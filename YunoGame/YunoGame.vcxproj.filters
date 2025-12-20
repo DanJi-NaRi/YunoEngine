@@ -1,26 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="main">
+      <UniqueIdentifier>{6a70feda-159a-4de9-91c5-b3f4aac0e982}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Game">
+      <UniqueIdentifier>{e5031400-6bf3-4c86-ba41-ea8b0c14f304}</UniqueIdentifier>
     </Filter>
     <Filter Include="GamePCH">
       <UniqueIdentifier>{38f5e7a6-3988-4694-b80c-2399a2758a86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePCH\pch.cpp">
       <Filter>GamePCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameApp.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
+    <ClInclude Include="GamePCH\pch.h">
       <Filter>GamePCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameApp.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
