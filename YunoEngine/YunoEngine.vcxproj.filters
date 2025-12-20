@@ -1,31 +1,61 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Public">
+      <UniqueIdentifier>{85128bc1-ffec-4bd4-943f-ebf61aae4afe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Private">
+      <UniqueIdentifier>{13137a3c-78ff-49e9-b9ee-1aa7ab95e635}</UniqueIdentifier>
     </Filter>
     <Filter Include="EnginePCH">
       <UniqueIdentifier>{881aa38b-79e5-4e14-a444-41e460e49bc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Interface">
+      <UniqueIdentifier>{0901a40a-eefe-4adb-a519-672acbd888e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="YunoEngine.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Public\YunoEngine.h">
+      <Filter>Public</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
+    <ClInclude Include="EnginePCH\pch.h">
       <Filter>EnginePCH</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Interface\IRenderer.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IInput.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\ISound.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\ITime.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\ISceneManager.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IResoureceManager.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IMeshManager.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\ITextureManager.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IGameApp.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IMaterialManager.h" />
+    <ClInclude Include="Public\Interface\IWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="YunoEngine.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Private\YunoEngine.cpp">
+      <Filter>Private</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="EnginePCH\pch.cpp">
       <Filter>EnginePCH</Filter>
     </ClCompile>
   </ItemGroup>
