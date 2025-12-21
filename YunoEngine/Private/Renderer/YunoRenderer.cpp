@@ -1,6 +1,15 @@
 #include "pch.h"
 
 #include "YunoRenderer.h"
+
+// 셰이더
+#include "YunoRenderPass.h"
+#include "YunoMeshBuffer.h"
+#include "YunoShaderCompiler.h"
+#include "YunoShader.h"
+#include "YunoConstantBuffers.h"
+
+// 인터페이스
 #include "IWindow.h"
 
 using Microsoft::WRL::ComPtr;
@@ -29,9 +38,142 @@ bool YunoRenderer::Initialize(IWindow* window)
     if (!CreateDepthStencil(m_width, m_height))             // DS
         return false;
 
+
+    auto CreateDynamicCB = [&](UINT byteWidth, Microsoft::WRL::ComPtr<ID3D11Buffer>& out)
+        {
+            D3D11_BUFFER_DESC bd{};
+            bd.Usage = D3D11_USAGE_DYNAMIC;
+            bd.ByteWidth = byteWidth;
+            bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+            bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+            return SUCCEEDED(m_device->CreateBuffer(&bd, nullptr, out.ReleaseAndGetAddressOf()));
+        };
+
+    if (!CreateDynamicCB(sizeof(CBDefault), m_cbDefault)) return false;
+
+
+
+    m_aspect = (m_height == 0) ? 1.0f : (float)m_width / (float)m_height;
+    m_camera.aspect = m_aspect;
+
+
+    //----------------------------------------------------------------------------
+    // 1) Shader compile
+    YunoShaderCompiler compiler;
+
+    // include 디렉터리(네 프로젝트에 맞게 조정)
+    // 보통 실행 경로 기준이 아니라 "프로젝트 루트 기준 상대경로"가 안 잡히는 경우가 많아서,
+    // 일단은 디버깅할 때 absolute 또는 작업 디렉터리를 맞추는 것을 권장.
+    // 여기서는 우선 상대경로로 가정:
+    compiler.AddIncludeDir(L"Shaders");
+
+    const std::wstring shaderPath = L"Shaders\\BasicColor.hlsl";
+
+    auto vsBlob = compiler.CompileFromFile(shaderPath, "VSMain", "vs_5_0");
+    auto psBlob = compiler.CompileFromFile(shaderPath, "PSMain", "ps_5_0");
+
+
+    // 2) Create shader objects (멤버로 보관해서 수명 유지)
+    m_basicVS = std::make_unique<YunoShader>();
+    m_basicPS = std::make_unique<YunoShader>();
+
+    if (!m_basicVS->CreateVertexShader(m_device.Get(), vsBlob.Get()))
+        return false;
+    if (!m_basicPS->CreatePixelShader(m_device.Get(), psBlob.Get()))
+        return false;
+
+
+    // 3) InputLayout desc (VertexPC)
+    struct VertexPC
+    {
+        float x, y, z;
+        float r, g, b, a;
+    };
+
+    static constexpr D3D11_INPUT_ELEMENT_DESC kInputPC[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    };
+
+    // 4) RenderPass
+    m_basicPass = std::make_unique<YunoRenderPass>();
+
+    YunoRenderPassDesc passDesc{};
+    passDesc.vs = m_basicVS.get();
+    passDesc.ps = m_basicPS.get();
+    passDesc.vsBytecode = vsBlob.Get();
+    passDesc.inputElements = kInputPC;
+    passDesc.inputElementCount = _countof(kInputPC);
+    passDesc.enableDepth = false;
+
+    if (!m_basicPass->Create(m_device.Get(), passDesc))
+        return false;
+
+    // 5) Triangle mesh
+    VertexPC vertices[3] =
+    {
+    {  0.0f,        0.5773503f, 0.0f,  1,0,0,1 },  // 위
+    {  0.5f,       -0.2886751f, 0.0f,  0,0,1,1 },  // 우하
+    { -0.5f,       -0.2886751f, 0.0f,  0,1,0,1 },  // 좌하
+    };
+
+    uint16_t indices[3] = { 0, 1, 2 };
+
+    m_triangle = std::make_unique<YunoMeshBuffer>();
+    if (!m_triangle->Create(m_device.Get(), vertices, sizeof(VertexPC), 3, indices, 3))
+    //----------------------------------------------------------------------------
+
     return true;
 }
 
+
+static void UpdateDynamicCB(ID3D11DeviceContext* ctx, ID3D11Buffer* cb, const void* data, size_t size)
+{
+    D3D11_MAPPED_SUBRESOURCE ms{};
+    if (SUCCEEDED(ctx->Map(cb, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms)))
+    {
+        memcpy(ms.pData, data, size);
+        ctx->Unmap(cb, 0);
+    }
+}
+
+// 테스트 드로우 함수임 나중에 삭제할거임
+void YunoRenderer::RenderTestTriangle()
+{
+    if (!m_basicPass || !m_triangle || !m_context)
+        return;
+
+    m_basicPass->Bind(m_context.Get());
+    m_triangle->Bind(m_context.Get());
+
+    using namespace DirectX;
+
+
+    XMMATRIX W = XMMatrixIdentity();               // Transform.ToMatrix() 결과
+    XMMATRIX V = m_camera.View();
+    XMMATRIX P = m_camera.Proj();
+    XMMATRIX WVP = W * V * P;
+
+    // transpose해서 저장 (HLSL에서 mul(v, M) 사용)
+    CBDefault cbd{};
+    XMStoreFloat4x4(&cbd.mWorld, XMMatrixTranspose(W));
+    XMStoreFloat4x4(&cbd.mView, XMMatrixTranspose(V));
+    XMStoreFloat4x4(&cbd.mProj, XMMatrixTranspose(P));
+    XMStoreFloat4x4(&cbd.mWVP, XMMatrixTranspose(WVP));
+
+    UpdateDynamicCB(m_context.Get(), m_cbDefault.Get(), &cbd, sizeof(cbd));
+
+    // b0에 바인딩
+    ID3D11Buffer* cbs[] = { m_cbDefault.Get() };
+    m_context->VSSetConstantBuffers(0, 1, cbs);
+
+    // Indexed로 만들었으면 DrawIndexed
+    if (m_triangle->HasIndexBuffer())
+        m_context->DrawIndexed(m_triangle->GetIndexCount(), 0, 0);
+    else
+        m_context->Draw(m_triangle->GetVertexCount(), 0);
+}
 
 bool YunoRenderer::CreateDeviceAndSwapChain(HWND hwnd, uint32_t width, uint32_t height)
 {
@@ -187,14 +329,14 @@ void YunoRenderer::BeginFrame()
 {
     m_context->OMSetRenderTargets(1, m_backBufferRT.rtv.GetAddressOf(), m_dsv.Get());        // RT ,DS 셋
 
-    SetViewPort();                                                              // 뷰포트 설정
+    SetViewPort();                                                                           // 뷰포트 설정
 
-    const float clearColor[4] = { 0.05f, 0.1f, 0.2f, 1.0f }; // 어두운 파랑
+    const float clearColor[4] = { 0.05f, 0.1f, 0.2f, 1.0f };                                 // 어두운 파랑
 
 
     m_context->ClearRenderTargetView(m_backBufferRT.rtv.Get(), clearColor);                  // 화면 클리어
 
-    ClearDepthStencil();                                                        // 뎁스/스텐실 클리어
+    ClearDepthStencil();                                                                     // 뎁스/스텐실 클리어
 
 }
 
@@ -204,7 +346,7 @@ void YunoRenderer::EndFrame()
     m_swapChain->Present(1, 0);
 }
 
-void YunoRenderer::Resize(uint32_t width, uint32_t height)
+void YunoRenderer::Resize(uint32_t width, uint32_t height)          //기존 RT, DS 없애고 재생성 및 스왑체인 버퍼 크기 리사이즈
 {
     if (!m_swapChain || !m_context || !m_device)
         return;
@@ -217,6 +359,9 @@ void YunoRenderer::Resize(uint32_t width, uint32_t height)
 
     m_width = width;
     m_height = height;
+
+    m_aspect = (height == 0) ? 1.0f : (float)width / (float)height;
+    m_camera.aspect = m_aspect;
 
     // 1) 바인딩 해제
     ID3D11RenderTargetView* nullRTV[1] = { nullptr };

@@ -6,5 +6,6 @@ class GameApp : public IGameApp
 public:
     bool OnInit() override;
     void OnUpdate(float dt) override;
+    void OnFixedUpdate(float fixedDt) override;
     void OnShutdown() override;
 };

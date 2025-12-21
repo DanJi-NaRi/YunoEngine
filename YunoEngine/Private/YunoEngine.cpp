@@ -5,10 +5,13 @@
 // 인터페이스
 #include "IGameApp.h"
 #include "IWindow.h"
+#include "IRenderer.h"
+#include "ITime.h"
 
 // 유노
 #include "YunoWindow.h"
 #include "YunoRenderer.h"
+#include "YunoTimer.h"
 
 YunoEngine::YunoEngine() = default;
 YunoEngine::~YunoEngine()
@@ -27,12 +30,17 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     if (!m_window->Create(title, width, height))
         return false;
 
+
     m_renderer = std::make_unique<YunoRenderer>();      // 렌더러 생성
     if (!m_renderer->Initialize(m_window.get()))
         return false;
 
-    // Timer 초기화
-    InitTimer();
+
+    m_timer = std::make_unique<YunoTimer>();            // 타이머 생성
+    m_timer->Initialize();
+    //m_timer->SetMaxDeltaSeconds(0.1f); // 최대 프레임 제한
+    m_timer->SetTimeScale(1.0f);
+
 
     // Game 초기화
     if (!m_game->OnInit())
@@ -47,6 +55,7 @@ int YunoEngine::Run()
     if (!m_running || !m_window || !m_game)
         return -1;
 
+
     while (m_running)
     {
         m_window->PollEvents(); // OS한테 메시지 전달
@@ -58,16 +67,51 @@ int YunoEngine::Run()
         }
 
         uint32_t w = 0, h = 0;
-        if (m_window->ConsumeResize(w, h))      // 화면 크기 변화 있으면?
+        if (m_window->ConsumeResize(w, h))      // 화면 크기 변화 있으면? (더티 플래그 사용)
         {
             m_renderer->Resize(w, h);           // 렌더러 화면도 같이 변경 (스왑 체인, RTV, DSV)
         }
 
+
+        // ---------------------------------업데이트 시작 -----------------------------------------
+
+        constexpr double fixedDt = 1.0 / 60.0;   // 60Hz
+        constexpr int maxFixedStepsPerFrame = 5; 
+
+        double accumulator = 0.0;
+
         // dt 계산
-        const float dt = TickDeltaSeconds();
+        m_timer->Tick();
+        const double frameDt = static_cast<double>(m_timer->UnscaledDeltaSeconds());
+
+        accumulator += frameDt;
+
+        int steps = 0;
+        while (accumulator >= fixedDt && steps < maxFixedStepsPerFrame)
+        {
+            m_game->OnFixedUpdate(static_cast<float>(fixedDt));
+            accumulator -= fixedDt;
+            ++steps;
+        }
+
+        if (steps == maxFixedStepsPerFrame)
+        {
+            accumulator = 0.0;
+        }
+
+        const float dt = m_timer->DeltaSeconds();
+        m_game->OnUpdate(dt);
+
+
+        // ---------------------------------드로우 시작 -----------------------------------------
 
         m_renderer->BeginFrame();
-        m_game->OnUpdate(dt);
+
+        if (auto* yr = dynamic_cast<YunoRenderer*>(m_renderer.get()))
+        {
+            yr->RenderTestTriangle();
+        }
+
         m_renderer->EndFrame();
     }
 
@@ -93,29 +137,8 @@ void YunoEngine::Shutdown()
 
     // 3) 그 다음 윈도우 종료
     m_window.reset();
+    m_timer.reset();
 
     m_running = false;
 }
 
-void YunoEngine::InitTimer()
-{
-    LARGE_INTEGER freq{};
-    QueryPerformanceFrequency(&freq);
-    m_counterToSeconds = 1.0 / static_cast<double>(freq.QuadPart);
-
-    LARGE_INTEGER now{};
-    QueryPerformanceCounter(&now);
-    m_prevCounter = now.QuadPart;
-}
-
-float YunoEngine::TickDeltaSeconds()
-{
-    LARGE_INTEGER now{};
-    QueryPerformanceCounter(&now);
-
-    const long long delta = now.QuadPart - m_prevCounter;
-    m_prevCounter = now.QuadPart;
-
-    const double dt = static_cast<double>(delta) * m_counterToSeconds;
-    return static_cast<float>(dt);
-}
