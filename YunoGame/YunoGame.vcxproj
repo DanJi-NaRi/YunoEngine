@@ -131,7 +131,8 @@
       <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)Assets"</Command>
+      <Command>xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)Assets"
+xcopy /E /I /Y "$(SolutionDir)YunoEngine\Assets\Shaders" "$(OutDir)Shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -159,7 +160,8 @@
       <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)Assets"</Command>
+      <Command>xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)Assets"
+xcopy /E /I /Y "$(SolutionDir)YunoEngine\Assets\Shaders" "$(OutDir)Shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

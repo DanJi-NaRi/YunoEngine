@@ -16,6 +16,30 @@
     <Filter Include="Private\Window">
       <UniqueIdentifier>{1415be2a-8b84-4dbd-b91e-ad9a40d03a99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Renderer">
+      <UniqueIdentifier>{ab1585dc-2583-40ac-bbd1-4230fdcf9d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Timer">
+      <UniqueIdentifier>{cab421c5-d32d-429e-a83a-19fdc0051be1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Shader">
+      <UniqueIdentifier>{88467870-f679-4bbe-8bb0-fa1e18ad0263}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\RenderPass">
+      <UniqueIdentifier>{b21c89f8-cdf2-4e47-a7c7-dfe0f282fee3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Mesh">
+      <UniqueIdentifier>{3e4a7fba-f8ac-40e3-afe5-776a246a34e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{ea4a655d-7206-455e-886d-dae1bc682cbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shader">
+      <UniqueIdentifier>{e1a8a3b2-7955-41ed-b6cd-d9cb28f6cb3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Math">
+      <UniqueIdentifier>{37267af7-4f4b-4459-89df-0a783023fbf4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\YunoEngine.h">
@@ -39,7 +63,7 @@
     <ClInclude Include="Public\Interface\ISceneManager.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Interface\IResoureceManager.h">
+    <ClInclude Include="Public\Interface\IResourceManager.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Public\Interface\IMeshManager.h">
@@ -60,7 +84,29 @@
     <ClInclude Include="Private\Window\YunoWindow.h">
       <Filter>Private\Window</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Renderer\YunoRenderer.h" />
+    <ClInclude Include="Private\Renderer\YunoRenderer.h">
+      <Filter>Private\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Timer\YunoTimer.h">
+      <Filter>Private\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\Mesh\YunoMeshBuffer.h">
+      <Filter>Private\Renderer\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\RenderPass\YunoRenderPass.h">
+      <Filter>Private\Renderer\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\Shader\YunoShader.h">
+      <Filter>Private\Renderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\Shader\YunoShaderCompiler.h">
+      <Filter>Private\Renderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Math\YunoTransform.h">
+      <Filter>Public\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h" />
+    <ClInclude Include="Public\Camera\YunoCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\YunoEngine.cpp">
@@ -72,6 +118,28 @@
     <ClCompile Include="Private\Window\YunoWindow.cpp">
       <Filter>Private\Window</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Renderer\YunoRenderer.cpp" />
+    <ClCompile Include="Private\Renderer\YunoRenderer.cpp">
+      <Filter>Private\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Timer\YunoTimer.cpp">
+      <Filter>Private\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\Mesh\YunoMeshBuffer.cpp">
+      <Filter>Private\Renderer\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\RenderPass\YunoRenderPass.cpp">
+      <Filter>Private\Renderer\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\Shader\YunoShader.cpp">
+      <Filter>Private\Renderer\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\Shader\YunoShaderCompiler.cpp">
+      <Filter>Private\Renderer\Shader</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Assets\Shaders\BasicColor.hlsl">
+      <Filter>Assets\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

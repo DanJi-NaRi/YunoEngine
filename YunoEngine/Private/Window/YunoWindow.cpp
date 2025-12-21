@@ -78,7 +78,7 @@ bool YunoWindow::ConsumeResize(uint32_t& outW, uint32_t& outH)
     if (!m_resized)
         return false;
 
-    m_resized = false;
+    m_resized = false;      // 더티플래그
     outW = m_pendingW;
     outH = m_pendingH;
     return true;
@@ -121,7 +121,7 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 
             window->m_pendingW = w;
             window->m_pendingH = h;
-            window->m_resized = true;
+            window->m_resized = true;   //더티 플래그
         }
         return 0;
     }
