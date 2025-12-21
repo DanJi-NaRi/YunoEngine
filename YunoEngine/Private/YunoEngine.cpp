@@ -107,10 +107,10 @@ int YunoEngine::Run()
 
         m_renderer->BeginFrame();
 
-        if (auto* yr = dynamic_cast<YunoRenderer*>(m_renderer.get()))
-        {
-            yr->RenderTestTriangle();
-        }
+        //if (auto* yr = dynamic_cast<YunoRenderer*>(m_renderer.get()))
+        //{
+        //    yr->RenderTestTriangle();
+        //}
 
         m_renderer->EndFrame();
     }

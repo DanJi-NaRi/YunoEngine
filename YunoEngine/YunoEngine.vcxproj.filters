@@ -107,6 +107,7 @@
     </ClInclude>
     <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h" />
     <ClInclude Include="Public\Camera\YunoCamera.h" />
+    <ClInclude Include="Public\Renderer\RenderTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\YunoEngine.cpp">

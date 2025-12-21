@@ -122,7 +122,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)public\Interface;$(ProjectDir)private\Window;$(ProjectDir)private\Renderer;$(ProjectDir)private\Timer;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)Assets\Shaders;$(ProjectDir)Public\Math;$(ProjectDir)Public\Camera;$(ProjectDir)private\Renderer\ConstBuffer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)public\Interface;$(ProjectDir)private\Window;$(ProjectDir)private\Renderer;$(ProjectDir)private\Timer;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)Assets\Shaders;$(ProjectDir)Public\Math;$(ProjectDir)Public\Camera;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)Public\Renderer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -142,7 +142,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)public\Interface;$(ProjectDir)private\Window;$(ProjectDir)private\Renderer;$(ProjectDir)private\Timer;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)Assets\Shaders;$(ProjectDir)Public\Math;$(ProjectDir)Public\Camera;$(ProjectDir)private\Renderer\ConstBuffer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)public\Interface;$(ProjectDir)private\Window;$(ProjectDir)private\Renderer;$(ProjectDir)private\Timer;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)Assets\Shaders;$(ProjectDir)Public\Math;$(ProjectDir)Public\Camera;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)Public\Renderer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -175,6 +175,7 @@
     <ClInclude Include="Public\Interface\ITime.h" />
     <ClInclude Include="Public\Interface\IWindow.h" />
     <ClInclude Include="Public\Math\YunoTransform.h" />
+    <ClInclude Include="Public\Renderer\RenderTypes.h" />
     <ClInclude Include="Public\YunoEngine.h" />
   </ItemGroup>
   <ItemGroup>
