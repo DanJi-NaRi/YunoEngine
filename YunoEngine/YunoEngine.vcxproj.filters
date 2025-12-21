@@ -13,6 +13,9 @@
     <Filter Include="Public\Interface">
       <UniqueIdentifier>{0901a40a-eefe-4adb-a519-672acbd888e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Window">
+      <UniqueIdentifier>{1415be2a-8b84-4dbd-b91e-ad9a40d03a99}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\YunoEngine.h">
@@ -48,8 +51,16 @@
     <ClInclude Include="Public\Interface\IGameApp.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Interface\IMaterialManager.h" />
-    <ClInclude Include="Public\Interface\IWindow.h" />
+    <ClInclude Include="Public\Interface\IWindow.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IMaterialManager.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Window\YunoWindow.h">
+      <Filter>Private\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\YunoRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\YunoEngine.cpp">
@@ -58,5 +69,9 @@
     <ClCompile Include="EnginePCH\pch.cpp">
       <Filter>EnginePCH</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Window\YunoWindow.cpp">
+      <Filter>Private\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\YunoRenderer.cpp" />
   </ItemGroup>
 </Project>

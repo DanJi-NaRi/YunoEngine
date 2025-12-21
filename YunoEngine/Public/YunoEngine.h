@@ -2,7 +2,8 @@
 
 
 class IGameApp;
-
+class IWindow;
+class IRenderer;
 
 class YunoEngine
 {
@@ -10,19 +11,23 @@ public:
     YunoEngine();
     ~YunoEngine();
 
-    // 엔진 초기화
-    bool Initialize(IGameApp* game);
-
-    // 엔진 실행 (메인 루프)
+    bool Initialize(IGameApp* game, const wchar_t* title, uint32_t width, uint32_t height);
     int Run();
-
-    // 엔진 종료
     void Shutdown();
 
-    // 실행 상태
-    bool IsRunning() const;
+    bool IsRunning() const { return m_running; }
 
 private:
-    bool m_running = false;
-    IGameApp* m_game = nullptr; 
+    bool m_running = false;                 // 엔진 작동 여부
+    IGameApp* m_game = nullptr;             // 엔진으로 돌릴 게임
+    std::unique_ptr<IWindow> m_window;      // 화면
+    std::unique_ptr<IRenderer> m_renderer;  // 렌더러
+
+    // 시간
+    long long m_prevCounter = 0;
+    double m_counterToSeconds = 0.0;
+
+private:
+    void InitTimer();
+    float TickDeltaSeconds();
 };
