@@ -30,6 +30,9 @@ public:
     // 기본 머티리얼(추후 키/파일 기반으로 확장)
     virtual MaterialHandle GetOrCreateMaterial_Default() = 0;
 
+    // 렌더패스 생성
+    virtual RenderPassHandle CreateRenderPass(const RenderPassDesc& desc) = 0;
+
     // 매 프레임 렌더 요청 제출
     virtual void Submit(const RenderItem& item) = 0;
 

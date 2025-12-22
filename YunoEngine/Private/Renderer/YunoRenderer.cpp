@@ -539,6 +539,12 @@ MaterialHandle YunoRenderer::GetOrCreateMaterial_Default()
     return 1;
 }
 
+RenderPassHandle YunoRenderer::CreateRenderPass(const RenderPassDesc& desc)
+{
+    m_renderPassDescs.push_back(desc);
+    return static_cast<RenderPassHandle>(m_renderPassDescs.size());
+}
+
 void YunoRenderer::Submit(const RenderItem& item)
 {
     if (item.mesh == 0 || item.mesh > m_meshes.size())
