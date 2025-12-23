@@ -14,6 +14,35 @@
 
 using Microsoft::WRL::ComPtr;
 
+namespace
+{
+    bool BuildInputLayoutDesc(uint32_t flags, std::vector<D3D11_INPUT_ELEMENT_DESC>& out)
+    {
+        out.clear();
+
+        auto Add = [&](const char* semantic, DXGI_FORMAT format, UINT slot)
+            {
+                D3D11_INPUT_ELEMENT_DESC desc{};
+                desc.SemanticName = semantic;
+                desc.SemanticIndex = 0;
+                desc.Format = format;
+                desc.InputSlot = slot;
+                desc.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+                desc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+                desc.InstanceDataStepRate = 0;
+                out.push_back(desc);
+            };
+
+        if (flags & VSF_Pos) Add("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
+        if (flags & VSF_Nrm) Add("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT, 1);
+        if (flags & VSF_UV) Add("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT, 2);
+        if (flags & VSF_T) Add("TANGENT", DXGI_FORMAT_R32G32B32_FLOAT, 3);
+        if (flags & VSF_B) Add("BINORMAL", DXGI_FORMAT_R32G32B32_FLOAT, 4);
+
+        return !out.empty();
+    }
+}
+
 YunoRenderer::YunoRenderer() = default;
 YunoRenderer::~YunoRenderer() = default;
 
@@ -539,10 +568,139 @@ MaterialHandle YunoRenderer::GetOrCreateMaterial_Default()
     return 1;
 }
 
+MaterialHandle YunoRenderer::CreateMaterial(const MaterialDesc& desc)
+{
+    MaterialResource mr{};
+    mr.desc = desc;
+    m_materials.push_back(std::move(mr));
+    return static_cast<MaterialHandle>(m_materials.size());
+}
+
 RenderPassHandle YunoRenderer::CreateRenderPass(const RenderPassDesc& desc)
 {
-    m_renderPassDescs.push_back(desc);
-    return static_cast<RenderPassHandle>(m_renderPassDescs.size());
+    if (!m_device)
+        return 0;
+    if (!desc.vsBytecode || desc.vsBytecodeSize == 0)
+        return 0;
+    if (desc.vertexStreamFlags == 0)
+        return 0;
+
+    std::vector<D3D11_INPUT_ELEMENT_DESC> elements;
+    if (!BuildInputLayoutDesc(desc.vertexStreamFlags, elements))
+        return 0;
+
+    RenderPassResource rp{};
+    rp.desc = desc;
+
+    {
+        ComPtr<ID3D11InputLayout> layout;
+        const HRESULT hr = m_device->CreateInputLayout(
+            elements.data(),
+            static_cast<UINT>(elements.size()),
+            desc.vsBytecode,
+            desc.vsBytecodeSize,
+            &layout);
+        if (FAILED(hr))
+            return 0;
+        rp.inputLayout = std::move(layout);
+    }
+
+    {
+        D3D11_RASTERIZER_DESC rd{};
+        rd.FillMode = (desc.fill == RenderPassFillMode::Wireframe) ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
+        switch (desc.cull)
+        {
+        case RenderPassCullMode::None:
+            rd.CullMode = D3D11_CULL_NONE;
+            break;
+        case RenderPassCullMode::Front:
+            rd.CullMode = D3D11_CULL_FRONT;
+            break;
+        case RenderPassCullMode::Back:
+        default:
+            rd.CullMode = D3D11_CULL_BACK;
+            break;
+        }
+        rd.FrontCounterClockwise = FALSE;
+        rd.DepthClipEnable = desc.depthClip ? TRUE : FALSE;
+
+        ComPtr<ID3D11RasterizerState> rs;
+        const HRESULT hr = m_device->CreateRasterizerState(&rd, &rs);
+        if (FAILED(hr))
+            return 0;
+        rp.rs = std::move(rs);
+    }
+
+    {
+        D3D11_DEPTH_STENCIL_DESC dd{};
+        switch (desc.depth)
+        {
+        case RenderPassDepthMode::Disabled:
+            dd.DepthEnable = FALSE;
+            dd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+            break;
+        case RenderPassDepthMode::ReadOnly:
+            dd.DepthEnable = TRUE;
+            dd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+            break;
+        case RenderPassDepthMode::ReadWrite:
+        default:
+            dd.DepthEnable = TRUE;
+            dd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+            break;
+        }
+        dd.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+        ComPtr<ID3D11DepthStencilState> dss;
+        const HRESULT hr = m_device->CreateDepthStencilState(&dd, &dss);
+        if (FAILED(hr))
+            return 0;
+        rp.dss = std::move(dss);
+    }
+
+    {
+        D3D11_BLEND_DESC bd{};
+        bd.AlphaToCoverageEnable = desc.alphaToCoverage ? TRUE : FALSE;
+        bd.IndependentBlendEnable = FALSE;
+
+        auto& rt = bd.RenderTarget[0];
+        rt.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+        switch (desc.blend)
+        {
+        case RenderPassBlendMode::AlphaBlend:
+            rt.BlendEnable = TRUE;
+            rt.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+            rt.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+            rt.BlendOp = D3D11_BLEND_OP_ADD;
+            rt.SrcBlendAlpha = D3D11_BLEND_ONE;
+            rt.DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+            rt.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+            break;
+        case RenderPassBlendMode::Additive:
+            rt.BlendEnable = TRUE;
+            rt.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+            rt.DestBlend = D3D11_BLEND_ONE;
+            rt.BlendOp = D3D11_BLEND_OP_ADD;
+            rt.SrcBlendAlpha = D3D11_BLEND_ONE;
+            rt.DestBlendAlpha = D3D11_BLEND_ONE;
+            rt.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+            break;
+        case RenderPassBlendMode::Opaque:
+        default:
+            rt.BlendEnable = FALSE;
+            break;
+        }
+
+        ComPtr<ID3D11BlendState> bs;
+        const HRESULT hr = m_device->CreateBlendState(&bd, &bs);
+        if (FAILED(hr))
+            return 0;
+        rp.bs = std::move(bs);
+    }
+
+    m_renderPasses.push_back(std::move(rp));
+    return static_cast<RenderPassHandle>(m_renderPasses.size());
 }
 
 void YunoRenderer::Submit(const RenderItem& item)
@@ -564,6 +722,9 @@ void YunoRenderer::Flush()
             continue;
 
         const MeshResource& mr = m_meshes[item.mesh - 1];
+        const RenderPassResource* rp = nullptr;
+        if (item.pass != 0 && item.pass <= m_renderPasses.size())
+            rp = &m_renderPasses[item.pass - 1];
 
         // 슬롯 고정 매핑:
         // 0=Pos, 1=Nrm, 2=UV, 3=T, 4=B
@@ -591,6 +752,15 @@ void YunoRenderer::Flush()
             m_context->IASetIndexBuffer(mr.ib.Get(), DXGI_FORMAT_R32_UINT, 0);
 
         m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+        if (rp)
+        {
+            m_context->IASetInputLayout(rp->inputLayout.Get());
+            m_context->RSSetState(rp->rs.Get());
+            m_context->OMSetDepthStencilState(rp->dss.Get(), 0);
+            const float blendFactor[4] = { 0, 0, 0, 0 };
+            m_context->OMSetBlendState(rp->bs.Get(), blendFactor, 0xFFFFFFFF);
+        }
 
         // 지금 단계에서는 "보이는 것"까지 목표가 아님.
         // (셰이더/입력레이아웃/상수버퍼 업데이트는 다음 단계에서 연결)

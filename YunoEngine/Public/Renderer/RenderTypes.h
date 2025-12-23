@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cstddef>
 #include <DirectXMath.h>
 
 // 게임이 들고 있을 핸들
@@ -39,6 +40,8 @@ struct RenderPassDesc
 {
     const char* debugName = nullptr;
     uint32_t vertexStreamFlags = 0; // VertexStreamFlags 조합
+    const void* vsBytecode = nullptr;
+    size_t vsBytecodeSize = 0;
 
     RenderPassBlendMode blend = RenderPassBlendMode::Opaque;
     RenderPassDepthMode depth = RenderPassDepthMode::ReadWrite;
@@ -47,6 +50,12 @@ struct RenderPassDesc
 
     bool depthClip = true;
     bool alphaToCoverage = false;
+};
+
+// 게임 -> 엔진 머티리얼 생성용 데이터(임시)
+struct MaterialDesc
+{
+    DirectX::XMFLOAT4 baseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 };
 
 struct VERTEX_Pos { DirectX::XMFLOAT3 pos; };
@@ -106,6 +115,8 @@ struct RenderItem
 RenderPassDesc passDesc{};
 passDesc.debugName = "OpaqueLit";
 passDesc.vertexStreamFlags = VSF_Pos | VSF_Nrm | VSF_UV;
+passDesc.vsBytecode = vsBlob->GetBufferPointer();
+passDesc.vsBytecodeSize = vsBlob->GetBufferSize();
 passDesc.depth = RenderPassDepthMode::ReadWrite;
 passDesc.blend = RenderPassBlendMode::Opaque;
 

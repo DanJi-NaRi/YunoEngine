@@ -41,6 +41,7 @@ public:
         uint32_t indexCount) override;
 
     MaterialHandle GetOrCreateMaterial_Default() override; // 다음 단계에서 구현
+    MaterialHandle CreateMaterial(const MaterialDesc& desc) override;
     RenderPassHandle CreateRenderPass(const RenderPassDesc& desc) override;
     void Submit(const RenderItem& item) override;           // 다음 단계에서 구현
     void Flush() override;                                  // 다음 단계에서 구현
@@ -106,9 +107,24 @@ private:
         ComPtr<ID3D11Buffer> ib;
     };
 
+    struct MaterialResource
+    {
+        MaterialDesc desc;
+    };
+
+    struct RenderPassResource
+    {
+        RenderPassDesc desc;
+        ComPtr<ID3D11InputLayout> inputLayout;
+        ComPtr<ID3D11RasterizerState> rs;
+        ComPtr<ID3D11DepthStencilState> dss;
+        ComPtr<ID3D11BlendState> bs;
+    };
+
     std::vector<MeshResource> m_meshes;        // handle -> m_meshes[handle-1]
+    std::vector<MaterialResource> m_materials; // handle -> m_materials[handle-1]
     std::vector<RenderItem>   m_renderQueue;   // 이번 프레임 제출된 드로우 요청
-    std::vector<RenderPassDesc> m_renderPassDescs; // handle -> m_renderPassDescs[handle-1]
+    std::vector<RenderPassResource> m_renderPasses; // handle -> m_renderPasses[handle-1]
 
 
 };
