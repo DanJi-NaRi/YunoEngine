@@ -40,7 +40,7 @@ public:
         const uint32_t* indices,
         uint32_t indexCount) override;
 
-    MaterialHandle GetOrCreateMaterial_Default() override; // 다음 단계에서 구현
+    MaterialHandle CreateMaterial_Default() override; // 다음 단계에서 구현
     void Submit(const RenderItem& item) override;           // 다음 단계에서 구현
     void Flush() override;                                  // 다음 단계에서 구현
 

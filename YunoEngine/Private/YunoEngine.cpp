@@ -40,7 +40,7 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     m_timer->Initialize();
     //m_timer->SetMaxDeltaSeconds(0.1f); // 최대 프레임 제한
     m_timer->SetTimeScale(1.0f);
-
+    m_fixedAccumulator = 0.0;
 
     // Game 초기화
     if (!m_game->OnInit())
@@ -78,25 +78,24 @@ int YunoEngine::Run()
         constexpr double fixedDt = 1.0 / 60.0;   // 60Hz
         constexpr int maxFixedStepsPerFrame = 5; 
 
-        double accumulator = 0.0;
 
         // dt 계산
         m_timer->Tick();
         const double frameDt = static_cast<double>(m_timer->UnscaledDeltaSeconds());
 
-        accumulator += frameDt;
+        m_fixedAccumulator += frameDt;
 
         int steps = 0;
-        while (accumulator >= fixedDt && steps < maxFixedStepsPerFrame)
+        while (m_fixedAccumulator >= fixedDt && steps < maxFixedStepsPerFrame)
         {
             m_game->OnFixedUpdate(static_cast<float>(fixedDt));
-            accumulator -= fixedDt;
+            m_fixedAccumulator -= fixedDt;
             ++steps;
         }
 
         if (steps == maxFixedStepsPerFrame)
         {
-            accumulator = 0.0;
+            m_fixedAccumulator = 0.0;
         }
 
         const float dt = m_timer->DeltaSeconds();

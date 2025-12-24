@@ -5,6 +5,7 @@
 // 게임이 들고 있을 핸들
 using MeshHandle = uint32_t;
 using MaterialHandle = uint32_t;
+using RenderPassHandle = uint32_t;
 
 struct VERTEX_Pos { DirectX::XMFLOAT3 pos; };
 struct VERTEX_Nrm { DirectX::XMFLOAT3 nrm; };

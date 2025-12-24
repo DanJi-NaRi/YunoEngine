@@ -343,7 +343,10 @@ void YunoRenderer::BeginFrame()
 void YunoRenderer::EndFrame()
 {
     // VSync ON
-    m_swapChain->Present(1, 0);
+    //m_swapChain->Present(1, 0);
+    
+    // VSync OFF
+    m_swapChain->Present(0, 0);
 }
 
 void YunoRenderer::Resize(uint32_t width, uint32_t height)          //기존 RT, DS 없애고 재생성 및 스왑체인 버퍼 크기 리사이즈
@@ -532,7 +535,7 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
     return static_cast<MeshHandle>(m_meshes.size());
 }
 
-MaterialHandle YunoRenderer::GetOrCreateMaterial_Default()
+MaterialHandle YunoRenderer::CreateMaterial_Default()
 {
     // 지금은 컴파일/연결용 스텁
     // 다음 단계에서 Material/Pass 관리로 교체
@@ -573,11 +576,11 @@ void YunoRenderer::Flush()
 
         // 가장 높은 사용 슬롯까지 바인딩 (중간 슬롯이 nullptr이어도 count 안에 포함될 수 있음)
         UINT maxSlot = 0;
-        if (mr.vbB)      maxSlot = 4;
-        else if (mr.vbT) maxSlot = 3;
-        else if (mr.vbUV)maxSlot = 2;
+        if (mr.vbB)       maxSlot = 4;
+        else if (mr.vbT)  maxSlot = 3;
+        else if (mr.vbUV) maxSlot = 2;
         else if (mr.vbNrm)maxSlot = 1;
-        else             maxSlot = 0;
+        else              maxSlot = 0;
 
         m_context->IASetVertexBuffers(0, maxSlot + 1, vbs, strides, offsets);
 

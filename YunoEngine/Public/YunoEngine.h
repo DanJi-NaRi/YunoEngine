@@ -24,6 +24,6 @@ private:
     std::unique_ptr<IWindow>    m_window;    // 화면
     std::unique_ptr<IRenderer>  m_renderer;  // 렌더러
     std::unique_ptr<ITime>      m_timer;     // 타이머
-
+    double  m_fixedAccumulator = 0.0;        // FixedUpdate 누적 시간
 
 };

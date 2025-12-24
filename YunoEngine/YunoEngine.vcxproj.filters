@@ -40,6 +40,15 @@
     <Filter Include="Public\Math">
       <UniqueIdentifier>{37267af7-4f4b-4459-89df-0a783023fbf4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Camera">
+      <UniqueIdentifier>{93b7cc2a-38e5-488a-9b02-705a4fd0c6eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Renderer">
+      <UniqueIdentifier>{2ead9d39-55a1-4b0f-865a-7b5051e73c0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\ConstBuffer">
+      <UniqueIdentifier>{70699ab7-a50e-4b05-b0e7-2eb921999005}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\YunoEngine.h">
@@ -105,9 +114,15 @@
     <ClInclude Include="Public\Math\YunoTransform.h">
       <Filter>Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h" />
-    <ClInclude Include="Public\Camera\YunoCamera.h" />
-    <ClInclude Include="Public\Renderer\RenderTypes.h" />
+    <ClInclude Include="Public\Renderer\RenderTypes.h">
+      <Filter>Public\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Camera\YunoCamera.h">
+      <Filter>Public\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h">
+      <Filter>Private\Renderer\ConstBuffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\YunoEngine.cpp">
