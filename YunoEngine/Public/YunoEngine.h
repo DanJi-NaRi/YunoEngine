@@ -17,6 +17,7 @@ public:
     void Shutdown();
 
     bool IsRunning() const { return m_running; }
+    static IRenderer* GetRenderer() { return s_renderer; }
 
 private:
     bool m_running = false;                  // 엔진 작동 여부
@@ -26,4 +27,5 @@ private:
     std::unique_ptr<ITime>      m_timer;     // 타이머
     double  m_fixedAccumulator = 0.0;        // FixedUpdate 누적 시간
 
+    static IRenderer* s_renderer;
 };

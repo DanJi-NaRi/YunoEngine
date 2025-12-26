@@ -14,6 +14,19 @@
 
 using Microsoft::WRL::ComPtr;
 
+namespace
+{
+    void UpdateDynamicCB(ID3D11DeviceContext* ctx, ID3D11Buffer* cb, const void* data, size_t size)
+    {
+        D3D11_MAPPED_SUBRESOURCE ms{};
+        if (SUCCEEDED(ctx->Map(cb, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms)))
+        {
+            std::memcpy(ms.pData, data, size);
+            ctx->Unmap(cb, 0);
+        }
+    }
+}
+
 YunoRenderer::YunoRenderer() = default;
 YunoRenderer::~YunoRenderer() = default;
 
@@ -56,124 +69,63 @@ bool YunoRenderer::Initialize(IWindow* window)
     m_aspect = (m_height == 0) ? 1.0f : (float)m_width / (float)m_height;
     m_camera.aspect = m_aspect;
 
-
-    ////----------------------------------------------------------------------------
-    //// 1) Shader compile
-    //YunoShaderCompiler compiler;
-
-    //// include 디렉터리(네 프로젝트에 맞게 조정)
-    //// 보통 실행 경로 기준이 아니라 "프로젝트 루트 기준 상대경로"가 안 잡히는 경우가 많아서,
-    //// 일단은 디버깅할 때 absolute 또는 작업 디렉터리를 맞추는 것을 권장.
-    //// 여기서는 우선 상대경로로 가정:
-    //compiler.AddIncludeDir(L"Shaders");
-
-    //const std::wstring shaderPath = L"Shaders\\BasicColor.hlsl";
-
-    //auto vsBlob = compiler.CompileFromFile(shaderPath, "VSMain", "vs_5_0");
-    //auto psBlob = compiler.CompileFromFile(shaderPath, "PSMain", "ps_5_0");
-
-
-    //// 2) Create shader objects (멤버로 보관해서 수명 유지)
-    //m_basicVS = std::make_unique<YunoShader>();
-    //m_basicPS = std::make_unique<YunoShader>();
-
-    //if (!m_basicVS->CreateVertexShader(m_device.Get(), vsBlob.Get()))
-    //    return false;
-    //if (!m_basicPS->CreatePixelShader(m_device.Get(), psBlob.Get()))
-    //    return false;
-
-
-    //// 3) InputLayout desc (VertexPC)
-    //struct VertexPC
-    //{
-    //    float x, y, z;
-    //    float r, g, b, a;
-    //};
-
-    //static constexpr D3D11_INPUT_ELEMENT_DESC kInputPC[] =
-    //{
-    //    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    //    { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    //};
-
-    //// 4) RenderPass
-    //m_basicPass = std::make_unique<YunoRenderPass>();
-
-    //YunoRenderPassDesc passDesc{};
-    //passDesc.vs = m_basicVS.get();
-    //passDesc.ps = m_basicPS.get();
-    //passDesc.vsBytecode = vsBlob.Get();
-    //passDesc.inputElements = kInputPC;
-    //passDesc.inputElementCount = _countof(kInputPC);
-    //passDesc.enableDepth = false;
-
-    //if (!m_basicPass->Create(m_device.Get(), passDesc))
-    //    return false;
-
-    //// 5) Triangle mesh
-    //VertexPC vertices[3] =
-    //{
-    //{  0.0f,        0.5773503f, 0.0f,  1,0,0,1 },  // 위
-    //{  0.5f,       -0.2886751f, 0.0f,  0,0,1,1 },  // 우하
-    //{ -0.5f,       -0.2886751f, 0.0f,  0,1,0,1 },  // 좌하
-    //};
-
-    //uint16_t indices[3] = { 0, 1, 2 };
-
-    //m_triangle = std::make_unique<YunoMeshBuffer>();
-    //if (!m_triangle->Create(m_device.Get(), vertices, sizeof(VertexPC), 3, indices, 3))
-    ////----------------------------------------------------------------------------
+    if (!CreateBasicPipeline())
+        return false;
 
     return true;
 }
 
+bool YunoRenderer::CreateBasicPipeline()
+{
+    if (!m_device)
+        return false;
 
-//static void UpdateDynamicCB(ID3D11DeviceContext* ctx, ID3D11Buffer* cb, const void* data, size_t size)
-//{
-//    D3D11_MAPPED_SUBRESOURCE ms{};
-//    if (SUCCEEDED(ctx->Map(cb, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms)))
-//    {
-//        memcpy(ms.pData, data, size);
-//        ctx->Unmap(cb, 0);
-//    }
-//}
+    YunoShaderCompiler compiler;
 
-// 테스트 드로우 함수임 나중에 삭제할거임
-//void YunoRenderer::RenderTestTriangle()
-//{
-//    if (!m_basicPass || !m_triangle || !m_context)
-//        return;
-//
-//    m_basicPass->Bind(m_context.Get());
-//    m_triangle->Bind(m_context.Get());
-//
-//    using namespace DirectX;
-//
-//
-//    XMMATRIX W = XMMatrixIdentity();               // Transform.ToMatrix() 결과
-//    XMMATRIX V = m_camera.View();
-//    XMMATRIX P = m_camera.Proj();
-//    XMMATRIX WVP = W * V * P;
-//
-//    // transpose해서 저장 (HLSL에서 mul(v, M) 사용)
-//    CBDefault cbd{};
-//    XMStoreFloat4x4(&cbd.mWorld, XMMatrixTranspose(W));
-//    XMStoreFloat4x4(&cbd.mView, XMMatrixTranspose(V));
-//    XMStoreFloat4x4(&cbd.mProj, XMMatrixTranspose(P));
-//    XMStoreFloat4x4(&cbd.mWVP, XMMatrixTranspose(WVP));
-//
-//    UpdateDynamicCB(m_context.Get(), m_cbDefault.Get(), &cbd, sizeof(cbd));
-//
-//    // b0에 바인딩
-//    ID3D11Buffer* cbs[] = { m_cbDefault.Get() };
-//    m_context->VSSetConstantBuffers(0, 1, cbs);
-//
-//    // Indexed로 만들었으면 DrawIndexed
-//    if (m_triangle->HasIndexBuffer())
-//        m_context->DrawIndexed(m_triangle->GetIndexCount(), 0, 0);
-//    else
-//        m_context->Draw(m_triangle->GetVertexCount(), 0);
-//}
+    // 현재 파일 경로 기준으로 Assets/ 아래의 쉐이더를 찾는다.
+    const std::filesystem::path shaderPath =
+        std::filesystem::path(__FILE__).parent_path().parent_path().parent_path() /
+        "Assets" / "Shaders" / "BasicColor.hlsl";
+
+    compiler.AddIncludeDir(shaderPath.parent_path().wstring());
+
+    auto vsBlob = compiler.CompileFromFile(shaderPath.wstring(), "VSMain", "vs_5_0");
+    auto psBlob = compiler.CompileFromFile(shaderPath.wstring(), "PSMain", "ps_5_0");
+
+    m_basicVS = std::make_unique<YunoShader>();
+    m_basicPS = std::make_unique<YunoShader>();
+
+    if (!m_basicVS->CreateVertexShader(m_device.Get(), vsBlob.Get()))
+        return false;
+    if (!m_basicPS->CreatePixelShader(m_device.Get(), psBlob.Get()))
+        return false;
+
+    static constexpr D3D11_INPUT_ELEMENT_DESC kInputPos[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    };
+
+    m_basicPass = std::make_unique<YunoRenderPass>();
+
+    YunoRenderPassDesc passDesc{};
+    passDesc.vs = m_basicVS.get();
+    passDesc.ps = m_basicPS.get();
+    passDesc.vsBytecode = vsBlob.Get();
+    passDesc.inputElements = kInputPos;
+    passDesc.inputElementCount = _countof(kInputPos);
+    passDesc.enableDepth = true;
+    passDesc.cullBack = false;
+
+    if (!m_basicPass->Create(m_device.Get(), passDesc))
+        return false;
+
+    m_materials.clear();
+    m_defaultMaterial = 0;
+    m_defaultMaterial = CreateMaterial_Default();
+    return m_defaultMaterial != 0;
+}
+
+
 
 bool YunoRenderer::CreateDeviceAndSwapChain(HWND hwnd, uint32_t width, uint32_t height)
 {
@@ -537,9 +489,18 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
 
 MaterialHandle YunoRenderer::CreateMaterial_Default()
 {
-    // 지금은 컴파일/연결용 스텁
-    // 다음 단계에서 Material/Pass 관리로 교체
-    return 1;
+    if (!m_basicPass)
+        return 0;
+
+    if (m_defaultMaterial != 0)
+        return m_defaultMaterial;
+
+    MaterialResource mat{};
+    mat.pass = m_basicPass.get();
+
+    m_materials.push_back(mat);
+    m_defaultMaterial = static_cast<MaterialHandle>(m_materials.size());
+    return m_defaultMaterial;
 }
 
 void YunoRenderer::Submit(const RenderItem& item)
@@ -547,18 +508,39 @@ void YunoRenderer::Submit(const RenderItem& item)
     if (item.mesh == 0 || item.mesh > m_meshes.size())
         return;
 
-    m_renderQueue.push_back(item);
+    RenderItem copy = item;
+    if (copy.material == 0)
+        copy.material = m_defaultMaterial;
+
+    if (copy.material == 0 || copy.material > m_materials.size())
+        return;
+
+    m_renderQueue.push_back(copy);
 }
 
 void YunoRenderer::Flush()
 {
-    if (!m_context)
+    if (!m_context || !m_cbDefault)
         return;
 
     for (const RenderItem& item : m_renderQueue)
     {
         if (item.mesh == 0 || item.mesh > m_meshes.size())
             continue;
+
+        const MaterialResource* material = nullptr;
+        if (item.material > 0 && item.material <= m_materials.size())
+        {
+            material = &m_materials[item.material - 1];
+        }
+
+        YunoRenderPass* pass = material ? material->pass : nullptr;
+        if (!pass)
+            pass = m_basicPass.get();
+        if (!pass)
+            continue;
+
+        pass->Bind(m_context.Get());
 
         const MeshResource& mr = m_meshes[item.mesh - 1];
 
@@ -589,8 +571,22 @@ void YunoRenderer::Flush()
 
         m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-        // 지금 단계에서는 "보이는 것"까지 목표가 아님.
-        // (셰이더/입력레이아웃/상수버퍼 업데이트는 다음 단계에서 연결)
+        using namespace DirectX;
+
+        XMMATRIX W = XMLoadFloat4x4(&item.world);
+        XMMATRIX V = m_camera.View();
+        XMMATRIX P = m_camera.Proj();
+        XMMATRIX WVP = W * V * P;
+
+        CBDefault cbd{};
+        XMStoreFloat4x4(&cbd.mWorld, XMMatrixTranspose(W));
+        XMStoreFloat4x4(&cbd.mView, XMMatrixTranspose(V));
+        XMStoreFloat4x4(&cbd.mProj, XMMatrixTranspose(P));
+        XMStoreFloat4x4(&cbd.mWVP, XMMatrixTranspose(WVP));
+
+        UpdateDynamicCB(m_context.Get(), m_cbDefault.Get(), &cbd, sizeof(cbd));
+        ID3D11Buffer* cbs[] = { m_cbDefault.Get() };
+        m_context->VSSetConstantBuffers(0, 1, cbs);
 
         if (mr.ib && mr.indexCount > 0)
             m_context->DrawIndexed(mr.indexCount, 0, 0);

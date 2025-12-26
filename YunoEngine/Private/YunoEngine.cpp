@@ -13,6 +13,8 @@
 #include "YunoRenderer.h"
 #include "YunoTimer.h"
 
+IRenderer* YunoEngine::s_renderer = nullptr;
+
 YunoEngine::YunoEngine() = default;
 YunoEngine::~YunoEngine()
 {
@@ -35,6 +37,7 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     if (!m_renderer->Initialize(m_window.get()))
         return false;
 
+    s_renderer = m_renderer.get();
 
     m_timer = std::make_unique<YunoTimer>();            // 타이머 생성
     m_timer->Initialize();
@@ -110,6 +113,7 @@ int YunoEngine::Run()
         //{
         //    yr->RenderTestTriangle();
         //}
+        m_renderer->Flush();
 
         m_renderer->EndFrame();
     }
@@ -133,6 +137,7 @@ void YunoEngine::Shutdown()
         m_renderer->Shutdown();
         m_renderer.reset();
     }
+    s_renderer = nullptr;
 
     // 3) 그 다음 윈도우 종료
     m_window.reset();

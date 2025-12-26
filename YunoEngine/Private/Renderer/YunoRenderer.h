@@ -52,6 +52,7 @@ private:
     bool CreateDeviceAndSwapChain(HWND hwnd, uint32_t width, uint32_t height);
     bool CreateRenderTarget();
     bool CreateDepthStencil(uint32_t width, uint32_t height);
+    bool CreateBasicPipeline();
 
     void SetViewPort();
     void ClearDepthStencil();
@@ -107,6 +108,15 @@ private:
 
     std::vector<MeshResource> m_meshes;        // handle -> m_meshes[handle-1]
     std::vector<RenderItem>   m_renderQueue;   // 이번 프레임 제출된 드로우 요청
+
+
+    struct MaterialResource
+    {
+        YunoRenderPass* pass = nullptr;
+    };
+
+    std::vector<MaterialResource> m_materials;
+    MaterialHandle m_defaultMaterial = 0;
 
 
 };

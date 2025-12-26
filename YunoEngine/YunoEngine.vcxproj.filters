@@ -75,7 +75,7 @@
     <ClInclude Include="Public\Interface\IResourceManager.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Interface\IMeshManager.h">
+    <ClInclude Include="Public\Interface\IMesh.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Public\Interface\ITextureManager.h">

@@ -31,7 +31,7 @@
 #include <chrono>
 #include <thread>
 #include <stdexcept>
-
+#include <cstring>
 
 // ===============================
 // Win32

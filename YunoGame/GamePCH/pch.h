@@ -23,11 +23,18 @@
 #include <string>
 #include <unordered_map>
 #include <chrono>
+#include <array>
 
 // ===============================
 // Debug
 // ===============================
 #include <iostream>
+
+// ===============================
+// DirectX Math
+// ===============================
+#include <DirectXMath.h>
+using namespace DirectX;
 
 
 

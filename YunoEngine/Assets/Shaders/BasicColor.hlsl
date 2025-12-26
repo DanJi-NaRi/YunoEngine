@@ -8,8 +8,7 @@ cbuffer PerFrame : register(b0)
 
 struct VSInput
 {
-    float4 pos : POSITION;
-    float4 col : COLOR;
+    float3 pos : POSITION;
 };
 
 struct VSOutput
@@ -22,17 +21,18 @@ VSOutput VSMain(VSInput v)
 {
     VSOutput o;
 
-    float4 pos = v.pos;
+    float4 pos = float4(v.pos, 1.0f);
     float4 wpos = mul(pos, mWorld);
     float4 vpos = mul(wpos, mView);
     float4 ppos = mul(vpos, mProj);
     
     o.pos = ppos;
-    o.col = v.col;
     return o;
 }
 
 float4 PSMain(VSOutput i) : SV_TARGET
 {
-    return i.col;
+
+    // 간단한 단색 머티리얼
+    return float4(1.0f, 0.35f, 0.2f, 1.0f);
 }
