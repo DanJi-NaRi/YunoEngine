@@ -1,8 +1,17 @@
 #include "pch.h"
-#include "GameApp.h"
 
+
+
+
+#include "RenderTypes.h"
 #include "IRenderer.h"
 #include "YunoEngine.h"
+
+#include "GameApp.h"
+
+
+
+GameApp::~GameApp() = default;
 
 bool GameApp::OnInit()
 {
@@ -13,32 +22,11 @@ bool GameApp::OnInit()
     {
         std::cout << "[GameApp] Renderer not available.\n";
         return false;
-    }
+    } // 렌더러 체크
 
-    const std::array<VERTEX_Pos, 3> vertices = {
-        VERTEX_Pos{DirectX::XMFLOAT3{0.0f, 0.5f, 0.0f}},
-        VERTEX_Pos{DirectX::XMFLOAT3{0.5f, -0.5f, 0.0f}},
-        VERTEX_Pos{DirectX::XMFLOAT3{-0.5f, -0.5f, 0.0f}},
-    };
-
-    VertexStreams streams{};
-    streams.flags = VSF_Pos;
-    streams.vtx_count = static_cast<uint32_t>(vertices.size());
-    streams.pos = vertices.data();
-
-    m_triangleMesh = renderer->CreateMesh(streams, nullptr, 0);
-    m_defaultMaterial = renderer->CreateMaterial_Default();
-    DirectX::XMStoreFloat4x4(&m_world, DirectX::XMMatrixIdentity());
-
-
-    XMMATRIX Translate = DirectX::XMMatrixTranslation(0.3f, -0.5f, -0.5f);
-
-    DirectX::XMStoreFloat4x4(&m_world2, Translate);
-    if (m_triangleMesh == 0 || m_defaultMaterial == 0)
-    {
-        std::cout << "[GameApp] Failed to create triangle resources.\n";
-        return false;
-    }
+   m_quad = std::make_unique<Quad>();
+   if (!m_quad->Create(DirectX::XMFLOAT3(0, 0, 0)))
+       return false;
 
     return true;
 }
@@ -60,25 +48,12 @@ void GameApp::OnUpdate(float dt)
         frameCount = 0;
     }
 
-    if (IRenderer* renderer = YunoEngine::GetRenderer())
+    if (m_quad)
     {
-        RenderItem item{};
-        item.mesh = m_triangleMesh;
-        item.material = m_defaultMaterial;
-        item.world = m_world;
+        m_quad->Update(dt);
+        m_quad->Submit();  
+    }
     
-        renderer->Submit(item);
-    }
-
-    if (IRenderer* renderer = YunoEngine::GetRenderer())
-    {
-        RenderItem item{};
-        item.mesh = m_triangleMesh;
-        item.material = m_defaultMaterial;
-        item.world = m_world2;
-
-        renderer->Submit(item);
-    }
 }
 
 void GameApp::OnFixedUpdate(float fixedDt)

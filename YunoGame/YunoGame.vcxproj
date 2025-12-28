@@ -119,7 +119,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Renderer;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)GamePCH;$(ProjectDir)Object</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)GamePCH</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
@@ -146,7 +146,7 @@ xcopy /E /I /Y "$(SolutionDir)YunoEngine\Assets\Shaders" "$(OutDir)Shaders\"</Co
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Renderer;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)GamePCH;$(ProjectDir)Object</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)GamePCH</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
@@ -176,12 +176,14 @@ xcopy /E /I /Y "$(SolutionDir)YunoEngine\Assets\Shaders" "$(OutDir)Shaders\"</Co
     </ClCompile>
     <ClCompile Include="Game\GameApp.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Object\Triangle.cpp" />
+    <ClCompile Include="Game\Object\Triangle.cpp" />
+    <ClCompile Include="Game\Object\Quad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h" />
     <ClInclude Include="Game\GameApp.h" />
-    <ClInclude Include="Object\Triangle.h" />
+    <ClInclude Include="Game\Object\Triangle.h" />
+    <ClInclude Include="Game\Object\Quad.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

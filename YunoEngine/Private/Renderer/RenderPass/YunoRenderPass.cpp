@@ -33,7 +33,13 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
     {
         D3D11_RASTERIZER_DESC rd{};
         rd.FillMode = desc.wireframe ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
-        rd.CullMode = desc.cullBack ? D3D11_CULL_BACK : D3D11_CULL_NONE;
+        switch (desc.cull)
+        {
+        case CullMode::Back:  rd.CullMode = D3D11_CULL_BACK;  break;
+        case CullMode::Front: rd.CullMode = D3D11_CULL_FRONT; break;
+        case CullMode::None:
+        default:              rd.CullMode = D3D11_CULL_NONE;  break;
+        }
         rd.FrontCounterClockwise = FALSE;
         rd.DepthClipEnable = TRUE;
 
@@ -43,12 +49,13 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
         m_rs = std::move(rs);
     }
 
-    // DepthStencilState (MVP는 depth off 가능)
+    // DepthStencilState
     {
         D3D11_DEPTH_STENCIL_DESC dd{};
         dd.DepthEnable = desc.enableDepth ? TRUE : FALSE;
         dd.DepthWriteMask = desc.enableDepth ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
         dd.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+        dd.StencilEnable = FALSE;
 
         Microsoft::WRL::ComPtr<ID3D11DepthStencilState> dss;
         const HRESULT hr = device->CreateDepthStencilState(&dd, &dss);
@@ -65,7 +72,11 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
         auto& rt = bd.RenderTarget[0];
         rt.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-        if (desc.enableBlend)
+        if (!desc.enableBlend)
+        {
+            rt.BlendEnable = FALSE;
+        }
+        else
         {
             rt.BlendEnable = TRUE;
             rt.SrcBlend = D3D11_BLEND_SRC_ALPHA;
@@ -82,8 +93,6 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
         m_bs = std::move(bs);
     }
 
-    m_depthEnabled = desc.enableDepth;
-    m_blendEnabled = desc.enableBlend;
     return true;
 }
 

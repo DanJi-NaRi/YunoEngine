@@ -122,7 +122,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Assets\Shaders;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Renderer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Assets\Shaders;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Object;$(ProjectDir)Public\Math</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -142,7 +142,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Assets\Shaders;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Renderer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Assets\Shaders;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Object;$(ProjectDir)Public\Math</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -155,7 +155,10 @@
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h" />
     <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h" />
-    <ClInclude Include="Private\Renderer\Mesh\YunoMeshBuffer.h" />
+    <ClInclude Include="Private\Renderer\Mesh\YunoMeshBuffer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Private\Renderer\RenderPass\YunoRenderPass.h" />
     <ClInclude Include="Private\Renderer\Shader\YunoShader.h" />
     <ClInclude Include="Private\Renderer\Shader\YunoShaderCompiler.h" />
@@ -165,7 +168,7 @@
     <ClInclude Include="Public\Camera\YunoCamera.h" />
     <ClInclude Include="Public\Interface\IGameApp.h" />
     <ClInclude Include="Public\Interface\IInput.h" />
-    <ClInclude Include="Public\Interface\IMaterialManager.h" />
+    <ClInclude Include="Public\Interface\IMaterial.h" />
     <ClInclude Include="Public\Interface\IMesh.h" />
     <ClInclude Include="Public\Interface\IRenderer.h" />
     <ClInclude Include="Public\Interface\IResourceManager.h" />
@@ -175,6 +178,7 @@
     <ClInclude Include="Public\Interface\ITime.h" />
     <ClInclude Include="Public\Interface\IWindow.h" />
     <ClInclude Include="Public\Math\YunoTransform.h" />
+    <ClInclude Include="Public\Object\Unit.h" />
     <ClInclude Include="Public\Renderer\RenderTypes.h" />
     <ClInclude Include="Public\YunoEngine.h" />
   </ItemGroup>
@@ -183,7 +187,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Private\Renderer\Mesh\YunoMeshBuffer.cpp" />
+    <ClCompile Include="Private\Renderer\Mesh\YunoMeshBuffer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Private\Renderer\RenderPass\YunoRenderPass.cpp" />
     <ClCompile Include="Private\Renderer\Shader\YunoShader.cpp" />
     <ClCompile Include="Private\Renderer\Shader\YunoShaderCompiler.cpp" />
@@ -191,6 +198,7 @@
     <ClCompile Include="Private\Timer\YunoTimer.cpp" />
     <ClCompile Include="Private\Window\YunoWindow.cpp" />
     <ClCompile Include="Private\YunoEngine.cpp" />
+    <ClCompile Include="Public\Object\Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\BasicColor.hlsl">

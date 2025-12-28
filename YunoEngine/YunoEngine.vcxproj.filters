@@ -49,6 +49,9 @@
     <Filter Include="Private\Renderer\ConstBuffer">
       <UniqueIdentifier>{70699ab7-a50e-4b05-b0e7-2eb921999005}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Object">
+      <UniqueIdentifier>{6d6361fc-035d-432e-b73c-88c648b399ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\YunoEngine.h">
@@ -87,7 +90,7 @@
     <ClInclude Include="Public\Interface\IWindow.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Interface\IMaterialManager.h">
+    <ClInclude Include="Public\Interface\IMaterial.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Private\Window\YunoWindow.h">
@@ -123,6 +126,9 @@
     <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h">
       <Filter>Private\Renderer\ConstBuffer</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Object\Unit.h">
+      <Filter>Public\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\YunoEngine.cpp">
@@ -151,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="Private\Renderer\Shader\YunoShaderCompiler.cpp">
       <Filter>Private\Renderer\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\Unit.cpp">
+      <Filter>Public\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

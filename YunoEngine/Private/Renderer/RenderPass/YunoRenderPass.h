@@ -12,6 +12,11 @@ struct ID3D11BlendState;
 
 class YunoShader;
 
+enum class BlendMode : uint8_t { Opaque, AlphaBlend, Additive };
+enum class FillMode : uint8_t { Solid, Wireframe };
+enum class CullMode : uint8_t { None, Back, Front };
+enum class DepthMode : uint8_t { Off, ReadWrite, ReadOnly };
+
 struct YunoRenderPassDesc
 {
     // 셰이더
@@ -28,7 +33,13 @@ struct YunoRenderPassDesc
     bool enableDepth = false;
     bool wireframe = false;
     bool enableBlend = false;
-    bool cullBack = true; // true면 back-face cull
+    //bool cullBack = false;
+
+    // 이렇게 바꿀거임
+    //BlendMode blend = BlendMode::Opaque;
+    //FillMode  fill = FillMode::Solid;
+    CullMode  cull = CullMode::Back;
+    //DepthMode depth = DepthMode::ReadWrite;
 };
 
 class YunoRenderPass
@@ -45,7 +56,4 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RasterizerState>  m_rs;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_dss;
     Microsoft::WRL::ComPtr<ID3D11BlendState>       m_bs;
-
-    bool m_depthEnabled = false;
-    bool m_blendEnabled = false;
 };

@@ -24,8 +24,8 @@ public:
     // Vertex 스트림 + 인덱스로 GPU 메쉬 생성
     virtual MeshHandle CreateMesh(
         const VertexStreams& streams,
-        const uint32_t* indices,
-        uint32_t indexCount) = 0;
+        const INDEX* triangles,
+        uint32_t triCount) = 0;
 
     // 기본 머티리얼(추후 키/파일 기반으로 확장)
     virtual MaterialHandle CreateMaterial_Default() = 0;

@@ -10,11 +10,14 @@
     <Filter Include="GamePCH">
       <UniqueIdentifier>{38f5e7a6-3988-4694-b80c-2399a2758a86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object">
+    <Filter Include="Game\Object">
       <UniqueIdentifier>{4c21017b-91c4-436f-81a4-06b919079788}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Triangle">
+    <Filter Include="Game\Object\Triangle">
       <UniqueIdentifier>{e8537736-ea68-49da-94b7-d29dc58e2b4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Quad">
+      <UniqueIdentifier>{ecf648a9-22db-45d7-af4d-ce4d9e87cc76}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -27,8 +30,11 @@
     <ClCompile Include="Game\GameApp.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Triangle.cpp">
-      <Filter>Object\Triangle</Filter>
+    <ClCompile Include="Game\Object\Triangle.cpp">
+      <Filter>Game\Object\Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Quad.cpp">
+      <Filter>Game\Object\Quad</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -38,8 +44,11 @@
     <ClInclude Include="Game\GameApp.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Triangle.h">
-      <Filter>Object\Triangle</Filter>
+    <ClInclude Include="Game\Object\Triangle.h">
+      <Filter>Game\Object\Triangle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Quad.h">
+      <Filter>Game\Object\Quad</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

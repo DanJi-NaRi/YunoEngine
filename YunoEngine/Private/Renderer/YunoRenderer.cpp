@@ -4,28 +4,16 @@
 
 // 셰이더
 #include "YunoRenderPass.h"
-#include "YunoMeshBuffer.h"
+//#include "YunoMeshBuffer.h"
 #include "YunoShaderCompiler.h"
 #include "YunoShader.h"
-#include "YunoConstantBuffers.h"
+
 
 // 인터페이스
 #include "IWindow.h"
 
 using Microsoft::WRL::ComPtr;
 
-namespace
-{
-    void UpdateDynamicCB(ID3D11DeviceContext* ctx, ID3D11Buffer* cb, const void* data, size_t size)
-    {
-        D3D11_MAPPED_SUBRESOURCE ms{};
-        if (SUCCEEDED(ctx->Map(cb, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms)))
-        {
-            std::memcpy(ms.pData, data, size);
-            ctx->Unmap(cb, 0);
-        }
-    }
-}
 
 YunoRenderer::YunoRenderer() = default;
 YunoRenderer::~YunoRenderer() = default;
@@ -51,25 +39,22 @@ bool YunoRenderer::Initialize(IWindow* window)
     if (!CreateDepthStencil(m_width, m_height))             // DS
         return false;
 
-
-    auto CreateDynamicCB = [&](UINT byteWidth, Microsoft::WRL::ComPtr<ID3D11Buffer>& out)
-        {
-            D3D11_BUFFER_DESC bd{};
-            bd.Usage = D3D11_USAGE_DYNAMIC;
-            bd.ByteWidth = byteWidth;
-            bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-            bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-            return SUCCEEDED(m_device->CreateBuffer(&bd, nullptr, out.ReleaseAndGetAddressOf()));
-        };
-
-    if (!CreateDynamicCB(sizeof(CBDefault), m_cbDefault)) return false;
+    // 상수 버퍼 생성
+    if (!m_cbDefault.Create(m_device.Get())) return false;
 
 
 
     m_aspect = (m_height == 0) ? 1.0f : (float)m_width / (float)m_height;
     m_camera.aspect = m_aspect;
 
+
+    // 디폴트 파이프라인 생성
     if (!CreateBasicPipeline())
+        return false;
+
+    if (m_defaultMaterial == 0)
+        m_defaultMaterial = CreateMaterial_Default();
+    if (m_defaultMaterial == 0)     // 생성 실패하면 리턴
         return false;
 
     return true;
@@ -87,10 +72,14 @@ bool YunoRenderer::CreateBasicPipeline()
         std::filesystem::path(__FILE__).parent_path().parent_path().parent_path() /
         "Assets" / "Shaders" / "BasicColor.hlsl";
 
+
     compiler.AddIncludeDir(shaderPath.parent_path().wstring());
 
     auto vsBlob = compiler.CompileFromFile(shaderPath.wstring(), "VSMain", "vs_5_0");
+    m_basicVSBytecode = vsBlob; // 바이트코드 저장 >> InputLayout생성을 위함
     auto psBlob = compiler.CompileFromFile(shaderPath.wstring(), "PSMain", "ps_5_0");
+
+
 
     m_basicVS = std::make_unique<YunoShader>();
     m_basicPS = std::make_unique<YunoShader>();
@@ -100,9 +89,11 @@ bool YunoRenderer::CreateBasicPipeline()
     if (!m_basicPS->CreatePixelShader(m_device.Get(), psBlob.Get()))
         return false;
 
-    static constexpr D3D11_INPUT_ELEMENT_DESC kInputPos[] =
+    static constexpr D3D11_INPUT_ELEMENT_DESC layout[] =
     {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    2, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
     m_basicPass = std::make_unique<YunoRenderPass>();
@@ -110,11 +101,11 @@ bool YunoRenderer::CreateBasicPipeline()
     YunoRenderPassDesc passDesc{};
     passDesc.vs = m_basicVS.get();
     passDesc.ps = m_basicPS.get();
-    passDesc.vsBytecode = vsBlob.Get();
-    passDesc.inputElements = kInputPos;
-    passDesc.inputElementCount = _countof(kInputPos);
+    passDesc.vsBytecode = m_basicVSBytecode.Get();
+    passDesc.inputElements = layout;
+    passDesc.inputElementCount = _countof(layout);
     passDesc.enableDepth = true;
-    passDesc.cullBack = false;
+    passDesc.cull = CullMode::None;
 
     if (!m_basicPass->Create(m_device.Get(), passDesc))
         return false;
@@ -254,7 +245,6 @@ bool YunoRenderer::CreateDepthStencil(uint32_t width, uint32_t height)
 
     return true;
 }
-
 
 void YunoRenderer::SetViewPort()
 {
@@ -398,10 +388,15 @@ void YunoRenderer::Shutdown()
 // ------------------------------------------------------------
 
 MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
-    const uint32_t* indices,
-    uint32_t indexCount)
+    const INDEX* triangles,
+    uint32_t triCount)
 {
     auto Has = [&](uint32_t f) { return (streams.flags & f) != 0; };
+
+    const uint32_t indexCount = triCount * 3;
+    const uint32_t* indices = (triCount > 0)
+        ? reinterpret_cast<const uint32_t*>(triangles)
+        : nullptr;
 
     if (!m_device)
         return 0;
@@ -487,21 +482,125 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
     return static_cast<MeshHandle>(m_meshes.size());
 }
 
+
 MaterialHandle YunoRenderer::CreateMaterial_Default()
 {
-    if (!m_basicPass)
-        return 0;
-
     if (m_defaultMaterial != 0)
         return m_defaultMaterial;
 
+    PassKey key{};
+    key.vs = ShaderId::Basic;
+    key.ps = ShaderId::Basic;
+    key.vertexFlags = VSF_Pos | VSF_Nrm | VSF_UV;
+    key.blend = BlendPreset::Opaque;
+    key.raster = RasterPreset::Wireframe;
+    key.depth = DepthPreset::ReadWrite;
+
+    const RenderPassHandle pass = GetOrCreatePass(key);
+    if (pass == 0)
+        return 0;
+
     MaterialResource mat{};
-    mat.pass = m_basicPass.get();
+    mat.pass = pass;
 
     m_materials.push_back(mat);
-    m_defaultMaterial = static_cast<MaterialHandle>(m_materials.size());
+    m_defaultMaterial = static_cast<MaterialHandle>(m_materials.size()); // 1-based
     return m_defaultMaterial;
 }
+
+
+RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
+{
+    auto it = m_passCache.find(key);
+    if (it != m_passCache.end())
+        return it->second;
+
+    // 현재는 Basic만 지원 (확장 예정)
+    if (key.vs != ShaderId::Basic || key.ps != ShaderId::Basic)
+        return 0;
+
+    if (!m_basicVS || !m_basicPS || !m_basicVSBytecode)
+        return 0;
+
+    // TODO(다음 단계): vertexFlags 기반으로 InputLayout 생성
+    // 지금은 BasicPass처럼 POSITION만 받는 layout로 고정
+    std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
+    if (!InputLayoutFromFlags(key.vertexFlags, layout))
+        return 0;
+
+    YunoRenderPassDesc pd{};
+    pd.vs = m_basicVS.get();
+    pd.ps = m_basicPS.get();
+    pd.vsBytecode = m_basicVSBytecode.Get();
+    pd.inputElements = layout.data();
+    pd.inputElementCount = static_cast<uint32_t>(layout.size());
+
+    pd.enableDepth = (key.depth != DepthPreset::Off);
+    pd.enableBlend = (key.blend != BlendPreset::Opaque);
+    pd.wireframe = (key.raster == RasterPreset::Wireframe);
+
+    switch (key.raster)
+    {
+    case RasterPreset::CullBack: pd.cull = CullMode::Back; break;
+    case RasterPreset::CullNone: pd.cull = CullMode::None; break;
+    case RasterPreset::Wireframe: pd.cull = CullMode::None; break;
+    default: pd.cull = CullMode::Back; break;
+    }
+
+    auto pass = std::make_unique<YunoRenderPass>();
+    if (!pass->Create(m_device.Get(), pd))
+        return 0;
+
+    m_passes.push_back(std::move(pass));
+    const RenderPassHandle handle = static_cast<RenderPassHandle>(m_passes.size());
+
+    m_passCache.emplace(key, handle);
+    return handle;
+}
+
+bool YunoRenderer::InputLayoutFromFlags(uint32_t flags,
+    std::vector<D3D11_INPUT_ELEMENT_DESC>& outLayout) const
+{
+    outLayout.clear();
+
+    // 필수: POSITION
+    if ((flags & VSF_Pos) == 0)
+        return false;
+
+    // 슬롯 규약(현재 엔진 규약과 반드시 동일해야 함)
+    // 0=Pos, 1=Nrm, 2=UV, 3=T, 4=B
+    outLayout.push_back({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
+        D3D11_INPUT_PER_VERTEX_DATA, 0 });
+
+    if (flags & VSF_Nrm)
+    {
+        outLayout.push_back({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0,
+            D3D11_INPUT_PER_VERTEX_DATA, 0 });
+    }
+
+    if (flags & VSF_UV)
+    {
+        outLayout.push_back({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 2, 0,
+            D3D11_INPUT_PER_VERTEX_DATA, 0 });
+    }
+
+    if (flags & VSF_T)
+    {
+        // tangent
+        outLayout.push_back({ "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 3, 0,
+            D3D11_INPUT_PER_VERTEX_DATA, 0 });
+    }
+
+    if (flags & VSF_B)
+    {
+        // bitangent
+        outLayout.push_back({ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 4, 0,
+            D3D11_INPUT_PER_VERTEX_DATA, 0 });
+    }
+
+    return true;
+}
+
 
 void YunoRenderer::Submit(const RenderItem& item)
 {
@@ -520,13 +619,27 @@ void YunoRenderer::Submit(const RenderItem& item)
 
 void YunoRenderer::Flush()
 {
-    if (!m_context || !m_cbDefault)
+    if (!m_context || !m_cbDefault.IsValid())
         return;
 
     for (const RenderItem& item : m_renderQueue)
     {
-        if (item.mesh == 0 || item.mesh > m_meshes.size())
+        if (item.mesh == 0 || item.mesh > m_meshes.size()) // 0은 안씀
             continue;
+
+        //const MaterialResource* material = nullptr;
+        //if (item.material > 0 && item.material <= m_materials.size())
+        //{
+        //    material = &m_materials[item.material - 1];
+        //}
+
+        //YunoRenderPass* pass = material ? material->pass : nullptr;
+        //if (!pass)
+        //    pass = m_basicPass.get();
+        //if (!pass)
+        //    continue;
+
+        //pass->Bind(m_context.Get());
 
         const MaterialResource* material = nullptr;
         if (item.material > 0 && item.material <= m_materials.size())
@@ -534,42 +647,25 @@ void YunoRenderer::Flush()
             material = &m_materials[item.material - 1];
         }
 
-        YunoRenderPass* pass = material ? material->pass : nullptr;
-        if (!pass)
-            pass = m_basicPass.get();
-        if (!pass)
+        // material이 없거나 pass handle이 없으면 기본 머테리얼로 대체
+        RenderPassHandle passHandle = material ? material->pass : 0;
+        if (passHandle == 0)
+        {
+            // 기본 머테리얼이 있다면 그걸로 사용
+            if (m_defaultMaterial > 0 && m_defaultMaterial <= m_materials.size())
+                passHandle = m_materials[m_defaultMaterial - 1].pass;
+        }
+
+        if (passHandle == 0 || passHandle > m_passes.size())
             continue;
 
-        pass->Bind(m_context.Get());
+        m_passes[passHandle - 1]->Bind(m_context.Get());
 
-        const MeshResource& mr = m_meshes[item.mesh - 1];
+        const MeshResource& mesh = m_meshes[item.mesh - 1];
 
-        // 슬롯 고정 매핑:
-        // 0=Pos, 1=Nrm, 2=UV, 3=T, 4=B
-        ID3D11Buffer* vbs[5] = {};
-        UINT strides[5] = {};
-        UINT offsets[5] = {};
 
-        vbs[0] = mr.vbPos.Get(); strides[0] = sizeof(VERTEX_Pos);
-        vbs[1] = mr.vbNrm.Get(); strides[1] = sizeof(VERTEX_Nrm);
-        vbs[2] = mr.vbUV.Get();  strides[2] = sizeof(VERTEX_UV);
-        vbs[3] = mr.vbT.Get();   strides[3] = sizeof(VERTEX_T);
-        vbs[4] = mr.vbB.Get();   strides[4] = sizeof(VERTEX_B);
-
-        // 가장 높은 사용 슬롯까지 바인딩 (중간 슬롯이 nullptr이어도 count 안에 포함될 수 있음)
-        UINT maxSlot = 0;
-        if (mr.vbB)       maxSlot = 4;
-        else if (mr.vbT)  maxSlot = 3;
-        else if (mr.vbUV) maxSlot = 2;
-        else if (mr.vbNrm)maxSlot = 1;
-        else              maxSlot = 0;
-
-        m_context->IASetVertexBuffers(0, maxSlot + 1, vbs, strides, offsets);
-
-        if (mr.ib && mr.indexCount > 0)
-            m_context->IASetIndexBuffer(mr.ib.Get(), DXGI_FORMAT_R32_UINT, 0);
-
-        m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        // 정점버퍼 셋
+        mesh.Bind(m_context.Get());
 
         using namespace DirectX;
 
@@ -584,14 +680,19 @@ void YunoRenderer::Flush()
         XMStoreFloat4x4(&cbd.mProj, XMMatrixTranspose(P));
         XMStoreFloat4x4(&cbd.mWVP, XMMatrixTranspose(WVP));
 
-        UpdateDynamicCB(m_context.Get(), m_cbDefault.Get(), &cbd, sizeof(cbd));
+
+        // 상수버퍼 업데이트
+        m_cbDefault.Update(m_context.Get(), cbd);
+
+
+        // 상수버퍼 셋
         ID3D11Buffer* cbs[] = { m_cbDefault.Get() };
         m_context->VSSetConstantBuffers(0, 1, cbs);
 
-        if (mr.ib && mr.indexCount > 0)
-            m_context->DrawIndexed(mr.indexCount, 0, 0);
+        if (mesh.ib && mesh.indexCount > 0)
+            m_context->DrawIndexed(mesh.indexCount, 0, 0);
         else
-            m_context->Draw(mr.vertexCount, 0);
+            m_context->Draw(mesh.vertexCount, 0);
     }
 
     m_renderQueue.clear();
