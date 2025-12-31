@@ -26,9 +26,12 @@
 #include <array>
 
 // ===============================
-// Debug
+// Debug / Utility
 // ===============================
 #include <iostream>
+#include <sstream>
+#include <filesystem>
+
 
 // ===============================
 // DirectX Math
@@ -38,6 +41,10 @@ using namespace DirectX;
 
 
 
+// ===============================
+// YunoMath
+// ===============================
+#include "YunoTransform.h"
 
 
 

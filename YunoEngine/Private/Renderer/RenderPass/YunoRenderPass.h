@@ -12,7 +12,7 @@ struct ID3D11BlendState;
 
 class YunoShader;
 
-enum class BlendMode : uint8_t { Opaque, AlphaBlend, Additive };
+enum class BlendMode : uint8_t { Opaque, AlphaBlend, ColorBlend, ColorBlendOne };
 enum class FillMode : uint8_t { Solid, Wireframe };
 enum class CullMode : uint8_t { None, Back, Front };
 enum class DepthMode : uint8_t { Off, ReadWrite, ReadOnly };
@@ -29,17 +29,11 @@ struct YunoRenderPassDesc
     const D3D11_INPUT_ELEMENT_DESC* inputElements = nullptr;
     uint32_t inputElementCount = 0;
 
-    // 상태(최소)
-    bool enableDepth = false;
-    bool wireframe = false;
-    bool enableBlend = false;
-    //bool cullBack = false;
 
-    // 이렇게 바꿀거임
-    //BlendMode blend = BlendMode::Opaque;
-    //FillMode  fill = FillMode::Solid;
+    bool wireframe = false;
+    DepthMode depth = DepthMode::ReadWrite;
     CullMode  cull = CullMode::Back;
-    //DepthMode depth = DepthMode::ReadWrite;
+    BlendMode blend = BlendMode::Opaque;
 };
 
 class YunoRenderPass

@@ -3,8 +3,8 @@
 #include "IRenderer.h"
 #include "YunoCamera.h"
 #include "YunoConstantBuffers.h"
-
-
+#include "YunoMaterial.h"
+#include "MaterialDesc.h"
 
 enum ClearColor { Black, White, Gray, Red, Blue, Green, MAX_COUNT };
 
@@ -42,7 +42,7 @@ public:
         uint32_t triCount) override;
 
     MaterialHandle CreateMaterial_Default() override;
-
+    MaterialHandle CreateMaterial(const MaterialDesc& desc);
 
     void Submit(const RenderItem& item) override;
     void Flush() override;                       
@@ -53,6 +53,7 @@ private:
     bool CreateRenderTarget();
     bool CreateDepthStencil(uint32_t width, uint32_t height);
     bool CreateBasicPipeline();
+    bool CreateShaders();
 
     void SetViewPort();
     void ClearDepthStencil();
@@ -74,15 +75,9 @@ private:
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_dsv;
 
     YunoConstantBuffer<CBDefault> m_cbDefault;
+    YunoConstantBuffer<CBMaterial> m_cbMaterial;
     YunoCamera m_camera;
     float m_aspect = 1.0f;
-
-private:
-    // 셰이더
-    std::unique_ptr<YunoRenderPass> m_basicPass;
-    std::unique_ptr<YunoShader> m_basicVS;
-    std::unique_ptr<YunoShader> m_basicPS;
-
 
 
 
@@ -146,63 +141,13 @@ private:
         RenderPassHandle pass = 0; // handle -> m_passes[pass-1]
     };
 
-    std::vector<MaterialResource> m_materials;
+    std::vector<YunoMaterial> m_materials;
     MaterialHandle m_defaultMaterial = 0;
+    RenderPassHandle m_defaultPass = 0;
 
 
     // 렌더패스 관련 프리셋들
 private:
-    enum class BlendPreset : uint8_t
-    {
-        Opaque = 0,
-        AlphaBlend,
-        Additive,
-        Count
-    };
-
-    enum class RasterPreset : uint8_t
-    {
-        CullBack = 0,
-        CullNone,
-        Wireframe,
-        Count
-    };
-
-    enum class DepthPreset : uint8_t
-    {
-        ReadWrite = 0,
-        ReadOnly,     
-        Off,          
-        Count
-    };
-
-    // -------------------- Shader Id (현재는 Basic만) --------------------
-    enum class ShaderId : uint8_t
-    {
-        Basic = 0,
-        Count
-    };
-
-    // -------------------- PassKey --------------------
-    struct PassKey
-    {
-        ShaderId vs = ShaderId::Basic;
-        ShaderId ps = ShaderId::Basic;
-        uint32_t vertexFlags = 0;
-        BlendPreset blend = BlendPreset::Opaque;
-        RasterPreset raster = RasterPreset::CullBack;
-        DepthPreset depth = DepthPreset::ReadWrite;
-
-        bool operator==(const PassKey& rhs) const
-        {
-            return vs == rhs.vs
-                && ps == rhs.ps
-                && vertexFlags == rhs.vertexFlags
-                && blend == rhs.blend
-                && raster == rhs.raster
-                && depth == rhs.depth;
-        }
-    };
 
     struct PassKeyHash
     {
@@ -242,4 +187,31 @@ private:
 
     bool InputLayoutFromFlags(uint32_t flags,
         std::vector<D3D11_INPUT_ELEMENT_DESC>& outLayout) const;
+
+private:
+    struct ShaderProgram
+    {
+        std::unique_ptr<YunoShader> vs;
+        std::unique_ptr<YunoShader> ps;
+        Microsoft::WRL::ComPtr<ID3DBlob> vsBytecode; // InputLayout용
+    };
+
+    std::unordered_map<ShaderId, ShaderProgram> m_programs;
+
+public:
+    bool LoadShader(
+        ShaderId id,
+        const std::wstring& filePath,   // ex) L"Assets/Shaders/BasicColor.hlsl"
+        const std::string& vsEntry,
+        const std::string& psEntry,
+        const std::string& vsProfile = "vs_5_0",
+        const std::string& psProfile = "ps_5_0",
+        const std::vector<std::pair<std::string, std::string>>& defines = {});
+    bool LoadShader(
+        ShaderId id,
+        const char* filePath,     // "../Assets/Shaders/BasicColor.hlsl"
+        const char* vsEntry,      // "VSMain"
+        const char* psEntry,      // "PSMain"
+        const char* vsProfile = "vs_5_0",
+        const char* psProfile = "ps_5_0");
 };

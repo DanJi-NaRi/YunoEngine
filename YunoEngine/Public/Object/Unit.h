@@ -4,6 +4,12 @@
 #include "RenderTypes.h"
 #include "IRenderer.h"
 
+
+// 모든 메쉬는 CW 시계방향 정점이 앞면임
+/* 예시)
+01
+23   >> 인덱스 012, 213 이 앞면 쿼드
+*/
 class Unit 
 {
 protected:
@@ -44,4 +50,6 @@ public:
 
     virtual void  Backup();
 
+    virtual bool CreateMesh() = 0;
+    virtual bool CreateMaterial() = 0;
 };

@@ -6,6 +6,7 @@
 // 게임이 들고 있을 핸들
 using MeshHandle = uint32_t;
 using MaterialHandle = uint32_t;
+using TextureHandle = uint32_t;
 using RenderPassHandle = uint32_t;
 
 
@@ -53,4 +54,63 @@ struct RenderItem
     MaterialHandle material = 0;
 
     DirectX::XMFLOAT4X4 world;
+};
+
+// -------------------- PassKey --------------------
+enum class BlendPreset : uint8_t
+{
+    Opaque = 0,
+    AlphaBlend,
+    ColorBlend,
+    ColorBlendOne,
+    Count
+};
+
+enum class RasterPreset : uint8_t
+{
+    CullNone = 0,
+    CullBack,
+    CullFront,
+    WireCullNone,
+    WireCullBack,
+    WireCullFront,
+    Count
+};
+
+enum class DepthPreset : uint8_t
+{
+    ReadWrite = 0,
+    ReadOnly,
+    Off,
+    Count
+};
+
+
+enum class ShaderId : uint8_t
+{
+    Basic = 0,
+    Unlit,
+    PBR,
+    Skybox,
+    Count
+};
+
+struct PassKey
+{
+    ShaderId vs = ShaderId::Basic;
+    ShaderId ps = ShaderId::Basic;
+    uint32_t vertexFlags = 0;
+    BlendPreset blend = BlendPreset::Opaque;
+    RasterPreset raster = RasterPreset::CullBack;
+    DepthPreset depth = DepthPreset::ReadWrite;
+
+    bool operator==(const PassKey& rhs) const
+    {
+        return vs == rhs.vs
+            && ps == rhs.ps
+            && vertexFlags == rhs.vertexFlags
+            && blend == rhs.blend
+            && raster == rhs.raster
+            && depth == rhs.depth;
+    }
 };

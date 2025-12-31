@@ -6,6 +6,15 @@ cbuffer CBDefault : register(b0)
     float4x4 mWVP;
 };
 
+cbuffer CBMaterial : register(b1)
+{
+    float4 gBaseColor;
+    float gRoughness;
+    float gMetallic;
+    uint gFlags;
+    float gPadding;
+};
+
 struct VSInput
 {
     float3 pos : POSITION;
@@ -29,8 +38,8 @@ VSOutput VSMain(VSInput i)
     return o;
 }
 
-float4 PSMain(VSOutput i) : SV_Target
+float4 PSMain(VSOutput input) : SV_Target
 {
-    // 임시: UV 기반 컬러
-    return float4(i.uv, 0.0f, 1.0f);
+    float3 uvColor = float3(input.uv, 0.0f); // (u, v, 0)
+    return float4(uvColor, 1.0f) * gBaseColor;
 }

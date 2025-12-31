@@ -123,24 +123,32 @@ ComPtr<ID3DBlob> YunoShaderCompiler::CompileFromFile(
         bytecode.GetAddressOf(),
         &errors);
 
-    //if (FAILED(hr))
-    //{
-    //    std::string msg = "D3DCompileFromFile failed.\n";
-    //    if (errors)
-    //    {
-    //        msg += static_cast<const char*>(errors->GetBufferPointer());
-    //    }
-    //    throw std::runtime_error(msg);
-    //}
     if (FAILED(hr))
     {
-        char buf[128];
-        sprintf_s(buf, "D3DCompileFromFile HR=0x%08X\n", (unsigned)hr);
-        OutputDebugStringA(buf);
-
         std::string msg = "D3DCompileFromFile failed.\n";
+
+        // 1) HRESULT 코드/설명
+        char hrBuf[64]{};
+        sprintf_s(hrBuf, "HRESULT=0x%08X\n", (unsigned)hr);
+        msg += hrBuf;
+
+        // 2) 어떤 파일/엔트리/프로파일인지
+        msg += "File: ";
+        msg += std::string(filePath.begin(), filePath.end());
+        msg += "\nEntry: " + entryPoint + "\nProfile: " + profile + "\n";
+
+        // 3) 컴파일러가 준 상세 에러 메시지(가장 중요)
         if (errors)
-            msg += (const char*)errors->GetBufferPointer();
+        {
+            msg += "---- Compiler Output ----\n";
+            msg += std::string((const char*)errors->GetBufferPointer(),
+                errors->GetBufferSize());
+            msg += "\n-------------------------\n";
+        }
+        else
+        {
+            msg += "(No error blob)\n";
+        }
 
         throw std::runtime_error(msg);
     }

@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "RenderTypes.h"
+#include "MaterialDesc.h"
 
 class IWindow;
 
@@ -29,6 +30,8 @@ public:
 
     // 기본 머티리얼(추후 키/파일 기반으로 확장)
     virtual MaterialHandle CreateMaterial_Default() = 0;
+
+    virtual MaterialHandle CreateMaterial(const MaterialDesc& desc) = 0;
 
     // 매 프레임 렌더 요청 제출
     virtual void Submit(const RenderItem& item) = 0;

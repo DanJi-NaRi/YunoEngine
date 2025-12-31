@@ -1,16 +1,18 @@
 #include "pch.h"
+#include "Quad.h"
 
 #include "YunoEngine.h"
 #include "RenderTypes.h"
 #include "IRenderer.h"
 
-#include "Quad.h"
+
+
 
 VERTEX_Pos g_Quad_pos[] = {
-    { -0.5f,  0.5f,  0.0f },    // 좌상
-    {  0.5f,  0.5f,  0.0f },    // 우상
-    { -0.5f, -0.5f,  0.0f },    // 좌하
-    {  0.5f, -0.5f,  0.0f }     // 우하
+    { -1.0f,  1.0f,  0.0f },    // 좌상
+    {  1.0f,  1.0f,  0.0f },    // 우상
+    { -1.0f, -1.0f,  0.0f },    // 좌하
+    {  1.0f, -1.0f,  0.0f }     // 우하
 };
 
 VERTEX_Nrm g_Quad_nrm[] =
@@ -31,8 +33,8 @@ VERTEX_UV g_Quad_uv[] =
 
 INDEX g_Quad_idx[] =
 {
-    { 0, 2, 1},
-    { 1, 2, 3 }
+    { 0, 1, 2},
+    { 2, 1, 3 }
 };
 
 
@@ -49,10 +51,10 @@ bool Quad::Create(XMFLOAT3 vPos)
     Unit::Create(vPos);
 
 
-    if (!CreateQuadMesh())
+    if (!CreateMesh())
         return false;
 
-    if (!CreateQuadMaterial())
+    if (!CreateMaterial())
         return false;
 
     Backup();
@@ -64,10 +66,14 @@ bool Quad::Update(float dTime)
 {
     //게임 로직 업데이트 ㄱㄱ
 
-    m_vRot.y += dTime*3;
+    //m_vRot.y += dTime*3;
+
+    m_vScale.x = 64;
+    m_vScale.y = 64;
 
     XMMATRIX mScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
-    XMMATRIX mRot = XMMatrixRotationY(m_vRot.y);
+    XMMATRIX mRotx = XMMatrixRotationX(XMConvertToRadians(90));
+    XMMATRIX mRot = mRotx;
     XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z);
 
     XMMATRIX mTM = mScale * mRot * mTrans;
@@ -83,7 +89,7 @@ bool Quad::Update(float dTime)
     return true;
 }
 
-bool Quad::CreateQuadMesh()
+bool Quad::CreateMesh()
 {
     IRenderer* renderer = YunoEngine::GetRenderer();
     if (!renderer)
@@ -105,7 +111,7 @@ bool Quad::CreateQuadMesh()
     return true;
 }
 
-bool Quad::CreateQuadMaterial()
+bool Quad::CreateMaterial()
 {
     IRenderer* renderer = YunoEngine::GetRenderer();
     if (!renderer)

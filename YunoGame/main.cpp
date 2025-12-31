@@ -17,8 +17,15 @@ int main()
     GameApp game;
     YunoEngine engine;
 
-    if (!engine.Initialize(&game, L"YunoGame", 1280, 720))
+
+    if (!engine.Initialize(&game, L"YunoGame", 1280, 720)) 
+    {
+        int n;
+        std::cin >> n;
         return -1;
+    }
+
+
 
     return engine.Run();
 }

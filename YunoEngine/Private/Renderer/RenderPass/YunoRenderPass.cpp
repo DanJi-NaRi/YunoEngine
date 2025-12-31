@@ -52,10 +52,24 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
     // DepthStencilState
     {
         D3D11_DEPTH_STENCIL_DESC dd{};
-        dd.DepthEnable = desc.enableDepth ? TRUE : FALSE;
-        dd.DepthWriteMask = desc.enableDepth ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
-        dd.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
         dd.StencilEnable = FALSE;
+
+        if (desc.depth == DepthMode::Off)
+        {
+            dd.DepthEnable = FALSE;
+            dd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+            dd.DepthFunc = D3D11_COMPARISON_ALWAYS;
+        }
+        else
+        {
+            dd.DepthEnable = TRUE;
+            dd.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+            if (desc.depth == DepthMode::ReadOnly)
+                dd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+            else // DepthMode::ReadWrite
+                dd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+        }
 
         Microsoft::WRL::ComPtr<ID3D11DepthStencilState> dss;
         const HRESULT hr = device->CreateDepthStencilState(&dd, &dss);
@@ -68,24 +82,47 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
         D3D11_BLEND_DESC bd{};
         bd.AlphaToCoverageEnable = FALSE;
         bd.IndependentBlendEnable = FALSE;
+        D3D11_RENDER_TARGET_BLEND_DESC rtb = {};
 
-        auto& rt = bd.RenderTarget[0];
-        rt.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+        rtb.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-        if (!desc.enableBlend)
+        // 기본값 설정
+        rtb.BlendOp = D3D11_BLEND_OP_ADD;
+        rtb.SrcBlend = D3D11_BLEND_ONE;
+        rtb.DestBlend = D3D11_BLEND_ZERO;
+
+        rtb.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        rtb.SrcBlendAlpha = D3D11_BLEND_ONE;
+        rtb.DestBlendAlpha = D3D11_BLEND_ZERO;
+
+        if (desc.blend == BlendMode::Opaque)
         {
-            rt.BlendEnable = FALSE;
+            rtb.BlendEnable = FALSE;
         }
         else
         {
-            rt.BlendEnable = TRUE;
-            rt.SrcBlend = D3D11_BLEND_SRC_ALPHA;
-            rt.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-            rt.BlendOp = D3D11_BLEND_OP_ADD;
-            rt.SrcBlendAlpha = D3D11_BLEND_ONE;
-            rt.DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
-            rt.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+            rtb.BlendEnable = TRUE;
+            rtb.BlendOp = D3D11_BLEND_OP_ADD;
+            rtb.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+
+            if (desc.blend == BlendMode::AlphaBlend)
+            {
+                rtb.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+                rtb.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+            }
+            else if(desc.blend == BlendMode::ColorBlend)
+            {
+                rtb.SrcBlend = D3D11_BLEND_SRC_COLOR;
+                rtb.DestBlend = D3D11_BLEND_INV_SRC_COLOR;
+            }
+            else // BlendMode::ColorBlendOne
+            {
+                rtb.SrcBlend = D3D11_BLEND_ONE;
+                rtb.DestBlend = D3D11_BLEND_ONE;
+            }
         }
+
+        bd.RenderTarget[0] = rtb;
 
         Microsoft::WRL::ComPtr<ID3D11BlendState> bs;
         const HRESULT hr = device->CreateBlendState(&bd, &bs);

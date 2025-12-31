@@ -9,6 +9,7 @@
 #include "YunoShader.h"
 
 
+
 // 인터페이스
 #include "IWindow.h"
 
@@ -17,6 +18,10 @@ using Microsoft::WRL::ComPtr;
 
 YunoRenderer::YunoRenderer() = default;
 YunoRenderer::~YunoRenderer() = default;
+
+
+// assert(Has(VSF_Pos) && streams.pos != nullptr && streams.vtx_count != 0);
+// 어썰트 나중에 싹 바꾸기 ㄱㄱ 필수임 개좋음!!
 
 bool YunoRenderer::Initialize(IWindow* window)
 {
@@ -41,21 +46,33 @@ bool YunoRenderer::Initialize(IWindow* window)
 
     // 상수 버퍼 생성
     if (!m_cbDefault.Create(m_device.Get())) return false;
-
+    if (!m_cbMaterial.Create(m_device.Get())) return false;
 
 
     m_aspect = (m_height == 0) ? 1.0f : (float)m_width / (float)m_height;
     m_camera.aspect = m_aspect;
 
 
+    // 쉐이더들 초기화
+    if (!CreateShaders()) return false;
+
     // 디폴트 파이프라인 생성
-    if (!CreateBasicPipeline())
-        return false;
+    if (!CreateBasicPipeline()) return false;
 
     if (m_defaultMaterial == 0)
         m_defaultMaterial = CreateMaterial_Default();
     if (m_defaultMaterial == 0)     // 생성 실패하면 리턴
         return false;
+
+
+
+    return true;
+}
+
+bool YunoRenderer::CreateShaders()
+{
+    // 여기서 쉐이더들 초기화 쭉 하면 됨
+    if (!LoadShader(ShaderId::Basic, "../Assets/Shaders/BasicColor.hlsl", "VSMain", "PSMain")) return false;
 
     return true;
 }
@@ -63,51 +80,6 @@ bool YunoRenderer::Initialize(IWindow* window)
 bool YunoRenderer::CreateBasicPipeline()
 {
     if (!m_device)
-        return false;
-
-    YunoShaderCompiler compiler;
-
-    // 현재 파일 경로 기준으로 Assets/ 아래의 쉐이더를 찾는다.
-    const std::filesystem::path shaderPath =
-        std::filesystem::path(__FILE__).parent_path().parent_path().parent_path() /
-        "Assets" / "Shaders" / "BasicColor.hlsl";
-
-
-    compiler.AddIncludeDir(shaderPath.parent_path().wstring());
-
-    auto vsBlob = compiler.CompileFromFile(shaderPath.wstring(), "VSMain", "vs_5_0");
-    m_basicVSBytecode = vsBlob; // 바이트코드 저장 >> InputLayout생성을 위함
-    auto psBlob = compiler.CompileFromFile(shaderPath.wstring(), "PSMain", "ps_5_0");
-
-
-
-    m_basicVS = std::make_unique<YunoShader>();
-    m_basicPS = std::make_unique<YunoShader>();
-
-    if (!m_basicVS->CreateVertexShader(m_device.Get(), vsBlob.Get()))
-        return false;
-    if (!m_basicPS->CreatePixelShader(m_device.Get(), psBlob.Get()))
-        return false;
-
-    static constexpr D3D11_INPUT_ELEMENT_DESC layout[] =
-    {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    2, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
-
-    m_basicPass = std::make_unique<YunoRenderPass>();
-
-    YunoRenderPassDesc passDesc{};
-    passDesc.vs = m_basicVS.get();
-    passDesc.ps = m_basicPS.get();
-    passDesc.vsBytecode = m_basicVSBytecode.Get();
-    passDesc.inputElements = layout;
-    passDesc.inputElementCount = _countof(layout);
-    passDesc.enableDepth = true;
-    passDesc.cull = CullMode::None;
-
-    if (!m_basicPass->Create(m_device.Get(), passDesc))
         return false;
 
     m_materials.clear();
@@ -284,6 +256,7 @@ void YunoRenderer::BeginFrame()
 
 void YunoRenderer::EndFrame()
 {
+    // VSync가 뭔지는 다들 알죠? >> 화면 주사율이랑 게임 프레임이랑 동기화 시키는 겁니다
     // VSync ON
     //m_swapChain->Present(1, 0);
     
@@ -382,6 +355,93 @@ void YunoRenderer::Shutdown()
 }
 
 
+// 셰이더 로드 함수임 filePath 같은 경우 "../Assets/Shaders/~~.hlsl" or L"Assets/Shaders/~~.hlsl" 2가지 방법 전부 가능
+bool YunoRenderer::LoadShader(
+    ShaderId id,
+    const std::wstring& filePath,
+    const std::string& vsEntry,
+    const std::string& psEntry,
+    const std::string& vsProfile,
+    const std::string& psProfile,
+    const std::vector<std::pair<std::string, std::string>>& defines)
+{
+    if (!m_device)
+        return false;
+
+    YunoShaderCompiler compiler;
+
+    {
+        std::filesystem::path p(filePath);
+        compiler.AddIncludeDir(p.parent_path().wstring());
+    }
+
+    Microsoft::WRL::ComPtr<ID3DBlob> vsBlob;
+    Microsoft::WRL::ComPtr<ID3DBlob> psBlob;
+
+    try
+    {
+        vsBlob = compiler.CompileFromFile(filePath, vsEntry, vsProfile, defines);
+        psBlob = compiler.CompileFromFile(filePath, psEntry, psProfile, defines);
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << "[LoadShader] Shader compile failed: " << std::string(vsEntry) << "/" << std::string(psEntry) << "\n";
+        std::cout << e.what() << "\n";
+
+        return false;
+    }
+
+    if (!vsBlob || !psBlob)
+        return false;
+
+    ShaderProgram prog{};
+    prog.vsBytecode = vsBlob;
+
+    prog.vs = std::make_unique<YunoShader>();
+    prog.ps = std::make_unique<YunoShader>();
+
+    if (!prog.vs->CreateVertexShader(m_device.Get(), vsBlob.Get()))
+        return false;
+    if (!prog.ps->CreatePixelShader(m_device.Get(), psBlob.Get()))
+        return false;
+
+    m_programs[id] = std::move(prog);
+    return true;
+}
+
+static std::wstring Utf8ToWString(const char* s)
+{
+    if (!s) return {};
+    const int len = static_cast<int>(std::strlen(s));
+    if (len == 0) return {};
+
+    const int wlen = MultiByteToWideChar(CP_UTF8, 0, s, len, nullptr, 0);
+    if (wlen <= 0) return {};
+
+    std::wstring w;
+    w.resize(wlen);
+    MultiByteToWideChar(CP_UTF8, 0, s, len, w.data(), wlen);
+    return w;
+}
+
+bool YunoRenderer::LoadShader(
+    ShaderId id,
+    const char* filePath,
+    const char* vsEntry,
+    const char* psEntry,
+    const char* vsProfile,
+    const char* psProfile)
+{
+    if (!filePath || !vsEntry || !psEntry) return false;
+
+    const std::wstring wPath = Utf8ToWString(filePath);
+    const std::string  sVsEntry = vsEntry;
+    const std::string  sPsEntry = psEntry;
+    const std::string  sVsProfile = vsProfile ? vsProfile : "vs_5_0";
+    const std::string  sPsProfile = psProfile ? psProfile : "ps_5_0";
+
+    return LoadShader(id, wPath, sVsEntry, sPsEntry, sVsProfile, sPsProfile);
+}
 
 // ------------------------------------------------------------
 // Game -> Engine API 구현
@@ -401,7 +461,8 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
     if (!m_device)
         return 0;
 
-    // 필수: Position
+    // Position은 필수로 있어야 됨
+    //assert(Has(VSF_Pos) && streams.pos != nullptr && streams.vtx_count != 0);
     if (!Has(VSF_Pos) || streams.pos == nullptr || streams.vtx_count == 0)
         return 0;
 
@@ -482,29 +543,50 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
     return static_cast<MeshHandle>(m_meshes.size());
 }
 
+MaterialHandle YunoRenderer::CreateMaterial(const MaterialDesc& desc)
+{
+    const RenderPassHandle pass = GetOrCreatePass(desc.passKey);
+    if (pass == 0)
+        return 0;
+
+    YunoMaterial mat{};
+    mat.pass = pass;
+
+    mat.cpuParams.baseColor = desc.baseColor;
+    mat.cpuParams.roughness = desc.roughness;
+    mat.cpuParams.metallic = desc.metallic;
+
+    mat.cpuParams.flags = 0;
+
+    mat.albedo = desc.albedo;
+    mat.normal = desc.normal;
+    mat.orm = desc.orm;
+
+    m_materials.push_back(mat);
+    return static_cast<MaterialHandle>(m_materials.size()); // 1-based
+}
 
 MaterialHandle YunoRenderer::CreateMaterial_Default()
 {
     if (m_defaultMaterial != 0)
         return m_defaultMaterial;
 
-    PassKey key{};
-    key.vs = ShaderId::Basic;
-    key.ps = ShaderId::Basic;
-    key.vertexFlags = VSF_Pos | VSF_Nrm | VSF_UV;
-    key.blend = BlendPreset::Opaque;
-    key.raster = RasterPreset::Wireframe;
-    key.depth = DepthPreset::ReadWrite;
+    MaterialDesc md{};
+    md.passKey.vs = ShaderId::Basic;
+    md.passKey.ps = ShaderId::Basic;
+    md.passKey.vertexFlags = VSF_Pos | VSF_Nrm | VSF_UV;
+    md.passKey.blend = BlendPreset::Opaque;
+    md.passKey.raster = RasterPreset::CullNone;
+    md.passKey.depth = DepthPreset::ReadWrite;
 
-    const RenderPassHandle pass = GetOrCreatePass(key);
-    if (pass == 0)
-        return 0;
+    md.baseColor = { 1,1,1,1 };
+    md.roughness = 1.0f;
+    md.metallic = 0.0f;
 
-    MaterialResource mat{};
-    mat.pass = pass;
+    const MaterialHandle h = CreateMaterial(md);
+    if (h == 0) return 0;
 
-    m_materials.push_back(mat);
-    m_defaultMaterial = static_cast<MaterialHandle>(m_materials.size()); // 1-based
+    m_defaultMaterial = h;
     return m_defaultMaterial;
 }
 
@@ -513,39 +595,70 @@ RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
 {
     auto it = m_passCache.find(key);
     if (it != m_passCache.end())
-        return it->second;
+        return it->second; // 패스가 이미 있으면 그거 주고 없으면 새로만듬
 
-    // 현재는 Basic만 지원 (확장 예정)
-    if (key.vs != ShaderId::Basic || key.ps != ShaderId::Basic)
+    if (key.vs != key.ps)
+        return 0; // 아직은 동일 Program만 지원(확장 가능)
+
+    auto itProg = m_programs.find(key.vs);
+    if (itProg == m_programs.end())
         return 0;
 
-    if (!m_basicVS || !m_basicPS || !m_basicVSBytecode)
+    const ShaderProgram& shader = itProg->second;
+    if (!shader.vs || !shader.ps || !shader.vsBytecode)
         return 0;
 
-    // TODO(다음 단계): vertexFlags 기반으로 InputLayout 생성
-    // 지금은 BasicPass처럼 POSITION만 받는 layout로 고정
+
     std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
-    if (!InputLayoutFromFlags(key.vertexFlags, layout))
+    if (!InputLayoutFromFlags(key.vertexFlags, layout)) // 플래그에 맞는 layout을 만들어서 담아줌
         return 0;
 
     YunoRenderPassDesc pd{};
-    pd.vs = m_basicVS.get();
-    pd.ps = m_basicPS.get();
-    pd.vsBytecode = m_basicVSBytecode.Get();
-    pd.inputElements = layout.data();
-    pd.inputElementCount = static_cast<uint32_t>(layout.size());
+    pd.vs = shader.vs.get();                                            // 키 기반 완료
+    pd.ps = shader.ps.get();                                            // 키 기반 완료
+    pd.vsBytecode = shader.vsBytecode.Get();                            // 키 기반 완료
+    pd.inputElements = layout.data();                                   // 키 기반 완료
+    pd.inputElementCount = static_cast<uint32_t>(layout.size());        // 키 기반 완료
 
-    pd.enableDepth = (key.depth != DepthPreset::Off);
-    pd.enableBlend = (key.blend != BlendPreset::Opaque);
-    pd.wireframe = (key.raster == RasterPreset::Wireframe);
-
-    switch (key.raster)
+    switch (key.depth)                                                  // 키 기반 완료
     {
-    case RasterPreset::CullBack: pd.cull = CullMode::Back; break;
-    case RasterPreset::CullNone: pd.cull = CullMode::None; break;
-    case RasterPreset::Wireframe: pd.cull = CullMode::None; break;
-    default: pd.cull = CullMode::Back; break;
+    case DepthPreset::Off:       pd.depth = DepthMode::Off;       break;
+    case DepthPreset::ReadOnly:  pd.depth = DepthMode::ReadOnly;  break;
+    case DepthPreset::ReadWrite: pd.depth = DepthMode::ReadWrite; break;
+    default:                     pd.depth = DepthMode::ReadWrite; break;
     }
+
+
+    // 블렌드 모드
+    switch (key.blend)                                                  // 키 기반 완료
+    {
+    case BlendPreset::Opaque:        pd.blend = BlendMode::Opaque; break;
+    case BlendPreset::AlphaBlend:    pd.blend = BlendMode::AlphaBlend; break;
+    case BlendPreset::ColorBlend:    pd.blend = BlendMode::ColorBlend; break;
+    case BlendPreset::ColorBlendOne: pd.blend = BlendMode::ColorBlendOne; break;
+    default:                         pd.blend = BlendMode::Opaque; break;
+    } 
+    
+
+    pd.wireframe =(key.raster == RasterPreset::WireCullNone)            // 키 기반 완료
+                ||(key.raster == RasterPreset::WireCullBack) 
+                ||(key.raster == RasterPreset::WireCullFront);
+
+
+    // 컬 모드
+    switch (key.raster)                                                 // 키 기반 완료
+    {
+    case RasterPreset::CullNone:      pd.cull = CullMode::None;  break;
+    case RasterPreset::CullBack:      pd.cull = CullMode::Back;  break;
+    case RasterPreset::CullFront:     pd.cull = CullMode::Front; break;
+
+    case RasterPreset::WireCullNone:  pd.cull = CullMode::None;  break;
+    case RasterPreset::WireCullBack:  pd.cull = CullMode::Back;  break;
+    case RasterPreset::WireCullFront: pd.cull = CullMode::Front; break;
+    default:                          pd.cull = CullMode::None;  break;
+    }
+
+    // RenderpassDesk 생성한걸로 렌더패스 생성
 
     auto pass = std::make_unique<YunoRenderPass>();
     if (!pass->Create(m_device.Get(), pd))
@@ -619,42 +732,33 @@ void YunoRenderer::Submit(const RenderItem& item)
 
 void YunoRenderer::Flush()
 {
-    if (!m_context || !m_cbDefault.IsValid())
+    if (!m_context || !m_cbDefault.IsValid() || !m_cbMaterial.IsValid())
         return;
 
     for (const RenderItem& item : m_renderQueue)
     {
-        if (item.mesh == 0 || item.mesh > m_meshes.size()) // 0은 안씀
+        if (item.mesh == 0 || item.mesh > m_meshes.size())
             continue;
 
-        //const MaterialResource* material = nullptr;
-        //if (item.material > 0 && item.material <= m_materials.size())
-        //{
-        //    material = &m_materials[item.material - 1];
-        //}
+        // -------------------------
+        // 1) Material resolve (딱 1번)
+        // -------------------------
+        const YunoMaterial* material = nullptr;
 
-        //YunoRenderPass* pass = material ? material->pass : nullptr;
-        //if (!pass)
-        //    pass = m_basicPass.get();
-        //if (!pass)
-        //    continue;
-
-        //pass->Bind(m_context.Get());
-
-        const MaterialResource* material = nullptr;
-        if (item.material > 0 && item.material <= m_materials.size())
-        {
+        if (item.material > 0 && item.material <= m_materials.size()) // 핸들 유효성 체크
             material = &m_materials[item.material - 1];
+
+        if (!material)
+        {
+            if (m_defaultMaterial > 0 && m_defaultMaterial <= m_materials.size())
+                material = &m_materials[m_defaultMaterial - 1];
         }
 
-        // material이 없거나 pass handle이 없으면 기본 머테리얼로 대체
-        RenderPassHandle passHandle = material ? material->pass : 0;
+
+        RenderPassHandle passHandle = material->pass;
+
         if (passHandle == 0)
-        {
-            // 기본 머테리얼이 있다면 그걸로 사용
-            if (m_defaultMaterial > 0 && m_defaultMaterial <= m_materials.size())
-                passHandle = m_materials[m_defaultMaterial - 1].pass;
-        }
+            passHandle = m_defaultPass;
 
         if (passHandle == 0 || passHandle > m_passes.size())
             continue;
@@ -662,9 +766,6 @@ void YunoRenderer::Flush()
         m_passes[passHandle - 1]->Bind(m_context.Get());
 
         const MeshResource& mesh = m_meshes[item.mesh - 1];
-
-
-        // 정점버퍼 셋
         mesh.Bind(m_context.Get());
 
         using namespace DirectX;
@@ -680,14 +781,16 @@ void YunoRenderer::Flush()
         XMStoreFloat4x4(&cbd.mProj, XMMatrixTranspose(P));
         XMStoreFloat4x4(&cbd.mWVP, XMMatrixTranspose(WVP));
 
-
-        // 상수버퍼 업데이트
         m_cbDefault.Update(m_context.Get(), cbd);
 
+        ID3D11Buffer* vsCbs[] = { m_cbDefault.Get() };
+        m_context->VSSetConstantBuffers(0, 1, vsCbs);
 
-        // 상수버퍼 셋
-        ID3D11Buffer* cbs[] = { m_cbDefault.Get() };
-        m_context->VSSetConstantBuffers(0, 1, cbs);
+        m_cbMaterial.Update(m_context.Get(), material->cpuParams);
+
+        ID3D11Buffer* psCbs[] = { m_cbMaterial.Get() };
+        m_context->PSSetConstantBuffers(1, 1, psCbs);
+
 
         if (mesh.ib && mesh.indexCount > 0)
             m_context->DrawIndexed(mesh.indexCount, 0, 0);

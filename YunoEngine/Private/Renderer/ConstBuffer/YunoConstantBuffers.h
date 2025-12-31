@@ -10,6 +10,15 @@ struct CBDefault
 	XMFLOAT4X4 mWVP;
 };
 
+struct CBMaterial
+{
+    DirectX::XMFLOAT4 baseColor;
+    float roughness;
+    float metallic;
+    uint32_t flags;
+    float padding;
+};
+
 
 template<typename T>
 class YunoConstantBuffer

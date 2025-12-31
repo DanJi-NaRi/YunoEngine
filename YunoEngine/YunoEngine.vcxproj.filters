@@ -52,6 +52,9 @@
     <Filter Include="Public\Object">
       <UniqueIdentifier>{6d6361fc-035d-432e-b73c-88c648b399ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Renderer\Material">
+      <UniqueIdentifier>{c3edce74-c1c2-435d-90c0-6ff90309a4cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\YunoEngine.h">
@@ -129,6 +132,12 @@
     <ClInclude Include="Public\Object\Unit.h">
       <Filter>Public\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Renderer\MaterialDesc.h">
+      <Filter>Public\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\Material\YunoMaterial.h">
+      <Filter>Private\Renderer\Material</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\YunoEngine.cpp">
@@ -163,7 +172,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Assets\Shaders\BasicColor.hlsl">
+    <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
       <Filter>Assets\Shader</Filter>
     </FxCompile>
   </ItemGroup>

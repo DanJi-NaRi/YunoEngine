@@ -1,8 +1,5 @@
 #include "pch.h"
 
-
-
-
 #include "RenderTypes.h"
 #include "IRenderer.h"
 #include "YunoEngine.h"
@@ -26,6 +23,9 @@ bool GameApp::OnInit()
 
    m_quad = std::make_unique<Quad>();
    if (!m_quad->Create(DirectX::XMFLOAT3(0, 0, 0)))
+       return false;
+   m_triangle = std::make_unique<Triangle>();
+   if (!m_triangle->Create(DirectX::XMFLOAT3(0, 0, 0)))
        return false;
 
     return true;
@@ -51,7 +51,13 @@ void GameApp::OnUpdate(float dt)
     if (m_quad)
     {
         m_quad->Update(dt);
-        m_quad->Submit();  
+        m_quad->Submit();
+    }
+
+    if (m_triangle)
+    {
+        m_triangle->Update(dt);
+        m_triangle->Submit();
     }
     
 }
