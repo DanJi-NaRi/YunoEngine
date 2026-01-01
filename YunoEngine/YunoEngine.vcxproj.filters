@@ -40,6 +40,24 @@
     <Filter Include="Public\Math">
       <UniqueIdentifier>{37267af7-4f4b-4459-89df-0a783023fbf4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Camera">
+      <UniqueIdentifier>{93b7cc2a-38e5-488a-9b02-705a4fd0c6eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Renderer">
+      <UniqueIdentifier>{2ead9d39-55a1-4b0f-865a-7b5051e73c0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\ConstBuffer">
+      <UniqueIdentifier>{70699ab7-a50e-4b05-b0e7-2eb921999005}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Object">
+      <UniqueIdentifier>{6d6361fc-035d-432e-b73c-88c648b399ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Material">
+      <UniqueIdentifier>{c3edce74-c1c2-435d-90c0-6ff90309a4cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shader\Include">
+      <UniqueIdentifier>{ef94bfe5-6d1c-4714-8c18-b906c0ae3ae1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\YunoEngine.h">
@@ -66,7 +84,7 @@
     <ClInclude Include="Public\Interface\IResourceManager.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Interface\IMeshManager.h">
+    <ClInclude Include="Public\Interface\IMesh.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Public\Interface\ITextureManager.h">
@@ -78,7 +96,7 @@
     <ClInclude Include="Public\Interface\IWindow.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Interface\IMaterialManager.h">
+    <ClInclude Include="Public\Interface\IMaterial.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Private\Window\YunoWindow.h">
@@ -105,8 +123,25 @@
     <ClInclude Include="Public\Math\YunoTransform.h">
       <Filter>Public\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h" />
-    <ClInclude Include="Public\Camera\YunoCamera.h" />
+    <ClInclude Include="Public\Renderer\RenderTypes.h">
+      <Filter>Public\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Camera\YunoCamera.h">
+      <Filter>Public\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h">
+      <Filter>Private\Renderer\ConstBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\Unit.h">
+      <Filter>Public\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\MaterialDesc.h">
+      <Filter>Public\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\Material\YunoMaterial.h">
+      <Filter>Private\Renderer\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Resource\YunoTextureManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\YunoEngine.cpp">
@@ -136,10 +171,22 @@
     <ClCompile Include="Private\Renderer\Shader\YunoShaderCompiler.cpp">
       <Filter>Private\Renderer\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="Public\Object\Unit.cpp">
+      <Filter>Public\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Resource\YunoTextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Assets\Shaders\BasicColor.hlsl">
+    <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
       <Filter>Assets\Shader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\Shaders\ConstantBuffers.hlsli">
+      <Filter>Assets\Shader\Include</Filter>
+    </None>
+    <None Include="..\Assets\Shaders\TexturesSampler.hlsli">
+      <Filter>Assets\Shader\Include</Filter>
+    </None>
   </ItemGroup>
 </Project>

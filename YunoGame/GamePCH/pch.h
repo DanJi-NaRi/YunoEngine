@@ -23,12 +23,28 @@
 #include <string>
 #include <unordered_map>
 #include <chrono>
+#include <array>
 
 // ===============================
-// Debug
+// Debug / Utility
 // ===============================
 #include <iostream>
+#include <sstream>
+#include <filesystem>
 
+
+// ===============================
+// DirectX Math
+// ===============================
+#include <DirectXMath.h>
+using namespace DirectX;
+
+
+
+// ===============================
+// YunoMath
+// ===============================
+#include "YunoTransform.h"
 
 
 

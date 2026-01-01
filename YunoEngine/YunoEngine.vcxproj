@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -122,7 +122,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)public\Interface;$(ProjectDir)private\Window;$(ProjectDir)private\Renderer;$(ProjectDir)private\Timer;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)Assets\Shaders;$(ProjectDir)Public\Math;$(ProjectDir)Public\Camera;$(ProjectDir)private\Renderer\ConstBuffer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -142,7 +142,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)public\Interface;$(ProjectDir)private\Window;$(ProjectDir)private\Renderer;$(ProjectDir)private\Timer;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)Assets\Shaders;$(ProjectDir)Public\Math;$(ProjectDir)Public\Camera;$(ProjectDir)private\Renderer\ConstBuffer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -154,8 +154,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h" />
+    <ClInclude Include="Private\Renderer\Material\YunoMaterial.h" />
+    <ClInclude Include="Private\Resource\YunoTextureManager.h" />
+    <ClInclude Include="Public\Renderer\MaterialDesc.h" />
     <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h" />
-    <ClInclude Include="Private\Renderer\Mesh\YunoMeshBuffer.h" />
+    <ClInclude Include="Private\Renderer\Mesh\YunoMeshBuffer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Private\Renderer\RenderPass\YunoRenderPass.h" />
     <ClInclude Include="Private\Renderer\Shader\YunoShader.h" />
     <ClInclude Include="Private\Renderer\Shader\YunoShaderCompiler.h" />
@@ -165,8 +171,8 @@
     <ClInclude Include="Public\Camera\YunoCamera.h" />
     <ClInclude Include="Public\Interface\IGameApp.h" />
     <ClInclude Include="Public\Interface\IInput.h" />
-    <ClInclude Include="Public\Interface\IMaterialManager.h" />
-    <ClInclude Include="Public\Interface\IMeshManager.h" />
+    <ClInclude Include="Public\Interface\IMaterial.h" />
+    <ClInclude Include="Public\Interface\IMesh.h" />
     <ClInclude Include="Public\Interface\IRenderer.h" />
     <ClInclude Include="Public\Interface\IResourceManager.h" />
     <ClInclude Include="Public\Interface\ISceneManager.h" />
@@ -175,6 +181,8 @@
     <ClInclude Include="Public\Interface\ITime.h" />
     <ClInclude Include="Public\Interface\IWindow.h" />
     <ClInclude Include="Public\Math\YunoTransform.h" />
+    <ClInclude Include="Public\Object\Unit.h" />
+    <ClInclude Include="Public\Renderer\RenderTypes.h" />
     <ClInclude Include="Public\YunoEngine.h" />
   </ItemGroup>
   <ItemGroup>
@@ -182,20 +190,35 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Private\Renderer\Mesh\YunoMeshBuffer.cpp" />
+    <ClCompile Include="Private\Renderer\Mesh\YunoMeshBuffer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Private\Renderer\RenderPass\YunoRenderPass.cpp" />
     <ClCompile Include="Private\Renderer\Shader\YunoShader.cpp" />
     <ClCompile Include="Private\Renderer\Shader\YunoShaderCompiler.cpp" />
     <ClCompile Include="Private\Renderer\YunoRenderer.cpp" />
+    <ClCompile Include="Private\Resource\YunoTextureManager.cpp" />
     <ClCompile Include="Private\Timer\YunoTimer.cpp" />
     <ClCompile Include="Private\Window\YunoWindow.cpp" />
     <ClCompile Include="Private\YunoEngine.cpp" />
+    <ClCompile Include="Public\Object\Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Assets\Shaders\BasicColor.hlsl">
+    <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\Shaders\ConstantBuffers.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\Assets\Shaders\TexturesSampler.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,7 @@
 #pragma once
 #include <cstdint>
+#include "RenderTypes.h"
+#include "MaterialDesc.h"
 
 class IWindow;
 
@@ -8,19 +10,42 @@ class IRenderer
 public:
     virtual ~IRenderer() = default;
 
-    // DX11 ì¥ì¹˜/ìŠ¤ì™‘ì²´ì¸ ìƒì„±
+    // DX11 ÀåÄ¡/½º¿ÒÃ¼ÀÎ »ı¼º
     virtual bool Initialize(IWindow* window) = 0;
 
-    // ë§¤ í”„ë ˆì„ ì‹œì‘
+    // ¸Å ÇÁ·¹ÀÓ ½ÃÀÛ
     virtual void BeginFrame() = 0;
 
-    // í™”ë©´ í‘œì‹œ
+    // È­¸é Ç¥½Ã
     virtual void EndFrame() = 0;
 
-    // ì°½ í¬ê¸° ë³€ê²½ ëŒ€ì‘
+    // Ã¢ Å©±â º¯°æ ´ëÀÀ
     virtual void Resize(uint32_t width, uint32_t height) = 0;
 
-    // ì¢…ë£Œ
+    // MSAA ´Ü°è º¯°æ
+    virtual bool SetMSAASamples(uint32_t samples) = 0; // 1/2/4/8
+    virtual uint32_t GetMSAASamples() const = 0;
+
+    // Vertex ½ºÆ®¸² + ÀÎµ¦½º·Î GPU ¸Ş½¬ »ı¼º
+    virtual MeshHandle CreateMesh(
+        const VertexStreams& streams,
+        const INDEX* triangles,
+        uint32_t triCount) = 0;
+
+    // ±âº» ¸ÓÆ¼¸®¾ó(ÃßÈÄ Å°/ÆÄÀÏ ±â¹İÀ¸·Î È®Àå)
+    virtual MaterialHandle CreateMaterial_Default() = 0;
+
+    virtual MaterialHandle CreateMaterial(const MaterialDesc& desc) = 0;
+
+    virtual TextureHandle CreateTexture2DFromFile(const wchar_t* path) = 0;
+
+    // ¸Å ÇÁ·¹ÀÓ ·»´õ ¿äÃ» Á¦Ãâ
+    virtual void Submit(const RenderItem& item) = 0;
+
+    // BeginFrame~EndFrame »çÀÌ¿¡¼­ È£ÃâµÇ¾î ½ÇÁ¦ Draw ¼öÇà
+    virtual void Flush() = 0;
+    
+    // Á¾·á
     virtual void Shutdown() = 0;
 
 };

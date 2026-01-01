@@ -12,6 +12,10 @@
 #include "YunoWindow.h"
 #include "YunoRenderer.h"
 #include "YunoTimer.h"
+#include "YunoTextureManager.h"
+
+IRenderer* YunoEngine::s_renderer = nullptr;
+ITextureManager* YunoEngine::s_textureManager = nullptr;
 
 YunoEngine::YunoEngine() = default;
 YunoEngine::~YunoEngine()
@@ -26,21 +30,27 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
 
     m_game = game;
 
-    m_window = std::make_unique<YunoWindow>();          // 화면 생성
+    // 화면 생성
+    m_window = std::make_unique<YunoWindow>();          
     if (!m_window->Create(title, width, height))
         return false;
 
-
-    m_renderer = std::make_unique<YunoRenderer>();      // 렌더러 생성
+    // 렌더러 생성
+    m_renderer = std::make_unique<YunoRenderer>();      
     if (!m_renderer->Initialize(m_window.get()))
         return false;
+    s_renderer = m_renderer.get();
 
+    // 텍스쳐 매니저 생성
+    m_textureManager = std::make_unique<YunoTextureManager>(m_renderer.get());  
+    s_textureManager = m_textureManager.get();
 
-    m_timer = std::make_unique<YunoTimer>();            // 타이머 생성
+    // 타이머 생성
+    m_timer = std::make_unique<YunoTimer>();            
     m_timer->Initialize();
     //m_timer->SetMaxDeltaSeconds(0.1f); // 최대 프레임 제한
     m_timer->SetTimeScale(1.0f);
-
+    m_fixedAccumulator = 0.0;
 
     // Game 초기화
     if (!m_game->OnInit())
@@ -78,25 +88,24 @@ int YunoEngine::Run()
         constexpr double fixedDt = 1.0 / 60.0;   // 60Hz
         constexpr int maxFixedStepsPerFrame = 5; 
 
-        double accumulator = 0.0;
 
         // dt 계산
         m_timer->Tick();
         const double frameDt = static_cast<double>(m_timer->UnscaledDeltaSeconds());
 
-        accumulator += frameDt;
+        m_fixedAccumulator += frameDt;
 
         int steps = 0;
-        while (accumulator >= fixedDt && steps < maxFixedStepsPerFrame)
+        while (m_fixedAccumulator >= fixedDt && steps < maxFixedStepsPerFrame)
         {
             m_game->OnFixedUpdate(static_cast<float>(fixedDt));
-            accumulator -= fixedDt;
+            m_fixedAccumulator -= fixedDt;
             ++steps;
         }
 
         if (steps == maxFixedStepsPerFrame)
         {
-            accumulator = 0.0;
+            m_fixedAccumulator = 0.0;
         }
 
         const float dt = m_timer->DeltaSeconds();
@@ -107,10 +116,7 @@ int YunoEngine::Run()
 
         m_renderer->BeginFrame();
 
-        if (auto* yr = dynamic_cast<YunoRenderer*>(m_renderer.get()))
-        {
-            yr->RenderTestTriangle();
-        }
+        m_renderer->Flush();
 
         m_renderer->EndFrame();
     }
@@ -134,6 +140,12 @@ void YunoEngine::Shutdown()
         m_renderer->Shutdown();
         m_renderer.reset();
     }
+
+    s_textureManager = nullptr;
+    m_textureManager.reset();
+
+    s_renderer = nullptr;
+    m_renderer.reset();
 
     // 3) 그 다음 윈도우 종료
     m_window.reset();

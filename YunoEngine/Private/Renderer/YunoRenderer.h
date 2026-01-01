@@ -1,7 +1,13 @@
 #pragma once
 
+#include <wincodec.h>
+#pragma comment(lib, "windowscodecs.lib")
+
 #include "IRenderer.h"
 #include "YunoCamera.h"
+#include "YunoConstantBuffers.h"
+#include "YunoMaterial.h"
+#include "MaterialDesc.h"
 
 
 
@@ -17,11 +23,101 @@ struct RenderTarget
 };
 
 
-// Ï†ÑÎ∞©ÏÑ†Ïñ∏
+// ¿¸πÊº±æ
 class IWindow;
 class YunoRenderPass;
 class YunoMeshBuffer;
 class YunoShader;
+
+
+namespace
+{
+    struct ImageRGBA8
+    {
+        uint32_t width = 0;
+        uint32_t height = 0;
+        std::vector<uint8_t> pixels; // RGBA8, row-major
+    };
+
+    // WIC: file -> RGBA8 ∏ﬁ∏∏Æ
+    bool LoadImageRGBA8_WIC(const wchar_t* path, ImageRGBA8& out)
+    {
+        out = {};
+
+        if (!path || !path[0])
+            return false;
+
+        // COM √ ±‚»≠ (¿ÃπÃ µ«æÓ ¿÷¿∏∏È S_FALSE/¿ÃπÃ √ ±‚»≠ ªÛ≈¬ OK)
+        HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+        if (FAILED(hr) && hr != RPC_E_CHANGED_MODE)
+            return false;
+
+        Microsoft::WRL::ComPtr<IWICImagingFactory> factory;
+        hr = CoCreateInstance(
+            CLSID_WICImagingFactory,
+            nullptr,
+            CLSCTX_INPROC_SERVER,
+            IID_PPV_ARGS(factory.GetAddressOf())
+        );
+        if (FAILED(hr))
+            return false;
+
+        Microsoft::WRL::ComPtr<IWICBitmapDecoder> decoder;
+        hr = factory->CreateDecoderFromFilename(
+            path,
+            nullptr,
+            GENERIC_READ,
+            WICDecodeMetadataCacheOnDemand,
+            decoder.GetAddressOf()
+        );
+        if (FAILED(hr))
+            return false;
+
+        Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> frame;
+        hr = decoder->GetFrame(0, frame.GetAddressOf());
+        if (FAILED(hr))
+            return false;
+
+        UINT w = 0, h = 0;
+        hr = frame->GetSize(&w, &h);
+        if (FAILED(hr) || w == 0 || h == 0)
+            return false;
+
+        // RGBA8∑Œ ∫Ø»Ø
+        Microsoft::WRL::ComPtr<IWICFormatConverter> converter;
+        hr = factory->CreateFormatConverter(converter.GetAddressOf());
+        if (FAILED(hr))
+            return false;
+
+        hr = converter->Initialize(
+            frame.Get(),
+            GUID_WICPixelFormat32bppRGBA, // √÷¡æ RGBA8
+            WICBitmapDitherTypeNone,
+            nullptr,
+            0.0,
+            WICBitmapPaletteTypeCustom
+        );
+        if (FAILED(hr))
+            return false;
+
+        const uint32_t stride = w * 4;
+        const uint32_t sizeBytes = stride * h;
+
+        out.width = static_cast<uint32_t>(w);
+        out.height = static_cast<uint32_t>(h);
+        out.pixels.resize(sizeBytes);
+
+        hr = converter->CopyPixels(
+            nullptr,
+            stride,
+            sizeBytes,
+            out.pixels.data()
+        );
+
+        return SUCCEEDED(hr);
+    }
+}
+
 
 class YunoRenderer final : public IRenderer
 {
@@ -35,14 +131,35 @@ public:
     void Resize(uint32_t width, uint32_t height) override;
     void Shutdown() override;
 
+    bool SetMSAASamples(uint32_t samples) override;
+    uint32_t GetMSAASamples() const override { return m_msaaSamples; }
 
-    // ÌÖåÏä§Ìä∏ ÎìúÎ°úÏö∞ Ìï®ÏàòÏûÑ ÎÇòÏ§ëÏóê ÏÇ≠Ï†ú „Ñ±„Ñ±
-    void RenderTestTriangle();
+    // --- Game -> Engine ---
+    MeshHandle CreateMesh(const VertexStreams& streams,
+        const INDEX* triangles,
+        uint32_t triCount) override;
+
+    MaterialHandle CreateMaterial_Default() override;
+    MaterialHandle CreateMaterial(const MaterialDesc& desc);
+
+    TextureHandle CreateTexture2DFromFile(const wchar_t* path) override;
+
+    void Submit(const RenderItem& item) override;
+    void Flush() override;     
+
+private:
+    void BindConstantBuffers(
+        const RenderItem& item,
+        const YunoMaterial& material
+    );
+
 
 private:
     bool CreateDeviceAndSwapChain(HWND hwnd, uint32_t width, uint32_t height);
     bool CreateRenderTarget();
     bool CreateDepthStencil(uint32_t width, uint32_t height);
+    bool CreateBasicPipeline();
+    bool CreateShaders();
 
     void SetViewPort();
     void ClearDepthStencil();
@@ -60,19 +177,193 @@ private:
     Microsoft::WRL::ComPtr<ID3D11DeviceContext>    m_context;
     Microsoft::WRL::ComPtr<IDXGISwapChain>         m_swapChain;
 
+    Microsoft::WRL::ComPtr<ID3D11Texture2D>        m_backBufferTex;
     Microsoft::WRL::ComPtr<ID3D11Texture2D>        m_depthStencilTex;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_dsv;
 
-    Microsoft::WRL::ComPtr<ID3D11Buffer> m_cbDefault;
+    YunoConstantBuffer<CBDefault> m_cbDefault;
+    YunoConstantBuffer<CBMaterial> m_cbMaterial;
     YunoCamera m_camera;
     float m_aspect = 1.0f;
 
+    // MSAA
 private:
-    // ÏÖ∞Ïù¥Îçî
-    std::unique_ptr<YunoRenderPass> m_basicPass;
-    std::unique_ptr<YunoMeshBuffer> m_triangle;
-    std::unique_ptr<YunoShader> m_basicVS;
-    std::unique_ptr<YunoShader> m_basicPS;
+
+    uint32_t m_msaaSamples = 4;     // 1/2/4/8 (1¿Ã∏È MSAA off)
+    uint32_t m_msaaQuality = 0;
+
+    // MSAA ∑ª¥ı ≈∏∞Ÿ(ø¿«¡Ω∫≈©∏∞)
+    RenderTarget m_msaaRT;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D>        m_msaaDepthTex;
+    Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_msaaDSV;
+
+    bool CreateMSAARenderTarget(uint32_t width, uint32_t height);
+    bool CreateMSAADepthStencil(uint32_t width, uint32_t height);
+    bool CheckMSAA();
+
+    // ≥™¡ﬂø° ∏ﬁΩ¨ ∏≈¥œ¿˙ ¿Ã∑±∞…∑Œ ñEµÌ
+private:
+    struct MeshResource
+    {
+        uint32_t flags = 0;
+        uint32_t vertexCount = 0;
+        uint32_t indexCount = 0;
+
+        // Ω∫∆Æ∏≤∫∞ Vertex Buffer
+        ComPtr<ID3D11Buffer> vbPos;
+        ComPtr<ID3D11Buffer> vbNrm;
+        ComPtr<ID3D11Buffer> vbUV;
+        ComPtr<ID3D11Buffer> vbT;
+        ComPtr<ID3D11Buffer> vbB;
+
+        // Index Buffer (optional)
+        ComPtr<ID3D11Buffer> ib;
+
+        void Bind(ID3D11DeviceContext* ctx) const
+        {
+            // IA ΩΩ∑‘ ∞Ì¡§ ∏≈«Œ:
+            // 0=Pos, 1=Nrm, 2=UV, 3=T, 4=B
+            ID3D11Buffer* vbs[5] = {};
+            UINT strides[5] = {};
+            UINT offsets[5] = {};
+
+            // Pos¥¬ « ºˆ∂Û∞Ì ∞°¡§ (CreateMeshø°º≠ ∫∏¿Â)
+            vbs[0] = vbPos.Get(); strides[0] = sizeof(VERTEX_Pos);
+
+            if (vbNrm) { vbs[1] = vbNrm.Get(); strides[1] = sizeof(VERTEX_Nrm); }
+            if (vbUV) { vbs[2] = vbUV.Get();  strides[2] = sizeof(VERTEX_UV); }
+            if (vbT) { vbs[3] = vbT.Get();   strides[3] = sizeof(VERTEX_T); }
+            if (vbB) { vbs[4] = vbB.Get();   strides[4] = sizeof(VERTEX_B); }
+
+            UINT maxSlot = 0;
+            if (vbB)        maxSlot = 4;
+            else if (vbT)   maxSlot = 3;
+            else if (vbUV)  maxSlot = 2;
+            else if (vbNrm) maxSlot = 1;
+            else            maxSlot = 0;
+
+            ctx->IASetVertexBuffers(0, maxSlot + 1, vbs, strides, offsets);
+
+            if (ib && indexCount > 0)
+                ctx->IASetIndexBuffer(ib.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+            ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        }
+    };
+
+    std::vector<MeshResource> m_meshes;        // handle -> m_meshes[handle-1]
+    std::vector<RenderItem>   m_renderQueue;   // ¿Ãπ¯ «¡∑π¿” ¡¶√‚µ» µÂ∑ŒøÏ ø‰√ª
+
+
+    struct MaterialResource
+    {
+        //YunoRenderPass* pass = nullptr;
+        RenderPassHandle pass = 0; // handle -> m_passes[pass-1]
+    };
+
+    std::vector<YunoMaterial> m_materials;
+    MaterialHandle m_defaultMaterial = 0;
+    RenderPassHandle m_defaultPass = 0;
+
+
+    // ∑ª¥ı∆–Ω∫ ∞¸∑√ «¡∏Æº¬µÈ
+private:
+
+    struct PassKeyHash
+    {
+        size_t operator()(const PassKey& k) const noexcept
+        {
+            size_t h = 1469598103934665603ull; // FNV offset basis (64-bit)
+            auto Mix = [&](uint64_t v)
+                {
+                    h ^= v;
+                    h *= 1099511628211ull;
+                };
+
+            Mix(static_cast<uint64_t>(k.vs));
+            Mix(static_cast<uint64_t>(k.ps));
+            Mix(static_cast<uint64_t>(k.vertexFlags));
+            Mix(static_cast<uint64_t>(k.blend));
+            Mix(static_cast<uint64_t>(k.raster));
+            Mix(static_cast<uint64_t>(k.depth));
+            return h;
+        }
+    };
+
+    using RenderPassHandle = uint32_t;
+
+    // ƒ≥Ω√ ¡∂»∏/ª˝º∫
+    RenderPassHandle GetOrCreatePass(const PassKey& key);
+
+    std::vector<std::unique_ptr<YunoRenderPass>> m_passes;
+    std::unordered_map<PassKey, RenderPassHandle, PassKeyHash> m_passCache;
+
+    // Preset states cache (« ø‰«“ ∂ß ª˝º∫)
+    Microsoft::WRL::ComPtr<ID3D11BlendState>        m_blendStates[(size_t)BlendPreset::Count]{};
+    Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_rasterStates[(size_t)RasterPreset::Count]{};
+    Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStates[(size_t)DepthPreset::Count]{};
+
+    Microsoft::WRL::ComPtr<ID3DBlob> m_basicVSBytecode;
+
+    bool InputLayoutFromFlags(uint32_t flags,
+        std::vector<D3D11_INPUT_ELEMENT_DESC>& outLayout) const;
+
+private:
+    struct ShaderProgram
+    {
+        std::unique_ptr<YunoShader> vs;
+        std::unique_ptr<YunoShader> ps;
+        Microsoft::WRL::ComPtr<ID3DBlob> vsBytecode; // InputLayoutøÎ
+    };
+
+    std::unordered_map<ShaderId, ShaderProgram> m_programs;
+
+public:
+    bool LoadShader(
+        ShaderId id,
+        const std::wstring& filePath,   // ex) L"Assets/Shaders/BasicColor.hlsl"
+        const std::string& vsEntry,
+        const std::string& psEntry,
+        const std::string& vsProfile = "vs_5_0",
+        const std::string& psProfile = "ps_5_0",
+        const std::vector<std::pair<std::string, std::string>>& defines = {});
+    bool LoadShader(
+        ShaderId id,
+        const char* filePath,     // "../Assets/Shaders/BasicColor.hlsl"
+        const char* vsEntry,      // "VSMain"
+        const char* psEntry,      // "PSMain"
+        const char* vsProfile = "vs_5_0",
+        const char* psProfile = "ps_5_0");
+
+// ≈ÿΩ∫√ƒ
+private:
+    struct TextureResource
+    {
+        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
+        uint32_t w = 0;
+        uint32_t h = 0;
+    };
+
+    std::vector<TextureResource> m_textures; // handle -> m_textures[handle-1]
+
+    // ¥ıπÃ ≈ÿΩ∫√≥ «⁄µÈ(0¿∫ "æ¯¿Ω"¿Ãπ«∑Œ Ω«¡¶ ¥ıπÃ¥¬ 1-based handle∑Œ ∫∏∞¸)
+    TextureHandle m_texWhite = 0; // æÀ∫£µµ ±‚∫ª
+    TextureHandle m_texNormal = 0; // ≥Î∏÷ ±‚∫ª(0,0,1)
+    TextureHandle m_texBlack = 0; // orm ±‚∫ª(0,0,0) ∂«¥¬ (1,1,1) « ø‰ Ω√ ∫Ø∞Ê
+
+    bool CreateSamplerPresets();
+
+    Microsoft::WRL::ComPtr<ID3D11SamplerState> m_samplers[(uint8_t)SampleMode::Count];
+    std::unordered_map<std::wstring, TextureHandle> m_texturePathCache;
+private:
+    TextureHandle CreateTexture2D_SolidRGBA8(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+    bool CreateDefaultTextures();    // white/normal/black ª˝º∫
+
+
+    ID3D11ShaderResourceView* ResolveSRV(TextureHandle h) const;
+
+    void BindTextures(const YunoMaterial& material);
+    void BindSamplers();
 
 
 

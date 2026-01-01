@@ -4,7 +4,7 @@ using namespace DirectX;
 
 struct YunoCamera
 {
-    XMFLOAT3 position{ 0, 1.5f, -3.0f };
+    XMFLOAT3 position{ 0, 1.0f, -10.0f };
     XMFLOAT3 target{ 0, 0,  0.0f };
     XMFLOAT3 up{ 0, 1,  0.0f };
 
