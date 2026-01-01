@@ -12,8 +12,10 @@
 #include "YunoWindow.h"
 #include "YunoRenderer.h"
 #include "YunoTimer.h"
+#include "YunoTextureManager.h"
 
 IRenderer* YunoEngine::s_renderer = nullptr;
+ITextureManager* YunoEngine::s_textureManager = nullptr;
 
 YunoEngine::YunoEngine() = default;
 YunoEngine::~YunoEngine()
@@ -28,18 +30,23 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
 
     m_game = game;
 
-    m_window = std::make_unique<YunoWindow>();          // 화면 생성
+    // 화면 생성
+    m_window = std::make_unique<YunoWindow>();          
     if (!m_window->Create(title, width, height))
         return false;
 
-
-    m_renderer = std::make_unique<YunoRenderer>();      // 렌더러 생성
+    // 렌더러 생성
+    m_renderer = std::make_unique<YunoRenderer>();      
     if (!m_renderer->Initialize(m_window.get()))
         return false;
-
     s_renderer = m_renderer.get();
 
-    m_timer = std::make_unique<YunoTimer>();            // 타이머 생성
+    // 텍스쳐 매니저 생성
+    m_textureManager = std::make_unique<YunoTextureManager>(m_renderer.get());  
+    s_textureManager = m_textureManager.get();
+
+    // 타이머 생성
+    m_timer = std::make_unique<YunoTimer>();            
     m_timer->Initialize();
     //m_timer->SetMaxDeltaSeconds(0.1f); // 최대 프레임 제한
     m_timer->SetTimeScale(1.0f);
@@ -133,7 +140,12 @@ void YunoEngine::Shutdown()
         m_renderer->Shutdown();
         m_renderer.reset();
     }
+
+    s_textureManager = nullptr;
+    m_textureManager.reset();
+
     s_renderer = nullptr;
+    m_renderer.reset();
 
     // 3) 그 다음 윈도우 종료
     m_window.reset();

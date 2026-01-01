@@ -1,19 +1,5 @@
-cbuffer CBDefault : register(b0)
-{
-    float4x4 mWorld;
-    float4x4 mView;
-    float4x4 mProj;
-    float4x4 mWVP;
-};
-
-cbuffer CBMaterial : register(b1)
-{
-    float4 gBaseColor;
-    float gRoughness;
-    float gMetallic;
-    uint gFlags;
-    float gPadding;
-};
+#include "ConstantBuffers.hlsli"
+#include "TexturesSampler.hlsli"
 
 struct VSInput
 {
@@ -38,8 +24,9 @@ VSOutput VSMain(VSInput i)
     return o;
 }
 
+
 float4 PSMain(VSOutput input) : SV_Target
 {
-    float3 uvColor = float3(input.uv, 0.0f); // (u, v, 0)
-    return float4(uvColor, 1.0f) * gBaseColor;
+    float4 tex = gAlbedo.Sample(SamplerWrap, input.uv);
+    return tex;
 }

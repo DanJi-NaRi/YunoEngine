@@ -21,8 +21,11 @@ Unit::Unit()
     m_Exp = 0;
 
 
-    m_mesh = -1;
-    m_material = -1;
+    m_mesh = 0;
+    m_material = 0;
+    m_Albedo = 0;
+    m_Normal = 0;
+    m_Orm = 0;
 }
 
 Unit::~Unit()
@@ -61,9 +64,9 @@ bool Unit::Update(float dTime)
 
 bool Unit::Submit()
 {
-    m_renderItem.mesh = m_mesh;
-    m_renderItem.material = m_material;
-    m_renderItem.world = m_mWorld;
+    m_renderItem.meshHandle = m_mesh;
+    m_renderItem.materialHandle = m_material;
+    m_renderItem.mWorld = m_mWorld;
 
     YunoEngine::GetRenderer()->Submit(m_renderItem);
 

@@ -38,6 +38,9 @@ protected:
     RenderItem      m_renderItem;
     MeshHandle      m_mesh;
     MaterialHandle  m_material;
+    TextureHandle   m_Albedo;
+    TextureHandle   m_Normal;
+    TextureHandle   m_Orm;
 
 public:
     explicit Unit();

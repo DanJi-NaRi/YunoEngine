@@ -17,7 +17,7 @@ int main()
     GameApp game;
     YunoEngine engine;
 
-
+    std::cout << "[CWD] " << std::filesystem::current_path().string() << "\n";
     if (!engine.Initialize(&game, L"YunoGame", 1280, 720)) 
     {
         int n;

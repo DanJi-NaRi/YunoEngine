@@ -5,6 +5,7 @@ class IGameApp;
 class IWindow;
 class IRenderer;
 class ITime;
+class ITextureManager;
 
 class YunoEngine
 {
@@ -18,14 +19,18 @@ public:
 
     bool IsRunning() const { return m_running; }
     static IRenderer* GetRenderer() { return s_renderer; }
+    static ITextureManager* GetTextureManager() { return s_textureManager; }
+
 
 private:
-    bool m_running = false;                  // 엔진 작동 여부
-    IGameApp* m_game = nullptr;              // 엔진으로 돌릴 게임
-    std::unique_ptr<IWindow>    m_window;    // 화면
-    std::unique_ptr<IRenderer>  m_renderer;  // 렌더러
-    std::unique_ptr<ITime>      m_timer;     // 타이머
-    double  m_fixedAccumulator = 0.0;        // FixedUpdate 누적 시간
+    bool m_running = false;                             // 엔진 작동 여부
+    IGameApp* m_game = nullptr;                         // 엔진으로 돌릴 게임
+    std::unique_ptr<IWindow>    m_window;               // 화면
+    std::unique_ptr<IRenderer>  m_renderer;             // 렌더러
+    std::unique_ptr<ITime>      m_timer;                // 타이머
+    std::unique_ptr<ITextureManager> m_textureManager;  // 텍스쳐 매니저
+    double  m_fixedAccumulator = 0.0;                   // FixedUpdate 누적 시간
 
     static IRenderer* s_renderer;
+    static ITextureManager* s_textureManager;
 };

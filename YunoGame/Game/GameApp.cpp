@@ -19,7 +19,7 @@ bool GameApp::OnInit()
     {
         std::cout << "[GameApp] Renderer not available.\n";
         return false;
-    } // ë Œë”ëŸ¬ ì²´í¬
+    } // ·»´õ·¯ Ã¼Å©
 
    m_quad = std::make_unique<Quad>();
    if (!m_quad->Create(DirectX::XMFLOAT3(0, 0, 0)))
@@ -38,6 +38,25 @@ void GameApp::OnUpdate(float dt)
 
     acc += dt;
     ++frameCount;
+
+    static float test = 0.0f;
+    test += dt;
+
+    if (test >= 4.0f) 
+    {
+        IRenderer* renderer = YunoEngine::GetRenderer();
+        int msaaVal = renderer->GetMSAASamples();
+        std::cout <<"before msaa Value = " << msaaVal;
+        if(msaaVal == 1)
+            renderer->SetMSAASamples(8);
+        else
+            renderer->SetMSAASamples(1);
+
+        msaaVal = renderer->GetMSAASamples();
+        std::cout << ", After msaa Value = " << msaaVal<<std::endl;
+
+        test = 0.0f;
+    }
 
     if (acc >= 1.0f)
     {
@@ -79,17 +98,11 @@ void GameApp::OnShutdown()
 }
 
 /*
-ê²Œì„ìª½ì—ì„œ ì •ì ë²„í¼,ì¸ë±ìŠ¤ ë²„í¼, í”Œë˜ê·¸ë¥¼ ë„˜ê¹€ 
-CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) ì´ í•¨ìˆ˜ ì‚¬ìš©
-ê·¸ë¦¬ê³ 
-ë¨¸í…Œë¦¬ì–¼í•¸ë“¤ì„ ë°›ê¸°ìœ„í•´ì„œ ë¨¸í…Œë¦¬ì–¼ ê´€ë ¨ ë°ì´í„°ë“¤ì„ ë„˜ê¸¸ê±°ì„ (PBR ë² ì´ìŠ¤) 
+°ÔÀÓÂÊ¿¡¼­ Á¤Á¡¹öÆÛ,ÀÎµ¦½º ¹öÆÛ, ÇÃ·¡±×¸¦ ³Ñ±è 
+CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) ÀÌ ÇÔ¼ö »ç¿ë
+±×¸®°í
+¸ÓÅ×¸®¾óÇÚµéÀ» ¹Ş±âÀ§ÇØ¼­ ¸ÓÅ×¸®¾ó °ü·Ã µ¥ÀÌÅÍµéÀ» ³Ñ±æ°ÅÀÓ (PBR º£ÀÌ½º) 
 
-
-// ìƒ˜í”ŒëŸ¬ ì„¸íŒ… ê·œì•½
-ìŠ¬ë¡¯ 0 = Custom
-ìŠ¬ë¡¯ 1 = Wrap, Anisotropic
-ìŠ¬ë¡¯ 2 = Clamp, Anisotropic
-ìŠ¬ë¡¯ 3 = Wrap, Anisotropic
 
 
 */

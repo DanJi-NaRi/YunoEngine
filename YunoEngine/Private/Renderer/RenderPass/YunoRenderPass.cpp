@@ -42,6 +42,8 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
         }
         rd.FrontCounterClockwise = FALSE;
         rd.DepthClipEnable = TRUE;
+        rd.MultisampleEnable = TRUE;
+        rd.AntialiasedLineEnable = FALSE;
 
         Microsoft::WRL::ComPtr<ID3D11RasterizerState> rs;
         const HRESULT hr = device->CreateRasterizerState(&rd, &rs);
@@ -77,7 +79,7 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
         m_dss = std::move(dss);
     }
 
-    // BlendState (ê¸°ë³¸: opaque)
+    // BlendState (±âº»: opaque)
     {
         D3D11_BLEND_DESC bd{};
         bd.AlphaToCoverageEnable = FALSE;
@@ -86,7 +88,7 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
 
         rtb.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-        // ê¸°ë³¸ê°’ ì„¤ì •
+        // ±âº»°ª ¼³Á¤
         rtb.BlendOp = D3D11_BLEND_OP_ADD;
         rtb.SrcBlend = D3D11_BLEND_ONE;
         rtb.DestBlend = D3D11_BLEND_ZERO;

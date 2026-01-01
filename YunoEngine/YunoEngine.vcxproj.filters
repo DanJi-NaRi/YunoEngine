@@ -55,6 +55,9 @@
     <Filter Include="Private\Renderer\Material">
       <UniqueIdentifier>{c3edce74-c1c2-435d-90c0-6ff90309a4cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Shader\Include">
+      <UniqueIdentifier>{ef94bfe5-6d1c-4714-8c18-b906c0ae3ae1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\YunoEngine.h">
@@ -138,6 +141,7 @@
     <ClInclude Include="Private\Renderer\Material\YunoMaterial.h">
       <Filter>Private\Renderer\Material</Filter>
     </ClInclude>
+    <ClInclude Include="Private\Resource\YunoTextureManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\YunoEngine.cpp">
@@ -170,10 +174,19 @@
     <ClCompile Include="Public\Object\Unit.cpp">
       <Filter>Public\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Resource\YunoTextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
       <Filter>Assets\Shader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\Shaders\ConstantBuffers.hlsli">
+      <Filter>Assets\Shader\Include</Filter>
+    </None>
+    <None Include="..\Assets\Shaders\TexturesSampler.hlsli">
+      <Filter>Assets\Shader\Include</Filter>
+    </None>
   </ItemGroup>
 </Project>
