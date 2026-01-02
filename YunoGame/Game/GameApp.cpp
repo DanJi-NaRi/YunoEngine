@@ -19,13 +19,13 @@ bool GameApp::OnInit()
     {
         std::cout << "[GameApp] Renderer not available.\n";
         return false;
-    } // ·»´õ·¯ Ã¼Å©
+    } // ë Œë”ëŸ¬ ì²´í¬
 
    m_quad = std::make_unique<Quad>();
    if (!m_quad->Create(DirectX::XMFLOAT3(0, 0, 0)))
        return false;
    m_triangle = std::make_unique<Triangle>();
-   if (!m_triangle->Create(DirectX::XMFLOAT3(0, 0, 0)))
+   if (!m_triangle->Create(DirectX::XMFLOAT3(0, 0, -5)))
        return false;
 
     return true;
@@ -70,13 +70,13 @@ void GameApp::OnUpdate(float dt)
     if (m_quad)
     {
         m_quad->Update(dt);
-        m_quad->Submit();
+        m_quad->Submit(dt);
     }
 
     if (m_triangle)
     {
         m_triangle->Update(dt);
-        m_triangle->Submit();
+        m_triangle->Submit(dt);
     }
     
 }
@@ -98,11 +98,12 @@ void GameApp::OnShutdown()
 }
 
 /*
-°ÔÀÓÂÊ¿¡¼­ Á¤Á¡¹öÆÛ,ÀÎµ¦½º ¹öÆÛ, ÇÃ·¡±×¸¦ ³Ñ±è 
-CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) ÀÌ ÇÔ¼ö »ç¿ë
-±×¸®°í
-¸ÓÅ×¸®¾óÇÚµéÀ» ¹Ş±âÀ§ÇØ¼­ ¸ÓÅ×¸®¾ó °ü·Ã µ¥ÀÌÅÍµéÀ» ³Ñ±æ°ÅÀÓ (PBR º£ÀÌ½º) 
+ë‚´ ë©”ëª¨ì¥ì„ - ì¤€í˜
+ê²Œì„ìª½ì—ì„œ ì •ì ë²„í¼,ì¸ë±ìŠ¤ ë²„í¼, í”Œë˜ê·¸ë¥¼ ë„˜ê¹€ 
+CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) ì´ í•¨ìˆ˜ ì‚¬ìš©
+ê·¸ë¦¬ê³ 
+ë¨¸í…Œë¦¬ì–¼í•¸ë“¤ì„ ë°›ê¸°ìœ„í•´ì„œ ë¨¸í…Œë¦¬ì–¼ ê´€ë ¨ ë°ì´í„°ë“¤ì„ ë„˜ê¸¸ê±°ì„ (PBR ë² ì´ìŠ¤) 
 
-
+ê°ë§ˆ ì»¬ë ‰ì…˜ ë„£ì–´ì•¼ ë¨
 
 */

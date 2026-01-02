@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "Triangle.h"
-#include "IMesh.h"
+
+
+
 
 VERTEX_Pos g_Triangle_pos[] = {
-    {  0.0f,  0.5f,  0.0f},
-    {  0.5f, -0.5f,  0.0f},
-    { -0.5f, -0.5f,  0.0f}
+    {  0.0f,  1.0f,  0.0f},
+    {  0.5f,  0.0f,  0.0f},
+    { -0.5f,  0.0f,  0.0f}
 };
 
 VERTEX_Nrm g_Triangle_nrm[] =
@@ -17,9 +19,9 @@ VERTEX_Nrm g_Triangle_nrm[] =
 
 VERTEX_UV g_Triangle_uv[] =
 {
-    {  0.0f,  1.0f},
-    {  0.0f,  1.0f},
-    {  0.0f,  1.0f}
+    {  0.5f,  0.0f}, // 상
+    {  0.0f,  1.0f}, // 좌
+    {  1.0f,  1.0f}  // 우
 };
 
 INDEX g_Triangle_idx[] =
@@ -74,6 +76,13 @@ bool Triangle::Update(float dTime)
     return true;
 }
 
+bool Triangle::Submit(float dTime)
+{
+    Unit::Submit(dTime);
+
+    return true;
+}
+
 bool Triangle::CreateMesh()
 {
     IRenderer* renderer = YunoEngine::GetRenderer();
@@ -82,15 +91,15 @@ bool Triangle::CreateMesh()
 
     VertexStreams streams{};
     streams.flags = VSF_Pos | VSF_Nrm | VSF_UV;
-    streams.vtx_count = 4;
+    streams.vtx_count = 3;
     streams.pos = g_Triangle_pos;
     streams.nrm = g_Triangle_nrm;
     streams.uv = g_Triangle_uv;
 
 
 
-    m_mesh = renderer->CreateMesh(streams, g_Triangle_idx, _countof(g_Triangle_idx));
-    if (m_mesh == 0)
+    m_defaultMesh = renderer->CreateMesh(streams, g_Triangle_idx, _countof(g_Triangle_idx));
+    if (m_defaultMesh == 0)
         return false;
 
     return true;
@@ -102,7 +111,35 @@ bool Triangle::CreateMaterial()
     if (!renderer)
         return false;
 
-    m_material = renderer->CreateMaterial_Default();
+    ITextureManager* texMan = YunoEngine::GetTextureManager();
+    if (!texMan)
+        return false;
+
+    m_Albedo = texMan->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
+
+    MaterialDesc md{};
+    md.passKey.vs = ShaderId::Basic;
+    md.passKey.ps = ShaderId::Basic;
+    md.passKey.vertexFlags = VSF_Pos | VSF_Nrm | VSF_UV;
+
+    md.passKey.blend = BlendPreset::AlphaBlend;
+    md.passKey.raster = RasterPreset::CullNone;
+    md.passKey.depth = DepthPreset::ReadWrite;
+
+    md.baseColor = { 1,1,1,1 };
+    md.roughness = 1.0f;
+    md.metallic = 0.0f;
+
+    md.albedo = m_Albedo;
+    md.normal = 0;
+    md.orm = 0;
+
+    // 첫번째 머테리얼 생성
+    m_defaultMaterial = renderer->CreateMaterial(md);
+    if (m_defaultMaterial == 0)
+        return false;
+
+    //m_defaultMaterial = renderer->CreateMaterial_Default();
 
     return true;
 }

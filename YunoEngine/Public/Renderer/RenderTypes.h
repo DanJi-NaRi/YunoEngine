@@ -87,6 +87,7 @@ enum class ShaderId : uint8_t
     Unlit,
     PBR,
     Skybox,
+    DebugGrid,
     Count
 };
 

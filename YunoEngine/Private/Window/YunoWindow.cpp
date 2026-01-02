@@ -110,6 +110,15 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         PostQuitMessage(0);
         return 0;
 
+    case WM_KEYDOWN:
+        switch (wParam)
+        {
+        case VK_ESCAPE:
+            SendMessage(hWnd, WM_DESTROY, 0, 0);
+            break;
+        }
+        return 0;
+
     case WM_SIZE:
         if (window)
         {

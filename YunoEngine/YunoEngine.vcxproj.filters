@@ -180,6 +180,9 @@
     <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
       <Filter>Assets\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\DebugGrid.hlsl">
+      <Filter>Assets\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\ConstantBuffers.hlsli">
