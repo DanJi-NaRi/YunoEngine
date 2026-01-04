@@ -8,10 +8,10 @@
 
 
 VERTEX_Pos g_Quad_pos[] = {
-    { -1.0f,  1.0f,  0.0f },    // ì¢Œìƒ
-    {  1.0f,  1.0f,  0.0f },    // ìš°ìƒ
-    { -1.0f, -1.0f,  0.0f },    // ì¢Œí•˜
-    {  1.0f, -1.0f,  0.0f }     // ìš°í•˜
+    { -1.0f,  1.0f,  0.0f },    // ÁÂ»ó
+    {  1.0f,  1.0f,  0.0f },    // ¿ì»ó
+    { -1.0f, -1.0f,  0.0f },    // ÁÂÇÏ
+    {  1.0f, -1.0f,  0.0f }     // ¿ìÇÏ
 };
 
 VERTEX_Nrm g_Quad_nrm[] =
@@ -33,9 +33,9 @@ VERTEX_UV g_Quad_uv[] =
 VERTEX_UV g_Terrain_uv[] =
 {
     {  0.0f,   0.0f },
-    { 20.0f,   0.0f },
-    {  0.0f,  20.0f},
-    { 20.0f,  20.0f}
+    { 24.0f,   0.0f },
+    {  0.0f,  24.0f},
+    { 24.0f,  24.0f}
 };
 
 INDEX g_Quad_idx[] =
@@ -71,11 +71,11 @@ bool Quad::Create(XMFLOAT3 vPos)
 
 bool Quad::Update(float dTime)
 {
-    //ê²Œì„ ë¡œì§ ì—…ë°ì´íŠ¸ ã„±ã„±
+    //°ÔÀÓ ·ÎÁ÷ ¾÷µ¥ÀÌÆ® ¤¡¤¡
     m_time += dTime;
 
-    m_vScale.x = 64;
-    m_vScale.y = 64;
+    m_vScale.x = 60;
+    m_vScale.y = 60;
 
     XMMATRIX mScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
     XMMATRIX mRotx = XMMatrixRotationX(XMConvertToRadians(90));
@@ -126,7 +126,7 @@ bool Quad::CreateMesh()
 
     VertexStreams streams{};
     streams.flags = VSF_Pos | VSF_Nrm | VSF_UV;
-    streams.vtx_count = 4;
+    streams.vtx_count = sizeof(g_Quad_pos)/sizeof(VERTEX_Pos);
     streams.pos = g_Quad_pos;
     streams.nrm = g_Quad_nrm;
     streams.uv = g_Terrain_uv;
@@ -135,7 +135,7 @@ bool Quad::CreateMesh()
 
     m_defaultMesh = renderer->CreateMesh(streams, g_Quad_idx, _countof(g_Quad_idx));
     if (m_defaultMesh == 0)
-        return false;
+        return false; 
 
     return true;
 }
@@ -169,14 +169,14 @@ bool Quad::CreateMaterial()
     md.normal = 0;
     md.orm = 0;
 
-    // ì²«ë²ˆì§¸ ë¨¸í…Œë¦¬ì–¼ ìƒì„±
+    // Ã¹¹øÂ° ¸ÓÅ×¸®¾ó »ı¼º
     m_defaultMaterial = renderer->CreateMaterial(md);
     if (m_defaultMaterial == 0)
         return false;
     
     m_Albedo = texMan->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
 
-    // ì¶”ê°€ ë¨¸í…Œë¦¬ì–¼ ìƒì„±
+    // Ãß°¡ ¸ÓÅ×¸®¾ó »ı¼º
     md.passKey.raster = RasterPreset::CullNone;
     md.albedo = m_Albedo;
 

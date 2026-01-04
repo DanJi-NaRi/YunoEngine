@@ -10,17 +10,26 @@ struct VSInput
 struct VSOutput
 {
     float4 pos : SV_POSITION;
+    float4 originPos : TEXCOORD0;
 };
+
 VSOutput VSMain(VSInput i)
 {
     VSOutput o;
     o.pos = mul(float4(i.pos, 1.0f), mWVP);
+    o.originPos = float4(i.pos, 1.0f);
     return o;
 }
 
 float4 PSMain(VSOutput input) : SV_Target
 {
-    // ì—”ì§„ ë¨¸í‹°ë¦¬ì–¼ì—ì„œ gBaseColor ì“°ê³  ì‹¶ìœ¼ë©´ ì•„ë˜ë¡œ êµì²´ ê°€ëŠ¥
-    // return gBaseColor;
-    return float4(1, 1, 1, 1); // ì¼ë‹¨ ë…¸ë‘ ê³ ì •
+    // zÃà ÆÄ¶õ»ö Ãâ·Â
+    if (input.originPos.z == 0.0f)
+        return float4(0, 0, 1, 1);
+    
+    // xÃà »¡°£»ö Ãâ·Â
+    if (input.originPos.x == 0.0f)
+        return float4(1, 0, 0, 1);
+
+    return float4(0.6, 0.6, 0.6, 1);
 }
