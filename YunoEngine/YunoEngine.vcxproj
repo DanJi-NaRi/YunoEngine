@@ -73,10 +73,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\Engine\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\Engine\</IntDir>
+    <LibraryPath>$(SolutionDir)ThirdParty\Assimp\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\Engine\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\Engine\</IntDir>
+    <LibraryPath>$(SolutionDir)ThirdParty\Assimp\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -122,13 +124,16 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)private\Parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\Assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -142,7 +147,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)private\Parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -151,9 +156,13 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\Assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h" />
+    <ClInclude Include="Private\Parser\Parser.h" />
     <ClInclude Include="Private\Renderer\Material\YunoMaterial.h" />
     <ClInclude Include="Private\Resource\YunoTextureManager.h" />
     <ClInclude Include="Public\Renderer\MaterialDesc.h" />
@@ -190,6 +199,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Private\Parser\Parser.cpp" />
     <ClCompile Include="Private\Renderer\Mesh\YunoMeshBuffer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
