@@ -368,3 +368,5 @@ private:
 
 
 };
+
+static std::wstring Utf8ToWString(const char* s);

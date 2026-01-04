@@ -10,5 +10,5 @@ public:
 
 private:
     void CreateNode(aiNode* node, const aiScene* scene);
-    MeshHandle CreateMesh(aiMesh* aiMesh, const aiScene* scene);
+    std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene);
 };

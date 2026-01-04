@@ -7,7 +7,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-
 #include "Parser.h"
 
 bool Parser::LoadFile(const std::string& filename)
@@ -35,7 +34,7 @@ void Parser::CreateNode(aiNode* node, const aiScene* scene)
     for (size_t i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
-        auto meshH = CreateMesh(aiMesh, scene);
+        auto mesh_matKey = CreateMesh(aiMesh, scene);
     }
 
     for (size_t i = 0; i < node->mNumChildren; i++)
@@ -44,7 +43,7 @@ void Parser::CreateNode(aiNode* node, const aiScene* scene)
     }
 }
 
-MeshHandle Parser::CreateMesh(aiMesh* aiMesh, const aiScene* scene)
+std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const aiScene* scene)
 {
     std::vector<VERTEX_Pos> vtxPos;
     std::vector<VERTEX_Nrm> vtxNrm;
@@ -125,5 +124,72 @@ MeshHandle Parser::CreateMesh(aiMesh* aiMesh, const aiScene* scene)
 
     const auto& renderer = YunoEngine::GetRenderer();
 
-    return renderer->CreateMesh(vs, indices.data(), aiMesh->mNumFaces);
+    auto meshHandle = renderer->CreateMesh(vs, indices.data(), aiMesh->mNumFaces);
+
+    aiMaterial* aiMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
+
+    MaterialDesc md;
+
+    if (aiMaterial)
+    {
+        aiString texPath;
+        aiReturn ret;
+        
+        //AlbedoMap
+        if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS)
+        {
+            auto wPath = Utf8ToWString(texPath.C_Str());
+            TextureHandle diff = renderer->CreateTexture2DFromFile(wPath.c_str());
+
+            md.albedo = diff;
+        }
+        //NormalMap
+        if (aiMaterial->GetTexture(aiTextureType_NORMALS, 0, &texPath) == AI_SUCCESS)
+        {
+            auto wPath = Utf8ToWString(texPath.C_Str());
+            TextureHandle nrm = renderer->CreateTexture2DFromFile(wPath.c_str());
+
+            md.normal = nrm;
+        }
+        //Metallic
+        if (aiMaterial->GetTexture(aiTextureType_METALNESS, 0, &texPath) == AI_SUCCESS)
+        {
+            auto wPath = Utf8ToWString(texPath.C_Str());
+            TextureHandle metal = renderer->CreateTexture2DFromFile(wPath.c_str());
+
+            md.metal = metal;
+        }
+        else
+        {
+            ret = aiMaterial->Get(AI_MATKEY_METALLIC_FACTOR, md.metallic);
+            if (ret == AI_FAILURE)
+                md.metallic = 0.0f;
+        }
+        //Roughness
+        if (aiMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &texPath) == AI_SUCCESS)
+        {
+            auto wPath = Utf8ToWString(texPath.C_Str());
+            TextureHandle rough = renderer->CreateTexture2DFromFile(wPath.c_str());
+
+            md.rough = rough;
+        }
+        else
+        {
+            ret = aiMaterial->Get(AI_MATKEY_ROUGHNESS_FACTOR, md.roughness);
+            if (ret == AI_FAILURE)
+                md.roughness = 0.5f;
+        }
+        //AO
+        if (aiMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &texPath) == AI_SUCCESS)
+        {
+            auto wPath = Utf8ToWString(texPath.C_Str());
+            TextureHandle ao = renderer->CreateTexture2DFromFile(wPath.c_str());
+
+            md.ao = ao;
+        }
+    }
+
+    auto materialHandle = renderer->CreateMaterial(md);
+
+    return std::make_pair(meshHandle, materialHandle);
 }
