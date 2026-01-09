@@ -4,18 +4,22 @@
 
 // 인터페이스
 #include "IGameApp.h"
-#include "IWindow.h"
-#include "IRenderer.h"
-#include "ITime.h"
+//#include "IWindow.h"
+//#include "IRenderer.h"
+//#include "ITime.h"
+#include <IInput.h>
 
 // 유노
 #include "YunoWindow.h"
 #include "YunoRenderer.h"
 #include "YunoTimer.h"
 #include "YunoTextureManager.h"
+#include "YunoInputSystem.h"
 
 IRenderer* YunoEngine::s_renderer = nullptr;
 ITextureManager* YunoEngine::s_textureManager = nullptr;
+IInput* YunoEngine::s_input = nullptr;
+IWindow* YunoEngine::s_window = nullptr;
 
 YunoEngine::YunoEngine() = default;
 YunoEngine::~YunoEngine()
@@ -34,6 +38,7 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     m_window = std::make_unique<YunoWindow>();          
     if (!m_window->Create(title, width, height))
         return false;
+    s_window = m_window.get();
 
     // 렌더러 생성
     m_renderer = std::make_unique<YunoRenderer>();      
@@ -41,8 +46,14 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
         return false;
     s_renderer = m_renderer.get();
 
+    // 인풋 시스템 생성
+    m_input = std::make_unique<YunoInputSystem>();
+    s_input = m_input.get();
+
     // 텍스쳐 매니저 생성
-    m_textureManager = std::make_unique<YunoTextureManager>(m_renderer.get());  
+    m_textureManager = std::make_unique<YunoTextureManager>(
+        static_cast<YunoRenderer*>(m_renderer.get())
+    );
     s_textureManager = m_textureManager.get();
 
     // 타이머 생성
@@ -107,6 +118,11 @@ int YunoEngine::Run()
         {
             m_fixedAccumulator = 0.0;
         }
+
+
+        m_input->BeginFrame();
+        m_input->Dispatch();
+
 
         const float dt = m_timer->DeltaSeconds();
         m_game->OnUpdate(dt);

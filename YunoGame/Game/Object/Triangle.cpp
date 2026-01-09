@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Triangle.h"
 
-
+#include <IInput.h>
+#include "YunoEngine.h"
 
 
 VERTEX_Pos g_Triangle_pos[] = {
@@ -56,6 +57,18 @@ bool Triangle::Create(XMFLOAT3 vPos)
 bool Triangle::Update(float dTime)
 {
     //게임 로직 업데이트 ㄱㄱ
+
+    IInput* input = YunoEngine::GetInput();
+    if (input)
+    {
+        const float speed = 5.0f;            
+        const float step = speed * dTime;
+
+        if (input->IsKeyDown('W')) m_vPos.z += step;
+        if (input->IsKeyDown('S')) m_vPos.z -= step;
+        if (input->IsKeyDown('A')) m_vPos.x -= step;
+        if (input->IsKeyDown('D')) m_vPos.x += step;
+    }
 
     m_vRot.y += dTime*3;
 

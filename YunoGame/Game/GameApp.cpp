@@ -1,12 +1,17 @@
 #include "pch.h"
 
 #include "RenderTypes.h"
+#include "IInput.h"
 #include "IRenderer.h"
+#include "IWindow.h"
 #include "YunoEngine.h"
+#include "TestInputContexts.h"
+
 
 #include "GameApp.h"
 
-
+static UITestContext s_uiCtx;
+static GameTestContext s_gameCtx;
 
 GameApp::~GameApp() = default;
 
@@ -19,7 +24,16 @@ bool GameApp::OnInit()
     {
         std::cout << "[GameApp] Renderer not available.\n";
         return false;
-    } // ·»´õ·¯ Ã¼Å©
+    } // ë Œë”ëŸ¬ ì²´í¬
+
+    //---------------- ì¸í’‹ í…ŒìŠ¤íŠ¸
+    IInput* input = YunoEngine::GetInput();
+    input->AddContext(&s_uiCtx);
+    input->AddContext(&s_gameCtx);
+    //---------------- ì¸í’‹ í…ŒìŠ¤íŠ¸
+
+
+
 
    m_quad = std::make_unique<Quad>();
    if (!m_quad->Create(DirectX::XMFLOAT3(0, 0, 0)))
@@ -40,7 +54,7 @@ void GameApp::OnUpdate(float dt)
     ++frameCount;
 
 
-    // MSAA º¯°æµÇ´ÂÁö Å×½ºÆ®
+    // MSAA ë³€ê²½ë˜ëŠ”ì§€ í…ŒìŠ¤íŠ¸
     //static float test = 0.0f;
     //test += dt;
     //
@@ -59,6 +73,15 @@ void GameApp::OnUpdate(float dt)
     //
     //    test = 0.0f;
     //}
+    IRenderer* renderer = YunoEngine::GetRenderer();
+    IInput* input = YunoEngine::GetInput();
+    IWindow* window = YunoEngine::GetWindow();
+
+    if (input->IsKeyDown('O'))
+        window->SetClientSize(1920, 1080);
+
+    if (input->IsKeyDown('P'))
+        window->SetClientSize(3440, 1440);
 
     if (acc >= 1.0f)
     {
@@ -100,12 +123,12 @@ void GameApp::OnShutdown()
 }
 
 /*
-³» ¸Ş¸ğÀåÀÓ - ÁØÇõ
-°ÔÀÓÂÊ¿¡¼­ Á¤Á¡¹öÆÛ,ÀÎµ¦½º ¹öÆÛ, ÇÃ·¡±×¸¦ ³Ñ±è 
-CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) ÀÌ ÇÔ¼ö »ç¿ë
-±×¸®°í
-¸ÓÅ×¸®¾óÇÚµéÀ» ¹Ş±âÀ§ÇØ¼­ ¸ÓÅ×¸®¾ó °ü·Ã µ¥ÀÌÅÍµéÀ» ³Ñ±æ°ÅÀÓ (PBR º£ÀÌ½º) 
+ë‚´ ë©”ëª¨ì¥ì„ - ì¤€í˜
+ê²Œì„ìª½ì—ì„œ ì •ì ë²„í¼,ì¸ë±ìŠ¤ ë²„í¼, í”Œë˜ê·¸ë¥¼ ë„˜ê¹€ 
+CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) ì´ í•¨ìˆ˜ ì‚¬ìš©
+ê·¸ë¦¬ê³ 
+ë¨¸í…Œë¦¬ì–¼í•¸ë“¤ì„ ë°›ê¸°ìœ„í•´ì„œ ë¨¸í…Œë¦¬ì–¼ ê´€ë ¨ ë°ì´í„°ë“¤ì„ ë„˜ê¸¸ê±°ì„ (PBR ë² ì´ìŠ¤) 
 
-°¨¸¶ ÄÃ·º¼Ç ³Ö¾î¾ß µÊ
+ê°ë§ˆ ì»¬ë ‰ì…˜ ë„£ì–´ì•¼ ë¨
 
 */

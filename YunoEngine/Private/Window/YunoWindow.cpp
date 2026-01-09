@@ -2,6 +2,9 @@
 
 //유노
 #include "YunoWindow.h"
+#include "YunoEngine.h"
+#include <IInput.h>
+#include <InputEvent.h>
 
 YunoWindow::YunoWindow() = default;
 YunoWindow::~YunoWindow() = default;
@@ -48,6 +51,21 @@ bool YunoWindow::Create(const wchar_t* title, uint32_t width, uint32_t height)
 
     OnResizeFromClientRect();
     return true;
+}
+
+void YunoWindow::SetClientSize(uint32_t width, uint32_t height)
+{
+    RECT rc{ 0, 0, (LONG)width, (LONG)height };
+    AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+
+    SetWindowPos(
+        m_hWnd,
+        nullptr,
+        0, 0,
+        rc.right - rc.left,
+        rc.bottom - rc.top,
+        SWP_NOMOVE | SWP_NOZORDER
+    );
 }
 
 void YunoWindow::PollEvents()
@@ -111,14 +129,96 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         return 0;
 
     case WM_KEYDOWN:
-        switch (wParam)
+    {
+
+        if (IInput* input = YunoEngine::GetInput())
         {
-        case VK_ESCAPE:
+            InputEvent evt{};
+            evt.type = InputEventType::KeyDown;
+            evt.key = static_cast<uint32_t>(wParam); // 키 코드(어떤 키인지)
+            input->PushEvent(evt);
+        }
+
+        if (wParam == VK_ESCAPE)
+        {
             SendMessage(hWnd, WM_DESTROY, 0, 0);
-            break;
+        }
+
+        return 0;
+    }
+    case WM_MOUSEMOVE:
+    {
+        if (IInput* input = YunoEngine::GetInput())
+        {
+            InputEvent evt{};
+            evt.type = InputEventType::MouseMove;
+            evt.x = static_cast<float>(GET_X_LPARAM(lParam));
+            evt.y = static_cast<float>(GET_Y_LPARAM(lParam));
+            input->PushEvent(evt);
         }
         return 0;
-
+    }
+    case WM_KEYUP:
+    {
+        if (IInput* input = YunoEngine::GetInput())
+        {
+            InputEvent evt{};
+            evt.type = InputEventType::KeyUp;
+            evt.key = static_cast<uint32_t>(wParam);
+            input->PushEvent(evt);
+        }
+        return 0;
+    }
+    case WM_LBUTTONDOWN:
+    case WM_LBUTTONUP:
+    {
+        if (IInput* input = YunoEngine::GetInput())
+        {
+            InputEvent evt{};
+            evt.type = (msg == WM_LBUTTONDOWN) ? InputEventType::MouseButtonDown
+                : InputEventType::MouseButtonUp;
+            evt.key = 0; // LMB
+            input->PushEvent(evt);
+        }
+        return 0;
+    }
+    case WM_RBUTTONDOWN:
+    case WM_RBUTTONUP:
+    {
+        if (IInput* input = YunoEngine::GetInput())
+        {
+            InputEvent evt{};
+            evt.type = (msg == WM_RBUTTONDOWN) ? InputEventType::MouseButtonDown
+                : InputEventType::MouseButtonUp;
+            evt.key = 1; // RMB
+            input->PushEvent(evt);
+        }
+        return 0;
+    }
+    case WM_MBUTTONDOWN:
+    case WM_MBUTTONUP:
+    {
+        if (IInput* input = YunoEngine::GetInput())
+        {
+            InputEvent evt{};
+            evt.type = (msg == WM_MBUTTONDOWN) ? InputEventType::MouseButtonDown
+                : InputEventType::MouseButtonUp;
+            evt.key = 2; // MMB
+            input->PushEvent(evt);
+        }
+        return 0;
+    }
+    case WM_MOUSEWHEEL:
+    {
+        if (IInput* input = YunoEngine::GetInput())
+        {
+            InputEvent evt{};
+            evt.type = InputEventType::MouseWheel;
+            evt.delta = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA;
+            input->PushEvent(evt);
+        }
+        return 0;
+    }
     case WM_SIZE:
         if (window)
         {

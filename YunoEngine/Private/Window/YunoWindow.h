@@ -11,6 +11,7 @@ public:
     ~YunoWindow() override;
 
     bool Create(const wchar_t* title, uint32_t width, uint32_t height) override;
+    void SetClientSize(uint32_t width, uint32_t height) override;
     void PollEvents() override;
     bool ShouldClose() const override { return m_shouldClose; }
 
