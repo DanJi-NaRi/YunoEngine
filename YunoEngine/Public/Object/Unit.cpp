@@ -20,9 +20,10 @@ Unit::Unit()
     m_Lv = 0;
     m_Exp = 0;
 
+    m_time = 0.0f;
 
-    m_mesh = 0;
-    m_material = 0;
+    m_defaultMesh = 0;
+    m_defaultMaterial = 0;
     m_Albedo = 0;
     m_Normal = 0;
     m_Orm = 0;
@@ -62,12 +63,20 @@ bool Unit::Update(float dTime)
     return true;
 }
 
-bool Unit::Submit()
+bool Unit::Submit(float dTime)
 {
-    m_renderItem.meshHandle = m_mesh;
-    m_renderItem.materialHandle = m_material;
+    m_renderItem.meshHandle = m_defaultMesh;
+    m_renderItem.materialHandle = m_defaultMaterial;
     m_renderItem.mWorld = m_mWorld;
 
+
+    LastSubmit(dTime);
+
+    return true;
+}
+
+bool Unit::LastSubmit(float dTime /*= 0*/)
+{
     YunoEngine::GetRenderer()->Submit(m_renderItem);
 
     return true;

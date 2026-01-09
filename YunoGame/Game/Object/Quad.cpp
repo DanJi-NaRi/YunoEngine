@@ -1,10 +1,8 @@
 #include "pch.h"
 #include "Quad.h"
 
-#include "YunoEngine.h"
-#include "RenderTypes.h"
-#include "IRenderer.h"
-#include "ITextureManager.h"
+
+
 
 
 
@@ -35,9 +33,9 @@ VERTEX_UV g_Quad_uv[] =
 VERTEX_UV g_Terrain_uv[] =
 {
     {  0.0f,   0.0f },
-    { 20.0f,   0.0f },
-    {  0.0f,  20.0f},
-    { 20.0f,  20.0f}
+    { 24.0f,   0.0f },
+    {  0.0f,  24.0f},
+    { 24.0f,  24.0f}
 };
 
 INDEX g_Quad_idx[] =
@@ -74,11 +72,10 @@ bool Quad::Create(XMFLOAT3 vPos)
 bool Quad::Update(float dTime)
 {
     //게임 로직 업데이트 ㄱㄱ
+    m_time += dTime;
 
-    //m_vRot.y += dTime*3;
-
-    m_vScale.x = 64;
-    m_vScale.y = 64;
+    m_vScale.x = 60;
+    m_vScale.y = 60;
 
     XMMATRIX mScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
     XMMATRIX mRotx = XMMatrixRotationX(XMConvertToRadians(90));
@@ -98,6 +95,29 @@ bool Quad::Update(float dTime)
     return true;
 }
 
+bool Quad::Submit(float dTime)
+{
+    static bool test = true;
+    if (m_time >= 1.0f)
+    {
+        test = !test;
+        m_time -= 1.0f;
+    }
+    Unit::Submit(dTime);
+    //if (test) 
+    //{
+    //    Unit::Submit(dTime);
+    //}
+    //else 
+    //{
+    //    m_renderItem.materialHandle = m_addMaterial;
+    //
+    //    LastSubmit(dTime);
+    //}
+
+    return true;
+}
+
 bool Quad::CreateMesh()
 {
     IRenderer* renderer = YunoEngine::GetRenderer();
@@ -106,16 +126,16 @@ bool Quad::CreateMesh()
 
     VertexStreams streams{};
     streams.flags = VSF_Pos | VSF_Nrm | VSF_UV;
-    streams.vtx_count = 4;
+    streams.vtx_count = sizeof(g_Quad_pos)/sizeof(VERTEX_Pos);
     streams.pos = g_Quad_pos;
     streams.nrm = g_Quad_nrm;
     streams.uv = g_Terrain_uv;
 
 
 
-    m_mesh = renderer->CreateMesh(streams, g_Quad_idx, _countof(g_Quad_idx));
-    if (m_mesh == 0)
-        return false;
+    m_defaultMesh = renderer->CreateMesh(streams, g_Quad_idx, _countof(g_Quad_idx));
+    if (m_defaultMesh == 0)
+        return false; 
 
     return true;
 }
@@ -138,7 +158,7 @@ bool Quad::CreateMaterial()
     md.passKey.vertexFlags = VSF_Pos | VSF_Nrm | VSF_UV;
 
     md.passKey.blend = BlendPreset::AlphaBlend;
-    md.passKey.raster = RasterPreset::WireCullNone;
+    md.passKey.raster = RasterPreset::CullNone;
     md.passKey.depth = DepthPreset::ReadWrite;
 
     md.baseColor = { 1,1,1,1 };
@@ -149,8 +169,19 @@ bool Quad::CreateMaterial()
     md.normal = 0;
     md.orm = 0;
 
-    m_material = renderer->CreateMaterial(md);
-    if (m_material == 0)
+    // 첫번째 머테리얼 생성
+    m_defaultMaterial = renderer->CreateMaterial(md);
+    if (m_defaultMaterial == 0)
+        return false;
+    
+    m_Albedo = texMan->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
+
+    // 추가 머테리얼 생성
+    md.passKey.raster = RasterPreset::CullNone;
+    md.albedo = m_Albedo;
+
+    m_addMaterial = renderer->CreateMaterial(md);
+    if (m_addMaterial == 0)
         return false;
 
     return true;
