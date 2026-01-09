@@ -7,7 +7,8 @@
 //#include "IWindow.h"
 //#include "IRenderer.h"
 //#include "ITime.h"
-#include <IInput.h>
+//#include "IInput.h"
+//#include "ISceneManager.h"
 
 // 유노
 #include "YunoWindow.h"
@@ -15,11 +16,13 @@
 #include "YunoTimer.h"
 #include "YunoTextureManager.h"
 #include "YunoInputSystem.h"
+#include "YunoSceneManager.h"
 
 IRenderer* YunoEngine::s_renderer = nullptr;
 ITextureManager* YunoEngine::s_textureManager = nullptr;
 IInput* YunoEngine::s_input = nullptr;
 IWindow* YunoEngine::s_window = nullptr;
+ISceneManager* YunoEngine::s_sceneManager = nullptr;
 
 YunoEngine::YunoEngine() = default;
 YunoEngine::~YunoEngine()
@@ -45,6 +48,10 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     if (!m_renderer->Initialize(m_window.get()))
         return false;
     s_renderer = m_renderer.get();
+
+    // 씬 매니저 생성
+    m_sceneManager = std::make_unique<YunoSceneManager>();
+    s_sceneManager = m_sceneManager.get();
 
     // 인풋 시스템 생성
     m_input = std::make_unique<YunoInputSystem>();
@@ -127,10 +134,16 @@ int YunoEngine::Run()
         const float dt = m_timer->DeltaSeconds();
         m_game->OnUpdate(dt);
 
+        // 씬 업데이트 (씬 전환 ApplyPending 포함)
+        if (m_sceneManager)
+            m_sceneManager->Update(dt);
 
         // ---------------------------------드로우 시작 -----------------------------------------
 
         m_renderer->BeginFrame();
+
+        if (m_sceneManager)
+            m_sceneManager->Submit(m_renderer.get());
 
         m_renderer->Flush();
 
@@ -143,29 +156,35 @@ int YunoEngine::Run()
 
 void YunoEngine::Shutdown()
 {
-    // 1) 게임 종료 콜백 (게임이 렌더 리소스를 들고 있을 수도 있음)
+    // 종료 순서
+    // 1. 게임
     if (m_game)
     {
         m_game->OnShutdown();
         m_game = nullptr;
     }
+    // 2. 씬매니저
+    s_sceneManager = nullptr;
+    m_sceneManager.reset();
 
-    // 2) 렌더러 먼저 종료 (D3D 리소스 Release, 디버그 리포트도 여기서)
-    if (m_renderer)
-    {
-        m_renderer->Shutdown();
-        m_renderer.reset();
-    }
-
+    // 3. 텍스쳐 매니저
     s_textureManager = nullptr;
     m_textureManager.reset();
 
-    s_renderer = nullptr;
-    m_renderer.reset();
+    // 4. 렌더러
+    if (m_renderer)
+    {
+        m_renderer->Shutdown();
+        s_renderer = nullptr;
+        m_renderer.reset();
+    }
 
-    // 3) 그 다음 윈도우 종료
-    m_window.reset();
+    // 5. 타이머 
     m_timer.reset();
+
+    // 6. 윈도우
+    s_window = nullptr;
+    m_window.reset();
 
     m_running = false;
 }

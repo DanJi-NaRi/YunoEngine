@@ -6,7 +6,8 @@
 #include "IWindow.h"
 #include "YunoEngine.h"
 #include "TestInputContexts.h"
-
+#include "MainScene.h"
+#include "ISceneManager.h"
 
 #include "GameApp.h"
 
@@ -41,6 +42,11 @@ bool GameApp::OnInit()
    m_triangle = std::make_unique<Triangle>();
    if (!m_triangle->Create(DirectX::XMFLOAT3(0, 0, -5)))
        return false;
+
+   if (auto* SceneManager = YunoEngine::GetSceneManager())
+   {
+       SceneManager->RequestSetActive(std::make_unique<MainScene>());
+   }
 
     return true;
 }
@@ -77,7 +83,7 @@ void GameApp::OnUpdate(float dt)
     IInput* input = YunoEngine::GetInput();
     IWindow* window = YunoEngine::GetWindow();
 
-    if (input->IsKeyDown('O'))
+    if (input->IsKeyDown('O')) // >> 이거 인스턴스 호출해서 키다운하는거 불편하니까 나중에 바꾸기 ㄱㄱ
         window->SetClientSize(1920, 1080);
 
     if (input->IsKeyDown('P'))
@@ -130,5 +136,9 @@ CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t index
 머테리얼핸들을 받기위해서 머테리얼 관련 데이터들을 넘길거임 (PBR 베이스) 
 
 감마 컬렉션 넣어야 됨
+상수버퍼 관리 넣어야 됨
+오브젝트 매니저 넣어야됨 (현승)
+FSM은 뭐 나중에 게임 나오고 만들기 ㄱㄱ
+오브젝트 매니저 씬매니저 얼른 만들고 임구이 ㄱㄱ
 
 */

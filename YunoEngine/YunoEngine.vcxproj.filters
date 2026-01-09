@@ -67,6 +67,9 @@
     <Filter Include="Private\Input">
       <UniqueIdentifier>{28d7ec52-21cf-4305-850b-668fe8855625}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Scene">
+      <UniqueIdentifier>{0170ffaa-52a9-4ad9-a9ea-a5490f1015d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\YunoEngine.h">
@@ -159,8 +162,18 @@
     <ClInclude Include="Private\Resource\YunoTextureManager.h">
       <Filter>Private\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Input\InputState.h" />
-    <ClInclude Include="Private\Input\YunoInputSystem.h" />
+    <ClInclude Include="Private\Input\InputState.h">
+      <Filter>Private\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Input\YunoInputSystem.h">
+      <Filter>Private\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Scene\YunoSceneManager.h">
+      <Filter>Private\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IScene.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\YunoEngine.cpp">
@@ -196,7 +209,12 @@
     <ClCompile Include="Private\Resource\YunoTextureManager.cpp">
       <Filter>Private\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Input\YunoInputSystem.cpp" />
+    <ClCompile Include="Private\Input\YunoInputSystem.cpp">
+      <Filter>Private\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Scene\YunoSceneManager.cpp">
+      <Filter>Private\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">

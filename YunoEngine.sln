@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "YunoGame", "YunoGame\YunoGame.vcxproj", "{6F20F6E3-AB1D-4D58-B117-1AA018D32777}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "YunoEngine", "YunoEngine\YunoEngine.vcxproj", "{CEB210F1-5107-40E0-A0CC-207C920418B6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "YunoGame", "YunoGame\YunoGame.vcxproj", "{6F20F6E3-AB1D-4D58-B117-1AA018D32777}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,14 +15,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Debug|x64.ActiveCfg = Debug|x64
-		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Debug|x64.Build.0 = Debug|x64
-		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Debug|x86.ActiveCfg = Debug|Win32
-		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Debug|x86.Build.0 = Debug|Win32
-		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Release|x64.ActiveCfg = Release|x64
-		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Release|x64.Build.0 = Release|x64
-		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Release|x86.ActiveCfg = Release|Win32
-		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Release|x86.Build.0 = Release|Win32
 		{CEB210F1-5107-40E0-A0CC-207C920418B6}.Debug|x64.ActiveCfg = Debug|x64
 		{CEB210F1-5107-40E0-A0CC-207C920418B6}.Debug|x64.Build.0 = Debug|x64
 		{CEB210F1-5107-40E0-A0CC-207C920418B6}.Debug|x86.ActiveCfg = Debug|Win32
@@ -31,6 +23,14 @@ Global
 		{CEB210F1-5107-40E0-A0CC-207C920418B6}.Release|x64.Build.0 = Release|x64
 		{CEB210F1-5107-40E0-A0CC-207C920418B6}.Release|x86.ActiveCfg = Release|Win32
 		{CEB210F1-5107-40E0-A0CC-207C920418B6}.Release|x86.Build.0 = Release|Win32
+		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Debug|x64.ActiveCfg = Debug|x64
+		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Debug|x64.Build.0 = Debug|x64
+		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Debug|x86.ActiveCfg = Debug|Win32
+		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Debug|x86.Build.0 = Debug|Win32
+		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Release|x64.ActiveCfg = Release|x64
+		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Release|x64.Build.0 = Release|x64
+		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Release|x86.ActiveCfg = Release|Win32
+		{6F20F6E3-AB1D-4D58-B117-1AA018D32777}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

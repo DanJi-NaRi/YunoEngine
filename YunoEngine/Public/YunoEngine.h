@@ -9,6 +9,8 @@ class ITextureManager;
 class IWindow;
 class IInput;
 class YunoInputSystem;
+class ISceneManager;
+
 
 class YunoEngine
 {
@@ -26,6 +28,7 @@ public:
     static ITextureManager* GetTextureManager() { return s_textureManager; }
     static IInput* GetInput() { return s_input; }
     static IWindow* GetWindow() { return s_window; }
+    static ISceneManager* GetSceneManager() { return s_sceneManager; }
 
 
 private:
@@ -36,10 +39,12 @@ private:
     std::unique_ptr<ITime>      m_timer;                // 타이머
     std::unique_ptr<ITextureManager> m_textureManager;  // 텍스쳐 매니저
     std::unique_ptr<YunoInputSystem> m_input;           // 인풋 시스템
+    std::unique_ptr<ISceneManager> m_sceneManager;      // 씬 매니저
     double  m_fixedAccumulator = 0.0;                   // FixedUpdate 누적 시간
 
     static IRenderer* s_renderer;
     static ITextureManager* s_textureManager;
     static IInput* s_input;
     static IWindow* s_window;
+    static ISceneManager* s_sceneManager;
 };
