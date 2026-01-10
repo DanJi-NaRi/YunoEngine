@@ -13,6 +13,8 @@
 class Unit 
 {
 protected:
+    UINT m_id;
+    std::string m_name;
 
     XMFLOAT3	m_vPos;
     XMFLOAT3	m_vRot;
@@ -21,8 +23,6 @@ protected:
 
     XMFLOAT4X4	m_mWorld;
     XMFLOAT4X4	m_mScale, m_mRot, m_mTrans;
-
-
 
     XMFLOAT3	m_vPosBk;
     XMFLOAT3	m_vRotBk;
@@ -34,7 +34,6 @@ protected:
     int			m_Lv;
     int			m_Exp;
 
-
     RenderItem      m_renderItem;
     MeshHandle      m_mesh;
     MaterialHandle  m_material;
@@ -42,12 +41,17 @@ protected:
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
 
+    Unit* m_Parent;
+    std::vector<Unit*> m_Childs;
+
 public:
     explicit Unit();
 
     virtual ~Unit();
+    //Create는 오브젝트 매니저만 쓰기
+    virtual bool  Create(XMFLOAT3 vPos);//일단 호환용으로 냅두고 나중에 무조건 이름 필요한걸로 바꾸는게 나을듯
+    virtual bool  Create(std::string& name, UINT id, XMFLOAT3 vPos);
 
-    virtual bool  Create(XMFLOAT3 vPos);
     virtual bool  Update(float dTime = 0);
     virtual bool  Submit();
 
@@ -55,4 +59,9 @@ public:
 
     virtual bool CreateMesh() = 0;
     virtual bool CreateMaterial() = 0;
+
+    UINT GetID() { return m_id; }
+    const std::string& GetName() { return m_name; }
+
+    XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
 };

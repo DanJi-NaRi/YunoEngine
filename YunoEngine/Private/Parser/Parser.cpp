@@ -9,6 +9,21 @@
 
 #include "Parser.h"
 
+std::wstring Utf8ToWString(const char* s)
+{
+    if (!s) return {};
+    const int len = static_cast<int>(std::strlen(s));
+    if (len == 0) return {};
+
+    const int wlen = MultiByteToWideChar(CP_UTF8, 0, s, len, nullptr, 0);
+    if (wlen <= 0) return {};
+
+    std::wstring w;
+    w.resize(wlen);
+    MultiByteToWideChar(CP_UTF8, 0, s, len, w.data(), wlen);
+    return w;
+}
+
 bool Parser::LoadFile(const std::string& filename)
 {
     Assimp::Importer importer;

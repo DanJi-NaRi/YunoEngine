@@ -43,6 +43,16 @@ bool Unit::Create(XMFLOAT3 vPos)
     return true;
 }
 
+bool Unit::Create(std::string& name, UINT id, XMFLOAT3 vPos)
+{
+    m_id = id;
+    m_name = name;
+
+    Create(vPos);
+
+    return true;
+}
+
 bool Unit::Update(float dTime)
 {
 
