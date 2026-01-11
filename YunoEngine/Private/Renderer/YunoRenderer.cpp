@@ -2,7 +2,7 @@
 
 #include "YunoRenderer.h"
 
-// ¼ÎÀÌ´õ
+// ì…°ì´ë”
 #include "YunoRenderPass.h"
 //#include "YunoMeshBuffer.h"
 #include "YunoShaderCompiler.h"
@@ -10,7 +10,7 @@
 
 
 
-// ÀÎÅÍÆäÀÌ½º
+// ì¸í„°í˜ì´ìŠ¤
 #include "IWindow.h"
 
 using Microsoft::WRL::ComPtr;
@@ -21,7 +21,7 @@ YunoRenderer::~YunoRenderer() = default;
 
 
 // assert(Has(VSF_Pos) && streams.pos != nullptr && streams.vtx_count != 0);
-// ¾î½äÆ® ³ªÁß¿¡ ½Ï ¹Ù²Ù±â ¤¡¤¡ ÇÊ¼öÀÓ °³ÁÁÀ½!!
+// ì–´ì°íŠ¸ ë‚˜ì¤‘ì— ì‹¹ ë°”ê¾¸ê¸° ã„±ã„± í•„ìˆ˜ì„ ê°œì¢‹ìŒ!!
 
 bool YunoRenderer::Initialize(IWindow* window)
 {
@@ -35,10 +35,10 @@ bool YunoRenderer::Initialize(IWindow* window)
     m_width = window->GetClientWidth();
     m_height = window->GetClientHeight();
 
-    if (!CreateDeviceAndSwapChain(hwnd, m_width, m_height))     // ½º¿ÒÃ¼ÀÎ »ı¼º
+    if (!CreateDeviceAndSwapChain(hwnd, m_width, m_height))     // ìŠ¤ì™‘ì²´ì¸ ìƒì„±
         return false;
 
-    CheckMSAA();                                            // MSAA °¡´É Ã¼Å©
+    CheckMSAA();                                            // MSAA ê°€ëŠ¥ ì²´í¬
 
     if (!SetMSAASamples(m_msaaSamples))
         return false;
@@ -55,7 +55,7 @@ bool YunoRenderer::Initialize(IWindow* window)
     if (!CreateMSAADepthStencil(m_width, m_height))         // MSAA DS
         return false;
 
-    // »ó¼ö ¹öÆÛ »ı¼º
+    // ìƒìˆ˜ ë²„í¼ ìƒì„±
     if (!m_cbDefault.Create(m_device.Get())) return false;
     if (!m_cbMaterial.Create(m_device.Get())) return false;
 
@@ -63,21 +63,23 @@ bool YunoRenderer::Initialize(IWindow* window)
     m_aspect = (m_height == 0) ? 1.0f : (float)m_width / (float)m_height;
     m_camera.aspect = m_aspect;
 
-    // µğÆúÆ® ÅØ½ºÃÄ, »ùÇÃ·¯ »ı¼º
+    // ë””í´íŠ¸ í…ìŠ¤ì³, ìƒ˜í”ŒëŸ¬ ìƒì„±
     if (!CreateDefaultTextures()) return false;
     if (!CreateSamplerPresets()) return false;
 
-    // ½¦ÀÌ´õµé ÃÊ±âÈ­
+    // ì‰ì´ë”ë“¤ ì´ˆê¸°í™”
     if (!CreateShaders()) return false;
 
-    // µğÆúÆ® ÆÄÀÌÇÁ¶óÀÎ »ı¼º
+    // ë””í´íŠ¸ íŒŒì´í”„ë¼ì¸ ìƒì„±
     if (!CreateBasicPipeline()) return false;
 
     if (m_defaultMaterial == 0)
         m_defaultMaterial = CreateMaterial_Default();
-    if (m_defaultMaterial == 0)     // »ı¼º ½ÇÆĞÇÏ¸é ¸®ÅÏ
+    if (m_defaultMaterial == 0)     // ìƒì„± ì‹¤íŒ¨í•˜ë©´ ë¦¬í„´
         return false;
 
+    // ë””ë²„ê·¸ ë¦¬ì†ŒìŠ¤ ìƒì„±
+    CreateDebugGridResources();
 
 
     return true;
@@ -85,9 +87,10 @@ bool YunoRenderer::Initialize(IWindow* window)
 
 bool YunoRenderer::CreateShaders()
 {
-    // ¿©±â¼­ ½¦ÀÌ´õµé ÃÊ±âÈ­ Âß ÇÏ¸é µÊ
+    // ì—¬ê¸°ì„œ ì‰ì´ë”ë“¤ ì´ˆê¸°í™” ì­‰ í•˜ë©´ ë¨
     if (!LoadShader(ShaderId::Basic, "../Assets/Shaders/BasicColor.hlsl", "VSMain", "PSMain")) return false;
-
+    if (!LoadShader(ShaderId::DebugGrid, "../Assets/Shaders/DebugGrid.hlsl", "VSMain", "PSMain")) return false;
+    
     return true;
 }
 
@@ -155,7 +158,7 @@ bool YunoRenderer::CreateDeviceAndSwapChain(HWND hwnd, uint32_t width, uint32_t 
     HRESULT hr = create(flags);
 
 #if defined(_DEBUG)
-    // µğ¹ö±× ·¹ÀÌ¾î°¡ ¼³Ä¡µÇ¾î ÀÖÁö ¾ÊÀ¸¸é ½ÇÆĞÇÒ ¼ö ÀÖÀ¸´Ï ÇÃ·¡±× Á¦°Å ÈÄ Àç½Ãµµ
+    // ë””ë²„ê·¸ ë ˆì´ì–´ê°€ ì„¤ì¹˜ë˜ì–´ ìˆì§€ ì•Šìœ¼ë©´ ì‹¤íŒ¨í•  ìˆ˜ ìˆìœ¼ë‹ˆ í”Œë˜ê·¸ ì œê±° í›„ ì¬ì‹œë„
     if (FAILED(hr) && (flags & D3D11_CREATE_DEVICE_DEBUG))
     {
         flags &= ~D3D11_CREATE_DEVICE_DEBUG;
@@ -167,14 +170,14 @@ bool YunoRenderer::CreateDeviceAndSwapChain(HWND hwnd, uint32_t width, uint32_t 
         return false;
 
 #if defined(_DEBUG)
-    // InfoQueue: ½É°¢ÇÑ D3D ¿¡·¯°¡ ¶ß´Â ¼ø°£ µğ¹ö°Å°¡ ¸ØÃß°Ô ÇÔ
+    // InfoQueue: ì‹¬ê°í•œ D3D ì—ëŸ¬ê°€ ëœ¨ëŠ” ìˆœê°„ ë””ë²„ê±°ê°€ ë©ˆì¶”ê²Œ í•¨
     Microsoft::WRL::ComPtr<ID3D11InfoQueue> infoQueue;
     if (m_device && SUCCEEDED(m_device.As(&infoQueue)))
     {
         infoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, TRUE);
         infoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, TRUE);
 
-        // Ã³À½¿£ ²ô´Â °É ÃßÃµ (°æ°í´Â ³Ê¹« ¸¹ÀÌ °É¸± ¼ö ÀÖÀ½)
+        // ì²˜ìŒì—” ë„ëŠ” ê±¸ ì¶”ì²œ (ê²½ê³ ëŠ” ë„ˆë¬´ ë§ì´ ê±¸ë¦´ ìˆ˜ ìˆìŒ)
         //infoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_WARNING, TRUE);
     }
 #endif
@@ -199,7 +202,7 @@ bool YunoRenderer::CreateRenderTarget()
 
 bool YunoRenderer::CreateDepthStencil(uint32_t width, uint32_t height)
 {
-    // ±âÁ¸ ¸®¼Ò½º ÇØÁ¦ (Resize ´ëºñ)
+    // ê¸°ì¡´ ë¦¬ì†ŒìŠ¤ í•´ì œ (Resize ëŒ€ë¹„)
     m_dsv.Reset();
     m_depthStencilTex.Reset();
 
@@ -212,7 +215,7 @@ bool YunoRenderer::CreateDepthStencil(uint32_t width, uint32_t height)
     desc.MipLevels = 1;
     desc.ArraySize = 1;
 
-    // °¡Àå ¹«³­ÇÑ ±íÀÌ Æ÷¸Ë (Depth 24 + Stencil 8)
+    // ê°€ì¥ ë¬´ë‚œí•œ ê¹Šì´ í¬ë§· (Depth 24 + Stencil 8)
     desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
     desc.SampleDesc.Count = 1;
@@ -242,7 +245,7 @@ bool YunoRenderer::CreateMSAARenderTarget(uint32_t width, uint32_t height)
     m_msaaRT = {};
 
     if (m_msaaSamples <= 1)
-        return true; // MSAA off¸é ¸¸µé ÇÊ¿ä ¾øÀ½
+        return true; // MSAA offë©´ ë§Œë“¤ í•„ìš” ì—†ìŒ
 
     D3D11_TEXTURE2D_DESC td{};
     td.Width = width;
@@ -272,8 +275,8 @@ bool YunoRenderer::CreateMSAARenderTarget(uint32_t width, uint32_t height)
     m_msaaRT.h = height;
     m_msaaRT.fmt = td.Format;
 
-    // MSAA ÅØ½ºÃ³´Â º¸Åë SRV°¡ ÇÊ¿ä ¾ø´Ù(Resolve ÈÄ ¹é¹öÆÛ·Î)
-    // ÇÊ¿äÇØÁö¸é º°µµÀÇ non-MSAA ÅØ½ºÃ³·Î ResolveÇØ¼­ SRV ¸¸µå´Â ±¸Á¶·Î È®Àå.
+    // MSAA í…ìŠ¤ì²˜ëŠ” ë³´í†µ SRVê°€ í•„ìš” ì—†ë‹¤(Resolve í›„ ë°±ë²„í¼ë¡œ)
+    // í•„ìš”í•´ì§€ë©´ ë³„ë„ì˜ non-MSAA í…ìŠ¤ì²˜ë¡œ Resolveí•´ì„œ SRV ë§Œë“œëŠ” êµ¬ì¡°ë¡œ í™•ì¥.
     return true;
 }
 
@@ -337,10 +340,10 @@ bool YunoRenderer::CheckMSAA()
             const UINT qCommon = (qColor < qDepth) ? qColor : qDepth;
             m_msaaQuality = qCommon - 1;
 
-            std::cout << "[MSAA] Samples=" << m_msaaSamples
-                << " Quality(Color)=" << (qColor - 1)
-                << " Quality(Depth)=" << (qDepth - 1)
-                << " Using=" << m_msaaQuality << "\n";
+            //std::cout << "[MSAA] Samples=" << m_msaaSamples
+            //    << " Quality(Color)=" << (qColor - 1)
+            //    << " Quality(Depth)=" << (qDepth - 1)
+            //    << " Using=" << m_msaaQuality << "\n";
         }
     }
     else
@@ -372,27 +375,27 @@ void YunoRenderer::ClearDepthStencil()
 
 void YunoRenderer::BeginFrame()
 {
-    // RT ,DS ¼Â
-    if (m_msaaSamples > 1 && m_msaaRT.rtv && m_msaaDSV)     // MSAA »ç¿ë
+    // RT ,DS ì…‹
+    if (m_msaaSamples > 1 && m_msaaRT.rtv && m_msaaDSV)     // MSAA ì‚¬ìš©
     {
         m_context->OMSetRenderTargets(1, m_msaaRT.rtv.GetAddressOf(), m_msaaDSV.Get());
     }
-    else                                                    // MSAA ¹Ì»ç¿ë
+    else                                                    // MSAA ë¯¸ì‚¬ìš©
     {
         m_context->OMSetRenderTargets(1, m_backBufferRT.rtv.GetAddressOf(), m_dsv.Get());
     }        
 
-    SetViewPort();                                                                           // ºäÆ÷Æ® ¼³Á¤
+    SetViewPort();                                                                           // ë·°í¬íŠ¸ ì„¤ì •
 
-    const float clearColor[4] = { 0.05f, 0.1f, 0.2f, 1.0f };                                 // ¾îµÎ¿î ÆÄ¶û
+    const float clearColor[4] = { 0.05f, 0.1f, 0.2f, 1.0f };                                 // ì–´ë‘ìš´ íŒŒë‘
 
-    // È­¸é Å¬¸®¾î
-    if (m_msaaSamples > 1 && m_msaaRT.rtv)                  // MSAA »ç¿ë
+    // í™”ë©´ í´ë¦¬ì–´
+    if (m_msaaSamples > 1 && m_msaaRT.rtv)                  // MSAA ì‚¬ìš©
         m_context->ClearRenderTargetView(m_msaaRT.rtv.Get(), clearColor);
-    else                                                    // MSAA ¹Ì»ç¿ë
+    else                                                    // MSAA ë¯¸ì‚¬ìš©
         m_context->ClearRenderTargetView(m_backBufferRT.rtv.Get(), clearColor);   
 
-    // µª½º/½ºÅÙ½Ç Å¬¸®¾î
+    // ëìŠ¤/ìŠ¤í…ì‹¤ í´ë¦¬ì–´
     ClearDepthStencil();                                                                     
 
 }
@@ -407,7 +410,7 @@ void YunoRenderer::EndFrame()
             DXGI_FORMAT_R8G8B8A8_UNORM);
     }
 
-    // VSync°¡ ¹ºÁö´Â ´Ùµé ¾ËÁÒ? >> È­¸é ÁÖ»çÀ²ÀÌ¶û °ÔÀÓ ÇÁ·¹ÀÓÀÌ¶û µ¿±âÈ­ ½ÃÅ°´Â °Ì´Ï´Ù
+    // VSyncê°€ ë­”ì§€ëŠ” ë‹¤ë“¤ ì•Œì£ ? >> í™”ë©´ ì£¼ì‚¬ìœ¨ì´ë‘ ê²Œì„ í”„ë ˆì„ì´ë‘ ë™ê¸°í™” ì‹œí‚¤ëŠ” ê²ë‹ˆë‹¤
     // VSync ON
     //m_swapChain->Present(1, 0);
     
@@ -415,7 +418,7 @@ void YunoRenderer::EndFrame()
     m_swapChain->Present(0, 0);
 }
 
-void YunoRenderer::Resize(uint32_t width, uint32_t height)          //±âÁ¸ RT, DS ¾ø¾Ö°í Àç»ı¼º ¹× ½º¿ÒÃ¼ÀÎ ¹öÆÛ Å©±â ¸®»çÀÌÁî
+void YunoRenderer::Resize(uint32_t width, uint32_t height)          //ê¸°ì¡´ RT, DS ì—†ì• ê³  ì¬ìƒì„± ë° ìŠ¤ì™‘ì²´ì¸ ë²„í¼ í¬ê¸° ë¦¬ì‚¬ì´ì¦ˆ
 {
     if (!m_swapChain || !m_context || !m_device)
         return;
@@ -432,11 +435,11 @@ void YunoRenderer::Resize(uint32_t width, uint32_t height)          //±âÁ¸ RT, D
     m_aspect = (height == 0) ? 1.0f : (float)width / (float)height;
     m_camera.aspect = m_aspect;
 
-    // 1) ¹ÙÀÎµù ÇØÁ¦
+    // 1) ë°”ì¸ë”© í•´ì œ
     ID3D11RenderTargetView* nullRTV[1] = { nullptr };
     m_context->OMSetRenderTargets(1, nullRTV, nullptr);
 
-    // 2) RTV/DSV ¸®¼Ò½º ÇØÁ¦
+    // 2) RTV/DSV ë¦¬ì†ŒìŠ¤ í•´ì œ
     m_backBufferRT = {};
     m_backBufferTex.Reset();
     m_dsv.Reset();
@@ -505,16 +508,16 @@ bool YunoRenderer::SetMSAASamples(uint32_t samples)
         }
     }
 
-    // ±âÁ¸ MSAA ¸®¼Ò½º ÇØÁ¦
+    // ê¸°ì¡´ MSAA ë¦¬ì†ŒìŠ¤ í•´ì œ
     m_msaaRT = {};
     m_msaaDepthTex.Reset();
     m_msaaDSV.Reset();
 
-    // °ª ¹İ¿µ
+    // ê°’ ë°˜ì˜
     m_msaaSamples = newSamples;
     m_msaaQuality = newQuality;
 
-    // MSAA ¸®¼Ò½º Àç»ı¼º (Å©±â ÀÇÁ¸)
+    // MSAA ë¦¬ì†ŒìŠ¤ ì¬ìƒì„± (í¬ê¸° ì˜ì¡´)
     if (!CreateMSAARenderTarget(m_width, m_height))
         return false;
 
@@ -544,20 +547,20 @@ void YunoRenderer::Shutdown()
         m_context->Flush();
     }
 
-    // ³» ¸®¼Ò½º ÇØÁ¦
+    // ë‚´ ë¦¬ì†ŒìŠ¤ í•´ì œ
     m_backBufferRT = {};
     m_dsv.Reset();
     m_depthStencilTex.Reset();
     m_swapChain.Reset();
 
-    // ÄÁÅØ½ºÆ® ¸ÕÀú
+    // ì»¨í…ìŠ¤íŠ¸ ë¨¼ì €
     m_context.Reset();
 
 #if defined(_DEBUG)
     if (debug)
     {
-        //debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);                // D3D11 ³»ºÎ ÂüÁ¶±îÁö ÀüºÎ Ãâ·ÂµÊ
-        debug->ReportLiveDeviceObjects(D3D11_RLDO_IGNORE_INTERNAL);         // D3D11 ³»ºÎ ÂüÁ¶´Â ¹«½Ã (ÀÇ¹Ì ¾ø´Â °æ°í Ãâ·Âx)
+        //debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);                // D3D11 ë‚´ë¶€ ì°¸ì¡°ê¹Œì§€ ì „ë¶€ ì¶œë ¥ë¨
+        debug->ReportLiveDeviceObjects(D3D11_RLDO_IGNORE_INTERNAL);         // D3D11 ë‚´ë¶€ ì°¸ì¡°ëŠ” ë¬´ì‹œ (ì˜ë¯¸ ì—†ëŠ” ê²½ê³  ì¶œë ¥x)
         debug.Reset();
     }
 #endif
@@ -576,7 +579,7 @@ void YunoRenderer::Shutdown()
 // Shader
 // ------------------------------------------------------------
 
-// ¼ÎÀÌ´õ ·Îµå ÇÔ¼öÀÓ filePath °°Àº °æ¿ì "../Assets/Shaders/~~.hlsl" or L"Assets/Shaders/~~.hlsl" 2°¡Áö ¹æ¹ı ÀüºÎ °¡´É
+// ì…°ì´ë” ë¡œë“œ í•¨ìˆ˜ì„ filePath ê°™ì€ ê²½ìš° "../Assets/Shaders/~~.hlsl" or L"Assets/Shaders/~~.hlsl" 2ê°€ì§€ ë°©ë²• ì „ë¶€ ê°€ëŠ¥
 bool YunoRenderer::LoadShader(
     ShaderId id,
     const std::wstring& filePath,
@@ -670,7 +673,7 @@ bool YunoRenderer::LoadShader(
 // Texture & Sampler
 // ------------------------------------------------------------
 
-// ´Ü»ö ÅØ½ºÃÄ ¸¸µé¾î³»´Â ÇÔ¼ö
+// ë‹¨ìƒ‰ í…ìŠ¤ì³ ë§Œë“¤ì–´ë‚´ëŠ” í•¨ìˆ˜
 TextureHandle YunoRenderer::CreateTexture2D_SolidRGBA8(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
     if (!m_device) return 0;
@@ -718,7 +721,7 @@ bool YunoRenderer::CreateDefaultTextures()
     m_texNormal = CreateTexture2D_SolidRGBA8(128, 128, 255, 255);
     if (m_texNormal == 0) return false;
 
-    // ORM default: ÀÏ´Ü black (ÇÊ¿äÇÏ¸é (255,255,255)·Î ¹Ù²ãµµ µÊ)
+    // ORM default: ì¼ë‹¨ black (í•„ìš”í•˜ë©´ (255,255,255)ë¡œ ë°”ê¿”ë„ ë¨)
     m_texBlack = CreateTexture2D_SolidRGBA8(0, 0, 0, 255);
     if (m_texBlack == 0) return false;
 
@@ -749,7 +752,7 @@ bool YunoRenderer::CreateSamplerPresets()
             sd.AddressW = addr;
 
             sd.MipLODBias = 0.0f;
-            sd.MaxAnisotropy = 16; // º¸Åë 16 °íÁ¤(ÇÊ¿äÇÏ¸é ¿É¼ÇÈ­)
+            sd.MaxAnisotropy = 16; // ë³´í†µ 16 ê³ ì •(í•„ìš”í•˜ë©´ ì˜µì…˜í™”)
             sd.ComparisonFunc = D3D11_COMPARISON_NEVER;
 
             sd.BorderColor[0] = border[0];
@@ -767,8 +770,7 @@ bool YunoRenderer::CreateSamplerPresets()
             return samp;
         };
 
-    // 0) Custom: ÀÏ´Ü ±âº»°ªÀ¸·Î Wrap Aniso ³Ö¾îµĞ´Ù.
-    //    (³ªÁß¿¡ MaterialDesc¿¡ sampler override°¡ »ı±â¸é Flush¿¡¼­ ±³Ã¼)
+
     {
         const float border[4] = { 0,0,0,0 };
         m_samplers[(uint8_t)SampleMode::Custom] = MakeAniso(D3D11_TEXTURE_ADDRESS_WRAP, border);
@@ -800,7 +802,7 @@ bool YunoRenderer::CreateSamplerPresets()
 }
 
 // ------------------------------------------------------------
-// Game -> Engine API ±¸Çö
+// Game -> Engine API êµ¬í˜„
 // ------------------------------------------------------------
 
 MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
@@ -817,16 +819,16 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
     if (!m_device)
         return 0;
 
-    // PositionÀº ÇÊ¼ö·Î ÀÖ¾î¾ß µÊ
+    // Positionì€ í•„ìˆ˜ë¡œ ìˆì–´ì•¼ ë¨
     //assert(Has(VSF_Pos) && streams.pos != nullptr && streams.vtx_count != 0);
     if (!Has(VSF_Pos) || streams.pos == nullptr || streams.vtx_count == 0)
         return 0;
 
-    // ÀÎµ¦½º°¡ ÀÖ´Ù°í ÇßÀ¸¸é Æ÷ÀÎÅÍ ÇÊ¿ä
+    // ì¸ë±ìŠ¤ê°€ ìˆë‹¤ê³  í–ˆìœ¼ë©´ í¬ì¸í„° í•„ìš”
     if (indexCount > 0 && indices == nullptr)
         return 0;
 
-    // flags¿¡ Æ÷ÇÔµÈ ½ºÆ®¸²Àº ¹İµå½Ã Æ÷ÀÎÅÍ°¡ ÀÖ¾î¾ß ÇÑ´Ù
+    // flagsì— í¬í•¨ëœ ìŠ¤íŠ¸ë¦¼ì€ ë°˜ë“œì‹œ í¬ì¸í„°ê°€ ìˆì–´ì•¼ í•œë‹¤
     if (Has(VSF_Nrm) && streams.nrm == nullptr) return 0;
     if (Has(VSF_UV) && streams.uv == nullptr) return 0;
     if (Has(VSF_T) && streams.t == nullptr) return 0;
@@ -836,7 +838,7 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
         ComPtr<ID3D11Buffer>& outVB) -> bool
         {
             D3D11_BUFFER_DESC bd{};
-            bd.Usage = D3D11_USAGE_IMMUTABLE;           // Á¤Àû ¸Ş½¬
+            bd.Usage = D3D11_USAGE_IMMUTABLE;           // ì •ì  ë©”ì‰¬
             bd.ByteWidth = stride * count;
             bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
@@ -851,7 +853,7 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
     mr.vertexCount = streams.vtx_count;
     mr.indexCount = indexCount;
 
-    // ½ºÆ®¸²º° VB »ı¼º
+    // ìŠ¤íŠ¸ë¦¼ë³„ VB ìƒì„±
     if (!CreateVB(streams.pos, sizeof(VERTEX_Pos), streams.vtx_count, mr.vbPos))
         return 0;
 
@@ -879,7 +881,7 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
             return 0;
     }
 
-    // ÀÎµ¦½º ¹öÆÛ(¿É¼Ç)
+    // ì¸ë±ìŠ¤ ë²„í¼(ì˜µì…˜)
     if (indexCount > 0)
     {
         D3D11_BUFFER_DESC ibd{};
@@ -894,7 +896,7 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
             return 0;
     }
 
-    // ÀúÀåÇÏ°í ÇÚµé ¹İÈ¯ (1-based)
+    // ì €ì¥í•˜ê³  í•¸ë“¤ ë°˜í™˜ (1-based)
     m_meshes.push_back(std::move(mr));
     return static_cast<MeshHandle>(m_meshes.size());
 }
@@ -953,38 +955,34 @@ TextureHandle YunoRenderer::CreateTexture2DFromFile(const wchar_t* path)
     if (!m_device || !path || !path[0])
         return 0;
 
-    // 1) °æ·Î Á¤±ÔÈ­(Ä³½Ã Å° ÅëÀÏ)
+    // 1) ê²½ë¡œ ì •ê·œí™”
     std::filesystem::path p(path);
 
-    // »ó´ë°æ·Î¸é CWD ±âÁØÀ¸·Î absolute ¸¸µé°í, weakly_canonical·Î Á¤±ÔÈ­
-    // (ÆÄÀÏÀÌ ½ÇÁ¦·Î ¾øÀ¸¸é canonicalÀº ½ÇÆĞÇÒ ¼ö ÀÖÀ¸´Ï weakly_canonical »ç¿ë)
     std::error_code ec;
     std::filesystem::path abs = std::filesystem::absolute(p, ec);
     if (!ec)
         abs = std::filesystem::weakly_canonical(abs, ec);
 
-    // Ä³½Ã Å° (Á¤±ÔÈ­ ½ÇÆĞ ½Ã ¿øº» »ç¿ë)
+    // ìºì‹œ í‚¤
     const std::wstring key = (!ec) ? abs.wstring() : std::wstring(path);
 
-    // 2) Ä³½Ã hit
+    // 2) ìºì‹œ hit
     auto it = m_texturePathCache.find(key);
     if (it != m_texturePathCache.end())
         return it->second;
 
-    // 3) WIC ·Îµù (RGBA8)
+    // 3) WIC ë¡œë”© (RGBA8)
     ImageRGBA8 img{};
     if (!LoadImageRGBA8_WIC(key.c_str(), img))
     {
-        // ½ÇÆĞ ½Ã 0 ¹İÈ¯ (TextureManager°¡ ´õ¹Ì·Î ´ëÃ¼ÇÏ°Å³ª, caller°¡ 0 Ã³¸®)
-        // ¿©±â¼­ m_texWhite ¹İÈ¯À¸·Î ÇØµµ µÇÁö¸¸, ½ÇÆĞ¸¦ µå·¯³»´Â °Ô µğ¹ö±ë¿¡ À¯¸®
         return 0;
     }
 
-    // 4) D3D11 Texture2D »ı¼º
+    // 4) D3D11 Texture2D ìƒì„±
     D3D11_TEXTURE2D_DESC td{};
     td.Width = img.width;
     td.Height = img.height;
-    td.MipLevels = 1;                 // Step 10-3¿¡¼­ mipgen È®Àå °¡´É
+    td.MipLevels = 1;                 
     td.ArraySize = 1;
     td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     td.SampleDesc.Count = 1;
@@ -1003,13 +1001,13 @@ TextureHandle YunoRenderer::CreateTexture2DFromFile(const wchar_t* path)
     if (FAILED(hr))
         return 0;
 
-    // 5) SRV »ı¼º
+    // 5) SRV ìƒì„±
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
     hr = m_device->CreateShaderResourceView(tex.Get(), nullptr, srv.GetAddressOf());
     if (FAILED(hr))
         return 0;
 
-    // 6) Å×ÀÌºí¿¡ ÀúÀåÇÏ°í handle ¹ß±Ş
+    // 6) í…Œì´ë¸”ì— ì €ì¥í•˜ê³  handle ë°œê¸‰
     TextureResource tr{};
     tr.srv = srv;
     tr.w = img.width;
@@ -1018,7 +1016,7 @@ TextureHandle YunoRenderer::CreateTexture2DFromFile(const wchar_t* path)
     m_textures.push_back(std::move(tr));
     const TextureHandle handle = static_cast<TextureHandle>(m_textures.size()); // 1-based
 
-    // 7) path Ä³½Ã µî·Ï
+    // 7) path ìºì‹œ ë“±ë¡
     m_texturePathCache.emplace(key, handle);
 
     return handle;
@@ -1029,10 +1027,10 @@ RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
 {
     auto it = m_passCache.find(key);
     if (it != m_passCache.end())
-        return it->second; // ÆĞ½º°¡ ÀÌ¹Ì ÀÖÀ¸¸é ±×°Å ÁÖ°í ¾øÀ¸¸é »õ·Î¸¸µë
+        return it->second; // íŒ¨ìŠ¤ê°€ ì´ë¯¸ ìˆìœ¼ë©´ ê·¸ê±° ì£¼ê³  ì—†ìœ¼ë©´ ìƒˆë¡œë§Œë“¬
 
     if (key.vs != key.ps)
-        return 0; // ¾ÆÁ÷Àº µ¿ÀÏ Program¸¸ Áö¿ø(È®Àå °¡´É)
+        return 0;
 
     auto itProg = m_programs.find(key.vs);
     if (itProg == m_programs.end())
@@ -1044,17 +1042,17 @@ RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
 
 
     std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
-    if (!InputLayoutFromFlags(key.vertexFlags, layout)) // ÇÃ·¡±×¿¡ ¸Â´Â layoutÀ» ¸¸µé¾î¼­ ´ã¾ÆÁÜ
+    if (!InputLayoutFromFlags(key.vertexFlags, layout)) // í”Œë˜ê·¸ì— ë§ëŠ” layoutì„ ë§Œë“¤ì–´ì„œ ë‹´ì•„ì¤Œ
         return 0;
 
     YunoRenderPassDesc pd{};
-    pd.vs = shader.vs.get();                                            // Å° ±â¹İ ¿Ï·á
-    pd.ps = shader.ps.get();                                            // Å° ±â¹İ ¿Ï·á
-    pd.vsBytecode = shader.vsBytecode.Get();                            // Å° ±â¹İ ¿Ï·á
-    pd.inputElements = layout.data();                                   // Å° ±â¹İ ¿Ï·á
-    pd.inputElementCount = static_cast<uint32_t>(layout.size());        // Å° ±â¹İ ¿Ï·á
+    pd.vs = shader.vs.get();                                            // í‚¤ ê¸°ë°˜ ì™„ë£Œ
+    pd.ps = shader.ps.get();                                            // í‚¤ ê¸°ë°˜ ì™„ë£Œ
+    pd.vsBytecode = shader.vsBytecode.Get();                            // í‚¤ ê¸°ë°˜ ì™„ë£Œ
+    pd.inputElements = layout.data();                                   // í‚¤ ê¸°ë°˜ ì™„ë£Œ
+    pd.inputElementCount = static_cast<uint32_t>(layout.size());        // í‚¤ ê¸°ë°˜ ì™„ë£Œ
 
-    switch (key.depth)                                                  // Å° ±â¹İ ¿Ï·á
+    switch (key.depth)                                                  // í‚¤ ê¸°ë°˜ ì™„ë£Œ
     {
     case DepthPreset::Off:       pd.depth = DepthMode::Off;       break;
     case DepthPreset::ReadOnly:  pd.depth = DepthMode::ReadOnly;  break;
@@ -1063,8 +1061,8 @@ RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
     }
 
 
-    // ºí·»µå ¸ğµå
-    switch (key.blend)                                                  // Å° ±â¹İ ¿Ï·á
+    // ë¸”ë Œë“œ ëª¨ë“œ
+    switch (key.blend)                                                  // í‚¤ ê¸°ë°˜ ì™„ë£Œ
     {
     case BlendPreset::Opaque:        pd.blend = BlendMode::Opaque; break;
     case BlendPreset::AlphaBlend:    pd.blend = BlendMode::AlphaBlend; break;
@@ -1074,13 +1072,13 @@ RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
     } 
     
 
-    pd.wireframe =(key.raster == RasterPreset::WireCullNone)            // Å° ±â¹İ ¿Ï·á
+    pd.wireframe =(key.raster == RasterPreset::WireCullNone)            // í‚¤ ê¸°ë°˜ ì™„ë£Œ
                 ||(key.raster == RasterPreset::WireCullBack) 
                 ||(key.raster == RasterPreset::WireCullFront);
 
 
-    // ÄÃ ¸ğµå
-    switch (key.raster)                                                 // Å° ±â¹İ ¿Ï·á
+    // ì»¬ ëª¨ë“œ
+    switch (key.raster)                                                 // í‚¤ ê¸°ë°˜ ì™„ë£Œ
     {
     case RasterPreset::CullNone:      pd.cull = CullMode::None;  break;
     case RasterPreset::CullBack:      pd.cull = CullMode::Back;  break;
@@ -1092,7 +1090,7 @@ RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
     default:                          pd.cull = CullMode::None;  break;
     }
 
-    // RenderpassDesk »ı¼ºÇÑ°É·Î ·»´õÆĞ½º »ı¼º
+    // RenderpassDesk ìƒì„±í•œê±¸ë¡œ ë Œë”íŒ¨ìŠ¤ ìƒì„±
 
     auto pass = std::make_unique<YunoRenderPass>();
     if (!pass->Create(m_device.Get(), pd))
@@ -1110,11 +1108,11 @@ bool YunoRenderer::InputLayoutFromFlags(uint32_t flags,
 {
     outLayout.clear();
 
-    // ÇÊ¼ö: POSITION
+    // í•„ìˆ˜: POSITION
     if ((flags & VSF_Pos) == 0)
         return false;
 
-    // ½½·Ô ±Ô¾à(ÇöÀç ¿£Áø ±Ô¾à°ú ¹İµå½Ã µ¿ÀÏÇØ¾ß ÇÔ)
+    // ìŠ¬ë¡¯ ê·œì•½
     // 0=Pos, 1=Nrm, 2=UV, 3=T, 4=B
     outLayout.push_back({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
         D3D11_INPUT_PER_VERTEX_DATA, 0 });
@@ -1133,14 +1131,12 @@ bool YunoRenderer::InputLayoutFromFlags(uint32_t flags,
 
     if (flags & VSF_T)
     {
-        // tangent
         outLayout.push_back({ "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 3, 0,
             D3D11_INPUT_PER_VERTEX_DATA, 0 });
     }
 
     if (flags & VSF_B)
     {
-        // bitangent
         outLayout.push_back({ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 4, 0,
             D3D11_INPUT_PER_VERTEX_DATA, 0 });
     }
@@ -1174,8 +1170,9 @@ void YunoRenderer::Flush()
     if (!m_context || !m_cbDefault.IsValid() || !m_cbMaterial.IsValid())
         return;
 
+    SubmitDebugGrid();
 
-    // ·»´õ Àü¿¡ Á¤·Ä ³ÖÀ»¿¹Á¤
+    // ë Œë” ì „ì— ì •ë ¬ ë„£ì„ì˜ˆì •
 
     for (const RenderItem& item : m_renderQueue)
     {
@@ -1184,7 +1181,7 @@ void YunoRenderer::Flush()
 
         const YunoMaterial* material = nullptr;
 
-        if (item.materialHandle > 0 && item.materialHandle <= m_materials.size()) // ÇÚµé À¯È¿¼º Ã¼Å©
+        if (item.materialHandle > 0 && item.materialHandle <= m_materials.size()) // í•¸ë“¤ ìœ íš¨ì„± ì²´í¬
             material = &m_materials[item.materialHandle - 1];
 
         if (!material)
@@ -1202,23 +1199,23 @@ void YunoRenderer::Flush()
         if (passHandle == 0 || passHandle > m_passes.size())
             continue;
 
-        // ·»´õ ÆĞ½º ¹ÙÀÎµå
+        // ë Œë” íŒ¨ìŠ¤ ë°”ì¸ë“œ
         m_passes[passHandle - 1]->Bind(m_context.Get());
 
-        // ¸Ş½¬ ¹ÙÀÎµå
+        // ë©”ì‰¬ ë°”ì¸ë“œ
         const MeshResource& mesh = m_meshes[item.meshHandle - 1];
         mesh.Bind(m_context.Get());
 
-        // »ó¼ö ¹öÆÛ ¹ÙÀÎµå
+        // ìƒìˆ˜ ë²„í¼ ë°”ì¸ë“œ
         BindConstantBuffers(item, *material);
 
-        // ÅØ½ºÃÄ ¹ÙÀÎµå
+        // í…ìŠ¤ì³ ë°”ì¸ë“œ
         BindTextures(*material);
 
-        // »ùÇÃ·¯ ¹ÙÀÎµå
+        // ìƒ˜í”ŒëŸ¬ ë°”ì¸ë“œ
         BindSamplers();
 
-        // µå·Î¿ì
+        // ë“œë¡œìš°
         if (mesh.ib && mesh.indexCount > 0)
             m_context->DrawIndexed(mesh.indexCount, 0, 0);
         else
@@ -1229,7 +1226,7 @@ void YunoRenderer::Flush()
 }
 
 // ------------------------------------------------------------
-// Bind ÇÔ¼öµé
+// Bind í•¨ìˆ˜ë“¤
 // ------------------------------------------------------------
 
 void YunoRenderer::BindConstantBuffers(
@@ -1286,6 +1283,7 @@ void YunoRenderer::BindSamplers()
     m_context->PSSetSamplers(0, (uint8_t)SampleMode::Count, samps);
 }
 
+
 void YunoRenderer::BindTextures(const YunoMaterial& material)
 {
     TextureHandle hAlbedo = (material.albedo != 0) ? material.albedo : m_texWhite;
@@ -1299,6 +1297,95 @@ void YunoRenderer::BindTextures(const YunoMaterial& material)
         ResolveSRV(hOrm) 
     };
 
-    // È¤½Ã¶óµµ ResolveSRV°¡ nullptrÀÌ¸é ¾ÈÀüÇÏ°Ô nullptr ¹ÙÀÎµù(µğ¹ö±×¿¡¼­ º¸ÀÌ°Ô)
+    // í˜¹ì‹œë¼ë„ ResolveSRVê°€ nullptrì´ë©´ ì•ˆì „í•˜ê²Œ nullptr ë°”ì¸ë”©(ë””ë²„ê·¸ì—ì„œ ë³´ì´ê²Œ)
     m_context->PSSetShaderResources(0, 3, srvs);
+}
+
+// ------------------------------------------------------------
+// Debug í•¨ìˆ˜ë“¤
+// ------------------------------------------------------------
+
+void YunoRenderer::CreateDebugGridResources()
+{
+    if (m_debugGridMeshHandle != 0 && m_debugGridMaterial != 0)
+        return;
+
+    constexpr int   N = 12;
+    constexpr float s = 5.0f;
+    constexpr float half = N * s;
+    constexpr float y = 0.01f;
+
+    std::vector<VERTEX_Pos> v;
+    v.reserve((N * 2 + 1) * 4); 
+
+    for (int i = -N; i <= N; ++i)
+    {
+        const float z = i * s;
+        v.push_back(VERTEX_Pos{ -half, y, z });
+        v.push_back(VERTEX_Pos{ +half, y, z });
+
+        const float x = i * s;
+        v.push_back(VERTEX_Pos{ x, y, -half });
+        v.push_back(VERTEX_Pos{ x, y, +half });
+    }
+
+    m_debugGridMeshHandle = CreateLineMesh_PosOnly(v.data(), (uint32_t)v.size());
+    if (m_debugGridMeshHandle == 0)
+        return;
+
+    MaterialDesc md{};
+    md.passKey.vs = ShaderId::DebugGrid;
+    md.passKey.ps = ShaderId::DebugGrid;
+    md.passKey.vertexFlags = VSF_Pos;
+
+    md.passKey.blend = BlendPreset::Opaque;
+    md.passKey.raster = RasterPreset::CullNone;
+    md.passKey.depth = DepthPreset::ReadOnly;
+
+    md.baseColor = { 1,1,0,1 };
+    md.roughness = 1.0f;
+    md.metallic = 0.0f;
+
+    m_debugGridMaterial = CreateMaterial(md);
+}
+
+void YunoRenderer::SubmitDebugGrid()
+{
+    if (!m_enableDebugGrid)
+        return;
+
+    if (m_debugGridMeshHandle == 0)
+        return;
+
+    RenderItem item{};
+    item.meshHandle = m_debugGridMeshHandle;
+    item.materialHandle = m_debugGridMaterial; // 0ì´ì–´ë„ Submitì—ì„œ defaultë¡œ ë³´ì •ë¨
+    DirectX::XMStoreFloat4x4(&item.mWorld, DirectX::XMMatrixIdentity());
+    Submit(item);
+}
+
+MeshHandle YunoRenderer::CreateLineMesh_PosOnly(const VERTEX_Pos* verts, uint32_t vtxCount)
+{
+    if (!m_device || !verts || vtxCount == 0)
+        return 0;
+
+    MeshResource mr{};
+    mr.flags = VSF_Pos;
+    mr.vertexCount = vtxCount;
+    mr.indexCount = 0;
+    mr.topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+
+    D3D11_BUFFER_DESC bd{};
+    bd.Usage = D3D11_USAGE_IMMUTABLE;
+    bd.ByteWidth = sizeof(VERTEX_Pos) * vtxCount;
+    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+    D3D11_SUBRESOURCE_DATA init{};
+    init.pSysMem = verts;
+
+    if (FAILED(m_device->CreateBuffer(&bd, &init, mr.vbPos.ReleaseAndGetAddressOf())))
+        return 0;
+
+    m_meshes.push_back(std::move(mr));
+    return static_cast<MeshHandle>(m_meshes.size()); // 1-based
 }

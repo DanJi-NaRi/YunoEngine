@@ -3,7 +3,7 @@
 #include "YunoEngine.h"
 #include "RenderTypes.h"
 #include "IRenderer.h"
-
+#include "ITextureManager.h"
 
 // 모든 메쉬는 CW 시계방향 정점이 앞면임
 /* 예시)
@@ -34,9 +34,12 @@ protected:
     int			m_Lv;
     int			m_Exp;
 
+    float       m_time;
+
+
     RenderItem      m_renderItem;
-    MeshHandle      m_mesh;
-    MaterialHandle  m_material;
+    MeshHandle      m_defaultMesh;
+    MaterialHandle  m_defaultMaterial;
     TextureHandle   m_Albedo;
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
@@ -53,7 +56,8 @@ public:
     virtual bool  Create(std::string& name, uint32_t id, XMFLOAT3 vPos);
 
     virtual bool  Update(float dTime = 0);
-    virtual bool  Submit();
+    virtual bool  Submit(float dTime = 0);
+    bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 xx
 
     virtual void  Backup();
 

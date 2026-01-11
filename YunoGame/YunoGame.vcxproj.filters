@@ -50,5 +50,7 @@
     <ClInclude Include="Game\Object\Quad.h">
       <Filter>Game\Object\Quad</Filter>
     </ClInclude>
+    <ClInclude Include="System\GameInputContext.h" />
+    <ClInclude Include="System\TestInputContexts.h" />
   </ItemGroup>
 </Project>

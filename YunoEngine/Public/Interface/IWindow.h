@@ -10,6 +10,9 @@ public:
     // 창 생성
     virtual bool Create(const wchar_t* title, uint32_t width, uint32_t height) = 0;
 
+    // 화면 크기 변경
+    virtual void SetClientSize(uint32_t width, uint32_t height) = 0;
+
     // 매 프레임 메시지 처리
     virtual void PollEvents() = 0;
 
