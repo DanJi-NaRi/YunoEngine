@@ -237,11 +237,11 @@
       <Filter>Public</Filter>
     </ClInclude>
     <ClInclude Include="Private\Scene\YunoSceneManager.h">
-  <Filter>Private\Scene</Filter>
-</ClInclude>
-<ClInclude Include="Public\Interface\IScene.h">
-  <Filter>Public\Interface</Filter>
-</ClInclude>
+      <Filter>Private\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IScene.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>
