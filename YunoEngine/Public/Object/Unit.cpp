@@ -44,6 +44,16 @@ bool Unit::Create(XMFLOAT3 vPos)
     return true;
 }
 
+bool Unit::Create(std::string& name, uint32_t id, XMFLOAT3 vPos)
+{
+    m_id = id;
+    m_name = name;
+
+    Create(vPos);
+
+    return true;
+}
+
 bool Unit::Update(float dTime)
 {
 
@@ -88,5 +98,28 @@ void Unit::Backup()
     m_vRotBk = m_vRot;
     m_vScaleBk = m_vScale;
     m_vDirBk = m_vDir;
+}
+
+void Unit::Attach(Unit* obj) //this가 부모, 파라미터로 자식
+{
+    if (obj->m_Parent)//기존 부모있으면 떨어진 후 결합
+        obj->DettachParent();
+
+    obj->m_Parent = this;
+
+    m_Childs.insert(std::make_pair(obj->GetID(), obj));
+}
+
+void Unit::DettachParent()
+{
+    m_Parent->DettachChild(m_id);
+}
+
+void Unit::DettachChild(uint32_t id)
+{
+    if (m_Childs.find(id) == m_Childs.end())
+        return;
+
+    m_Childs.erase(id);
 }
 
