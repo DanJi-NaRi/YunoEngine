@@ -140,9 +140,9 @@ public:
         uint32_t triCount) override;
 
     MaterialHandle CreateMaterial_Default() override;
-    MaterialHandle CreateMaterial(const MaterialDesc& desc);
+    MaterialHandle CreateMaterial(const MaterialDesc& desc) override;
 
-    TextureHandle CreateTexture2DFromFile(const wchar_t* path);
+    TextureHandle CreateTexture2DFromFile(const wchar_t* path) override;
 
     void Submit(const RenderItem& item) override;
     void Flush() override;     

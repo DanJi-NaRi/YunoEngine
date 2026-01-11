@@ -75,6 +75,7 @@ using Microsoft::WRL::ComPtr;
 #include <iostream>
 #include <sstream>
 #include <filesystem>
+#include <type_traits>
 
 #ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC
@@ -82,7 +83,7 @@ using Microsoft::WRL::ComPtr;
 #endif
 
 #ifdef _DEBUG
-#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
+//#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
 

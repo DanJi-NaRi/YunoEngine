@@ -13,6 +13,8 @@
 class Unit 
 {
 protected:
+    uint32_t m_id;
+    std::string m_name;
 
     XMFLOAT3	m_vPos;
     XMFLOAT3	m_vRot;
@@ -21,8 +23,6 @@ protected:
 
     XMFLOAT4X4	m_mWorld;
     XMFLOAT4X4	m_mScale, m_mRot, m_mTrans;
-
-
 
     XMFLOAT3	m_vPosBk;
     XMFLOAT3	m_vRotBk;
@@ -44,12 +44,17 @@ protected:
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
 
+    Unit* m_Parent;
+    std::unordered_map<uint32_t, Unit*> m_Childs;
+
 public:
     explicit Unit();
 
     virtual ~Unit();
+    //Create는 오브젝트 매니저만 쓰기
+    virtual bool  Create(XMFLOAT3 vPos);//일단 호환용으로 냅두고 나중에 무조건 이름 필요한걸로 바꾸는게 나을듯
+    virtual bool  Create(std::string& name, uint32_t id, XMFLOAT3 vPos);
 
-    virtual bool  Create(XMFLOAT3 vPos);
     virtual bool  Update(float dTime = 0);
     virtual bool  Submit(float dTime = 0);
     bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 xx
@@ -58,4 +63,13 @@ public:
 
     virtual bool CreateMesh() = 0;
     virtual bool CreateMaterial() = 0;
+
+    uint32_t GetID() { return m_id; }
+    const std::string& GetName() { return m_name; }
+
+    void Attach(Unit* obj);
+    void DettachParent();
+    void DettachChild(uint32_t id);
+
+    XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
 };
