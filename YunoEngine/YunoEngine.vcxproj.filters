@@ -8,9 +8,6 @@
     <Filter Include="Private">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E002}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Private\Parser">
-      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E003}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Private\Input">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E004}</UniqueIdentifier>
     </Filter>
@@ -32,14 +29,8 @@
     <Filter Include="Private\Renderer\Material">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00A}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Private\Renderer\Model">
-      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00B}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Private\Resource">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Private\Singleton">
-      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00D}</UniqueIdentifier>
     </Filter>
     <Filter Include="Private\Timer">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00E}</UniqueIdentifier>
@@ -77,14 +68,17 @@
     <Filter Include="Private\Scene">
       <UniqueIdentifier>{0170ffaa-52a9-4ad9-a9ea-a5490f1015d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Parser">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Singleton">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00D}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
     <ClCompile Include="EnginePCH\pch.cpp">
       <Filter>EnginePCH</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Parser\Parser.cpp">
-      <Filter>Private\Parser</Filter>
     </ClCompile>
     <ClCompile Include="Private\Input\YunoInputSystem.cpp">
       <Filter>Private\Input</Filter>
@@ -125,17 +119,17 @@
     <ClCompile Include="Private\Scene\YunoSceneManager.cpp">
       <Filter>Private\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Renderer\Mesh\Mesh.cpp">
-      <Filter>Private\Renderer\Model</Filter>
+    <ClCompile Include="Public\Renderer\Mesh.cpp">
+      <Filter>Private\Renderer\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Parser\Parser.cpp">
+      <Filter>Public\Parser</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h">
       <Filter>EnginePCH</Filter>
-    </ClInclude>
-    <ClInclude Include="Private\Parser\Parser.h">
-      <Filter>Private\Parser</Filter>
     </ClInclude>
     <ClInclude Include="Private\Input\InputState.h">
       <Filter>Private\Input</Filter>
@@ -150,7 +144,7 @@
       <Filter>Private\Resource</Filter>
     </ClInclude>
     <ClInclude Include="Private\Singleton\Singleton.h">
-      <Filter>Private\Singleton</Filter>
+      <Filter>Public\Singleton</Filter>
     </ClInclude>
     <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h">
       <Filter>Private\Renderer\ConstBuffer</Filter>
@@ -242,8 +236,11 @@
     <ClInclude Include="Public\Interface\IScene.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Renderer\Mesh\Mesh.h">
-      <Filter>Private\Renderer\Model</Filter>
+    <ClInclude Include="Public\Renderer\Mesh.h">
+      <Filter>Private\Renderer\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Parser\Parser.h">
+      <Filter>Public\Parser</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
