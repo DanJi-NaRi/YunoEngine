@@ -9,23 +9,28 @@ class YunoInputSystem final : public IInput
 {
 public:
 
-    void BeginFrame();   // ë¸íƒ€ ì´ˆê¸°í™” ë“±
-    void Dispatch();     // ì´ë²¤íŠ¸ í >> ì»¨í…ìŠ¤íŠ¸ë¡œ ì „ë‹¬
+    void BeginFrame();   // µ¨Å¸ ÃÊ±âÈ­ µî
+    void Dispatch();     // ÀÌº¥Æ® Å¥ >> ÄÁÅØ½ºÆ®·Î Àü´Ş
 
 public:
-    // ì…ë ¥ ì´ë²¤íŠ¸ íì— ì‚½ì…
+    // ÀÔ·Â ÀÌº¥Æ® Å¥¿¡ »ğÀÔ
     void PushEvent(const InputEvent& evt) override;
 
-    // ê²Œì„ì—ì„œ ì‚¬ìš©í•  APIí•¨ìˆ˜ë“¤
+    // °ÔÀÓ¿¡¼­ »ç¿ëÇÒ APIÇÔ¼öµé
     bool IsKeyDown(uint32_t key) const override;
+    bool IsKeyPressed(uint32_t key) const override;
+    bool IsKeyReleased(uint32_t key) const override;
+
     bool IsMouseButtonDown(uint32_t button) const override;
+    bool IsMouseButtonPressed(uint32_t button) const override;
+    bool IsMouseButtonReleased(uint32_t button) const override;
 
     float GetMouseX() const override { return m_state.mouseX; }
     float GetMouseY() const override { return m_state.mouseY; }
     float GetMouseDeltaX() const override { return m_state.mouseDeltaX; }
     float GetMouseDeltaY() const override { return m_state.mouseDeltaY; }
 
-    // ì¸í’‹ì„ ì‚¬ìš©í•  ì»¨í…ìŠ¤íŠ¸
+    // ÀÎÇ²À» »ç¿ëÇÒ ÄÁÅØ½ºÆ®
     void AddContext(IInputContext* context) override;
     void RemoveContext(IInputContext* context) override;
 

@@ -25,10 +25,13 @@
     <Filter Include="System">
       <UniqueIdentifier>{9361046d-0731-4de1-9145-d90d338d0e82}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scenes\First">
+    <Filter Include="Scenes\0. Test">
+      <UniqueIdentifier>{568b3c88-40c4-44a7-95a2-efd275f2cc97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\1. First">
       <UniqueIdentifier>{dfb98353-23be-4e81-8a4f-8384ec4cfd4e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scenes\Second">
+    <Filter Include="Scenes\2. Second">
       <UniqueIdentifier>{75bf4271-7290-46c5-9098-5693ea31ff20}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -48,10 +51,12 @@
     <ClCompile Include="Game\Object\Quad.cpp">
       <Filter>Game\Object\Quad</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\MainScene.cpp">
-      <Filter>Scenes\First</Filter>
+    <ClCompile Include="Scenes\PlayScene.cpp">
+      <Filter>Scenes\2. Second</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\SecondScene.cpp" />
+    <ClCompile Include="Scenes\TitleScene.cpp">
+      <Filter>Scenes\1. First</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -72,9 +77,14 @@
     <ClInclude Include="System\GameInputContext.h">
       <Filter>System</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\MainScene.h">
-      <Filter>Scenes\First</Filter>
+    <ClInclude Include="TestScenes.h">
+      <Filter>Scenes\0. Test</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\SecondScene.h" />
+    <ClInclude Include="Scenes\PlayScene.h">
+      <Filter>Scenes\2. Second</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\TitleScene.h">
+      <Filter>Scenes\1. First</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

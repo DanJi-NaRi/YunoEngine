@@ -6,8 +6,10 @@
 #include "IWindow.h"
 #include "YunoEngine.h"
 #include "TestInputContexts.h"
-#include "MainScene.h"
 #include "ISceneManager.h"
+
+#include "TitleScene.h"
+#include "PlayScene.h"
 
 #include "GameApp.h"
 
@@ -25,28 +27,23 @@ bool GameApp::OnInit()
     {
         std::cout << "[GameApp] Renderer not available.\n";
         return false;
-    } // Î†åÎçîÎü¨ Ï≤¥ÌÅ¨
+    } // ∑ª¥ı∑Ø √º≈©
 
-    //---------------- Ïù∏Ìíã ÌÖåÏä§Ìä∏
+    //---------------- ¿Œ«≤ ≈◊Ω∫∆Æ
     IInput* input = YunoEngine::GetInput();
     input->AddContext(&s_uiCtx);
     input->AddContext(&s_gameCtx);
-    //---------------- Ïù∏Ìíã ÌÖåÏä§Ìä∏
+    //---------------- ¿Œ«≤ ≈◊Ω∫∆Æ
 
 
 
+   ISceneManager* sm = YunoEngine::GetSceneManager();
+   if (!sm) return false;
 
-   m_quad = std::make_unique<Quad>();
-   if (!m_quad->Create(DirectX::XMFLOAT3(0, 0, 0)))
-       return false;
-   m_triangle = std::make_unique<Triangle>();
-   if (!m_triangle->Create(DirectX::XMFLOAT3(0, 0, -5)))
-       return false;
+   SceneTransitionOptions opt{};
+   opt.immediate = true;
+   sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
 
-   if (auto* SceneManager = YunoEngine::GetSceneManager())
-   {
-       SceneManager->RequestSetActive(std::make_unique<MainScene>());
-   }
 
     return true;
 }
@@ -60,7 +57,7 @@ void GameApp::OnUpdate(float dt)
     ++frameCount;
 
 
-    // MSAA Î≥ÄÍ≤ΩÎêòÎäîÏßÄ ÌÖåÏä§Ìä∏
+    // MSAA ∫Ø∞Êµ«¥¬¡ˆ ≈◊Ω∫∆Æ
     //static float test = 0.0f;
     //test += dt;
     //
@@ -83,32 +80,23 @@ void GameApp::OnUpdate(float dt)
     IInput* input = YunoEngine::GetInput();
     IWindow* window = YunoEngine::GetWindow();
 
-    if (input->IsKeyDown('O')) // >> Ïù¥Í±∞ Ïù∏Ïä§ÌÑ¥Ïä§ Ìò∏Ï∂úÌï¥ÏÑú ÌÇ§Îã§Ïö¥ÌïòÎäîÍ±∞ Î∂àÌé∏ÌïòÎãàÍπå ÎÇòÏ§ëÏóê Î∞îÍæ∏Í∏∞ „Ñ±„Ñ±
+    if (input->IsKeyDown('O')) // >> ¿Ã∞≈ ¿ŒΩ∫≈œΩ∫ »£√‚«ÿº≠ ≈∞¥ŸøÓ«œ¥¬∞≈ ∫“∆Ì«œ¥œ±Ó ≥™¡ﬂø° πŸ≤Ÿ±‚ §°§°
         window->SetClientSize(1920, 1080);
 
     if (input->IsKeyDown('P'))
         window->SetClientSize(3440, 1440);
 
-    if (acc >= 1.0f)
-    {
-        std::cout << "[GameApp] dt = " << dt << "\n";
-        const float fps = static_cast<float>(frameCount) / acc;
-        std::cout << "[GameApp] FPS = " << fps << "\n";
-        acc = 0.0f;
-        frameCount = 0;
-    }
 
-    if (m_quad)
-    {
-        m_quad->Update(dt);
-        m_quad->Submit(dt);
-    }
+    //if (acc >= 1.0f)
+    //{
+    //    std::cout << "[GameApp] dt = " << dt << "\n";
+    //    const float fps = static_cast<float>(frameCount) / acc;
+    //    std::cout << "[GameApp] FPS = " << fps << "\n";
+    //    acc = 0.0f;
+    //    frameCount = 0;
+    //}
 
-    if (m_triangle)
-    {
-        m_triangle->Update(dt);
-        m_triangle->Submit(dt);
-    }
+
     
 }
 
@@ -117,10 +105,10 @@ void GameApp::OnFixedUpdate(float fixedDt)
     static int step = 0;
     ++step;
 
-    if (step % 60 == 0)
-    {
-        std::cout << "[GameApp] FixedUpdate dt = " << fixedDt << "\n";
-    }
+    //if (step % 60 == 0)
+    //{
+    //    std::cout << "[GameApp] FixedUpdate dt = " << fixedDt << "\n";
+    //}
 }
 
 void GameApp::OnShutdown()
@@ -129,16 +117,16 @@ void GameApp::OnShutdown()
 }
 
 /*
-ÎÇ¥ Î©îÎ™®Ïû•ÏûÑ - Ï§ÄÌòÅ
-Í≤åÏûÑÏ™ΩÏóêÏÑú Ï†ïÏ†êÎ≤ÑÌçº,Ïù∏Îç±Ïä§ Î≤ÑÌçº, ÌîåÎûòÍ∑∏Î•º ÎÑòÍπÄ 
-CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) Ïù¥ Ìï®Ïàò ÏÇ¨Ïö©
-Í∑∏Î¶¨Í≥†
-Î®∏ÌÖåÎ¶¨ÏñºÌï∏Îì§ÏùÑ Î∞õÍ∏∞ÏúÑÌï¥ÏÑú Î®∏ÌÖåÎ¶¨Ïñº Í¥ÄÎ†® Îç∞Ïù¥ÌÑ∞Îì§ÏùÑ ÎÑòÍ∏∏Í±∞ÏûÑ (PBR Î≤†Ïù¥Ïä§) 
+≥ª ∏ﬁ∏¿Â¿” - ¡ÿ«ı
+∞‘¿”¬ ø°º≠ ¡§¡°πˆ∆€,¿Œµ¶Ω∫ πˆ∆€, «√∑°±◊∏¶ ≥—±Ë 
+CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) ¿Ã «‘ºˆ ªÁøÎ
+±◊∏Æ∞Ì
+∏”≈◊∏ÆæÛ«⁄µÈ¿ª πﬁ±‚¿ß«ÿº≠ ∏”≈◊∏ÆæÛ ∞¸∑√ µ•¿Ã≈ÕµÈ¿ª ≥—±Ê∞≈¿” (PBR ∫£¿ÃΩ∫) 
 
-Í∞êÎßà Ïª¨Î†âÏÖò ÎÑ£Ïñ¥Ïïº Îê®
-ÏÉÅÏàòÎ≤ÑÌçº Í¥ÄÎ¶¨ ÎÑ£Ïñ¥Ïïº Îê®
-Ïò§Î∏åÏ†ùÌä∏ Îß§ÎãàÏ†Ä ÎÑ£Ïñ¥ÏïºÎê® (ÌòÑÏäπ)
-FSMÏùÄ Î≠ê ÎÇòÏ§ëÏóê Í≤åÏûÑ ÎÇòÏò§Í≥† ÎßåÎì§Í∏∞ „Ñ±„Ñ±
-Ïò§Î∏åÏ†ùÌä∏ Îß§ÎãàÏ†Ä Ïî¨Îß§ÎãàÏ†Ä ÏñºÎ•∏ ÎßåÎì§Í≥† ÏûÑÍµ¨Ïù¥ „Ñ±„Ñ±
+∞®∏∂ ƒ√∑∫º« ≥÷æÓæﬂ µ 
+ªÛºˆπˆ∆€ ∞¸∏Æ ≥÷æÓæﬂ µ 
+ø¿∫Í¡ß∆Æ ∏≈¥œ¿˙ ≥÷æÓæﬂµ  («ˆΩ¬)
+FSM¿∫ ππ ≥™¡ﬂø° ∞‘¿” ≥™ø¿∞Ì ∏∏µÈ±‚ §°§°
+ø¿∫Í¡ß∆Æ ∏≈¥œ¿˙ æ¿∏≈¥œ¿˙ æÛ∏• ∏∏µÈ∞Ì ¿”±∏¿Ã §°§°
 
 */

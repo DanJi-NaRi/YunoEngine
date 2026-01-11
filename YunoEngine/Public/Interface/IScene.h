@@ -1,25 +1,22 @@
 #pragma once
-#include <memory>
 
 class IRenderer;
-
 
 class IScene
 {
 public:
     virtual ~IScene() = default;
 
-    // 씬 활성화 >> 해당 씬에 필요한 오브젝트들 로드
-    virtual void OnEnter() {}
 
-    // 씬 비활성화 >> 로드한 오브젝트들 언로드
-    virtual void OnExit() {}
+    virtual bool OnCreate() { return true; }    // 최초 1회
+    virtual void OnEnter() {}                   // Active 직전/직후
+    virtual void OnExit() {}                    // Active 해제 직전
+    virtual void OnDestroy() {}                 // 제거 직전 1회
 
-    // 프레임 업데이트
+    virtual void OnPause() {}                   // 스택 위로 다른 씬이 올라왔을 때
+    virtual void OnResume() {}                  // 다시 상단이 되었을 때
+
+
     virtual void Update(float dt) = 0;
-
-    // 렌더 아이템 제출
     virtual void Submit(IRenderer* renderer) = 0;
 };
-
-using ScenePtr = std::unique_ptr<IScene>;
