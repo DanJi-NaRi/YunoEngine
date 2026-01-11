@@ -124,7 +124,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)private\Parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)private\Parser;$(ProjectDir)private\Singleton;$(ProjectDir)private\Renderer\Model</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -147,7 +147,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)private\Parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)private\Parser;$(ProjectDir)private\Singleton;$(ProjectDir)private\Renderer\Model</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -164,7 +164,10 @@
     <ClInclude Include="EnginePCH\pch.h" />
     <ClInclude Include="Private\Parser\Parser.h" />
     <ClInclude Include="Private\Renderer\Material\YunoMaterial.h" />
+    <ClInclude Include="Private\Renderer\Model\Model.h" />
     <ClInclude Include="Private\Resource\YunoTextureManager.h" />
+    <ClInclude Include="Private\Singleton\Singleton.h" />
+    <ClInclude Include="Public\Object\ObjectManager.h" />
     <ClInclude Include="Public\Renderer\MaterialDesc.h" />
     <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h" />
     <ClInclude Include="Private\Renderer\Mesh\YunoMeshBuffer.h">
@@ -212,6 +215,7 @@
     <ClCompile Include="Private\Timer\YunoTimer.cpp" />
     <ClCompile Include="Private\Window\YunoWindow.cpp" />
     <ClCompile Include="Private\YunoEngine.cpp" />
+    <ClCompile Include="Public\Object\ObjectManager.cpp" />
     <ClCompile Include="Public\Object\Unit.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -42,7 +42,7 @@ protected:
     TextureHandle   m_Orm;
 
     Unit* m_Parent;
-    std::vector<Unit*> m_Childs;
+    std::unordered_map<UINT, Unit*> m_Childs;
 
 public:
     explicit Unit();
@@ -62,6 +62,10 @@ public:
 
     UINT GetID() { return m_id; }
     const std::string& GetName() { return m_name; }
+
+    void Attach(Unit* obj);
+    void DettachParent();
+    void DettachChild(UINT id);
 
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
 };

@@ -1,6 +1,12 @@
 #pragma once
+#include "RenderTypes.h"
+#include "Singleton.h"
 
-class Parser
+struct aiMesh;
+struct aiScene;
+struct aiNode;
+
+class Parser : public Singleton<Parser>
 {
 public:
     Parser() = default;

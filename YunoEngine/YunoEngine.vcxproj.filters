@@ -61,6 +61,15 @@
     <Filter Include="Parser">
       <UniqueIdentifier>{b706da04-1ffd-403e-b015-91b6d253dc5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Object\ObjectManager">
+      <UniqueIdentifier>{44a199ed-1a93-462d-b9a5-71fe12f238cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Singleton">
+      <UniqueIdentifier>{fc06ba6f-8f8f-4330-86f6-3622d5b5eb21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Model">
+      <UniqueIdentifier>{7f0c911e-aa7a-4a32-81a2-86c2c422e4eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\YunoEngine.h">
@@ -148,6 +157,15 @@
     <ClInclude Include="Private\Parser\Parser.h">
       <Filter>Parser</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Object\ObjectManager.h">
+      <Filter>Public\Object\ObjectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Singleton\Singleton.h">
+      <Filter>Private\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\Model\Model.h">
+      <Filter>Private\Renderer\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\YunoEngine.cpp">
@@ -183,6 +201,9 @@
     <ClCompile Include="Private\Resource\YunoTextureManager.cpp" />
     <ClCompile Include="Private\Parser\Parser.cpp">
       <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\ObjectManager.cpp">
+      <Filter>Public\Object\ObjectManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ObjectManager.h"
+#include "Parser.h"
 
 ObjectManager::ObjectManager()
 {
@@ -56,12 +57,6 @@ void ObjectManager::ProcessPending()
 
         m_pendingDestoryQ.clear();
     }
-}
-
-void ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos)
-{
-    m_pendingCreateQ.emplace_back(std::make_unique<Unit>(name, m_ObjectIDs, pos));
-    m_ObjectIDs++;
 }
 
 //유니크 포인터의 생포인터 반환 외부에서 삭제 절대 금지

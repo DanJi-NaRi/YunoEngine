@@ -74,6 +74,7 @@ using Microsoft::WRL::ComPtr;
 #include <iostream>
 #include <sstream>
 #include <filesystem>
+#include <type_traits>
 
 #ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC

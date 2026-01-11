@@ -20,7 +20,10 @@ public:
 
     void ProcessPending(); //프레임 맨 마지막에 호출
 
+    template<typename T>
     void CreateObject(const std::string& name, XMFLOAT3 pos);
+    template<typename T>
+    void CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath);
 
     //씬 매니저에 있어도 될것같은 놈들
     const Unit* FindObject(UINT id); //id로 검색
@@ -34,3 +37,20 @@ public:
 
     const std::unordered_map<UINT, std::unique_ptr<Unit>>& GetObjectlist() { return m_objs; }
 };
+
+template<typename T>
+void ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
+    static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
+    
+    auto obj = std::make_unique<T>();
+    obj->Create(name, m_ObjectIDs, pos);
+
+    m_pendingCreateQ.emplace_back(std::move(obj));
+    m_ObjectIDs++;
+}
+
+template<typename T>
+void CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath)
+{
+
+}
