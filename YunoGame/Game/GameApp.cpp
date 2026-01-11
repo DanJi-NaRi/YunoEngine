@@ -6,7 +6,10 @@
 #include "IWindow.h"
 #include "YunoEngine.h"
 #include "TestInputContexts.h"
+#include "ISceneManager.h"
 
+#include "TitleScene.h"
+#include "PlayScene.h"
 
 #include "GameApp.h"
 
@@ -24,23 +27,23 @@ bool GameApp::OnInit()
     {
         std::cout << "[GameApp] Renderer not available.\n";
         return false;
-    } // ë Œë”ëŸ¬ ì²´í¬
+    } // ·»´õ·¯ Ã¼Å©
 
-    //---------------- ì¸í’‹ í…ŒìŠ¤íŠ¸
+    //---------------- ÀÎÇ² Å×½ºÆ®
     IInput* input = YunoEngine::GetInput();
     input->AddContext(&s_uiCtx);
     input->AddContext(&s_gameCtx);
-    //---------------- ì¸í’‹ í…ŒìŠ¤íŠ¸
+    //---------------- ÀÎÇ² Å×½ºÆ®
 
 
 
+   ISceneManager* sm = YunoEngine::GetSceneManager();
+   if (!sm) return false;
 
-   m_quad = std::make_unique<Quad>();
-   if (!m_quad->Create(DirectX::XMFLOAT3(0, 0, 0)))
-       return false;
-   m_triangle = std::make_unique<Triangle>();
-   if (!m_triangle->Create(DirectX::XMFLOAT3(0, 0, -5)))
-       return false;
+   SceneTransitionOptions opt{};
+   opt.immediate = true;
+   sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+
 
     return true;
 }
@@ -54,7 +57,7 @@ void GameApp::OnUpdate(float dt)
     ++frameCount;
 
 
-    // MSAA ë³€ê²½ë˜ëŠ”ì§€ í…ŒìŠ¤íŠ¸
+    // MSAA º¯°æµÇ´ÂÁö Å×½ºÆ®
     //static float test = 0.0f;
     //test += dt;
     //
@@ -77,32 +80,23 @@ void GameApp::OnUpdate(float dt)
     IInput* input = YunoEngine::GetInput();
     IWindow* window = YunoEngine::GetWindow();
 
-    if (input->IsKeyDown('O'))
+    if (input->IsKeyDown('O')) // >> ÀÌ°Å ÀÎ½ºÅÏ½º È£ÃâÇØ¼­ Å°´Ù¿îÇÏ´Â°Å ºÒÆíÇÏ´Ï±î ³ªÁß¿¡ ¹Ù²Ù±â ¤¡¤¡
         window->SetClientSize(1920, 1080);
 
     if (input->IsKeyDown('P'))
         window->SetClientSize(3440, 1440);
 
-    if (acc >= 1.0f)
-    {
-        std::cout << "[GameApp] dt = " << dt << "\n";
-        const float fps = static_cast<float>(frameCount) / acc;
-        std::cout << "[GameApp] FPS = " << fps << "\n";
-        acc = 0.0f;
-        frameCount = 0;
-    }
 
-    if (m_quad)
-    {
-        m_quad->Update(dt);
-        m_quad->Submit(dt);
-    }
+    //if (acc >= 1.0f)
+    //{
+    //    std::cout << "[GameApp] dt = " << dt << "\n";
+    //    const float fps = static_cast<float>(frameCount) / acc;
+    //    std::cout << "[GameApp] FPS = " << fps << "\n";
+    //    acc = 0.0f;
+    //    frameCount = 0;
+    //}
 
-    if (m_triangle)
-    {
-        m_triangle->Update(dt);
-        m_triangle->Submit(dt);
-    }
+
     
 }
 
@@ -111,10 +105,10 @@ void GameApp::OnFixedUpdate(float fixedDt)
     static int step = 0;
     ++step;
 
-    if (step % 60 == 0)
-    {
-        std::cout << "[GameApp] FixedUpdate dt = " << fixedDt << "\n";
-    }
+    //if (step % 60 == 0)
+    //{
+    //    std::cout << "[GameApp] FixedUpdate dt = " << fixedDt << "\n";
+    //}
 }
 
 void GameApp::OnShutdown()
@@ -123,12 +117,16 @@ void GameApp::OnShutdown()
 }
 
 /*
-ë‚´ ë©”ëª¨ì¥ì„ - ì¤€í˜
-ê²Œì„ìª½ì—ì„œ ì •ì ë²„í¼,ì¸ë±ìŠ¤ ë²„í¼, í”Œë˜ê·¸ë¥¼ ë„˜ê¹€ 
-CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) ì´ í•¨ìˆ˜ ì‚¬ìš©
-ê·¸ë¦¬ê³ 
-ë¨¸í…Œë¦¬ì–¼í•¸ë“¤ì„ ë°›ê¸°ìœ„í•´ì„œ ë¨¸í…Œë¦¬ì–¼ ê´€ë ¨ ë°ì´í„°ë“¤ì„ ë„˜ê¸¸ê±°ì„ (PBR ë² ì´ìŠ¤) 
+³» ¸Ş¸ğÀåÀÓ - ÁØÇõ
+°ÔÀÓÂÊ¿¡¼­ Á¤Á¡¹öÆÛ,ÀÎµ¦½º ¹öÆÛ, ÇÃ·¡±×¸¦ ³Ñ±è 
+CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) ÀÌ ÇÔ¼ö »ç¿ë
+±×¸®°í
+¸ÓÅ×¸®¾óÇÚµéÀ» ¹Ş±âÀ§ÇØ¼­ ¸ÓÅ×¸®¾ó °ü·Ã µ¥ÀÌÅÍµéÀ» ³Ñ±æ°ÅÀÓ (PBR º£ÀÌ½º) 
 
-ê°ë§ˆ ì»¬ë ‰ì…˜ ë„£ì–´ì•¼ ë¨
+°¨¸¶ ÄÃ·º¼Ç ³Ö¾î¾ß µÊ
+»ó¼ö¹öÆÛ °ü¸® ³Ö¾î¾ß µÊ
+¿ÀºêÁ§Æ® ¸Å´ÏÀú ³Ö¾î¾ßµÊ (Çö½Â)
+FSMÀº ¹¹ ³ªÁß¿¡ °ÔÀÓ ³ª¿À°í ¸¸µé±â ¤¡¤¡
+¿ÀºêÁ§Æ® ¸Å´ÏÀú ¾À¸Å´ÏÀú ¾ó¸¥ ¸¸µé°í ÀÓ±¸ÀÌ ¤¡¤¡
 
 */

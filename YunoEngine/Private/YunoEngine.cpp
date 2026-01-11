@@ -2,24 +2,27 @@
 
 #include "YunoEngine.h"
 
-// ì¸í„°í˜ì´ìŠ¤
+// ÀÎÅÍÆäÀÌ½º
 #include "IGameApp.h"
 //#include "IWindow.h"
 //#include "IRenderer.h"
 //#include "ITime.h"
-#include <IInput.h>
+//#include "IInput.h"
+//#include "ISceneManager.h"
 
-// ìœ ë…¸
+// À¯³ë
 #include "YunoWindow.h"
 #include "YunoRenderer.h"
 #include "YunoTimer.h"
 #include "YunoTextureManager.h"
 #include "YunoInputSystem.h"
+#include "YunoSceneManager.h"
 
 IRenderer* YunoEngine::s_renderer = nullptr;
 ITextureManager* YunoEngine::s_textureManager = nullptr;
 IInput* YunoEngine::s_input = nullptr;
 IWindow* YunoEngine::s_window = nullptr;
+ISceneManager* YunoEngine::s_sceneManager = nullptr;
 
 YunoEngine::YunoEngine() = default;
 YunoEngine::~YunoEngine()
@@ -34,36 +37,40 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
 
     m_game = game;
 
-    // í™”ë©´ ìƒì„±
+    // È­¸é »ı¼º
     m_window = std::make_unique<YunoWindow>();          
     if (!m_window->Create(title, width, height))
         return false;
     s_window = m_window.get();
 
-    // ë Œë”ëŸ¬ ìƒì„±
+    // ·»´õ·¯ »ı¼º
     m_renderer = std::make_unique<YunoRenderer>();      
     if (!m_renderer->Initialize(m_window.get()))
         return false;
     s_renderer = m_renderer.get();
 
-    // ì¸í’‹ ì‹œìŠ¤í…œ ìƒì„±
+    // ¾À ¸Å´ÏÀú »ı¼º
+    m_sceneManager = std::make_unique<YunoSceneManager>();
+    s_sceneManager = m_sceneManager.get();
+
+    // ÀÎÇ² ½Ã½ºÅÛ »ı¼º
     m_input = std::make_unique<YunoInputSystem>();
     s_input = m_input.get();
 
-    // í…ìŠ¤ì³ ë§¤ë‹ˆì € ìƒì„±
+    // ÅØ½ºÃÄ ¸Å´ÏÀú »ı¼º
     m_textureManager = std::make_unique<YunoTextureManager>(
         static_cast<YunoRenderer*>(m_renderer.get())
     );
     s_textureManager = m_textureManager.get();
 
-    // íƒ€ì´ë¨¸ ìƒì„±
+    // Å¸ÀÌ¸Ó »ı¼º
     m_timer = std::make_unique<YunoTimer>();            
     m_timer->Initialize();
-    //m_timer->SetMaxDeltaSeconds(0.1f); // ìµœëŒ€ í”„ë ˆì„ ì œí•œ
+    //m_timer->SetMaxDeltaSeconds(0.1f); // ÃÖ´ë ÇÁ·¹ÀÓ Á¦ÇÑ
     m_timer->SetTimeScale(1.0f);
     m_fixedAccumulator = 0.0;
 
-    // Game ì´ˆê¸°í™”
+    // Game ÃÊ±âÈ­
     if (!m_game->OnInit())
         return false;
 
@@ -79,28 +86,30 @@ int YunoEngine::Run()
 
     while (m_running)
     {
-        m_window->PollEvents(); // OSí•œí…Œ ë©”ì‹œì§€ ì „ë‹¬
+        m_input->BeginFrame();
 
-        if (m_window->ShouldClose())    // ì¢…ë£Œ
+        m_window->PollEvents(); // OSÇÑÅ× ¸Ş½ÃÁö Àü´Ş
+
+        if (m_window->ShouldClose())    // Á¾·á
         {
             m_running = false;
             break;
         }
 
         uint32_t w = 0, h = 0;
-        if (m_window->ConsumeResize(w, h))      // í™”ë©´ í¬ê¸° ë³€í™” ìˆìœ¼ë©´? (ë”í‹° í”Œë˜ê·¸ ì‚¬ìš©)
+        if (m_window->ConsumeResize(w, h))      // È­¸é Å©±â º¯È­ ÀÖÀ¸¸é? (´õÆ¼ ÇÃ·¡±× »ç¿ë)
         {
-            m_renderer->Resize(w, h);           // ë Œë”ëŸ¬ í™”ë©´ë„ ê°™ì´ ë³€ê²½ (ìŠ¤ì™‘ ì²´ì¸, RTV, DSV)
+            m_renderer->Resize(w, h);           // ·»´õ·¯ È­¸éµµ °°ÀÌ º¯°æ (½º¿Ò Ã¼ÀÎ, RTV, DSV)
         }
 
 
-        // ---------------------------------ì—…ë°ì´íŠ¸ ì‹œì‘ -----------------------------------------
+        // ---------------------------------¾÷µ¥ÀÌÆ® ½ÃÀÛ -----------------------------------------
 
         constexpr double fixedDt = 1.0 / 60.0;   // 60Hz
         constexpr int maxFixedStepsPerFrame = 5; 
 
 
-        // dt ê³„ì‚°
+        // dt °è»ê
         m_timer->Tick();
         const double frameDt = static_cast<double>(m_timer->UnscaledDeltaSeconds());
 
@@ -120,17 +129,21 @@ int YunoEngine::Run()
         }
 
 
-        m_input->BeginFrame();
+
         m_input->Dispatch();
 
 
         const float dt = m_timer->DeltaSeconds();
         m_game->OnUpdate(dt);
 
+        // ¾À ¾÷µ¥ÀÌÆ® (¾À ÀüÈ¯ ApplyPending Æ÷ÇÔ)
+        m_sceneManager->Update(dt);
 
-        // ---------------------------------ë“œë¡œìš° ì‹œì‘ -----------------------------------------
+        // ---------------------------------µå·Î¿ì ½ÃÀÛ -----------------------------------------
 
         m_renderer->BeginFrame();
+
+        m_sceneManager->Submit(m_renderer.get());
 
         m_renderer->Flush();
 
@@ -143,29 +156,35 @@ int YunoEngine::Run()
 
 void YunoEngine::Shutdown()
 {
-    // 1) ê²Œì„ ì¢…ë£Œ ì½œë°± (ê²Œì„ì´ ë Œë” ë¦¬ì†ŒìŠ¤ë¥¼ ë“¤ê³  ìˆì„ ìˆ˜ë„ ìˆìŒ)
+    // Á¾·á ¼ø¼­
+    // 1. °ÔÀÓ
     if (m_game)
     {
         m_game->OnShutdown();
         m_game = nullptr;
     }
+    // 2. ¾À¸Å´ÏÀú
+    s_sceneManager = nullptr;
+    m_sceneManager.reset();
 
-    // 2) ë Œë”ëŸ¬ ë¨¼ì € ì¢…ë£Œ (D3D ë¦¬ì†ŒìŠ¤ Release, ë””ë²„ê·¸ ë¦¬í¬íŠ¸ë„ ì—¬ê¸°ì„œ)
-    if (m_renderer)
-    {
-        m_renderer->Shutdown();
-        m_renderer.reset();
-    }
-
+    // 3. ÅØ½ºÃÄ ¸Å´ÏÀú
     s_textureManager = nullptr;
     m_textureManager.reset();
 
-    s_renderer = nullptr;
-    m_renderer.reset();
+    // 4. ·»´õ·¯
+    if (m_renderer)
+    {
+        m_renderer->Shutdown();
+        s_renderer = nullptr;
+        m_renderer.reset();
+    }
 
-    // 3) ê·¸ ë‹¤ìŒ ìœˆë„ìš° ì¢…ë£Œ
-    m_window.reset();
+    // 5. Å¸ÀÌ¸Ó 
     m_timer.reset();
+
+    // 6. À©µµ¿ì
+    s_window = nullptr;
+    m_window.reset();
 
     m_running = false;
 }

@@ -74,6 +74,9 @@
     <Filter Include="Shaders\Include">
       <UniqueIdentifier>{4cc2b856-b3d6-459a-9e23-866c449184b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Scene">
+      <UniqueIdentifier>{0170ffaa-52a9-4ad9-a9ea-a5490f1015d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="Public\Object\Unit.cpp">
       <Filter>Public\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Scene\YunoSceneManager.cpp">
+      <Filter>Private\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -230,6 +236,12 @@
     <ClInclude Include="Public\YunoEngine.h">
       <Filter>Public</Filter>
     </ClInclude>
+    <ClInclude Include="Private\Scene\YunoSceneManager.h">
+  <Filter>Private\Scene</Filter>
+</ClInclude>
+<ClInclude Include="Public\Interface\IScene.h">
+  <Filter>Public\Interface</Filter>
+</ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>

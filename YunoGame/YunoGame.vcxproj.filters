@@ -19,6 +19,21 @@
     <Filter Include="Game\Object\Quad">
       <UniqueIdentifier>{ecf648a9-22db-45d7-af4d-ce4d9e87cc76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{dddf83ad-e69d-43b6-885b-f95b1e186a91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System">
+      <UniqueIdentifier>{9361046d-0731-4de1-9145-d90d338d0e82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\0. Test">
+      <UniqueIdentifier>{568b3c88-40c4-44a7-95a2-efd275f2cc97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\1. First">
+      <UniqueIdentifier>{dfb98353-23be-4e81-8a4f-8384ec4cfd4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\2. Second">
+      <UniqueIdentifier>{75bf4271-7290-46c5-9098-5693ea31ff20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -36,6 +51,12 @@
     <ClCompile Include="Game\Object\Quad.cpp">
       <Filter>Game\Object\Quad</Filter>
     </ClCompile>
+    <ClCompile Include="Scenes\PlayScene.cpp">
+      <Filter>Scenes\2. Second</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\TitleScene.cpp">
+      <Filter>Scenes\1. First</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -50,7 +71,20 @@
     <ClInclude Include="Game\Object\Quad.h">
       <Filter>Game\Object\Quad</Filter>
     </ClInclude>
-    <ClInclude Include="System\GameInputContext.h" />
-    <ClInclude Include="System\TestInputContexts.h" />
+    <ClInclude Include="System\TestInputContexts.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="System\GameInputContext.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScenes.h">
+      <Filter>Scenes\0. Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\PlayScene.h">
+      <Filter>Scenes\2. Second</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\TitleScene.h">
+      <Filter>Scenes\1. First</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

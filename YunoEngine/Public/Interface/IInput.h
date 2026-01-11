@@ -9,19 +9,24 @@ class IInput
 public:
     virtual ~IInput() = default;
 
-    // ì…ë ¥ ì´ë²¤íŠ¸ íì— ì‚½ì…
+    // ÀÔ·Â ÀÌº¥Æ® Å¥¿¡ »ğÀÔ
     virtual void PushEvent(const InputEvent& evt) = 0;
 
-    // ê²Œì„ì—ì„œ ì‚¬ìš©í•  APIí•¨ìˆ˜ë“¤
+    // °ÔÀÓ¿¡¼­ »ç¿ëÇÒ APIÇÔ¼öµé
     virtual bool IsKeyDown(uint32_t key) const = 0;
+    virtual bool IsKeyPressed(uint32_t key) const = 0;
+    virtual bool IsKeyReleased(uint32_t key) const = 0;
+
     virtual bool IsMouseButtonDown(uint32_t button) const = 0;
+    virtual bool IsMouseButtonPressed(uint32_t button) const = 0;
+    virtual bool IsMouseButtonReleased(uint32_t button) const = 0;
 
     virtual float GetMouseX() const = 0;
     virtual float GetMouseY() const = 0;
     virtual float GetMouseDeltaX() const = 0;
     virtual float GetMouseDeltaY() const = 0;
 
-    // ì¸í’‹ì„ ì‚¬ìš©í•  ì»¨í…ìŠ¤íŠ¸
+    // ÀÎÇ²À» »ç¿ëÇÒ ÄÁÅØ½ºÆ®
     virtual void AddContext(IInputContext* context) = 0;
     virtual void RemoveContext(IInputContext* context) = 0;
 };

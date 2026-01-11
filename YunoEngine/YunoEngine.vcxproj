@@ -124,8 +124,34 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)private\Parser;$(ProjectDir)private\Singleton;$(ProjectDir)private\Renderer\Model</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Input;$(ProjectDir)private\Parser;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Singleton;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer</AdditionalIncludeDirectories>
+<AdditionalIncludeDirectories>
+  $(SolutionDir)ThirdParty\Assimp\include;
+  $(ProjectDir)EnginePCH;
+  $(ProjectDir)Public;
+  $(ProjectDir)Private;
+  $(ProjectDir)Private\Input;
+  $(ProjectDir)Private\Parser;
+  $(ProjectDir)Private\Renderer;
+  $(ProjectDir)Private\Renderer\ConstBuffer;
+  $(ProjectDir)Private\Renderer\Material;
+  $(ProjectDir)Private\Renderer\Model;
+  $(ProjectDir)Private\Renderer\Mesh;
+  $(ProjectDir)Private\Renderer\RenderPass;
+  $(ProjectDir)Private\Renderer\Shader;
+  $(ProjectDir)Private\Resource;
+  $(ProjectDir)Private\Scene;
+  $(ProjectDir)Private\Singleton;
+  $(ProjectDir)Private\Timer;
+  $(ProjectDir)Private\Window;
+  $(ProjectDir)Public\Camera;
+  $(ProjectDir)Public\Input;
+  $(ProjectDir)Public\Interface;
+  $(ProjectDir)Public\Math;
+  $(ProjectDir)Public\Object;
+  $(ProjectDir)Public\Renderer;
+  %(AdditionalIncludeDirectories)
+</AdditionalIncludeDirectories>
+
     </ClCompile>
     <Link>
       <SubSystem>
@@ -148,8 +174,34 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)private\Parser;$(ProjectDir)private\Singleton;$(ProjectDir)private\Renderer\Model</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)public;$(ProjectDir)private;$(ProjectDir)private\Input;$(ProjectDir)private\Parser;$(ProjectDir)private\Renderer;$(ProjectDir)private\Renderer\ConstBuffer;$(ProjectDir)private\Renderer\Material;$(ProjectDir)private\Renderer\Mesh;$(ProjectDir)private\Renderer\RenderPass;$(ProjectDir)private\Renderer\Shader;$(ProjectDir)private\Resource;$(ProjectDir)private\Singleton;$(ProjectDir)private\Timer;$(ProjectDir)private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer</AdditionalIncludeDirectories>
+<AdditionalIncludeDirectories>
+  $(SolutionDir)ThirdParty\Assimp\include;
+  $(ProjectDir)EnginePCH;
+  $(ProjectDir)Public;
+  $(ProjectDir)Private;
+  $(ProjectDir)Private\Input;
+  $(ProjectDir)Private\Parser;
+  $(ProjectDir)Private\Renderer;
+  $(ProjectDir)Private\Renderer\ConstBuffer;
+  $(ProjectDir)Private\Renderer\Material;
+  $(ProjectDir)Private\Renderer\Model;
+  $(ProjectDir)Private\Renderer\Mesh;
+  $(ProjectDir)Private\Renderer\RenderPass;
+  $(ProjectDir)Private\Renderer\Shader;
+  $(ProjectDir)Private\Resource;
+  $(ProjectDir)Private\Scene;
+  $(ProjectDir)Private\Singleton;
+  $(ProjectDir)Private\Timer;
+  $(ProjectDir)Private\Window;
+  $(ProjectDir)Public\Camera;
+  $(ProjectDir)Public\Input;
+  $(ProjectDir)Public\Interface;
+  $(ProjectDir)Public\Math;
+  $(ProjectDir)Public\Object;
+  $(ProjectDir)Public\Renderer;
+  %(AdditionalIncludeDirectories)
+</AdditionalIncludeDirectories>
+
     </ClCompile>
     <Link>
       <SubSystem>
@@ -167,11 +219,13 @@
     <ClInclude Include="Private\Parser\Parser.h" />
     <ClInclude Include="Private\Input\InputState.h" />
     <ClInclude Include="Private\Input\YunoInputSystem.h" />
+    <ClInclude Include="Private\Scene\YunoSceneManager.h" />
     <ClInclude Include="Public\Interface\IInputContext.h" />
     <ClInclude Include="Public\Input\InputEvent.h" />
     <ClInclude Include="Private\Renderer\Material\YunoMaterial.h" />
     <ClInclude Include="Private\Renderer\Model\Model.h" />
     <ClInclude Include="Private\Resource\YunoTextureManager.h" />
+    <ClInclude Include="Public\Interface\IScene.h" />
     <ClInclude Include="Private\Singleton\Singleton.h" />
     <ClInclude Include="Public\Object\ObjectManager.h" />
     <ClInclude Include="Public\Renderer\MaterialDesc.h" />
@@ -219,6 +273,7 @@
     <ClCompile Include="Private\Renderer\Shader\YunoShaderCompiler.cpp" />
     <ClCompile Include="Private\Renderer\YunoRenderer.cpp" />
     <ClCompile Include="Private\Resource\YunoTextureManager.cpp" />
+    <ClCompile Include="Private\Scene\YunoSceneManager.cpp" />
     <ClCompile Include="Private\Timer\YunoTimer.cpp" />
     <ClCompile Include="Private\Window\YunoWindow.cpp" />
     <ClCompile Include="Private\YunoEngine.cpp" />
