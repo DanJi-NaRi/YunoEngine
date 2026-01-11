@@ -124,33 +124,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>
-  $(SolutionDir)ThirdParty\Assimp\include;
-  $(ProjectDir)EnginePCH;
-  $(ProjectDir)Public;
-  $(ProjectDir)Private;
-  $(ProjectDir)Private\Input;
-  $(ProjectDir)Private\Parser;
-  $(ProjectDir)Private\Renderer;
-  $(ProjectDir)Private\Renderer\ConstBuffer;
-  $(ProjectDir)Private\Renderer\Material;
-  $(ProjectDir)Private\Renderer\Model;
-  $(ProjectDir)Private\Renderer\Mesh;
-  $(ProjectDir)Private\Renderer\RenderPass;
-  $(ProjectDir)Private\Renderer\Shader;
-  $(ProjectDir)Private\Resource;
-  $(ProjectDir)Private\Scene;
-  $(ProjectDir)Private\Singleton;
-  $(ProjectDir)Private\Timer;
-  $(ProjectDir)Private\Window;
-  $(ProjectDir)Public\Camera;
-  $(ProjectDir)Public\Input;
-  $(ProjectDir)Public\Interface;
-  $(ProjectDir)Public\Math;
-  $(ProjectDir)Public\Object;
-  $(ProjectDir)Public\Renderer;
-  %(AdditionalIncludeDirectories)
-</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -159,6 +133,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\Assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;zlibstaticd.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -173,33 +148,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>
-  $(SolutionDir)ThirdParty\Assimp\include;
-  $(ProjectDir)EnginePCH;
-  $(ProjectDir)Public;
-  $(ProjectDir)Private;
-  $(ProjectDir)Private\Input;
-  $(ProjectDir)Private\Parser;
-  $(ProjectDir)Private\Renderer;
-  $(ProjectDir)Private\Renderer\ConstBuffer;
-  $(ProjectDir)Private\Renderer\Material;
-  $(ProjectDir)Private\Renderer\Model;
-  $(ProjectDir)Private\Renderer\Mesh;
-  $(ProjectDir)Private\Renderer\RenderPass;
-  $(ProjectDir)Private\Renderer\Shader;
-  $(ProjectDir)Private\Resource;
-  $(ProjectDir)Private\Scene;
-  $(ProjectDir)Private\Singleton;
-  $(ProjectDir)Private\Timer;
-  $(ProjectDir)Private\Window;
-  $(ProjectDir)Public\Camera;
-  $(ProjectDir)Public\Input;
-  $(ProjectDir)Public\Interface;
-  $(ProjectDir)Public\Math;
-  $(ProjectDir)Public\Object;
-  $(ProjectDir)Public\Renderer;
-  %(AdditionalIncludeDirectories)
-</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -210,14 +159,13 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\Assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h" />
-    <ClInclude Include="Private\Parser\Parser.h" />
     <ClInclude Include="Private\Input\InputState.h" />
     <ClInclude Include="Private\Input\YunoInputSystem.h" />
-    <ClInclude Include="Private\Renderer\Mesh\Mesh.h" />
     <ClInclude Include="Private\Scene\YunoSceneManager.h" />
     <ClInclude Include="Public\Interface\IInputContext.h" />
     <ClInclude Include="Public\Input\InputEvent.h" />
@@ -226,6 +174,7 @@
     <ClInclude Include="Public\Interface\IScene.h" />
     <ClInclude Include="Private\Singleton\Singleton.h" />
     <ClInclude Include="Public\Object\ObjectManager.h" />
+    <ClInclude Include="Public\Parser\Parser.h" />
     <ClInclude Include="Public\Renderer\MaterialDesc.h" />
     <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h" />
     <ClInclude Include="Private\Renderer\Mesh\YunoMeshBuffer.h">
@@ -252,6 +201,7 @@
     <ClInclude Include="Public\Interface\IWindow.h" />
     <ClInclude Include="Public\Math\YunoTransform.h" />
     <ClInclude Include="Public\Object\Unit.h" />
+    <ClInclude Include="Public\Renderer\Mesh.h" />
     <ClInclude Include="Public\Renderer\RenderTypes.h" />
     <ClInclude Include="Public\YunoEngine.h" />
   </ItemGroup>
@@ -260,9 +210,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Private\Parser\Parser.cpp" />
     <ClCompile Include="Private\Input\YunoInputSystem.cpp" />
-    <ClCompile Include="Private\Renderer\Mesh\Mesh.cpp" />
     <ClCompile Include="Private\Renderer\Mesh\YunoMeshBuffer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -278,6 +226,8 @@
     <ClCompile Include="Private\YunoEngine.cpp" />
     <ClCompile Include="Public\Object\ObjectManager.cpp" />
     <ClCompile Include="Public\Object\Unit.cpp" />
+    <ClCompile Include="Public\Parser\Parser.cpp" />
+    <ClCompile Include="Public\Renderer\Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">

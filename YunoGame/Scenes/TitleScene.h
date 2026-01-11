@@ -4,6 +4,8 @@
 #include "IScene.h"
 
 class Quad;
+class Building;
+class ObjectManager;
 
 class TitleScene final : public IScene
 {
@@ -18,5 +20,7 @@ public:
 
 private:
     Quad* m_plane = nullptr;   // 간단하게 raw로 들고, OnDestroy에서 delete
+    Building* m_building = nullptr;   // 간단하게 raw로 들고, OnDestroy에서 delete
     float m_lastDt = 0.0f;
+    ObjectManager* m_ObjManager;
 };
