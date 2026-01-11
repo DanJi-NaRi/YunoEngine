@@ -24,7 +24,7 @@ std::wstring Utf8ToWString(const char* s)
     return w;
 }
 
-bool Parser::LoadFile(const std::string& filename)
+std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filename)
 {
     Assimp::Importer importer;
 
@@ -37,25 +37,35 @@ bool Parser::LoadFile(const std::string& filename)
     );
 
     if (!scene || !scene->mRootNode)
-        return false;
+        return {};
 
-    CreateNode(scene->mRootNode, scene);
+    auto MeshNode = CreateNode(scene->mRootNode, scene);
 
-    return true;
+    return MeshNode;
 }
 
-void Parser::CreateNode(aiNode* node, const aiScene* scene)
+std::unique_ptr<MeshNode> Parser::CreateNode(aiNode* node, const aiScene* scene)
 {
+    auto meshnode = std::make_unique<MeshNode>();
+
     for (size_t i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
-        auto mesh_matKey = CreateMesh(aiMesh, scene);
+        auto [meshkey, matkey] = CreateMesh(aiMesh, scene);
+
+        auto model = std::make_unique<Mesh>();
+        model->Create(meshkey, matkey);
+
+        meshnode->m_Meshs.push_back(std::move(model));
     }
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
-        CreateNode(node->mChildren[i], scene); //자식 노드 탐색
+        auto child = CreateNode(node->mChildren[i], scene); //자식 노드 탐색
+        meshnode->m_Childs.push_back(std::move(child));
     }
+
+    return meshnode;
 }
 
 std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const aiScene* scene)

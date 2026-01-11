@@ -124,7 +124,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-<AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
   $(SolutionDir)ThirdParty\Assimp\include;
   $(ProjectDir)EnginePCH;
   $(ProjectDir)Public;
@@ -151,7 +151,6 @@
   $(ProjectDir)Public\Renderer;
   %(AdditionalIncludeDirectories)
 </AdditionalIncludeDirectories>
-
     </ClCompile>
     <Link>
       <SubSystem>
@@ -174,7 +173,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-<AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
   $(SolutionDir)ThirdParty\Assimp\include;
   $(ProjectDir)EnginePCH;
   $(ProjectDir)Public;
@@ -201,7 +200,6 @@
   $(ProjectDir)Public\Renderer;
   %(AdditionalIncludeDirectories)
 </AdditionalIncludeDirectories>
-
     </ClCompile>
     <Link>
       <SubSystem>
@@ -219,11 +217,11 @@
     <ClInclude Include="Private\Parser\Parser.h" />
     <ClInclude Include="Private\Input\InputState.h" />
     <ClInclude Include="Private\Input\YunoInputSystem.h" />
+    <ClInclude Include="Private\Renderer\Mesh\Mesh.h" />
     <ClInclude Include="Private\Scene\YunoSceneManager.h" />
     <ClInclude Include="Public\Interface\IInputContext.h" />
     <ClInclude Include="Public\Input\InputEvent.h" />
     <ClInclude Include="Private\Renderer\Material\YunoMaterial.h" />
-    <ClInclude Include="Private\Renderer\Model\Model.h" />
     <ClInclude Include="Private\Resource\YunoTextureManager.h" />
     <ClInclude Include="Public\Interface\IScene.h" />
     <ClInclude Include="Private\Singleton\Singleton.h" />
@@ -264,6 +262,7 @@
     </ClCompile>
     <ClCompile Include="Private\Parser\Parser.cpp" />
     <ClCompile Include="Private\Input\YunoInputSystem.cpp" />
+    <ClCompile Include="Private\Renderer\Mesh\Mesh.cpp" />
     <ClCompile Include="Private\Renderer\Mesh\YunoMeshBuffer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
