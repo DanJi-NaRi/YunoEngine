@@ -43,7 +43,7 @@ bool Unit::Create(XMFLOAT3 vPos)
     return true;
 }
 
-bool Unit::Create(std::string& name, UINT id, XMFLOAT3 vPos)
+bool Unit::Create(std::string& name, uint32_t id, XMFLOAT3 vPos)
 {
     m_id = id;
     m_name = name;
@@ -106,7 +106,7 @@ void Unit::DettachParent()
     m_Parent->DettachChild(m_id);
 }
 
-void Unit::DettachChild(UINT id)
+void Unit::DettachChild(uint32_t id)
 {
     if (m_Childs.find(id) == m_Childs.end())
         return;
