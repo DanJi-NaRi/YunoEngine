@@ -5,6 +5,8 @@
 #include "IRenderer.h"
 #include "ITextureManager.h"
 
+class Mesh;
+
 // 모든 메쉬는 CW 시계방향 정점이 앞면임
 /* 예시)
 01
@@ -44,6 +46,8 @@ protected:
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
 
+    std::vector<std::unique_ptr<Mesh>> m_Meshs;
+
     Unit* m_Parent;
     std::unordered_map<uint32_t, Unit*> m_Childs;
 
@@ -63,6 +67,8 @@ public:
 
     virtual bool CreateMesh() = 0;
     virtual bool CreateMaterial() = 0;
+
+    virtual void SetMesh(std::unique_ptr<Mesh>&& mesh);
 
     uint32_t GetID() { return m_id; }
     const std::string& GetName() { return m_name; }
