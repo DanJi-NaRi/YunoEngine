@@ -82,6 +82,12 @@ bool Unit::Update(float dTime)
     else
         mTM = mScale * mRot * mTrans;
 
+    if (!m_Meshs.empty())
+    {
+        XMMATRIX userTM = XMLoadFloat4x4(&m_Meshs[0]->GetUserTM());
+        mTM = userTM * mTM;
+    }
+    
     XMStoreFloat4x4(&m_mScale, mScale);
     XMStoreFloat4x4(&m_mRot, mRot);
     XMStoreFloat4x4(&m_mTrans, mTrans);
