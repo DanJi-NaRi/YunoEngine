@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "YunoInputSystem.h"
 
 void YunoInputSystem::BeginFrame()
@@ -77,7 +77,7 @@ void YunoInputSystem::SortContextsIfDirty()
 {
     if (!m_contextOrderDirty) return;
 
-    // ³»¸²Â÷¼ø Á¤·Ä ¿ì¼±¼øÀ§°¡ Å©¸é ¸ÕÀú ¹ŞÀ½
+    // ë‚´ë¦¼ì°¨ìˆœ ì •ë ¬ ìš°ì„ ìˆœìœ„ê°€ í¬ë©´ ë¨¼ì € ë°›ìŒ
     std::sort(m_contexts.begin(), m_contexts.end(),
         [](IInputContext* a, IInputContext* b)
         {
@@ -98,7 +98,7 @@ void YunoInputSystem::Dispatch()
         InputEvent evt = m_events.front();
         m_events.pop_front();
 
-        // ÄÁÅØ½ºÆ® ¿ì¼±¼øÀ§ ¼øÀ¸·Î Àü´Ş
+        // ì»¨í…ìŠ¤íŠ¸ ìš°ì„ ìˆœìœ„ ìˆœìœ¼ë¡œ ì „ë‹¬
         for (IInputContext* ctx : m_contexts)
         {
             if (!ctx) continue;
@@ -106,9 +106,9 @@ void YunoInputSystem::Dispatch()
             const bool consumed = ctx->OnInputEvent(evt);
             if (consumed || evt.consumed)
             {
-                // »óÀ§ ÄÁÅØ½ºÆ®¿¡¼­ ÀÌº¥Æ® ¼Ò¸ğµÇ¸é ÇÏÀ§ ÄÁÅØ½ºÆ®·Î ¾È³»·Á°¨
-                // ÀÌ°Å Á¶±İ ¹Ù²Ù¸é ¸ğµç ·¹ÀÌ¾î¿¡¼­µµ ¼Ò¸ğ °¡´ÉÇÏ±ä ÇÔ
-                // Æ¯Á¤ ·¹ÀÌ¾î¿¡¼­¸¸ ¼Ò¸ğÇÏ°Ô ÇÏ´Â°Åµµ ÄÁÅØ½ºÆ® ¹Ù²Ù¸é µÇ±äÇÒµí?
+                // ìƒìœ„ ì»¨í…ìŠ¤íŠ¸ì—ì„œ ì´ë²¤íŠ¸ ì†Œëª¨ë˜ë©´ í•˜ìœ„ ì»¨í…ìŠ¤íŠ¸ë¡œ ì•ˆë‚´ë ¤ê°
+                // ì´ê±° ì¡°ê¸ˆ ë°”ê¾¸ë©´ ëª¨ë“  ë ˆì´ì–´ì—ì„œë„ ì†Œëª¨ ê°€ëŠ¥í•˜ê¸´ í•¨
+                // íŠ¹ì • ë ˆì´ì–´ì—ì„œë§Œ ì†Œëª¨í•˜ê²Œ í•˜ëŠ”ê±°ë„ ì»¨í…ìŠ¤íŠ¸ ë°”ê¾¸ë©´ ë˜ê¸´í• ë“¯?
                 break;
             }
         }
@@ -141,7 +141,7 @@ void YunoInputSystem::ApplyToState(const InputEvent& evt)
 
     case InputEventType::MouseMove:
     {
-        // delta °è»ê: ÀÌÀü ÁÂÇ¥ ±âÁØ
+        // delta ê³„ì‚°: ì´ì „ ì¢Œí‘œ ê¸°ì¤€
         const float prevX = m_state.mouseX;
         const float prevY = m_state.mouseY;
 
@@ -154,7 +154,7 @@ void YunoInputSystem::ApplyToState(const InputEvent& evt)
     }
 
     case InputEventType::MouseWheel:
-        // »óÅÂ ±â¹İ wheel ´©ÀûÀÌ ÇÊ¿äÇÏ¸é InputState¿¡ wheelDelta Ãß°¡ÇØ¼­ ´©Àû
+        // ìƒíƒœ ê¸°ë°˜ wheel ëˆ„ì ì´ í•„ìš”í•˜ë©´ InputStateì— wheelDelta ì¶”ê°€í•´ì„œ ëˆ„ì 
         break;
 
     default:

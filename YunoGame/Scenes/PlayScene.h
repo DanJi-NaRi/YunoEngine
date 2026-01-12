@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <iostream>
 
 #include "IScene.h"
@@ -15,6 +15,8 @@ public:
 
     void Update(float dt) override;
     void Submit(IRenderer* renderer) override;
+
+    const char* GetDebugName() const override { return "PlayScene"; }
 
 private:
     Triangle* m_player = nullptr;

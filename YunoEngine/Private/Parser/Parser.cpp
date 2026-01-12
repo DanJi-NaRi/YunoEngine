@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "YunoRenderer.h"
 #include "IMesh.h"
 #include "YunoEngine.h"
@@ -54,7 +54,7 @@ void Parser::CreateNode(aiNode* node, const aiScene* scene)
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
-        CreateNode(node->mChildren[i], scene); //ÀÚ½Ä ³ëµå Å½»ö
+        CreateNode(node->mChildren[i], scene); //ìì‹ ë…¸ë“œ íƒìƒ‰
     }
 }
 
@@ -86,7 +86,7 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
 
         {
             VERTEX_UV vUV;
-            if (aiMesh->HasTextureCoords(0)) //0ÀÌ Á¦ÀÏ ±âº» uv
+            if (aiMesh->HasTextureCoords(0)) //0ì´ ì œì¼ ê¸°ë³¸ uv
             {
                 vUV.u = aiMesh->mTextureCoords[0][i].x;
                 vUV.v = aiMesh->mTextureCoords[0][i].y;
@@ -121,7 +121,7 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
         aiFace face = aiMesh->mFaces[i];
         INDEX idx;
 
-        //ÆÄ½Ì ÇÃ·¡±×·Î ¹«Á¶°Ç »ï°¢Çü face
+        //íŒŒì‹± í”Œë˜ê·¸ë¡œ ë¬´ì¡°ê±´ ì‚¼ê°í˜• face
         idx.V0 = face.mIndices[0]; 
         idx.V1 = face.mIndices[1]; 
         idx.V2 = face.mIndices[2];

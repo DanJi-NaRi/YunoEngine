@@ -1,4 +1,4 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 
 #include "YunoSceneManager.h"
 
@@ -60,7 +60,7 @@ bool YunoSceneManager::EnsureCreated(SceneEntry& e)
 {
     if (!e.scene) return false;
 
-    if (e.state == SceneState::Uninitialized)   // æ¿¿Ã ∏∏µÈæÓ¡ˆ¡ˆ æ æ“¥Ÿ∏È Create»£√‚
+    if (e.state == SceneState::Uninitialized)   // Ïî¨Ïù¥ ÎßåÎì§Ïñ¥ÏßÄÏßÄ ÏïäÏïòÎã§Î©¥ CreateÌò∏Ï∂ú
     {
         const bool ok = e.scene->OnCreate();
         if (!ok)
@@ -110,7 +110,7 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
                 m_stack.pop_back();
             }
 
-            // ªı æ¿ 1∞≥∑Œ ±≥√º
+            // ÏÉà Ïî¨ 1Í∞úÎ°ú ÍµêÏ≤¥
             SceneEntry e{};
             e.scene = std::move(op.scene);
             e.policy = op.policy;
@@ -126,7 +126,7 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
         }
         else if (op.type == PendingOpType::Push)
         {
-            // ±‚¡∏ top Pause
+            // Í∏∞Ï°¥ top Pause
             if (!m_stack.empty())
             {
                 SceneEntry& prevTop = m_stack.back();
@@ -156,7 +156,7 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
             if (m_stack.empty())
                 continue;
 
-            // top ¡æ∑·/∆ƒ±´
+            // top Ï¢ÖÎ£å/ÌååÍ¥¥
             {
                 SceneEntry& top = m_stack.back();
                 EnsureCreated(top);
@@ -170,7 +170,7 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
                 m_stack.pop_back();
             }
 
-            // ªı top Resume
+            // ÏÉà top Resume
             if (!m_stack.empty())
             {
                 SceneEntry& newTop = m_stack.back();

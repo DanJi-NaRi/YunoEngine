@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "PlayScene.h"
 
 #include "Triangle.h"
@@ -11,9 +11,9 @@
 
 bool PlayScene::OnCreate()
 {
-    std::cout << "[PlayScene] OnCreate\n";
+    //std::cout << "[PlayScene] OnCreate\n";
 
-    // ÇÃ·¹ÀÌ¾î(»ï°¢Çü)
+    // í”Œë ˆì´ì–´(ì‚¼ê°í˜•)
     m_player = new Triangle();
     if (!m_player->Create({ 0.0f, 0.0f, 0.0f }))
     {
@@ -27,7 +27,7 @@ bool PlayScene::OnCreate()
 
 void PlayScene::OnDestroy()
 {
-    std::cout << "[PlayScene] OnDestroy\n";
+    //std::cout << "[PlayScene] OnDestroy\n";
     delete m_player;
     m_player = nullptr;
 }
@@ -43,10 +43,12 @@ void PlayScene::Update(float dt)
     {
         if ( input->IsKeyPressed('1'))
         {
-            std::cout << "[PlayScene] Back -> ReplaceRoot(TitleScene)\n";
             SceneTransitionOptions opt{};
             opt.immediate = true;
-            sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+            ScenePolicy policy;
+            policy.blockUpdateBelow = false;
+            policy.blockRenderBelow = false;
+            sm->RequestPush(std::make_unique<TitleScene>(), policy);
         }
     }
 

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Unit.h"
 
 class ObjectManager
@@ -15,25 +15,25 @@ public:
     explicit ObjectManager();
     virtual ~ObjectManager();
 
-    void Init(); //»ı¼º ÃÊ±âÈ­
-    void Clear(); //»èÁ¦ ÃÊ±âÈ­
+    void Init(); //ìƒì„± ì´ˆê¸°í™”
+    void Clear(); //ì‚­ì œ ì´ˆê¸°í™”
 
-    void ProcessPending(); //ÇÁ·¹ÀÓ ¸Ç ¸¶Áö¸·¿¡ È£Ãâ
+    void ProcessPending(); //í”„ë ˆì„ ë§¨ ë§ˆì§€ë§‰ì— í˜¸ì¶œ
 
     template<typename T>
     void CreateObject(const std::string& name, XMFLOAT3 pos);
     template<typename T>
     void CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath);
 
-    //¾À ¸Å´ÏÀú¿¡ ÀÖ¾îµµ µÉ°Í°°Àº ³ğµé
-    const Unit* FindObject(UINT id); //id·Î °Ë»ö
-    const Unit* FindObject(const std::string& name); //ÀÌ¸§À¸·Î °Ë»ö
+    //ì”¬ ë§¤ë‹ˆì €ì— ìˆì–´ë„ ë ê²ƒê°™ì€ ë†ˆë“¤
+    const Unit* FindObject(UINT id); //idë¡œ ê²€ìƒ‰
+    const Unit* FindObject(const std::string& name); //ì´ë¦„ìœ¼ë¡œ ê²€ìƒ‰
 
     void DestroyObject(UINT id);
     void DestroyObject(const std::string& name);
 
     const size_t GetObjectCount() { return m_ObjectCount; }
-    //¿©±â±îÁö
+    //ì—¬ê¸°ê¹Œì§€
 
     const std::unordered_map<UINT, std::unique_ptr<Unit>>& GetObjectlist() { return m_objs; }
 };

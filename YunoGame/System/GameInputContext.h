@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <IInputContext.h>
 
 class GameInputContext : public IInputContext

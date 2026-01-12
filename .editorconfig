@@ -1,9 +1,16 @@
 root = true
 
-# All files
+# ===== All files =====
 [*]
+charset = utf-8-bom
+end_of_line = crlf
 indent_style = space
+insert_final_newline = true
 
-# Xml files
+# ===== C / C++ =====
+[*.{h,hpp,cpp,inl}]
+indent_size = 4
+
+# ===== XML =====
 [*.xml]
 indent_size = 2

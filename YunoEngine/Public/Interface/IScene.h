@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 class IRenderer;
 
@@ -8,15 +8,17 @@ public:
     virtual ~IScene() = default;
 
 
-    virtual bool OnCreate() { return true; }    // ÃÖÃÊ 1È¸
-    virtual void OnEnter() {}                   // Active Á÷Àü/Á÷ÈÄ
-    virtual void OnExit() {}                    // Active ÇØÁ¦ Á÷Àü
-    virtual void OnDestroy() {}                 // Á¦°Å Á÷Àü 1È¸
+    virtual bool OnCreate() { return true; }    // ìµœì´ˆ 1íšŒ
+    virtual void OnEnter() {}                   // Active ì§ì „/ì§í›„
+    virtual void OnExit() {}                    // Active í•´ì œ ì§ì „
+    virtual void OnDestroy() {}                 // ì œê±° ì§ì „ 1íšŒ
 
-    virtual void OnPause() {}                   // ½ºÅÃ À§·Î ´Ù¸¥ ¾ÀÀÌ ¿Ã¶ó¿ÔÀ» ¶§
-    virtual void OnResume() {}                  // ´Ù½Ã »ó´ÜÀÌ µÇ¾úÀ» ¶§
+    virtual void OnPause() {}                   // ìŠ¤íƒ ìœ„ë¡œ ë‹¤ë¥¸ ì”¬ì´ ì˜¬ë¼ì™”ì„ ë•Œ
+    virtual void OnResume() {}                  // ë‹¤ì‹œ ìƒë‹¨ì´ ë˜ì—ˆì„ ë•Œ
 
 
     virtual void Update(float dt) = 0;
     virtual void Submit(IRenderer* renderer) = 0;
+
+    virtual const char* GetDebugName() const = 0;
 };
