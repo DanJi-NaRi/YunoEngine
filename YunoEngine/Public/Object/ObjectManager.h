@@ -5,6 +5,8 @@
 #include "RenderTypes.h"
 >>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 #include "Unit.h"
+#include "Parser.h"
+#include "Mesh.h"
 
 
 class ObjectManager
@@ -20,9 +22,13 @@ private:
     std::vector<std::unique_ptr<Unit>> m_pendingCreateQ;
 
     template<typename T>
+<<<<<<< HEAD
     T* CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //��� ������Ʈ ������
 
     std::unique_ptr<MeshNode> CreateMeshNode(const std::string& filepath);
+=======
+    Unit* CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //��� ������Ʈ ������
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
 public:
     explicit ObjectManager();
     virtual ~ObjectManager();
@@ -40,9 +46,15 @@ public:
 >>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 
     template<typename T>
+<<<<<<< HEAD
     T* CreateObject(const std::string& name, XMFLOAT3 pos);
     template<typename T>
     T* CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath);
+=======
+    Unit* CreateObject(const std::string& name, XMFLOAT3 pos);
+    template<typename T>
+    Unit* CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath);
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
 
 <<<<<<< HEAD
     //씬 매니저에 있어도 될것같은 놈들
@@ -66,7 +78,11 @@ public:
 };
 
 template<typename T>
+<<<<<<< HEAD
 T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
+=======
+Unit* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
     
     auto obj = std::make_unique<T>();
@@ -78,6 +94,7 @@ T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
     m_ObjectIDs++;
 
     return pObj;
+<<<<<<< HEAD
 }
 
 //�������� ������Ʈ ��� ������
@@ -116,4 +133,42 @@ T* ObjectManager::CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, co
     auto pObj = CreateObject<T>(name, pos, std::move(meshRootNode));
 
     return pObj;
+=======
+}
+
+template<typename T>
+Unit* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node)
+{
+    static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
+
+    auto obj = std::make_unique<T>();
+    obj->Create(name, m_ObjectIDs, pos);
+
+    auto* pObj = obj.get();
+
+    m_pendingCreateQ.emplace_back(std::move(obj));
+    m_ObjectIDs++;
+
+    return pObj;
+}
+
+template<typename T>
+Unit* ObjectManager::CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath)
+{
+    static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
+
+    auto meshNode = Parser::Instance().LoadFile(filepath);
+
+    auto obj = CreateObject<T>(name, pos);
+    for (auto& mesh : meshNode->m_Meshs)
+    {
+        obj->SetMesh(std::move(mesh));
+    }
+
+    for (auto& child : meshNode->m_Childs)
+    {
+        auto child = CreateObject(name, pos, std::move(child));
+        obj->Attach(child);
+    }
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
 }

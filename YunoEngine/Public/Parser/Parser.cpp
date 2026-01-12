@@ -28,7 +28,11 @@ std::wstring Utf8ToWString(const char* s)
     return w;
 }
 
+<<<<<<< HEAD:YunoEngine/Public/Parser/Parser.cpp
 std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filepath)
+=======
+std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filename)
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋):YunoEngine/Private/Parser/Parser.cpp
 {
     Assimp::Importer importer;
 
@@ -43,11 +47,16 @@ std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filepath)
     if (!scene || !scene->mRootNode)
         return {};
 
+<<<<<<< HEAD:YunoEngine/Public/Parser/Parser.cpp
     auto MeshNode = CreateNode(scene->mRootNode, scene, 0, filepath);
+=======
+    auto MeshNode = CreateNode(scene->mRootNode, scene);
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋):YunoEngine/Private/Parser/Parser.cpp
 
     return MeshNode;
 }
 
+<<<<<<< HEAD:YunoEngine/Public/Parser/Parser.cpp
 std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, const std::string& filepath)
 {
     std::string name(node->mName.C_Str());
@@ -80,6 +89,19 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 
         auto model = std::make_unique<Mesh>();
         model->Create(meshkey, matkey, vPos, vRot, vScale);
+=======
+std::unique_ptr<MeshNode> Parser::CreateNode(aiNode* node, const aiScene* scene)
+{
+    auto meshnode = std::make_unique<MeshNode>();
+
+    for (size_t i = 0; i < node->mNumMeshes; i++)
+    {
+        aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
+        auto [meshkey, matkey] = CreateMesh(aiMesh, scene);
+
+        auto model = std::make_unique<Mesh>();
+        model->Create(meshkey, matkey);
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋):YunoEngine/Private/Parser/Parser.cpp
 
         meshnode->m_Meshs.push_back(std::move(model));
     }
@@ -88,6 +110,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
+<<<<<<< HEAD:YunoEngine/Public/Parser/Parser.cpp
 <<<<<<< HEAD
 <<<<<<< HEAD:YunoEngine/Private/Parser/Parser.cpp
         auto child = CreateNode(node->mChildren[i], scene); //�ڽ� ���� Ž��
@@ -101,6 +124,10 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 >>>>>>> 7165d64 (좌표계 수정)
         meshnode->m_Childs.push_back(std::move(child));
         num++;
+=======
+        auto child = CreateNode(node->mChildren[i], scene); //�ڽ� ��� Ž��
+        meshnode->m_Childs.push_back(std::move(child));
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋):YunoEngine/Private/Parser/Parser.cpp
     }
 
     return meshnode;

@@ -128,6 +128,14 @@ void Unit::Backup()
 }
 
 void Unit::SetMesh(std::unique_ptr<Mesh>&& mesh)
+<<<<<<< HEAD
+=======
+{
+    m_Meshs.push_back(std::move(mesh));
+}
+
+void Unit::Attach(Unit* obj) //this°¡ ºÎ¸ð, ÆÄ¶ó¹ÌÅÍ·Î ÀÚ½Ä
+>>>>>>> 3eb4e1a (ë©”ëª¨í• ê±° ìžˆì–´ì„œ ì¤‘ê°„ ì»¤ë°‹)
 {
     m_Meshs.push_back(std::move(mesh));
 }

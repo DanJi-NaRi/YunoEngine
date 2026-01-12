@@ -124,7 +124,37 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
+<<<<<<< HEAD
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+=======
+      <AdditionalIncludeDirectories>
+  $(SolutionDir)ThirdParty\Assimp\include;
+  $(ProjectDir)EnginePCH;
+  $(ProjectDir)Public;
+  $(ProjectDir)Private;
+  $(ProjectDir)Private\Input;
+  $(ProjectDir)Private\Parser;
+  $(ProjectDir)Private\Renderer;
+  $(ProjectDir)Private\Renderer\ConstBuffer;
+  $(ProjectDir)Private\Renderer\Material;
+  $(ProjectDir)Private\Renderer\Model;
+  $(ProjectDir)Private\Renderer\Mesh;
+  $(ProjectDir)Private\Renderer\RenderPass;
+  $(ProjectDir)Private\Renderer\Shader;
+  $(ProjectDir)Private\Resource;
+  $(ProjectDir)Private\Scene;
+  $(ProjectDir)Private\Singleton;
+  $(ProjectDir)Private\Timer;
+  $(ProjectDir)Private\Window;
+  $(ProjectDir)Public\Camera;
+  $(ProjectDir)Public\Input;
+  $(ProjectDir)Public\Interface;
+  $(ProjectDir)Public\Math;
+  $(ProjectDir)Public\Object;
+  $(ProjectDir)Public\Renderer;
+  %(AdditionalIncludeDirectories)
+</AdditionalIncludeDirectories>
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
     </ClCompile>
     <Link>
       <SubSystem>
@@ -148,7 +178,37 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
+<<<<<<< HEAD
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+=======
+      <AdditionalIncludeDirectories>
+  $(SolutionDir)ThirdParty\Assimp\include;
+  $(ProjectDir)EnginePCH;
+  $(ProjectDir)Public;
+  $(ProjectDir)Private;
+  $(ProjectDir)Private\Input;
+  $(ProjectDir)Private\Parser;
+  $(ProjectDir)Private\Renderer;
+  $(ProjectDir)Private\Renderer\ConstBuffer;
+  $(ProjectDir)Private\Renderer\Material;
+  $(ProjectDir)Private\Renderer\Model;
+  $(ProjectDir)Private\Renderer\Mesh;
+  $(ProjectDir)Private\Renderer\RenderPass;
+  $(ProjectDir)Private\Renderer\Shader;
+  $(ProjectDir)Private\Resource;
+  $(ProjectDir)Private\Scene;
+  $(ProjectDir)Private\Singleton;
+  $(ProjectDir)Private\Timer;
+  $(ProjectDir)Private\Window;
+  $(ProjectDir)Public\Camera;
+  $(ProjectDir)Public\Input;
+  $(ProjectDir)Public\Interface;
+  $(ProjectDir)Public\Math;
+  $(ProjectDir)Public\Object;
+  $(ProjectDir)Public\Renderer;
+  %(AdditionalIncludeDirectories)
+</AdditionalIncludeDirectories>
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
     </ClCompile>
     <Link>
       <SubSystem>
@@ -166,6 +226,7 @@
     <ClInclude Include="EnginePCH\pch.h" />
     <ClInclude Include="Private\Input\InputState.h" />
     <ClInclude Include="Private\Input\YunoInputSystem.h" />
+    <ClInclude Include="Private\Renderer\Mesh\Mesh.h" />
     <ClInclude Include="Private\Scene\YunoSceneManager.h" />
     <ClInclude Include="Public\Interface\IInputContext.h" />
     <ClInclude Include="Public\Input\InputEvent.h" />
@@ -211,6 +272,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Private\Input\YunoInputSystem.cpp" />
+    <ClCompile Include="Private\Renderer\Mesh\Mesh.cpp" />
     <ClCompile Include="Private\Renderer\Mesh\YunoMeshBuffer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

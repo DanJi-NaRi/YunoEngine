@@ -6,6 +6,8 @@
 #include "ITextureManager.h"
 #include "Mesh.h"
 
+class Mesh;
+
 // 모든 메쉬는 CW 시계방향 정점이 앞면임
 /* 예시)
 01
@@ -68,6 +70,8 @@ public:
     //메쉬는 대부분 파서가 만들어서 순수 가상함수일 필요없어짐
     virtual bool CreateMesh() { return false; };
     virtual bool CreateMaterial() { return false; };
+
+    virtual void SetMesh(std::unique_ptr<Mesh>&& mesh);
 
     virtual void SetMesh(std::unique_ptr<Mesh>&& mesh);
 

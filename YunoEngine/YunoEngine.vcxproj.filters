@@ -119,11 +119,16 @@
     <ClCompile Include="Private\Scene\YunoSceneManager.cpp">
       <Filter>Private\Scene</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Public\Renderer\Mesh.cpp">
       <Filter>Private\Renderer\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Public\Parser\Parser.cpp">
       <Filter>Public\Parser</Filter>
+=======
+    <ClCompile Include="Private\Renderer\Mesh\Mesh.cpp">
+      <Filter>Private\Renderer\Model</Filter>
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -236,11 +241,16 @@
     <ClInclude Include="Public\Interface\IScene.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="Public\Renderer\Mesh.h">
       <Filter>Private\Renderer\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Public\Parser\Parser.h">
       <Filter>Public\Parser</Filter>
+=======
+    <ClInclude Include="Private\Renderer\Mesh\Mesh.h">
+      <Filter>Private\Renderer\Model</Filter>
+>>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
