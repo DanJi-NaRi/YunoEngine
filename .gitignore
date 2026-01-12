@@ -23,3 +23,22 @@ x86/
 
 # Optional: logs/cache
 *.log
+Assets/fbx/Building/building.fbx
+Assets/fbx/Building/building_Albedo0.png
+Assets/fbx/Building/building_Albedo1.png
+Assets/fbx/Building/building_Albedo2.png
+Assets/fbx/Building/BUILDING_LLLL_1_BaseColor.png
+Assets/fbx/Building/BUILDING_LLLL_1_Height.png
+Assets/fbx/Building/BUILDING_LLLL_1_Metallic.png
+Assets/fbx/Building/BUILDING_LLLL_1_Normal.png
+Assets/fbx/Building/BUILDING_LLLL_1_Roughness.png
+Assets/fbx/Building/BUILDING_LLLL_2_BaseColor.png
+Assets/fbx/Building/BUILDING_LLLL_2_Height.png
+Assets/fbx/Building/BUILDING_LLLL_2_Metallic.png
+Assets/fbx/Building/BUILDING_LLLL_2_Normal.png
+Assets/fbx/Building/BUILDING_LLLL_2_Roughness.png
+Assets/fbx/Building/BUILDING_LLLL_3_Height.png
+Assets/fbx/Building/BUILDING_LLLL_3_Metallic.png
+Assets/fbx/Building/BUILDING_LLLL_3_Normal.png
+Assets/fbx/Building/BUILDING_LLLL_3_Roughness.png
+Assets/fbx/Building/HighresScreenshot00028.jpg

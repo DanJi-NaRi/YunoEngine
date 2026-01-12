@@ -2,12 +2,14 @@
 #include "TitleScene.h"
 
 #include "Quad.h"
+#include "Building.h"
 
 #include "YunoEngine.h"
 #include "IInput.h"
 #include "ISceneManager.h"
 
 #include "PlayScene.h"
+#include "ObjectManager.h"
 
 
 bool TitleScene::OnCreate()
@@ -23,6 +25,13 @@ bool TitleScene::OnCreate()
         m_plane = nullptr;
         return false;
     }
+
+    m_ObjManager = new ObjectManager;
+
+    m_ObjManager->Init();
+
+    m_building = m_ObjManager->CreateObjectFromFile<Building>("Buliding", XMFLOAT3(0, 0, 0), "../Assets/fbx/Building/building.fbx");
+
     return true;
 }
 
@@ -57,10 +66,14 @@ void TitleScene::Update(float dt)
 
     if (m_plane)
         m_plane->Update(dt);
+
+    m_ObjManager->Update(dt);
+
 }
 
 void TitleScene::Submit(IRenderer* renderer)
 {
+<<<<<<< HEAD
     //if (m_plane)
     //    m_plane->Submit(m_lastDt);
 
@@ -68,4 +81,13 @@ void TitleScene::Submit(IRenderer* renderer)
     //  for (objManager -Submit)
     //
     // UI view proj
+=======
+    (void)renderer; // Unit::SubmitÀÌ ³»ºÎ¿¡¼­ renderer¸¦ ¾²¸é ÇÊ¿ä ¾øÀ½
+    if (m_plane)
+        m_plane->Submit(m_lastDt);
+
+    m_ObjManager->Submit(m_lastDt);
+
+    m_ObjManager->ProcessPending();
+>>>>>>> 933f6d3 (í™”ë©´ì— ëœ¨ëŠ”ë° íŒŒì‹±í•  ë•Œ í…ìŠ¤ì³ í•¸ë“¤ê¹Œì§€ëŠ” ë°›ëŠ”ë° ì ìš©ì´ ì•ˆëŒ)
 }

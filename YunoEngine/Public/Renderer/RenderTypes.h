@@ -110,3 +110,20 @@ struct PassKey
             && depth == rhs.depth;
     }
 };
+<<<<<<< HEAD
+=======
+
+class Mesh;
+
+struct MeshNode {
+    std::string m_name;
+    MeshNode* m_Parent = nullptr;
+    std::vector<std::unique_ptr<MeshNode>> m_Childs;
+
+    XMFLOAT3 pos;
+    XMFLOAT3 rot;
+    XMFLOAT3 scale;
+
+    std::vector<std::unique_ptr<Mesh>> m_Meshs;
+};
+>>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)

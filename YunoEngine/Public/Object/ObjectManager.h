@@ -1,21 +1,28 @@
+<<<<<<< HEAD
 ï»¿#pragma once
+=======
+#pragma once
+#include "RenderTypes.h"
+>>>>>>> 933f6d3 (í™”ë©´ì— ëœ¨ëŠ”ë° íŒŒì‹±í•  ë•Œ í…ìŠ¤ì³ í•¸ë“¤ê¹Œì§€ëŠ” ë°›ëŠ”ë° ì ìš©ì´ ì•ˆëŒ)
 #include "Unit.h"
-#include "Parser.h"
-#include "Mesh.h"
+
 
 class ObjectManager
 {
 private:
     size_t m_ObjectCount;
     UINT m_ObjectIDs;
-    std::unordered_map<UINT, std::unique_ptr<Unit>> m_objs;
+    std::deque<std::unique_ptr<Unit>> m_objs;
+    std::unordered_map<UINT, Unit*> m_objMap;
     std::unordered_map<std::string, UINT> m_nameToID;
 
     std::vector<UINT> m_pendingDestoryQ;
     std::vector<std::unique_ptr<Unit>> m_pendingCreateQ;
 
     template<typename T>
-    Unit* CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //Àç±Í ¿ÀºêÁ§Æ® »ı¼º¿ë
+    T* CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //Àç±Í ¿ÀºêÁ§Æ® »ı¼º¿ë
+
+    std::unique_ptr<MeshNode> CreateMeshNode(const std::string& filepath);
 public:
     explicit ObjectManager();
     virtual ~ObjectManager();
@@ -23,28 +30,43 @@ public:
     void Init(); //ìƒì„± ì´ˆê¸°í™”
     void Clear(); //ì‚­ì œ ì´ˆê¸°í™”
 
+<<<<<<< HEAD
     void ProcessPending(); //í”„ë ˆì„ ë§¨ ë§ˆì§€ë§‰ì— í˜¸ì¶œ
+=======
+    void Update(float dTime);
+    void Submit(float dTime);
+
+    void ProcessPending(); //ÇÁ·¹ÀÓ ¸Ç ¸¶Áö¸·¿¡ È£Ãâ
+>>>>>>> 933f6d3 (í™”ë©´ì— ëœ¨ëŠ”ë° íŒŒì‹±í•  ë•Œ í…ìŠ¤ì³ í•¸ë“¤ê¹Œì§€ëŠ” ë°›ëŠ”ë° ì ìš©ì´ ì•ˆëŒ)
 
     template<typename T>
-    Unit* CreateObject(const std::string& name, XMFLOAT3 pos);
+    T* CreateObject(const std::string& name, XMFLOAT3 pos);
     template<typename T>
-    Unit* CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath);
+    T* CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath);
 
+<<<<<<< HEAD
     //ì”¬ ë§¤ë‹ˆì €ì— ìˆì–´ë„ ë ê²ƒê°™ì€ ë†ˆë“¤
     const Unit* FindObject(UINT id); //idë¡œ ê²€ìƒ‰
     const Unit* FindObject(const std::string& name); //ì´ë¦„ìœ¼ë¡œ ê²€ìƒ‰
+=======
+    const Unit* FindObject(UINT id); //id·Î °Ë»ö
+    const Unit* FindObject(const std::string& name); //ÀÌ¸§À¸·Î °Ë»ö
+>>>>>>> 933f6d3 (í™”ë©´ì— ëœ¨ëŠ”ë° íŒŒì‹±í•  ë•Œ í…ìŠ¤ì³ í•¸ë“¤ê¹Œì§€ëŠ” ë°›ëŠ”ë° ì ìš©ì´ ì•ˆëŒ)
 
     void DestroyObject(UINT id);
     void DestroyObject(const std::string& name);
 
     const size_t GetObjectCount() { return m_ObjectCount; }
+<<<<<<< HEAD
     //ì—¬ê¸°ê¹Œì§€
+=======
+>>>>>>> 933f6d3 (í™”ë©´ì— ëœ¨ëŠ”ë° íŒŒì‹±í•  ë•Œ í…ìŠ¤ì³ í•¸ë“¤ê¹Œì§€ëŠ” ë°›ëŠ”ë° ì ìš©ì´ ì•ˆëŒ)
 
-    const std::unordered_map<UINT, std::unique_ptr<Unit>>& GetObjectlist() { return m_objs; }
+    const std::unordered_map<UINT, Unit*>& GetObjectlist() { return m_objMap; }
 };
 
 template<typename T>
-Unit* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
+T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
     
     auto obj = std::make_unique<T>();
@@ -58,38 +80,40 @@ Unit* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
     return pObj;
 }
 
+//°èÃş±¸Á¶ ¿ÀºêÁ§Æ® Àç±Í »ı¼º¿ë
 template<typename T>
-Unit* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node)
+T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node)
 {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
+    std::string newname = name + '_' + node->m_name;
+
     auto obj = std::make_unique<T>();
-    obj->Create(name, m_ObjectIDs, pos);
+    obj->Create(newname, m_ObjectIDs++, pos);
+    for (auto& mesh : node->m_Meshs)
+    {
+        obj->SetMesh(std::move(mesh));
+    }
 
     auto* pObj = obj.get();
-
     m_pendingCreateQ.emplace_back(std::move(obj));
-    m_ObjectIDs++;
+
+    for (auto& childNode : node->m_Childs)
+    {
+        auto child = CreateObject<T>(name, pos, std::move(childNode));
+        pObj->Attach(child);
+    }
 
     return pObj;
 }
 
 template<typename T>
-Unit* ObjectManager::CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath)
+T* ObjectManager::CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath)
 {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
-    auto meshNode = Parser::Instance().LoadFile(filepath);
+    auto meshRootNode = CreateMeshNode(filepath);
+    auto pObj = CreateObject<T>(name, pos, std::move(meshRootNode));
 
-    auto obj = CreateObject<T>(name, pos);
-    for (auto& mesh : meshNode->m_Meshs)
-    {
-        obj->SetMesh(std::move(mesh));
-    }
-
-    for (auto& child : meshNode->m_Childs)
-    {
-        auto child = CreateObject(name, pos, std::move(child));
-        obj->Attach(child);
-    }
+    return pObj;
 }

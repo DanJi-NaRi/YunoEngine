@@ -34,6 +34,9 @@
     <Filter Include="Scenes\2. Second">
       <UniqueIdentifier>{75bf4271-7290-46c5-9098-5693ea31ff20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Object\Building">
+      <UniqueIdentifier>{634a52df-c3f6-426d-9088-ebdfd94c30d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -56,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="Scenes\TitleScene.cpp">
       <Filter>Scenes\1. First</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Building.cpp">
+      <Filter>Game\Object\Building</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="Scenes\TitleScene.h">
       <Filter>Scenes\1. First</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Building.h">
+      <Filter>Game\Object\Building</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

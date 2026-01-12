@@ -2,12 +2,16 @@
 #include "YunoRenderer.h"
 #include "IMesh.h"
 #include "YunoEngine.h"
+#include "Mesh.h"
+
+#include "Parser.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "Parser.h"
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, const std::string& filepath);
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, const std::string& filepath);
 
 std::wstring Utf8ToWString(const char* s)
 {
@@ -24,12 +28,12 @@ std::wstring Utf8ToWString(const char* s)
     return w;
 }
 
-std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filename)
+std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filepath)
 {
     Assimp::Importer importer;
 
     const aiScene* scene = importer.ReadFile(
-        filename,
+        filepath,
         aiProcess_Triangulate |
         aiProcess_ConvertToLeftHanded |
         aiProcess_GenSmoothNormals |
@@ -39,36 +43,55 @@ std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filename)
     if (!scene || !scene->mRootNode)
         return {};
 
-    auto MeshNode = CreateNode(scene->mRootNode, scene);
+    auto MeshNode = CreateNode(scene->mRootNode, scene, filepath);
 
     return MeshNode;
 }
 
-std::unique_ptr<MeshNode> Parser::CreateNode(aiNode* node, const aiScene* scene)
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, const std::string& filepath)
 {
     auto meshnode = std::make_unique<MeshNode>();
 
+    meshnode->m_name = std::string(node->mName.C_Str());
+    
+    aiVector3D scale;
+    aiVector3D rot;
+    aiVector3D pos;
+    node->mTransformation.Decompose(scale, rot, pos); //³ªÁß¿¡ ÄõÅÍ´Ï¾ðÀ¸·Î ¹Ù²Ù±â
+
+    XMFLOAT3 vScale = XMFLOAT3(scale.x, scale.y, scale.z);
+    XMFLOAT3 vRot = XMFLOAT3(rot.x, rot.y, rot.z);
+    XMFLOAT3 vPos = XMFLOAT3(pos.x, pos.y, pos.z);
+
+    meshnode->pos = vPos;
+    meshnode->rot = vRot;
+    meshnode->scale = vScale;
+    
     for (size_t i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
-        auto [meshkey, matkey] = CreateMesh(aiMesh, scene);
+        auto [meshkey, matkey] = CreateMesh(aiMesh, scene, filepath);
 
         auto model = std::make_unique<Mesh>();
-        model->Create(meshkey, matkey);
+        model->Create(meshkey, matkey, vPos, vRot, vScale);
 
         meshnode->m_Meshs.push_back(std::move(model));
     }
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
+<<<<<<< HEAD:YunoEngine/Private/Parser/Parser.cpp
         auto child = CreateNode(node->mChildren[i], scene); //ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½
+=======
+        auto child = CreateNode(node->mChildren[i], scene, filepath); //ÀÚ½Ä ³ëµå Å½»ö
+>>>>>>> 933f6d3 (í™”ë©´ì— ëœ¨ëŠ”ë° íŒŒì‹±í•  ë•Œ í…ìŠ¤ì³ í•¸ë“¤ê¹Œì§€ëŠ” ë°›ëŠ”ë° ì ìš©ì´ ì•ˆëŒ):YunoEngine/Public/Parser/Parser.cpp
         meshnode->m_Childs.push_back(std::move(child));
     }
 
     return meshnode;
 }
 
-std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const aiScene* scene)
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, const std::string& filepath)
 {
     std::vector<VERTEX_Pos> vtxPos;
     std::vector<VERTEX_Nrm> vtxNrm;
@@ -77,6 +100,8 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
     std::vector<VERTEX_B> vtxBi;
     std::vector<INDEX> indices;
 
+    VertexStreams vs;
+
     for (size_t i = 0; i < aiMesh->mNumVertices; i++)
     {
         VERTEX_Pos vPos;
@@ -84,6 +109,8 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
         vPos.y = aiMesh->mVertices[i].y;
         vPos.z = aiMesh->mVertices[i].z;
         vtxPos.push_back(vPos);
+        
+        vs.flags = VSF_Pos;
 
         if (aiMesh->HasNormals())
         {
@@ -92,6 +119,8 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
             vNrm.ny = aiMesh->mNormals[i].y;
             vNrm.nz = aiMesh->mNormals[i].z;
             vtxNrm.push_back(vNrm);
+
+            vs.flags |= VSF_Nrm;
         }
 
         {
@@ -100,6 +129,8 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
             {
                 vUV.u = aiMesh->mTextureCoords[0][i].x;
                 vUV.v = aiMesh->mTextureCoords[0][i].y;
+
+                vs.flags |= VSF_UV;
             }
             else
             {
@@ -123,6 +154,8 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
 
             vtxTan.push_back(vtxT);
             vtxBi.push_back(vtxB);
+
+            vs.flags |= VSF_T | VSF_B;
         }
     }
 
@@ -139,7 +172,7 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
         indices.push_back(idx);
     }
 
-    VertexStreams vs;
+    
     vs.vtx_count = aiMesh->mNumVertices;
     vs.pos = vtxPos.data();
     vs.nrm = vtxNrm.data();
@@ -153,7 +186,7 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
 
     aiMaterial* aiMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 
-    MaterialDesc md;
+    MaterialDesc md{};
 
     if (aiMaterial)
     {
@@ -164,6 +197,16 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
         if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS)
         {
             auto wPath = Utf8ToWString(texPath.C_Str());
+            TextureHandle diff = renderer->CreateTexture2DFromFile(wPath.c_str());
+
+            md.albedo = diff;
+        }
+        else
+        {
+            auto texPath = filepath.substr(0, filepath.find(".fbx"));
+            texPath += "_Albedo" + std::to_string(aiMesh->mMaterialIndex) + ".png";
+
+            auto wPath = Utf8ToWString(texPath.c_str());
             TextureHandle diff = renderer->CreateTexture2DFromFile(wPath.c_str());
 
             md.albedo = diff;
