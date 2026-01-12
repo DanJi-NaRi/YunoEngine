@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <array>
 #include <cstdint>
 
@@ -8,7 +8,7 @@ struct InputState
 {
 
     std::array<uint8_t, 256>    keyDown{};
-    std::array<uint8_t, 3>      mouseDown{};    // ÁÂ = 0, ¿ì = 1, °¡¿îµ¥ = 2
+    std::array<uint8_t, 3>      mouseDown{};    // ì¢Œ = 0, ìš° = 1, ê°€ìš´ë° = 2
 
     std::array<uint8_t, 256>    prevKeyDown{};
     std::array<uint8_t, 3>      prevMouseDown{};
@@ -21,7 +21,7 @@ struct InputState
     float mouseDeltaX = 0.0f;
     float mouseDeltaY = 0.0f;
 
-    // ÇÁ·¹ÀÓ ½ÃÀÛ ½Ã µ¨Å¸ ÃÊ±âÈ­
+    // í”„ë ˆì„ ì‹œì‘ ì‹œ ë¸íƒ€ ì´ˆê¸°í™”
     void BeginFrame()
     {
         prevKeyDown = keyDown;

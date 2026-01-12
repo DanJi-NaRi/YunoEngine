@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <IInput.h>        
 #include <InputEvent.h>    
 #include <IInputContext.h> 
@@ -9,14 +9,14 @@ class YunoInputSystem final : public IInput
 {
 public:
 
-    void BeginFrame();   // µ¨Å¸ ÃÊ±âÈ­ µî
-    void Dispatch();     // ÀÌº¥Æ® Å¥ >> ÄÁÅØ½ºÆ®·Î Àü´Ş
+    void BeginFrame();   // ë¸íƒ€ ì´ˆê¸°í™” ë“±
+    void Dispatch();     // ì´ë²¤íŠ¸ í >> ì»¨í…ìŠ¤íŠ¸ë¡œ ì „ë‹¬
 
 public:
-    // ÀÔ·Â ÀÌº¥Æ® Å¥¿¡ »ğÀÔ
+    // ì…ë ¥ ì´ë²¤íŠ¸ íì— ì‚½ì…
     void PushEvent(const InputEvent& evt) override;
 
-    // °ÔÀÓ¿¡¼­ »ç¿ëÇÒ APIÇÔ¼öµé
+    // ê²Œì„ì—ì„œ ì‚¬ìš©í•  APIí•¨ìˆ˜ë“¤
     bool IsKeyDown(uint32_t key) const override;
     bool IsKeyPressed(uint32_t key) const override;
     bool IsKeyReleased(uint32_t key) const override;
@@ -30,7 +30,7 @@ public:
     float GetMouseDeltaX() const override { return m_state.mouseDeltaX; }
     float GetMouseDeltaY() const override { return m_state.mouseDeltaY; }
 
-    // ÀÎÇ²À» »ç¿ëÇÒ ÄÁÅØ½ºÆ®
+    // ì¸í’‹ì„ ì‚¬ìš©í•  ì»¨í…ìŠ¤íŠ¸
     void AddContext(IInputContext* context) override;
     void RemoveContext(IInputContext* context) override;
 

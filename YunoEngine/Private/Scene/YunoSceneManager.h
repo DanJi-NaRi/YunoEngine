@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "ISceneManager.h"
 
 
@@ -59,12 +59,12 @@ public:
 
 private:
     void PromoteNextPending();
-    void ApplyPending(std::vector<PendingOp>& ops);     // ¾À º¯°æ ¿äÃ» Ã³¸®
-    bool EnsureCreated(SceneEntry& e);                  // ¾À À¯È¿¼º °ËÁõ ÇÔ¼ö
+    void ApplyPending(std::vector<PendingOp>& ops);     // ì”¬ ë³€ê²½ ìš”ì²­ ì²˜ë¦¬
+    bool EnsureCreated(SceneEntry& e);                  // ì”¬ ìœ íš¨ì„± ê²€ì¦ í•¨ìˆ˜
 
 private:
     std::vector<SceneEntry> m_stack;
 
     std::vector<PendingOp> m_pendingNow;   // immediate=true
-    std::vector<PendingOp> m_pendingNext;  // immediate=false (´ÙÀ½ ÇÁ·¹ÀÓ Àû¿ë)
+    std::vector<PendingOp> m_pendingNext;  // immediate=false (ë‹¤ìŒ í”„ë ˆì„ ì ìš©)
 };

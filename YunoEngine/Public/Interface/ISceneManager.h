@@ -1,33 +1,33 @@
-#pragma once
+ï»¿#pragma once
 #include <cstdint>
 #include <memory>
 
 class IRenderer;
 class IScene;
 
-// ¾À »óÅÂ
+// ì”¬ ìƒíƒœ
 enum class SceneState : uint8_t
 {
-    Uninitialized = 0, // OnCreate Àü
-    Loaded,            // OnCreate ÈÄ
-    Active,            // OnEnter ÈÄ
-    Paused             // OnPause ÈÄ
+    Uninitialized = 0, // OnCreate ì „
+    Loaded,            // OnCreate í›„
+    Active,            // OnEnter í›„
+    Paused             // OnPause í›„
 };
 
 
 struct ScenePolicy
 {
-    // ÀÌ ¾ÀÀÌ È°¼ºÈ­ µÆÀ» ¶§ ½ºÅÃ¿¡ Á¸ÀçÇÏ´Â ´Ù¸¥ ¾ÀµéÀÇ ¾÷µ¥ÀÌÆ®¸¦ ¸·À»°ÍÀÎÁö
+    // ì´ ì”¬ì´ í™œì„±í™” ëì„ ë•Œ ìŠ¤íƒì— ì¡´ì¬í•˜ëŠ” ë‹¤ë¥¸ ì”¬ë“¤ì˜ ì—…ë°ì´íŠ¸ë¥¼ ë§‰ì„ê²ƒì¸ì§€
     bool blockUpdateBelow = true;
 
-    // ÀÌ ¾ÀÀÌ È°¼ºÈ­ µÆÀ» ¶§ ½ºÅÃ¿¡ Á¸ÀçÇÏ´Â ´Ù¸¥ ¾ÀµéÀÇ ·»´õ¸¦ ¸·À»°ÍÀÎÁö
+    // ì´ ì”¬ì´ í™œì„±í™” ëì„ ë•Œ ìŠ¤íƒì— ì¡´ì¬í•˜ëŠ” ë‹¤ë¥¸ ì”¬ë“¤ì˜ ë Œë”ë¥¼ ë§‰ì„ê²ƒì¸ì§€
     bool blockRenderBelow = false;
 };
 
 
 struct SceneTransitionOptions
 {
-    bool immediate = true;      // true¸é ÀÌ¹ø ÇÁ·¹ÀÓ ³¡¿¡¼­ ¹Ù·Î ÀüÈ¯ Àû¿ë
+    bool immediate = true;      // trueë©´ ì´ë²ˆ í”„ë ˆì„ ëì—ì„œ ë°”ë¡œ ì „í™˜ ì ìš©
 };
 
 class ISceneManager

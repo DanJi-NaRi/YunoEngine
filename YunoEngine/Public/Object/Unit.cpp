@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 
 #include "Unit.h"
 
@@ -100,9 +100,9 @@ void Unit::Backup()
     m_vDirBk = m_vDir;
 }
 
-void Unit::Attach(Unit* obj) //this°¡ ºÎ¸ğ, ÆÄ¶ó¹ÌÅÍ·Î ÀÚ½Ä
+void Unit::Attach(Unit* obj) //thisê°€ ë¶€ëª¨, íŒŒë¼ë¯¸í„°ë¡œ ìì‹
 {
-    if (obj->m_Parent)//±âÁ¸ ºÎ¸ğÀÖÀ¸¸é ¶³¾îÁø ÈÄ °áÇÕ
+    if (obj->m_Parent)//ê¸°ì¡´ ë¶€ëª¨ìˆìœ¼ë©´ ë–¨ì–´ì§„ í›„ ê²°í•©
         obj->DettachParent();
 
     obj->m_Parent = this;

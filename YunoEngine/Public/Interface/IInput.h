@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <cstdint>
 
 struct InputEvent;
@@ -9,10 +9,10 @@ class IInput
 public:
     virtual ~IInput() = default;
 
-    // ÀÔ·Â ÀÌº¥Æ® Å¥¿¡ »ğÀÔ
+    // ì…ë ¥ ì´ë²¤íŠ¸ íì— ì‚½ì…
     virtual void PushEvent(const InputEvent& evt) = 0;
 
-    // °ÔÀÓ¿¡¼­ »ç¿ëÇÒ APIÇÔ¼öµé
+    // ê²Œì„ì—ì„œ ì‚¬ìš©í•  APIí•¨ìˆ˜ë“¤
     virtual bool IsKeyDown(uint32_t key) const = 0;
     virtual bool IsKeyPressed(uint32_t key) const = 0;
     virtual bool IsKeyReleased(uint32_t key) const = 0;
@@ -26,7 +26,7 @@ public:
     virtual float GetMouseDeltaX() const = 0;
     virtual float GetMouseDeltaY() const = 0;
 
-    // ÀÎÇ²À» »ç¿ëÇÒ ÄÁÅØ½ºÆ®
+    // ì¸í’‹ì„ ì‚¬ìš©í•  ì»¨í…ìŠ¤íŠ¸
     virtual void AddContext(IInputContext* context) = 0;
     virtual void RemoveContext(IInputContext* context) = 0;
 };
