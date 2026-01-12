@@ -10,8 +10,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, const std::string& filepath);
-std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, const std::string& filepath);
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, const std::string& filepath);
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::string& filepath);
 
 std::wstring Utf8ToWString(const char* s)
 {
@@ -43,25 +43,31 @@ std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filepath)
     if (!scene || !scene->mRootNode)
         return {};
 
-    auto MeshNode = CreateNode(scene->mRootNode, scene, filepath);
+    auto MeshNode = CreateNode(scene->mRootNode, scene, 0, filepath);
 
     return MeshNode;
 }
 
-std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, const std::string& filepath)
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, const std::string& filepath)
 {
+    std::string name(node->mName.C_Str());
+
+    if (name == "Camera" || name == "Light")
+        return nullptr;
+
     auto meshnode = std::make_unique<MeshNode>();
 
-    meshnode->m_name = std::string(node->mName.C_Str());
+    meshnode->m_name = name;
     
     aiVector3D scale;
     aiVector3D rot;
     aiVector3D pos;
+
     node->mTransformation.Decompose(scale, rot, pos); //³ªÁß¿¡ ÄõÅÍ´Ï¾ðÀ¸·Î ¹Ù²Ù±â
 
-    XMFLOAT3 vScale = XMFLOAT3(scale.x, scale.y, scale.z);
-    XMFLOAT3 vRot = XMFLOAT3(rot.x, rot.y, rot.z);
-    XMFLOAT3 vPos = XMFLOAT3(pos.x, pos.y, pos.z);
+    XMFLOAT3 vScale = XMFLOAT3(scale.x * 0.01f, scale.y * 0.01f, scale.z * 0.01f);
+    XMFLOAT3 vRot = XMFLOAT3(rot.x, -rot.z, rot.y);
+    XMFLOAT3 vPos = XMFLOAT3(pos.x * 0.01f, -pos.z * 0.01f, pos.y * 0.01f);
 
     meshnode->pos = vPos;
     meshnode->rot = vRot;
@@ -70,7 +76,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, const s
     for (size_t i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
-        auto [meshkey, matkey] = CreateMesh(aiMesh, scene, filepath);
+        auto [meshkey, matkey] = CreateMesh(aiMesh, scene, nodeNum, filepath);
 
         auto model = std::make_unique<Mesh>();
         model->Create(meshkey, matkey, vPos, vRot, vScale);
@@ -78,20 +84,29 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, const s
         meshnode->m_Meshs.push_back(std::move(model));
     }
 
+    int num = 0;
+
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
+<<<<<<< HEAD
 <<<<<<< HEAD:YunoEngine/Private/Parser/Parser.cpp
         auto child = CreateNode(node->mChildren[i], scene); //ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½
 =======
         auto child = CreateNode(node->mChildren[i], scene, filepath); //ÀÚ½Ä ³ëµå Å½»ö
 >>>>>>> 933f6d3 (í™”ë©´ì— ëœ¨ëŠ”ë° íŒŒì‹±í•  ë•Œ í…ìŠ¤ì³ í•¸ë“¤ê¹Œì§€ëŠ” ë°›ëŠ”ë° ì ìš©ì´ ì•ˆëŒ):YunoEngine/Public/Parser/Parser.cpp
+=======
+        auto child = CreateNode(node->mChildren[i], scene, num, filepath); //ÀÚ½Ä ³ëµå Å½»ö
+        if(!child)
+            continue;
+>>>>>>> 7165d64 (ì¢Œí‘œê³„ ìˆ˜ì •)
         meshnode->m_Childs.push_back(std::move(child));
+        num++;
     }
 
     return meshnode;
 }
 
-std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, const std::string& filepath)
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::string& filepath)
 {
     std::vector<VERTEX_Pos> vtxPos;
     std::vector<VERTEX_Nrm> vtxNrm;
@@ -101,26 +116,29 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
     std::vector<INDEX> indices;
 
     VertexStreams vs;
+    MaterialDesc md{};
 
     for (size_t i = 0; i < aiMesh->mNumVertices; i++)
     {
         VERTEX_Pos vPos;
         vPos.x = aiMesh->mVertices[i].x;
-        vPos.y = aiMesh->mVertices[i].y;
-        vPos.z = aiMesh->mVertices[i].z;
+        vPos.y = -aiMesh->mVertices[i].z;
+        vPos.z = aiMesh->mVertices[i].y;
         vtxPos.push_back(vPos);
         
         vs.flags = VSF_Pos;
+        md.passKey.vertexFlags = VSF_Pos;
 
         if (aiMesh->HasNormals())
         {
             VERTEX_Nrm vNrm;
             vNrm.nx = aiMesh->mNormals[i].x;
-            vNrm.ny = aiMesh->mNormals[i].y;
-            vNrm.nz = aiMesh->mNormals[i].z;
+            vNrm.ny = -aiMesh->mNormals[i].z;
+            vNrm.nz = aiMesh->mNormals[i].y;
             vtxNrm.push_back(vNrm);
 
             vs.flags |= VSF_Nrm;
+            md.passKey.vertexFlags |= VSF_Nrm;
         }
 
         {
@@ -131,6 +149,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
                 vUV.v = aiMesh->mTextureCoords[0][i].y;
 
                 vs.flags |= VSF_UV;
+                md.passKey.vertexFlags |= VSF_UV;
             }
             else
             {
@@ -145,17 +164,18 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             VERTEX_B vtxB;
 
             vtxT.tx = aiMesh->mTangents[i].x;
-            vtxT.ty = aiMesh->mTangents[i].y;
-            vtxT.tz = aiMesh->mTangents[i].z;
+            vtxT.ty = -aiMesh->mTangents[i].z;
+            vtxT.tz = aiMesh->mTangents[i].y;
 
             vtxB.bx = aiMesh->mBitangents[i].x;
-            vtxB.by = aiMesh->mBitangents[i].y;
-            vtxB.bz = aiMesh->mBitangents[i].z;
+            vtxB.by = -aiMesh->mBitangents[i].z;
+            vtxB.bz = aiMesh->mBitangents[i].y;
 
             vtxTan.push_back(vtxT);
             vtxBi.push_back(vtxB);
 
             vs.flags |= VSF_T | VSF_B;
+            md.passKey.vertexFlags |= VSF_T | VSF_B;
         }
     }
 
@@ -186,8 +206,6 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
 
     aiMaterial* aiMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 
-    MaterialDesc md{};
-
     if (aiMaterial)
     {
         aiString texPath;
@@ -204,7 +222,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         else
         {
             auto texPath = filepath.substr(0, filepath.find(".fbx"));
-            texPath += "_Albedo" + std::to_string(aiMesh->mMaterialIndex) + ".png";
+            texPath += "_Albedo" + std::to_string(nodeNum) + ".png";
 
             auto wPath = Utf8ToWString(texPath.c_str());
             TextureHandle diff = renderer->CreateTexture2DFromFile(wPath.c_str());
