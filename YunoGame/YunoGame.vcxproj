@@ -190,7 +190,6 @@ xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)..\Assets"</Command>
     <ClInclude Include="Scenes\TitleScene.h" />
     <ClInclude Include="System\GameInputContext.h" />
     <ClInclude Include="System\TestInputContexts.h" />
-    <ClInclude Include="TestScenes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

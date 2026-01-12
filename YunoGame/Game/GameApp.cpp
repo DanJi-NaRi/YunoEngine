@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 
 #include "RenderTypes.h"
 #include "IInput.h"
@@ -28,13 +28,13 @@ bool GameApp::OnInit()
     {
         std::cout << "[GameApp] Renderer not available.\n";
         return false;
-    } // ·»´õ·¯ Ã¼Å©
+    } // ë Œë”ëŸ¬ ì²´í¬
 
-    //---------------- ÀÎÇ² Å×½ºÆ®
+    //---------------- ì¸í’‹ í…ŒìŠ¤íŠ¸
     IInput* input = YunoEngine::GetInput();
     input->AddContext(&s_uiCtx);
     input->AddContext(&s_gameCtx);
-    //---------------- ÀÎÇ² Å×½ºÆ®
+    //---------------- ì¸í’‹ í…ŒìŠ¤íŠ¸
 
 
 
@@ -58,7 +58,7 @@ void GameApp::OnUpdate(float dt)
     ++frameCount;
 
 
-    // MSAA º¯°æµÇ´ÂÁö Å×½ºÆ®
+    // MSAA ë³€ê²½ë˜ëŠ”ì§€ í…ŒìŠ¤íŠ¸
     //static float test = 0.0f;
     //test += dt;
     //
@@ -81,7 +81,7 @@ void GameApp::OnUpdate(float dt)
     IInput* input = YunoEngine::GetInput();
     IWindow* window = YunoEngine::GetWindow();
 
-    if (input->IsKeyDown('O')) // >> ÀÌ°Å ÀÎ½ºÅÏ½º È£ÃâÇØ¼­ Å°´Ù¿îÇÏ´Â°Å ºÒÆíÇÏ´Ï±î ³ªÁß¿¡ ¹Ù²Ù±â ¤¡¤¡
+    if (input->IsKeyDown('O')) // >> ì´ê±° ì¸ìŠ¤í„´ìŠ¤ í˜¸ì¶œí•´ì„œ í‚¤ë‹¤ìš´í•˜ëŠ”ê±° ë¶ˆíŽ¸í•˜ë‹ˆê¹Œ ë‚˜ì¤‘ì— ë°”ê¾¸ê¸° ã„±ã„±
         window->SetClientSize(1920, 1080);
 
     if (input->IsKeyDown('P'))
@@ -120,17 +120,17 @@ void GameApp::OnShutdown()
 }
 
 /*
-³» ¸Þ¸ðÀåÀÓ - ÁØÇõ
-°ÔÀÓÂÊ¿¡¼­ Á¤Á¡¹öÆÛ,ÀÎµ¦½º ¹öÆÛ, ÇÃ·¡±×¸¦ ³Ñ±è 
-CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) ÀÌ ÇÔ¼ö »ç¿ë
-±×¸®°í
-¸ÓÅ×¸®¾óÇÚµéÀ» ¹Þ±âÀ§ÇØ¼­ ¸ÓÅ×¸®¾ó °ü·Ã µ¥ÀÌÅÍµéÀ» ³Ñ±æ°ÅÀÓ (PBR º£ÀÌ½º) 
+ë‚´ ë©”ëª¨ìž¥ìž„ - ì¤€í˜
+ê²Œìž„ìª½ì—ì„œ ì •ì ë²„í¼,ì¸ë±ìŠ¤ ë²„í¼, í”Œëž˜ê·¸ë¥¼ ë„˜ê¹€ 
+CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) ì´ í•¨ìˆ˜ ì‚¬ìš©
+ê·¸ë¦¬ê³ 
+ë¨¸í…Œë¦¬ì–¼í•¸ë“¤ì„ ë°›ê¸°ìœ„í•´ì„œ ë¨¸í…Œë¦¬ì–¼ ê´€ë ¨ ë°ì´í„°ë“¤ì„ ë„˜ê¸¸ê±°ìž„ (PBR ë² ì´ìŠ¤) 
 
-°¨¸¶ ÄÃ·º¼Ç ³Ö¾î¾ß µÊ
-»ó¼ö¹öÆÛ °ü¸® ³Ö¾î¾ß µÊ
-¿ÀºêÁ§Æ® ¸Å´ÏÀú ³Ö¾î¾ßµÊ (Çö½Â)
-FSMÀº ¹¹ ³ªÁß¿¡ °ÔÀÓ ³ª¿À°í ¸¸µé±â ¤¡¤¡
-¿ÀºêÁ§Æ® ¸Å´ÏÀú ¾À¸Å´ÏÀú ¾ó¸¥ ¸¸µé°í ÀÓ±¸ÀÌ ¤¡¤¡
+ê°ë§ˆ ì»¬ë ‰ì…˜ ë„£ì–´ì•¼ ë¨
+ìƒìˆ˜ë²„í¼ ê´€ë¦¬ ë„£ì–´ì•¼ ë¨
+ì˜¤ë¸Œì íŠ¸ ë§¤ë‹ˆì € ë„£ì–´ì•¼ë¨ (í˜„ìŠ¹)
+FSMì€ ë­ ë‚˜ì¤‘ì— ê²Œìž„ ë‚˜ì˜¤ê³  ë§Œë“¤ê¸° ã„±ã„±
+ì˜¤ë¸Œì íŠ¸ ë§¤ë‹ˆì € ì”¬ë§¤ë‹ˆì € ì–¼ë¥¸ ë§Œë“¤ê³  ìž„êµ¬ì´ ã„±ã„±
 
 */
 
