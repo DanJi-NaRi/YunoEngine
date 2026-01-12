@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 
 #include "Unit.h"
+#include "Mesh.h"
 
 
 Unit::Unit()
@@ -100,7 +101,12 @@ void Unit::Backup()
     m_vDirBk = m_vDir;
 }
 
-void Unit::Attach(Unit* obj) //this가 부모, 파라미터로 자식
+void Unit::SetMesh(std::unique_ptr<Mesh>&& mesh)
+{
+    m_Meshs.push_back(std::move(mesh));
+}
+
+void Unit::Attach(Unit* obj) //this�� �θ�, �Ķ����ͷ� �ڽ�
 {
     if (obj->m_Parent)//기존 부모있으면 떨어진 후 결합
         obj->DettachParent();
