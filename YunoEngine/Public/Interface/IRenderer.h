@@ -4,6 +4,7 @@
 #include "MaterialDesc.h"
 
 class IWindow;
+struct YunoCamera;
 
 class IRenderer
 {
@@ -45,6 +46,9 @@ public:
     // BeginFrame~EndFrame 사이에서 호출되어 실제 Draw 수행
     virtual void Flush() = 0;
     
+    // 카메라 받아오기
+    virtual YunoCamera& GetCamera() = 0;
+
     // 종료
     virtual void Shutdown() = 0;
 
