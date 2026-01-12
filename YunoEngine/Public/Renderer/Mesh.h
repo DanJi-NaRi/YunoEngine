@@ -29,6 +29,8 @@ public:
 
     void UpdateRenderItem(XMFLOAT4X4 mWorld);
     const RenderItem& GetRenderItem() { return m_renderItem; }
+
+    const XMFLOAT4X4& GetUserTM() { return m_mUser; }
 };
 
 

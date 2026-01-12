@@ -69,8 +69,8 @@ void TitleScene::Update(float dt)
 void TitleScene::Submit(IRenderer* renderer)
 {
     (void)renderer; // Unit::Submit이 내부에서 renderer를 쓰면 필요 없음
-    if (m_plane)
-        m_plane->Submit(m_lastDt);
+    /*if (m_plane)
+        m_plane->Submit(m_lastDt);*/
 
     m_ObjManager->Submit(m_lastDt);
 
