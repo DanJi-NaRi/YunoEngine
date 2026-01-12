@@ -7,6 +7,7 @@
 #include "YunoEngine.h"
 #include "TestInputContexts.h"
 #include "ISceneManager.h"
+#include "YunoCamera.h"
 
 #include "TitleScene.h"
 #include "PlayScene.h"
@@ -86,6 +87,8 @@ void GameApp::OnUpdate(float dt)
     if (input->IsKeyDown('P'))
         window->SetClientSize(3440, 1440);
 
+    CameraMove(dt);
+
 
     //if (acc >= 1.0f)
     //{
@@ -130,3 +133,73 @@ FSM은 뭐 나중에 게임 나오고 만들기 ㄱㄱ
 오브젝트 매니저 씬매니저 얼른 만들고 임구이 ㄱㄱ
 
 */
+
+void CameraMove(float dt)
+{
+    IRenderer* renderer = YunoEngine::GetRenderer();
+    IInput* input = YunoEngine::GetInput();
+
+    static bool s_cameraInitialized = false;
+    static float s_cameraYaw = 0.0f;
+    static float s_cameraPitch = 0.0f;
+
+    YunoCamera& camera = renderer->GetCamera();
+    XMVECTOR position = XMLoadFloat3(&camera.position);
+
+    if (!s_cameraInitialized)
+    {
+        XMVECTOR toTarget = XMVectorSubtract(XMLoadFloat3(&camera.target), position);
+        float lenSq = XMVectorGetX(XMVector3LengthSq(toTarget));
+        if (lenSq < 0.0001f)
+        {
+            toTarget = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+        }
+        XMVECTOR forward = XMVector3Normalize(toTarget);
+        XMFLOAT3 forwardFloat{};
+        XMStoreFloat3(&forwardFloat, forward);
+        s_cameraYaw = atan2f(forwardFloat.x, forwardFloat.z);
+        s_cameraPitch = asinf(forwardFloat.y);
+        s_cameraInitialized = true;
+    }
+
+    const float lookSpeed = 0.005f;
+    if (input->IsMouseButtonDown(1))
+    {
+        s_cameraYaw += input->GetMouseDeltaX() * lookSpeed;
+        s_cameraPitch -= input->GetMouseDeltaY() * lookSpeed;
+
+        const float maxPitch = XM_PIDIV2 - 0.01f;
+        if (s_cameraPitch > maxPitch) s_cameraPitch = maxPitch;
+        if (s_cameraPitch < -maxPitch) s_cameraPitch = -maxPitch;
+    }
+
+    XMVECTOR forward = XMVectorSet(
+        cosf(s_cameraPitch) * sinf(s_cameraYaw),
+        sinf(s_cameraPitch),
+        cosf(s_cameraPitch) * cosf(s_cameraYaw),
+        0.0f
+    );
+    XMVECTOR worldUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+    XMVECTOR right = XMVector3Normalize(XMVector3Cross(worldUp, forward));
+
+    XMVECTOR move = XMVectorZero();
+    if (input->IsKeyDown('W')) move = XMVectorAdd(move, forward);
+    if (input->IsKeyDown('S')) move = XMVectorSubtract(move, forward);
+    if (input->IsKeyDown('A')) move = XMVectorSubtract(move, right);
+    if (input->IsKeyDown('D')) move = XMVectorAdd(move, right);
+    if (input->IsKeyDown('Q')) move = XMVectorSubtract(move, worldUp);
+    if (input->IsKeyDown('E')) move = XMVectorAdd(move, worldUp);
+
+    const float moveSpeed = 10.0f;
+    float moveLenSq = XMVectorGetX(XMVector3LengthSq(move));
+    if (moveLenSq > 0.0001f)
+    {
+        move = XMVector3Normalize(move);
+        position = XMVectorAdd(position, XMVectorScale(move, moveSpeed * dt));
+    }
+
+    XMVECTOR target = XMVectorAdd(position, forward);
+    XMStoreFloat3(&camera.position, position);
+    XMStoreFloat3(&camera.target, target);
+    camera.up = { 0.0f, 1.0f, 0.0f };
+}

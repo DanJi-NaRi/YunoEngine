@@ -147,6 +147,8 @@ public:
     void Submit(const RenderItem& item) override;
     void Flush() override;     
 
+    YunoCamera& GetCamera() override { return m_camera; }
+
 private:
     void BindConstantBuffers(
         const RenderItem& item,
