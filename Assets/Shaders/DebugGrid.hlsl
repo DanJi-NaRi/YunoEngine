@@ -23,11 +23,11 @@ VSOutput VSMain(VSInput i)
 
 float4 PSMain(VSOutput input) : SV_Target
 {
-    // zÃà ÆÄ¶õ»ö Ãâ·Â
+    // zì¶• íŒŒë€ìƒ‰ ì¶œë ¥
     if (input.originPos.z == 0.0f)
         return float4(0, 0, 1, 1);
     
-    // xÃà »¡°£»ö Ãâ·Â
+    // xì¶• ë¹¨ê°„ìƒ‰ ì¶œë ¥
     if (input.originPos.x == 0.0f)
         return float4(1, 0, 0, 1);
 

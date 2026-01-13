@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "YunoEngine.h"
 #include "RenderTypes.h"
