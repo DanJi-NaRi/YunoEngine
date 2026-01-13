@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TitleScene.h"
 
 #include "Quad.h"
@@ -30,7 +30,7 @@ bool TitleScene::OnCreate()
 
     m_ObjManager->Init();
 
-    m_building = m_ObjManager->CreateObjectFromFile<Building>("Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    m_building = m_ObjManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     return true;
 }

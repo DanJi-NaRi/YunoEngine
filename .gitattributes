@@ -1,18 +1,22 @@
-# Default: text files use CRLF on checkout, LF in repo (Windows-friendly)
+# Default
 * text=auto
 
-# C/C++
-*.h   text eol=crlf
-*.hpp text eol=crlf
-*.cpp text eol=crlf
-*.inl text eol=crlf
-*.c   text eol=crlf
-*.cc  text eol=crlf
+# C / C++ / HLSL
+*.h       text eol=crlf
+*.hpp     text eol=crlf
+*.cpp     text eol=crlf
+*.inl     text eol=crlf
+*.hlsl    text eol=crlf
+*.hlsli   text eol=crlf
 
-# Shaders
-*.hlsl text eol=crlf
+# Visual Studio meta files
+*.sln      text eol=crlf
+*.vcxproj  text eol=crlf
+*.filters  text eol=crlf
+*.props    text eol=crlf
+*.targets  text eol=crlf
 
-# Config / scripts (원하면 조정)
-*.md  text eol=lf
-*.yml text eol=lf
-*.yaml text eol=lf
+# Docs / config
+*.md     text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf

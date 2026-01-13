@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <cstdint>
 #include <DirectXMath.h>
 #include <IMesh.h>
@@ -114,7 +114,7 @@ struct PassKey
 class Mesh;
 
 struct MeshNode {
-    std::string m_name;
+    std::wstring m_name;
     MeshNode* m_Parent = nullptr;
     std::vector<std::unique_ptr<MeshNode>> m_Childs;
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <wincodec.h>
 #pragma comment(lib, "windowscodecs.lib")

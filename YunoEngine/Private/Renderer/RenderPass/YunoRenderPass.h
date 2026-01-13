@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 
 struct ID3D11Device;

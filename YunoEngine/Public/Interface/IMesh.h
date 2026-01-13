@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 struct VERTEX_Pos { float x, y, z; };
 struct VERTEX_Nrm { float nx, ny, nz; };

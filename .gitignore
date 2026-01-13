@@ -23,3 +23,16 @@ x86/
 
 # Optional: logs/cache
 *.log
+
+
+# VS user-specific
+*.vcxproj.user
+
+# IntelliSense / intermediate
+ipch/
+*.tlog
+*.lastbuildstate
+
+# CMake 쓰면
+CMakeFiles/
+CMakeCache.txt

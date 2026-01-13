@@ -12,8 +12,8 @@
 #include <assimp/postprocess.h>
 
 
-std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, const std::string& filepath);
-std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::string& filepath);
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, const std::wstring& filepath);
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::wstring& filepath);
 
 std::wstring Utf8ToWString(const char* s)
 {
@@ -30,12 +30,14 @@ std::wstring Utf8ToWString(const char* s)
     return w;
 }
 
-std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filepath)
+std::unique_ptr<MeshNode> Parser::LoadFile(const std::wstring& filepath)
 {
     Assimp::Importer importer;
 
+    std::string pathUtf8 = std::filesystem::path(filepath).u8string();
+
     const aiScene* scene = importer.ReadFile(
-        filepath,
+        pathUtf8,
         aiProcess_Triangulate |
         aiProcess_ConvertToLeftHanded |
         aiProcess_GenSmoothNormals |
@@ -50,11 +52,13 @@ std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filepath)
     return MeshNode;
 }
 
-std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, const std::string& filepath)
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, const std::wstring& filepath)
 {
-    std::string name(node->mName.C_Str());
+    std::wstring name(Utf8ToWString(node->mName.C_Str()));
 
-    if (name == "Camera" || name == "Light")
+    
+
+    if (name == L"Camera" || name == L"Light")
         return nullptr;
 
     auto meshnode = std::make_unique<MeshNode>();
@@ -100,7 +104,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
     return meshnode;
 }
 
-std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::string& filepath)
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::wstring& filepath)
 {
     std::vector<VERTEX_Pos> vtxPos;
     std::vector<VERTEX_Nrm> vtxNrm;
@@ -215,11 +219,11 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         }
         else
         {
-            auto texPath = filepath.substr(0, filepath.find(".fbx"));
-            texPath += "_Albedo" + std::to_string(nodeNum) + ".png";
+            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
+            texPath += L"_Albedo" + std::to_wstring(nodeNum) + L".png";
 
-            auto wPath = Utf8ToWString(texPath.c_str());
-            TextureHandle diff = renderer->CreateTexture2DFromFile(wPath.c_str());
+            //auto wPath = Utf8ToWString(texPath.c_str());
+            TextureHandle diff = renderer->CreateTexture2DFromFile(texPath.c_str());
 
             md.albedo = diff;
         }

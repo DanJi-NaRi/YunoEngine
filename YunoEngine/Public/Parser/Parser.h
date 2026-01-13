@@ -8,5 +8,5 @@ public:
     Parser() = default;
     virtual ~Parser() = default;
 
-    std::unique_ptr<MeshNode> LoadFile(const std::string& filename);
+    std::unique_ptr<MeshNode> LoadFile(const std::wstring& filename);
 };

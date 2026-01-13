@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 #include "ObjectManager.h"
 #include "Parser.h"
@@ -101,7 +101,7 @@ const Unit* ObjectManager::FindObject(UINT id)//GetID랑 연동해서쓰기
     return m_objMap[id];
 }
 
-const Unit* ObjectManager::FindObject(const std::string& name)
+const Unit* ObjectManager::FindObject(const std::wstring& name)
 {
     if (m_nameToID.find(name) == m_nameToID.end())
         return nullptr;
@@ -128,7 +128,7 @@ void ObjectManager::DestroyObject(UINT id)
     m_pendingDestoryQ.push_back(id);
 }
 
-void ObjectManager::DestroyObject(const std::string& name)
+void ObjectManager::DestroyObject(const std::wstring& name)
 {
     if (m_nameToID.find(name) == m_nameToID.end())
         return;
