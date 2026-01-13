@@ -2,12 +2,14 @@
 #include "TitleScene.h"
 
 #include "Quad.h"
+#include "Building.h"
 
 #include "YunoEngine.h"
 #include "IInput.h"
 #include "ISceneManager.h"
 
 #include "PlayScene.h"
+#include "ObjectManager.h"
 
 
 bool TitleScene::OnCreate()
@@ -23,6 +25,13 @@ bool TitleScene::OnCreate()
         m_plane = nullptr;
         return false;
     }
+
+    m_ObjManager = new ObjectManager;
+
+    m_ObjManager->Init();
+
+    m_building = m_ObjManager->CreateObjectFromFile<Building>("Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+
     return true;
 }
 
@@ -57,15 +66,18 @@ void TitleScene::Update(float dt)
 
     if (m_plane)
         m_plane->Update(dt);
+
+    m_ObjManager->Update(dt);
+
 }
 
 void TitleScene::Submit(IRenderer* renderer)
 {
-    //if (m_plane)
-    //    m_plane->Submit(m_lastDt);
+    (void)renderer; // Unit::Submit�� ���ο��� renderer�� ���� �ʿ� ����
+    /*if (m_plane)
+        m_plane->Submit(m_lastDt);*/
 
-    // 프레임 데이터 서브밋 (라이트)
-    //  for (objManager -Submit)
-    //
-    // UI view proj
+    m_ObjManager->Submit(m_lastDt);
+
+    m_ObjManager->ProcessPending();
 }

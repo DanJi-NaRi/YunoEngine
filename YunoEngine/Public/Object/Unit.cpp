@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 
 #include "Unit.h"
+#include "Mesh.h"
 
 
 Unit::Unit()
@@ -54,16 +55,39 @@ bool Unit::Create(std::string& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
+bool Unit::Create(std::string& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale)
+{
+    m_id = id;
+    m_name = name;
+
+    m_vPos = vPos;
+    m_vRot = vRot;
+    m_vScale = vScale;
+
+    Unit::Update();
+
+    return true;
+}
+
 bool Unit::Update(float dTime)
 {
-
     XMMATRIX mScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
-    XMMATRIX mRot = XMMatrixIdentity();
+    XMMATRIX mRot = XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
     XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z);
 
-    XMMATRIX mTM = mScale * mRot * mTrans;
+    XMMATRIX mTM;
 
+    if(m_Parent)
+        mTM = mScale * mRot * mTrans * m_Parent->GetWorldMatrix();
+    else
+        mTM = mScale * mRot * mTrans;
 
+    if (!m_Meshs.empty())
+    {
+        XMMATRIX userTM = XMLoadFloat4x4(&m_Meshs[0]->GetUserTM());
+        mTM = userTM * mTM;
+    }
+    
     XMStoreFloat4x4(&m_mScale, mScale);
     XMStoreFloat4x4(&m_mRot, mRot);
     XMStoreFloat4x4(&m_mTrans, mTrans);
@@ -75,10 +99,10 @@ bool Unit::Update(float dTime)
 
 bool Unit::Submit(float dTime)
 {
-    m_renderItem.meshHandle = m_defaultMesh;
-    m_renderItem.materialHandle = m_defaultMaterial;
-    m_renderItem.mWorld = m_mWorld;
-
+    for (auto& mesh : m_Meshs)
+    {
+        mesh->UpdateRenderItem(m_mWorld);
+    }
 
     LastSubmit(dTime);
 
@@ -87,8 +111,11 @@ bool Unit::Submit(float dTime)
 
 bool Unit::LastSubmit(float dTime /*= 0*/)
 {
-    YunoEngine::GetRenderer()->Submit(m_renderItem);
-
+    for (auto& mesh : m_Meshs)
+    {
+        YunoEngine::GetRenderer()->Submit(mesh->GetRenderItem());
+    }
+    
     return true;
 }
 
@@ -99,6 +126,12 @@ void Unit::Backup()
     m_vScaleBk = m_vScale;
     m_vDirBk = m_vDir;
 }
+
+void Unit::SetMesh(std::unique_ptr<Mesh>&& mesh)
+{
+    m_Meshs.push_back(std::move(mesh));
+}
+
 
 void Unit::Attach(Unit* obj) //this가 부모, 파라미터로 자식
 {
@@ -121,5 +154,18 @@ void Unit::DettachChild(uint32_t id)
         return;
 
     m_Childs.erase(id);
+}
+
+void Unit::ClearChild()
+{
+    if (m_Childs.empty())
+        return;
+
+    for (auto& [id, child] : m_Childs)
+    {
+        child->DettachParent();
+    }
+
+    m_Childs.clear();
 }
 

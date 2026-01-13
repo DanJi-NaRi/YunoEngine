@@ -110,3 +110,17 @@ struct PassKey
             && depth == rhs.depth;
     }
 };
+
+class Mesh;
+
+struct MeshNode {
+    std::string m_name;
+    MeshNode* m_Parent = nullptr;
+    std::vector<std::unique_ptr<MeshNode>> m_Childs;
+
+    XMFLOAT3 pos;
+    XMFLOAT3 rot;
+    XMFLOAT3 scale;
+
+    std::vector<std::unique_ptr<Mesh>> m_Meshs;
+};

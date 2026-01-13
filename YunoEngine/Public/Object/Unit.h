@@ -4,6 +4,8 @@
 #include "RenderTypes.h"
 #include "IRenderer.h"
 #include "ITextureManager.h"
+#include "Mesh.h"
+
 
 // 모든 메쉬는 CW 시계방향 정점이 앞면임
 /* 예시)
@@ -44,6 +46,8 @@ protected:
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
 
+    std::vector<std::unique_ptr<Mesh>> m_Meshs;
+
     Unit* m_Parent;
     std::unordered_map<uint32_t, Unit*> m_Childs;
 
@@ -54,6 +58,7 @@ public:
     //Create는 오브젝트 매니저만 쓰기
     virtual bool  Create(XMFLOAT3 vPos);//일단 호환용으로 냅두고 나중에 무조건 이름 필요한걸로 바꾸는게 나을듯
     virtual bool  Create(std::string& name, uint32_t id, XMFLOAT3 vPos);
+    virtual bool  Create(std::string& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
 
     virtual bool  Update(float dTime = 0);
     virtual bool  Submit(float dTime = 0);
@@ -61,8 +66,11 @@ public:
 
     virtual void  Backup();
 
-    virtual bool CreateMesh() = 0;
-    virtual bool CreateMaterial() = 0;
+    //메쉬는 대부분 파서가 만들어서 순수 가상함수일 필요없어짐
+    virtual bool CreateMesh() { return false; };
+    virtual bool CreateMaterial() { return false; };
+
+    virtual void SetMesh(std::unique_ptr<Mesh>&& mesh);
 
     uint32_t GetID() { return m_id; }
     const std::string& GetName() { return m_name; }
@@ -70,6 +78,7 @@ public:
     void Attach(Unit* obj);
     void DettachParent();
     void DettachChild(uint32_t id);
+    void ClearChild();
 
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
 };

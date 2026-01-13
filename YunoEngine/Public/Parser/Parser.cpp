@@ -1,13 +1,19 @@
-﻿#include "pch.h"
+#include "pch.h"
+
 #include "YunoRenderer.h"
 #include "IMesh.h"
 #include "YunoEngine.h"
+#include "Mesh.h"
+
+#include "Parser.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "Parser.h"
+
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, const std::string& filepath);
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::string& filepath);
 
 std::wstring Utf8ToWString(const char* s)
 {
@@ -24,12 +30,12 @@ std::wstring Utf8ToWString(const char* s)
     return w;
 }
 
-bool Parser::LoadFile(const std::string& filename)
+std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filepath)
 {
     Assimp::Importer importer;
 
     const aiScene* scene = importer.ReadFile(
-        filename,
+        filepath,
         aiProcess_Triangulate |
         aiProcess_ConvertToLeftHanded |
         aiProcess_GenSmoothNormals |
@@ -37,28 +43,64 @@ bool Parser::LoadFile(const std::string& filename)
     );
 
     if (!scene || !scene->mRootNode)
-        return false;
+        return {};
 
-    CreateNode(scene->mRootNode, scene);
+    auto MeshNode = CreateNode(scene->mRootNode, scene, 0, filepath);
 
-    return true;
+    return MeshNode;
 }
 
-void Parser::CreateNode(aiNode* node, const aiScene* scene)
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, const std::string& filepath)
 {
+    std::string name(node->mName.C_Str());
+
+    if (name == "Camera" || name == "Light")
+        return nullptr;
+
+    auto meshnode = std::make_unique<MeshNode>();
+
+    meshnode->m_name = name;
+    
+    aiVector3D scale;
+    aiVector3D rot;
+    aiVector3D pos;
+
+    node->mTransformation.Decompose(scale, rot, pos); //나중에 쿼터니언으로 바꾸기
+
+    XMFLOAT3 vScale = XMFLOAT3(scale.x * 0.01f, scale.y * 0.01f, scale.z * 0.01f);
+    XMFLOAT3 vRot = XMFLOAT3(rot.x, -rot.z, rot.y);
+    XMFLOAT3 vPos = XMFLOAT3(pos.x * 0.01f, -pos.z * 0.01f, pos.y * 0.01f);
+
+    meshnode->pos = vPos;
+    meshnode->rot = vRot;
+    meshnode->scale = vScale;
+    
     for (size_t i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
-        auto mesh_matKey = CreateMesh(aiMesh, scene);
+        auto [meshkey, matkey] = CreateMesh(aiMesh, scene, nodeNum, filepath);
+
+        auto model = std::make_unique<Mesh>();
+        model->Create(meshkey, matkey, vPos, vRot, vScale);
+
+        meshnode->m_Meshs.push_back(std::move(model));
     }
+
+    int num = 0;
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
-        CreateNode(node->mChildren[i], scene); //자식 노드 탐색
+        auto child = CreateNode(node->mChildren[i], scene, num, filepath); //자식 노드 탐색
+        if(!child)
+            continue;
+        meshnode->m_Childs.push_back(std::move(child));
+        num++;
     }
+
+    return meshnode;
 }
 
-std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const aiScene* scene)
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::string& filepath)
 {
     std::vector<VERTEX_Pos> vtxPos;
     std::vector<VERTEX_Nrm> vtxNrm;
@@ -67,21 +109,30 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
     std::vector<VERTEX_B> vtxBi;
     std::vector<INDEX> indices;
 
+    VertexStreams vs;
+    MaterialDesc md{};
+
     for (size_t i = 0; i < aiMesh->mNumVertices; i++)
     {
         VERTEX_Pos vPos;
         vPos.x = aiMesh->mVertices[i].x;
-        vPos.y = aiMesh->mVertices[i].y;
-        vPos.z = aiMesh->mVertices[i].z;
+        vPos.y = -aiMesh->mVertices[i].z;
+        vPos.z = aiMesh->mVertices[i].y;
         vtxPos.push_back(vPos);
+        
+        vs.flags = VSF_Pos;
+        md.passKey.vertexFlags = VSF_Pos;
 
         if (aiMesh->HasNormals())
         {
             VERTEX_Nrm vNrm;
             vNrm.nx = aiMesh->mNormals[i].x;
-            vNrm.ny = aiMesh->mNormals[i].y;
-            vNrm.nz = aiMesh->mNormals[i].z;
+            vNrm.ny = -aiMesh->mNormals[i].z;
+            vNrm.nz = aiMesh->mNormals[i].y;
             vtxNrm.push_back(vNrm);
+
+            vs.flags |= VSF_Nrm;
+            md.passKey.vertexFlags |= VSF_Nrm;
         }
 
         {
@@ -90,6 +141,9 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
             {
                 vUV.u = aiMesh->mTextureCoords[0][i].x;
                 vUV.v = aiMesh->mTextureCoords[0][i].y;
+
+                vs.flags |= VSF_UV;
+                md.passKey.vertexFlags |= VSF_UV;
             }
             else
             {
@@ -104,15 +158,18 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
             VERTEX_B vtxB;
 
             vtxT.tx = aiMesh->mTangents[i].x;
-            vtxT.ty = aiMesh->mTangents[i].y;
-            vtxT.tz = aiMesh->mTangents[i].z;
+            vtxT.ty = -aiMesh->mTangents[i].z;
+            vtxT.tz = aiMesh->mTangents[i].y;
 
             vtxB.bx = aiMesh->mBitangents[i].x;
-            vtxB.by = aiMesh->mBitangents[i].y;
-            vtxB.bz = aiMesh->mBitangents[i].z;
+            vtxB.by = -aiMesh->mBitangents[i].z;
+            vtxB.bz = aiMesh->mBitangents[i].y;
 
             vtxTan.push_back(vtxT);
             vtxBi.push_back(vtxB);
+
+            vs.flags |= VSF_T | VSF_B;
+            md.passKey.vertexFlags |= VSF_T | VSF_B;
         }
     }
 
@@ -129,7 +186,7 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
         indices.push_back(idx);
     }
 
-    VertexStreams vs;
+    
     vs.vtx_count = aiMesh->mNumVertices;
     vs.pos = vtxPos.data();
     vs.nrm = vtxNrm.data();
@@ -143,8 +200,6 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
 
     aiMaterial* aiMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 
-    MaterialDesc md;
-
     if (aiMaterial)
     {
         aiString texPath;
@@ -154,6 +209,16 @@ std::pair<MeshHandle, MaterialHandle> Parser::CreateMesh(aiMesh* aiMesh, const a
         if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS)
         {
             auto wPath = Utf8ToWString(texPath.C_Str());
+            TextureHandle diff = renderer->CreateTexture2DFromFile(wPath.c_str());
+
+            md.albedo = diff;
+        }
+        else
+        {
+            auto texPath = filepath.substr(0, filepath.find(".fbx"));
+            texPath += "_Albedo" + std::to_string(nodeNum) + ".png";
+
+            auto wPath = Utf8ToWString(texPath.c_str());
             TextureHandle diff = renderer->CreateTexture2DFromFile(wPath.c_str());
 
             md.albedo = diff;

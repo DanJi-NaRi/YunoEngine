@@ -2,11 +2,6 @@
 #include "Quad.h"
 
 
-
-
-
-
-
 VERTEX_Pos g_Quad_pos[] = {
     { -1.0f,  1.0f,  0.0f },    // 좌상
     {  1.0f,  1.0f,  0.0f },    // 우상
@@ -57,12 +52,16 @@ bool Quad::Create(XMFLOAT3 vPos)
 {
     Unit::Create(vPos);
 
-
     if (!CreateMesh())
         return false;
 
     if (!CreateMaterial())
         return false;
+
+    auto mesh = std::make_unique<Mesh>();
+    mesh->Create(m_defaultMesh, m_addMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+
+    m_Meshs.push_back(std::move(mesh));
 
     Backup();
 
@@ -176,6 +175,7 @@ bool Quad::CreateMaterial()
         return false;
     
     m_Albedo = texMan->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
+    //m_Albedo = texMan->LoadTexture2D(L"../Assets/fbx/Building/building_Albedo0.png");
 
     // 추가 머테리얼 생성
     md.passKey.raster = RasterPreset::CullNone;

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- ===== Filters (folder view in Solution Explorer) ===== -->
   <ItemGroup>
@@ -83,9 +83,6 @@
     <ClCompile Include="EnginePCH\pch.cpp">
       <Filter>EnginePCH</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Parser\Parser.cpp">
-      <Filter>Private\Parser</Filter>
-    </ClCompile>
     <ClCompile Include="Private\Input\YunoInputSystem.cpp">
       <Filter>Private\Input</Filter>
     </ClCompile>
@@ -125,14 +122,17 @@
     <ClCompile Include="Private\Scene\YunoSceneManager.cpp">
       <Filter>Private\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Public\Parser\Parser.cpp">
+      <Filter>Private\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Renderer\Mesh.cpp">
+      <Filter>Private\Renderer\Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h">
       <Filter>EnginePCH</Filter>
-    </ClInclude>
-    <ClInclude Include="Private\Parser\Parser.h">
-      <Filter>Private\Parser</Filter>
     </ClInclude>
     <ClInclude Include="Private\Input\InputState.h">
       <Filter>Private\Input</Filter>
@@ -143,14 +143,8 @@
     <ClInclude Include="Private\Renderer\Material\YunoMaterial.h">
       <Filter>Private\Renderer\Material</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Renderer\Model\Model.h">
-      <Filter>Private\Renderer\Model</Filter>
-    </ClInclude>
     <ClInclude Include="Private\Resource\YunoTextureManager.h">
       <Filter>Private\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="Private\Singleton\Singleton.h">
-      <Filter>Private\Singleton</Filter>
     </ClInclude>
     <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h">
       <Filter>Private\Renderer\ConstBuffer</Filter>
@@ -241,6 +235,15 @@
     </ClInclude>
     <ClInclude Include="Public\Interface\IScene.h">
       <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Parser\Parser.h">
+      <Filter>Private\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\Mesh.h">
+      <Filter>Private\Renderer\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Singleton\Singleton.h">
+      <Filter>Private\Singleton</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
