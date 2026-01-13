@@ -83,11 +83,19 @@ void TitleScene::Submit(IRenderer* renderer)
     // UI view proj
 =======
     (void)renderer; // Unit::Submit�� ���ο��� renderer�� ���� �ʿ� ����
+<<<<<<< HEAD
     /*if (m_plane)
         m_plane->Submit(m_lastDt);*/
+=======
+    if (m_plane)
+        m_plane->Submit(m_lastDt);
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 
     m_ObjManager->Submit(m_lastDt);
 
     m_ObjManager->ProcessPending();
+<<<<<<< HEAD
 >>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 }

@@ -29,8 +29,11 @@ public:
 
     void UpdateRenderItem(XMFLOAT4X4 mWorld);
     const RenderItem& GetRenderItem() { return m_renderItem; }
+<<<<<<< HEAD
 
     const XMFLOAT4X4& GetUserTM() { return m_mUser; }
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 };
 
 

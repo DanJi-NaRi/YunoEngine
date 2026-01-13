@@ -3,7 +3,10 @@
 =======
 #include "pch.h"
 
+<<<<<<< HEAD
 >>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 #include "ObjectManager.h"
 #include "Parser.h"
 
@@ -12,6 +15,7 @@
 ObjectManager::ObjectManager()
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     m_ObjectCount = 0;
     m_ObjectIDs = 0;
     m_objs.reserve(30); //30개 정도 메모리 잡고 시작
@@ -19,6 +23,9 @@ ObjectManager::ObjectManager()
 =======
     
 >>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+    
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 }
 
 ObjectManager::~ObjectManager()

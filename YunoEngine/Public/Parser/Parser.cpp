@@ -10,8 +10,13 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+<<<<<<< HEAD
 std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, const std::string& filepath);
 std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::string& filepath);
+=======
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, const std::string& filepath);
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, const std::string& filepath);
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 
 std::wstring Utf8ToWString(const char* s)
 {
@@ -28,11 +33,15 @@ std::wstring Utf8ToWString(const char* s)
     return w;
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD:YunoEngine/Public/Parser/Parser.cpp
 std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filepath)
 =======
 std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filename)
 >>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋):YunoEngine/Private/Parser/Parser.cpp
+=======
+std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filepath)
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 {
     Assimp::Importer importer;
 
@@ -47,15 +56,20 @@ std::unique_ptr<MeshNode> Parser::LoadFile(const std::string& filename)
     if (!scene || !scene->mRootNode)
         return {};
 
+<<<<<<< HEAD
 <<<<<<< HEAD:YunoEngine/Public/Parser/Parser.cpp
     auto MeshNode = CreateNode(scene->mRootNode, scene, 0, filepath);
 =======
     auto MeshNode = CreateNode(scene->mRootNode, scene);
 >>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋):YunoEngine/Private/Parser/Parser.cpp
+=======
+    auto MeshNode = CreateNode(scene->mRootNode, scene, filepath);
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 
     return MeshNode;
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD:YunoEngine/Public/Parser/Parser.cpp
 std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, const std::string& filepath)
 {
@@ -91,17 +105,39 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
         model->Create(meshkey, matkey, vPos, vRot, vScale);
 =======
 std::unique_ptr<MeshNode> Parser::CreateNode(aiNode* node, const aiScene* scene)
+=======
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, const std::string& filepath)
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 {
     auto meshnode = std::make_unique<MeshNode>();
 
+    meshnode->m_name = std::string(node->mName.C_Str());
+    
+    aiVector3D scale;
+    aiVector3D rot;
+    aiVector3D pos;
+    node->mTransformation.Decompose(scale, rot, pos); //���߿� ���ʹϾ����� �ٲٱ�
+
+    XMFLOAT3 vScale = XMFLOAT3(scale.x, scale.y, scale.z);
+    XMFLOAT3 vRot = XMFLOAT3(rot.x, rot.y, rot.z);
+    XMFLOAT3 vPos = XMFLOAT3(pos.x, pos.y, pos.z);
+
+    meshnode->pos = vPos;
+    meshnode->rot = vRot;
+    meshnode->scale = vScale;
+    
     for (size_t i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
-        auto [meshkey, matkey] = CreateMesh(aiMesh, scene);
+        auto [meshkey, matkey] = CreateMesh(aiMesh, scene, filepath);
 
         auto model = std::make_unique<Mesh>();
+<<<<<<< HEAD
         model->Create(meshkey, matkey);
 >>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋):YunoEngine/Private/Parser/Parser.cpp
+=======
+        model->Create(meshkey, matkey, vPos, vRot, vScale);
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 
         meshnode->m_Meshs.push_back(std::move(model));
     }
@@ -110,6 +146,7 @@ std::unique_ptr<MeshNode> Parser::CreateNode(aiNode* node, const aiScene* scene)
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
+<<<<<<< HEAD
 <<<<<<< HEAD:YunoEngine/Public/Parser/Parser.cpp
 <<<<<<< HEAD
 <<<<<<< HEAD:YunoEngine/Private/Parser/Parser.cpp
@@ -126,6 +163,9 @@ std::unique_ptr<MeshNode> Parser::CreateNode(aiNode* node, const aiScene* scene)
         num++;
 =======
         auto child = CreateNode(node->mChildren[i], scene); //�ڽ� ��� Ž��
+=======
+        auto child = CreateNode(node->mChildren[i], scene, filepath); //�ڽ� ��� Ž��
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
         meshnode->m_Childs.push_back(std::move(child));
 >>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋):YunoEngine/Private/Parser/Parser.cpp
     }
@@ -133,7 +173,11 @@ std::unique_ptr<MeshNode> Parser::CreateNode(aiNode* node, const aiScene* scene)
     return meshnode;
 }
 
+<<<<<<< HEAD
 std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::string& filepath)
+=======
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, const std::string& filepath)
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 {
     std::vector<VERTEX_Pos> vtxPos;
     std::vector<VERTEX_Nrm> vtxNrm;
@@ -143,7 +187,10 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
     std::vector<INDEX> indices;
 
     VertexStreams vs;
+<<<<<<< HEAD
     MaterialDesc md{};
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 
     for (size_t i = 0; i < aiMesh->mNumVertices; i++)
     {
@@ -154,7 +201,10 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         vtxPos.push_back(vPos);
         
         vs.flags = VSF_Pos;
+<<<<<<< HEAD
         md.passKey.vertexFlags = VSF_Pos;
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 
         if (aiMesh->HasNormals())
         {
@@ -165,7 +215,10 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             vtxNrm.push_back(vNrm);
 
             vs.flags |= VSF_Nrm;
+<<<<<<< HEAD
             md.passKey.vertexFlags |= VSF_Nrm;
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
         }
 
         {
@@ -176,7 +229,10 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
                 vUV.v = aiMesh->mTextureCoords[0][i].y;
 
                 vs.flags |= VSF_UV;
+<<<<<<< HEAD
                 md.passKey.vertexFlags |= VSF_UV;
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
             }
             else
             {
@@ -202,7 +258,10 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             vtxBi.push_back(vtxB);
 
             vs.flags |= VSF_T | VSF_B;
+<<<<<<< HEAD
             md.passKey.vertexFlags |= VSF_T | VSF_B;
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
         }
     }
 
@@ -233,6 +292,11 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
 
     aiMaterial* aiMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 
+<<<<<<< HEAD
+=======
+    MaterialDesc md{};
+
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
     if (aiMaterial)
     {
         aiString texPath;
@@ -249,7 +313,11 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         else
         {
             auto texPath = filepath.substr(0, filepath.find(".fbx"));
+<<<<<<< HEAD
             texPath += "_Albedo" + std::to_string(nodeNum) + ".png";
+=======
+            texPath += "_Albedo" + std::to_string(aiMesh->mMaterialIndex) + ".png";
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 
             auto wPath = Utf8ToWString(texPath.c_str());
             TextureHandle diff = renderer->CreateTexture2DFromFile(wPath.c_str());

@@ -120,15 +120,21 @@
       <Filter>Private\Scene</Filter>
     </ClCompile>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
     <ClCompile Include="Public\Renderer\Mesh.cpp">
       <Filter>Private\Renderer\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Public\Parser\Parser.cpp">
       <Filter>Public\Parser</Filter>
+<<<<<<< HEAD
 =======
     <ClCompile Include="Private\Renderer\Mesh\Mesh.cpp">
       <Filter>Private\Renderer\Model</Filter>
 >>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -242,15 +248,21 @@
       <Filter>Public\Interface</Filter>
     </ClInclude>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
     <ClInclude Include="Public\Renderer\Mesh.h">
       <Filter>Private\Renderer\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Public\Parser\Parser.h">
       <Filter>Public\Parser</Filter>
+<<<<<<< HEAD
 =======
     <ClInclude Include="Private\Renderer\Mesh\Mesh.h">
       <Filter>Private\Renderer\Model</Filter>
 >>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
+=======
+>>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
