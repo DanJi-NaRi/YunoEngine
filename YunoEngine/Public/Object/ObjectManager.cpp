@@ -4,9 +4,12 @@
 #include "pch.h"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 =======
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 #include "ObjectManager.h"
 #include "Parser.h"
 
@@ -14,6 +17,7 @@
 
 ObjectManager::ObjectManager()
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     m_ObjectCount = 0;
@@ -26,6 +30,9 @@ ObjectManager::ObjectManager()
 =======
     
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+    
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 }
 
 ObjectManager::~ObjectManager()

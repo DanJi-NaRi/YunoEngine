@@ -27,9 +27,12 @@ private:
     Quad* m_plane = nullptr;   // °£´ÜÇÏ°Ô raw·Î µé°í, OnDestroy¿¡¼­ delete
     Building* m_building = nullptr;   // °£´ÜÇÏ°Ô raw·Î µé°í, OnDestroy¿¡¼­ delete
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 933f6d3 (í™”ë©´ì— ëœ¨ëŠ”ë° íŒŒì‹±í•  ë•Œ í…ìŠ¤ì³ í•¸ë“¤ê¹Œì§€ëŠ” ë°›ëŠ”ë° ì ìš©ì´ ì•ˆëŒ)
 =======
 >>>>>>> 1178914 (í™”ë©´ì— ëœ¨ëŠ”ë° íŒŒì‹±í•  ë•Œ í…ìŠ¤ì³ í•¸ë“¤ê¹Œì§€ëŠ” ë°›ëŠ”ë° ì ìš©ì´ ì•ˆëŒ)
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
     float m_lastDt = 0.0f;
     ObjectManager* m_ObjManager;
 };

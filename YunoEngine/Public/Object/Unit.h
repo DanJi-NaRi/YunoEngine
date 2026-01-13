@@ -6,10 +6,13 @@
 #include "ITextureManager.h"
 #include "Mesh.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 class Mesh;
 =======
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 
 // 모든 메쉬는 CW 시계방향 정점이 앞면임
 /* 예시)
@@ -74,10 +77,13 @@ public:
     virtual bool CreateMesh() { return false; };
     virtual bool CreateMaterial() { return false; };
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     virtual void SetMesh(std::unique_ptr<Mesh>&& mesh);
 =======
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 
     virtual void SetMesh(std::unique_ptr<Mesh>&& mesh);
 

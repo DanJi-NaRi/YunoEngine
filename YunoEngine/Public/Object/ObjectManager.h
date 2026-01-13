@@ -4,6 +4,7 @@
 #pragma once
 #include "RenderTypes.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 =======
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
@@ -11,6 +12,11 @@
 
 
 
+=======
+#include "Unit.h"
+
+
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 class ObjectManager
 {
 private:
@@ -26,6 +32,7 @@ private:
     template<typename T>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     T* CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //��� ������Ʈ ������
 
     std::unique_ptr<MeshNode> CreateMeshNode(const std::string& filepath);
@@ -37,6 +44,11 @@ private:
 
     std::unique_ptr<MeshNode> CreateMeshNode(const std::string& filepath);
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+    T* CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //��� ������Ʈ ������
+
+    std::unique_ptr<MeshNode> CreateMeshNode(const std::string& filepath);
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 public:
     explicit ObjectManager();
     virtual ~ObjectManager();
@@ -53,10 +65,14 @@ public:
     void Update(float dTime);
     void Submit(float dTime);
 
+    void Update(float dTime);
+    void Submit(float dTime);
+
     void ProcessPending(); //������ �� �������� ȣ��
 >>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 
     template<typename T>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     T* CreateObject(const std::string& name, XMFLOAT3 pos);
@@ -79,6 +95,12 @@ public:
     T* CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath);
 
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+    T* CreateObject(const std::string& name, XMFLOAT3 pos);
+    template<typename T>
+    T* CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath);
+
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
     const Unit* FindObject(UINT id); //id�� �˻�
     const Unit* FindObject(const std::string& name); //�̸����� �˻�
 >>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
@@ -89,16 +111,20 @@ public:
     const size_t GetObjectCount() { return m_ObjectCount; }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     //여기까지
 =======
 >>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 =======
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 
     const std::unordered_map<UINT, Unit*>& GetObjectlist() { return m_objMap; }
 };
 
 template<typename T>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
@@ -108,6 +134,9 @@ Unit* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
 =======
 T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
     
     auto obj = std::make_unique<T>();
@@ -120,6 +149,9 @@ T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
 
     return pObj;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 }
 
 //�������� ������Ʈ ��� ������
@@ -158,6 +190,7 @@ T* ObjectManager::CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, co
     auto pObj = CreateObject<T>(name, pos, std::move(meshRootNode));
 
     return pObj;
+<<<<<<< HEAD
 =======
 }
 
@@ -212,4 +245,6 @@ T* ObjectManager::CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, co
 =======
     return pObj;
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 }

@@ -129,7 +129,15 @@ void Unit::Backup()
 
 void Unit::SetMesh(std::unique_ptr<Mesh>&& mesh)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+{
+    m_Meshs.push_back(std::move(mesh));
+}
+
+void Unit::Attach(Unit* obj) //this가 부모, 파라미터로 자식
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 {
     m_Meshs.push_back(std::move(mesh));
 }

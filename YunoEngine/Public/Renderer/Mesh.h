@@ -31,6 +31,7 @@ public:
     const RenderItem& GetRenderItem() { return m_renderItem; }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     const XMFLOAT4X4& GetUserTM() { return m_mUser; }
 =======
@@ -39,6 +40,10 @@ public:
 
     const XMFLOAT4X4& GetUserTM() { return m_mUser; }
 >>>>>>> 2e8bd5d (좌표계 수정)
+=======
+
+    const XMFLOAT4X4& GetUserTM() { return m_mUser; }
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 };
 
 

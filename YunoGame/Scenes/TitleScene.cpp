@@ -85,6 +85,7 @@ void TitleScene::Submit(IRenderer* renderer)
     (void)renderer; // Unit::Submit�� ���ο��� renderer�� ���� �ʿ� ����
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     /*if (m_plane)
         m_plane->Submit(m_lastDt);*/
 =======
@@ -95,12 +96,19 @@ void TitleScene::Submit(IRenderer* renderer)
     /*if (m_plane)
         m_plane->Submit(m_lastDt);*/
 >>>>>>> 2e8bd5d (좌표계 수정)
+=======
+    /*if (m_plane)
+        m_plane->Submit(m_lastDt);*/
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 
     m_ObjManager->Submit(m_lastDt);
 
     m_ObjManager->ProcessPending();
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 933f6d3 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
 =======
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
 }

@@ -121,13 +121,17 @@
     </ClCompile>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
     <ClCompile Include="Public\Renderer\Mesh.cpp">
       <Filter>Private\Renderer\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Public\Parser\Parser.cpp">
       <Filter>Public\Parser</Filter>
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
     <ClCompile Include="Private\Renderer\Mesh\Mesh.cpp">
@@ -135,6 +139,8 @@
 >>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
 =======
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -249,13 +255,17 @@
     </ClInclude>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
     <ClInclude Include="Public\Renderer\Mesh.h">
       <Filter>Private\Renderer\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Public\Parser\Parser.h">
       <Filter>Public\Parser</Filter>
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
     <ClInclude Include="Private\Renderer\Mesh\Mesh.h">
@@ -263,6 +273,8 @@
 >>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
 =======
 >>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
+=======
+>>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
