@@ -45,7 +45,7 @@ bool Unit::Create(XMFLOAT3 vPos)
     return true;
 }
 
-bool Unit::Create(std::string& name, uint32_t id, XMFLOAT3 vPos)
+bool Unit::Create(std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     m_id = id;
     m_name = name;
@@ -55,7 +55,7 @@ bool Unit::Create(std::string& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool Unit::Create(std::string& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale)
+bool Unit::Create(std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale)
 {
     m_id = id;
     m_name = name;

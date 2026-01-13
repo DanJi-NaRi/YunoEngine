@@ -12,13 +12,13 @@ private:
     UINT m_ObjectIDs;
     std::deque<std::unique_ptr<Unit>> m_objs;
     std::unordered_map<UINT, Unit*> m_objMap;
-    std::unordered_map<std::string, UINT> m_nameToID;
+    std::unordered_map<std::wstring, UINT> m_nameToID;
 
     std::vector<UINT> m_pendingDestoryQ;
     std::vector<std::unique_ptr<Unit>> m_pendingCreateQ;
 
     template<typename T>
-    T* CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 오브젝트 생성용
+    T* CreateObject(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 오브젝트 생성용
     std::unique_ptr<MeshNode> CreateMeshNode(const std::wstring& filepath);
 public:
     explicit ObjectManager();
@@ -33,24 +33,24 @@ public:
     void Submit(float dTime);
 
     template<typename T>
-    T* CreateObject(const std::string& name, XMFLOAT3 pos);
+    T* CreateObject(const std::wstring& name, XMFLOAT3 pos);
     template<typename T>
-    T* CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::wstring& filepath);
+    T* CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath);
 
     //씬 매니저에 있어도 될것같은 놈들
     const Unit* FindObject(UINT id); //id로 검색
-    const Unit* FindObject(const std::string& name); //이름으로 검색
+    const Unit* FindObject(const std::wstring& name); //이름으로 검색
 
 
     void DestroyObject(UINT id);
-    void DestroyObject(const std::string& name);
+    void DestroyObject(const std::wstring& name);
 
     const size_t GetObjectCount() { return m_ObjectCount; }
     const std::unordered_map<UINT, Unit*>& GetObjectlist() { return m_objMap; }
 };
 
 template<typename T>
-T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
+T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos) {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
     
     auto obj = std::make_unique<T>();
@@ -66,11 +66,11 @@ T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
 
 //계층구조 오브젝트 재귀 생성용
 template<typename T>
-T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node)
+T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node)
 {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
-    std::string newname = name + '_' + node->m_name;
+    std::wstring newname = name + L'_' + node->m_name;
 
     auto obj = std::make_unique<T>();
     obj->Create(newname, m_ObjectIDs++, pos);
@@ -92,7 +92,7 @@ T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos, std::uniqu
 }
 
 template<typename T>
-T* ObjectManager::CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::wstring& filepath)
+T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath)
 {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 

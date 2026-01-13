@@ -16,7 +16,7 @@ class Unit
 {
 protected:
     uint32_t m_id;
-    std::string m_name;
+    std::wstring m_name;
 
     XMFLOAT3	m_vPos;
     XMFLOAT3	m_vRot;
@@ -57,8 +57,8 @@ public:
     virtual ~Unit();
     //Create는 오브젝트 매니저만 쓰기
     virtual bool  Create(XMFLOAT3 vPos);//일단 호환용으로 냅두고 나중에 무조건 이름 필요한걸로 바꾸는게 나을듯
-    virtual bool  Create(std::string& name, uint32_t id, XMFLOAT3 vPos);
-    virtual bool  Create(std::string& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
+    virtual bool  Create(std::wstring& name, uint32_t id, XMFLOAT3 vPos);
+    virtual bool  Create(std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
 
     virtual bool  Update(float dTime = 0);
     virtual bool  Submit(float dTime = 0);
@@ -73,7 +73,7 @@ public:
     virtual void SetMesh(std::unique_ptr<Mesh>&& mesh);
 
     uint32_t GetID() { return m_id; }
-    const std::string& GetName() { return m_name; }
+    const std::wstring& GetName() { return m_name; }
 
     void Attach(Unit* obj);
     void DettachParent();
