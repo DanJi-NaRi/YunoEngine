@@ -84,12 +84,17 @@ void TitleScene::Submit(IRenderer* renderer)
 =======
     (void)renderer; // Unit::SubmitÀÌ ³»ºÎ¿¡¼­ renderer¸¦ ¾²¸é ÇÊ¿ä ¾øÀ½
 <<<<<<< HEAD
+<<<<<<< HEAD
     /*if (m_plane)
         m_plane->Submit(m_lastDt);*/
 =======
     if (m_plane)
         m_plane->Submit(m_lastDt);
 >>>>>>> 1178914 (í™”ë©´ì— ëœ¨ëŠ”ë° íŒŒì‹±í•  ë•Œ í…ìŠ¤ì³ í•¸ë“¤ê¹Œì§€ëŠ” ë°›ëŠ”ë° ì ìš©ì´ ì•ˆëŒ)
+=======
+    /*if (m_plane)
+        m_plane->Submit(m_lastDt);*/
+>>>>>>> 2e8bd5d (ì¢Œí‘œê³„ ìˆ˜ì •)
 
     m_ObjManager->Submit(m_lastDt);
 
