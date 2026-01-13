@@ -7,7 +7,6 @@
 
 ObjectManager::ObjectManager()
 {
-    
 }
 
 ObjectManager::~ObjectManager()

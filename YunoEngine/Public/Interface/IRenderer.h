@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <cstdint>
 #include "RenderTypes.h"
 #include "MaterialDesc.h"
@@ -11,45 +11,45 @@ class IRenderer
 public:
     virtual ~IRenderer() = default;
 
-    // DX11 ÀåÄ¡/½º¿ÒÃ¼ÀÎ »ı¼º
+    // DX11 ì¥ì¹˜/ìŠ¤ì™‘ì²´ì¸ ìƒì„±
     virtual bool Initialize(IWindow* window) = 0;
 
-    // ¸Å ÇÁ·¹ÀÓ ½ÃÀÛ
+    // ë§¤ í”„ë ˆì„ ì‹œì‘
     virtual void BeginFrame() = 0;
 
-    // È­¸é Ç¥½Ã
+    // í™”ë©´ í‘œì‹œ
     virtual void EndFrame() = 0;
 
-    // Ã¢ Å©±â º¯°æ ´ëÀÀ
+    // ì°½ í¬ê¸° ë³€ê²½ ëŒ€ì‘
     virtual void Resize(uint32_t width, uint32_t height) = 0;
 
-    // MSAA ´Ü°è º¯°æ
+    // MSAA ë‹¨ê³„ ë³€ê²½
     virtual bool SetMSAASamples(uint32_t samples) = 0; // 1/2/4/8
     virtual uint32_t GetMSAASamples() const = 0;
 
-    // Vertex ½ºÆ®¸² + ÀÎµ¦½º·Î GPU ¸Ş½¬ »ı¼º
+    // Vertex ìŠ¤íŠ¸ë¦¼ + ì¸ë±ìŠ¤ë¡œ GPU ë©”ì‰¬ ìƒì„±
     virtual MeshHandle CreateMesh(
         const VertexStreams& streams,
         const INDEX* triangles,
         uint32_t triCount) = 0;
 
-    // ±âº» ¸ÓÆ¼¸®¾ó(ÃßÈÄ Å°/ÆÄÀÏ ±â¹İÀ¸·Î È®Àå)
+    // ê¸°ë³¸ ë¨¸í‹°ë¦¬ì–¼(ì¶”í›„ í‚¤/íŒŒì¼ ê¸°ë°˜ìœ¼ë¡œ í™•ì¥)
     virtual MaterialHandle CreateMaterial_Default() = 0;
 
     virtual MaterialHandle CreateMaterial(const MaterialDesc& desc) = 0;
 
     virtual TextureHandle CreateTexture2DFromFile(const wchar_t* path) = 0;
 
-    // ¸Å ÇÁ·¹ÀÓ ·»´õ ¿äÃ» Á¦Ãâ
+    // ë§¤ í”„ë ˆì„ ë Œë” ìš”ì²­ ì œì¶œ
     virtual void Submit(const RenderItem& item) = 0;
 
-    // BeginFrame~EndFrame »çÀÌ¿¡¼­ È£ÃâµÇ¾î ½ÇÁ¦ Draw ¼öÇà
+    // BeginFrame~EndFrame ì‚¬ì´ì—ì„œ í˜¸ì¶œë˜ì–´ ì‹¤ì œ Draw ìˆ˜í–‰
     virtual void Flush() = 0;
     
-    // Ä«¸Ş¶ó ¹Ş¾Æ¿À±â
+    // ì¹´ë©”ë¼ ë°›ì•„ì˜¤ê¸°
     virtual YunoCamera& GetCamera() = 0;
 
-    // Á¾·á
+    // ì¢…ë£Œ
     virtual void Shutdown() = 0;
 
 };

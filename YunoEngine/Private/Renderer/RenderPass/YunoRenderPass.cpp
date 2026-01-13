@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "YunoRenderPass.h"
 
 #include "YunoShader.h"
@@ -79,7 +79,7 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
         m_dss = std::move(dss);
     }
 
-    // BlendState (±âº»: opaque)
+    // BlendState (ê¸°ë³¸: opaque)
     {
         D3D11_BLEND_DESC bd{};
         bd.AlphaToCoverageEnable = FALSE;
@@ -88,7 +88,7 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
 
         rtb.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-        // ±âº»°ª ¼³Á¤
+        // ê¸°ë³¸ê°’ ì„¤ì •
         rtb.BlendOp = D3D11_BLEND_OP_ADD;
         rtb.SrcBlend = D3D11_BLEND_ONE;
         rtb.DestBlend = D3D11_BLEND_ZERO;

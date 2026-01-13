@@ -1,8 +1,8 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Unit.h"
 
-// °¢ ¿ÀºêÁ§Æ® Çì´õ ÆÄÀÏ ÃÖ»ó´Ü¿¡´Â Unit Çì´õ°¡ ÀÖ¾î¾ßµÊ
+// ê° ì˜¤ë¸Œì íŠ¸ í—¤ë” íŒŒì¼ ìµœìƒë‹¨ì—ëŠ” Unit í—¤ë”ê°€ ìˆì–´ì•¼ë¨
 class Quad : public Unit
 {
 public:
@@ -13,10 +13,10 @@ public:
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
 private:
-    bool CreateMesh() override;      // ¸Ş½Ã »ı¼º (ÇÑ ¹ø¸¸)
-    bool CreateMaterial() override;  // ¸ÓÅ×¸®¾ó »ı¼º (ÇÑ ¹ø¸¸)
+    bool CreateMesh() override;      // ë©”ì‹œ ìƒì„± (í•œ ë²ˆë§Œ)
+    bool CreateMaterial() override;  // ë¨¸í…Œë¦¬ì–¼ ìƒì„± (í•œ ë²ˆë§Œ)
 
-    //Ãß°¡ ¸ÓÅ×¸®¾ó
+    //ì¶”ê°€ ë¨¸í…Œë¦¬ì–¼
     MaterialHandle m_addMaterial = 0;
 };
 

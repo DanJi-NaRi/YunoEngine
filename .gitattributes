@@ -1,0 +1,18 @@
+# Default: text files use CRLF on checkout, LF in repo (Windows-friendly)
+* text=auto
+
+# C/C++
+*.h   text eol=crlf
+*.hpp text eol=crlf
+*.cpp text eol=crlf
+*.inl text eol=crlf
+*.c   text eol=crlf
+*.cc  text eol=crlf
+
+# Shaders
+*.hlsl text eol=crlf
+
+# Config / scripts (원하면 조정)
+*.md  text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

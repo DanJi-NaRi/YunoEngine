@@ -1,12 +1,12 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Quad.h"
 
 
 VERTEX_Pos g_Quad_pos[] = {
-    { -1.0f,  1.0f,  0.0f },    // ÁÂ»ó
-    {  1.0f,  1.0f,  0.0f },    // ¿ì»ó
-    { -1.0f, -1.0f,  0.0f },    // ÁÂÇÏ
-    {  1.0f, -1.0f,  0.0f }     // ¿ìÇÏ
+    { -1.0f,  1.0f,  0.0f },    // ì¢Œìƒ
+    {  1.0f,  1.0f,  0.0f },    // ìš°ìƒ
+    { -1.0f, -1.0f,  0.0f },    // ì¢Œí•˜
+    {  1.0f, -1.0f,  0.0f }     // ìš°í•˜
 };
 
 VERTEX_Nrm g_Quad_nrm[] =
@@ -70,7 +70,7 @@ bool Quad::Create(XMFLOAT3 vPos)
 
 bool Quad::Update(float dTime)
 {
-    //°ÔÀÓ ·ÎÁ÷ ¾÷µ¥ÀÌÆ® ¤¡¤¡
+    //ê²Œì„ ë¡œì§ ì—…ë°ì´íŠ¸ ã„±ã„±
     m_time += dTime;
 
     m_vScale.x = 60;
@@ -103,11 +103,11 @@ bool Quad::Submit(float dTime)
         m_time -= 1.0f;
     }
     Unit::Submit(dTime);
-    //if (test) 
+    //if (test)
     //{
     //    Unit::Submit(dTime);
     //}
-    //else 
+    //else
     //{
     //    m_renderItem.materialHandle = m_addMaterial;
     //
@@ -136,7 +136,7 @@ bool Quad::CreateMesh()
     if (m_defaultMesh == 0)
         return false; 
 
-    return true;
+    return true;    
 }
 
 bool Quad::CreateMaterial()
@@ -168,7 +168,8 @@ bool Quad::CreateMaterial()
     md.normal = 0;
     md.orm = 0;
 
-    // Ã¹¹øÂ° ¸ÓÅ×¸®¾ó »ı¼º
+
+    // ì²«ë²ˆì§¸ ë¨¸í…Œë¦¬ì–¼ ìƒì„±
     m_defaultMaterial = renderer->CreateMaterial(md);
     if (m_defaultMaterial == 0)
         return false;
@@ -176,7 +177,7 @@ bool Quad::CreateMaterial()
     m_Albedo = texMan->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
     //m_Albedo = texMan->LoadTexture2D(L"../Assets/fbx/Building/building_Albedo0.png");
 
-    // Ãß°¡ ¸ÓÅ×¸®¾ó »ı¼º
+    // ì¶”ê°€ ë¨¸í…Œë¦¬ì–¼ ìƒì„±
     md.passKey.raster = RasterPreset::CullNone;
     md.albedo = m_Albedo;
 

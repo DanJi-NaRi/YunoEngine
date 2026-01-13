@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <iostream>
 
 #include "IScene.h"
@@ -18,9 +18,11 @@ public:
     void Update(float dt) override;
     void Submit(IRenderer* renderer) override;
 
+    const char* GetDebugName() const override { return "TitleScene"; }
+
 private:
-    Quad* m_plane = nullptr;   // °£´ÜÇÏ°Ô raw·Î µé°í, OnDestroy¿¡¼­ delete
-    Building* m_building = nullptr;   // °£´ÜÇÏ°Ô raw·Î µé°í, OnDestroy¿¡¼­ delete
+    Quad* m_plane = nullptr;   // ê°„ë‹¨í•˜ê²Œ rawë¡œ ë“¤ê³ , OnDestroyì—ì„œ delete
+    Building* m_building = nullptr;   // ê°„ë‹¨í•˜ê²Œ rawë¡œ ë“¤ê³ , ì˜¤ë¸Œì íŠ¸ë§¤ë‹ˆì €ê°€ delete
     float m_lastDt = 0.0f;
     ObjectManager* m_ObjManager;
 };

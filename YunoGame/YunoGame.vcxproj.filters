@@ -83,9 +83,6 @@
     <ClInclude Include="System\GameInputContext.h">
       <Filter>System</Filter>
     </ClInclude>
-    <ClInclude Include="TestScenes.h">
-      <Filter>Scenes\0. Test</Filter>
-    </ClInclude>
     <ClInclude Include="Scenes\PlayScene.h">
       <Filter>Scenes\2. Second</Filter>
     </ClInclude>

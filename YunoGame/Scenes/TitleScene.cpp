@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "TitleScene.h"
 
 #include "Quad.h"
@@ -14,9 +14,9 @@
 
 bool TitleScene::OnCreate()
 {
-    std::cout << "[TitleScene] OnCreate\n";
+    //std::cout << "[TitleScene] OnCreate\n";
 
-    // Å¸ÀÌÆ² ¹Ù´Ú(ÇÃ·¹ÀÎ)
+    // íƒ€ì´í‹€ ë°”ë‹¥(í”Œë ˆì¸)
     m_plane = new Quad();
     if (!m_plane->Create({ 0.0f, 0.0f, 0.0f }))
     {
@@ -37,7 +37,7 @@ bool TitleScene::OnCreate()
 
 void TitleScene::OnDestroy()
 {
-    std::cout << "[TitleScene] OnDestroy\n";
+    //std::cout << "[TitleScene] OnDestroy\n";
     delete m_plane;
     m_plane = nullptr;
 }
@@ -52,10 +52,15 @@ void TitleScene::Update(float dt)
     {
         if ( input->IsKeyPressed('2'))
         {
-            std::cout << "[TitleScene] Start -> ReplaceRoot(PlayScene)\n";
             SceneTransitionOptions opt{};
             opt.immediate = true;
             sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+        }
+        if (input->IsKeyPressed('3'))
+        {
+            SceneTransitionOptions opt{};
+            opt.immediate = true;
+            sm->RequestPop();
         }
     }
 
@@ -68,7 +73,7 @@ void TitleScene::Update(float dt)
 
 void TitleScene::Submit(IRenderer* renderer)
 {
-    (void)renderer; // Unit::SubmitÀÌ ³»ºÎ¿¡¼­ renderer¸¦ ¾²¸é ÇÊ¿ä ¾øÀ½
+    (void)renderer; // Unit::Submitï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ rendererï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½
     /*if (m_plane)
         m_plane->Submit(m_lastDt);*/
 

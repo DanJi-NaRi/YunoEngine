@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "InputEvent.h"
 
 class IInputContext
