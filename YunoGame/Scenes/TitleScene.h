@@ -1,28 +1,26 @@
 #pragma once
-#include <iostream>
 
-#include "IScene.h"
+#include "SceneBase.h"
 
 class Quad;
 class Building;
-class ObjectManager;
 
-class TitleScene final : public IScene
+class TitleScene final : public SceneBase
 {
 public:
-    bool OnCreate() override;
-    void OnEnter() override { std::cout << "[TitleScene] OnEnter\n"; }
-    void OnExit() override { std::cout << "[TitleScene] OnExit\n"; }
-    void OnDestroy() override;
+    void OnEnter() override;
+    void OnExit() override;
 
     void Update(float dt) override;
-    void Submit(IRenderer* renderer) override;
+    void Submit() override;
 
     const char* GetDebugName() const override { return "TitleScene"; }
 
+protected:
+    bool OnCreateScene() override;
+    void OnDestroyScene() override;
+
 private:
-    Quad* m_plane = nullptr;   // 간단하게 raw로 들고, OnDestroy에서 delete
-    Building* m_building = nullptr;   // 간단하게 raw로 들고, 오브젝트매니저가 delete
-    float m_lastDt = 0.0f;
-    ObjectManager* m_ObjManager;
+    //Quad* m_plane = nullptr;   // 간단하게 raw로 들고, 오브젝트매니저가 delete
+    //Building* m_building = nullptr;   // 간단하게 raw로 들고, 오브젝트매니저가 delete
 };

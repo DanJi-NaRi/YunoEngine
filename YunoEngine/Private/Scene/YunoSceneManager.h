@@ -3,7 +3,7 @@
 
 
 class IScene;
-class IRenderer;
+
 
 
 struct SceneEntry
@@ -52,15 +52,19 @@ public:
     void RequestPop(SceneTransitionOptions opt = {}) override;
 
     void Update(float dt) override;
-    void Submit(IRenderer* renderer) override;
+    void Submit() override;
 
     IScene* GetActiveScene() const override;
     uint32_t GetStackSize() const override { return static_cast<uint32_t>(m_stack.size()); }
 
 private:
+    void ShutdownStack();                               // 종료시 모든 씬 정리
     void PromoteNextPending();
     void ApplyPending(std::vector<PendingOp>& ops);     // 씬 변경 요청 처리
     bool EnsureCreated(SceneEntry& e);                  // 씬 유효성 검증 함수
+
+private: // 디버그용
+    void DumpStack_Console(const char* reason) const;
 
 private:
     std::vector<SceneEntry> m_stack;

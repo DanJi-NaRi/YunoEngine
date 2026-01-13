@@ -48,22 +48,38 @@ Quad::~Quad()
 {
 }
 
-bool Quad::Create(XMFLOAT3 vPos)
-{
-    Unit::Create(vPos);
+//bool Quad::Create(XMFLOAT3 vPos)
+//{
+//    Unit::Create(vPos);
+//
+//    if (!CreateMesh())
+//        return false;
+//
+//    if (!CreateMaterial())
+//        return false;
+//
+//    auto mesh = std::make_unique<Mesh>();
+//    mesh->Create(m_defaultMesh, m_addMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+//
+//    m_Meshs.push_back(std::move(mesh));
+//
+//    Backup();
+//
+//    return true;
+//}
 
+bool Quad::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+{
+    Unit::Create(name, id, vPos);
     if (!CreateMesh())
         return false;
-
     if (!CreateMaterial())
         return false;
 
-    auto mesh = std::make_unique<Mesh>();
-    mesh->Create(m_defaultMesh, m_addMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
 
-    m_Meshs.push_back(std::move(mesh));
 
     Backup();
+
 
     return true;
 }
@@ -89,7 +105,7 @@ bool Quad::Update(float dTime)
     XMStoreFloat4x4(&m_mTrans, mTrans);
     XMStoreFloat4x4(&m_mWorld, mTM);
 
-    //Unit::Update(dTime);
+
 
     return true;
 }
@@ -103,16 +119,7 @@ bool Quad::Submit(float dTime)
         m_time -= 1.0f;
     }
     Unit::Submit(dTime);
-    //if (test)
-    //{
-    //    Unit::Submit(dTime);
-    //}
-    //else
-    //{
-    //    m_renderItem.materialHandle = m_addMaterial;
-    //
-    //    LastSubmit(dTime);
-    //}
+
 
     return true;
 }

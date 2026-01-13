@@ -128,6 +128,7 @@
     <ClCompile Include="Public\Renderer\Mesh.cpp">
       <Filter>Private\Renderer\Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="Public\SceneBase\SceneBase.cpp" />
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -245,6 +246,7 @@
     <ClInclude Include="Public\Singleton\Singleton.h">
       <Filter>Private\Singleton</Filter>
     </ClInclude>
+    <ClInclude Include="Public\SceneBase\SceneBase.h" />
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>

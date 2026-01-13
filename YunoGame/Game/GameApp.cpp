@@ -57,6 +57,7 @@ void GameApp::OnUpdate(float dt)
     acc += dt;
     ++frameCount;
 
+    CameraMove(dt);
 
     // MSAA 변경되는지 테스트
     //static float test = 0.0f;
@@ -80,6 +81,7 @@ void GameApp::OnUpdate(float dt)
     IRenderer* renderer = YunoEngine::GetRenderer();
     IInput* input = YunoEngine::GetInput();
     IWindow* window = YunoEngine::GetWindow();
+    ISceneManager* sm = YunoEngine::GetSceneManager();
 
     if (input->IsKeyDown('O')) // >> 이거 인스턴스 호출해서 키다운하는거 불편하니까 나중에 바꾸기 ㄱㄱ
         window->SetClientSize(1920, 1080);
@@ -87,7 +89,49 @@ void GameApp::OnUpdate(float dt)
     if (input->IsKeyDown('P'))
         window->SetClientSize(3440, 1440);
 
-    CameraMove(dt);
+
+    if (input && sm)
+    {
+        if (input->IsKeyPressed(VK_F1))
+        {
+            SceneTransitionOptions opt{};
+            opt.immediate = true;
+            sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+            //sm->RequestPush(std::make_unique<PlayScene>());
+        }
+
+        if (input->IsKeyPressed(VK_F2))
+        {
+            SceneTransitionOptions opt{};
+            opt.immediate = true;
+            sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+            //sm->RequestPush(std::make_unique<PlayScene>());
+        }
+
+        if (input->IsKeyPressed(VK_F3))
+        {
+            SceneTransitionOptions opt{};
+            opt.immediate = true;
+            ScenePolicy policy;
+            policy.blockUpdateBelow = false;
+            policy.blockRenderBelow = false;
+            //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+            sm->RequestPush(std::make_unique<TitleScene>(), policy);
+        }
+
+        if (input->IsKeyPressed(VK_F4))
+        {
+            SceneTransitionOptions opt{};
+            opt.immediate = true;
+            ScenePolicy policy;
+            policy.blockUpdateBelow = false;
+            policy.blockRenderBelow = false;
+            //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+            sm->RequestPush(std::make_unique<PlayScene>(), policy);
+        }
+    }
+
+
 
 
     //if (acc >= 1.0f)

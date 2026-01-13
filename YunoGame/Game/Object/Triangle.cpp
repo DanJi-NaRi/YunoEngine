@@ -38,20 +38,36 @@ Triangle::~Triangle()
 {
 }
 
-bool Triangle::Create(XMFLOAT3 vPos)
+//bool Triangle::Create(XMFLOAT3 vPos)
+//{
+//    Unit::Create(vPos);
+//
+//
+//    if (!CreateMesh())
+//        return false;
+//
+//    if (!CreateMaterial())
+//        return false;
+//
+//    auto mesh = std::make_unique<Mesh>();
+//    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+//
+//    m_Meshs.push_back(std::move(mesh));
+//
+//    Backup();
+//
+//    return true;
+//}
+
+bool Triangle::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
-    Unit::Create(vPos);
-
-
+    Unit::Create(name, id, vPos);
     if (!CreateMesh())
         return false;
-
     if (!CreateMaterial())
         return false;
 
     Backup();
-
-    return true;
 }
 
 bool Triangle::Update(float dTime)
@@ -64,10 +80,10 @@ bool Triangle::Update(float dTime)
         const float speed = 5.0f;            
         const float step = speed * dTime;
 
-        if (input->IsKeyDown('W')) m_vPos.z += step;
-        if (input->IsKeyDown('S')) m_vPos.z -= step;
-        if (input->IsKeyDown('A')) m_vPos.x -= step;
-        if (input->IsKeyDown('D')) m_vPos.x += step;
+        if (input->IsKeyDown(VK_UP)) m_vPos.z += step;
+        if (input->IsKeyDown(VK_DOWN)) m_vPos.z -= step;
+        if (input->IsKeyDown(VK_LEFT)) m_vPos.x -= step;
+        if (input->IsKeyDown(VK_RIGHT)) m_vPos.x += step;
     }
 
     m_vRot.y += dTime*3;
@@ -92,6 +108,7 @@ bool Triangle::Update(float dTime)
 bool Triangle::Submit(float dTime)
 {
     Unit::Submit(dTime);
+
 
     return true;
 }

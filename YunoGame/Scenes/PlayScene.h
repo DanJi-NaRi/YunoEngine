@@ -1,24 +1,24 @@
 #pragma once
-#include <iostream>
 
-#include "IScene.h"
+#include "SceneBase.h"
 
 class Triangle;
 
-class PlayScene final : public IScene
+class PlayScene final : public SceneBase
 {
 public:
-    bool OnCreate() override;
-    void OnEnter() override { std::cout << "[PlayScene] OnEnter\n"; }
-    void OnExit() override { std::cout << "[PlayScene] OnExit\n"; }
-    void OnDestroy() override;
+    void OnEnter() override;
+    void OnExit() override;
 
     void Update(float dt) override;
-    void Submit(IRenderer* renderer) override;
+    void Submit() override;
 
     const char* GetDebugName() const override { return "PlayScene"; }
 
+protected:
+    bool OnCreateScene() override;
+    void OnDestroyScene() override;
+
 private:
     Triangle* m_player = nullptr;
-    float m_lastDt = 0.0f;
 };

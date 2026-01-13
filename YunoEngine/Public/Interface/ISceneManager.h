@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <memory>
 
-class IRenderer;
 class IScene;
 
 // 씬 상태
@@ -46,8 +45,8 @@ public:
     virtual void RequestPop(SceneTransitionOptions opt = {}) = 0;
 
 
-    virtual void Update(float dt) = 0;             // Update traversal
-    virtual void Submit(IRenderer* renderer) = 0; // Render submission traversal
+    virtual void Update(float dt) = 0;
+    virtual void Submit() = 0;
 
 
     virtual IScene* GetActiveScene() const = 0;

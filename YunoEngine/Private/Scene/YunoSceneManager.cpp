@@ -7,7 +7,14 @@
 
 SceneEntry::~SceneEntry() = default;
 PendingOp::~PendingOp() = default;
-YunoSceneManager::~YunoSceneManager() = default;
+
+YunoSceneManager::~YunoSceneManager()
+{
+    m_pendingNow.clear();
+    m_pendingNext.clear();
+
+    ShutdownStack();
+};
 
 
 static inline void EnqueueOp(std::vector<PendingOp>& now, std::vector<PendingOp>& next, PendingOp&& op)
@@ -75,6 +82,42 @@ bool YunoSceneManager::EnsureCreated(SceneEntry& e)
     return true;
 }
 
+void YunoSceneManager::DumpStack_Console(const char* reason) const
+{
+    std::cout << "\n[SceneStack] "
+        << (reason ? reason : "")
+        << " | size=" << m_stack.size() << "\n";
+
+    for (size_t i = 0; i < m_stack.size(); ++i)
+    {
+        const SceneEntry& e = m_stack[i];
+
+        std::cout
+            << "  [" << i << "] "
+            << (e.scene ? e.scene->GetDebugName() : "(null)")
+            << " | state=" << static_cast<int>(e.state)
+            << "\n\n";
+    }
+}
+
+void YunoSceneManager::ShutdownStack()
+{
+    while (!m_stack.empty())
+    {
+        SceneEntry& top = m_stack.back();
+
+        if (top.scene)
+        {
+            if (top.state == SceneState::Active || top.state == SceneState::Paused)
+                top.scene->OnExit();
+
+            top.scene->OnDestroy();
+        }
+
+        m_stack.pop_back();
+    }
+}
+
 void YunoSceneManager::PromoteNextPending()
 {
     if (m_pendingNext.empty())
@@ -123,6 +166,7 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
             e.scene->OnEnter();
             e.state = SceneState::Active;
             m_stack.push_back(std::move(e));
+            DumpStack_Console("After ReplaceRoot");
         }
         else if (op.type == PendingOpType::Push)
         {
@@ -150,6 +194,7 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
             e.scene->OnEnter();
             e.state = SceneState::Active;
             m_stack.push_back(std::move(e));
+            DumpStack_Console("After Push");
         }
         else if (op.type == PendingOpType::Pop)
         {
@@ -181,6 +226,7 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
                     newTop.state = SceneState::Active;
                 }
             }
+            DumpStack_Console("After Pop");
         }
     }
 
@@ -210,9 +256,8 @@ void YunoSceneManager::Update(float dt)
     }
 }
 
-void YunoSceneManager::Submit(IRenderer* renderer)
+void YunoSceneManager::Submit()
 {
-    if (!renderer) return;
     if (m_stack.empty()) return;
 
     int start = 0;
@@ -230,6 +275,6 @@ void YunoSceneManager::Submit(IRenderer* renderer)
         SceneEntry& e = m_stack[i];
 
         if (!EnsureCreated(e)) continue;
-        e.scene->Submit(renderer);
+        e.scene->Submit();
     }
 }

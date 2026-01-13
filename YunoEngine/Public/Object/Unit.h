@@ -57,8 +57,8 @@ public:
     virtual ~Unit();
     //Create는 오브젝트 매니저만 쓰기
     virtual bool  Create(XMFLOAT3 vPos);//일단 호환용으로 냅두고 나중에 무조건 이름 필요한걸로 바꾸는게 나을듯
-    virtual bool  Create(std::wstring& name, uint32_t id, XMFLOAT3 vPos);
-    virtual bool  Create(std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
+    virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
+    virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
 
     virtual bool  Update(float dTime = 0);
     virtual bool  Submit(float dTime = 0);
@@ -82,3 +82,10 @@ public:
 
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
 };
+
+
+// 씬 만들떄 처음에 해줘야 되는게
+// 크리에이트 할때 오브젝트 매니저 넣기
+// 디스트로이 할때 오브젝트 매니저 죽이기
+// 로우 포인터 만들어서 오브젝트 매니저로 오브젝트 만들기
+// 오브젝트를 만들기 위해서는  Unit에 크리에이트 함수 오버라이드하기
