@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- ===== Filters (folder view in Solution Explorer) ===== -->
   <ItemGroup>
@@ -7,6 +7,9 @@
     </Filter>
     <Filter Include="Private">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Parser">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E003}</UniqueIdentifier>
     </Filter>
     <Filter Include="Private\Input">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E004}</UniqueIdentifier>
@@ -29,8 +32,14 @@
     <Filter Include="Private\Renderer\Material">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00A}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\Renderer\Model">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00B}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Private\Resource">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Singleton">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00D}</UniqueIdentifier>
     </Filter>
     <Filter Include="Private\Timer">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00E}</UniqueIdentifier>
@@ -68,17 +77,14 @@
     <Filter Include="Private\Scene">
       <UniqueIdentifier>{0170ffaa-52a9-4ad9-a9ea-a5490f1015d5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Public\Parser">
-      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E003}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\Singleton">
-      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00D}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
     <ClCompile Include="EnginePCH\pch.cpp">
       <Filter>EnginePCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Parser\Parser.cpp">
+      <Filter>Private\Parser</Filter>
     </ClCompile>
     <ClCompile Include="Private\Input\YunoInputSystem.cpp">
       <Filter>Private\Input</Filter>
@@ -119,34 +125,14 @@
     <ClCompile Include="Private\Scene\YunoSceneManager.cpp">
       <Filter>Private\Scene</Filter>
     </ClCompile>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
-=======
->>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
-    <ClCompile Include="Public\Renderer\Mesh.cpp">
-      <Filter>Private\Renderer\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Public\Parser\Parser.cpp">
-      <Filter>Public\Parser</Filter>
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    <ClCompile Include="Private\Renderer\Mesh\Mesh.cpp">
-      <Filter>Private\Renderer\Model</Filter>
->>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
-=======
->>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
-=======
->>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
-    </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h">
       <Filter>EnginePCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Parser\Parser.h">
+      <Filter>Private\Parser</Filter>
     </ClInclude>
     <ClInclude Include="Private\Input\InputState.h">
       <Filter>Private\Input</Filter>
@@ -157,8 +143,14 @@
     <ClInclude Include="Private\Renderer\Material\YunoMaterial.h">
       <Filter>Private\Renderer\Material</Filter>
     </ClInclude>
+    <ClInclude Include="Private\Renderer\Model\Model.h">
+      <Filter>Private\Renderer\Model</Filter>
+    </ClInclude>
     <ClInclude Include="Private\Resource\YunoTextureManager.h">
       <Filter>Private\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Singleton\Singleton.h">
+      <Filter>Private\Singleton</Filter>
     </ClInclude>
     <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h">
       <Filter>Private\Renderer\ConstBuffer</Filter>
@@ -249,32 +241,6 @@
     </ClInclude>
     <ClInclude Include="Public\Interface\IScene.h">
       <Filter>Public\Interface</Filter>
-    </ClInclude>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
-=======
->>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
-    <ClInclude Include="Public\Renderer\Mesh.h">
-      <Filter>Private\Renderer\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Parser\Parser.h">
-      <Filter>Public\Parser</Filter>
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    <ClInclude Include="Private\Renderer\Mesh\Mesh.h">
-      <Filter>Private\Renderer\Model</Filter>
->>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
-=======
->>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
-=======
->>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
-    </ClInclude>
-    <ClInclude Include="Public\Singleton\Singleton.h">
-      <Filter>Public\Singleton</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->

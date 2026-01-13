@@ -124,11 +124,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-=======
       <AdditionalIncludeDirectories>
   $(SolutionDir)ThirdParty\Assimp\include;
   $(ProjectDir)EnginePCH;
@@ -156,13 +152,7 @@
   $(ProjectDir)Public\Renderer;
   %(AdditionalIncludeDirectories)
 </AdditionalIncludeDirectories>
->>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
-=======
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
->>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
-=======
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
->>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
     </ClCompile>
     <Link>
       <SubSystem>
@@ -186,11 +176,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-=======
       <AdditionalIncludeDirectories>
   $(SolutionDir)ThirdParty\Assimp\include;
   $(ProjectDir)EnginePCH;
@@ -218,13 +204,7 @@
   $(ProjectDir)Public\Renderer;
   %(AdditionalIncludeDirectories)
 </AdditionalIncludeDirectories>
->>>>>>> 3eb4e1a (메모할거 있어서 중간 커밋)
-=======
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
->>>>>>> 1178914 (화면에 뜨는데 파싱할 때 텍스쳐 핸들까지는 받는데 적용이 안됌)
-=======
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
->>>>>>> 6ded2033580cf12334606aed8b92a20d427da9e6
     </ClCompile>
     <Link>
       <SubSystem>
