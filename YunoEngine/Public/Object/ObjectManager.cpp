@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 
 #include "ObjectManager.h"
 #include "Parser.h"
@@ -144,7 +144,7 @@ void ObjectManager::DestroyObject(const std::string& name)
     m_pendingDestoryQ.push_back(id);
 }
 
-std::unique_ptr<MeshNode> ObjectManager::CreateMeshNode(const std::string& filepath)
+std::unique_ptr<MeshNode> ObjectManager::CreateMeshNode(const std::wstring& filepath)
 {
     return Parser::Instance().LoadFile(filepath);
 }
