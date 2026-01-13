@@ -18,7 +18,7 @@ void ObjectManager::Init()
 {
     m_ObjectCount = 0;
     m_ObjectIDs = 0;
-    m_objMap.reserve(30); //30°³ Á¤µµ ¸Ş¸ğ¸® Àâ°í ½ÃÀÛ
+    m_objMap.reserve(30); //30ê°œ ì •ë„ ë©”ëª¨ë¦¬ ì¡ê³  ì‹œì‘
     m_pendingCreateQ.reserve(30);
 }
 
@@ -26,14 +26,14 @@ void ObjectManager::Clear()
 {
     m_ObjectCount = 0;
     m_ObjectIDs = 0;
-    m_objs.clear(); //¿ÀºêÁ§Æ® °´Ã¼ ¿ÏÀü »èÁ¦
+    m_objs.clear(); //ì˜¤ë¸Œì íŠ¸ ê°ì²´ ì™„ì „ ì‚­ì œ
     m_pendingCreateQ.clear();
     m_pendingDestoryQ.clear();
     m_nameToID.clear();
 }
 
 
-//³ªÁß¿¡ ÀÌº¥Æ® Å¥ ¸¸µé¾î¼­ ¹Ù²ã¾ßÇÔ
+//ë‚˜ì¤‘ì— ì´ë²¤íŠ¸ í ë§Œë“¤ì–´ì„œ ë°”ê¿”ì•¼í•¨
 void ObjectManager::Update(float dTime)
 {
     for (auto& obj : m_objs)
@@ -41,7 +41,7 @@ void ObjectManager::Update(float dTime)
         obj->Update(dTime);
     }
 }
-//³ªÁß¿¡ ÀÌº¥Æ® Å¥ ¸¸µé¾î¼­ ¹Ù²ã¾ßÇÔ
+//ë‚˜ì¤‘ì— ì´ë²¤íŠ¸ í ë§Œë“¤ì–´ì„œ ë°”ê¿”ì•¼í•¨
 void ObjectManager::Submit(float dTime)
 {
     for (auto& obj : m_objs)
@@ -93,8 +93,8 @@ void ObjectManager::ProcessPending()
     }
 }
 
-//À¯´ÏÅ© Æ÷ÀÎÅÍÀÇ »ıÆ÷ÀÎÅÍ ¹İÈ¯ ¿ÜºÎ¿¡¼­ »èÁ¦ Àı´ë ±İÁö
-const Unit* ObjectManager::FindObject(UINT id)//GetID¶û ¿¬µ¿ÇØ¼­¾²±â
+//ìœ ë‹ˆí¬ í¬ì¸í„°ì˜ ìƒí¬ì¸í„° ë°˜í™˜ ì™¸ë¶€ì—ì„œ ì‚­ì œ ì ˆëŒ€ ê¸ˆì§€
+const Unit* ObjectManager::FindObject(UINT id)//GetIDë‘ ì—°ë™í•´ì„œì“°ê¸°
 {
     if(m_objMap.find(id) == m_objMap.end())
         return nullptr;
@@ -120,7 +120,7 @@ void ObjectManager::DestroyObject(UINT id)
     if (m_objMap.find(id) == m_objMap.end())
         return;
 
-    for (auto& checkID : m_pendingDestoryQ)//Å¥¿¡ Áßº¹»èÁ¦ »ğÀÔ ¹æÁö
+    for (auto& checkID : m_pendingDestoryQ)//íì— ì¤‘ë³µì‚­ì œ ì‚½ì… ë°©ì§€
     {
         if (id == checkID)
             return;
@@ -136,7 +136,7 @@ void ObjectManager::DestroyObject(const std::string& name)
 
     UINT id = m_nameToID[name];
 
-    for (auto& checkID : m_pendingDestoryQ)//Å¥¿¡ Áßº¹»èÁ¦ »ğÀÔ ¹æÁö
+    for (auto& checkID : m_pendingDestoryQ)//íì— ì¤‘ë³µì‚­ì œ ì‚½ì… ë°©ì§€
     {
         if (id == checkID)
             return;

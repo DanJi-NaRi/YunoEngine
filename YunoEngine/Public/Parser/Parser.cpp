@@ -63,7 +63,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
     aiVector3D rot;
     aiVector3D pos;
 
-    node->mTransformation.Decompose(scale, rot, pos); //³ªÁß¿¡ ÄõÅÍ´Ï¾ğÀ¸·Î ¹Ù²Ù±â
+    node->mTransformation.Decompose(scale, rot, pos); //ë‚˜ì¤‘ì— ì¿¼í„°ë‹ˆì–¸ìœ¼ë¡œ ë°”ê¾¸ê¸°
 
     XMFLOAT3 vScale = XMFLOAT3(scale.x * 0.01f, scale.y * 0.01f, scale.z * 0.01f);
     XMFLOAT3 vRot = XMFLOAT3(rot.x, -rot.z, rot.y);
@@ -88,7 +88,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
-        auto child = CreateNode(node->mChildren[i], scene, num, filepath); //ÀÚ½Ä ³ëµå Å½»ö
+        auto child = CreateNode(node->mChildren[i], scene, num, filepath); //ìì‹ ë…¸ë“œ íƒìƒ‰
         if(!child)
             continue;
         meshnode->m_Childs.push_back(std::move(child));
@@ -135,7 +135,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
 
         {
             VERTEX_UV vUV;
-            if (aiMesh->HasTextureCoords(0)) //0ÀÌ Á¦ÀÏ ±âº» uv
+            if (aiMesh->HasTextureCoords(0)) //0ì´ ì œì¼ ê¸°ë³¸ uv
             {
                 vUV.u = aiMesh->mTextureCoords[0][i].x;
                 vUV.v = aiMesh->mTextureCoords[0][i].y;
@@ -176,7 +176,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         aiFace face = aiMesh->mFaces[i];
         INDEX idx;
 
-        //ÆÄ½Ì ÇÃ·¡±×·Î ¹«Á¶°Ç »ï°¢Çü face
+        //íŒŒì‹± í”Œë˜ê·¸ë¡œ ë¬´ì¡°ê±´ ì‚¼ê°í˜• face
         idx.V0 = face.mIndices[0]; 
         idx.V1 = face.mIndices[1]; 
         idx.V2 = face.mIndices[2];

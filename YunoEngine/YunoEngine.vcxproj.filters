@@ -143,9 +143,6 @@
     <ClInclude Include="Private\Resource\YunoTextureManager.h">
       <Filter>Private\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Singleton\Singleton.h">
-      <Filter>Public\Singleton</Filter>
-    </ClInclude>
     <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h">
       <Filter>Private\Renderer\ConstBuffer</Filter>
     </ClInclude>
@@ -241,6 +238,9 @@
     </ClInclude>
     <ClInclude Include="Public\Parser\Parser.h">
       <Filter>Public\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Singleton\Singleton.h">
+      <Filter>Public\Singleton</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->

@@ -172,7 +172,6 @@
     <ClInclude Include="Private\Renderer\Material\YunoMaterial.h" />
     <ClInclude Include="Private\Resource\YunoTextureManager.h" />
     <ClInclude Include="Public\Interface\IScene.h" />
-    <ClInclude Include="Private\Singleton\Singleton.h" />
     <ClInclude Include="Public\Object\ObjectManager.h" />
     <ClInclude Include="Public\Parser\Parser.h" />
     <ClInclude Include="Public\Renderer\MaterialDesc.h" />
@@ -203,6 +202,7 @@
     <ClInclude Include="Public\Object\Unit.h" />
     <ClInclude Include="Public\Renderer\Mesh.h" />
     <ClInclude Include="Public\Renderer\RenderTypes.h" />
+    <ClInclude Include="Public\Singleton\Singleton.h" />
     <ClInclude Include="Public\YunoEngine.h" />
   </ItemGroup>
   <ItemGroup>

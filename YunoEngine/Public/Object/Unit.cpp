@@ -132,9 +132,9 @@ void Unit::SetMesh(std::unique_ptr<Mesh>&& mesh)
     m_Meshs.push_back(std::move(mesh));
 }
 
-void Unit::Attach(Unit* obj) //this°¡ ºÎ¸ð, ÆÄ¶ó¹ÌÅÍ·Î ÀÚ½Ä
+void Unit::Attach(Unit* obj) //thisê°€ ë¶€ëª¨, íŒŒë¼ë¯¸í„°ë¡œ ìžì‹
 {
-    if (obj->m_Parent)//±âÁ¸ ºÎ¸ðÀÖÀ¸¸é ¶³¾îÁø ÈÄ °áÇÕ
+    if (obj->m_Parent)//ê¸°ì¡´ ë¶€ëª¨ìžˆìœ¼ë©´ ë–¨ì–´ì§„ í›„ ê²°í•©
         obj->DettachParent();
 
     obj->m_Parent = this;

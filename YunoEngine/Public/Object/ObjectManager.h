@@ -16,28 +16,28 @@ private:
     std::vector<std::unique_ptr<Unit>> m_pendingCreateQ;
 
     template<typename T>
-    T* CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //Àç±Í ¿ÀºêÁ§Æ® »ı¼º¿ë
+    T* CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //ì¬ê·€ ì˜¤ë¸Œì íŠ¸ ìƒì„±ìš©
 
     std::unique_ptr<MeshNode> CreateMeshNode(const std::string& filepath);
 public:
     explicit ObjectManager();
     virtual ~ObjectManager();
 
-    void Init(); //»ı¼º ÃÊ±âÈ­
-    void Clear(); //»èÁ¦ ÃÊ±âÈ­
+    void Init(); //ìƒì„± ì´ˆê¸°í™”
+    void Clear(); //ì‚­ì œ ì´ˆê¸°í™”
 
     void Update(float dTime);
     void Submit(float dTime);
 
-    void ProcessPending(); //ÇÁ·¹ÀÓ ¸Ç ¸¶Áö¸·¿¡ È£Ãâ
+    void ProcessPending(); //í”„ë ˆì„ ë§¨ ë§ˆì§€ë§‰ì— í˜¸ì¶œ
 
     template<typename T>
     T* CreateObject(const std::string& name, XMFLOAT3 pos);
     template<typename T>
     T* CreateObjectFromFile(const std::string& name, XMFLOAT3 pos, const std::string& filepath);
 
-    const Unit* FindObject(UINT id); //id·Î °Ë»ö
-    const Unit* FindObject(const std::string& name); //ÀÌ¸§À¸·Î °Ë»ö
+    const Unit* FindObject(UINT id); //idë¡œ ê²€ìƒ‰
+    const Unit* FindObject(const std::string& name); //ì´ë¦„ìœ¼ë¡œ ê²€ìƒ‰
 
     void DestroyObject(UINT id);
     void DestroyObject(const std::string& name);
@@ -62,7 +62,7 @@ T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos) {
     return pObj;
 }
 
-//°èÃş±¸Á¶ ¿ÀºêÁ§Æ® Àç±Í »ı¼º¿ë
+//ê³„ì¸µêµ¬ì¡° ì˜¤ë¸Œì íŠ¸ ì¬ê·€ ìƒì„±ìš©
 template<typename T>
 T* ObjectManager::CreateObject(const std::string& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node)
 {
