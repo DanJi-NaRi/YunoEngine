@@ -32,9 +32,6 @@
     <Filter Include="Private\Renderer\Material">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00A}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Private\Renderer\Model">
-      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00B}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Private\Resource">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00C}</UniqueIdentifier>
     </Filter>
@@ -76,6 +73,18 @@
     </Filter>
     <Filter Include="Private\Scene">
       <UniqueIdentifier>{0170ffaa-52a9-4ad9-a9ea-a5490f1015d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Bone">
+      <UniqueIdentifier>{16ad65e1-9a9e-4a8e-965e-f224ac0e004e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Bone\Node">
+      <UniqueIdentifier>{b07fa004-a577-42d0-a94e-7ba1408de09e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Bone\Animation">
+      <UniqueIdentifier>{31a6296c-5dca-4d1d-948d-ca1e4f9e0e4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Animator">
+      <UniqueIdentifier>{dd759dd7-be6c-427f-8246-0d67659cd3e2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
@@ -127,6 +136,15 @@
     </ClCompile>
     <ClCompile Include="Public\Renderer\Mesh.cpp">
       <Filter>Private\Renderer\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Renderer\3DAnimation\Animator.cpp">
+      <Filter>Public\Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\BoneAnimation\BoneAnimation.cpp">
+      <Filter>Private\Renderer\Bone\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\BoneNode\BoneNode.cpp">
+      <Filter>Private\Renderer\Bone\Node</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -244,6 +262,15 @@
     </ClInclude>
     <ClInclude Include="Public\Singleton\Singleton.h">
       <Filter>Private\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\3DAnimation\Animator.h">
+      <Filter>Public\Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\BoneAnimation\BoneAnimation.h">
+      <Filter>Private\Renderer\Bone\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\BoneNode\BoneNode.h">
+      <Filter>Private\Renderer\Bone\Node</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->

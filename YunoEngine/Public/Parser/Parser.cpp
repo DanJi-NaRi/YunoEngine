@@ -56,8 +56,6 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 {
     std::wstring name(Utf8ToWString(node->mName.C_Str()));
 
-    
-
     if (name == L"Camera" || name == L"Light")
         return nullptr;
 
@@ -71,7 +69,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 
     node->mTransformation.Decompose(scale, rot, pos); //나중에 쿼터니언으로 바꾸기
 
-    XMFLOAT3 vScale = XMFLOAT3(scale.x * 0.01f, scale.y * 0.01f, scale.z * 0.01f);
+    XMFLOAT3 vScale = XMFLOAT3(scale.x * 0.01f, scale.z * 0.01f, scale.y * 0.01f);
     XMFLOAT3 vRot = XMFLOAT3(rot.x, -rot.z, rot.y);
     XMFLOAT3 vPos = XMFLOAT3(pos.x * 0.01f, -pos.z * 0.01f, pos.y * 0.01f);
 
