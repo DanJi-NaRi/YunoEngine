@@ -51,6 +51,11 @@ protected:
     Unit* m_Parent;
     std::unordered_map<uint32_t, Unit*> m_Childs;
 
+protected:
+    IRenderer* m_pRenderer = nullptr;
+    ITextureManager* m_pTextures = nullptr;
+    IInput* m_pInput = nullptr;
+
 public:
     explicit Unit();
 

@@ -41,6 +41,10 @@ bool Unit::Create(XMFLOAT3 vPos)
     m_vRot = XMFLOAT3(0, 0, 0);
     m_vScale = XMFLOAT3(1, 1, 1);
 
+    m_pRenderer = YunoEngine::GetRenderer();
+    m_pTextures = YunoEngine::GetTextureManager();
+    m_pInput = YunoEngine::GetInput();
+
     Unit::Update();
 
     return true;
@@ -64,6 +68,10 @@ bool Unit::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3
     m_vPos = vPos;
     m_vRot = vRot;
     m_vScale = vScale;
+
+    m_pRenderer = YunoEngine::GetRenderer();
+    m_pTextures = YunoEngine::GetTextureManager();
+    m_pInput = YunoEngine::GetInput();
 
     Unit::Update();
 

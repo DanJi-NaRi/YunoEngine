@@ -21,7 +21,7 @@ bool PlayScene::OnCreateScene()
     if (!om) return false;
 
     // 플레이어(삼각형)
-    m_player = om->CreateObject<Triangle>(L"player", XMFLOAT3(0, 0, 0));
+    om->CreateObject<Triangle>(L"player", XMFLOAT3(0, 0, 0));
     return true;
 }
 

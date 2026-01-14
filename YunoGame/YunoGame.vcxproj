@@ -185,8 +185,9 @@ xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)..\Assets"</Command>
     <ClCompile Include="Scenes\PlayScene.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Scenes\SecondPlayScene.cpp">
+    <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Scenes\TitleScene.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -201,8 +202,9 @@ xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)..\Assets"</Command>
     <ClInclude Include="Scenes\PlayScene.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="Scenes\SecondPlayScene.h">
+    <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Scenes\TitleScene.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>

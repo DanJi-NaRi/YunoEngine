@@ -1,0 +1,59 @@
+#include "pch.h"
+
+// 본인 씬 최상단 ㄱㄱ
+#include "SceneTemplate.h"
+// 다음 엔진
+#include "YunoEngine.h"
+// 다음 오브젝트 매니저 여기까지 고정
+#include "ObjectManager.h"
+
+
+// 사용법
+// 컨트롤 + H 누르면 이름 변경 나옴
+// 위쪽 칸에 SceneTemplate 적고
+// 아래 칸에 원하는 씬 이름 적고
+// 모두 바꾸기 누르면 됨 .h 파일도 동일하게 ㄱㄱ
+
+bool SceneTemplate::OnCreateScene()
+{
+    //std::cout << "[SceneTemplate] OnCreate\n";
+
+    ObjectManager* om = GetObjectManager();
+    if (!om) return false;
+
+    // Sample Object 생성 예시
+    //om->CreateObject<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0));
+    
+    // FBX 파일로부터 오브젝트 생성 예시
+    //om->CreateObjectFromFile<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+
+    return true;
+}
+
+void SceneTemplate::OnDestroyScene()
+{
+    //std::cout << "[SceneTemplate] OnDestroy\n";
+
+}
+
+void SceneTemplate::OnEnter()
+{
+    //std::cout << "[SceneTemplate] OnEnter\n"; 
+}
+
+void SceneTemplate::OnExit()
+{
+    //std::cout << "[SceneTemplate] OnExit\n"; 
+}
+
+void SceneTemplate::Update(float dt)
+{
+    // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
+    SceneBase::Update(dt);
+}
+
+void SceneTemplate::Submit()
+{
+    // 이거만 있으면 오브젝트 렌더 됨 따로 서브밋 ㄴㄴ
+    SceneBase::Submit();
+}

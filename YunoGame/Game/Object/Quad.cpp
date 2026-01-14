@@ -48,35 +48,21 @@ Quad::~Quad()
 {
 }
 
-//bool Quad::Create(XMFLOAT3 vPos)
-//{
-//    Unit::Create(vPos);
-//
-//    if (!CreateMesh())
-//        return false;
-//
-//    if (!CreateMaterial())
-//        return false;
-//
-//    auto mesh = std::make_unique<Mesh>();
-//    mesh->Create(m_defaultMesh, m_addMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
-//
-//    m_Meshs.push_back(std::move(mesh));
-//
-//    Backup();
-//
-//    return true;
-//}
 
 bool Quad::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Unit::Create(name, id, vPos);
+
+    if (!m_pInput || !m_pRenderer || !m_pTextures) 
+        return false;
     if (!CreateMesh())
         return false;
     if (!CreateMaterial())
         return false;
 
-
+    auto mesh = std::make_unique<Mesh>();
+    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+    m_Meshs.push_back(std::move(mesh));
 
     Backup();
 
@@ -126,9 +112,7 @@ bool Quad::Submit(float dTime)
 
 bool Quad::CreateMesh()
 {
-    IRenderer* renderer = YunoEngine::GetRenderer();
-    if (!renderer)
-        return false;
+
 
     VertexStreams streams{};
     streams.flags = VSF_Pos | VSF_Nrm | VSF_UV;
@@ -139,7 +123,7 @@ bool Quad::CreateMesh()
 
 
 
-    m_defaultMesh = renderer->CreateMesh(streams, g_Quad_idx, _countof(g_Quad_idx));
+    m_defaultMesh = m_pRenderer->CreateMesh(streams, g_Quad_idx, _countof(g_Quad_idx));
     if (m_defaultMesh == 0)
         return false; 
 
@@ -148,15 +132,8 @@ bool Quad::CreateMesh()
 
 bool Quad::CreateMaterial()
 {
-    IRenderer* renderer = YunoEngine::GetRenderer();
-    if (!renderer)
-        return false;
 
-    ITextureManager* texMan = YunoEngine::GetTextureManager();
-    if (!texMan)
-        return false;
-
-    m_Albedo = texMan->LoadTexture2D(L"../Assets/Textures/woodbox.bmp");
+    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/woodbox.bmp");
 
     MaterialDesc md{};
     md.passKey.vs = ShaderId::Basic;
@@ -175,20 +152,22 @@ bool Quad::CreateMaterial()
     md.normal = 0;
     md.orm = 0;
 
+    md.metal = 0;
+    md.rough = 0;
+    md.ao = 0;
 
     // 첫번째 머테리얼 생성
-    m_defaultMaterial = renderer->CreateMaterial(md);
+    m_defaultMaterial = m_pRenderer->CreateMaterial(md);
     if (m_defaultMaterial == 0)
         return false;
     
-    m_Albedo = texMan->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
-    //m_Albedo = texMan->LoadTexture2D(L"../Assets/fbx/Building/building_Albedo0.png");
+    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
 
     // 추가 머테리얼 생성
     md.passKey.raster = RasterPreset::CullNone;
     md.albedo = m_Albedo;
 
-    m_addMaterial = renderer->CreateMaterial(md);
+    m_addMaterial = m_pRenderer->CreateMaterial(md);
     if (m_addMaterial == 0)
         return false;
 

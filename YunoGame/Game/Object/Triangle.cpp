@@ -38,34 +38,21 @@ Triangle::~Triangle()
 {
 }
 
-//bool Triangle::Create(XMFLOAT3 vPos)
-//{
-//    Unit::Create(vPos);
-//
-//
-//    if (!CreateMesh())
-//        return false;
-//
-//    if (!CreateMaterial())
-//        return false;
-//
-//    auto mesh = std::make_unique<Mesh>();
-//    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
-//
-//    m_Meshs.push_back(std::move(mesh));
-//
-//    Backup();
-//
-//    return true;
-//}
 
 bool Triangle::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Unit::Create(name, id, vPos);
+
+    if (!m_pInput || !m_pRenderer || !m_pTextures)
+        return false;
     if (!CreateMesh())
         return false;
     if (!CreateMaterial())
         return false;
+
+    auto mesh = std::make_unique<Mesh>();
+    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+    m_Meshs.push_back(std::move(mesh));
 
     Backup();
 }
@@ -74,16 +61,16 @@ bool Triangle::Update(float dTime)
 {
     //게임 로직 업데이트 ㄱㄱ
 
-    IInput* input = YunoEngine::GetInput();
-    if (input)
+
+    if (m_pInput)
     {
         const float speed = 5.0f;            
         const float step = speed * dTime;
 
-        if (input->IsKeyDown(VK_UP)) m_vPos.z += step;
-        if (input->IsKeyDown(VK_DOWN)) m_vPos.z -= step;
-        if (input->IsKeyDown(VK_LEFT)) m_vPos.x -= step;
-        if (input->IsKeyDown(VK_RIGHT)) m_vPos.x += step;
+        if (m_pInput->IsKeyDown(VK_UP)) m_vPos.z += step;
+        if (m_pInput->IsKeyDown(VK_DOWN)) m_vPos.z -= step;
+        if (m_pInput->IsKeyDown(VK_LEFT)) m_vPos.x -= step;
+        if (m_pInput->IsKeyDown(VK_RIGHT)) m_vPos.x += step;
     }
 
     m_vRot.y += dTime*3;
@@ -115,9 +102,6 @@ bool Triangle::Submit(float dTime)
 
 bool Triangle::CreateMesh()
 {
-    IRenderer* renderer = YunoEngine::GetRenderer();
-    if (!renderer)
-        return false;
 
     VertexStreams streams{};
     streams.flags = VSF_Pos | VSF_Nrm | VSF_UV;
@@ -128,7 +112,7 @@ bool Triangle::CreateMesh()
 
 
 
-    m_defaultMesh = renderer->CreateMesh(streams, g_Triangle_idx, _countof(g_Triangle_idx));
+    m_defaultMesh = m_pRenderer->CreateMesh(streams, g_Triangle_idx, _countof(g_Triangle_idx));
     if (m_defaultMesh == 0)
         return false;
 
@@ -137,15 +121,9 @@ bool Triangle::CreateMesh()
 
 bool Triangle::CreateMaterial()
 {
-    IRenderer* renderer = YunoEngine::GetRenderer();
-    if (!renderer)
-        return false;
 
-    ITextureManager* texMan = YunoEngine::GetTextureManager();
-    if (!texMan)
-        return false;
 
-    m_Albedo = texMan->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
+    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
 
     MaterialDesc md{};
     md.passKey.vs = ShaderId::Basic;
@@ -158,18 +136,21 @@ bool Triangle::CreateMaterial()
 
     md.baseColor = { 1,1,1,1 };
     md.roughness = 1.0f;
-    md.metallic = 0.0f;
+    md.metallic = 1.0f;
 
     md.albedo = m_Albedo;
     md.normal = 0;
     md.orm = 0;
 
+    md.metal = 0;
+    md.rough = 0;
+    md.ao = 0;
+
     // 첫번째 머테리얼 생성
-    m_defaultMaterial = renderer->CreateMaterial(md);
+    m_defaultMaterial = m_pRenderer->CreateMaterial(md);
     if (m_defaultMaterial == 0)
         return false;
 
-    //m_defaultMaterial = renderer->CreateMaterial_Default();
 
     return true;
 }

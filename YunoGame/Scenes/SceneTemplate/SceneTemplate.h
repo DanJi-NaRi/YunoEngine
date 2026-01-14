@@ -2,9 +2,7 @@
 
 #include "SceneBase.h"
 
-class Triangle;
-
-class PlayScene final : public SceneBase
+class SceneTemplate final : public SceneBase
 {
 public:
     void OnEnter() override;
@@ -13,12 +11,12 @@ public:
     void Update(float dt) override;
     void Submit() override;
 
-    const char* GetDebugName() const override { return "PlayScene"; }
+    const char* GetDebugName() const override { return "SampleScene"; }
 
 protected:
     bool OnCreateScene() override;
     void OnDestroyScene() override;
 
 private:
-
+    
 };

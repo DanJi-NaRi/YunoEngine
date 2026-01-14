@@ -2,8 +2,6 @@
 
 #include "SceneBase.h"
 
-class Quad;
-class Building;
 
 class TitleScene final : public SceneBase
 {
