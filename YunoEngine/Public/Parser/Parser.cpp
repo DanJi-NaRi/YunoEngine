@@ -245,9 +245,9 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         }
         else
         {
-            ret = aiMaterial->Get(AI_MATKEY_METALLIC_FACTOR, md.metallic);
+            ret = aiMaterial->Get(AI_MATKEY_METALLIC_FACTOR, md.metalRatio);
             if (ret == AI_FAILURE)
-                md.metallic = 0.0f;
+                md.metalRatio = 1.0f; // 일단 1 ㄱㄱ
         }
         //Roughness
         if (aiMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &texPath) == AI_SUCCESS)
@@ -259,9 +259,9 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         }
         else
         {
-            ret = aiMaterial->Get(AI_MATKEY_ROUGHNESS_FACTOR, md.roughness);
+            ret = aiMaterial->Get(AI_MATKEY_ROUGHNESS_FACTOR, md.roughRatio);
             if (ret == AI_FAILURE)
-                md.roughness = 0.5f;
+                md.roughRatio = 1.0f;
         }
         //AO
         if (aiMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &texPath) == AI_SUCCESS)

@@ -8,7 +8,9 @@ class YunoMaterial
 public:
     RenderPassHandle pass = 0;
 
-    CBMaterial cpuParams{};
+    DirectX::XMFLOAT4 baseColor = { 1, 1, 1, 1 };
+    float roughRatio = 1.0f;
+    float metalRatio = 1.0f;
 
     TextureHandle albedo = 0;
     TextureHandle normal = 0;

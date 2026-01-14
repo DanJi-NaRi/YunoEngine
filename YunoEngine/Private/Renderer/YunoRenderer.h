@@ -183,8 +183,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Texture2D>        m_depthStencilTex;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_dsv;
 
-    YunoConstantBuffer<CBDefault> m_cbDefault;
-    YunoConstantBuffer<CBMaterial> m_cbMaterial;
+    YunoConstantBuffer<CBPerFrame> m_cbFrame;
+    YunoConstantBuffer<CBPerObject> m_cbObject;
     YunoCamera m_camera;
     float m_aspect = 1.0f;
 
@@ -217,6 +217,8 @@ private:
         ComPtr<ID3D11Buffer> vbUV;
         ComPtr<ID3D11Buffer> vbT;
         ComPtr<ID3D11Buffer> vbB;
+        ComPtr<ID3D11Buffer> vbBoneWeight;
+        ComPtr<ID3D11Buffer> vbBoneIndex;
 
         // Index Buffer (optional)
         ComPtr<ID3D11Buffer> ib;

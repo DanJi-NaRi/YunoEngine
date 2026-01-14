@@ -2,22 +2,25 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
-struct CBDefault
+struct CBPerFrame
 {
-    XMFLOAT4X4 mWorld;
+
 	XMFLOAT4X4 mView;
 	XMFLOAT4X4 mProj;
-	XMFLOAT4X4 mWVP;
+
 };
 
-struct CBMaterial
+struct CBPerObject
 {
+    XMFLOAT4X4 mWorld;
+    XMFLOAT4X4 mWVP;
+    XMFLOAT4X4 mWInvT;
     DirectX::XMFLOAT4 baseColor;
-    float roughness;
-    float metallic;
-    uint32_t flags;
-    float padding;
+    float roughRatio;
+    float metalRatio;
+    float padding[2];
 };
+
 
 
 template<typename T>

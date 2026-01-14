@@ -145,8 +145,9 @@ bool Quad::CreateMaterial()
     md.passKey.depth = DepthPreset::ReadWrite;
 
     md.baseColor = { 1,1,1,1 };
-    md.roughness = 1.0f;
-    md.metallic = 0.0f;
+    md.roughRatio = 1.0f;
+    md.metalRatio = 1.0f;
+    md.shadowBias = 0.005f;
 
     md.albedo = m_Albedo;
     md.normal = 0;

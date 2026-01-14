@@ -56,8 +56,8 @@ bool YunoRenderer::Initialize(IWindow* window)
         return false;
 
     // 상수 버퍼 생성
-    if (!m_cbDefault.Create(m_device.Get())) return false;
-    if (!m_cbMaterial.Create(m_device.Get())) return false;
+    if (!m_cbFrame.Create(m_device.Get())) return false;
+    if (!m_cbObject.Create(m_device.Get())) return false;
 
 
     m_aspect = (m_height == 0) ? 1.0f : (float)m_width / (float)m_height;
@@ -881,6 +881,19 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
             return 0;
     }
 
+    if (Has(VSF_BoneWeight))
+    {
+        if (!CreateVB(streams.boneWeight, sizeof(VERTEX_BoneWeight), streams.vtx_count, mr.vbBoneWeight))
+            return 0;
+    }
+
+    if (Has(VSF_BoneIndex))
+    {
+        if (!CreateVB(streams.boneIdx, sizeof(VERTEX_BoneIndex), streams.vtx_count, mr.vbBoneIndex))
+            return 0;
+    }
+
+
     // 인덱스 버퍼(옵션)
     if (indexCount > 0)
     {
@@ -910,11 +923,9 @@ MaterialHandle YunoRenderer::CreateMaterial(const MaterialDesc& desc)
     YunoMaterial mat{};
     mat.pass = pass;
 
-    mat.cpuParams.baseColor = desc.baseColor;
-    mat.cpuParams.roughness = desc.roughness;
-    mat.cpuParams.metallic = desc.metallic;
-
-    mat.cpuParams.flags = 0;
+    mat.baseColor = desc.baseColor;
+    mat.roughRatio = desc.roughRatio;
+    mat.metalRatio = desc.metalRatio;
 
     mat.albedo = desc.albedo;
     mat.normal = desc.normal;
@@ -938,9 +949,9 @@ MaterialHandle YunoRenderer::CreateMaterial_Default()
     md.passKey.raster = RasterPreset::CullNone;
     md.passKey.depth = DepthPreset::ReadWrite;
 
-    md.baseColor = { 1,1,1,1 };
-    md.roughness = 1.0f;
-    md.metallic = 0.0f;
+    md.baseColor = { 0,0,1,1 };
+    md.roughRatio = 0.0f;
+    md.metalRatio = 0.0f;
 
     const MaterialHandle h = CreateMaterial(md);
     if (h == 0) return 0;
@@ -1113,7 +1124,7 @@ bool YunoRenderer::InputLayoutFromFlags(uint32_t flags,
         return false;
 
     // 슬롯 규약
-    // 0=Pos, 1=Nrm, 2=UV, 3=T, 4=B
+    // 0=Pos, 1=Nrm, 2=UV, 3=T, 4=B, 5=BoneWeight, 6=BoneIndex
     outLayout.push_back({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
         D3D11_INPUT_PER_VERTEX_DATA, 0 });
 
@@ -1138,6 +1149,18 @@ bool YunoRenderer::InputLayoutFromFlags(uint32_t flags,
     if (flags & VSF_B)
     {
         outLayout.push_back({ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 4, 0,
+            D3D11_INPUT_PER_VERTEX_DATA, 0 });
+    }
+
+    if (flags & VSF_BoneWeight)
+    {
+        outLayout.push_back({ "BONEWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 5, 0,
+            D3D11_INPUT_PER_VERTEX_DATA, 0 });
+    }
+
+    if (flags & VSF_BoneIndex)
+    {
+        outLayout.push_back({ "BONEINDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 6, 0,
             D3D11_INPUT_PER_VERTEX_DATA, 0 });
     }
 
@@ -1167,7 +1190,7 @@ void YunoRenderer::Submit(const RenderItem& item)
 
 void YunoRenderer::Flush()
 {
-    if (!m_context || !m_cbDefault.IsValid() || !m_cbMaterial.IsValid())
+    if (!m_context || !m_cbFrame.IsValid() || !m_cbObject.IsValid())
         return;
 
     SubmitDebugGrid();
@@ -1237,36 +1260,45 @@ void YunoRenderer::BindConstantBuffers(
     using namespace DirectX;
 
     // -----------------------------
-    // CBDefault (b0)
+    // CBPerFrame (b0)
     // -----------------------------
     XMMATRIX W = XMLoadFloat4x4(&item.mWorld);
     XMMATRIX V = m_camera.View();
     XMMATRIX P = m_camera.Proj();
     XMMATRIX WVP = W * V * P;
 
-    CBDefault cbd{};
-    XMStoreFloat4x4(&cbd.mWorld, XMMatrixTranspose(W));
-    XMStoreFloat4x4(&cbd.mView, XMMatrixTranspose(V));
-    XMStoreFloat4x4(&cbd.mProj, XMMatrixTranspose(P));
-    XMStoreFloat4x4(&cbd.mWVP, XMMatrixTranspose(WVP));
+    CBPerFrame cbPerFrame{};
+    XMStoreFloat4x4(&cbPerFrame.mView, XMMatrixTranspose(V));
+    XMStoreFloat4x4(&cbPerFrame.mProj, XMMatrixTranspose(P));
 
-    m_cbDefault.Update(m_context.Get(), cbd);
+    m_cbFrame.Update(m_context.Get(), cbPerFrame);
 
-    ID3D11Buffer* cbDefault[] = { m_cbDefault.Get() };
-    m_context->VSSetConstantBuffers(0, 1, cbDefault);
-    m_context->PSSetConstantBuffers(0, 1, cbDefault);
+    ID3D11Buffer* cbFrame[] = { m_cbFrame.Get() };
+    m_context->VSSetConstantBuffers(0, 1, cbFrame);
+    m_context->PSSetConstantBuffers(0, 1, cbFrame);
 
 
 
 
     // -----------------------------
-    // CBMaterial (b1)
+    // CBPerObject (b1)
     // -----------------------------
-    m_cbMaterial.Update(m_context.Get(), material.cpuParams);
+    CBPerObject cbPerObject{};
 
-    ID3D11Buffer* cbMaterial[] = { m_cbMaterial.Get() };
-    m_context->VSSetConstantBuffers(1, 1, cbMaterial);
-    m_context->PSSetConstantBuffers(1, 1, cbMaterial);
+    XMStoreFloat4x4(&cbPerObject.mWorld, XMMatrixTranspose(W));
+    XMStoreFloat4x4(&cbPerObject.mWVP, XMMatrixTranspose(WVP));
+    XMStoreFloat4x4(&cbPerObject.mWInvT, XMMatrixTranspose(XMMatrixInverse(nullptr, W)));
+    cbPerObject.baseColor = material.baseColor;
+    cbPerObject.roughRatio = material.roughRatio;
+    cbPerObject.metalRatio = material.metalRatio;
+    cbPerObject.padding[0] = 0.0f;
+    cbPerObject.padding[1] = 0.0f;
+
+    m_cbObject.Update(m_context.Get(), cbPerObject);
+
+    ID3D11Buffer* cbPerObjectBuffers[] = { m_cbObject.Get() };
+    m_context->VSSetConstantBuffers(1, 1, cbPerObjectBuffers);
+    m_context->PSSetConstantBuffers(1, 1, cbPerObjectBuffers);
 }
 
 void YunoRenderer::BindSamplers()
@@ -1343,8 +1375,8 @@ void YunoRenderer::CreateDebugGridResources()
     md.passKey.depth = DepthPreset::ReadOnly;
 
     md.baseColor = { 1,1,0,1 };
-    md.roughness = 1.0f;
-    md.metallic = 0.0f;
+    md.roughRatio = 1.0f;
+    md.metalRatio = 1.0f;
 
     m_debugGridMaterial = CreateMaterial(md);
 }

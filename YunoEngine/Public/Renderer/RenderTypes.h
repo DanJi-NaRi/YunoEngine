@@ -28,6 +28,8 @@ enum VertexStreamFlags : uint32_t
     VSF_UV = 1u << 2,
     VSF_T = 1u << 3,
     VSF_B = 1u << 4,
+    VSF_BoneIndex = 1u << 5,
+    VSF_BoneWeight = 1u << 6
 };
 
 struct VertexStreams
@@ -40,6 +42,8 @@ struct VertexStreams
     const VERTEX_UV* uv = nullptr;
     const VERTEX_T* t = nullptr;
     const VERTEX_B* b = nullptr;
+    const VERTEX_BoneWeight* boneWeight = nullptr;
+    const VERTEX_BoneIndex* boneIdx = nullptr;
 };
 
 // 게임 >> 엔진 렌더 제출 단위
