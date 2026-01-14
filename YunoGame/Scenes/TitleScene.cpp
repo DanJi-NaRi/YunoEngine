@@ -1,83 +1,55 @@
 #include "pch.h"
+
+
 #include "TitleScene.h"
+
+#include "YunoEngine.h"
+
+#include "ObjectManager.h"
 
 #include "Quad.h"
 #include "Building.h"
 
-#include "YunoEngine.h"
-#include "IInput.h"
-#include "ISceneManager.h"
-
-#include "PlayScene.h"
-#include "ObjectManager.h"
-
-
-bool TitleScene::OnCreate()
+bool TitleScene::OnCreateScene()
 {
     //std::cout << "[TitleScene] OnCreate\n";
 
-    // 타이틀 바닥(플레인)
-    m_plane = new Quad();
-    if (!m_plane->Create({ 0.0f, 0.0f, 0.0f }))
-    {
-        std::cout << "[TitleScene] Quad Create failed\n";
-        delete m_plane;
-        m_plane = nullptr;
-        return false;
-    }
+    // 있는지 체크
+    ObjectManager* om = GetObjectManager();
+    if (!om) return false;
 
-    m_ObjManager = new ObjectManager;
-
-    m_ObjManager->Init();
-
-    m_building = m_ObjManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    
+    om->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
+    
+    om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     return true;
 }
 
-void TitleScene::OnDestroy()
+void TitleScene::OnDestroyScene()
+{   
+
+}
+
+void TitleScene::OnEnter()
 {
-    //std::cout << "[TitleScene] OnDestroy\n";
-    delete m_plane;
-    m_plane = nullptr;
+    //std::cout << "[TitleScene] OnEnter\n";
+}
+
+void TitleScene::OnExit()
+{
+    //std::cout << "[TitleScene] OnExit\n";
 }
 
 void TitleScene::Update(float dt)
 {
-    m_lastDt = dt;
 
-    IInput* input = YunoEngine::GetInput();
-    ISceneManager* sm = YunoEngine::GetSceneManager();
-    if (input && sm)
-    {
-        if ( input->IsKeyPressed('2'))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
-        }
-        if (input->IsKeyPressed('3'))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            sm->RequestPop();
-        }
-    }
-
-    if (m_plane)
-        m_plane->Update(dt);
-
-    m_ObjManager->Update(dt);
+    SceneBase::Update(dt);
 
 }
 
-void TitleScene::Submit(IRenderer* renderer)
+void TitleScene::Submit()
 {
-    (void)renderer; // Unit::Submit�� ���ο��� renderer�� ���� �ʿ� ����
-    /*if (m_plane)
-        m_plane->Submit(m_lastDt);*/
 
-    m_ObjManager->Submit(m_lastDt);
-
-    m_ObjManager->ProcessPending();
+    SceneBase::Submit();
 }
