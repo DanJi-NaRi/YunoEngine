@@ -5,4 +5,4 @@
 인재원 7기 4쿼터 미니 프로젝트에 사용할 엔진입니다.
 
 
-[노션] (https://www.notion.so/4Q-2ce9357db9428096a44ac341eeb05416) 
+[엔진 안내](https://www.notion.so/4Q-2ce9357db9428096a44ac341eeb05416) 
