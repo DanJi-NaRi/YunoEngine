@@ -28,6 +28,7 @@ public:
     void SetMaterial(MaterialHandle mat) { m_Material = mat; }
 
     void UpdateRenderItem(XMFLOAT4X4 mWorld);
+    void SetObjectConstants(const Update_Data& constants);
     const RenderItem& GetRenderItem() { return m_renderItem; }
 
     const XMFLOAT4X4& GetUserTM() { return m_mUser; }

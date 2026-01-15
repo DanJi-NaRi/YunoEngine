@@ -77,6 +77,9 @@
     <Filter Include="Private\Scene">
       <UniqueIdentifier>{0170ffaa-52a9-4ad9-a9ea-a5490f1015d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\SceneBase">
+      <UniqueIdentifier>{3ce47353-34f6-4914-bfaa-aad64ee2159f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -128,7 +131,9 @@
     <ClCompile Include="Public\Renderer\Mesh.cpp">
       <Filter>Private\Renderer\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Public\SceneBase\SceneBase.cpp" />
+    <ClCompile Include="Public\SceneBase\SceneBase.cpp">
+      <Filter>Public\SceneBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -246,7 +251,9 @@
     <ClInclude Include="Public\Singleton\Singleton.h">
       <Filter>Private\Singleton</Filter>
     </ClInclude>
-    <ClInclude Include="Public\SceneBase\SceneBase.h" />
+    <ClInclude Include="Public\SceneBase\SceneBase.h">
+      <Filter>Public\SceneBase</Filter>
+    </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>
@@ -256,12 +263,18 @@
     <FxCompile Include="..\Assets\Shaders\DebugGrid.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PBR_Base.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\ConstantBuffers.hlsli">
       <Filter>Shaders\Include</Filter>
     </None>
     <None Include="..\Assets\Shaders\TexturesSampler.hlsli">
+      <Filter>Shaders\Include</Filter>
+    </None>
+    <None Include="..\Assets\Shaders\Light.hlsli">
       <Filter>Shaders\Include</Filter>
     </None>
   </ItemGroup>

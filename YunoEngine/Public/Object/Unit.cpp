@@ -110,6 +110,7 @@ bool Unit::Submit(float dTime)
 {
     for (auto& mesh : m_Meshs)
     {
+        mesh->SetObjectConstants(m_constant);
         mesh->UpdateRenderItem(m_mWorld);
     }
 

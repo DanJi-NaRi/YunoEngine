@@ -10,17 +10,31 @@ struct CBPerFrame
 
 };
 
-struct CBPerObject
+struct CBPerObject_Matrix
 {
     XMFLOAT4X4 mWorld;
     XMFLOAT4X4 mWVP;
     XMFLOAT4X4 mWInvT;
-    DirectX::XMFLOAT4 baseColor;
-    float roughRatio;
-    float metalRatio;
-    float padding[2];
 };
 
+struct CBPerObject_Material
+{
+    XMFLOAT4 baseColor;
+    float roughRatio;
+    float metalRatio;
+    float shadowBias;
+    float padding;
+};
+
+struct CBDirLight
+{
+    XMFLOAT4 dir;
+    XMFLOAT4 diff;
+    XMFLOAT4 amb;
+    XMFLOAT4 spec;
+    float intensity;
+    float pad[3] = { 0,0,0 };
+};
 
 
 template<typename T>

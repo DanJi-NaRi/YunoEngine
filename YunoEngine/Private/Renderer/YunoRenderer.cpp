@@ -57,8 +57,8 @@ bool YunoRenderer::Initialize(IWindow* window)
 
     // 상수 버퍼 생성
     if (!m_cbFrame.Create(m_device.Get())) return false;
-    if (!m_cbObject.Create(m_device.Get())) return false;
-
+    if (!m_cbObject_Matrix.Create(m_device.Get())) return false;
+    if (!m_cbObject_Material.Create(m_device.Get())) return false;
 
     m_aspect = (m_height == 0) ? 1.0f : (float)m_width / (float)m_height;
     m_camera.aspect = m_aspect;
@@ -90,7 +90,7 @@ bool YunoRenderer::CreateShaders()
     // 여기서 쉐이더들 초기화 쭉 하면 됨
     if (!LoadShader(ShaderId::Basic, "../Assets/Shaders/BasicColor.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::DebugGrid, "../Assets/Shaders/DebugGrid.hlsl", "VSMain", "PSMain")) return false;
-    
+    if (!LoadShader(ShaderId::PBRBase, "../Assets/Shaders/PBR_Base.hlsl", "VSMain", "PSMain")) return false;
     return true;
 }
 
@@ -372,6 +372,7 @@ void YunoRenderer::ClearDepthStencil()
     else
         m_context->ClearDepthStencilView(m_dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
+
 
 void YunoRenderer::BeginFrame()
 {
@@ -668,6 +669,18 @@ bool YunoRenderer::LoadShader(
 }
 
 
+// desc 체크해서 셰이더 지정해주는 함수
+const ShaderId YunoRenderer::SetShaderKey(const MaterialDesc& desc)
+{
+    if (desc.orm != 0)
+        return ShaderId::PBRBase;
+
+    if (desc.metal != 0 || desc.rough != 0 || desc.ao != 0)
+        return ShaderId::PBRBase;
+
+    return ShaderId::Basic;
+}
+
 
 // ------------------------------------------------------------
 // Texture & Sampler
@@ -916,20 +929,31 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
 
 MaterialHandle YunoRenderer::CreateMaterial(const MaterialDesc& desc)
 {
-    const RenderPassHandle pass = GetOrCreatePass(desc.passKey);
+    PassKey key = desc.passKey;
+
+    if (key.vs == ShaderId::Basic) // 이게 베이직이 아니라는 것은 외부에서 지정했다는 거니까 통과 ㄱㄱ
+    {
+        const ShaderId id = SetShaderKey(desc);
+        key.vs = id;
+        key.ps = id;
+
+        // MaterialDesc 정보를 확인해서 셰이더뭐쓸지 결정하는곳
+    }
+
+    const RenderPassHandle pass = GetOrCreatePass(key);
     if (pass == 0)
         return 0;
 
     YunoMaterial mat{};
     mat.pass = pass;
 
-    mat.baseColor = desc.baseColor;
-    mat.roughRatio = desc.roughRatio;
-    mat.metalRatio = desc.metalRatio;
 
     mat.albedo = desc.albedo;
     mat.normal = desc.normal;
     mat.orm = desc.orm;
+    mat.metallic = desc.metal;
+    mat.roughness = desc.rough;
+    mat.ao = desc.ao;
 
     m_materials.push_back(mat);
     return static_cast<MaterialHandle>(m_materials.size()); // 1-based
@@ -949,9 +973,6 @@ MaterialHandle YunoRenderer::CreateMaterial_Default()
     md.passKey.raster = RasterPreset::CullNone;
     md.passKey.depth = DepthPreset::ReadWrite;
 
-    md.baseColor = { 0,0,1,1 };
-    md.roughRatio = 0.0f;
-    md.metalRatio = 0.0f;
 
     const MaterialHandle h = CreateMaterial(md);
     if (h == 0) return 0;
@@ -1190,7 +1211,7 @@ void YunoRenderer::Submit(const RenderItem& item)
 
 void YunoRenderer::Flush()
 {
-    if (!m_context || !m_cbFrame.IsValid() || !m_cbObject.IsValid())
+    if (!m_context || !m_cbFrame.IsValid() || !m_cbObject_Matrix.IsValid() || !m_cbObject_Material.IsValid())
         return;
 
     SubmitDebugGrid();
@@ -1230,7 +1251,7 @@ void YunoRenderer::Flush()
         mesh.Bind(m_context.Get());
 
         // 상수 버퍼 바인드
-        BindConstantBuffers(item, *material);
+        BindConstantBuffers(item);
 
         // 텍스쳐 바인드
         BindTextures(*material);
@@ -1252,53 +1273,85 @@ void YunoRenderer::Flush()
 // Bind 함수들
 // ------------------------------------------------------------
 
-void YunoRenderer::BindConstantBuffers(
-    const RenderItem& item,
-    const YunoMaterial& material
-)
+void YunoRenderer::BindConstantBuffers(const RenderItem& item)
 {
     using namespace DirectX;
 
+
     // -----------------------------
-    // CBPerFrame (b0)
+    // CBPerObject_Matrix (b0)
     // -----------------------------
-    XMMATRIX W = XMLoadFloat4x4(&item.mWorld);
-    XMMATRIX V = m_camera.View();
-    XMMATRIX P = m_camera.Proj();
+    CBPerObject_Matrix cbPerObject_matrix{};
+
+    XMMATRIX V = m_camera.View();                       // 이거 2개는 b2에서쓰는건데
+    XMMATRIX P = m_camera.Proj();                       // WVP에서 써야돼서 미리 계산함
+    XMMATRIX W = XMLoadFloat4x4(&item.Constant.world);
     XMMATRIX WVP = W * V * P;
 
+
+    XMStoreFloat4x4(&cbPerObject_matrix.mWorld, XMMatrixTranspose(W));
+    XMStoreFloat4x4(&cbPerObject_matrix.mWVP, XMMatrixTranspose(WVP));
+    XMStoreFloat4x4(&cbPerObject_matrix.mWInvT, XMMatrixTranspose(XMMatrixInverse(nullptr, W)));
+    
+
+    m_cbObject_Matrix.Update(m_context.Get(), cbPerObject_matrix);
+
+    ID3D11Buffer* cbPerObj_Matrix_Buffers[] = { m_cbObject_Matrix.Get() };
+    m_context->VSSetConstantBuffers(0, 1, cbPerObj_Matrix_Buffers);
+    m_context->PSSetConstantBuffers(0, 1, cbPerObj_Matrix_Buffers);
+
+
+    // -----------------------------
+    // CBPerObject_Matetrial (b1)
+    // -----------------------------
+    CBPerObject_Material cbPerObject_material{};
+
+    cbPerObject_material.baseColor = item.Constant.baseColor;
+    cbPerObject_material.roughRatio = item.Constant.roughRatio;
+    cbPerObject_material.metalRatio = item.Constant.metalRatio;
+    cbPerObject_material.shadowBias = item.Constant.shadowBias;
+    cbPerObject_material.padding = 0.0f;
+
+    m_cbObject_Material.Update(m_context.Get(), cbPerObject_material);
+
+    ID3D11Buffer* cbPerObj_Material_Buffers[] = { m_cbObject_Material.Get() };
+    m_context->VSSetConstantBuffers(1, 1, cbPerObj_Material_Buffers);
+    m_context->PSSetConstantBuffers(1, 1, cbPerObj_Material_Buffers);
+
+
+    // -----------------------------
+    // CBPerFrame (b2)
+    // -----------------------------
     CBPerFrame cbPerFrame{};
+
     XMStoreFloat4x4(&cbPerFrame.mView, XMMatrixTranspose(V));
     XMStoreFloat4x4(&cbPerFrame.mProj, XMMatrixTranspose(P));
 
     m_cbFrame.Update(m_context.Get(), cbPerFrame);
 
     ID3D11Buffer* cbFrame[] = { m_cbFrame.Get() };
-    m_context->VSSetConstantBuffers(0, 1, cbFrame);
-    m_context->PSSetConstantBuffers(0, 1, cbFrame);
+    m_context->VSSetConstantBuffers(2, 1, cbFrame);
+    m_context->PSSetConstantBuffers(2, 1, cbFrame);
+}
 
-
-
-
+void YunoRenderer::BindConstantBuffers_OneFrame(const RenderItem& item)
+{
     // -----------------------------
-    // CBPerObject (b1)
+    // CBLight (b3)
     // -----------------------------
-    CBPerObject cbPerObject{};
+    CBDirLight cbDirLight{};
 
-    XMStoreFloat4x4(&cbPerObject.mWorld, XMMatrixTranspose(W));
-    XMStoreFloat4x4(&cbPerObject.mWVP, XMMatrixTranspose(WVP));
-    XMStoreFloat4x4(&cbPerObject.mWInvT, XMMatrixTranspose(XMMatrixInverse(nullptr, W)));
-    cbPerObject.baseColor = material.baseColor;
-    cbPerObject.roughRatio = material.roughRatio;
-    cbPerObject.metalRatio = material.metalRatio;
-    cbPerObject.padding[0] = 0.0f;
-    cbPerObject.padding[1] = 0.0f;
+    cbDirLight.dir;
+    cbDirLight.diff;
+    cbDirLight.amb;
+    cbDirLight.spec;
+    cbDirLight.intensity;
 
-    m_cbObject.Update(m_context.Get(), cbPerObject);
+    m_cbDirLight.Update(m_context.Get(), cbDirLight);
 
-    ID3D11Buffer* cbPerObjectBuffers[] = { m_cbObject.Get() };
-    m_context->VSSetConstantBuffers(1, 1, cbPerObjectBuffers);
-    m_context->PSSetConstantBuffers(1, 1, cbPerObjectBuffers);
+    ID3D11Buffer* cbLight[] = { m_cbDirLight.Get() };
+    m_context->VSSetConstantBuffers(3, 1, cbLight);
+    m_context->PSSetConstantBuffers(3, 1, cbLight);
 }
 
 void YunoRenderer::BindSamplers()
@@ -1320,17 +1373,25 @@ void YunoRenderer::BindTextures(const YunoMaterial& material)
 {
     TextureHandle hAlbedo = (material.albedo != 0) ? material.albedo : m_texWhite;
     TextureHandle hNormal = (material.normal != 0) ? material.normal : m_texNormal;
+
     TextureHandle hOrm = (material.orm != 0) ? material.orm : m_texBlack;
 
-    ID3D11ShaderResourceView* srvs[3] =
+    TextureHandle hMetallic = (material.metallic != 0) ? material.metallic : m_texBlack;
+    TextureHandle hRoughness = (material.roughness != 0) ? material.roughness : m_texBlack;
+    TextureHandle hAO = (material.ao != 0) ? material.ao : m_texBlack;
+
+    ID3D11ShaderResourceView* srvs[6] =
     {
         ResolveSRV(hAlbedo),
         ResolveSRV(hNormal),
-        ResolveSRV(hOrm) 
+        ResolveSRV(hOrm),
+        ResolveSRV(hMetallic),
+        ResolveSRV(hRoughness),
+        ResolveSRV(hAO)
     };
 
     // 혹시라도 ResolveSRV가 nullptr이면 안전하게 nullptr 바인딩(디버그에서 보이게)
-    m_context->PSSetShaderResources(0, 3, srvs);
+    m_context->PSSetShaderResources(0, 6, srvs);
 }
 
 // ------------------------------------------------------------
@@ -1374,9 +1435,9 @@ void YunoRenderer::CreateDebugGridResources()
     md.passKey.raster = RasterPreset::CullNone;
     md.passKey.depth = DepthPreset::ReadOnly;
 
-    md.baseColor = { 1,1,0,1 };
-    md.roughRatio = 1.0f;
-    md.metalRatio = 1.0f;
+    //md.baseColor = { 1,1,0,1 };
+    //md.roughRatio = 1.0f;
+    //md.metalRatio = 1.0f;
 
     m_debugGridMaterial = CreateMaterial(md);
 }
@@ -1392,7 +1453,12 @@ void YunoRenderer::SubmitDebugGrid()
     RenderItem item{};
     item.meshHandle = m_debugGridMeshHandle;
     item.materialHandle = m_debugGridMaterial; // 0이어도 Submit에서 default로 보정됨
-    DirectX::XMStoreFloat4x4(&item.mWorld, DirectX::XMMatrixIdentity());
+    DirectX::XMStoreFloat4x4(&item.Constant.world, DirectX::XMMatrixIdentity());
+    item.Constant.baseColor = { 1, 1, 0, 1 };
+    item.Constant.roughRatio = 1.0f;
+    item.Constant.metalRatio = 1.0f;
+    item.Constant.shadowBias = 0.005f;
+
     Submit(item);
 }
 

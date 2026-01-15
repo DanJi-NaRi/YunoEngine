@@ -38,6 +38,7 @@ void ObjectManager::Clear()
 //나중에 이벤트 큐 만들어서 바꿔야함
 void ObjectManager::Update(float dTime)
 {
+
     for (auto& obj : m_objs)
     {
         obj->Update(dTime);
@@ -46,6 +47,8 @@ void ObjectManager::Update(float dTime)
 //나중에 이벤트 큐 만들어서 바꿔야함
 void ObjectManager::Submit(float dTime)
 {
+    FrameDataSubmit();
+
     for (auto& obj : m_objs)
     {
         obj->Submit(dTime);
@@ -145,6 +148,20 @@ void ObjectManager::DestroyObject(const std::wstring& name)
     }
 
     m_pendingDestoryQ.push_back(id);
+}
+
+void ObjectManager::FrameDataUpdate()
+{
+    dirData.Lightdir;
+    dirData.Lightdiff;
+    dirData.Lightamb;
+    dirData.Lightspec;
+    dirData.intensity;
+}
+
+void ObjectManager::FrameDataSubmit()
+{
+
 }
 
 std::unique_ptr<MeshNode> ObjectManager::CreateMeshNode(const std::wstring& filepath)

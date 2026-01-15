@@ -46,6 +46,9 @@ protected:
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
 
+    // 상수버퍼 업데이트할 데이터들
+    Update_Data   m_constant;
+
     std::vector<std::unique_ptr<Mesh>> m_Meshs;
 
     Unit* m_Parent;

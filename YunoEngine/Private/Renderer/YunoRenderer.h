@@ -150,11 +150,8 @@ public:
     YunoCamera& GetCamera() override { return m_camera; }
 
 private:
-    void BindConstantBuffers(
-        const RenderItem& item,
-        const YunoMaterial& material
-    );
-
+    void BindConstantBuffers(const RenderItem& item);
+    void BindConstantBuffers_OneFrame(const RenderItem& item);
 
 private:
     bool CreateDeviceAndSwapChain(HWND hwnd, uint32_t width, uint32_t height);
@@ -165,6 +162,7 @@ private:
 
     void SetViewPort();
     void ClearDepthStencil();
+    const ShaderId SetShaderKey(const MaterialDesc& desc);
 
 
 
@@ -184,7 +182,10 @@ private:
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_dsv;
 
     YunoConstantBuffer<CBPerFrame> m_cbFrame;
-    YunoConstantBuffer<CBPerObject> m_cbObject;
+    YunoConstantBuffer<CBPerObject_Matrix> m_cbObject_Matrix;
+    YunoConstantBuffer<CBPerObject_Material> m_cbObject_Material;
+    YunoConstantBuffer<CBDirLight> m_cbDirLight;
+
     YunoCamera m_camera;
     float m_aspect = 1.0f;
 

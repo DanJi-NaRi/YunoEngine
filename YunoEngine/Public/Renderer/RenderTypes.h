@@ -46,13 +46,34 @@ struct VertexStreams
     const VERTEX_BoneIndex* boneIdx = nullptr;
 };
 
+struct Update_Data
+{
+    DirectX::XMFLOAT4X4 world{};
+    DirectX::XMFLOAT4 baseColor = { 1, 1, 1, 1 };
+    float roughRatio = 1.0f;
+    float metalRatio = 1.0f;
+    float shadowBias = 0.005f;
+    float padding = 0.0f;
+};
+
+struct Frame_Data_Dir
+{
+    XMFLOAT4 Lightdir;
+    XMFLOAT4 Lightdiff;
+    XMFLOAT4 Lightamb;
+    XMFLOAT4 Lightspec;
+    float    intensity;
+};
+
+
+
 // 게임 >> 엔진 렌더 제출 단위
 struct RenderItem
 {
     MeshHandle meshHandle = 0;
     MaterialHandle materialHandle = 0;
 
-    DirectX::XMFLOAT4X4 mWorld;
+    Update_Data Constant;
 };
 
 // -------------------- PassKey --------------------
@@ -88,10 +109,11 @@ enum class DepthPreset : uint8_t
 enum class ShaderId : uint8_t
 {
     Basic = 0,
-    Unlit,
-    PBR,
-    Skybox,
+    PBRBase,
     DebugGrid,
+    Unlit,
+    Skybox,
+
     Count
 };
 

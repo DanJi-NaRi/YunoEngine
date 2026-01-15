@@ -47,6 +47,12 @@ public:
 
     const size_t GetObjectCount() { return m_ObjectCount; }
     const std::unordered_map<UINT, Unit*>& GetObjectlist() { return m_objMap; }
+
+    // 프레임 상수버퍼 관리
+private:
+    Frame_Data_Dir dirData;
+    void FrameDataUpdate();
+    void FrameDataSubmit();
 };
 
 template<typename T>

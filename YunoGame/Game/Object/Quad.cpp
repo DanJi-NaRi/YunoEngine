@@ -73,6 +73,11 @@ bool Quad::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 bool Quad::Update(float dTime)
 {
     //게임 로직 업데이트 ㄱㄱ
+    m_constant.baseColor = XMFLOAT4(1, 1, 1, 1);
+    m_constant.roughRatio = 1.0f;
+    m_constant.roughRatio = 1.0f;
+    m_constant.shadowBias = 0.005f;
+
     m_time += dTime;
 
     m_vScale.x = 60;
@@ -143,11 +148,6 @@ bool Quad::CreateMaterial()
     md.passKey.blend = BlendPreset::AlphaBlend;
     md.passKey.raster = RasterPreset::CullNone;
     md.passKey.depth = DepthPreset::ReadWrite;
-
-    md.baseColor = { 1,1,1,1 };
-    md.roughRatio = 1.0f;
-    md.metalRatio = 1.0f;
-    md.shadowBias = 0.005f;
 
     md.albedo = m_Albedo;
     md.normal = 0;
