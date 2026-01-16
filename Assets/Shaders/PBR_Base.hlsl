@@ -72,5 +72,5 @@ float4 PSMain(VSOutput input) : SV_Target
     // 최종 컬러
     float4 finalColor = BaseColor * diff + spec;
     
-    return finalColor;
+    return float4(input.nrm, 0);
 }
