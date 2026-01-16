@@ -121,6 +121,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\Singleton;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)System</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories>$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
     </ClCompile>

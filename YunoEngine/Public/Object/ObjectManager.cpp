@@ -149,5 +149,5 @@ void ObjectManager::DestroyObject(const std::wstring& name)
 
 std::unique_ptr<MeshNode> ObjectManager::CreateMeshNode(const std::wstring& filepath)
 {
-    return Parser::Instance().LoadFile(filepath);
+    return Parser::Instance().LoadFile(filepath).first;
 }
