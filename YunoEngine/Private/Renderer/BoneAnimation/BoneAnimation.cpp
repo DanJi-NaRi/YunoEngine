@@ -34,10 +34,9 @@ void BoneAnimation::Init()
     LastFrame = m_AnimationClips.size() - 1;
 }
 
-const XMFLOAT4X4& BoneAnimation::Update(float dTime)
+const XMFLOAT4X4& BoneAnimation::Update(unsigned int CurTickTime)
 {
     //dTime -> TickTime으로 변환
-    CurTickTime += TickPerSec * dTime;
 
     //TickTime이 현재 키프레임, 다음 키프레임 사이인지 비교
     //사이값이면 보간
@@ -48,11 +47,12 @@ const XMFLOAT4X4& BoneAnimation::Update(float dTime)
         NextFrame++;
 
         //루프 애니랑 아닌거랑 분기 나눠야할듯
+        //이거 여기 냅두는지 아니면 애니메이터로 뺄지 고민
+        //나중에 블랜딩하려면 총 프레임이랑 그런거 빼는게 편할것같음
         if (CurFrame == LastFrame)
         {
             CurFrame = 0;
             NextFrame = 1;
-            CurTickTime = 0;
         }
     }
 

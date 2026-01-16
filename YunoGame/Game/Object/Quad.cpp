@@ -59,9 +59,13 @@ bool Quad::Create(XMFLOAT3 vPos)
         return false;
 
     auto mesh = std::make_unique<Mesh>();
+
+    XMMATRIX i = XMMatrixIdentity();
     mesh->Create(m_defaultMesh, m_addMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
 
-    m_Meshs.push_back(std::move(mesh));
+    m_MeshNode = std::make_unique<MeshNode>();
+
+    m_MeshNode->m_Meshs.push_back(std::move(mesh));
 
     Backup();
 

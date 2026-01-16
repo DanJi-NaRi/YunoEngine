@@ -74,19 +74,11 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, std::uniq
 
     auto obj = std::make_unique<T>();
     obj->Create(newname, m_ObjectIDs++, pos);
-    for (auto& mesh : node->m_Meshs)
-    {
-        obj->SetMesh(std::move(mesh));
-    }
+    
+    obj->SetMesh(std::move(node));
 
     auto* pObj = obj.get();
     m_pendingCreateQ.emplace_back(std::move(obj));
-
-    for (auto& childNode : node->m_Childs)
-    {
-        auto child = CreateObject<T>(name, pos, std::move(childNode));
-        pObj->Attach(child);
-    }
 
     return pObj;
 }

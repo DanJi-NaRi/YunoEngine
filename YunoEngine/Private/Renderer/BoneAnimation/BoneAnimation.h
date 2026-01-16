@@ -27,18 +27,16 @@ struct AniClip
 //파싱 후 저장용
 struct AnimationClips
 {
-    std::string animeName;
+    std::string boneName;
 
-    unsigned int TickPerSec = 0;
     std::vector<AniClip> Clips;
 };
 
 class BoneAnimation
 {
 private:
-    std::string animeName;
+    std::string boneName;
 
-    unsigned int TickPerSec = 4800; //매직넘버, 수정 가능
     unsigned int CurTickTime = 0;
 
     size_t CurFrame = 0;
@@ -58,12 +56,12 @@ public:
     BoneAnimation() = delete;
     virtual ~BoneAnimation() = default;
 
-    BoneAnimation(AnimationClips clips) : animeName(clips.animeName), m_AnimationClips(clips.Clips), 
-        TickPerSec(clips.TickPerSec), CurTickTime(0) {
+    BoneAnimation(AnimationClips clips) : boneName(clips.boneName), m_AnimationClips(clips.Clips),
+        CurTickTime(0) {
         Init();
     }
 
     void Init();
 
-    const XMFLOAT4X4& Update(float dTime);
+    const XMFLOAT4X4& Update(unsigned int CurTickTime);
 };
