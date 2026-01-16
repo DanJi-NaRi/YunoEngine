@@ -146,6 +146,7 @@
     <ClCompile Include="Private\Renderer\BoneNode\BoneNode.cpp">
       <Filter>Private\Renderer\Bone\Node</Filter>
     </ClCompile>
+    <ClCompile Include="Public\SceneBase\SceneBase.cpp" />
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -272,6 +273,7 @@
     <ClInclude Include="Private\Renderer\BoneNode\BoneNode.h">
       <Filter>Private\Renderer\Bone\Node</Filter>
     </ClInclude>
+    <ClInclude Include="Public\SceneBase\SceneBase.h" />
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>

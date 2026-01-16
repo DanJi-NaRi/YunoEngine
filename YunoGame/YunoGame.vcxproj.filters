@@ -63,6 +63,7 @@
     <ClCompile Include="Game\Object\Building.cpp">
       <Filter>Game\Object\Building</Filter>
     </ClCompile>
+    <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -92,5 +93,6 @@
     <ClInclude Include="Game\Object\Building.h">
       <Filter>Game\Object\Building</Filter>
     </ClInclude>
+    <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h" />
   </ItemGroup>
 </Project>

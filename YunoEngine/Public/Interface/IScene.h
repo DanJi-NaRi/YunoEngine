@@ -18,7 +18,8 @@ public:
 
 
     virtual void Update(float dt) = 0;
-    virtual void Submit(IRenderer* renderer) = 0;
+    virtual void Submit() = 0;
 
     virtual const char* GetDebugName() const = 0;
+
 };

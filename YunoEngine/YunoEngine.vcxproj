@@ -153,6 +153,7 @@
   %(AdditionalIncludeDirectories)
 </AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -204,7 +205,7 @@
   $(ProjectDir)Public\Renderer;
   %(AdditionalIncludeDirectories)
 </AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -261,6 +262,7 @@
     <ClInclude Include="Public\Object\Unit.h" />
     <ClInclude Include="Public\Renderer\Mesh.h" />
     <ClInclude Include="Public\Renderer\RenderTypes.h" />
+    <ClInclude Include="Public\SceneBase\SceneBase.h" />
     <ClInclude Include="Public\Singleton\Singleton.h" />
     <ClInclude Include="Public\YunoEngine.h" />
   </ItemGroup>
@@ -290,6 +292,7 @@
     <ClCompile Include="Public\Parser\Parser.cpp" />
     <ClCompile Include="Public\Renderer\3DAnimation\Animator.cpp" />
     <ClCompile Include="Public\Renderer\Mesh.cpp" />
+    <ClCompile Include="Public\SceneBase\SceneBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">

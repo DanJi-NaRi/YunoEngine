@@ -32,6 +32,7 @@ Unit::Unit()
 
 Unit::~Unit()
 {
+
 }
 
 bool Unit::Create(XMFLOAT3 vPos)
@@ -40,12 +41,16 @@ bool Unit::Create(XMFLOAT3 vPos)
     m_vRot = XMFLOAT3(0, 0, 0);
     m_vScale = XMFLOAT3(1, 1, 1);
 
+    m_pRenderer = YunoEngine::GetRenderer();
+    m_pTextures = YunoEngine::GetTextureManager();
+    m_pInput = YunoEngine::GetInput();
+
     Unit::Update();
 
     return true;
 }
 
-bool Unit::Create(std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool Unit::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     m_id = id;
     m_name = name;
@@ -55,7 +60,7 @@ bool Unit::Create(std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool Unit::Create(std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale)
+bool Unit::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale)
 {
     m_id = id;
     m_name = name;
@@ -63,6 +68,10 @@ bool Unit::Create(std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot,
     m_vPos = vPos;
     m_vRot = vRot;
     m_vScale = vScale;
+
+    m_pRenderer = YunoEngine::GetRenderer();
+    m_pTextures = YunoEngine::GetTextureManager();
+    m_pInput = YunoEngine::GetInput();
 
     Unit::Update();
 

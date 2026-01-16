@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <memory>
 
-class IRenderer;
 class IScene;
 
 // 씬 상태
@@ -17,10 +16,10 @@ enum class SceneState : uint8_t
 
 struct ScenePolicy
 {
-    // 이 씬이 활성화 됐을 때 스택에 존재하는 다른 씬들의 업데이트를 막을것인지
+    // 이 씬이 활성화 됐을 때 스택 하단에 존재하는 다른 씬들의 업데이트를 막을것인지
     bool blockUpdateBelow = true;
 
-    // 이 씬이 활성화 됐을 때 스택에 존재하는 다른 씬들의 렌더를 막을것인지
+    // 이 씬이 활성화 됐을 때 스택 하단에 존재하는 다른 씬들의 렌더를 막을것인지
     bool blockRenderBelow = false;
 };
 
@@ -46,8 +45,8 @@ public:
     virtual void RequestPop(SceneTransitionOptions opt = {}) = 0;
 
 
-    virtual void Update(float dt) = 0;             // Update traversal
-    virtual void Submit(IRenderer* renderer) = 0; // Render submission traversal
+    virtual void Update(float dt) = 0;
+    virtual void Submit() = 0;
 
 
     virtual IScene* GetActiveScene() const = 0;

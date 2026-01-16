@@ -24,7 +24,7 @@ public:
     explicit ObjectManager();
     virtual ~ObjectManager();
 
-    void Init(); //생성 초기화
+    bool Init(); //생성 초기화
     void Clear(); //삭제 초기화
 
     void ProcessPending(); //프레임 맨 마지막에 호출

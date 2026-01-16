@@ -1,64 +1,54 @@
 #include "pch.h"
+
 #include "PlayScene.h"
 
 #include "Triangle.h"
+
+
 #include "YunoEngine.h"
 #include "IInput.h"
 #include "ISceneManager.h"
 
 #include "TitleScene.h"
+#include "ObjectManager.h"
 
-
-bool PlayScene::OnCreate()
+bool PlayScene::OnCreateScene()
 {
     //std::cout << "[PlayScene] OnCreate\n";
 
+    // 있는지 체크
+    ObjectManager* om = GetObjectManager();
+    if (!om) return false;
+
     // 플레이어(삼각형)
-    m_player = new Triangle();
-    if (!m_player->Create({ 0.0f, 0.0f, 0.0f }))
-    {
-        std::cout << "[PlayScene] Triangle Create failed\n";
-        delete m_player;
-        m_player = nullptr;
-        return false;
-    }
+    om->CreateObject<Triangle>(L"player", XMFLOAT3(0, 0, 0));
     return true;
 }
 
-void PlayScene::OnDestroy()
+void PlayScene::OnDestroyScene()
 {
     //std::cout << "[PlayScene] OnDestroy\n";
-    delete m_player;
-    m_player = nullptr;
+
+}
+
+void PlayScene::OnEnter()
+{
+    //std::cout << "[PlayScene] OnEnter\n"; 
+}
+
+void PlayScene::OnExit()
+{
+    //std::cout << "[PlayScene] OnExit\n"; 
 }
 
 void PlayScene::Update(float dt)
 {
-    m_lastDt = dt;
 
 
-    IInput* input = YunoEngine::GetInput();
-    ISceneManager* sm = YunoEngine::GetSceneManager();
-    if (input && sm)
-    {
-        if ( input->IsKeyPressed('1'))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            ScenePolicy policy;
-            policy.blockUpdateBelow = false;
-            policy.blockRenderBelow = false;
-            sm->RequestPush(std::make_unique<TitleScene>(), policy);
-        }
-    }
-
-    if (m_player)
-        m_player->Update(dt);
+    SceneBase::Update(dt);
 }
 
-void PlayScene::Submit(IRenderer* renderer)
+void PlayScene::Submit()
 {
-    (void)renderer;
-    if (m_player)
-        m_player->Submit(m_lastDt);
+    SceneBase::Submit();
 }

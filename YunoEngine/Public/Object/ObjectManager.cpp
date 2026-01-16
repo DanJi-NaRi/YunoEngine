@@ -13,16 +13,19 @@ ObjectManager::~ObjectManager()
 {
 }
 
-void ObjectManager::Init()
+bool ObjectManager::Init()
 {
     m_ObjectCount = 0;
     m_ObjectIDs = 0;
     m_objMap.reserve(30); //30개 정도 메모리 잡고 시작
     m_pendingCreateQ.reserve(30);
+
+    return true;
 }
 
 void ObjectManager::Clear()
 {
+
     m_ObjectCount = 0;
     m_ObjectIDs = 0;
     m_objs.clear(); //오브젝트 객체 완전 삭제
