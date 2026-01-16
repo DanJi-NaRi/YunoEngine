@@ -50,7 +50,7 @@ void Mesh::SetObjectConstants(const Update_Data& constants)
 
 void Mesh::Submit(XMFLOAT4X4& mWorld)
 {
-    XMStoreFloat4x4(&m_renderItem.mWorld, m_mUser * XMLoadFloat4x4(&mWorld));
+    XMStoreFloat4x4(&m_renderItem.Constant.world, m_mUser * XMLoadFloat4x4(&mWorld));
 }
 
 void Mesh::LastSubmit()

@@ -79,6 +79,7 @@
     </Filter>
     <Filter Include="Public\Light">
       <UniqueIdentifier>{491ca366-9401-4be6-8d32-293d3261bdc3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Private\Renderer\Bone">
       <UniqueIdentifier>{16ad65e1-9a9e-4a8e-965e-f224ac0e004e}</UniqueIdentifier>
     </Filter>
