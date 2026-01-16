@@ -144,14 +144,18 @@ public:
 
     TextureHandle CreateTexture2DFromFile(const wchar_t* path) override;
 
+
+
     void Submit(const RenderItem& item) override;
     void Flush() override;     
+
+    void BindConstantBuffers_OneFrame(const Frame_Data_Dir& dirData) override;
 
     YunoCamera& GetCamera() override { return m_camera; }
 
 private:
     void BindConstantBuffers(const RenderItem& item);
-    void BindConstantBuffers_OneFrame(const RenderItem& item);
+
 
 private:
     bool CreateDeviceAndSwapChain(HWND hwnd, uint32_t width, uint32_t height);
@@ -184,7 +188,7 @@ private:
     YunoConstantBuffer<CBPerFrame> m_cbFrame;
     YunoConstantBuffer<CBPerObject_Matrix> m_cbObject_Matrix;
     YunoConstantBuffer<CBPerObject_Material> m_cbObject_Material;
-    YunoConstantBuffer<CBDirLight> m_cbDirLight;
+    YunoConstantBuffer<CBLight_All> m_cbLight;
 
     YunoCamera m_camera;
     float m_aspect = 1.0f;

@@ -7,7 +7,6 @@ cbuffer CBPerObject_Matrix : register(b0)
     float4x4 mWorld;
     float4x4 mWVP;
     float4x4 mWInvT;
-    
 
 };
 
@@ -26,9 +25,12 @@ cbuffer CBPerObject_Material : register(b1)
 // 프레임 단위 ------------------------------------------------
 cbuffer CBPerFrame : register(b2)
 {
-    // camera pos ㄱㄱ
+    //camera pos ㄱㄱ
     float4x4 mView;
     float4x4 mProj;
+    float3 camPos_W;
+    
+    float pad;
 };
 
 // 라이트 (b3) >> Light.hlsli에 있음

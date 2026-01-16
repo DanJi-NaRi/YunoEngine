@@ -271,7 +271,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         else
         {
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_Metallic" + std::to_wstring(nodeNum) + L".png";
+            texPath += L"_Roughness" + std::to_wstring(nodeNum) + L".png";
 
             TextureHandle rough = renderer->CreateTexture2DFromFile(texPath.c_str());
 

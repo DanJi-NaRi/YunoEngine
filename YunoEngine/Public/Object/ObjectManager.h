@@ -4,22 +4,32 @@
 #include "RenderTypes.h"
 #include "Unit.h"
 
+class YunoDirectionalLight;
 
 class ObjectManager
 {
 private:
     size_t m_ObjectCount;
     UINT m_ObjectIDs;
+
     std::deque<std::unique_ptr<Unit>> m_objs;
     std::unordered_map<UINT, Unit*> m_objMap;
     std::unordered_map<std::wstring, UINT> m_nameToID;
 
     std::vector<UINT> m_pendingDestoryQ;
     std::vector<std::unique_ptr<Unit>> m_pendingCreateQ;
+   
 
     template<typename T>
     T* CreateObject(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 오브젝트 생성용
     std::unique_ptr<MeshNode> CreateMeshNode(const std::wstring& filepath);
+
+    std::unique_ptr<YunoDirectionalLight> m_directionLight;
+
+public:
+    void CreateDirLight();
+
+
 public:
     explicit ObjectManager();
     virtual ~ObjectManager();
@@ -47,6 +57,8 @@ public:
 
     const size_t GetObjectCount() { return m_ObjectCount; }
     const std::unordered_map<UINT, Unit*>& GetObjectlist() { return m_objMap; }
+
+
 
     // 프레임 상수버퍼 관리
 private:
@@ -90,6 +102,7 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, std::uniq
 
     for (auto& childNode : node->m_Childs)
     {
+
         auto child = CreateObject<T>(name, pos, std::move(childNode));
         pObj->Attach(child);
     }

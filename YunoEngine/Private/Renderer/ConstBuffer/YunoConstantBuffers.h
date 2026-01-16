@@ -7,7 +7,8 @@ struct CBPerFrame
 
 	XMFLOAT4X4 mView;
 	XMFLOAT4X4 mProj;
-
+    XMFLOAT3 camPos;
+    float pad = 0.0;
 };
 
 struct CBPerObject_Matrix
@@ -34,6 +35,11 @@ struct CBDirLight
     XMFLOAT4 spec;
     float intensity;
     float pad[3] = { 0,0,0 };
+};
+
+struct CBLight_All
+{
+    CBDirLight dirLit;
 };
 
 

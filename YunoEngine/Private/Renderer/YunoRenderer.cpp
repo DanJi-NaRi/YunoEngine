@@ -58,7 +58,9 @@ bool YunoRenderer::Initialize(IWindow* window)
     // 상수 버퍼 생성
     if (!m_cbFrame.Create(m_device.Get())) return false;
     if (!m_cbObject_Matrix.Create(m_device.Get())) return false;
-    if (!m_cbObject_Material.Create(m_device.Get())) return false;
+    if (!m_cbObject_Material.Create(m_device.Get())) return false; 
+    if (!m_cbLight.Create(m_device.Get())) return false;
+
 
     m_aspect = (m_height == 0) ? 1.0f : (float)m_width / (float)m_height;
     m_camera.aspect = m_aspect;
@@ -846,6 +848,8 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
     if (Has(VSF_UV) && streams.uv == nullptr) return 0;
     if (Has(VSF_T) && streams.t == nullptr) return 0;
     if (Has(VSF_B) && streams.b == nullptr) return 0;
+    if (Has(VSF_BoneWeight) && streams.boneWeight == nullptr) return 0;
+    if (Has(VSF_BoneIndex) && streams.boneIdx == nullptr) return 0;
 
     auto CreateVB = [&](const void* data, UINT stride, UINT count,
         ComPtr<ID3D11Buffer>& outVB) -> bool
@@ -1211,7 +1215,7 @@ void YunoRenderer::Submit(const RenderItem& item)
 
 void YunoRenderer::Flush()
 {
-    if (!m_context || !m_cbFrame.IsValid() || !m_cbObject_Matrix.IsValid() || !m_cbObject_Material.IsValid())
+    if (!m_context || !m_cbFrame.IsValid() || !m_cbObject_Matrix.IsValid() || !m_cbObject_Material.IsValid() || !m_cbLight.IsValid())
         return;
 
     SubmitDebugGrid();
@@ -1283,8 +1287,8 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
     // -----------------------------
     CBPerObject_Matrix cbPerObject_matrix{};
 
-    XMMATRIX V = m_camera.View();                       // 이거 2개는 b2에서쓰는건데
-    XMMATRIX P = m_camera.Proj();                       // WVP에서 써야돼서 미리 계산함
+    XMMATRIX V = m_camera.View();
+    XMMATRIX P = m_camera.Proj();
     XMMATRIX W = XMLoadFloat4x4(&item.Constant.world);
     XMMATRIX WVP = W * V * P;
 
@@ -1319,37 +1323,45 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
     m_context->PSSetConstantBuffers(1, 1, cbPerObj_Material_Buffers);
 
 
+}
+
+
+void YunoRenderer::BindConstantBuffers_OneFrame(const Frame_Data_Dir& dirData)
+{
+    using namespace DirectX;
     // -----------------------------
     // CBPerFrame (b2)
     // -----------------------------
     CBPerFrame cbPerFrame{};
 
+    XMMATRIX V = m_camera.View();
+    XMMATRIX P = m_camera.Proj();
+
     XMStoreFloat4x4(&cbPerFrame.mView, XMMatrixTranspose(V));
     XMStoreFloat4x4(&cbPerFrame.mProj, XMMatrixTranspose(P));
+    cbPerFrame.camPos = m_camera.Position();
 
     m_cbFrame.Update(m_context.Get(), cbPerFrame);
 
     ID3D11Buffer* cbFrame[] = { m_cbFrame.Get() };
     m_context->VSSetConstantBuffers(2, 1, cbFrame);
     m_context->PSSetConstantBuffers(2, 1, cbFrame);
-}
 
-void YunoRenderer::BindConstantBuffers_OneFrame(const RenderItem& item)
-{
+
     // -----------------------------
     // CBLight (b3)
     // -----------------------------
-    CBDirLight cbDirLight{};
+    CBLight_All cbLight_all;
 
-    cbDirLight.dir;
-    cbDirLight.diff;
-    cbDirLight.amb;
-    cbDirLight.spec;
-    cbDirLight.intensity;
+    cbLight_all.dirLit.dir = dirData.Lightdir;
+    cbLight_all.dirLit.diff = dirData.Lightdiff;
+    cbLight_all.dirLit.amb = dirData.Lightamb;
+    cbLight_all.dirLit.spec = dirData.Lightspec;
+    cbLight_all.dirLit.intensity = dirData.intensity;
 
-    m_cbDirLight.Update(m_context.Get(), cbDirLight);
+    m_cbLight.Update(m_context.Get(), cbLight_all);
 
-    ID3D11Buffer* cbLight[] = { m_cbDirLight.Get() };
+    ID3D11Buffer* cbLight[] = { m_cbLight.Get() };
     m_context->VSSetConstantBuffers(3, 1, cbLight);
     m_context->PSSetConstantBuffers(3, 1, cbLight);
 }
