@@ -74,6 +74,11 @@
     <Filter Include="Private\Scene">
       <UniqueIdentifier>{0170ffaa-52a9-4ad9-a9ea-a5490f1015d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\SceneBase">
+      <UniqueIdentifier>{3ce47353-34f6-4914-bfaa-aad64ee2159f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Light">
+      <UniqueIdentifier>{491ca366-9401-4be6-8d32-293d3261bdc3}</UniqueIdentifier>
     <Filter Include="Private\Renderer\Bone">
       <UniqueIdentifier>{16ad65e1-9a9e-4a8e-965e-f224ac0e004e}</UniqueIdentifier>
     </Filter>
@@ -137,6 +142,14 @@
     <ClCompile Include="Public\Renderer\Mesh.cpp">
       <Filter>Private\Renderer\Mesh</Filter>
     </ClCompile>
+
+    <ClCompile Include="Public\SceneBase\SceneBase.cpp">
+      <Filter>Public\SceneBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Light\YunoLight.cpp">
+      <Filter>Public\Light</Filter>
+    </ClCompile>
+
     <ClCompile Include="Public\Renderer\3DAnimation\Animator.cpp">
       <Filter>Public\Animator</Filter>
     </ClCompile>
@@ -146,7 +159,8 @@
     <ClCompile Include="Private\Renderer\BoneNode\BoneNode.cpp">
       <Filter>Private\Renderer\Bone\Node</Filter>
     </ClCompile>
-    <ClCompile Include="Public\SceneBase\SceneBase.cpp" />
+
+
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -204,16 +218,10 @@
     <ClInclude Include="Public\Interface\IInput.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Interface\IMaterial.h">
-      <Filter>Public\Interface</Filter>
-    </ClInclude>
     <ClInclude Include="Public\Interface\IMesh.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Public\Interface\IRenderer.h">
-      <Filter>Public\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Interface\IResourceManager.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Public\Interface\ISceneManager.h">
@@ -264,6 +272,14 @@
     <ClInclude Include="Public\Singleton\Singleton.h">
       <Filter>Private\Singleton</Filter>
     </ClInclude>
+
+    <ClInclude Include="Public\SceneBase\SceneBase.h">
+      <Filter>Public\SceneBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Light\YunoLight.h">
+      <Filter>Public\Light</Filter>
+    </ClInclude>
+
     <ClInclude Include="Public\Renderer\3DAnimation\Animator.h">
       <Filter>Public\Animator</Filter>
     </ClInclude>
@@ -273,14 +289,18 @@
     <ClInclude Include="Private\Renderer\BoneNode\BoneNode.h">
       <Filter>Private\Renderer\Bone\Node</Filter>
     </ClInclude>
-    <ClInclude Include="Public\SceneBase\SceneBase.h" />
+
+
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>
-    <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
+    <FxCompile Include="..\Assets\Shaders\DebugGrid.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\Assets\Shaders\DebugGrid.hlsl">
+    <FxCompile Include="..\Assets\Shaders\PBR_Base.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
@@ -289,6 +309,9 @@
       <Filter>Shaders\Include</Filter>
     </None>
     <None Include="..\Assets\Shaders\TexturesSampler.hlsli">
+      <Filter>Shaders\Include</Filter>
+    </None>
+    <None Include="..\Assets\Shaders\Light.hlsli">
       <Filter>Shaders\Include</Filter>
     </None>
   </ItemGroup>

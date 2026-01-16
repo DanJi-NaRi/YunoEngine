@@ -2,15 +2,20 @@
 
 #include "PlayScene.h"
 
-#include "Triangle.h"
-
-
 #include "YunoEngine.h"
-#include "IInput.h"
-#include "ISceneManager.h"
 
-#include "TitleScene.h"
 #include "ObjectManager.h"
+#include "YunoLight.h"
+
+
+#include "Building.h"
+#include "Triangle.h"
+#include "Quad.h"
+
+
+
+
+
 
 bool PlayScene::OnCreateScene()
 {
@@ -19,9 +24,16 @@ bool PlayScene::OnCreateScene()
     // 있는지 체크
     ObjectManager* om = GetObjectManager();
     if (!om) return false;
+    
+    // 디렉션 라이트 생성
+    m_objectManager->CreateDirLight();
 
+    //om->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
+
+    om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Box2.fbx");
+    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
     // 플레이어(삼각형)
-    om->CreateObject<Triangle>(L"player", XMFLOAT3(0, 0, 0));
+    //om->CreateObject<Triangle>(L"player", XMFLOAT3(0, 0, 0));
     return true;
 }
 

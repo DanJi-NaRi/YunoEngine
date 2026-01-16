@@ -90,7 +90,7 @@ bool Unit::Update(float dTime)
         mTM = mScale * mRot * mTrans * m_Parent->GetWorldMatrix();
     else
         mTM = mScale * mRot * mTrans;
-    
+
     XMStoreFloat4x4(&m_mScale, mScale);
     XMStoreFloat4x4(&m_mRot, mRot);
     XMStoreFloat4x4(&m_mTrans, mTrans);
@@ -101,7 +101,9 @@ bool Unit::Update(float dTime)
 
 bool Unit::Submit(float dTime)
 {
+
     m_MeshNode->Submit(m_mWorld);
+
 
     LastSubmit(dTime);
 

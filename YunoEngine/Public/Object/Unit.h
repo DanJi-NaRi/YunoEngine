@@ -46,7 +46,12 @@ protected:
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
 
+    // 상수버퍼 업데이트할 데이터들
+    Update_Data   m_constant;
+
+
    std::unique_ptr<MeshNode> m_MeshNode;
+
 
     Unit* m_Parent;
     std::unordered_map<uint32_t, Unit*> m_Childs;

@@ -2,21 +2,44 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
-struct CBDefault
+struct CBPerFrame
 {
-    XMFLOAT4X4 mWorld;
+
 	XMFLOAT4X4 mView;
 	XMFLOAT4X4 mProj;
-	XMFLOAT4X4 mWVP;
+    XMFLOAT3 camPos;
+    float pad = 0.0;
 };
 
-struct CBMaterial
+struct CBPerObject_Matrix
 {
-    DirectX::XMFLOAT4 baseColor;
-    float roughness;
-    float metallic;
-    uint32_t flags;
+    XMFLOAT4X4 mWorld;
+    XMFLOAT4X4 mWVP;
+    XMFLOAT4X4 mWInvT;
+};
+
+struct CBPerObject_Material
+{
+    XMFLOAT4 baseColor;
+    float roughRatio;
+    float metalRatio;
+    float shadowBias;
     float padding;
+};
+
+struct CBDirLight
+{
+    XMFLOAT4 dir;
+    XMFLOAT4 diff;
+    XMFLOAT4 amb;
+    XMFLOAT4 spec;
+    float intensity;
+    float pad[3] = { 0,0,0 };
+};
+
+struct CBLight_All
+{
+    CBDirLight dirLit;
 };
 
 

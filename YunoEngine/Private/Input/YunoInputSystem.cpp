@@ -104,7 +104,7 @@ void YunoInputSystem::Dispatch()
             if (!ctx) continue;
 
             const bool consumed = ctx->OnInputEvent(evt);
-            if (consumed || evt.consumed)
+            if (/*consumed ||*/ evt.consumed)
             {
                 // 상위 컨텍스트에서 이벤트 소모되면 하위 컨텍스트로 안내려감
                 // 이거 조금 바꾸면 모든 레이어에서도 소모 가능하긴 함

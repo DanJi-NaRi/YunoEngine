@@ -40,7 +40,12 @@ void Mesh::Create(MeshHandle mesh, MaterialHandle mat, const XMFLOAT3& vPos, con
 
 void Mesh::UpdateRenderItem(XMFLOAT4X4 mWorld)
 {
-    m_renderItem.mWorld = mWorld;
+    m_renderItem.Constant.world = mWorld;
+}
+
+void Mesh::SetObjectConstants(const Update_Data& constants)
+{
+    m_renderItem.Constant = constants;
 }
 
 void Mesh::Submit(XMFLOAT4X4& mWorld)

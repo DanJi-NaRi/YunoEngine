@@ -46,9 +46,12 @@ public:
 
     void UpdateRenderItem(XMFLOAT4X4 mWorld);
 
+    void SetObjectConstants(const Update_Data& constants);
+
+
     void Submit(XMFLOAT4X4& mWorld);
     void LastSubmit();
-   
+
     const RenderItem& GetRenderItem() { return m_renderItem; }
 
     const XMMATRIX& GetUserTM() { return m_mUser; }

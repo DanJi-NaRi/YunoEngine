@@ -359,7 +359,6 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
             texPath += L"_Albedo" + std::to_wstring(nodeNum) + L".png";
 
-            //auto wPath = Utf8ToWString(texPath.c_str());
             TextureHandle diff = renderer->CreateTexture2DFromFile(texPath.c_str());
 
             md.albedo = diff;
@@ -369,6 +368,15 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         {
             auto wPath = Utf8ToWString(texPath.C_Str());
             TextureHandle nrm = renderer->CreateTexture2DFromFile(wPath.c_str());
+
+            md.normal = nrm;
+        }
+        else 
+        {
+            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
+            texPath += L"_Normal" + std::to_wstring(nodeNum) + L".png";
+
+            TextureHandle nrm = renderer->CreateTexture2DFromFile(texPath.c_str());
 
             md.normal = nrm;
         }
@@ -382,9 +390,12 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         }
         else
         {
-            ret = aiMaterial->Get(AI_MATKEY_METALLIC_FACTOR, md.metallic);
-            if (ret == AI_FAILURE)
-                md.metallic = 0.0f;
+            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
+            texPath += L"_Metallic" + std::to_wstring(nodeNum) + L".png";
+
+            TextureHandle metal = renderer->CreateTexture2DFromFile(texPath.c_str());
+
+            md.metal = metal;
         }
         //Roughness
         if (aiMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &texPath) == AI_SUCCESS)
@@ -396,15 +407,27 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         }
         else
         {
-            ret = aiMaterial->Get(AI_MATKEY_ROUGHNESS_FACTOR, md.roughness);
-            if (ret == AI_FAILURE)
-                md.roughness = 0.5f;
+            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
+            texPath += L"_Roughness" + std::to_wstring(nodeNum) + L".png";
+
+            TextureHandle rough = renderer->CreateTexture2DFromFile(texPath.c_str());
+
+            md.rough = rough;
         }
         //AO
         if (aiMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &texPath) == AI_SUCCESS)
         {
             auto wPath = Utf8ToWString(texPath.C_Str());
             TextureHandle ao = renderer->CreateTexture2DFromFile(wPath.c_str());
+
+            md.ao = ao;
+        }
+        else 
+        {
+            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
+            texPath += L"_AO" + std::to_wstring(nodeNum) + L".png";
+
+            TextureHandle ao = renderer->CreateTexture2DFromFile(texPath.c_str());
 
             md.ao = ao;
         }

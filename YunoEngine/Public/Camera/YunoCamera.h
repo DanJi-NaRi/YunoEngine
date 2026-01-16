@@ -24,4 +24,6 @@ struct YunoCamera
         using namespace DirectX;
         return XMMatrixPerspectiveFovLH(fovY, aspect, nearZ, farZ);
     }
+
+    XMFLOAT3 Position() const { return position; }
 };

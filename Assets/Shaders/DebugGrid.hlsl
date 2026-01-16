@@ -24,11 +24,11 @@ VSOutput VSMain(VSInput i)
 float4 PSMain(VSOutput input) : SV_Target
 {
     // z축 파란색 출력
-    if (input.originPos.z == 0.0f)
+    if (input.originPos.x == 0.0f)
         return float4(0, 0, 1, 1);
     
     // x축 빨간색 출력
-    if (input.originPos.x == 0.0f)
+    if (input.originPos.z == 0.0f)
         return float4(1, 0, 0, 1);
 
     return float4(0.6, 0.6, 0.6, 1);

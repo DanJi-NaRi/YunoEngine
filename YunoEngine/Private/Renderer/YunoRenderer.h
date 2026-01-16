@@ -144,16 +144,17 @@ public:
 
     TextureHandle CreateTexture2DFromFile(const wchar_t* path) override;
 
+
+
     void Submit(const RenderItem& item) override;
     void Flush() override;     
+
+    void BindConstantBuffers_OneFrame(const Frame_Data_Dir& dirData) override;
 
     YunoCamera& GetCamera() override { return m_camera; }
 
 private:
-    void BindConstantBuffers(
-        const RenderItem& item,
-        const YunoMaterial& material
-    );
+    void BindConstantBuffers(const RenderItem& item);
 
 
 private:
@@ -165,6 +166,7 @@ private:
 
     void SetViewPort();
     void ClearDepthStencil();
+    const ShaderId SetShaderKey(const MaterialDesc& desc);
 
 
 
@@ -183,8 +185,11 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Texture2D>        m_depthStencilTex;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_dsv;
 
-    YunoConstantBuffer<CBDefault> m_cbDefault;
-    YunoConstantBuffer<CBMaterial> m_cbMaterial;
+    YunoConstantBuffer<CBPerFrame> m_cbFrame;
+    YunoConstantBuffer<CBPerObject_Matrix> m_cbObject_Matrix;
+    YunoConstantBuffer<CBPerObject_Material> m_cbObject_Material;
+    YunoConstantBuffer<CBLight_All> m_cbLight;
+
     YunoCamera m_camera;
     float m_aspect = 1.0f;
 
@@ -217,6 +222,8 @@ private:
         ComPtr<ID3D11Buffer> vbUV;
         ComPtr<ID3D11Buffer> vbT;
         ComPtr<ID3D11Buffer> vbB;
+        ComPtr<ID3D11Buffer> vbBoneWeight;
+        ComPtr<ID3D11Buffer> vbBoneIndex;
 
         // Index Buffer (optional)
         ComPtr<ID3D11Buffer> ib;

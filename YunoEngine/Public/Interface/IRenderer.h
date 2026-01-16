@@ -45,6 +45,9 @@ public:
 
     // BeginFrame~EndFrame 사이에서 호출되어 실제 Draw 수행
     virtual void Flush() = 0;
+
+    // 프레임당 1회 상수 버퍼 업데이트
+    virtual void BindConstantBuffers_OneFrame(const Frame_Data_Dir& dirData) = 0;
     
     // 카메라 받아오기
     virtual YunoCamera& GetCamera() = 0;
