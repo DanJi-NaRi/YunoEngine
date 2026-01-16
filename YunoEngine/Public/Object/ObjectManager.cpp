@@ -188,5 +188,5 @@ void ObjectManager::FrameDataSubmit()
 
 std::unique_ptr<MeshNode> ObjectManager::CreateMeshNode(const std::wstring& filepath)
 {
-    return Parser::Instance().LoadFile(filepath);
+    return Parser::Instance().LoadFile(filepath).first;
 }

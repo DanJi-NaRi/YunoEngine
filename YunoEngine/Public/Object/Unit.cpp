@@ -91,28 +91,19 @@ bool Unit::Update(float dTime)
     else
         mTM = mScale * mRot * mTrans;
 
-    if (!m_Meshs.empty())
-    {
-        XMMATRIX userTM = XMLoadFloat4x4(&m_Meshs[0]->GetUserTM());
-        mTM = userTM * mTM;
-    }
-        
     XMStoreFloat4x4(&m_mScale, mScale);
     XMStoreFloat4x4(&m_mRot, mRot);
     XMStoreFloat4x4(&m_mTrans, mTrans);
     XMStoreFloat4x4(&m_mWorld, mTM);
-
 
     return true;
 }
 
 bool Unit::Submit(float dTime)
 {
-    for (auto& mesh : m_Meshs)
-    {
-        mesh->SetObjectConstants(m_constant);
-        mesh->UpdateRenderItem(m_mWorld);
-    }
+
+    m_MeshNode->Submit(m_mWorld);
+
 
     LastSubmit(dTime);
 
@@ -121,10 +112,7 @@ bool Unit::Submit(float dTime)
 
 bool Unit::LastSubmit(float dTime /*= 0*/)
 {
-    for (auto& mesh : m_Meshs)
-    {
-        YunoEngine::GetRenderer()->Submit(mesh->GetRenderItem());
-    }
+    m_MeshNode->LastSubmit();
     
     return true;
 }
@@ -137,9 +125,9 @@ void Unit::Backup()
     m_vDirBk = m_vDir;
 }
 
-void Unit::SetMesh(std::unique_ptr<Mesh>&& mesh)
+void Unit::SetMesh(std::unique_ptr<MeshNode>&& mesh)
 {
-    m_Meshs.push_back(std::move(mesh));
+    m_MeshNode = std::move(mesh);
 }
 
 

@@ -49,7 +49,9 @@ protected:
     // 상수버퍼 업데이트할 데이터들
     Update_Data   m_constant;
 
-    std::vector<std::unique_ptr<Mesh>> m_Meshs;
+
+   std::unique_ptr<MeshNode> m_MeshNode;
+
 
     Unit* m_Parent;
     std::unordered_map<uint32_t, Unit*> m_Childs;
@@ -78,7 +80,7 @@ public:
     virtual bool CreateMesh() { return false; };
     virtual bool CreateMaterial() { return false; };
 
-    virtual void SetMesh(std::unique_ptr<Mesh>&& mesh);
+    virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 
     uint32_t GetID() { return m_id; }
     const std::wstring& GetName() { return m_name; }

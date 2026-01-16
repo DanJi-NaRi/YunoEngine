@@ -1,5 +1,8 @@
 #include "pch.h"
+
 #include "Mesh.h"
+#include "IRenderer.h"
+#include "YunoEngine.h"
 
 Mesh::Mesh()
 {
@@ -11,20 +14,25 @@ Mesh::~Mesh()
 
 }
 
-void Mesh::Create(MeshHandle mesh, MaterialHandle mat, XMFLOAT3 pos, XMFLOAT3 rot, XMFLOAT3 scale)
+void Mesh::Create(MeshHandle mesh, MaterialHandle mat, const XMMATRIX& modelTM)
 {
     m_Mesh = mesh;
     m_Material = mat;
 
-    m_vPos = pos;
-    m_vRot = rot;
-    m_vScale = scale;
+    m_mUser = modelTM;
 
-    XMMATRIX userTM = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z)
-                                        * XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z)
-                                        * XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z);
+    m_renderItem.materialHandle = m_Material;
+    m_renderItem.meshHandle = m_Mesh;
+}
 
-    XMStoreFloat4x4(&m_mUser, userTM);
+void Mesh::Create(MeshHandle mesh, MaterialHandle mat, const XMFLOAT3& vPos, const XMFLOAT3& vRot, const XMFLOAT3& vScale)
+{
+    m_Mesh = mesh;
+    m_Material = mat;
+
+    m_mUser = XMMatrixScaling(vScale.x, vScale.y, vScale.z) 
+                                        * XMMatrixRotationRollPitchYaw(vRot.x, vRot.y, vRot.z) 
+                                        * XMMatrixTranslation(vPos.x, vPos.y, vPos.z);
 
     m_renderItem.materialHandle = m_Material;
     m_renderItem.meshHandle = m_Mesh;
@@ -38,4 +46,32 @@ void Mesh::UpdateRenderItem(XMFLOAT4X4 mWorld)
 void Mesh::SetObjectConstants(const Update_Data& constants)
 {
     m_renderItem.Constant = constants;
+}
+
+void Mesh::Submit(XMFLOAT4X4& mWorld)
+{
+    XMStoreFloat4x4(&m_renderItem.mWorld, m_mUser * XMLoadFloat4x4(&mWorld));
+}
+
+void Mesh::LastSubmit()
+{
+    YunoEngine::GetRenderer()->Submit(m_renderItem);
+}
+
+void MeshNode::Submit(XMFLOAT4X4& mWorld)
+{
+    for (auto& mesh : m_Meshs)
+        mesh->Submit(mWorld);
+
+    for (auto& child : m_Childs)
+        child->Submit(mWorld);
+}
+
+void MeshNode::LastSubmit()
+{
+    for (auto& mesh : m_Meshs)
+        mesh->LastSubmit();
+
+    for (auto& child : m_Childs)
+        child->LastSubmit();
 }
