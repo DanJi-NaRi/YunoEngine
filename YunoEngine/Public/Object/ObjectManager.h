@@ -3,6 +3,7 @@
 #pragma once
 #include "RenderTypes.h"
 #include "Unit.h"
+#include "Widget.h"
 
 class YunoDirectionalLight;
 
@@ -13,6 +14,8 @@ private:
     UINT m_ObjectIDs;
 
     std::deque<std::unique_ptr<Unit>> m_objs;
+    std::deque<std::unique_ptr<Widget>> m_widgets;
+
     std::unordered_map<UINT, Unit*> m_objMap;
     std::unordered_map<std::wstring, UINT> m_nameToID;
 

@@ -9,6 +9,8 @@
 #include "ISceneManager.h"
 #include "YunoCamera.h"
 
+#include "Widget.h"
+
 #include "TitleScene.h"
 #include "PlayScene.h"
 
@@ -45,6 +47,8 @@ bool GameApp::OnInit()
    opt.immediate = true;
    sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
 
+   // UI 재사용 쿼드 제작
+   SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
 
     return true;
 }

@@ -37,6 +37,21 @@
     <Filter Include="Game\Object\Building">
       <UniqueIdentifier>{634a52df-c3f6-426d-9088-ebdfd94c30d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\UI">
+      <UniqueIdentifier>{7cf5f1df-0f47-4766-87b9-cbcce4497de0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Image">
+      <UniqueIdentifier>{886b6b45-32e8-4f8d-9c3a-1aeccba4ee20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Slider">
+      <UniqueIdentifier>{e189f2f1-ad82-43d5-8ce9-f8e63a9fe695}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Text">
+      <UniqueIdentifier>{d75203f4-897b-4c72-ad75-a53257c6b5fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Button">
+      <UniqueIdentifier>{de22c067-ae78-4163-9f35-1f853c353610}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -65,6 +80,12 @@
     </ClCompile>
     <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp" />
     <ClCompile Include="Game\Object\Dwarf.cpp" />
+    <ClCompile Include="Text.cpp">
+      <Filter>Game\UI\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Game\UI\Image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -96,5 +117,11 @@
     </ClInclude>
     <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h" />
     <ClInclude Include="Game\Object\Dwarf.h" />
+    <ClInclude Include="Text.h">
+      <Filter>Game\UI\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Game\UI\Image</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
