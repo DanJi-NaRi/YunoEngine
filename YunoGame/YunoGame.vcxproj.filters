@@ -25,17 +25,23 @@
     <Filter Include="System">
       <UniqueIdentifier>{9361046d-0731-4de1-9145-d90d338d0e82}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scenes\0. Test">
-      <UniqueIdentifier>{568b3c88-40c4-44a7-95a2-efd275f2cc97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scenes\1. First">
-      <UniqueIdentifier>{dfb98353-23be-4e81-8a4f-8384ec4cfd4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scenes\2. Second">
-      <UniqueIdentifier>{75bf4271-7290-46c5-9098-5693ea31ff20}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Object\Building">
       <UniqueIdentifier>{634a52df-c3f6-426d-9088-ebdfd94c30d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Dwarf">
+      <UniqueIdentifier>{3b9b7804-e2eb-4f90-8fcd-739ee7e89373}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\0. Template">
+      <UniqueIdentifier>{568b3c88-40c4-44a7-95a2-efd275f2cc97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\1. Title">
+      <UniqueIdentifier>{dfb98353-23be-4e81-8a4f-8384ec4cfd4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\2. Play">
+      <UniqueIdentifier>{75bf4271-7290-46c5-9098-5693ea31ff20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ClientNet">
+      <UniqueIdentifier>{37ac9af2-1aef-49b2-9c41-75a27528880d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -55,16 +61,20 @@
       <Filter>Game\Object\Quad</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\PlayScene.cpp">
-      <Filter>Scenes\2. Second</Filter>
+      <Filter>Scenes\2. Play</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\TitleScene.cpp">
-      <Filter>Scenes\1. First</Filter>
+      <Filter>Scenes\1. Title</Filter>
     </ClCompile>
     <ClCompile Include="Game\Object\Building.cpp">
       <Filter>Game\Object\Building</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp" />
-    <ClCompile Include="Game\Object\Dwarf.cpp" />
+    <ClCompile Include="Game\Object\Dwarf.cpp">
+      <Filter>Game\Object\Dwarf</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp">
+      <Filter>Scenes\0. Template</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -86,15 +96,19 @@
       <Filter>System</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\PlayScene.h">
-      <Filter>Scenes\2. Second</Filter>
+      <Filter>Scenes\2. Play</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\TitleScene.h">
-      <Filter>Scenes\1. First</Filter>
+      <Filter>Scenes\1. Title</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\Building.h">
       <Filter>Game\Object\Building</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h" />
-    <ClInclude Include="Game\Object\Dwarf.h" />
+    <ClInclude Include="Game\Object\Dwarf.h">
+      <Filter>Game\Object\Dwarf</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h">
+      <Filter>Scenes\0. Template</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
