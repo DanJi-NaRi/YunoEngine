@@ -150,89 +150,28 @@ float4 Specular_BRDF(float4 pos_W, float4 nrm_W, float4 base, float4 metal, floa
     
     float4 smooth = saturate(1 - rough);
     
-    
-    
-       // 조명 계산 <방식2> : 반사율(표면 거칠기 Roughness ) : rough.map 적용     
-    //                     (데모용, smooth 가 1 이면, 레거시 specular 계산)
-	//아래의 조건 각각 테스트 해 볼 것.★        
-	//float4 spec = lt * pow(max(dot(N, H), 0.0f), rough * 100.0f);    //rough 적용 
-    //float4 spec = lt * pow(max(dot(N, H), 0.0f), smooth * 100.0f);    //smooth 적용  풀질비교
-    //if(smooth.a) spec *= smooth;                                      //smooth 적용(2). 품질비교 요망.
-    //return spec;
-      
-    
-    
-    // 조명 계산 <방식3> : Cook-Torrance BRDF 모델 적용
-    // 1. Frenel 적용
-    // 나머지는 기본값 처리.
-    // [참고] 프레넬 굴절율 (IOR, List of Relfraction) (https://pixelandpoly.com/ior.html)
-    // 공기(Air) : 1.0
-    // 금속 (iron) : 2.950
-    // 알루미늄(Aluminum) : 1.390
-    // 금(Gold) : 0.470
-    // 얼름(Ice) : 1.309
-    // 플라스틱(Plastic) : 1.460
-    // 물(Water) : 1.325
-    // 티타늄(Titanium) : 2.160
-    // 유리(Glass) : 1.500
-    // 크리스탈(Crystal) : 2.000
-    // 자동차 페인트 : 1.175
-    //
-    //아래의 조건 각각 테스트 해 볼 것.★
-    //float4 R0 = float4(0.02, 0.02f, 0.02, 0);         //Water
-    //float4 R0 = float4(0.08, 0.08f, 0.08, 0);         //Glass
-    //float4 R0 = float4(0.05, 0.05f, 0.05, 0);         //Plastic
-    //float4 R0 = float4(1.00, 0.71f, 0.29, 0); //Gold -> Fresnel 반사 테스트 추천.★
-    float4 R0 = float4(0.95, 0.93f, 0.88, 0); //Silver
-    //float4 R0 = float4(0.95, 0.64f, 0.54, 0);         //Copper
-    //float4 R0 = float4(0.24, 0.24f, 0.24, 1);         //Iron
-    //float4 R0 = float4(1, 0.0f, 0.0, 1);              //Iron (Red) 테스트용
-    //float4 R0 = float4(0.0064, 0.0064, 0.0064, 0);     //자동차 페인트..(??)
+    float4 R0 = float4(1.00, 0.71f, 0.29, 0);
+
     
     R0 *= metal * smooth;
     
     
- //굴절율, 텍스처 기반 처리.
-    //float4 R0 = base;
-    //float4 R0 = spec0;
-    
-    
-    //아래의 조건 각각 테스트 해 볼 것.★
     float4 D = PBR_D(N, H, rough.x);
-    //float4 D = 1;
     float4 F = PBR_F(R0, V, H);
     float4 G = PBR_G(V, N, rough.x);
-    //float4 G = 1;
-    //float n_l = dot(N, L);
-    //float n_v = dot(N, V);
-    //float n_l = max(dot(N, L), 0);
-    //float n_v = max(dot(N, V), 0);    
+    
     float n_l = saturate(max(dot(N, L), 0.001));
     float n_v = saturate(max(dot(N, V), 0.001));
     
     
-    //아래의 조건 각각 테스트 해 볼 것.★
-    //float4 specBRDF = (D * F * G)/(2 * n_l * n_v);            //2배 배율 (더 넓은 확산)
-    float4 specBRDF = (D * F * G) / (4 * n_l * n_v); //Cook-Torrance 표준.
-    //float4 specBRDF = (D * F * G)/(8 * PI * n_l * n_v);       //2π 감쇄 배울 추가.
-    //float4 specBRDF = (D * F * G)/(16 * PI * n_l * n_v);      //4π 감쇄 배울 추가. (더 선명한 반사)
-    //float4 specBRDF = G_CookTorrance(V.xyz, N.xyz, L.xyz, rough.x);
+    float4 specBRDF = (D * F * G) / (4 * n_l * n_v); 
+
         
     
-    //아래의 조건 각각 테스트 해 볼 것.★
-    //float4 spec = F;
-    //float4 spec = F * base;
-    //float4 spec = specBRDF;
-    //float4 spec = saturate(specBRDF);
-    //float4 spec = g_Lit.Specular * specBRDF;
-    //float4 spec = lt * specBRDF;
-    //float4 spec = lt * saturate(specBRDF);          //기본멥+조명+Specular 혼합 ★
     float4 spec = lt * saturate(specBRDF) * smooth;
-    //float4 spec = lt * smooth + saturate(specBRDF) * smooth;
+
     
-    // 반사율(표면 거칠기 Roughness ) : rough.map 적용     
-    //float4 spec = lt * pow(max(dot(N, H), 0.0f), rough * 100.0f);       //rough 적용 
-    //return specBRDF;
+
     return spec;
     
 }
