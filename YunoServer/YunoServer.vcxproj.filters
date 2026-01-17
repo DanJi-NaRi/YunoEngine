@@ -4,13 +4,27 @@
     <Filter Include="ServerNet">
       <UniqueIdentifier>{6292b59c-ca1c-41a5-a493-3472fecd1064}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{f62417d9-ef44-4863-bdc0-76891466081a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ServerNet\NetworkServer.cpp" />
-    <ClCompile Include="ServerNet\Session.cpp" />
+    <ClCompile Include="ServerNet\NetworkServer.cpp">
+      <Filter>ServerNet</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerNet\Session.cpp">
+      <Filter>ServerNet</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ServerNet\NetworkServer.h" />
-    <ClInclude Include="ServerNet\Session.h" />
+    <ClInclude Include="ServerNet\Session.h">
+      <Filter>ServerNet</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerNet\NetworkServer.h">
+      <Filter>ServerNet</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
