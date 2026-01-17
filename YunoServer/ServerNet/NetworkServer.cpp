@@ -4,7 +4,7 @@
 
 NetworkServer::NetworkServer(unsigned short port)
     : io_context_(),
-    acceptor_(io_context_, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)) {
+    acceptor_(io_context_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) {
     StartAccept();
 }
 
@@ -14,7 +14,7 @@ void NetworkServer::Run() {
 
 void NetworkServer::StartAccept() {
     acceptor_.async_accept(
-        [this](const asio::error_code& error, asio::ip::tcp::socket socket) {
+        [this](const boost::system::error_code& error, boost::asio::ip::tcp::socket socket) {
             if (!error) {
                 std::make_shared<Session>(std::move(socket))->Start();
             }
