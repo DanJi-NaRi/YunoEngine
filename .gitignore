@@ -13,7 +13,6 @@ Debug/
 Release/
 x64/
 x86/
-Assets/
 
 # Intermediate / binaries
 *.obj
