@@ -36,3 +36,16 @@ ipch/
 # CMake 쓰면
 CMakeFiles/
 CMakeCache.txt
+
+# Project local outputs
+Bin/
+Intermediate/
+
+# vcpkg (DO NOT COMMIT)
+vcpkg_installed/
+vcpkg/downloads/
+vcpkg/buildtrees/
+vcpkg/packages/
+
+# temp created for vcpkg workaround
+.tmp/
