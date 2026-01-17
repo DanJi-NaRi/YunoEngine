@@ -339,6 +339,7 @@
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
     <ClInclude Include="Public\Renderer\3DAnimation\BoneAnimation.h" />
+    </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>

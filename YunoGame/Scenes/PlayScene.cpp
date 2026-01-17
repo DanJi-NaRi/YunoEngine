@@ -11,6 +11,7 @@
 #include "Building.h"
 #include "Triangle.h"
 #include "Quad.h"
+#include "Dwarf.h"
 
 
 
@@ -30,8 +31,10 @@ bool PlayScene::OnCreateScene()
 
     //om->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
+
     //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
     om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+
     // 플레이어(삼각형)
     //om->CreateObject<Triangle>(L"player", XMFLOAT3(0, 0, 0));
     return true;
