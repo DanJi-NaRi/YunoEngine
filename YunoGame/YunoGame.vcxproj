@@ -121,7 +121,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-<AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
 $(SolutionDir)YunoEngine\Public;
 $(SolutionDir)YunoEngine\Public\Camera;
 $(SolutionDir)YunoEngine\Public\Input;
@@ -200,6 +200,7 @@ xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)..\Assets"</Command>
     <ClCompile Include="Game\GameApp.cpp" />
     <ClCompile Include="Game\Object\Building.cpp" />
     <ClCompile Include="Game\Object\Dwarf.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Object\Triangle.cpp" />
     <ClCompile Include="Game\Object\Quad.cpp" />
@@ -213,6 +214,8 @@ xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)..\Assets"</Command>
     <ClCompile Include="Scenes\TitleScene.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="Scenes\TitleScene_UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h" />
@@ -221,6 +224,7 @@ xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)..\Assets"</Command>
     <ClInclude Include="Game\Object\Dwarf.h" />
     <ClInclude Include="Game\Object\Triangle.h" />
     <ClInclude Include="Game\Object\Quad.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="Scenes\PlayScene.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
@@ -233,6 +237,8 @@ xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)..\Assets"</Command>
     </ClInclude>
     <ClInclude Include="System\GameInputContext.h" />
     <ClInclude Include="System\TestInputContexts.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="Scenes\TitleScene_UI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -61,7 +61,12 @@ void SceneBase::Update(float dt)
     m_lastDt = dt;
 
     if (m_objectManager)
+    {
+        m_objectManager->WidgetUpdate(dt);
         m_objectManager->Update(dt);
+    }
+        
+        
 }
 
 void SceneBase::Submit()
@@ -70,6 +75,9 @@ void SceneBase::Submit()
     {
         m_objectManager->Submit(m_lastDt);
         m_objectManager->ProcessPending();
+
+        m_objectManager->WidgetSubmit(m_lastDt);
+        m_objectManager->ProcessWidgetPending();
     }
 
 }

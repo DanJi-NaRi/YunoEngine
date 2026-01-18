@@ -28,14 +28,27 @@ protected:
 
     std::wstring m_name;
 
-    XMFLOAT3	m_vPos;     // 스크린상의 위치 (z는 사용 안 함(camera-near 문제), 1 고정)
+    XMFLOAT3	m_vPos;     // 스크린상의 위치 (z는 사용 안 함(camera-near 문제))
     XMFLOAT3	m_vRot;     // 스크린상의 위젯 Rot
     XMFLOAT3	m_vScale;   // 스크린상의 위젯 크기 배율 (z는 의미 없음, 사용 안함)
     
+    XMFLOAT4X4	m_mWorld;
+    XMFLOAT4X4	m_mScale, m_mRot, m_mTrans;
+
+    XMFLOAT3	m_vPosBk;
+    XMFLOAT3	m_vRotBk;
+    XMFLOAT3	m_vScaleBk;
+    XMFLOAT3 	m_vDirBk;
+
     float m_width;
     float m_height;
 
+    float m_spriteSizeX;
+    float m_spriteSizeY;
+
     int m_zOrder;
+
+    XMFLOAT2 m_pivot = { 0,0 }; // 아직 미사용
 
     Visibility m_visible; // 보이기 여부
 
@@ -46,6 +59,8 @@ protected:
     bool m_layoutDirty    = true; // pos,rot,scale 변경 시
     bool m_transformDirty = true; // width,height 변경 시
 
+    float       m_time;
+
     RenderItem      m_renderItem;
     MeshHandle      m_defaultMesh;
     MaterialHandle  m_defaultMaterial;
@@ -53,15 +68,16 @@ protected:
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
 
+    RectPx m_layoutRectPx;
+    RectPx m_clipRectPx;
+
     // 상수버퍼 업데이트할 데이터들
     Update_Data   m_constant;
 
-
     std::unique_ptr<MeshNode> m_MeshNode;
 
-
-    //Widget* m_Parent;
-    //std::unordered_map<uint32_t, Widget*> m_Childs;
+    Widget* m_Parent;
+    std::unordered_map<uint32_t, Widget*> m_Childs;
 
 protected:
     IRenderer* m_pRenderer = nullptr;
@@ -92,6 +108,8 @@ public:
     uint32_t GetID() { return m_id; }
     const std::wstring& GetName() { return m_name; }
 
+    XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
+
     //void Attach(Widget* obj);
     //void DettachParent();
     //void DettachChild(uint32_t id);
@@ -101,7 +119,11 @@ public:
 extern MeshHandle g_defaultWidgetMesh;
 
 bool SetupDefWidgetMesh(MeshHandle& meshHandle, IRenderer* renderer);
-inline MeshHandle& GetDefWidgetMesh(MeshHandle& meshHandle) { if (meshHandle) { meshHandle = g_defaultWidgetMesh; } return g_defaultWidgetMesh; }
+inline MeshHandle GetDefWidgetMesh(MeshHandle* out = nullptr)
+{
+    if (out) *out = g_defaultWidgetMesh;
+    return g_defaultWidgetMesh;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //

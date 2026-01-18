@@ -61,6 +61,26 @@ void ObjectManager::Submit(float dTime)
     }
 }
 
+//나중에 이벤트 큐 만들어서 바꿔야함
+void ObjectManager::WidgetUpdate(float dTime)
+{
+    FrameDataUpdate();
+    for (auto& obj : m_widgets)
+    {
+        obj->Update(dTime);
+    }
+}
+//나중에 이벤트 큐 만들어서 바꿔야함
+void ObjectManager::WidgetSubmit(float dTime)
+{
+    FrameDataSubmit();
+
+    for (auto& obj : m_widgets)
+    {
+        obj->Submit(dTime);
+    }
+}
+
 void ObjectManager::ProcessPending()
 {
     if (!m_pendingCreateQ.empty())
@@ -101,6 +121,50 @@ void ObjectManager::ProcessPending()
         }
 
         m_pendingDestoryQ.clear();
+    }
+}
+
+void ObjectManager::ProcessWidgetPending()
+{
+    if (!m_widgetPendingCreateQ.empty())
+    {
+        for (auto& widget : m_widgetPendingCreateQ)
+        {
+            UINT id = widget->GetID();
+            auto name = widget->GetName();
+            auto* pWidget = widget.get();
+            m_widgets.push_back(std::move(widget));
+            m_WidgetMap.emplace(id, pWidget);
+            m_widgetNameToID.emplace(name, id);
+            m_ObjectCount++;
+        }
+
+        m_widgetPendingCreateQ.clear();
+    }
+
+    if (!m_widgetPendingDestoryQ.empty())
+    {
+        for (auto& id : m_widgetPendingDestoryQ)
+        {
+            auto name = m_WidgetMap[id]->GetName();
+
+            auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [id](const std::unique_ptr<Widget>& widget) { return widget->GetID() == id; });
+
+            if (it == m_widgets.end())
+                continue;
+
+            // 임시 주석 처리
+            //it->get()->DettachParent();
+            //it->get()->ClearChild();
+
+            m_widgetNameToID.erase(name);
+            m_WidgetMap.erase(id);
+
+            m_widgets.erase(it);
+            m_ObjectCount--;
+        }
+
+        m_widgetPendingDestoryQ.clear();
     }
 }
 
