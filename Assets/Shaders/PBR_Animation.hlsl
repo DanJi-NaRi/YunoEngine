@@ -9,6 +9,8 @@ struct VSInput
     float2 uv : TEXCOORD0;
     float4 T : TANGENT0;
     float3 B : BINORMAL0;
+    float4 weight : BONEWEIGHT0;
+    uint4 index : BONEINDICES0;
 };
 
 struct VSOutput
@@ -21,15 +23,22 @@ struct VSOutput
     float3 B : BINORMAL;
 };
 
+float4 Skinning(float4 pos, float4 weight, uint4 index);
+float3 SkinningNrm(float3 nrm, float4 weight, uint4 index);
+
 VSOutput VSMain(VSInput i)
 {
     VSOutput o;
+    float4 pos = float4(i.pos, 1);
+    float3 nrm = i.nrm;
     
-    float4 pos = mul(float4(i.pos, 1.0f), mWVP);
-    float4 pos_W = mul(float4(i.pos, 1.0f), mWorld);
+    pos = Skinning(pos, i.weight, i.index);
+    nrm = SkinningNrm(nrm, i.weight, i.index);
+    
+    pos = mul(pos, mWVP);
+    float4 pos_W = mul(pos, mWorld);
 
-    
-    float3 nrm = mul(i.nrm, (float3x3)mWInvT);
+    nrm = mul(nrm, (float3x3) mWInvT);
     nrm = normalize(nrm);
     
     o.pos = pos;
@@ -39,10 +48,42 @@ VSOutput VSMain(VSInput i)
     o.T = i.T;
     o.B = i.B;
 
-    
     return o;
 }
 
+float4 Skinning(float4 pos, float4 weight, uint4 index)
+{
+    float4 skinVtx;
+    
+    float4 v0 = mul(pos, mBoneAnimation[index.x]);
+    float4 v1 = mul(pos, mBoneAnimation[index.y]);
+    float4 v2 = mul(pos, mBoneAnimation[index.z]);
+    float4 v3 = mul(pos, mBoneAnimation[index.w]);
+    
+    skinVtx = v0 * weight.x
+                  + v1 * weight.y
+                  + v2 * weight.z
+                  + v3 * weight.w;
+
+    return skinVtx;
+}
+
+float3 SkinningNrm(float3 nrm, float4 weight, uint4 index)
+{
+    float3 skinNrm;
+    
+    float3 n0 = mul(nrm, (float3x3)mBoneAnimation[index.x]);
+    float3 n1 = mul(nrm, (float3x3)mBoneAnimation[index.y]);
+    float3 n2 = mul(nrm, (float3x3)mBoneAnimation[index.z]);
+    float3 n3 = mul(nrm, (float3x3)mBoneAnimation[index.w]);
+    
+    skinNrm = n0 * weight.x
+                    + n1 * weight.y
+                    + n2 * weight.z
+                    + n3 * weight.w;
+
+    return normalize(skinNrm);
+}
 
 float4 PSMain(VSOutput input) : SV_Target
 {
@@ -73,5 +114,5 @@ float4 PSMain(VSOutput input) : SV_Target
     // 최종 컬러
     float4 finalColor = BaseColor * diff + spec;
     
-    return float4(input.nrm, 1);
+    return float4(1, 1, 1, 1);
 }

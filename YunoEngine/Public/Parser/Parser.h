@@ -3,6 +3,12 @@
 #include "Singleton.h"
 #include "Animator.h"
 
+struct VertexWeight
+{
+    UINT boneIndex;
+    float weight;
+};
+
 class Parser : public Singleton<Parser>
 {
 public:

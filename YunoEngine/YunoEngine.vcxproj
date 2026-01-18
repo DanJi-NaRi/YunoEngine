@@ -129,8 +129,6 @@
 </AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Light;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-     
-
     </ClCompile>
     <Link>
       <SubSystem>
@@ -201,7 +199,6 @@
     <ClInclude Include="Private\Input\InputState.h" />
     <ClInclude Include="Private\Input\YunoInputSystem.h" />
     <ClInclude Include="Private\Renderer\BoneAnimation\BoneAnimation.h" />
-    <ClInclude Include="Private\Renderer\BoneNode\BoneNode.h" />
     <ClInclude Include="Private\Scene\YunoSceneManager.h" />
     <ClInclude Include="Public\Interface\IInputContext.h" />
     <ClInclude Include="Public\Input\InputEvent.h" />
@@ -209,9 +206,11 @@
     <ClInclude Include="Private\Resource\YunoTextureManager.h" />
     <ClInclude Include="Public\Interface\IScene.h" />
     <ClInclude Include="Public\Light\YunoLight.h" />
+    <ClInclude Include="Public\Object\AnimationUnit.h" />
     <ClInclude Include="Public\Object\ObjectManager.h" />
     <ClInclude Include="Public\Parser\Parser.h" />
     <ClInclude Include="Public\Renderer\3DAnimation\Animator.h" />
+    <ClInclude Include="Public\Renderer\3DAnimation\BoneNode.h" />
     <ClInclude Include="Public\Renderer\MaterialDesc.h" />
     <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h" />
     <ClInclude Include="Private\Renderer\Mesh\YunoMeshBuffer.h">
@@ -264,6 +263,7 @@
     <ClCompile Include="Private\Window\YunoWindow.cpp" />
     <ClCompile Include="Private\YunoEngine.cpp" />
     <ClCompile Include="Public\Light\YunoLight.cpp" />
+    <ClCompile Include="Public\Object\AnimationUnit.cpp" />
     <ClCompile Include="Public\Object\ObjectManager.cpp" />
     <ClCompile Include="Public\Object\Unit.cpp" />
     <ClCompile Include="Public\Parser\Parser.cpp" />
@@ -272,11 +272,19 @@
     <ClCompile Include="Public\SceneBase\SceneBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\DebugGrid.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PBR_Animation.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

@@ -2,65 +2,97 @@
 
 #include "BoneAnimation.h"
 
+template<typename T>
+int FindKeyIndex(const std::vector<T>& keys, UINT tick)
+{
+    for (size_t i = 0; i < keys.size() - 1; i++)
+    {
+        if (tick < keys[i + 1].TickTime)
+            return i;
+    }
+
+    return keys.size() - 2; // 마지막 구간
+}
+
 XMMATRIX BoneAnimation::LerpTransKey()
 {
-    XMVECTOR prevTrans = XMLoadFloat3(&m_AnimationClips[CurFrame].transKey.trans);
-    XMVECTOR nextTrans = XMLoadFloat3(&m_AnimationClips[NextFrame].transKey.trans);
+    auto& transKey = m_AnimationClips->TransKeys;
 
-    return XMMatrixTranslationFromVector(XMVectorLerp(prevTrans, nextTrans, frameTime));
+    if (transKey.empty())
+        return XMMatrixIdentity();
+
+    if (transKey.size() == 1)
+        return XMMatrixTranslation(transKey[0].trans.x, transKey[0].trans.y, transKey[0].trans.z);
+
+    int i = FindKeyIndex<TransKey>(transKey, CurTickTime);
+    int j = i + 1;
+
+    float t = (CurTickTime - transKey[i].TickTime) /
+        (transKey[j].TickTime - transKey[i].TickTime);
+
+    XMVECTOR prevTrans = XMLoadFloat3(&transKey[i].trans);
+    XMVECTOR nextTrans = XMLoadFloat3(&transKey[j].trans);
+
+    return XMMatrixTranslationFromVector(XMVectorLerp(prevTrans, nextTrans, t));
 }
 
 XMMATRIX BoneAnimation::SLerpQuatKey()
 {
-    XMVECTOR prevQuat = XMLoadFloat4(&m_AnimationClips[CurFrame].quatKey.quat);
-    XMVECTOR nextQuat = XMLoadFloat4(&m_AnimationClips[NextFrame].quatKey.quat);
+    auto& quatKey = m_AnimationClips->QuatKeys;
 
-    return XMMatrixRotationQuaternion(XMQuaternionSlerp(prevQuat, nextQuat, frameTime));
+    if (quatKey.empty())
+        return XMMatrixIdentity();
+
+    if (quatKey.size() == 1)
+    {
+        XMVECTOR quat = XMLoadFloat4(&quatKey[0].quat);
+        return XMMatrixRotationQuaternion(quat);
+    }
+        
+    int i = FindKeyIndex<QuatKey>(quatKey, CurTickTime);
+    int j = i + 1;
+
+    float t = (CurTickTime - quatKey[i].TickTime) /
+        (quatKey[j].TickTime - quatKey[i].TickTime);
+
+    XMVECTOR prevQuat = XMLoadFloat4(&quatKey[i].quat);
+    XMVECTOR nextQuat = XMLoadFloat4(&quatKey[j].quat);
+
+    XMVECTOR q = XMQuaternionSlerp(prevQuat, nextQuat, t);
+    q = XMQuaternionNormalize(q);
+
+    return XMMatrixRotationQuaternion(q);
 }
 
 XMMATRIX BoneAnimation::LerpScaleKey()
 {
-    XMVECTOR prevScale = XMLoadFloat3(&m_AnimationClips[CurFrame].scaleKey.scale);
-    XMVECTOR nextScale = XMLoadFloat3(&m_AnimationClips[NextFrame].scaleKey.scale);
+    auto& scaleKey = m_AnimationClips->ScaleKeys;
 
-    return XMMatrixScalingFromVector(XMVectorLerp(prevScale, nextScale, frameTime));
+    if (scaleKey.empty())
+        return XMMatrixIdentity();
+
+    if (scaleKey.size() == 1)
+        return XMMatrixScaling(scaleKey[0].scale.x, scaleKey[0].scale.y, scaleKey[0].scale.z);
+
+    int i = FindKeyIndex<ScaleKey>(scaleKey, CurTickTime);
+    int j = i + 1;
+
+    float t = (CurTickTime - scaleKey[i].TickTime) /
+        (scaleKey[j].TickTime - scaleKey[i].TickTime);
+
+    XMVECTOR prevScale = XMLoadFloat3(&scaleKey[i].scale);
+    XMVECTOR nextScale = XMLoadFloat3(&scaleKey[j].scale);
+
+    return XMMatrixScalingFromVector(XMVectorLerp(prevScale, nextScale, t));
 }
 
 void BoneAnimation::Init()
 {
-    CurFrame = 0;
-    NextFrame = 1;
-
-    LastFrame = m_AnimationClips.size() - 1;
 }
 
-const XMFLOAT4X4& BoneAnimation::Update(unsigned int CurTickTime)
+const XMFLOAT4X4& BoneAnimation::Update(float CurrentTick)
 {
-    //dTime -> TickTime으로 변환
-
-    //TickTime이 현재 키프레임, 다음 키프레임 사이인지 비교
-    //사이값이면 보간
-    //CurTickTime >= 다음 키프레임이면 프레임 이동
-    if (CurTickTime >= m_AnimationClips[NextFrame].TickTime)
-    {
-        CurFrame++;
-        NextFrame++;
-
-        //루프 애니랑 아닌거랑 분기 나눠야할듯
-        //이거 여기 냅두는지 아니면 애니메이터로 뺄지 고민
-        //나중에 블랜딩하려면 총 프레임이랑 그런거 빼는게 편할것같음
-        if (CurFrame == LastFrame)
-        {
-            CurFrame = 0;
-            NextFrame = 1;
-        }
-    }
-
-    UINT frameStart = m_AnimationClips[CurFrame].TickTime;
-    UINT frameEnd = m_AnimationClips[NextFrame].TickTime;
-
-    frameTime = (float)(CurTickTime - frameStart) / (frameEnd - frameStart); //0 ~ 1;
-
+    CurTickTime = CurrentTick;
     // 본행렬 계산
     {
         XMMATRIX scale = LerpScaleKey();

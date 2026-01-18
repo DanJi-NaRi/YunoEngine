@@ -9,6 +9,7 @@
 
 #include "Quad.h"
 #include "Building.h"
+#include "AnimTest.h"
 
 bool TitleScene::OnCreateScene()
 {
@@ -21,9 +22,10 @@ bool TitleScene::OnCreateScene()
     
     om->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
     
-    om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
     //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
-    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human.fbx");
+    om->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
+    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
 
     return true;
 }
