@@ -17,7 +17,7 @@ Animator::~Animator()
 
 void Animator::SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, UINT boneCount)
 {
-    assert(boneCount <= MAX_BONE); //본 일단 넉넉하게 40개 제한 나중에 줄이기 ㄱ
+    assert(boneCount <= MAX_BONE); //본 일단 넉넉하게 70개 제한 나중에 줄이기 ㄱ
 
     m_RootBone = std::move(rootNode);
 
