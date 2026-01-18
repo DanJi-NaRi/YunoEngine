@@ -75,9 +75,9 @@ void ObjectManager::WidgetSubmit(float dTime)
 {
     FrameDataSubmit();
 
-    for (auto& obj : m_widgets)
+    for (auto& widget : m_widgets)
     {
-        obj->Submit(dTime);
+        widget->Submit(dTime);
     }
 }
 
