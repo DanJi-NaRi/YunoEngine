@@ -92,9 +92,9 @@
     <Filter Include="Public\Animator">
       <UniqueIdentifier>{dd759dd7-be6c-427f-8246-0d67659cd3e2}</UniqueIdentifier>
     </Filter>
-
     <Filter Include="Public\UI">
       <UniqueIdentifier>{26a1c0cf-4dff-466e-81ba-cd90b6a032e5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Public\Sound">
       <UniqueIdentifier>{8e3efd06-278b-499d-99ee-e02a38b56f45}</UniqueIdentifier>
     </Filter>
@@ -103,7 +103,6 @@
     </Filter>
     <Filter Include="Public\Sound\src">
       <UniqueIdentifier>{13bdd158-89af-47af-86bd-12a0b27bb2df}</UniqueIdentifier>
-
     </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
@@ -171,8 +170,9 @@
     <ClCompile Include="Private\Renderer\BoneNode\BoneNode.cpp">
       <Filter>Private\Renderer\Bone\Node</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Widget.cpp">
+    <ClCompile Include="Public\Object\Widget.cpp">
       <Filter>Public\UI</Filter>
+    </ClCompile>
     <ClCompile Include="Public\Sound\AudioSystem.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
@@ -320,8 +320,23 @@
     <ClInclude Include="Public\Renderer\3DAnimation\BoneNode.h">
       <Filter>Private\Renderer\Bone\Node</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Widget.h">
+    <ClInclude Include="Public\Object\Widget.h">
       <Filter>Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Sound\AudioScene.h">
+      <Filter>Public\Sound\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Sound\AudioSystem.h">
+      <Filter>Public\Sound\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Sound\Bank.h">
+      <Filter>Public\Sound\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Sound\EventHandle.h">
+      <Filter>Public\Sound\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Sound\fmodPCH.h">
+      <Filter>Public\Sound\header</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
