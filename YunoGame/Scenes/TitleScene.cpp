@@ -22,10 +22,10 @@ bool TitleScene::OnCreateScene()
     
     om->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
-    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 5, 0), L"../Assets/fbx/Building/building.fbx");
     //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
     //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human.fbx");
-    om->CreateWidget<Image>(L"TestImage",XMFLOAT3(0,5,0));
+    om->CreateWidget<Image>(L"TestImage",XMFLOAT3(0,1,0));
     return true;
 }
 

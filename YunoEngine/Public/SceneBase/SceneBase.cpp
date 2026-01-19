@@ -73,8 +73,8 @@ void SceneBase::Submit()
 {
     if (m_objectManager) 
     {
-        //m_objectManager->Submit(m_lastDt);
-        //m_objectManager->ProcessPending();
+        m_objectManager->Submit(m_lastDt);
+        m_objectManager->ProcessPending();
 
         m_objectManager->WidgetSubmit(m_lastDt);
         m_objectManager->ProcessWidgetPending();

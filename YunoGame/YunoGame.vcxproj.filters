@@ -86,7 +86,6 @@
     <ClCompile Include="Image.cpp">
       <Filter>Game\UI\Image</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\TitleScene_UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -124,6 +123,5 @@
     <ClInclude Include="Image.h">
       <Filter>Game\UI\Image</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\TitleScene_UI.h" />
   </ItemGroup>
 </Project>

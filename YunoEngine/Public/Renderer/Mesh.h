@@ -23,7 +23,7 @@ class Mesh
 {
 protected:
     std::string m_name;
-    RenderItem                m_renderItem;
+    RenderItem              m_renderItem;
     MeshHandle              m_Mesh;
     MaterialHandle          m_Material;
     TextureHandle           m_Albedo;

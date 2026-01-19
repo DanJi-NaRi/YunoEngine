@@ -28,7 +28,13 @@ bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     auto mesh = std::make_unique<Mesh>();
     mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
     m_MeshNode->m_Meshs.push_back(std::move(mesh));
-
+     
+    {
+        m_constant.baseColor = XMFLOAT4(1, 1, 1, 1);
+        m_constant.roughRatio = 1.0f;
+        m_constant.roughRatio = 1.0f;
+        m_constant.shadowBias = 0.005f;
+    }
     Backup();
 }
 
@@ -67,6 +73,7 @@ bool Image::CreateMaterial()
     md.passKey.depth = DepthPreset::ReadWrite;
 
     md.albedo = m_Albedo;
+    //md.albedo = 0;
     md.normal = 0;
     md.orm = 0;
 

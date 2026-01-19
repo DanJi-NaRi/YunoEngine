@@ -99,8 +99,8 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     //float sizex = (float)spr.Width;  //원본 스프라이트 크기 (Pixel)
     //float sizey = (float)spr.Height;
 
-    m_spriteSizeX = (float)500;
-    m_spriteSizeY = (float)500;
+    m_spriteSizeX = (float)5;
+    m_spriteSizeY = (float)5;
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)

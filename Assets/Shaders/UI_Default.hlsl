@@ -4,7 +4,6 @@
 struct VSInput
 {
     float3 pos : POSITION;
-    float3 nrm : NORMAL;
     float2 uv : TEXCOORD0;
 };
 
@@ -18,7 +17,6 @@ struct VSOutput
 VSOutput VSMain(VSInput i)
 {
     VSOutput o;
-    float4 pos = mul(float4(i.pos, 1.0f), mWorld);
     o.pos = mul(float4(i.pos, 1.0f), mWVP);
     o.nrm = i.nrm;
     o.uv = i.uv;
