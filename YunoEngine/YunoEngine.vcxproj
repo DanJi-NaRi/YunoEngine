@@ -73,12 +73,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\Engine\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\Engine\</IntDir>
-    <LibraryPath>$(SolutionDir)ThirdParty\Assimp\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)ThirdParty\FMOD\core\lib\x64;$(SolutionDir)ThirdParty\FMOD\studio\lib\x64;$(SolutionDir)ThirdParty\Assimp\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)ThirdParty\FMOD\studio\inc;$(SolutionDir)ThirdParty\FMOD\core\inc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\Engine\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\Engine\</IntDir>
-    <LibraryPath>$(SolutionDir)ThirdParty\Assimp\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)ThirdParty\FMOD\core\lib\x64;$(SolutionDir)ThirdParty\FMOD\studio\lib\x64;$(SolutionDir)ThirdParty\Assimp\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)ThirdParty\FMOD\studio\inc;$(SolutionDir)ThirdParty\FMOD\core\inc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -128,9 +130,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Parser;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Singleton;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;%(AdditionalIncludeDirectories)
 </AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Light;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-     
-
+      <AdditionalIncludeDirectories>$(ProjectDir)Public\Sound;$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\Parser;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -182,7 +182,7 @@
   $(ProjectDir)Public\Renderer;
   %(AdditionalIncludeDirectories)
 </AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Light;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Public\Sound;$(SolutionDir)ThirdParty\Assimp\include;$(ProjectDir)EnginePCH;$(ProjectDir)Public;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Model;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Math;$(ProjectDir)Public\Light;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Parser;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Singleton;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -240,6 +240,11 @@
     <ClInclude Include="Public\Renderer\RenderTypes.h" />
     <ClInclude Include="Public\SceneBase\SceneBase.h" />
     <ClInclude Include="Public\Singleton\Singleton.h" />
+    <ClInclude Include="Public\Sound\AudioScene.h" />
+    <ClInclude Include="Public\Sound\AudioSystem.h" />
+    <ClInclude Include="Public\Sound\Bank.h" />
+    <ClInclude Include="Public\Sound\EventHandle.h" />
+    <ClInclude Include="Public\Sound\fmodPCH.h" />
     <ClInclude Include="Public\YunoEngine.h" />
   </ItemGroup>
   <ItemGroup>
@@ -270,6 +275,11 @@
     <ClCompile Include="Public\Renderer\3DAnimation\Animator.cpp" />
     <ClCompile Include="Public\Renderer\Mesh.cpp" />
     <ClCompile Include="Public\SceneBase\SceneBase.cpp" />
+    <ClCompile Include="Public\Sound\AudioScene.cpp" />
+    <ClCompile Include="Public\Sound\AudioSystem.cpp" />
+    <ClCompile Include="Public\Sound\Bank.cpp" />
+    <ClCompile Include="Public\Sound\EventHandle.cpp" />
+    <ClCompile Include="Public\Sound\fmodPCH.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
