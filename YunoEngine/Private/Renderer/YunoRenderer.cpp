@@ -1072,6 +1072,14 @@ TextureHandle YunoRenderer::CreateTexture2DFromFile(const wchar_t* path)
     return handle;
 }
 
+std::pair<int, int> YunoRenderer::GetTextureSize(TextureHandle handle) const
+{
+    if (handle == 0 || handle > m_textures.size())
+        return { -1, -1 };
+    const TextureResource& tr = m_textures[handle - 1];
+    return { static_cast<int>(tr.w), static_cast<int>(tr.h) };
+
+}
 
 RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
 {
@@ -1410,6 +1418,7 @@ void YunoRenderer::BindConstantBuffers_Light(const Frame_Data_Dir& dirData)
     m_context->VSSetConstantBuffers(3, 1, cbLight);
     m_context->PSSetConstantBuffers(3, 1, cbLight);
 }
+
 
 void YunoRenderer::BindSamplers()
 {
