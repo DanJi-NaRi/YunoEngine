@@ -64,7 +64,7 @@ bool Quad::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 
     XMMATRIX i = XMMatrixIdentity();
-    mesh->Create(m_defaultMesh, m_addMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
 
     m_MeshNode = std::make_unique<MeshNode>();
 
