@@ -34,5 +34,6 @@ float4 PSMain(VSOutput input) : SV_Target
     float4 tex = gAlbedo.Sample(SamplerWrap, input.uv);
     float4 col = gBaseColor * tex;
 
-    return float4(input.nrm, 1);
+    //return float4(1, 1, 0, 1);
+    return col;
 }
