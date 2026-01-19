@@ -18,6 +18,13 @@
 #include "YunoInputSystem.h"
 #include "YunoSceneManager.h"
 
+ // 사운드!
+#include "fmodPCH.h"
+#include "Bank.h"
+#include "AudioSystem.h"
+#include "EventHandle.h"
+
+
 IRenderer* YunoEngine::s_renderer = nullptr;
 ITextureManager* YunoEngine::s_textureManager = nullptr;
 IInput* YunoEngine::s_input = nullptr;
@@ -75,6 +82,15 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
         return false;
 
     m_running = true;
+
+    // 사운드!
+    // 사운드 매니저 초기화 
+    AudioSystem::Get().Init();
+    // 사운드 테스트
+    EventHandle event{ AudioSystem::Get().GetEventDesc("BGM/JaneDoe") };
+    event.Start();
+    //AudioSystem::Get().SetBusMute("Master", true);
+    //AudioSystem::Get().SetVCAVolume("Master", 0.2f);
     return true;
 }
 
@@ -128,7 +144,7 @@ int YunoEngine::Run()
             m_fixedAccumulator = 0.0;
         }
 
-
+        
 
         m_input->Dispatch();
 
@@ -138,6 +154,8 @@ int YunoEngine::Run()
 
         // 씬 업데이트 (씬 전환 ApplyPending 포함)
         m_sceneManager->Update(dt);
+
+        AudioSystem::Get().Update(dt);  // 사운드!
 
         // ---------------------------------드로우 시작 -----------------------------------------
 

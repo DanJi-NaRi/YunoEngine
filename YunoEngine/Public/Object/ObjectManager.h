@@ -4,6 +4,7 @@
 #include "RenderTypes.h"
 #include "Unit.h"
 #include "Widget.h"
+#include "AnimationUnit.h"
 
 class YunoDirectionalLight;
 
@@ -31,7 +32,7 @@ private:
 
     template<typename T>
     T* CreateObject(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 오브젝트 생성용
-    std::unique_ptr<MeshNode> CreateMeshNode(const std::wstring& filepath);
+    std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> CreateMeshNode(const std::wstring& filepath);
 
     std::unique_ptr<YunoDirectionalLight> m_directionLight;
 
@@ -167,15 +168,28 @@ T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, c
 {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
-    auto meshRootNode = CreateMeshNode(filepath);
+    auto meshAndAnim = CreateMeshNode(filepath);
 
-    if (meshRootNode)
-    {
-        auto pObj = CreateObject<T>(name, pos, std::move(meshRootNode));
-        return pObj;
-    }
-        
-    return nullptr;
+    auto meshnode = std::move(meshAndAnim.first);
+    auto animator = std::move(meshAndAnim.second);
+
+    std::wstring newname = name + L'_' + meshnode->m_name;
+
+    auto obj = std::make_unique<T>();
+    obj->Create(newname, m_ObjectIDs++, pos);
+
+    obj->SetMesh(std::move(meshnode));
+
+    if constexpr (std::is_base_of_v<AnimationUnit, T>)
+        if (animator)
+        {
+            obj->SetAnimator(std::move(animator));
+        }
+
+    auto* pObj = obj.get();
+    m_pendingCreateQ.emplace_back(std::move(obj));
+
+    return pObj;
 }
 
 template<typename T>

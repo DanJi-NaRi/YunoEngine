@@ -9,13 +9,12 @@ struct MeshNode {
     MeshNode* m_Parent = nullptr;
     std::vector<std::unique_ptr<MeshNode>> m_Childs;
 
-    XMFLOAT3 pos;
-    XMFLOAT3 rot;
-    XMFLOAT3 scale;
+    XMMATRIX mUserTM;
 
     std::vector<std::unique_ptr<Mesh>> m_Meshs;
 
     void Submit(XMFLOAT4X4& mWorld);
+    void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 };
 
@@ -30,7 +29,7 @@ protected:
     TextureHandle           m_Normal;
     TextureHandle           m_Orm;
 
-    XMMATRIX m_mUser; //로컬->모델 이동행렬
+    //XMMATRIX m_mUser; //로컬->모델 이동행렬
 
 public:
     Mesh();
@@ -38,7 +37,7 @@ public:
 
     void SetName(const std::string& name) { m_name = name; }
 
-    void Create(MeshHandle mesh, MaterialHandle mat, const XMMATRIX& modelTM);
+    void Create(MeshHandle mesh, MaterialHandle mat);
     void Create(MeshHandle mesh, MaterialHandle mat, const XMFLOAT3& vPos, const XMFLOAT3& vRot, const XMFLOAT3& vScale);
 
     void SetMesh(MeshHandle mesh) { m_Mesh = mesh; }
@@ -50,11 +49,10 @@ public:
 
 
     void Submit(XMFLOAT4X4& mWorld);
+    void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 
     const RenderItem& GetRenderItem() { return m_renderItem; }
-
-    const XMMATRIX& GetUserTM() { return m_mUser; }
 };
 
 

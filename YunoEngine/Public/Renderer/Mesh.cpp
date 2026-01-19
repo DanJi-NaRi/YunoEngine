@@ -14,12 +14,10 @@ Mesh::~Mesh()
 
 }
 
-void Mesh::Create(MeshHandle mesh, MaterialHandle mat, const XMMATRIX& modelTM)
+void Mesh::Create(MeshHandle mesh, MaterialHandle mat)
 {
     m_Mesh = mesh;
     m_Material = mat;
-
-    m_mUser = modelTM;
 
     m_renderItem.materialHandle = m_Material;
     m_renderItem.meshHandle = m_Mesh;
@@ -29,10 +27,6 @@ void Mesh::Create(MeshHandle mesh, MaterialHandle mat, const XMFLOAT3& vPos, con
 {
     m_Mesh = mesh;
     m_Material = mat;
-
-    m_mUser = XMMatrixScaling(vScale.x, vScale.y, vScale.z) 
-                                        * XMMatrixRotationRollPitchYaw(vRot.x, vRot.y, vRot.z) 
-                                        * XMMatrixTranslation(vPos.x, vPos.y, vPos.z);
 
     m_renderItem.materialHandle = m_Material;
     m_renderItem.meshHandle = m_Mesh;
@@ -50,7 +44,17 @@ void Mesh::SetObjectConstants(const Update_Data& constants)
 
 void Mesh::Submit(XMFLOAT4X4& mWorld)
 {
-    XMStoreFloat4x4(&m_renderItem.Constant.world, m_mUser * XMLoadFloat4x4(&mWorld));
+    XMStoreFloat4x4(&m_renderItem.Constant.world, XMLoadFloat4x4(&mWorld));
+}
+
+void Mesh::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
+{
+    if (!m_renderItem.haveAnim) m_renderItem.haveAnim = true;
+    for (size_t i = 0; i < animTM.size(); i++)
+    {
+        XMMATRIX mAnim = XMLoadFloat4x4(&animTM[i]);
+        XMStoreFloat4x4(&m_renderItem.Constant.boneAnim[i], mAnim);
+    }
 }
 
 void Mesh::LastSubmit()
@@ -60,11 +64,24 @@ void Mesh::LastSubmit()
 
 void MeshNode::Submit(XMFLOAT4X4& mWorld)
 {
+    XMMATRIX world = mUserTM * XMLoadFloat4x4(&mWorld);
+    XMFLOAT4X4 worldF;
+    XMStoreFloat4x4(&worldF, world);
+
     for (auto& mesh : m_Meshs)
-        mesh->Submit(mWorld);
+        mesh->Submit(worldF);
 
     for (auto& child : m_Childs)
-        child->Submit(mWorld);
+        child->Submit(worldF);
+}
+
+void MeshNode::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
+{
+    for (auto& mesh : m_Meshs)
+        mesh->AnimSubmit(animTM);
+
+    for (auto& child : m_Childs)
+        child->AnimSubmit(animTM);
 }
 
 void MeshNode::LastSubmit()

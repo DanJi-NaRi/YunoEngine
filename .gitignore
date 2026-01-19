@@ -1,9 +1,12 @@
+# =========================
 # Visual Studio
+# =========================
 .vs/
 *.user
 *.suo
 *.VC.db
 *.VC.opendb
+*.vcxproj.user
 
 # Build output
 Debug/
@@ -21,18 +24,34 @@ x86/
 *.dll
 *.lib
 
-# Optional: logs/cache
-*.log
-
-
-# VS user-specific
-*.vcxproj.user
-
 # IntelliSense / intermediate
 ipch/
 *.tlog
 *.lastbuildstate
 
-# CMake 쓰면
+# Logs
+*.log
+
+# =========================
+# CMake
+# =========================
 CMakeFiles/
 CMakeCache.txt
+
+# =========================
+# FMOD Studio (Authoring / Tool-side)
+# =========================
+
+# FMOD Studio project & metadata (auto-generated, machine-specific)
+ThirdParty/FMOD/fmodApp/
+
+# =========================
+# FMOD Runtime (Banks)
+# =========================
+
+# Ignore all FMOD banks by default
+ThirdParty/FMOD/**/*.bank
+
+# Keep runtime banks (adjust path if needed)
+!ThirdParty/FMOD/**/Desktop/*.bank
+!ThirdParty/FMOD/**/Desktop/*.strings.bank

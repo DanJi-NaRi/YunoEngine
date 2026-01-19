@@ -72,7 +72,7 @@ public:
 
     virtual bool  Update(float dTime = 0);
     virtual bool  Submit(float dTime = 0);
-    bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 xx
+    bool               LastSubmit(float dTime = 0);      // 이거는 오버라이드 xx
 
     virtual void  Backup();
 

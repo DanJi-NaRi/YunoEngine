@@ -234,9 +234,9 @@ private:
         {
             // IA 슬롯 고정 매핑:
             // 0=Pos, 1=Nrm, 2=UV, 3=T, 4=B
-            ID3D11Buffer* vbs[5] = {};
-            UINT strides[5] = {};
-            UINT offsets[5] = {};
+            ID3D11Buffer* vbs[7] = {};
+            UINT strides[7] = {};
+            UINT offsets[7] = {};
 
             // Pos는 필수라고 가정 (CreateMesh에서 보장)
             vbs[0] = vbPos.Get(); strides[0] = sizeof(VERTEX_Pos);
@@ -245,9 +245,13 @@ private:
             if (vbUV) { vbs[2] = vbUV.Get();  strides[2] = sizeof(VERTEX_UV); }
             if (vbT) { vbs[3] = vbT.Get();   strides[3] = sizeof(VERTEX_T); }
             if (vbB) { vbs[4] = vbB.Get();   strides[4] = sizeof(VERTEX_B); }
+            if (vbBoneWeight) { vbs[5] = vbBoneWeight.Get();   strides[5] = sizeof(VERTEX_BoneWeight); }
+            if (vbBoneIndex) { vbs[6] = vbBoneIndex.Get();   strides[6] = sizeof(VERTEX_BoneIndex); }
 
             UINT maxSlot = 0;
-            if (vbB)        maxSlot = 4;
+            if (vbBoneIndex)        maxSlot = 6;
+            else if (vbBoneWeight)   maxSlot = 5;
+            else if (vbB)   maxSlot = 4;
             else if (vbT)   maxSlot = 3;
             else if (vbUV)  maxSlot = 2;
             else if (vbNrm) maxSlot = 1;
