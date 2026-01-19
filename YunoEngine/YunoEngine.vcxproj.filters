@@ -92,6 +92,15 @@
     <Filter Include="Public\Animator">
       <UniqueIdentifier>{dd759dd7-be6c-427f-8246-0d67659cd3e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Sound">
+      <UniqueIdentifier>{8e3efd06-278b-499d-99ee-e02a38b56f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Sound\header">
+      <UniqueIdentifier>{ceb72912-103f-45b3-a3b2-b4d09a364809}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Sound\src">
+      <UniqueIdentifier>{13bdd158-89af-47af-86bd-12a0b27bb2df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -157,6 +166,21 @@
     </ClCompile>
     <ClCompile Include="Private\Renderer\BoneNode\BoneNode.cpp">
       <Filter>Private\Renderer\Bone\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Sound\AudioSystem.cpp">
+      <Filter>Public\Sound\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Sound\fmodPCH.cpp">
+      <Filter>Public\Sound\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Sound\Bank.cpp">
+      <Filter>Public\Sound\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Sound\EventHandle.cpp">
+      <Filter>Public\Sound\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Sound\AudioScene.cpp">
+      <Filter>Public\Sound\src</Filter>
     </ClCompile>
     <ClCompile Include="Public\Object\AnimationUnit.cpp">
       <Filter>Public\Object</Filter>
