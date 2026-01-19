@@ -96,8 +96,8 @@ float4 PSMain(VSOutput input) : SV_Target
     float4 aoMap = gAO.Sample(SamplerClamp, input.uv);
     
     // 변수 초기화
-    float4 nrm_TBN = normalize(float4(ComputeBumpNormal(normalMap, input.T, input.nrm), 0));
-    float4 nrm_W = mul(nrm_TBN, mWorld);
+    float4 nrm_W = normalize(float4(ComputeBumpNormal(normalMap, input.T, input.nrm), 0));
+    //float4 nrm_W = mul(nrm_TBN, mWorld);
     
     // 디렉션 라이트
     float4 diff = DirLight(nrm_W);
