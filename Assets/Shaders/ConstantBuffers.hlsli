@@ -1,6 +1,8 @@
 #ifndef YUNO_CB_INCLUDE
 #define YUNO_CB_INCLUDE
 
+#define MAX_BONE 70
+
 // 오브젝트 단위 ------------------------------------------------
 cbuffer CBPerObject_Matrix : register(b0)
 {
@@ -8,6 +10,7 @@ cbuffer CBPerObject_Matrix : register(b0)
     float4x4 mWVP;
     float4x4 mWInvT;
 
+    float4x4 mBoneAnimation[MAX_BONE];
 };
 
 cbuffer CBPerObject_Material : register(b1)

@@ -182,6 +182,9 @@
     <ClCompile Include="Public\Sound\AudioScene.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
+    <ClCompile Include="Public\Object\AnimationUnit.cpp">
+      <Filter>Public\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -305,23 +308,11 @@
     <ClInclude Include="Private\Renderer\BoneAnimation\BoneAnimation.h">
       <Filter>Private\Renderer\Bone\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Renderer\BoneNode\BoneNode.h">
+    <ClInclude Include="Public\Object\AnimationUnit.h">
+      <Filter>Public\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\3DAnimation\BoneNode.h">
       <Filter>Private\Renderer\Bone\Node</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Sound\AudioScene.h">
-      <Filter>Public\Sound\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Sound\AudioSystem.h">
-      <Filter>Public\Sound\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Sound\EventHandle.h">
-      <Filter>Public\Sound\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Sound\fmodPCH.h">
-      <Filter>Public\Sound\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Sound\Bank.h">
-      <Filter>Public\Sound\header</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
@@ -333,6 +324,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PBR_Animation.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -121,7 +121,15 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;
+      <AdditionalIncludeDirectories>
+$(SolutionDir)YunoEngine\Public;
+$(SolutionDir)YunoEngine\Public\Sound;
+$(SolutionDir)YunoEngine\Public\Camera;
+$(SolutionDir)YunoEngine\Public\Input;
+$(SolutionDir)YunoEngine\Public\Interface;
+$(SolutionDir)YunoEngine\Public\Math;
+$(SolutionDir)YunoEngine\Public\Object;
+$(SolutionDir)YunoEngine\Public\Renderer;
 $(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;
 $(SolutionDir)YunoEngine\Public\Light;
 $(SolutionDir)YunoEngine\Public\Parser;
@@ -191,6 +199,7 @@ xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)..\Assets"</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Game\GameApp.cpp" />
+    <ClCompile Include="Game\Object\AnimTest.cpp" />
     <ClCompile Include="Game\Object\Building.cpp" />
     <ClCompile Include="Game\Object\Dwarf.cpp" />
     <ClCompile Include="main.cpp" />
@@ -210,6 +219,7 @@ xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)..\Assets"</Command>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h" />
     <ClInclude Include="Game\GameApp.h" />
+    <ClInclude Include="Game\Object\AnimTest.h" />
     <ClInclude Include="Game\Object\Building.h" />
     <ClInclude Include="Game\Object\Dwarf.h" />
     <ClInclude Include="Game\Object\Triangle.h" />

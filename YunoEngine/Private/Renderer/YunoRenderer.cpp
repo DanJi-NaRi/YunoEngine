@@ -93,6 +93,8 @@ bool YunoRenderer::CreateShaders()
     if (!LoadShader(ShaderId::Basic, "../Assets/Shaders/BasicColor.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::DebugGrid, "../Assets/Shaders/DebugGrid.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PBRBase, "../Assets/Shaders/PBR_Base.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
     return true;
 }
 
@@ -674,6 +676,16 @@ bool YunoRenderer::LoadShader(
 // desc 체크해서 셰이더 지정해주는 함수
 const ShaderId YunoRenderer::SetShaderKey(const MaterialDesc& desc)
 {
+    if (desc.passKey.vertexFlags & (VSF_BoneIndex | VSF_BoneWeight))
+    {
+        if (desc.orm != 0)
+            return ShaderId::PBRAnimation;
+
+        if (desc.metal != 0 || desc.rough != 0 || desc.ao != 0)
+            return ShaderId::PBRAnimation;
+
+        return ShaderId::BasicAnimation;
+    }
     if (desc.orm != 0)
         return ShaderId::PBRBase;
 
@@ -1185,7 +1197,7 @@ bool YunoRenderer::InputLayoutFromFlags(uint32_t flags,
 
     if (flags & VSF_BoneIndex)
     {
-        outLayout.push_back({ "BONEINDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 6, 0,
+        outLayout.push_back({ "BONEINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 6, 0,
             D3D11_INPUT_PER_VERTEX_DATA, 0 });
     }
 
@@ -1292,11 +1304,30 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
     XMMATRIX W = XMLoadFloat4x4(&item.Constant.world);
     XMMATRIX WVP = W * V * P;
 
-
+    XMMATRIX mAnim[MAX_BONE];
+    if (item.haveAnim)
+    {
+        size_t i = 0;
+        for (auto& animTM : item.Constant.boneAnim)
+        {
+            mAnim[i] = XMLoadFloat4x4(&animTM);
+            i++;
+        }
+    }
+    
     XMStoreFloat4x4(&cbPerObject_matrix.mWorld, XMMatrixTranspose(W));
     XMStoreFloat4x4(&cbPerObject_matrix.mWVP, XMMatrixTranspose(WVP));
-    XMStoreFloat4x4(&cbPerObject_matrix.mWInvT, XMMatrixTranspose(XMMatrixInverse(nullptr, W)));
+    XMStoreFloat4x4(&cbPerObject_matrix.mWInvT, (XMMatrixInverse(nullptr, W)));
     
+    if (item.haveAnim)
+    {
+        size_t i = 0;
+        for (auto& animTM : mAnim)
+        {
+            XMStoreFloat4x4(&cbPerObject_matrix.mBoneAnim[i], XMMatrixTranspose(animTM));
+            i++;
+        }
+    }
 
     m_cbObject_Matrix.Update(m_context.Get(), cbPerObject_matrix);
 
@@ -1321,8 +1352,6 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
     ID3D11Buffer* cbPerObj_Material_Buffers[] = { m_cbObject_Material.Get() };
     m_context->VSSetConstantBuffers(1, 1, cbPerObj_Material_Buffers);
     m_context->PSSetConstantBuffers(1, 1, cbPerObj_Material_Buffers);
-
-
 }
 
 
