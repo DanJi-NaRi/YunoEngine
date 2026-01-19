@@ -17,7 +17,8 @@ struct BankContent
 class BankHelper
 {
 private:
-    std::string bankPath = "../ThirdParty/FMOD/fmodApp/Build/Desktop/";
+    std::string bankPath = "../Assets/Sound/";
+    //std::string bankPath = "../ThirdParty/FMOD/fmodApp/Build/Desktop/";
     std::string extension = ".bank";
     std::string tmpPath;
 
