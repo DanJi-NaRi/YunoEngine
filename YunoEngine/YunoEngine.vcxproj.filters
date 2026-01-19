@@ -149,7 +149,7 @@
     <ClCompile Include="Private\Scene\YunoSceneManager.cpp">
       <Filter>Private\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Parser\Parser.cpp">
+    <ClCompile Include="Private\Parser\Parser.cpp">
       <Filter>Private\Parser</Filter>
     </ClCompile>
     <ClCompile Include="Public\Renderer\Mesh.cpp">
@@ -293,13 +293,13 @@
     <ClInclude Include="Public\Interface\IScene.h">
       <Filter>Public\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Parser\Parser.h">
+    <ClInclude Include="Private\Parser\Parser.h">
       <Filter>Private\Parser</Filter>
     </ClInclude>
     <ClInclude Include="Public\Renderer\Mesh.h">
       <Filter>Private\Renderer\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Singleton\Singleton.h">
+    <ClInclude Include="Private\Singleton\Singleton.h">
       <Filter>Private\Singleton</Filter>
     </ClInclude>
     <ClInclude Include="Public\SceneBase\SceneBase.h">
@@ -338,6 +338,7 @@
     <ClInclude Include="Public\Sound\fmodPCH.h">
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Renderer\3DAnimation\BoneAnimation.h" />
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>

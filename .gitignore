@@ -13,6 +13,7 @@ Debug/
 Release/
 x64/
 x86/
+Assets/
 
 # Intermediate / binaries
 *.obj
@@ -43,15 +44,6 @@ CMakeCache.txt
 # =========================
 
 # FMOD Studio project & metadata (auto-generated, machine-specific)
-ThirdParty/FMOD/fmodApp/
-
-# =========================
-# FMOD Runtime (Banks)
-# =========================
-
-# Ignore all FMOD banks by default
-ThirdParty/FMOD/**/*.bank
-
-# Keep runtime banks (adjust path if needed)
-!ThirdParty/FMOD/**/Desktop/*.bank
-!ThirdParty/FMOD/**/Desktop/*.strings.bank
+ThirdParty/FMOD/fmodApp/.cache
+ThirdParty/FMOD/fmodApp/.unsaved
+ThirdParty/FMOD/fmodApp/.user
