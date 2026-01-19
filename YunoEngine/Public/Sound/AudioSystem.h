@@ -11,8 +11,11 @@ public:
         return s;
     }
 
+    // 게임 시작 시 엔진과 함께 꼬옥 초기화 해주기
     bool Init(int maxChannels = 1024);
+    // 게임 종료 시 꼬옥 호출해주기
     void Shutdown();
+
     void Update(float dt);
 
     // Bank
@@ -33,13 +36,18 @@ public:
     void SetBusMute(const std::string& busName, bool mute);
     void SetBusPaused(const std::string& busName, bool paused);
 
-    void DecRefAndEraseCaches(BankContent& content);    // bank unload 시, 캐시 삭제용
+    // bank unload 시, 캐시 삭제용
+    void DecRefAndEraseCaches(BankContent& content);
 
     // Listener (카메라/플레이어)
     void SetListener3DAttributes(
         const FMOD_3D_ATTRIBUTES& attrs,
         int listenerIndex = 0
     );
+
+    // bank 단위로 생성 소멸되므로 load()시 내부에서 호출
+    void CacheGlobalParam();
+    void SetGlobalParam(const std::string& paramName, float value);
 
     // 3D 세팅
     void Set3DSettings(float dopplerScale, float distanceFactor, float rolloffScale);
@@ -62,5 +70,5 @@ private:
     std::unordered_map<std::string, FMOD::Studio::EventDescription*> m_EventDescList;
     std::unordered_map<std::string, FMOD::Studio::Bus*> m_BusList;
     std::unordered_map<std::string, FMOD::Studio::VCA*> m_VCAList;
-    
+    std::unordered_map<std::string, FMOD_STUDIO_PARAMETER_ID> m_GlobalParam;
 };
