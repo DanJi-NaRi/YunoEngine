@@ -21,5 +21,27 @@
 *.yml    text eol=lf
 *.yaml   text eol=lf
 
-# FMOD Studio project file - keep LF
+# -------------------------
+# Binary files (never normalize EOL)
+# -------------------------
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+
+*.mp3  binary
+*.wav  binary
+*.ogg  binary
+*.flac binary
+
+*.bank binary
+*.strings.bank binary
+
+# -------------------------
+# FMOD Studio text files (keep LF)
+# -------------------------
 ThirdParty/FMOD/**/*.fspro text eol=lf
+ThirdParty/FMOD/**/*.xml   text eol=lf
+ThirdParty/FMOD/**/*.txt   text eol=lf
+ThirdParty/FMOD/**/*.json  text eol=lf

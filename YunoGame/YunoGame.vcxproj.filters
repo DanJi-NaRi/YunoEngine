@@ -55,6 +55,9 @@
     <Filter Include="Game\Object\Animation">
       <UniqueIdentifier>{111487a2-554f-421d-9895-5bb73c8b009f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Object\Dwarf">
+      <UniqueIdentifier>{4819ede5-efc2-41cb-a857-f54b670b66ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -81,7 +84,6 @@
     <ClCompile Include="Game\Object\Building.cpp">
       <Filter>Game\Object\Building</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Object\Dwarf.cpp" />
     <ClCompile Include="Text.cpp">
       <Filter>Game\UI\Text</Filter>
     </ClCompile>
@@ -93,6 +95,9 @@
     </ClCompile>
     <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp">
       <Filter>Scenes\0. Test</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Dwarf.cpp">
+      <Filter>Game\Object\Dwarf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -123,7 +128,6 @@
     <ClInclude Include="Game\Object\Building.h">
       <Filter>Game\Object\Building</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Object\Dwarf.h" />
     <ClInclude Include="Text.h">
       <Filter>Game\UI\Text</Filter>
     </ClInclude>
@@ -135,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h">
       <Filter>Scenes\0. Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Dwarf.h">
+      <Filter>Game\Object\Dwarf</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
