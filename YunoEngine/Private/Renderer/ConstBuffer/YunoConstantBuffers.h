@@ -16,6 +16,8 @@ struct CBPerObject_Matrix
     XMFLOAT4X4 mWorld;
     XMFLOAT4X4 mWVP;
     XMFLOAT4X4 mWInvT;
+
+    XMFLOAT4X4 mBoneAnim[MAX_BONE];
 };
 
 struct CBPerObject_Material

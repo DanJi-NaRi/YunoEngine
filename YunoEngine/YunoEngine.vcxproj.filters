@@ -143,14 +143,12 @@
     <ClCompile Include="Public\Renderer\Mesh.cpp">
       <Filter>Private\Renderer\Mesh</Filter>
     </ClCompile>
-
     <ClCompile Include="Public\SceneBase\SceneBase.cpp">
       <Filter>Public\SceneBase</Filter>
     </ClCompile>
     <ClCompile Include="Public\Light\YunoLight.cpp">
       <Filter>Public\Light</Filter>
     </ClCompile>
-
     <ClCompile Include="Public\Renderer\3DAnimation\Animator.cpp">
       <Filter>Public\Animator</Filter>
     </ClCompile>
@@ -160,8 +158,9 @@
     <ClCompile Include="Private\Renderer\BoneNode\BoneNode.cpp">
       <Filter>Private\Renderer\Bone\Node</Filter>
     </ClCompile>
-
-
+    <ClCompile Include="Public\Object\AnimationUnit.cpp">
+      <Filter>Public\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -273,25 +272,24 @@
     <ClInclude Include="Public\Singleton\Singleton.h">
       <Filter>Private\Singleton</Filter>
     </ClInclude>
-
     <ClInclude Include="Public\SceneBase\SceneBase.h">
       <Filter>Public\SceneBase</Filter>
     </ClInclude>
     <ClInclude Include="Public\Light\YunoLight.h">
       <Filter>Public\Light</Filter>
     </ClInclude>
-
     <ClInclude Include="Public\Renderer\3DAnimation\Animator.h">
       <Filter>Public\Animator</Filter>
     </ClInclude>
     <ClInclude Include="Private\Renderer\BoneAnimation\BoneAnimation.h">
       <Filter>Private\Renderer\Bone\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Renderer\BoneNode\BoneNode.h">
+    <ClInclude Include="Public\Object\AnimationUnit.h">
+      <Filter>Public\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\3DAnimation\BoneNode.h">
       <Filter>Private\Renderer\Bone\Node</Filter>
     </ClInclude>
-
-
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>
@@ -302,6 +300,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PBR_Animation.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

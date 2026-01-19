@@ -13,10 +13,11 @@
 #include <assimp/postprocess.h>
 
 
-std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, XMMATRIX& parentTM, const std::wstring& filepath);
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, XMMATRIX& parentTM, const std::wstring& filepath);
 std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std::unordered_map<std::string, UINT>& boneNameSet, std::unordered_map<std::string, XMMATRIX>& nameToOffset);
+void CreateAnimationClip(aiAnimation* anim, const aiScene* scene, std::unordered_map<std::string, UINT>& nameToIndex, AnimationClip* out);
 void CreateBoneNameSet(const aiScene* scene, std::unordered_map<std::string, UINT>& indexOut, std::unordered_map<std::string, XMMATRIX>& matrixOut);
-std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::wstring& filepath);
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, const std::wstring& filepath);
 bool CheckSkeletalModel(const aiScene* scene);
 void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* parent,
     std::unordered_map<std::string, UINT>& nameToIndex, std::unordered_map<std::string, XMMATRIX>& nameTomOffset);
@@ -59,18 +60,20 @@ std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> Parser::LoadFile
     std::unordered_map<std::string, UINT> BoneNameToIndex;
     std::unordered_map<std::string, XMMATRIX> BoneNameToOffset;
 
+    std::unique_ptr<Animator> animator = nullptr;
+
     if (scene->HasAnimations())
         if (CheckSkeletalModel(scene))
         {
             CreateBoneNameSet(scene, BoneNameToIndex, BoneNameToOffset);
-            auto Animator = CreateAnimator(scene->mRootNode, scene, BoneNameToIndex, BoneNameToOffset);
+            animator = CreateAnimator(scene->mRootNode, scene, BoneNameToIndex, BoneNameToOffset);
         }
 
     XMMATRIX root = XMMatrixIdentity();
 
-    auto MeshNode = CreateNode(scene->mRootNode, scene, 0, root, filepath);
+    auto MeshNode = CreateNode(scene->mRootNode, scene, 0, BoneNameToIndex, root, filepath);
 
-    return std::make_pair(std::move(MeshNode), nullptr);
+    return std::make_pair(std::move(MeshNode), std::move(animator));
 }
 
 bool CheckSkeletalModel(const aiScene* scene)
@@ -140,14 +143,70 @@ std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std
 
     for (size_t i = 0; i < scene->mNumAnimations; i++)
     {
-        std::unique_ptr<AnimationClip> aniClip = std::make_unique<AnimationClip>();
+        aiAnimation* aiAnim = scene->mAnimations[i];
+
+        std::unique_ptr<AnimationClip> clip = std::make_unique<AnimationClip>();
+        clip->duration = (UINT)aiAnim->mDuration;
+        clip->TickPerSec =
+            aiAnim->mTicksPerSecond != 0
+            ? (UINT)aiAnim->mTicksPerSecond
+            : 25.0f;
+
+        clip->channels.resize(nameToIndex.size());
+
+        CreateAnimationClip(aiAnim, scene, nameToIndex, clip.get());
+        //임시임시임시
+        clip->isLoop = true;
+
+        animator->AddAnimationClip(std::to_string(i), std::move(clip));
     }
 
     return animator;
 }
 
-void CreateAnimationClip()
+void CreateAnimationClip(aiAnimation* anim, const aiScene* scene, std::unordered_map<std::string, UINT>& nameToIndex, AnimationClip* out)
 {
+    for (size_t i = 0; i < anim->mNumChannels; i++)
+    {
+        auto channel = anim->mChannels[i];
+        std::string boneName = channel->mNodeName.C_Str();
+
+        auto it = nameToIndex.find(boneName);
+        if(it == nameToIndex.end()) continue;
+
+        std::unique_ptr<AnimationClips> boneClip = std::make_unique<AnimationClips>();
+        boneClip->boneName = boneName;
+
+        for (size_t j = 0; j < channel->mNumPositionKeys; j++)
+        {
+            TransKey transkey;
+            transkey.TickTime = channel->mPositionKeys[j].mTime;
+            auto posKey = channel->mPositionKeys[j].mValue;
+            transkey.trans = XMFLOAT3(posKey.x, posKey.y, posKey.z);
+            boneClip->TransKeys.push_back(transkey);
+        }
+
+        for (size_t j = 0; j < channel->mNumRotationKeys; j++)
+        {
+            QuatKey quatkey;
+            quatkey.TickTime = channel->mRotationKeys[j].mTime;
+            auto rotKey = channel->mRotationKeys[j].mValue;
+            quatkey.quat = XMFLOAT4(rotKey.x, rotKey.y, rotKey.z, rotKey.w);
+            boneClip->QuatKeys.push_back(quatkey);
+        }
+
+        for (size_t j = 0; j < channel->mNumScalingKeys; j++)
+        {
+            ScaleKey scalekey;
+            scalekey.TickTime = channel->mScalingKeys[j].mTime;
+            auto scalingkey = channel->mScalingKeys[j].mValue;
+            scalekey.scale = XMFLOAT3(scalingkey.x, scalingkey.y, scalingkey.z);
+            boneClip->ScaleKeys.push_back(scalekey);
+        }
+
+        UINT index = it->second;
+        out->channels[index] = std::make_unique<BoneAnimation>(std::move(boneClip));
+    }
 }
 
 void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* parent,
@@ -194,7 +253,7 @@ void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* pa
     }
 }
 
-std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, XMMATRIX& parentTM, const std::wstring& filepath)
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, XMMATRIX& parentTM, const std::wstring& filepath)
 {
     std::wstring name(Utf8ToWString(node->mName.C_Str()));
 
@@ -211,15 +270,16 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 
     aiMatrix4x4 aiMat = node->mTransformation.Transpose();
 
-    XMMATRIX current = XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4*>(&aiMat)) * parentTM;
+    XMMATRIX current = XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4*>(&aiMat));
+    meshnode->mUserTM = current;
     
     for (size_t i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
-        auto [meshkey, matkey] = CreateMesh(aiMesh, scene, nodeNum, filepath);
+        auto [meshkey, matkey] = CreateMesh(aiMesh, scene, nodeNum, nameToIndex, filepath);
 
         auto model = std::make_unique<Mesh>();
-        model->Create(meshkey, matkey, current);
+        model->Create(meshkey, matkey);
 
         meshnode->m_Meshs.push_back(std::move(model));
     }
@@ -228,7 +288,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
-        auto child = CreateNode(node->mChildren[i], scene, num, current, filepath); //자식 노드 탐색
+        auto child = CreateNode(node->mChildren[i], scene, num, nameToIndex, current, filepath); //자식 노드 탐색
         if(!child)
             continue;
         meshnode->m_Childs.push_back(std::move(child));
@@ -238,24 +298,44 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
     return meshnode;
 }
 
-std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, const std::wstring& filepath)
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, 
+                                            std::unordered_map<std::string, UINT>& nameToIndex, const std::wstring& filepath)
 {
     std::vector<VERTEX_Pos> vtxPos;
     std::vector<VERTEX_Nrm> vtxNrm;
     std::vector<VERTEX_UV> vtxUV;
     std::vector<VERTEX_T> vtxTan;
     std::vector<VERTEX_B> vtxBi;
+    std::vector<VERTEX_BoneIndex> vtxBoneindex;
+    std::vector<VERTEX_BoneWeight> vtxBoneweight;
     std::vector<INDEX> indices;
 
     VertexStreams vs;
     MaterialDesc md{};
 
+    std::vector<std::vector<VertexWeight>> tempWeights(aiMesh->mNumVertices);
+
+    if (aiMesh->HasBones())
+    {
+        for (UINT b = 0; b < aiMesh->mNumBones; b++)
+        {
+            aiBone* bone = aiMesh->mBones[b];
+            UINT boneIndex = nameToIndex[bone->mName.C_Str()];
+
+            for (UINT w = 0; w < bone->mNumWeights; w++)
+            {
+                const aiVertexWeight& vw = bone->mWeights[w];
+                tempWeights[vw.mVertexId].push_back({
+                    boneIndex,
+                    vw.mWeight
+                    });
+            }
+        }
+    }
+
     for (size_t i = 0; i < aiMesh->mNumVertices; i++)
     {
         VERTEX_Pos vPos;
-        /*vPos.x = aiMesh->mVertices[i].x;
-        vPos.y = -aiMesh->mVertices[i].z;
-        vPos.z = aiMesh->mVertices[i].y;*/
         vPos.x = aiMesh->mVertices[i].x;
         vPos.y = aiMesh->mVertices[i].y;
         vPos.z = aiMesh->mVertices[i].z;
@@ -270,6 +350,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             vNrm.nx = aiMesh->mNormals[i].x;
             vNrm.ny = aiMesh->mNormals[i].y;
             vNrm.nz = aiMesh->mNormals[i].z;
+
             vtxNrm.push_back(vNrm);
 
             vs.flags |= VSF_Nrm;
@@ -312,6 +393,43 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             vs.flags |= VSF_T | VSF_B;
             md.passKey.vertexFlags |= VSF_T | VSF_B;
         }
+
+        if (aiMesh->HasBones())
+        {
+            VERTEX_BoneIndex index;
+            VERTEX_BoneWeight weight;
+
+            auto& vw = tempWeights[i];
+            std::sort(vw.begin(), vw.end(), [](VertexWeight& a, VertexWeight& b) { return a.weight > b.weight; });
+
+            UINT idx[4] = { 0, 0, 0, 0 };
+            float w[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+            if (!vw.empty())
+            {
+                float sum = 0.0f;
+                for (int i = 0; i < 4 && i < vw.size(); i++)
+                    sum += vw[i].weight;
+
+                for (size_t j = 0; j < vw.size() && j < 4; j++)
+                {
+                    idx[j] = vw[j].boneIndex;
+                    if (sum > 0.0f)
+                        w[j] = vw[j].weight / sum; //정규화
+                    else
+                        w[j] = 0.0f;
+                }
+            }
+           
+            index = { idx[0], idx[1], idx[2], idx[3] };
+            weight = { w[0], w[1], w[2], w[3] };
+
+            vtxBoneindex.push_back(index);
+            vtxBoneweight.push_back(weight);
+
+            vs.flags |= VSF_BoneIndex | VSF_BoneWeight;
+            md.passKey.vertexFlags |= VSF_BoneIndex | VSF_BoneWeight;
+        }
     }
 
     for (size_t i = 0; i < aiMesh->mNumFaces; i++)
@@ -334,6 +452,8 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
     vs.uv = vtxUV.data();
     vs.t = vtxTan.data();
     vs.b = vtxBi.data();
+    vs.boneWeight = vtxBoneweight.data();
+    vs.boneIdx = vtxBoneindex.data();
 
     const auto& renderer = YunoEngine::GetRenderer();
 
@@ -395,7 +515,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
 
             TextureHandle metal = renderer->CreateTexture2DFromFile(texPath.c_str());
 
-            md.metal = metal;
+            md.metal = 1;
         }
         //Roughness
         if (aiMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &texPath) == AI_SUCCESS)

@@ -37,6 +37,9 @@
     <Filter Include="Game\Object\Building">
       <UniqueIdentifier>{634a52df-c3f6-426d-9088-ebdfd94c30d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Object\Animation">
+      <UniqueIdentifier>{111487a2-554f-421d-9895-5bb73c8b009f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -65,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp" />
     <ClCompile Include="Game\Object\Dwarf.cpp" />
+    <ClCompile Include="Game\Object\AnimTest.cpp">
+      <Filter>Game\Object\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -96,5 +102,8 @@
     </ClInclude>
     <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h" />
     <ClInclude Include="Game\Object\Dwarf.h" />
+    <ClInclude Include="Game\Object\AnimTest.h">
+      <Filter>Game\Object\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

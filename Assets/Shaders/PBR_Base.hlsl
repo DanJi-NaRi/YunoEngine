@@ -29,11 +29,12 @@ VSOutput VSMain(VSInput i)
     float4 pos_W = mul(float4(i.pos, 1.0f), mWorld);
 
     
-    
+    float3 nrm = mul(i.nrm, (float3x3)mWInvT);
+    nrm = normalize(nrm);
     
     o.pos = pos;
     o.pos_W = pos_W;
-    o.nrm = i.nrm;
+    o.nrm = nrm;
     o.uv = i.uv;
     o.T = i.T;
     o.B = i.B;
@@ -72,5 +73,5 @@ float4 PSMain(VSOutput input) : SV_Target
     // 최종 컬러
     float4 finalColor = BaseColor * diff + spec;
     
-    return float4(input.nrm, 0);
+    return float4(input.nrm, 1);
 }
