@@ -3,6 +3,7 @@
 #pragma once
 #include "RenderTypes.h"
 #include "Unit.h"
+#include "Widget.h"
 #include "AnimationUnit.h"
 
 class YunoDirectionalLight;
@@ -14,18 +15,29 @@ private:
     UINT m_ObjectIDs;
 
     std::deque<std::unique_ptr<Unit>> m_objs;
+
     std::unordered_map<UINT, Unit*> m_objMap;
     std::unordered_map<std::wstring, UINT> m_nameToID;
 
     std::vector<UINT> m_pendingDestoryQ;
     std::vector<std::unique_ptr<Unit>> m_pendingCreateQ;
    
+    // Widgets
+    std::deque<std::unique_ptr<Widget>> m_widgets;
+    std::unordered_map<UINT, Widget*> m_WidgetMap;
+    std::unordered_map<std::wstring, UINT> m_widgetNameToID;
+
+    std::vector<UINT> m_widgetPendingDestoryQ;
+    std::vector<std::unique_ptr<Widget>> m_widgetPendingCreateQ;
 
     template<typename T>
     T* CreateObject(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 오브젝트 생성용
     std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> CreateMeshNode(const std::wstring& filepath);
 
     std::unique_ptr<YunoDirectionalLight> m_directionLight;
+
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 위젯 생성용
 
 public:
     void CreateDirLight();
@@ -39,14 +51,22 @@ public:
     void Clear(); //삭제 초기화
 
     void ProcessPending(); //프레임 맨 마지막에 호출
+    void ProcessWidgetPending();
 
     void Update(float dTime);
     void Submit(float dTime);
+    void WidgetUpdate(float dTime);
+    void WidgetSubmit(float dTime);
 
     template<typename T>
     T* CreateObject(const std::wstring& name, XMFLOAT3 pos);
     template<typename T>
     T* CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath);
+
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);
+    template<typename T>
+    T* CreateWidgetFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath);
 
     //씬 매니저에 있어도 될것같은 놈들
     const Unit* FindObject(UINT id); //id로 검색
@@ -102,6 +122,47 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, std::uniq
     return pObj;
 }
 
+
+// 김장후 - 
+// 현재 Object와 같은 ID 체계를 사용하고 있음. 분리할지 고민중..
+// 매니저 분리까지는 굳이 필요 없을 것 같아서 일단은 큐만 추가해서 사용 중.
+template<typename T>
+T* ObjectManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+
+    auto widget = std::make_unique<T>();
+    if (!widget->Create(name, m_ObjectIDs, pos))
+        return nullptr;
+
+    auto* pWidget = widget.get();
+    m_widgetPendingCreateQ.emplace_back(std::move(widget));
+    ++m_ObjectIDs;
+    return pWidget;
+}
+
+// 계층구조 오브젝트 재귀 생성용
+template<typename T>
+T* ObjectManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+    if (!node) return nullptr;
+
+    std::wstring newname = name + L'_' + node->m_name;
+
+    auto widget = std::make_unique<T>();
+    if (!widget->Create(newname, m_ObjectIDs, pos))
+        return nullptr;
+
+    widget->SetMesh(std::move(node));
+
+    auto* pWidget = widget.get();
+    m_widgetPendingCreateQ.emplace_back(std::move(widget));
+    ++m_ObjectIDs;
+    return pWidget;
+}
+
+
 template<typename T>
 T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath)
 {
@@ -130,3 +191,20 @@ T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, c
 
     return pObj;
 }
+
+template<typename T>
+T* ObjectManager::CreateWidgetFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, ObjectManager.h)");
+
+    auto meshRootNode = CreateMeshNode(filepath);
+
+    if (meshRootNode)
+    {
+        auto pWidget = CreateWidget<T>(name, pos, std::move(meshRootNode));
+        return pWidget;
+    }
+
+    return nullptr;
+}
+
