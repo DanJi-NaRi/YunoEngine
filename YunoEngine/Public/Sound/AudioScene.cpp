@@ -122,7 +122,7 @@ void AudioScene::ClearInstList()
     //m_EventParameterNames.clear();
 }
 
-void TitleAudio::SetInstParam(const std::string& paramName, float value)
+void AudioScene::SetInstParam(const std::string& paramName, float value)
 {
     auto it = m_ParamList.find(paramName);
     if (it == m_ParamList.end())
@@ -134,7 +134,7 @@ void TitleAudio::SetInstParam(const std::string& paramName, float value)
     m_InstList[pc.eventName].SetParameter(pc.paramID, value, true);
 }
 
-void TitleAudio::SetGlobalParam(const std::string& paramName, float value)
+void AudioScene::SetGlobalParam(const std::string& paramName, float value)
 {
     AudioSystem::Get().SetGlobalParam(paramName, value);
 }

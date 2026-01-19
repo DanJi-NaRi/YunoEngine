@@ -6,6 +6,16 @@ public:
     virtual void Load(std::string bankName) = 0;
     virtual void Unload() = 0;
     virtual void Update(float dt) = 0;
+
+    virtual void Listener3DUpdate(XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up = { 0, 1, 0 }, XMFLOAT3 vel = {}) = 0;
+    virtual void Emitter3DUpdate(std::string eventName, XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up = { 0, 1, 0 }, XMFLOAT3 vel = {}) = 0;
+
+    virtual void PlayEvent(const std::string& eventName, bool is3D = false, XMFLOAT3 pos = {}, XMFLOAT3 forward = {}, XMFLOAT3 up = { 0, 1, 0 }, XMFLOAT3 vel = {}) = 0;
+    virtual void PlayOneShot(const std::string& eventName) = 0;
+    
+    virtual void SetInstParam(const std::string& paramName, float value) = 0;
+    virtual void SetGlobalParam(const std::string& paramName, float value) = 0;
+    virtual void SetState() = 0;
 };
 
 struct ParamContent
@@ -42,6 +52,12 @@ public:
     // 한 번 재생하고 나면 사라질 음원
     void PlayOneShot(const std::string& eventName);
 
+    // m_InstList에 있는 instance 별로 파라미터 설정 가능.
+    void SetInstParam(const std::string& paramName, float value);
+    // 전역 파라미터를 조절하고 싶다면
+    void SetGlobalParam(const std::string& paramName, float value);
+    void SetState() {};
+
     // 씬에서 만든 인스턴스 정리
     void ClearInstList();
 
@@ -64,10 +80,4 @@ public:
     {
         Unload();
     }
-
-    // m_InstList에 있는 instance 별로 파라미터 설정 가능.
-    void SetInstParam(const std::string& paramName, float value);
-    // 전역 파라미터를 조절하고 싶다면
-    void SetGlobalParam(const std::string& paramName, float value);
-    void SetState();
 };
