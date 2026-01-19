@@ -5,6 +5,7 @@
 class Mesh;
 
 struct MeshNode {
+    MeshNode() { mUserTM = XMMatrixIdentity(); }
     std::wstring m_name;
     MeshNode* m_Parent = nullptr;
     std::vector<std::unique_ptr<MeshNode>> m_Childs;
