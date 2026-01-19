@@ -357,6 +357,9 @@ private:
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
         uint32_t w = 0;
         uint32_t h = 0;
+
+        uint32_t GetWidth() const { return w; }
+        uint32_t GetHeight() const { return h; }
     };
 
     std::vector<TextureResource> m_textures; // handle -> m_textures[handle-1]

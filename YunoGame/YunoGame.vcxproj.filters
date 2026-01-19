@@ -49,6 +49,9 @@
     <Filter Include="Game\Object\Dwarf">
       <UniqueIdentifier>{4819ede5-efc2-41cb-a857-f54b670b66ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes\SceneTemplate">
+      <UniqueIdentifier>{24b754d7-a2f6-4d5c-9cb2-02394ae55327}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -66,29 +69,29 @@
     <ClCompile Include="Game\Object\Quad.cpp">
       <Filter>Game\Object\Quad</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\PlayScene.cpp">
-      <Filter>Scenes\2. Play</Filter>
-    </ClCompile>
-    <ClCompile Include="Scenes\TitleScene.cpp">
-      <Filter>Scenes\1. Title</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Object\Building.cpp">
       <Filter>Game\Object\Building</Filter>
     </ClCompile>
-    <ClCompile Include="Text.cpp">
+    <ClCompile Include="Game\UI\Text.cpp">
       <Filter>Game\UI\Text</Filter>
     </ClCompile>
-    <ClCompile Include="Image.cpp">
+    <ClCompile Include="Game\UI\Image.cpp">
       <Filter>Game\UI\Image</Filter>
     </ClCompile>
     <ClCompile Include="Game\Object\AnimTest.cpp">
       <Filter>Game\Object\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp">
-      <Filter>Scenes\0. Test</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Object\Dwarf.cpp">
       <Filter>Game\Object\Dwarf</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\PlayScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\TitleScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp">
+      <Filter>Scenes\SceneTemplate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -110,29 +113,29 @@
     <ClInclude Include="System\GameInputContext.h">
       <Filter>System</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\PlayScene.h">
-      <Filter>Scenes\2. Play</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenes\TitleScene.h">
-      <Filter>Scenes\1. Title</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Object\Building.h">
       <Filter>Game\Object\Building</Filter>
     </ClInclude>
-    <ClInclude Include="Text.h">
+    <ClInclude Include="Game\UI\Text.h">
       <Filter>Game\UI\Text</Filter>
     </ClInclude>
-    <ClInclude Include="Image.h">
+    <ClInclude Include="Game\UI\Image.h">
       <Filter>Game\UI\Image</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\AnimTest.h">
       <Filter>Game\Object\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h">
-      <Filter>Scenes\0. Test</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Object\Dwarf.h">
       <Filter>Game\Object\Dwarf</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\PlayScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\TitleScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h">
+      <Filter>Scenes\SceneTemplate</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

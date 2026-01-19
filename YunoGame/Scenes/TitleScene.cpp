@@ -12,6 +12,7 @@
 #include "Triangle.h"
 #include "Image.h"
 #include "AnimTest.h"
+#include "YunoLight.h"
 
 bool TitleScene::OnCreateScene()
 {
@@ -20,6 +21,8 @@ bool TitleScene::OnCreateScene()
     // 있는지 체크
     ObjectManager* om = GetObjectManager();
     if (!om) return false;
+    om->CreateDirLight();
+    
 
     
     om->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
@@ -28,7 +31,6 @@ bool TitleScene::OnCreateScene()
     //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
     om->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
     //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
-
 
     return true;
 }
