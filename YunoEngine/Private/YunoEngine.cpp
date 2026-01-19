@@ -89,7 +89,7 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     // 사운드 테스트
     EventHandle event{ AudioSystem::Get().GetEventDesc("BGM/JaneDoe") };
     event.Start();
-    AudioSystem::Get().SetBusMute("Master", true);
+    //AudioSystem::Get().SetBusMute("Master", true);
     //AudioSystem::Get().SetVCAVolume("Master", 0.2f);
     return true;
 }
