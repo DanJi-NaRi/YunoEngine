@@ -47,3 +47,20 @@ CMakeCache.txt
 ThirdParty/FMOD/fmodApp/.cache
 ThirdParty/FMOD/fmodApp/.unsaved
 ThirdParty/FMOD/fmodApp/.user
+
+# =========================
+# Project build outputs (your solution layout)
+# =========================
+Bin/
+Intermediate/
+
+# =========================
+# vcpkg (manifest mode outputs)
+# =========================
+vcpkg_installed/
+vcpkg/buildtrees/
+vcpkg/downloads/
+vcpkg/packages/
+vcpkg/installed/
+vcpkg/*.log
+vcpkg/*.exe
