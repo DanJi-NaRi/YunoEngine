@@ -87,7 +87,7 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     // 사운드 매니저 초기화 
     AudioSystem::Get().Init();
     // 사운드 테스트
-    EventHandle event{ AudioSystem::Get().GetEventDesc("BGM/JaneDoe") };
+    EventHandle event{ AudioSystem::Get().GetEventDesc("BGM/ManChanGa") };
     event.Start();
     //AudioSystem::Get().SetBusMute("Master", true);
     //AudioSystem::Get().SetVCAVolume("Master", 0.2f);

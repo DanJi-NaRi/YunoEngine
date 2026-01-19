@@ -44,8 +44,8 @@ public:
     // 3D 세팅
     void Set3DSettings(float dopplerScale, float distanceFactor, float rolloffScale);
 
-    FMOD::Studio::System* Studio() { return mStudio; }
-    FMOD::System* Core() { return mCore; }
+    FMOD::Studio::System* Studio() { return m_Studio; }
+    FMOD::System* Core() { return m_Core; }
 
 private:
     AudioSystem() = default;
@@ -54,13 +54,13 @@ private:
     AudioSystem& operator=(const AudioSystem&) = delete;
 
 private:
-    FMOD::Studio::System* mStudio = nullptr;
-    FMOD::System* mCore = nullptr;
+    FMOD::Studio::System* m_Studio = nullptr;
+    FMOD::System* m_Core = nullptr;
 
-    BankHelper mBH;
-    std::unordered_map<std::string, FMOD::Studio::Bank*> mBanks;
-    std::unordered_map<std::string, FMOD::Studio::EventDescription*> mEventDescCache;
-    std::unordered_map<std::string, FMOD::Studio::Bus*> mBusCache;
-    std::unordered_map<std::string, FMOD::Studio::VCA*> mVCACache;
+    BankHelper m_BH;
+    std::unordered_map<std::string, FMOD::Studio::Bank*> m_Banks;
+    std::unordered_map<std::string, FMOD::Studio::EventDescription*> m_EventDescList;
+    std::unordered_map<std::string, FMOD::Studio::Bus*> m_BusList;
+    std::unordered_map<std::string, FMOD::Studio::VCA*> m_VCAList;
     
 };
