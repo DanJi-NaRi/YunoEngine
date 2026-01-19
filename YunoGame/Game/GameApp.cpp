@@ -35,15 +35,28 @@ bool GameApp::OnInit()
     } // 렌더러 체크
 
     //---------------- 인풋 테스트
-    IInput* input = YunoEngine::GetInput();
-    input->AddContext(&s_uiCtx);
-    input->AddContext(&s_gameCtx);
+    //IInput* input = YunoEngine::GetInput();
+    //input->AddContext(&s_uiCtx);
+    //input->AddContext(&s_gameCtx);
     //---------------- 인풋 테스트
 
 
 
    ISceneManager* sm = YunoEngine::GetSceneManager();
    if (!sm) return false;
+
+
+   // 네트워크 초기화
+   m_net = std::make_unique<ClientNet>();
+
+   m_net->SetOnLine([](const std::string& line)
+       {
+           std::cout << "[NET] " << line << "\n";
+       });
+
+   const bool ok = m_net->Connect("127.0.0.1", 9000);
+   std::cout << (ok ? "[NET] Connected\n" : "[NET] Connect failed\n");
+
 
    SceneTransitionOptions opt{};
    opt.immediate = true;
@@ -95,6 +108,19 @@ void GameApp::OnUpdate(float dt)
 
     if (input->IsKeyDown('P'))
         window->SetClientSize(3440, 1440);
+
+    // 네트워크
+    if (m_net && m_net->IsConnected())
+    {
+        m_net->Pump();
+
+        m_netPingAcc += dt;
+        if (m_netPingAcc >= 1.0f)
+        {
+            m_netPingAcc = 0.0f;
+            m_net->SendLine("C2S");
+        }
+    }
 
 
     if (input && sm)
@@ -187,6 +213,12 @@ void GameApp::OnFixedUpdate(float fixedDt)
 void GameApp::OnShutdown()
 {
     std::cout << "[GameApp] OnShutdown\n";
+
+    if (m_net)
+    {
+        m_net->Close();
+        m_net.reset();
+    }
 }
 
 /*

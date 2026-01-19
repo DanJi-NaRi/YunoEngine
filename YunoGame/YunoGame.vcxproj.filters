@@ -94,12 +94,16 @@
       <Filter>Scenes\SceneTemplate</Filter>
     </ClCompile>
 
+
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Game\UI\Button.cpp">
       <Filter>Game\UI\Button</Filter>
     </ClCompile>
+
+
+    <ClCompile Include="ClientNet\ClientNet.cpp" />
 
   </ItemGroup>
   <ItemGroup>
@@ -146,12 +150,16 @@
       <Filter>Scenes\SceneTemplate</Filter>
     </ClInclude>
 
+
     <ClInclude Include="Scenes\UIScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Game\UI\Button.h">
       <Filter>Game\UI\Button</Filter>
     </ClInclude>
+
+
+    <ClInclude Include="ClientNet\ClientNet.h" />
 
   </ItemGroup>
 </Project>

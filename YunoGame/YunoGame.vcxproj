@@ -121,9 +121,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-
-      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System</AdditionalIncludeDirectories>
-
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\Packets;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System;$(ProjectDir)ClientNet</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -153,7 +151,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
 
-      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\Packets;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System;$(ProjectDir)ClientNet</AdditionalIncludeDirectories>
 
       <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -183,11 +181,17 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ProjectReference Include="..\YunoEngine\YunoEngine.vcxproj">
       <Project>{ceb210f1-5107-40e0-a0cc-207c920418b6}</Project>
     </ProjectReference>
+
     <ProjectReference Include="..\YunoImGui\YunoImGui.vcxproj">
       <Project>{ce3886a1-acc6-4b3e-b173-4ffdeb44e0fb}</Project>
     </ProjectReference>
+    
+    <ProjectReference Include="..\YunoNetProtocol\YunoNetProtocol.vcxproj">
+      <Project>{69684c5f-323b-4bbf-8e8f-ee62bf0eca13}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ClientNet\ClientNet.cpp" />
     <ClCompile Include="GamePCH\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -216,6 +220,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
 
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClientNet\ClientNet.h" />
     <ClInclude Include="GamePCH\pch.h" />
     <ClInclude Include="Game\GameApp.h" />
     <ClInclude Include="Game\Object\AnimTest.h" />
