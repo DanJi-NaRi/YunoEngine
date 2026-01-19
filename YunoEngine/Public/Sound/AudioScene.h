@@ -40,23 +40,23 @@ public:
     }
 
     // 3D음원이 있다면 리스너 업데이트 필수!
-    void Listener3DUpdate(XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up = { 0, 1, 0 }, XMFLOAT3 vel = {});
+    void Listener3DUpdate(XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up = { 0, 1, 0 }, XMFLOAT3 vel = {}) override;
     // 3D음원의 위치가 바뀌었다면? 업데이트 필수!
-    void Emitter3DUpdate(std::string eventName, XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up = { 0, 1, 0 }, XMFLOAT3 vel = {});
+    void Emitter3DUpdate(std::string eventName, XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up = { 0, 1, 0 }, XMFLOAT3 vel = {}) override;
 
     // 씬 내내 들고 관리할 음원.(특히 루프형)
     // 2D음원 재생 시, eventName만 기입.
     // 3D음원 재생 시, eventName, is3D, pos, forward 값 전달 모두 필요
-    void PlayEvent(const std::string& eventName, bool is3D = false, XMFLOAT3 pos = {}, XMFLOAT3 forward = {}, XMFLOAT3 up = { 0, 1, 0 }, XMFLOAT3 vel = {});
+    void PlayEvent(const std::string& eventName, bool is3D = false, XMFLOAT3 pos = {}, XMFLOAT3 forward = {}, XMFLOAT3 up = { 0, 1, 0 }, XMFLOAT3 vel = {}) override;
 
     // 한 번 재생하고 나면 사라질 음원
-    void PlayOneShot(const std::string& eventName);
+    void PlayOneShot(const std::string& eventName) override;
 
     // m_InstList에 있는 instance 별로 파라미터 설정 가능.
-    void SetInstParam(const std::string& paramName, float value);
+    void SetInstParam(const std::string& paramName, float value) override;
     // 전역 파라미터를 조절하고 싶다면
-    void SetGlobalParam(const std::string& paramName, float value);
-    void SetState() {};
+    void SetGlobalParam(const std::string& paramName, float value) override;
+    void SetState() override {};
 
     // 씬에서 만든 인스턴스 정리
     void ClearInstList();
