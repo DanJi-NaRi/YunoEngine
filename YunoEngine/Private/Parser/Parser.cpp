@@ -489,7 +489,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             auto wPath = Utf8ToWString(texPath.C_Str());
             TextureHandle nrm = renderer->CreateTexture2DFromFile(wPath.c_str());
 
-            md.normal = nrm;
+            md.normal = nrm; 
         }
         else 
         {
@@ -506,7 +506,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             auto wPath = Utf8ToWString(texPath.C_Str());
             TextureHandle metal = renderer->CreateTexture2DFromFile(wPath.c_str());
 
-            md.metal = metal;
+            md.metal = 123; //pbr셰이더용 쓰레기값 안넣어주면 터짐 추가 텍스쳐 안넣어주면 터짐
         }
         else
         {

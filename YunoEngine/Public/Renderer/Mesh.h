@@ -18,13 +18,27 @@ struct MeshNode {
     void LastSubmit();
 };
 
+enum class TextureUse
+{
+    Albedo = 0,
+    Normal = 1,
+    Metallic = 2,
+    Roughness = 3,
+    AO = 4,
+    ORM = 5,    // AO, Metallic, Roughness
+    Mask = 6,
+
+
+    MAX
+};
+
 class Mesh
 {
 protected:
     std::string m_name;
     RenderItem              m_renderItem;
     MeshHandle              m_Mesh;
-    MaterialHandle          m_Material;
+    MaterialHandle         m_Material;
     TextureHandle           m_Albedo;
     TextureHandle           m_Normal;
     TextureHandle           m_Orm;
@@ -42,6 +56,8 @@ public:
 
     void SetMesh(MeshHandle mesh) { m_Mesh = mesh; }
     void SetMaterial(MaterialHandle mat) { m_Material = mat; }
+
+    void SetTexture(TextureUse use, const std::wstring& filepath);
 
     void UpdateRenderItem(XMFLOAT4X4 mWorld);
 

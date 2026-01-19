@@ -25,8 +25,23 @@ bool TitleScene::OnCreateScene()
     om->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
     
     //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
-    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
-    om->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
+    auto building = om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
+    for (int i = 0; i < building->GetMeshNum(); i++)
+    {
+        std::wstring fullpath = L"../Assets/fbx/Building/";
+        std::wstring filepath = fullpath + L"building_Albedo" + std::to_wstring(i) + L".png";
+        building->SetTexture(i, TextureUse::Albedo, filepath);
+
+        filepath = fullpath + L"building_Metallic" + std::to_wstring(i) + L".png";
+        building->SetTexture(i, TextureUse::Metallic, filepath);
+
+        filepath = fullpath + L"building_Normal" + std::to_wstring(i) + L".png";
+        building->SetTexture(i, TextureUse::Normal, filepath);
+
+        filepath = fullpath + L"building_Roughness" + std::to_wstring(i) + L".png";
+        building->SetTexture(i, TextureUse::Roughness, filepath);
+    }
+    //om->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
     //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
 
 

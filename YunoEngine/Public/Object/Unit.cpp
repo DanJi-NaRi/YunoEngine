@@ -126,6 +126,25 @@ void Unit::Backup()
 void Unit::SetMesh(std::unique_ptr<MeshNode>&& mesh)
 {
     m_MeshNode = std::move(mesh);
+
+    SaveMesh(m_MeshNode, m_Meshs);
+}
+
+void Unit::SaveMesh(std::unique_ptr<MeshNode>& node, std::vector<Mesh*>& out)
+{
+    for (auto& mesh : node->m_Meshs)
+        out.push_back(mesh.get());
+
+    for (auto& child : node->m_Childs)
+        SaveMesh(child, out);
+}
+
+void Unit::SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepath)
+{
+    if (meshindex >= m_Meshs.size())
+        return;
+
+    m_Meshs[meshindex]->SetTexture(use, filepath);
 }
 
 

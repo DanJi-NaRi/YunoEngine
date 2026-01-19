@@ -49,9 +49,8 @@ protected:
     // 상수버퍼 업데이트할 데이터들
     Update_Data   m_constant;
 
-
    std::unique_ptr<MeshNode> m_MeshNode;
-
+   std::vector<Mesh*> m_Meshs; //전체 메쉬 저장용 수명관리는 메쉬노드가 함
 
     Unit* m_Parent;
     std::unordered_map<uint32_t, Unit*> m_Childs;
@@ -81,6 +80,11 @@ public:
     virtual bool CreateMaterial() { return false; };
 
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
+    void SaveMesh(std::unique_ptr<MeshNode>& node, std::vector<Mesh*>& out);
+
+    UINT GetMeshNum() { return m_Meshs.size(); }
+
+    void SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepath);
 
     uint32_t GetID() { return m_id; }
     const std::wstring& GetName() { return m_name; }
