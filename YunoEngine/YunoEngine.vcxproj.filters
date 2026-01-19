@@ -104,6 +104,9 @@
     <Filter Include="Public\Sound\src">
       <UniqueIdentifier>{13bdd158-89af-47af-86bd-12a0b27bb2df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Renderer\3DAnimation">
+      <UniqueIdentifier>{73b595f9-262f-40dc-97a8-c7c18b0f7dc2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -317,9 +320,6 @@
     <ClInclude Include="Public\Object\AnimationUnit.h">
       <Filter>Public\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Renderer\3DAnimation\BoneNode.h">
-      <Filter>Private\Renderer\Bone\Node</Filter>
-    </ClInclude>
     <ClInclude Include="Public\Object\Widget.h">
       <Filter>Public\UI</Filter>
     </ClInclude>
@@ -338,7 +338,11 @@
     <ClInclude Include="Public\Sound\fmodPCH.h">
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Renderer\3DAnimation\BoneAnimation.h" />
+    <ClInclude Include="Public\Renderer\3DAnimation\BoneAnimation.h">
+      <Filter>Public\Renderer\3DAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\3DAnimation\BoneNode.h">
+      <Filter>Public\Renderer\3DAnimation</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
