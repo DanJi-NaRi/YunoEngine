@@ -3,7 +3,7 @@
 #include "IScene.h"
 #include "IAudioScene.h"
 class ObjectManager;
-class IAudioScene;
+//class IAudioScene;
 
 class SceneBase : public IScene
 {
