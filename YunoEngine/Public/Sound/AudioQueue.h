@@ -11,6 +11,13 @@ enum class AudioCmdType
     EmitterUpdate   // 3D음원 위치 갱신
 };
 
+enum class SceneType : uint32_t
+{
+    Title,
+    Play,
+    UI
+};
+
 enum class EventName : uint32_t
 {
     BGM_Playlist,
@@ -24,18 +31,6 @@ enum class ParamName : uint32_t
 };
 const std::string to_string(ParamName param);
 
-struct CmdPlaySound
-{
-    EventName event;
-    XMFLOAT3 pos;
-};
-struct CmdSetParam
-{
-    EventName event;
-    ParamName param;
-    float value;
-};
-
 struct AudioCmd
 {
     AudioCmdType type;
@@ -43,21 +38,25 @@ struct AudioCmd
     {
         struct
         {
+            SceneType scene;
             EventName event;
             bool is3D;
             XMFLOAT3 pos;
         } pe;       // PlayEvent
         struct
         {
+            SceneType scene;
             EventName event;
             XMFLOAT3 pos;
         } eu;       // EmitterUpdate
         struct
         {
+            SceneType scene;
             EventName event;
         } po;       // PlayOneShot
         struct
         {
+            SceneType scene;
             EventName event;
             ParamName param;
             float value;

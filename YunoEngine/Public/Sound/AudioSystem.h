@@ -18,6 +18,8 @@ public:
 
     void Update(float dt);
 
+    void DispatchQue();
+
     // Bank
     bool LoadBank(const std::string& bankName, bool loadSampleData = true);
     void UnloadBank(const std::string& bankName);
@@ -44,6 +46,7 @@ public:
         const FMOD_3D_ATTRIBUTES& attrs,
         int listenerIndex = 0
     );
+    void SetListener3DAttributes(const XMFLOAT3& pos);
 
     // 전역 파라미터 조절
     void SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value);

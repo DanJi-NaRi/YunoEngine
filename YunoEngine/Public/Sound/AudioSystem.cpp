@@ -127,7 +127,7 @@ FMOD::Studio::EventDescription* AudioSystem::GetEventDesc(const std::string& eve
     FMOD_RESULT r = m_Studio->getEvent(totalPath.c_str(), &desc);
     CheckFMOD(r, "Studio::System::getEvent");
     if (r != FMOD_OK || !desc) return nullptr;
-
+    
     m_EventDescList[totalPath] = desc;
     return desc;
 }
@@ -246,6 +246,18 @@ void AudioSystem::SetListener3DAttributes(const FMOD_3D_ATTRIBUTES& attrs, int l
 {
     if (!m_Studio) return;
     m_Studio->setListenerAttributes(listenerIndex, &attrs);
+}
+
+void AudioSystem::SetListener3DAttributes(const XMFLOAT3& pos)
+{
+    FMOD_3D_ATTRIBUTES attrs = {};
+    attrs.position = { pos.x, pos.y, pos.z };
+    attrs.forward = { 0, 0, 1 };
+    attrs.up = { 0, 1, 0 };
+    attrs.velocity = { 0, 0, 0 };
+
+    if (!m_Studio) return;
+    m_Studio->setListenerAttributes(0, &attrs);
 }
 
 void AudioSystem::SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value)

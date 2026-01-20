@@ -50,5 +50,20 @@ protected:
     std::unordered_map<std::string, std::unordered_map<std::string, ParamContent>> m_EventParamCache; // key: 이벤트 이름, value: 파라미터 이름들
 
     AudioQ m_AQ;
+    std::queue<AudioCmd> m_aq;
 };
 
+class AudioTitleScene : public AudioScene
+{
+public:
+
+private:
+    
+};
+
+class AudioUIScene : public AudioScene
+{
+public:
+
+private:
+};
