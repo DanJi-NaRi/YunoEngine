@@ -13,10 +13,8 @@
 
 #include "TitleScene.h"
 #include "PlayScene.h"
-#include "UIScene.h"
 
 #include "GameApp.h"
-
 
 static UITestContext s_uiCtx;
 static GameTestContext s_gameCtx;
@@ -48,7 +46,6 @@ bool GameApp::OnInit()
    SceneTransitionOptions opt{};
    opt.immediate = true;
    sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
-   //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
 
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
@@ -119,8 +116,11 @@ void GameApp::OnUpdate(float dt)
         {
             SceneTransitionOptions opt{};
             opt.immediate = true;
-            sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
-            //sm->RequestPush(std::make_unique<PlayScene>());
+            ScenePolicy policy;
+            policy.blockUpdateBelow = false;
+            policy.blockRenderBelow = false;
+            //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+            sm->RequestPush(std::make_unique<TitleScene>(), policy);
         }
 
         if (input->IsKeyPressed(VK_F4))
@@ -130,30 +130,8 @@ void GameApp::OnUpdate(float dt)
             ScenePolicy policy;
             policy.blockUpdateBelow = false;
             policy.blockRenderBelow = false;
-            //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
-            sm->RequestPush(std::make_unique<TitleScene>(), policy);
-        }
-
-        if (input->IsKeyPressed(VK_F5))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            ScenePolicy policy;
-            policy.blockUpdateBelow = false;
-            policy.blockRenderBelow = false;
             //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
             sm->RequestPush(std::make_unique<PlayScene>(), policy);
-        }
-
-        if (input->IsKeyPressed(VK_F6))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            ScenePolicy policy;
-            policy.blockUpdateBelow = false;
-            policy.blockRenderBelow = false;
-            //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
-            sm->RequestPush(std::make_unique<UIScene>(), policy);
         }
     }
 

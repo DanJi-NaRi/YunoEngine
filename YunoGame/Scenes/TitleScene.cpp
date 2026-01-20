@@ -4,7 +4,6 @@
 #include "TitleScene.h"
 
 #include "YunoEngine.h"
-#include "YunoCamera.h"
 
 #include "ObjectManager.h"
 
@@ -18,16 +17,20 @@
 bool TitleScene::OnCreateScene()
 {
     //std::cout << "[TitleScene] OnCreate\n";
-   
-    m_objectManager->CreateDirLight();
+
+    // 있는지 체크
+    ObjectManager* om = GetObjectManager();
+    if (!om) return false;
+    om->CreateDirLight();
+    
 
     
-    m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
+    om->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
     
-    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
-    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
-    m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
-    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
+    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
+    om->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
+    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
 
     return true;
 }
@@ -47,19 +50,13 @@ void TitleScene::OnExit()
     //std::cout << "[TitleScene] OnExit\n";
 }
 
-
-
 void TitleScene::Update(float dt)
 {
     SceneBase::Update(dt);
+
 }
 
-void TitleScene::SubmitObj()
+void TitleScene::Submit()
 {
-    SceneBase::SubmitObj();
-}
-
-void TitleScene::SubmitUI()
-{
-    SceneBase::SubmitUI();
+    SceneBase::Submit();
 }

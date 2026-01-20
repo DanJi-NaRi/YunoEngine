@@ -1,18 +1,15 @@
 #include "pch.h"
 #include "Mesh.h"
-#include "YunoEngine.h"
 
 #include "Widget.h"
-#include "IWindow.h"
 
 VERTEX_Pos g_Widget_pos[] = {
-    { 0,0,0 },    // 좌상
-    { 1,0,0 },    // 우상
-    { 0,1,0 },    // 좌하
-    { 1,1,0 }     // 우하
+    { -0.5f,  0.5f,  0.0f },    // 좌상
+    {  0.5f,  0.5f,  0.0f },    // 우상
+    { -0.5f, -0.5f,  0.0f },    // 좌하
+    {  0.5f, -0.5f,  0.0f }     // 우하
 };
 
-// UI 쿼드는 노말 안씀
 VERTEX_Nrm g_Widget_nrm[] =
 {
     {  0.0f,  0.0f,  1.0f},
@@ -68,10 +65,10 @@ bool Widget::CreateMesh()
     // 정 필요하다면,  9-Slice 메쉬를 추가해도 되기는 한다.
 
     VertexStreams streams{};
-    streams.flags = VSF_Pos | VSF_UV;
+    streams.flags = VSF_Pos | VSF_Nrm | VSF_UV;
     streams.vtx_count = sizeof(g_Widget_pos) / sizeof(VERTEX_Pos);
     streams.pos = g_Widget_pos;
-    //streams.nrm = g_Widget_nrm;
+    streams.nrm = g_Widget_nrm;
     streams.uv = g_Widget_uv;
 
 
@@ -99,15 +96,11 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     m_id = id;
     m_name = name;
-    //float m_spriteSizeX = (float)spr.Width;  //원본 스프라이트 크기 (Pixel)
-    //float m_spriteSizeY = (float)spr.Height;
+    //float sizex = (float)spr.Width;  //원본 스프라이트 크기 (Pixel)
+    //float sizey = (float)spr.Height;
 
-    m_vPos = vPos;
-
-
-    m_spriteSizeX = (float)50;
-    m_spriteSizeY = (float)50;
-
+    m_spriteSizeX = (float)5;
+    m_spriteSizeY = (float)5;
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
@@ -128,20 +121,6 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOA
     m_pTextures = YunoEngine::GetTextureManager();
     m_pInput = YunoEngine::GetInput();
 
-    m_vPos = vPos;
-    m_vRot = vRot;
-    m_vScale = vScale;
-
-
-    m_spriteSizeX = (float)50;
-    m_spriteSizeY = (float)50;
-
-
-    // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
-    // (추후 에디터 기능으로 flag 추가 가능)
-    m_width = m_spriteSizeX;
-    m_height = m_spriteSizeY;
-
     Widget::Update();
 
     return true;
@@ -149,29 +128,19 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOA
 
 bool Widget::Update(float dTime)
 {
-    // DX 의 레스터라이즈 규칙에 따른 2D 픽셀좌표 보정.
-    //m_vPos.x -= 0.5f;	m_vPos.y -= 0.5f;
+    // UI 위젯은 기본 쿼드(-0.5~0.5)에 대해 scale로 실제 픽셀 크기를 만든다.
+    // 단순 출력 우선: (오쏘 1유닛=1픽셀) 가정
+    // 만약 렌더러/UI 카메라에서 픽셀-유닛 환산이 필요하면 이 값만 조정하면 된다.
+    const float UI_UNIT_PER_PX = 1.0f;
 
-    float clientWidth = (float)YunoEngine::GetWindow()->GetClientWidth();
-    float clientHeight = (float)YunoEngine::GetWindow()->GetClientHeight();
+    //m_vScale.x = m_width * UI_UNIT_PER_PX;
+    //m_vScale.y = m_height * UI_UNIT_PER_PX;
+    m_vScale.x = m_spriteSizeX;
+    m_vScale.y = m_spriteSizeY;
+    m_vScale.z = 1.0f; // UI는 z scale 의미 없음(일단 1로 고정)
 
-    /*m_vPos.x = (float)(clientWidth - m_width) / 2.0f;
-    m_vPos.y = (float)(clientHeight - m_height + 1);
-    m_vPos.z = 1.0f;*/
-
-    //m_vPos.x = (float)(clientWidth - m_width) / 2.0f;
-    //m_vPos.y = (float)(clientHeight - m_height + 1);
-    //m_vPos.z = 1.0f;
-
-    //float sizex = (float)m_spriteSizeX;
-    //float sizey = (float)m_spriteSizeY;
-    float sizex = m_vScale.x * m_width;
-    float sizey = m_vScale.y * m_height;
-    //m_vScale.z = 1.0f; // UI는 z scale 의미 없음(일단 1로 고정)
-
-    XMMATRIX mScale = XMMatrixScaling(sizex, sizey, 1.0f);
-    XMMATRIX mRot =   XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
-    //XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
+    XMMATRIX mScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
+    XMMATRIX mRot = XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
     XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
 
     XMMATRIX mTM;
@@ -230,10 +199,10 @@ bool SetupDefWidgetMesh(MeshHandle& meshHandle, IRenderer* renderer)
     // UI의 기본 쿼드 생성. 대부분의 UI는 엔진단에서 이 작업 한 번 하고 GetGlobalMesh()만 사용하면 된다.
 
     VertexStreams streams{};
-    streams.flags = VSF_Pos | VSF_UV;
+    streams.flags = VSF_Pos | VSF_Nrm | VSF_UV;
     streams.vtx_count = sizeof(g_Widget_pos) / sizeof(VERTEX_Pos);
     streams.pos = g_Widget_pos;
-    //streams.nrm = g_Widget_nrm;
+    streams.nrm = g_Widget_nrm;
     streams.uv = g_Widget_uv;
 
     meshHandle = renderer->CreateMesh(streams, g_Widget_idx, _countof(g_Widget_idx));

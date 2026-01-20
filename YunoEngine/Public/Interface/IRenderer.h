@@ -47,8 +47,7 @@ public:
     virtual void Flush() = 0;
 
     // 프레임당 1회 상수 버퍼 업데이트
-    virtual void BindConstantBuffers_Camera(const Frame_Data_Dir& dirData) = 0;
-    virtual void BindConstantBuffers_Light(const Frame_Data_Dir& dirData) = 0;
+    virtual void BindConstantBuffers_OneFrame(const Frame_Data_Dir& dirData) = 0;
     
     // 카메라 받아오기
     virtual YunoCamera& GetCamera() = 0;

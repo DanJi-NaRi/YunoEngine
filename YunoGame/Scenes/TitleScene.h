@@ -10,8 +10,7 @@ public:
     void OnExit() override;
 
     void Update(float dt) override;
-    void SubmitObj() override;
-    void SubmitUI() override;
+    void Submit() override;
 
     const char* GetDebugName() const override { return "TitleScene"; }
 
