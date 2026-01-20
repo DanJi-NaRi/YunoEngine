@@ -4,7 +4,12 @@
 
 class IScene;
 
-
+struct SceneView
+{
+    int stackIndex = -1;
+    std::string name;
+    const SceneState* state;
+};
 
 struct SceneEntry
 {
@@ -47,6 +52,8 @@ public:
     YunoSceneManager() = default;
     ~YunoSceneManager() override;
 
+    void RegisterDrawSceneUI();
+
     void RequestReplaceRoot(std::unique_ptr<IScene> scene, SceneTransitionOptions opt = {}) override;
     void RequestPush(std::unique_ptr<IScene> scene, ScenePolicy policy = {}, SceneTransitionOptions opt = {}) override;
     void RequestPop(SceneTransitionOptions opt = {}) override;
@@ -62,12 +69,15 @@ private:
     void PromoteNextPending();
     void ApplyPending(std::vector<PendingOp>& ops);     // 씬 변경 요청 처리
     bool EnsureCreated(SceneEntry& e);                  // 씬 유효성 검증 함수
+    void CreateView(const SceneEntry& e, UINT idx);
 
 private: // 디버그용
     void DumpStack_Console(const char* reason) const;
 
 private:
     std::vector<SceneEntry> m_stack;
+    std::vector<std::unique_ptr<SceneView>> m_views;
+    SceneView* m_selectView = nullptr;
 
     std::vector<PendingOp> m_pendingNow;   // immediate=true
     std::vector<PendingOp> m_pendingNext;  // immediate=false (다음 프레임 적용)

@@ -18,7 +18,9 @@ public:
     void Update(float dt) override;
     void Submit() override;
 
-    const char* GetDebugName() const override { return "SceneBase"; }
+    const char* GetDebugName() const override { return m_name.c_str(); }
+
+    void DrawObjectListUI();
 
 protected:
     ObjectManager* GetObjectManager() const { return m_objectManager.get(); }
@@ -30,4 +32,5 @@ protected:
 protected:
     std::unique_ptr<ObjectManager> m_objectManager;
     float m_lastDt = 0.0f;
+    std::string m_name;
 };

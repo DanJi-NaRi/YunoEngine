@@ -3,6 +3,7 @@
 #include <wincodec.h>
 #pragma comment(lib, "windowscodecs.lib")
 
+#include "YunoEngine.h"
 #include "IRenderer.h"
 #include "YunoCamera.h"
 #include "YunoConstantBuffers.h"
@@ -143,7 +144,6 @@ public:
     MaterialHandle CreateMaterial(const MaterialDesc& desc) override;
 
     TextureHandle CreateTexture2DFromFile(const wchar_t* path) override;
-
 
 
     void Submit(const RenderItem& item) override;
@@ -404,4 +404,6 @@ private:
     void CreateDebugGridResources();
     void SubmitDebugGrid();
     MeshHandle CreateLineMesh_PosOnly(const VERTEX_Pos* verts, uint32_t vtxCount);
+
+    friend YunoEngine;
 };

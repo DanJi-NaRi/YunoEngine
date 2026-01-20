@@ -121,7 +121,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -150,7 +150,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -178,6 +178,9 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
   <ItemGroup>
     <ProjectReference Include="..\YunoEngine\YunoEngine.vcxproj">
       <Project>{ceb210f1-5107-40e0-a0cc-207c920418b6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\YunoImGui\YunoImGui.vcxproj">
+      <Project>{ce3886a1-acc6-4b3e-b173-4ffdeb44e0fb}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -13,7 +13,7 @@ public:
     void Update(float dt) override;
     void Submit() override;
 
-    const char* GetDebugName() const override { return "PlayScene"; }
+    const char* GetDebugName() const override { return m_name.c_str(); }
 
 protected:
     bool OnCreateScene() override;

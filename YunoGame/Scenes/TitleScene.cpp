@@ -23,13 +23,13 @@ bool TitleScene::OnCreateScene()
     if (!om) return false;
     om->CreateDirLight();
     
-
+    m_name = "TitleScene";
     
     om->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
     
-    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
-    auto building = om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
-    for (int i = 0; i < building->GetMeshNum(); i++)
+    om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    //auto building = om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
+    /*for (int i = 0; i < building->GetMeshNum(); i++)
     {
         std::wstring fullpath = L"../Assets/fbx/Building/";
         std::wstring filepath = fullpath + L"building_Albedo" + std::to_wstring(i) + L".png";
@@ -43,7 +43,7 @@ bool TitleScene::OnCreateScene()
 
         filepath = fullpath + L"building_Roughness" + std::to_wstring(i) + L".png";
         building->SetTexture(i, TextureUse::Roughness, filepath);
-    }
+    }*/
     //om->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
     //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
 

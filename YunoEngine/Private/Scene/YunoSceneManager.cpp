@@ -3,7 +3,11 @@
 #include "YunoSceneManager.h"
 
 #include "IScene.h"
+#include "SceneBase.h"
 #include "IRenderer.h"
+
+#include "ImGuiManager.h"
+#include "UImgui.h"
 
 SceneEntry::~SceneEntry() = default;
 PendingOp::~PendingOp() = default;
@@ -14,7 +18,38 @@ YunoSceneManager::~YunoSceneManager()
     m_pendingNext.clear();
 
     ShutdownStack();
-};
+}
+
+void YunoSceneManager::RegisterDrawSceneUI()
+{
+    ImGuiManager::RegisterDraw(
+        [this]() {
+            UI::BeginPanel("SceneHierarchy");
+
+            for (size_t i = 0; i < m_views.size(); i++)
+            {
+                auto& pView = m_views[i];
+
+                bool selected = m_selectView != nullptr ? (m_selectView->stackIndex == pView->stackIndex) : false;
+                if (UI::Selectable(pView->name.c_str(), selected))
+                {
+                    m_selectView = pView.get();
+                }
+            }
+
+            UI::EndPanel();
+        }
+    );
+
+    ImGuiManager::RegisterDraw(
+        [this]() {
+            if (m_selectView)
+            {
+                dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawObjectListUI();
+            }
+        }
+    );
+}
 
 
 static inline void EnqueueOp(std::vector<PendingOp>& now, std::vector<PendingOp>& next, PendingOp&& op)
@@ -80,6 +115,18 @@ bool YunoSceneManager::EnsureCreated(SceneEntry& e)
         e.state = SceneState::Loaded;
     }
     return true;
+}
+
+void YunoSceneManager::CreateView(const SceneEntry& e, UINT idx)
+{
+    if (!e.scene) return;
+
+    auto v = std::make_unique<SceneView>();
+    v->name = std::string(e.scene->GetDebugName()) + std::to_string(m_views.size());
+    v->stackIndex = idx;
+    v->state = &e.state;
+
+    m_views.push_back(std::move(v));
 }
 
 void YunoSceneManager::DumpStack_Console(const char* reason) const
@@ -152,6 +199,8 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
                 }
                 m_stack.pop_back();
             }
+            m_views.clear();
+            m_selectView = nullptr;
 
             // 새 씬 1개로 교체
             SceneEntry e{};
@@ -166,6 +215,8 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
             e.scene->OnEnter();
             e.state = SceneState::Active;
             m_stack.push_back(std::move(e));
+            CreateView(m_stack[m_stack.size() - 1], m_stack.size() - 1);
+
             DumpStack_Console("After ReplaceRoot");
         }
         else if (op.type == PendingOpType::Push)
@@ -194,6 +245,7 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
             e.scene->OnEnter();
             e.state = SceneState::Active;
             m_stack.push_back(std::move(e));
+            CreateView(m_stack[m_stack.size() - 1], m_stack.size() - 1);
             DumpStack_Console("After Push");
         }
         else if (op.type == PendingOpType::Pop)
@@ -213,6 +265,8 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
                     top.scene->OnDestroy();
                 }
                 m_stack.pop_back();
+                m_views.pop_back();
+                m_selectView = nullptr;
             }
 
             // 새 top Resume

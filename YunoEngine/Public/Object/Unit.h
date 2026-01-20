@@ -87,7 +87,7 @@ public:
     void SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepath);
 
     uint32_t GetID() { return m_id; }
-    const std::wstring& GetName() { return m_name; }
+    const std::wstring& GetName() const { return m_name; }
 
     void Attach(Unit* obj);
     void DettachParent();

@@ -25,6 +25,8 @@ bool PlayScene::OnCreateScene()
     // 있는지 체크
     ObjectManager* om = GetObjectManager();
     if (!om) return false;
+
+    m_name = "PlayScene";
     
     // 디렉션 라이트 생성
     m_objectManager->CreateDirLight();

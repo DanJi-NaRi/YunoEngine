@@ -12,6 +12,7 @@ class ObjectManager
 {
 private:
     size_t m_ObjectCount;
+    size_t m_WidgetCount;
     UINT m_ObjectIDs;
 
     std::deque<std::unique_ptr<Unit>> m_objs;
@@ -77,8 +78,12 @@ public:
     void DestroyObject(const std::wstring& name);
 
     const size_t GetObjectCount() { return m_ObjectCount; }
+    const size_t GetWidgetCount() { return m_WidgetCount; }
     const std::unordered_map<UINT, Unit*>& GetObjectlist() { return m_objMap; }
+    const std::unordered_map<UINT, Widget*>& GetWidgetlist() { return m_WidgetMap; }
 
+private:
+    void CheckDedicateObjectName(std::wstring& name);
 
 
     // 프레임 상수버퍼 관리
@@ -91,9 +96,13 @@ private:
 template<typename T>
 T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos) {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
+
+    std::wstring newname = name;
     
     auto obj = std::make_unique<T>();
-    obj->Create(name, m_ObjectIDs, pos);
+    CheckDedicateObjectName(newname);
+
+    obj->Create(newname, m_ObjectIDs, pos);
 
     auto* pObj = obj.get();
 
@@ -103,7 +112,7 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos) {
     return pObj;
 }
 
-//계층구조 오브젝트 재귀 생성용
+//계층구조 오브젝트 재귀 생성용 (현재 안씀)
 template<typename T>
 T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node)
 {
@@ -173,7 +182,9 @@ T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, c
     auto meshnode = std::move(meshAndAnim.first);
     auto animator = std::move(meshAndAnim.second);
 
-    std::wstring newname = name + L'_' + meshnode->m_name;
+    std::wstring newname = name;
+
+    CheckDedicateObjectName(newname);
 
     auto obj = std::make_unique<T>();
     obj->Create(newname, m_ObjectIDs++, pos);

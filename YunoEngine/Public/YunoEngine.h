@@ -10,6 +10,7 @@ class IWindow;
 class IInput;
 class YunoInputSystem;
 class ISceneManager;
+class YunoRenderer;
 
 
 class YunoEngine
