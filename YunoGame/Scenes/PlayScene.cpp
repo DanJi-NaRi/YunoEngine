@@ -21,9 +21,13 @@
 bool PlayScene::OnCreateScene()
 {
     //std::cout << "[PlayScene] OnCreate\n";
+
+    m_name = "PlayScene";
+
     
     // 디렉션 라이트 생성
     m_objectManager->CreateDirLight();
+
 
     m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
@@ -33,6 +37,7 @@ bool PlayScene::OnCreateScene()
 
     // 플레이어(삼각형)
     m_objectManager->CreateObject<Triangle>(L"player", XMFLOAT3(0, 0, 0));
+
     return true;
 }
 

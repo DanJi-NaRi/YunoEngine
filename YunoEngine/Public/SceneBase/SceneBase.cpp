@@ -6,6 +6,30 @@
 
 #include "IRenderer.h"
 #include "ObjectManager.h"
+#include "UImgui.h"
+
+std::string WStringToString(const std::wstring& wstr)
+{
+    if (wstr.empty()) return {};
+
+    int size_needed = WideCharToMultiByte(
+        CP_UTF8, 0,
+        wstr.data(), (int)wstr.size(),
+        nullptr, 0,
+        nullptr, nullptr
+    );
+
+
+    std::string result(size_needed, 0);
+    WideCharToMultiByte(
+        CP_UTF8, 0,
+        wstr.data(), (int)wstr.size(),
+        result.data(), size_needed,
+        nullptr, nullptr
+    );
+
+    return result;
+}
 
 
 SceneBase::SceneBase() = default;
@@ -18,6 +42,15 @@ SceneBase::~SceneBase() = default;
 bool SceneBase::OnCreate()
 {
     //std::cout << "[SceneBase] OnCreate\n";
+
+    m_name = "SceneBase";
+
+#ifdef _DEBUG
+    m_selectedObject = nullptr;
+    m_selectedWidget = nullptr;
+#endif
+
+
     m_objectManager = std::make_unique<ObjectManager>();
     if (!m_objectManager)
         return false;
@@ -93,6 +126,193 @@ void SceneBase::SubmitUI()
         m_objectManager->WidgetSubmit(m_lastDt);
     }
 }
+
+#ifdef _DEBUG
+void SceneBase::DrawObjectListUI()
+{
+    if (!m_objectManager)
+        return;
+
+    const uint32_t objcount = m_objectManager->GetObjectCount();
+    const uint32_t widgetcount = m_objectManager->GetWidgetCount();
+
+    auto& objlist = m_objectManager->GetObjectlist();
+    auto& widgetlist = m_objectManager->GetWidgetlist();
+
+    for (uint32_t i = 0; i < objcount; ++i)
+    {
+        auto it = objlist.find(i);
+        if(it == objlist.end())
+            continue;
+
+        Unit* obj = it->second;
+
+        bool selected = false; // ← EditorState에서 가져오게 될 것
+
+        std::string name = WStringToString(obj->GetName());
+
+        if (UI::Selectable(name.c_str(), selected))
+        {
+            SelectObject(obj);
+        }
+    }
+
+    for (uint32_t i = 0; i < widgetcount; ++i)
+    {
+        auto it = widgetlist.find(i);
+        if (it == widgetlist.end())
+            continue;
+
+        Widget* obj = it->second;
+
+        bool selected = false; // ← EditorState에서 가져오게 될 것
+
+        std::string name = WStringToString(obj->GetName());
+
+        if (UI::Selectable(name.c_str(), selected))
+        {
+            SelectWidget(obj);
+        }
+    }
+}
+
+void RadToDegree(XMFLOAT3& out)
+{
+    out.x = XMConvertToDegrees(out.x);
+    out.y = XMConvertToDegrees(out.y);
+    out.z = XMConvertToDegrees(out.z);
+}
+
+void DegreeToRad(XMFLOAT3& out)
+{
+    out.x = XMConvertToRadians(out.x);
+    out.y = XMConvertToRadians(out.y);
+    out.z = XMConvertToRadians(out.z);
+}
+
+void SceneBase::DrawInspector()
+{
+    if (m_selectedObject)
+    {
+        if (UI::CollapsingHeader("Transform"))
+        {
+            auto& pos = m_selectedObject->GetPos();
+            auto& rot = m_selectedObject->GetRot();
+            auto& scale = m_selectedObject->GetScale();
+
+            XMFLOAT3 degRot = rot;
+            RadToDegree(degRot);
+
+            bool isChange = false;
+
+            static bool editPos = false;
+            static bool editRot = false;
+            static bool editScale = false;
+            static float value = 0.0f;
+
+
+            if (UI::Button("Reset"))
+            {
+                m_selectedObject->SetBackUpTransform();
+                isChange = true;
+            }
+
+            UI::Separator();
+
+            if (!editPos)
+            {
+                if (UI::DragFloat3("Position##Drag", &pos.x, 0.1f))
+                {
+                    isChange = true;
+                }
+
+                if (UI::IsItemHovered() &&
+                    UI::IsLeftMouseDoubleClicked())
+                {
+                    editPos = true;
+                }
+            }
+            else
+            {
+                if (UI::InputFloat3("Position##Input", &pos.x))
+                {
+                    isChange = true;
+                }
+
+                if (UI::IsItemDeactivatedAfterEdit())
+                {
+                    editPos = false;
+                }
+            }
+            
+            if (!editRot)
+            {
+                if (UI::DragFloat3("Rotation##Drag", &degRot.x, 0.5f))
+                {
+                    DegreeToRad(degRot);
+                    m_selectedObject->SetRot(degRot);
+
+                    isChange = true;
+                }
+
+                if (UI::IsItemHovered() &&
+                    UI::IsLeftMouseDoubleClicked())
+                {
+                    editRot = true;
+                }
+            }
+            else
+            {
+                if (UI::InputFloat3("Rotation##Input", &degRot.x))
+                {
+                    DegreeToRad(degRot);
+                    m_selectedObject->SetRot(degRot);
+                    isChange = true;
+                }
+
+                if (UI::IsItemDeactivatedAfterEdit())
+                {
+                    editRot = false;
+                }
+            }
+            
+            if (!editScale)
+            {
+                if (UI::DragFloat3("Scale##Drag", &scale.x, 0.1f, 0.001f, 1000.0f))
+                {
+                    isChange = true;
+                }
+
+                if (UI::IsItemHovered() &&
+                    UI::IsLeftMouseDoubleClicked())
+                {
+                    editScale = true;
+                }
+            }
+            else
+            {
+                if (UI::InputFloat3("Scale##Input", &scale.x))
+                {
+                    isChange = true;
+                }
+
+                if (UI::IsItemDeactivatedAfterEdit())
+                {
+                    editScale = false;
+                }
+            }
+            
+
+            if (isChange) m_selectedObject->Update();
+        }
+    }
+    else if(m_selectedWidget)
+    {
+       
+    }
+}
+#endif
+
 
 bool SceneBase::OnCreateScene()
 {

@@ -23,6 +23,7 @@
 #include "Bank.h"
 #include "AudioSystem.h"
 #include "EventHandle.h"
+#include "ImGuiManager.h"
 
 
 IRenderer* YunoEngine::s_renderer = nullptr;
@@ -60,6 +61,11 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     m_sceneManager = std::make_unique<YunoSceneManager>();
     s_sceneManager = m_sceneManager.get();
 
+#ifdef _DEBUG
+    auto YunoSmanager = dynamic_cast<YunoSceneManager*>(m_sceneManager.get());
+    YunoSmanager->RegisterDrawSceneUI();
+#endif
+
     // 인풋 시스템 생성
     m_input = std::make_unique<YunoInputSystem>();
     s_input = m_input.get();
@@ -76,6 +82,12 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     //m_timer->SetMaxDeltaSeconds(0.1f); // 최대 프레임 제한
     m_timer->SetTimeScale(1.0f);
     m_fixedAccumulator = 0.0;
+
+#ifdef _DEBUG
+    auto yunorenderer = dynamic_cast<YunoRenderer*>(m_renderer.get());
+
+    ImGuiManager::Initialize(static_cast<HWND>(m_window->GetNativeHandle()), yunorenderer->m_device.Get(), yunorenderer->m_context.Get());
+#endif
 
     // Game 초기화
     if (!m_game->OnInit())
@@ -160,6 +172,12 @@ int YunoEngine::Run()
 
         //s_renderer->Flush();
 
+#ifdef _DEBUG
+        ImGuiManager::BeginFrame();
+
+        ImGuiManager::EndFrame();
+#endif
+
         m_renderer->EndFrame();
     }
 
@@ -170,6 +188,10 @@ int YunoEngine::Run()
 void YunoEngine::Shutdown()
 {
     // 종료 순서
+#ifdef _DEBUG
+    ImGuiManager::Shutdown();
+#endif
+
     // 1. 게임
     if (m_game)
     {

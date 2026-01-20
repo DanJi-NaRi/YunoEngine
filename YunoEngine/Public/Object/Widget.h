@@ -102,7 +102,7 @@ public:
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 
     uint32_t GetID() { return m_id; }
-    const std::wstring& GetName() { return m_name; }
+    const std::wstring& GetName() const { return m_name; }
 
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
 

@@ -45,6 +45,8 @@ bool Unit::Create(XMFLOAT3 vPos)
     m_pTextures = YunoEngine::GetTextureManager();
     m_pInput = YunoEngine::GetInput();
 
+    Backup();
+
     Unit::Update();
 
     return true;
@@ -72,6 +74,8 @@ bool Unit::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3
     m_pRenderer = YunoEngine::GetRenderer();
     m_pTextures = YunoEngine::GetTextureManager();
     m_pInput = YunoEngine::GetInput();
+
+    Backup();
 
     Unit::Update();
 
@@ -126,6 +130,25 @@ void Unit::Backup()
 void Unit::SetMesh(std::unique_ptr<MeshNode>&& mesh)
 {
     m_MeshNode = std::move(mesh);
+
+    SaveMesh(m_MeshNode, m_Meshs);
+}
+
+void Unit::SaveMesh(std::unique_ptr<MeshNode>& node, std::vector<Mesh*>& out)
+{
+    for (auto& mesh : node->m_Meshs)
+        out.push_back(mesh.get());
+
+    for (auto& child : node->m_Childs)
+        SaveMesh(child, out);
+}
+
+void Unit::SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepath)
+{
+    if (meshindex >= m_Meshs.size())
+        return;
+
+    m_Meshs[meshindex]->SetTexture(use, filepath);
 }
 
 

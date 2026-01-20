@@ -26,9 +26,9 @@ protected:
     XMFLOAT4X4	m_mWorld;
     XMFLOAT4X4	m_mScale, m_mRot, m_mTrans;
 
-    XMFLOAT3	m_vPosBk;
-    XMFLOAT3	m_vRotBk;
-    XMFLOAT3	m_vScaleBk;
+    XMFLOAT3	    m_vPosBk;
+    XMFLOAT3	    m_vRotBk;
+    XMFLOAT3	    m_vScaleBk;
     XMFLOAT3 	m_vDirBk;
 
     int			m_Hp;
@@ -49,9 +49,8 @@ protected:
     // 상수버퍼 업데이트할 데이터들
     Update_Data   m_constant;
 
-
    std::unique_ptr<MeshNode> m_MeshNode;
-
+   std::vector<Mesh*> m_Meshs; //전체 메쉬 저장용 수명관리는 메쉬노드가 함
 
     Unit* m_Parent;
     std::unordered_map<uint32_t, Unit*> m_Childs;
@@ -74,6 +73,16 @@ public:
     virtual bool  Submit(float dTime = 0);
     bool               LastSubmit(float dTime = 0);      // 이거는 오버라이드 xx
 
+    XMFLOAT3& GetPos() { return m_vPos; }
+    XMFLOAT3& GetRot() { return m_vRot; }
+    XMFLOAT3& GetScale() { return m_vScale; }
+
+    void SetPos(const XMFLOAT3& pos) { m_vPos = pos; }
+    void SetRot(const XMFLOAT3& rot) { m_vRot = rot; }
+    void SetScale(const XMFLOAT3& scale) { m_vScale = scale; }
+
+    void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
+
     virtual void  Backup();
 
     //메쉬는 대부분 파서가 만들어서 순수 가상함수일 필요없어짐
@@ -81,9 +90,14 @@ public:
     virtual bool CreateMaterial() { return false; };
 
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
+    void SaveMesh(std::unique_ptr<MeshNode>& node, std::vector<Mesh*>& out);
+
+    UINT GetMeshNum() { return m_Meshs.size(); }
+
+    void SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepath);
 
     uint32_t GetID() { return m_id; }
-    const std::wstring& GetName() { return m_name; }
+    const std::wstring& GetName() const { return m_name; }
 
     void Attach(Unit* obj);
     void DettachParent();

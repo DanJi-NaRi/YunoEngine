@@ -30,6 +30,7 @@ bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     }
 
 
+
     m_MeshNode = std::make_unique<MeshNode>();
 
     auto mesh = std::make_unique<Mesh>();
@@ -39,12 +40,14 @@ bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     {
         m_constant.baseColor = XMFLOAT4(1, 1, 1, 1);
         m_constant.roughRatio = 1.0f;
+
         m_constant.metalRatio = 1.0f;
         m_constant.shadowBias = 0.005f;
     }
     Backup();
 
     return true;
+
 }
 
 bool Image::Update(float dTime)
@@ -68,6 +71,7 @@ bool Image::Submit(float dTime)
     return true;
 }
 
+
 bool Image::CreateMesh()
 {
     m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
@@ -75,11 +79,13 @@ bool Image::CreateMesh()
     return true;
 }
 
+
 bool Image::CreateMaterial()
 {
     m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/woodbox.bmp");
 
     MaterialDesc md{};
+
     md.passKey.vs = ShaderId::UIBase;
     md.passKey.ps = ShaderId::UIBase;
     md.passKey.vertexFlags = VSF_Pos | VSF_UV;
@@ -87,6 +93,7 @@ bool Image::CreateMaterial()
     md.passKey.blend = BlendPreset::AlphaBlend;
     md.passKey.raster = RasterPreset::CullNone;
     md.passKey.depth = DepthPreset::Off;
+
 
     md.albedo = m_Albedo;
     //md.albedo = 0;

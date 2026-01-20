@@ -93,12 +93,14 @@
     <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp">
       <Filter>Scenes\SceneTemplate</Filter>
     </ClCompile>
+
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Game\UI\Button.cpp">
       <Filter>Game\UI\Button</Filter>
     </ClCompile>
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -143,11 +145,13 @@
     <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h">
       <Filter>Scenes\SceneTemplate</Filter>
     </ClInclude>
+
     <ClInclude Include="Scenes\UIScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Game\UI\Button.h">
       <Filter>Game\UI\Button</Filter>
     </ClInclude>
+
   </ItemGroup>
 </Project>

@@ -126,7 +126,9 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Parser;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Private\Singleton;$(ProjectDir)Public;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Light;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Sound;$(SolutionDir)ThirdParty\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(ProjectDir)EnginePCH;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Parser;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Private\Singleton;$(ProjectDir)Public;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Light;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Sound;$(SolutionDir)ThirdParty\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -136,7 +138,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\Assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;zlibstaticd.lib</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;zlibstaticd.lib;</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -151,7 +153,9 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)EnginePCH;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Parser;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Private\Singleton;$(ProjectDir)Public;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Light;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Sound;$(SolutionDir)ThirdParty\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(ProjectDir)EnginePCH;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Parser;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Private\Singleton;$(ProjectDir)Public;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Light;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Sound;$(SolutionDir)ThirdParty\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -303,6 +307,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YunoImGui\YunoImGui.vcxproj">
+      <Project>{ce3886a1-acc6-4b3e-b173-4ffdeb44e0fb}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

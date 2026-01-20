@@ -3,6 +3,7 @@
 #include <wincodec.h>
 #pragma comment(lib, "windowscodecs.lib")
 
+#include "YunoEngine.h"
 #include "IRenderer.h"
 #include "YunoCamera.h"
 #include "YunoConstantBuffers.h"
@@ -145,7 +146,6 @@ public:
     TextureHandle CreateTexture2DFromFile(const wchar_t* path) override;
 
 
-
     void Submit(const RenderItem& item) override;
     void Flush() override;     
 
@@ -281,6 +281,11 @@ private:
     MaterialHandle m_defaultMaterial = 0;
     RenderPassHandle m_defaultPass = 0;
 
+public:
+    YunoMaterial& GetMaterial(MaterialHandle handle) { 
+        assert(handle <= m_materials.size() && handle != 0);
+        return m_materials[handle - 1]; 
+    }
 
     // 렌더패스 관련 프리셋들
 private:
@@ -307,9 +312,11 @@ private:
     };
 
     using RenderPassHandle = uint32_t;
-
+    
+public:
     // 캐시 조회/생성
     RenderPassHandle GetOrCreatePass(const PassKey& key);
+private:
 
     std::vector<std::unique_ptr<YunoRenderPass>> m_passes;
     std::unordered_map<PassKey, RenderPassHandle, PassKeyHash> m_passCache;
@@ -398,4 +405,6 @@ private:
     void CreateDebugGridResources();
     void SubmitDebugGrid();
     MeshHandle CreateLineMesh_PosOnly(const VERTEX_Pos* verts, uint32_t vtxCount);
+
+    friend YunoEngine;
 };

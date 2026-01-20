@@ -3,6 +3,7 @@
 #include "Mesh.h"
 #include "IRenderer.h"
 #include "YunoEngine.h"
+#include "YunoRenderer.h"
 
 Mesh::Mesh()
 {
@@ -30,6 +31,42 @@ void Mesh::Create(MeshHandle mesh, MaterialHandle mat, const XMFLOAT3& vPos, con
 
     m_renderItem.materialHandle = m_Material;
     m_renderItem.meshHandle = m_Mesh;
+}
+
+void Mesh::SetTexture(TextureUse use, const std::wstring& filepath)
+{
+    const auto& renderer = YunoEngine::GetRenderer();
+
+    TextureHandle handle = renderer->CreateTexture2DFromFile(filepath.c_str());
+
+    if (!handle) return;
+
+    auto& material = dynamic_cast<YunoRenderer*>(renderer)->GetMaterial(m_renderItem.materialHandle);
+
+    switch (use)
+    {
+    case TextureUse::Albedo:
+        material.albedo = handle;
+        m_Albedo = handle;
+        break;
+    case TextureUse::Normal:
+        material.normal = handle;
+        m_Normal = handle;
+        break;
+    case TextureUse::Metallic:
+        material.metallic = handle;
+        break;
+    case TextureUse::Roughness:
+        material.roughness = handle;
+        break;
+    case TextureUse::AO:
+        material.ao = handle;
+        break;
+    case TextureUse::ORM:
+        material.orm = handle;
+        m_Orm = handle;
+        break;
+    }
 }
 
 void Mesh::UpdateRenderItem(XMFLOAT4X4 mWorld)

@@ -3,7 +3,10 @@
 #include "IScene.h"
 #include "IAudioScene.h"
 class ObjectManager;
-//class IAudioScene;
+
+class Unit;
+class Widget;
+
 
 class SceneBase : public IScene
 {
@@ -20,10 +23,22 @@ public:
     virtual void SubmitObj() override;
     virtual void SubmitUI() override;
 
-    const char* GetDebugName() const override { return "SceneBase"; }
+    const char* GetDebugName() const override { return m_name.c_str(); }
+
+#ifdef _DEBUG
+    void DrawObjectListUI();
+    void DrawInspector();
+#endif
 
 protected:
     ObjectManager* GetObjectManager() const { return m_objectManager.get(); }
+
+#ifdef _DEBUG
+    Unit* GetSelectedObject() const { return m_selectedObject; }
+    void    SelectObject(Unit* obj) { m_selectedObject = obj; }
+    Widget* GetSelectedWidget() const { return m_selectedWidget; }
+    void    SelectWidget(Widget* obj) { m_selectedWidget = obj; }
+#endif
 
     // 파생 씬에서 구현 ㄱㄱ
     virtual bool OnCreateScene();
@@ -31,7 +46,13 @@ protected:
 
 protected:
     std::unique_ptr<ObjectManager> m_objectManager;
-    float m_lastDt = 0.0f;
 
+#ifdef _DEBUG
+    Unit* m_selectedObject;
+    Widget* m_selectedWidget;
+#endif
+    float m_lastDt = 0.0f;
+    std::string m_name;
     std::unique_ptr<IAudioScene> m_audioScene;
+
 };

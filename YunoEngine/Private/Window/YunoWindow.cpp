@@ -3,6 +3,7 @@
 //유노
 #include "YunoWindow.h"
 #include "YunoEngine.h"
+#include "ImGuiManager.h"
 #include <IInput.h>
 #include <InputEvent.h>
 
@@ -117,8 +118,16 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         window = reinterpret_cast<YunoWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     }
 
+
+#ifdef _DEBUG
+    if (ImGuiManager::ImGuiOwnWndProc(hWnd, msg, wParam, lParam))
+        return true;
+#endif
+    
+
     //마우스 트랙킹 활성화.
     if (IInput* input = YunoEngine::GetInput()) input->MouseTrack(hWnd, true);
+
 
     switch (msg)
     {

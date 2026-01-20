@@ -136,7 +136,7 @@ void ObjectManager::ProcessWidgetPending()
             m_widgets.push_back(std::move(widget));
             m_WidgetMap.emplace(id, pWidget);
             m_widgetNameToID.emplace(name, id);
-            m_ObjectCount++;
+            m_WidgetCount++;
         }
 
         m_widgetPendingCreateQ.clear();
@@ -161,7 +161,7 @@ void ObjectManager::ProcessWidgetPending()
             m_WidgetMap.erase(id);
 
             m_widgets.erase(it);
-            m_ObjectCount--;
+            m_WidgetCount--;
         }
 
         m_widgetPendingDestoryQ.clear();
@@ -218,6 +218,26 @@ void ObjectManager::DestroyObject(const std::wstring& name)
     }
 
     m_pendingDestoryQ.push_back(id);
+}
+
+void ObjectManager::CheckDedicateObjectName(std::wstring& name)
+{
+    int count = 0;
+
+    for (auto& obj : m_pendingCreateQ)
+    {
+        if (obj->GetName().find(name) != std::wstring::npos)
+            count++;
+    }
+
+    for (auto& [id, obj] : m_objMap)
+    {
+        if (obj->GetName().find(name) != std::wstring::npos)
+            count++;
+    }
+
+    if (count)
+        name += std::to_wstring(count);
 }
 
 void ObjectManager::FrameDataUpdate()
