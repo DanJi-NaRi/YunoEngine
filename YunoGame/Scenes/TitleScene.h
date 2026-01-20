@@ -2,6 +2,7 @@
 
 #include "SceneBase.h"
 
+class IAudioScene;
 
 class TitleScene final : public SceneBase
 {

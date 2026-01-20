@@ -4,6 +4,31 @@
 
 #include "Bank.h"
 
+BankHelper::~BankHelper()
+{
+    if (m_MasterStringBank)
+    {
+        m_MasterStringBank->unload();
+        m_MasterStringBank = nullptr;
+    }
+
+    if (m_MasterBank)
+    {
+        m_MasterBank->unload();
+        m_MasterBank = nullptr;
+    }
+
+    m_BankContents.clear();
+    m_EventRef.clear();
+    m_BusRef.clear();
+    m_VcaRef.clear();
+}
+
+const char* BankHelper::GetBankPath(std::string name)
+{
+    tmpPath = (bankPath + name + extension); return tmpPath.c_str();
+}
+
 std::string BankHelper::GetPath(FMOD::Studio::EventDescription* d)
 {
     if (!d) return {};
@@ -59,7 +84,7 @@ void BankHelper::IndexBankContent(const std::string& bankPath, FMOD::Studio::Ban
             if (!path.empty())
             {
                 content.events.push_back(path);
-                mEventRef[path]++; // refcount 증가
+                m_EventRef[path]++; // refcount 증가
             }
         }
     }
@@ -81,7 +106,7 @@ void BankHelper::IndexBankContent(const std::string& bankPath, FMOD::Studio::Ban
             if (!path.empty())
             {
                 content.buses.push_back(path);
-                mBusRef[path]++;
+                m_BusRef[path]++;
             }
         }
     }
@@ -103,11 +128,11 @@ void BankHelper::IndexBankContent(const std::string& bankPath, FMOD::Studio::Ban
             if (!path.empty())
             {
                 content.vcas.push_back(path);
-                mVcaRef[path]++;
+                m_VcaRef[path]++;
             }
         }
     }
 
-    mBankContents[bankPath] = std::move(content);
+    m_BankContents[bankPath] = std::move(content);
 }
 

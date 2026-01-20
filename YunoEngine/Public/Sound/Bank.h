@@ -17,7 +17,8 @@ struct BankContent
 class BankHelper
 {
 private:
-    std::string bankPath = "../Assets/Sound/";
+    std::string bankPath = "../Assets/Sound/Desktop/";
+    //std::string bankPath = "../Assets/Sound/";
     //std::string bankPath = "../ThirdParty/FMOD/fmodApp/Build/Desktop/";
     std::string extension = ".bank";
     std::string tmpPath;
@@ -26,27 +27,9 @@ private:
     friend class AudioSystem;
 
     BankHelper() = default;
-    ~BankHelper()
-    {
-        if (mMasterStringBank)
-        {
-            mMasterStringBank->unload();
-            mMasterStringBank = nullptr;
-        }
+    ~BankHelper();
 
-        if (mMasterBank)
-        {
-            mMasterBank->unload();
-            mMasterBank = nullptr;
-        }
-
-        mBankContents.clear();
-        mEventRef.clear();
-        mBusRef.clear();
-        mVcaRef.clear();
-    }
-
-    const char* GetBankPath(std::string name) { tmpPath = (bankPath + name + extension); return tmpPath.c_str(); }
+    const char* GetBankPath(std::string name);
 
     static std::string GetPath(FMOD::Studio::EventDescription* d);
     static std::string GetPath(FMOD::Studio::Bus* b);
@@ -55,14 +38,14 @@ private:
     void IndexBankContent(const std::string& bankPath, FMOD::Studio::Bank* bank);
 
 private:
-    FMOD::Studio::Bank* mMasterStringBank = nullptr;
-    FMOD::Studio::Bank* mMasterBank = nullptr;
+    FMOD::Studio::Bank* m_MasterStringBank = nullptr;
+    FMOD::Studio::Bank* m_MasterBank = nullptr;
 
     // bank별 구성 목록
-    std::unordered_map<std::string, BankContent> mBankContents;
+    std::unordered_map<std::string, BankContent> m_BankContents;
 
     // refcount (여러 bank가 같은 경로를 “공유”하는 경우 안전)
-    std::unordered_map<std::string, int> mEventRef;
-    std::unordered_map<std::string, int> mBusRef;
-    std::unordered_map<std::string, int> mVcaRef;
+    std::unordered_map<std::string, int> m_EventRef;
+    std::unordered_map<std::string, int> m_BusRef;
+    std::unordered_map<std::string, int> m_VcaRef;
 };

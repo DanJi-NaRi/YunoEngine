@@ -212,11 +212,15 @@
     <ClInclude Include="Public\Renderer\RenderTypes.h" />
     <ClInclude Include="Public\SceneBase\SceneBase.h" />
     <ClInclude Include="Private\Singleton\Singleton.h" />
+    <ClInclude Include="Public\Sound\AudioQueue.h" />
     <ClInclude Include="Public\Sound\AudioScene.h" />
+    <ClInclude Include="Public\Sound\AudioScenePCH.h" />
     <ClInclude Include="Public\Sound\AudioSystem.h" />
+    <ClInclude Include="Public\Sound\AudioSystemPCH.h" />
     <ClInclude Include="Public\Sound\Bank.h" />
     <ClInclude Include="Public\Sound\EventHandle.h" />
     <ClInclude Include="Public\Sound\fmodPCH.h" />
+    <ClInclude Include="Public\Sound\IAudioScene.h" />
     <ClInclude Include="Public\YunoEngine.h" />
     <ClInclude Include="Public\Object\Widget.h" />
   </ItemGroup>
@@ -250,11 +254,15 @@
     <ClCompile Include="Public\Renderer\Mesh.cpp" />
     <ClCompile Include="Public\SceneBase\SceneBase.cpp" />
     <ClCompile Include="Public\Object\Widget.cpp" />
+    <ClCompile Include="Public\Sound\AudioQueue.cpp" />
     <ClCompile Include="Public\Sound\AudioScene.cpp" />
+    <ClCompile Include="Public\Sound\AudioScenePCH.cpp" />
     <ClCompile Include="Public\Sound\AudioSystem.cpp" />
+    <ClCompile Include="Public\Sound\AudioSystemPCH.cpp" />
     <ClCompile Include="Public\Sound\Bank.cpp" />
     <ClCompile Include="Public\Sound\EventHandle.cpp" />
     <ClCompile Include="Public\Sound\fmodPCH.cpp" />
+    <ClCompile Include="Public\Sound\IAudioScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">

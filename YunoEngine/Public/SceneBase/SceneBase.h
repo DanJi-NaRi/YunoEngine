@@ -1,8 +1,9 @@
 #pragma once
 
 #include "IScene.h"
-
+#include "IAudioScene.h"
 class ObjectManager;
+//class IAudioScene;
 
 class SceneBase : public IScene
 {
@@ -31,4 +32,6 @@ protected:
 protected:
     std::unique_ptr<ObjectManager> m_objectManager;
     float m_lastDt = 0.0f;
+
+    std::unique_ptr<IAudioScene> m_audioScene;
 };
