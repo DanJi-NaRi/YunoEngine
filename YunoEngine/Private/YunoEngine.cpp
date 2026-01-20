@@ -61,8 +61,10 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     m_sceneManager = std::make_unique<YunoSceneManager>();
     s_sceneManager = m_sceneManager.get();
 
+#ifdef _DEBUG
     auto YunoSmanager = dynamic_cast<YunoSceneManager*>(m_sceneManager.get());
     YunoSmanager->RegisterDrawSceneUI();
+#endif
 
     // 인풋 시스템 생성
     m_input = std::make_unique<YunoInputSystem>();

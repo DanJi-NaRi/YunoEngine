@@ -39,6 +39,11 @@ bool SceneBase::OnCreate()
     //std::cout << "[SceneBase] OnCreate\n";
     m_name = "SceneBase";
 
+#ifdef _DEBUG
+    m_selectedObject = nullptr;
+    m_selectedWidget = nullptr;
+#endif
+
     m_objectManager = std::make_unique<ObjectManager>();
     if (!m_objectManager)
         return false;
@@ -104,13 +109,11 @@ void SceneBase::Submit()
 
 }
 
+#ifdef _DEBUG
 void SceneBase::DrawObjectListUI()
 {
     if (!m_objectManager)
         return;
-
-    UI::SetNextUIPos(800, 0);
-    UI::BeginPanel("ObjectHierarchy");
 
     const uint32_t objcount = m_objectManager->GetObjectCount();
     const uint32_t widgetcount = m_objectManager->GetWidgetCount();
@@ -124,7 +127,7 @@ void SceneBase::DrawObjectListUI()
         if(it == objlist.end())
             continue;
 
-        const Unit* obj = it->second;
+        Unit* obj = it->second;
 
         bool selected = false; // ← EditorState에서 가져오게 될 것
 
@@ -132,8 +135,7 @@ void SceneBase::DrawObjectListUI()
 
         if (UI::Selectable(name.c_str(), selected))
         {
-            // 여기서는 “선택 요청”만 보냄
-            // 실제 선택 상태 저장은 Engine/EditorState에서
+            SelectObject(obj);
         }
     }
 
@@ -143,7 +145,7 @@ void SceneBase::DrawObjectListUI()
         if (it == widgetlist.end())
             continue;
 
-        const Widget* obj = it->second;
+        Widget* obj = it->second;
 
         bool selected = false; // ← EditorState에서 가져오게 될 것
 
@@ -151,13 +153,148 @@ void SceneBase::DrawObjectListUI()
 
         if (UI::Selectable(name.c_str(), selected))
         {
-            // 여기서는 “선택 요청”만 보냄
-            // 실제 선택 상태 저장은 Engine/EditorState에서
+            SelectWidget(obj);
         }
     }
-
-    UI::EndPanel();
 }
+
+void RadToDegree(XMFLOAT3& out)
+{
+    out.x = XMConvertToDegrees(out.x);
+    out.y = XMConvertToDegrees(out.y);
+    out.z = XMConvertToDegrees(out.z);
+}
+
+void DegreeToRad(XMFLOAT3& out)
+{
+    out.x = XMConvertToRadians(out.x);
+    out.y = XMConvertToRadians(out.y);
+    out.z = XMConvertToRadians(out.z);
+}
+
+void SceneBase::DrawInspector()
+{
+    if (m_selectedObject)
+    {
+        if (UI::CollapsingHeader("Transform"))
+        {
+            auto& pos = m_selectedObject->GetPos();
+            auto& rot = m_selectedObject->GetRot();
+            auto& scale = m_selectedObject->GetScale();
+
+            XMFLOAT3 degRot = rot;
+            RadToDegree(degRot);
+
+            bool isChange = false;
+
+            static bool editPos = false;
+            static bool editRot = false;
+            static bool editScale = false;
+            static float value = 0.0f;
+
+
+            if (UI::Button("Reset"))
+            {
+                m_selectedObject->SetBackUpTransform();
+                isChange = true;
+            }
+
+            UI::Separator();
+
+            if (!editPos)
+            {
+                if (UI::DragFloat3("Position##Drag", &pos.x, 0.1f))
+                {
+                    isChange = true;
+                }
+
+                if (UI::IsItemHovered() &&
+                    UI::IsLeftMouseDoubleClicked())
+                {
+                    editPos = true;
+                }
+            }
+            else
+            {
+                if (UI::InputFloat3("Position##Input", &pos.x))
+                {
+                    isChange = true;
+                }
+
+                if (UI::IsItemDeactivatedAfterEdit())
+                {
+                    editPos = false;
+                }
+            }
+            
+            if (!editRot)
+            {
+                if (UI::DragFloat3("Rotation##Drag", &degRot.x, 0.5f))
+                {
+                    DegreeToRad(degRot);
+                    m_selectedObject->SetRot(degRot);
+
+                    isChange = true;
+                }
+
+                if (UI::IsItemHovered() &&
+                    UI::IsLeftMouseDoubleClicked())
+                {
+                    editRot = true;
+                }
+            }
+            else
+            {
+                if (UI::InputFloat3("Rotation##Input", &degRot.x))
+                {
+                    DegreeToRad(degRot);
+                    m_selectedObject->SetRot(degRot);
+                    isChange = true;
+                }
+
+                if (UI::IsItemDeactivatedAfterEdit())
+                {
+                    editRot = false;
+                }
+            }
+            
+            if (!editScale)
+            {
+                if (UI::DragFloat3("Scale##Drag", &scale.x, 0.1f, 0.001f, 1000.0f))
+                {
+                    isChange = true;
+                }
+
+                if (UI::IsItemHovered() &&
+                    UI::IsLeftMouseDoubleClicked())
+                {
+                    editScale = true;
+                }
+            }
+            else
+            {
+                if (UI::InputFloat3("Scale##Input", &scale.x))
+                {
+                    isChange = true;
+                }
+
+                if (UI::IsItemDeactivatedAfterEdit())
+                {
+                    editScale = false;
+                }
+            }
+            
+
+            if (isChange) m_selectedObject->Update();
+        }
+    }
+    else if(m_selectedWidget)
+    {
+       
+    }
+}
+#endif
+
 
 bool SceneBase::OnCreateScene()
 {

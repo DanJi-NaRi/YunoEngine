@@ -26,9 +26,9 @@ protected:
     XMFLOAT4X4	m_mWorld;
     XMFLOAT4X4	m_mScale, m_mRot, m_mTrans;
 
-    XMFLOAT3	m_vPosBk;
-    XMFLOAT3	m_vRotBk;
-    XMFLOAT3	m_vScaleBk;
+    XMFLOAT3	    m_vPosBk;
+    XMFLOAT3	    m_vRotBk;
+    XMFLOAT3	    m_vScaleBk;
     XMFLOAT3 	m_vDirBk;
 
     int			m_Hp;
@@ -72,6 +72,16 @@ public:
     virtual bool  Update(float dTime = 0);
     virtual bool  Submit(float dTime = 0);
     bool               LastSubmit(float dTime = 0);      // 이거는 오버라이드 xx
+
+    XMFLOAT3& GetPos() { return m_vPos; }
+    XMFLOAT3& GetRot() { return m_vRot; }
+    XMFLOAT3& GetScale() { return m_vScale; }
+
+    void SetPos(const XMFLOAT3& pos) { m_vPos = pos; }
+    void SetRot(const XMFLOAT3& rot) { m_vRot = rot; }
+    void SetScale(const XMFLOAT3& scale) { m_vScale = scale; }
+
+    void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
 
     virtual void  Backup();
 

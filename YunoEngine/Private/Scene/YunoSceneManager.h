@@ -52,7 +52,9 @@ public:
     YunoSceneManager() = default;
     ~YunoSceneManager() override;
 
+#ifdef _DEBUG
     void RegisterDrawSceneUI();
+#endif
 
     void RequestReplaceRoot(std::unique_ptr<IScene> scene, SceneTransitionOptions opt = {}) override;
     void RequestPush(std::unique_ptr<IScene> scene, ScenePolicy policy = {}, SceneTransitionOptions opt = {}) override;

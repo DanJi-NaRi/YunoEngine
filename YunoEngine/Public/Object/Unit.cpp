@@ -45,6 +45,8 @@ bool Unit::Create(XMFLOAT3 vPos)
     m_pTextures = YunoEngine::GetTextureManager();
     m_pInput = YunoEngine::GetInput();
 
+    Backup();
+
     Unit::Update();
 
     return true;
@@ -72,6 +74,8 @@ bool Unit::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3
     m_pRenderer = YunoEngine::GetRenderer();
     m_pTextures = YunoEngine::GetTextureManager();
     m_pInput = YunoEngine::GetInput();
+
+    Backup();
 
     Unit::Update();
 

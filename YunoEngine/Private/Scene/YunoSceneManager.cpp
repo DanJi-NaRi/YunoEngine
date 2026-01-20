@@ -20,6 +20,7 @@ YunoSceneManager::~YunoSceneManager()
     ShutdownStack();
 }
 
+#ifdef _DEBUG
 void YunoSceneManager::RegisterDrawSceneUI()
 {
     ImGuiManager::RegisterDraw(
@@ -43,13 +44,37 @@ void YunoSceneManager::RegisterDrawSceneUI()
 
     ImGuiManager::RegisterDraw(
         [this]() {
+            UI::SetNextUIPos(800, 0);
+            UI::SetNextUISize(200, 500);
+            UI::BeginPanel("ObjectHierarchy");
+
             if (m_selectView)
             {
                 dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawObjectListUI();
             }
+
+
+            UI::EndPanel();
+        }
+    );
+
+    ImGuiManager::RegisterDraw(
+        [this]() {
+            UI::SetNextUIPos(1000, 0);
+            UI::SetNextUISize(200, 500);
+            UI::BeginPanel("Inspector");
+
+            if (m_selectView)
+            {
+                dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawInspector();
+            }
+
+
+            UI::EndPanel();
         }
     );
 }
+#endif
 
 
 static inline void EnqueueOp(std::vector<PendingOp>& now, std::vector<PendingOp>& next, PendingOp&& op)
