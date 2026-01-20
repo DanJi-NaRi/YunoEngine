@@ -168,13 +168,10 @@ void YunoInputSystem::ApplyToState(const InputEvent& evt)
         m_state.mouseDeltaY += (m_state.mouseY - prevY);
 
         m_state.mouseHovered = false;
-
-        std::cout << "moved" << std::endl;
         break;
     }
     
     case InputEventType::MouseHover:
-        std::cout << "hovered" << std::endl;
         m_state.mouseHovered = true;
         break;
 

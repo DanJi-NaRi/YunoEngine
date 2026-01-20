@@ -114,6 +114,11 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     m_width = m_spriteSizeX;
     m_height = m_spriteSizeY;
 
+    m_rect = { (LONG)vPos.x, (LONG)vPos.y,
+            (LONG)(vPos.x + m_width),
+            (LONG)(vPos.y + m_height)
+    };
+
     Create(vPos);
 
     return true;
@@ -142,6 +147,11 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOA
     m_width = m_spriteSizeX;
     m_height = m_spriteSizeY;
 
+    m_rect = { (LONG)vPos.x, (LONG)vPos.y,
+            (LONG)(vPos.x + m_width),
+            (LONG)(vPos.y + m_height)
+    };
+
     Widget::Update();
 
     return true;
@@ -154,6 +164,7 @@ bool Widget::Update(float dTime)
 
     float clientWidth = (float)YunoEngine::GetWindow()->GetClientWidth();
     float clientHeight = (float)YunoEngine::GetWindow()->GetClientHeight();
+
 
     /*m_vPos.x = (float)(clientWidth - m_width) / 2.0f;
     m_vPos.y = (float)(clientHeight - m_height + 1);

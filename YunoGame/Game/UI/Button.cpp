@@ -75,13 +75,39 @@ void Button::ButtonUpdate(float dTime)
     //POINT mouseXY{ (LONG)mouseX, (LONG)mouseY };
     POINT mouseXY{ (LONG)m_pInput->GetMouseX(), (LONG)m_pInput->GetMouseY() };
 
+    XMFLOAT3 vPos;
+    vPos.x = (float)m_rect.left;
+    vPos.y = (float)m_rect.top;
+    vPos.z = 1.0f;
+
     m_BtnState = ButtonState::Idle; // 커서 영역 검사 전 기본 상태 초기화.
 
     if (!PtInRect(&m_rect, mouseXY)) return;	//커서/버튼 영역 검사.
 
+    // 버튼 State 업데이트
     if (m_pInput->IsMouseButtonDown(0)) { m_BtnState = ButtonState::Clicked; }
     else if (m_BtnState != ButtonState::Clicked && m_pInput->IsMouseButtonPressed(0)) { m_BtnState = ButtonState::Pressed; }
     else { m_BtnState = ButtonState::Hovered; } // 커서가 올라가있는 것은 확정이므로, 기본값은 Hovered
+
+    switch (m_BtnState) // 버튼 상태에 따른 그리기 셋업
+    {
+    case ButtonState::Idle:	    //버튼 "대기","일반" 출력.
+        std::cout << "Idle" << std::endl;
+        break;
+
+    case ButtonState::Hovered:	//커서 접촉, "하이라이트" 출력.
+        std::cout << "Hovered" << std::endl;
+        break;
+
+    case ButtonState::Clicked:	//"클릭" 상태. "눌림" 출력.
+        std::cout << "Clicked" << std::endl;
+        break;
+
+    case ButtonState::Pressed:	//"클릭" 상태. "눌리고 있음" 출력.
+        std::cout << "Pressed" << std::endl;
+        break;
+    }
+
 }
 
 bool Button::CreateMaterial()
