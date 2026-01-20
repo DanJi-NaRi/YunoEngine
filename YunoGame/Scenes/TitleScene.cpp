@@ -1,6 +1,5 @@
 #include "pch.h"
 
-
 #include "TitleScene.h"
 
 #include "YunoEngine.h"
@@ -13,6 +12,7 @@
 #include "Image.h"
 #include "AnimTest.h"
 #include "YunoLight.h"
+
 
 bool TitleScene::OnCreateScene()
 {
@@ -43,11 +43,14 @@ void TitleScene::OnDestroyScene()
 void TitleScene::OnEnter()
 {
     //std::cout << "[TitleScene] OnEnter\n";
+    m_audioScene->Load("Title");
+    m_audioScene->PlayEvent("BGM/Playlist");
 }
 
 void TitleScene::OnExit()
 {
     //std::cout << "[TitleScene] OnExit\n";
+    //m_audioScene->Unload();
 }
 
 void TitleScene::Update(float dt)

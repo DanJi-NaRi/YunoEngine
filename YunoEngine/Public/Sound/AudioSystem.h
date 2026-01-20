@@ -45,9 +45,8 @@ public:
         int listenerIndex = 0
     );
 
-    // bank 단위로 생성 소멸되므로 load()시 내부에서 호출
-    void CacheGlobalParam();
-    void SetGlobalParam(const std::string& paramName, float value);
+    // 전역 파라미터 조절
+    void SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value);
 
     // 3D 세팅
     void Set3DSettings(float dopplerScale, float distanceFactor, float rolloffScale);
@@ -70,5 +69,4 @@ private:
     std::unordered_map<std::string, FMOD::Studio::EventDescription*> m_EventDescList;
     std::unordered_map<std::string, FMOD::Studio::Bus*> m_BusList;
     std::unordered_map<std::string, FMOD::Studio::VCA*> m_VCAList;
-    std::unordered_map<std::string, FMOD_STUDIO_PARAMETER_ID> m_GlobalParam;
 };

@@ -90,8 +90,6 @@ bool AudioSystem::LoadBank(const std::string& bankName, bool loadSampleData)
     // 이 bank가 포함한 event/bus/vca 목록을 기록하고 refcount 증가
     m_BH.IndexBankContent(bankName, bank);
 
-    // 전역 파라미터 캐싱
-    CacheGlobalParam();
     return true;
 }
 
@@ -110,9 +108,6 @@ void AudioSystem::UnloadBank(const std::string& bankName)
 
     // desc/bus/vca 캐시는 “경로 기반”이라 남아있으면 무효 포인터가 될 수 있음.
     // 간단히 전체 클리어하거나, bank별로 관련 캐시만 지우는 체계를 추가함.
-
-    // 전역 파라미터는 bank 단위로 소멸
-    m_GlobalParam.clear();
 }
 
 ////////////////////////////////////////////
@@ -253,33 +248,9 @@ void AudioSystem::SetListener3DAttributes(const FMOD_3D_ATTRIBUTES& attrs, int l
     m_Studio->setListenerAttributes(listenerIndex, &attrs);
 }
 
-void AudioSystem::CacheGlobalParam()
+void AudioSystem::SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value)
 {
-    int count = 0;
-    FMOD_RESULT r = m_Studio->getParameterDescriptionCount(&count);
-    CheckFMOD(r, "SetGlobalParam");
-
-    if (count > 0)
-    {
-        std::vector<FMOD_STUDIO_PARAMETER_DESCRIPTION> descs(count);
-        r = m_Studio->getParameterDescriptionList(descs.data(), count, &count);
-        CheckFMOD(r, "SetGlobalParam");
-        for (const auto& d : descs)
-        {
-            m_GlobalParam[d.name] = d.id;
-        }
-    }
-}
-
-void AudioSystem::SetGlobalParam(const std::string& paramName, float value)
-{
-    auto it = m_GlobalParam.find(paramName);
-    if (it == m_GlobalParam.end())
-    {
-        std::cerr << "[AudioSystem]" << "SetGlobalParam : " << "Failed to find the paramID with that name.\n";
-        return;
-    }
-    m_Studio->setParameterByID(it->second, value, true);
+    m_Studio->setParameterByID(paramID, value, true);
 }
 
 void AudioSystem::Set3DSettings(float dopplerScale, float distanceFactor, float rolloffScale)

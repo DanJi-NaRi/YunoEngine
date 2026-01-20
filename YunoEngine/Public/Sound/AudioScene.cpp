@@ -8,7 +8,12 @@
 #include "Bank.h"
 #include "AudioSystem.h"
 #include "EventHandle.h"
+#include "AudioQueue.h"
+
 #include "AudioScene.h"
+
+
+AudioScene::~AudioScene() = default;
 
 void AudioScene::Load(std::string bankName)
 {
@@ -19,7 +24,34 @@ void AudioScene::Load(std::string bankName)
 void AudioScene::Unload()
 {
     ClearInstList();
+    m_AQ.Clear();
     AudioSystem::Get().UnloadBank(m_BankName);
+}
+
+void AudioScene::Update(float dt)
+{
+    while (!m_AQ.Empty())
+    {
+        const AudioCmd& cmd = m_AQ.Pop();
+        switch (cmd.type)
+        {
+        case AudioCmdType::PlayEvent:
+            PlayEvent(to_string(cmd.pe.event), cmd.pe.is3D, cmd.pe.pos);
+            break;
+        case AudioCmdType::PlayOneShot:
+            PlayOneShot(to_string(cmd.po.event));
+            break;
+        case AudioCmdType::SetParam:
+            SetParam(to_string(cmd.sp.event), to_string(cmd.sp.param), cmd.sp.value);
+            break;
+        case AudioCmdType::ListenerUpdate:
+            Listener3DUpdate(cmd.lu.pos);
+            break;
+        case AudioCmdType::EmitterUpdate:
+            Emitter3DUpdate(to_string(cmd.eu.event), cmd.eu.pos);
+            break;
+        }
+    }
 }
 
 void AudioScene::Listener3DUpdate(XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up, XMFLOAT3 vel)
@@ -77,22 +109,7 @@ void AudioScene::PlayEvent(const std::string& eventName, bool is3D, XMFLOAT3 pos
         h.Set3DAttributes(pos, forward, up, vel);
     }
 
-    // 해당 이벤트의 파라미터 정보 얻어오기
-    int paramCount = 0;
-    desc->getParameterDescriptionCount(&paramCount);
-    if (paramCount > 0)
-    {
-        for (int i = 0; i < paramCount; i++)
-        {
-            FMOD_STUDIO_PARAMETER_DESCRIPTION paramDesc = {};
-            desc->getParameterDescriptionByIndex(i, &paramDesc);
-            if (paramDesc.flags == FMOD_STUDIO_PARAMETER_GLOBAL) return;    // 오로지 로컬 파라미터만 관리
-            if (paramDesc.name == 0) return;
-            ParamContent pc = { eventName, paramDesc.id };
-            m_ParamList[paramDesc.name] = pc;
-        }
-    }
-
+    BuildParamCache(eventName, desc);
 }
 
 void AudioScene::PlayOneShot(const std::string& eventName)
@@ -118,23 +135,69 @@ void AudioScene::ClearInstList()
         }
     }
     m_InstList.clear();
-    m_ParamList.clear();
-    //m_EventParameterNames.clear();
+    m_EventParamCache.clear();
 }
 
-void AudioScene::SetInstParam(const std::string& paramName, float value)
+void AudioScene::BuildParamCache(const std::string& eventName, FMOD::Studio::EventDescription* desc)
 {
-    auto it = m_ParamList.find(paramName);
-    if (it == m_ParamList.end())
+    auto it = m_EventParamCache.find("eventName");
+    if (it == m_EventParamCache.end())
+        return;
+
+    std::unordered_map<std::string, ParamContent> cache;
+
+    int paramCount = 0;
+    desc->getParameterDescriptionCount(&paramCount);
+
+    for (int i = 0; i < paramCount; ++i)
     {
-        std::cerr << "[TitleAudio]" << "SetParam : " << "Failed to find the paramID with that name.\n";
+        FMOD_STUDIO_PARAMETER_DESCRIPTION pd{};
+        if (desc->getParameterDescriptionByIndex(i, &pd) != FMOD_OK)
+            continue;
+
+        if (!pd.name || pd.name[0] == '\0')
+            continue;
+
+        const bool isGlobal = (pd.flags & FMOD_STUDIO_PARAMETER_GLOBAL) != 0;
+        cache.emplace(pd.name, ParamContent{ pd.id, isGlobal });
+    }
+
+    m_EventParamCache.emplace(eventName, std::move(cache));
+}
+
+void AudioScene::SetParam(const std::string& eventName, const std::string& paramName, float value)
+{
+    auto it = m_EventParamCache.find(eventName);
+    if (it == m_EventParamCache.end())
+    {
+        std::cerr << "[TitleAudio]" << "SetParam : " << "Failed to find the param cache with the eventName.\n";
         return;
     }
-    const auto& pc = it->second;
-    m_InstList[pc.eventName].SetParameter(pc.paramID, value, true);
+    const auto& cache = it->second;
+    const auto& pcIt = cache.find(paramName);
+
+    if (pcIt == cache.end())
+    {
+        std::cerr << "[TitleAudio]" << "SetParam : " << "Failed to find the ParamContent with the paramName.\n";
+        return;
+    }
+
+    const auto& pc = pcIt->second;
+    if (pc.is3D)
+        SetGlobalParam(pc.paramID, value);
+    else
+    {
+        auto instIt = m_InstList.find(eventName);
+        if (instIt == m_InstList.end())
+        {
+            std::cerr << "[TitleAudio]" << "SetParam : " << "Failed to find the instance with the eventName.\n";
+            return;
+        }
+        instIt->second.SetParameter(pc.paramID, value);
+    }
 }
 
-void AudioScene::SetGlobalParam(const std::string& paramName, float value)
+void AudioScene::SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value)
 {
-    AudioSystem::Get().SetGlobalParam(paramName, value);
+    AudioSystem::Get().SetGlobalParam(paramID, value);
 }
