@@ -34,7 +34,7 @@ private:
 
     // 버튼 상태 : 대기/커서입력/눌림 (standby/CursorOn/Push)
     ButtonState m_BtnState;							//UI버튼별 상태 저장.
-    RECT m_rect;
+    
 };
 
 

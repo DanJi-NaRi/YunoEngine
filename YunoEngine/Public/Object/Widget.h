@@ -6,10 +6,6 @@
 #include "ITextureManager.h"
 #include "Mesh.h"
 
-struct Rect { float l = 0, t = 0, r = 0, b = 0; }; // left, top, right, bottom
-//struct Rect { float width, height; };
-struct RectPx { float x = 0, y = 0, w = 0, h = 0; };
-
 // 피봇 예정...
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
 enum class widgetType {
@@ -69,8 +65,7 @@ protected:
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
 
-    RectPx m_layoutRectPx;
-    RectPx m_clipRectPx;
+    RECT m_rect;
 
     // 상수버퍼 업데이트할 데이터들
     Update_Data   m_constant;
