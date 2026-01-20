@@ -117,6 +117,9 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         window = reinterpret_cast<YunoWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     }
 
+    //마우스 트랙킹 활성화.
+    if (IInput* input = YunoEngine::GetInput()) input->MouseTrack(hWnd, true);
+
     switch (msg)
     {
     case WM_CLOSE:
@@ -146,6 +149,19 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 
         return 0;
     }
+    case WM_MOUSEHOVER: // 마우스 호버링
+    {
+        if (IInput* input = YunoEngine::GetInput())
+        {
+            InputEvent evt{};
+            evt.type = InputEventType::MouseHover;
+            evt.x = static_cast<float>(GET_X_LPARAM(lParam));
+            evt.y = static_cast<float>(GET_Y_LPARAM(lParam));
+            input->PushEvent(evt);
+        }
+        return 0;
+    }
+    return 0;
     case WM_MOUSEMOVE:
     {
         if (IInput* input = YunoEngine::GetInput())

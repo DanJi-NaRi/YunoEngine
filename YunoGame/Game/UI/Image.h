@@ -12,7 +12,7 @@ class Image : public Widget {
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
 private:
-    //bool CreateMesh() override;      // 메시 생성 (한 번만)
+    bool CreateMesh() override;      // 메시 생성 (한 번만)
     bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
     //void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 
