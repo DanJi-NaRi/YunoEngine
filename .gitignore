@@ -32,6 +32,7 @@ ipch/
 
 # Logs
 *.log
+YunoGame/*.ini
 
 # =========================
 # CMake
