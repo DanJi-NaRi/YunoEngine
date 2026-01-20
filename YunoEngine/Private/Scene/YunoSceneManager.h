@@ -3,7 +3,7 @@
 
 
 class IScene;
-
+class IRenderer;
 
 
 struct SceneEntry
@@ -52,7 +52,7 @@ public:
     void RequestPop(SceneTransitionOptions opt = {}) override;
 
     void Update(float dt) override;
-    void Submit() override;
+    void SubmitAndRender(IRenderer* renderer) override;
 
     IScene* GetActiveScene() const override;
     uint32_t GetStackSize() const override { return static_cast<uint32_t>(m_stack.size()); }

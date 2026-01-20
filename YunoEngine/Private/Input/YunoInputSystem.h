@@ -21,6 +21,7 @@ public:
     bool IsKeyPressed(uint32_t key) const override;
     bool IsKeyReleased(uint32_t key) const override;
 
+    bool IsMouseHovered() const override;
     bool IsMouseButtonDown(uint32_t button) const override;
     bool IsMouseButtonPressed(uint32_t button) const override;
     bool IsMouseButtonReleased(uint32_t button) const override;
@@ -33,6 +34,9 @@ public:
     // 인풋을 사용할 컨텍스트
     void AddContext(IInputContext* context) override;
     void RemoveContext(IInputContext* context) override;
+
+    // 호버링(HOVERING) 메세지 발생 함수
+    void MouseTrack(HWND hWnd, BOOL bOn = TRUE);
 
 private:
     void SortContextsIfDirty();

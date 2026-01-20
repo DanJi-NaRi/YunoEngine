@@ -2,7 +2,7 @@
 
 #include "SceneBase.h"
 
-class SceneTemplate final : public SceneBase
+class UIScene final : public SceneBase
 {
 public:
     void OnEnter() override;
@@ -12,12 +12,12 @@ public:
     void SubmitObj() override;
     void SubmitUI() override;
 
-    const char* GetDebugName() const override { return "SampleScene"; }
+    const char* GetDebugName() const override { return "UIScene"; }
 
 protected:
     bool OnCreateScene() override;
     void OnDestroyScene() override;
 
 private:
-    
+
 };

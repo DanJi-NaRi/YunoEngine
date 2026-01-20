@@ -156,9 +156,9 @@ int YunoEngine::Run()
 
         m_renderer->BeginFrame();
 
-        m_sceneManager->Submit();
+        m_sceneManager->SubmitAndRender(s_renderer);
 
-        m_renderer->Flush();
+        //s_renderer->Flush();
 
         m_renderer->EndFrame();
     }
