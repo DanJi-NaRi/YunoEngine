@@ -12,7 +12,6 @@
 
 // 인터페이스
 #include "IWindow.h"
-#include "YunoEngine.h"
 
 using Microsoft::WRL::ComPtr;
 
@@ -96,7 +95,6 @@ bool YunoRenderer::CreateShaders()
     if (!LoadShader(ShaderId::PBRBase, "../Assets/Shaders/PBR_Base.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
     return true;
 }
 
@@ -1232,9 +1230,8 @@ void YunoRenderer::Flush()
     if (!m_context || !m_cbFrame.IsValid() || !m_cbObject_Matrix.IsValid() || !m_cbObject_Material.IsValid() || !m_cbLight.IsValid())
         return;
 
-#if defined(_DEBUG)
     SubmitDebugGrid();
-#endif
+
     // 렌더 전에 정렬 넣을예정
 
     for (const RenderItem& item : m_renderQueue)
@@ -1303,10 +1300,7 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
     CBPerObject_Matrix cbPerObject_matrix{};
 
     XMMATRIX V = m_camera.View();
-    XMMATRIX P = m_camera.Proj(
-        YunoEngine::GetWindow()->GetClientWidth(),
-        YunoEngine::GetWindow()->GetClientHeight()
-    );
+    XMMATRIX P = m_camera.Proj();
     XMMATRIX W = XMLoadFloat4x4(&item.Constant.world);
     XMMATRIX WVP = W * V * P;
 
@@ -1361,7 +1355,7 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
 }
 
 
-void YunoRenderer::BindConstantBuffers_Camera(const Frame_Data_Dir& dirData)
+void YunoRenderer::BindConstantBuffers_OneFrame(const Frame_Data_Dir& dirData)
 {
     using namespace DirectX;
     // -----------------------------
@@ -1369,14 +1363,8 @@ void YunoRenderer::BindConstantBuffers_Camera(const Frame_Data_Dir& dirData)
     // -----------------------------
     CBPerFrame cbPerFrame{};
 
-    
-
     XMMATRIX V = m_camera.View();
-    XMMATRIX P = m_camera.Proj(
-        YunoEngine::GetWindow()->GetClientWidth(), 
-        YunoEngine::GetWindow()->GetClientHeight()
-    );
-
+    XMMATRIX P = m_camera.Proj();
 
     XMStoreFloat4x4(&cbPerFrame.mView, XMMatrixTranspose(V));
     XMStoreFloat4x4(&cbPerFrame.mProj, XMMatrixTranspose(P));
@@ -1388,11 +1376,7 @@ void YunoRenderer::BindConstantBuffers_Camera(const Frame_Data_Dir& dirData)
     m_context->VSSetConstantBuffers(2, 1, cbFrame);
     m_context->PSSetConstantBuffers(2, 1, cbFrame);
 
-}
 
-void YunoRenderer::BindConstantBuffers_Light(const Frame_Data_Dir& dirData)
-{
-    using namespace DirectX;
     // -----------------------------
     // CBLight (b3)
     // -----------------------------
@@ -1490,7 +1474,7 @@ void YunoRenderer::CreateDebugGridResources()
 
     md.passKey.blend = BlendPreset::Opaque;
     md.passKey.raster = RasterPreset::CullNone;
-    md.passKey.depth = DepthPreset::ReadWrite;
+    md.passKey.depth = DepthPreset::ReadOnly;
 
     //md.baseColor = { 1,1,0,1 };
     //md.roughRatio = 1.0f;

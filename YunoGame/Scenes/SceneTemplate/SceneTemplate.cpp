@@ -20,16 +20,14 @@ bool SceneTemplate::OnCreateScene()
 {
     //std::cout << "[SceneTemplate] OnCreate\n";
 
-    // 디렉션 라이트 생성
-    //m_objectManager->CreateDirLight();
-    // 직교투영 필요한 씬만 ㄱㄱ
-    //m_objectManager->SetOrthoFlag(true);
+    ObjectManager* om = GetObjectManager();
+    if (!om) return false;
 
     // Sample Object 생성 예시
-    //m_objectManager->CreateObject<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0));
+    //om->CreateObject<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0));
     
     // FBX 파일로부터 오브젝트 생성 예시
-    //m_objectManager->CreateObjectFromFile<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    //om->CreateObjectFromFile<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     return true;
 }
@@ -56,14 +54,8 @@ void SceneTemplate::Update(float dt)
     SceneBase::Update(dt);
 }
 
-void SceneTemplate::SubmitObj()
+void SceneTemplate::Submit()
 {
     // 이거만 있으면 오브젝트 렌더 됨 따로 서브밋 ㄴㄴ
-    SceneBase::SubmitObj();
-}
-
-void SceneTemplate::SubmitUI()
-{
-    // 이거만 있으면 오브젝트 렌더 됨 따로 서브밋 ㄴㄴ
-    SceneBase::SubmitUI();
+    SceneBase::Submit();
 }

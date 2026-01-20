@@ -3,7 +3,6 @@
 #include <memory>
 
 class IScene;
-class IRenderer;
 
 // 씬 상태
 enum class SceneState : uint8_t
@@ -18,7 +17,7 @@ enum class SceneState : uint8_t
 struct ScenePolicy
 {
     // 이 씬이 활성화 됐을 때 스택 하단에 존재하는 다른 씬들의 업데이트를 막을것인지
-    bool blockUpdateBelow = false;
+    bool blockUpdateBelow = true;
 
     // 이 씬이 활성화 됐을 때 스택 하단에 존재하는 다른 씬들의 렌더를 막을것인지
     bool blockRenderBelow = false;
@@ -47,7 +46,7 @@ public:
 
 
     virtual void Update(float dt) = 0;
-    virtual void SubmitAndRender(IRenderer* renderer) = 0;
+    virtual void Submit() = 0;
 
 
     virtual IScene* GetActiveScene() const = 0;
