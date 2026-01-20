@@ -25,7 +25,9 @@ struct YunoCamera
     XMMATRIX Proj(float width, float height) const
     {
         using namespace DirectX;
+
         return (useOrtho) ? XMMatrixOrthographicOffCenterLH(0.0f, (float)width, (float)height, 0.0f, 0, 1) : XMMatrixPerspectiveFovLH(fovY, aspect, nearZ, farZ);
+
     }
 
     XMMATRIX ProjPerspective() const

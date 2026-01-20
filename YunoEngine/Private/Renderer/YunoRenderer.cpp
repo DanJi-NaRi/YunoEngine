@@ -1232,8 +1232,9 @@ void YunoRenderer::Flush()
     if (!m_context || !m_cbFrame.IsValid() || !m_cbObject_Matrix.IsValid() || !m_cbObject_Material.IsValid() || !m_cbLight.IsValid())
         return;
 
+#if defined(_DEBUG)
     SubmitDebugGrid();
-
+#endif
     // 렌더 전에 정렬 넣을예정
 
     for (const RenderItem& item : m_renderQueue)
@@ -1489,7 +1490,7 @@ void YunoRenderer::CreateDebugGridResources()
 
     md.passKey.blend = BlendPreset::Opaque;
     md.passKey.raster = RasterPreset::CullNone;
-    md.passKey.depth = DepthPreset::ReadOnly;
+    md.passKey.depth = DepthPreset::ReadWrite;
 
     //md.baseColor = { 1,1,0,1 };
     //md.roughRatio = 1.0f;

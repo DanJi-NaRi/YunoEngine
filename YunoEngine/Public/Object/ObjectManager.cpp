@@ -3,7 +3,7 @@
 #include "ObjectManager.h"
 #include "Parser.h"
 #include "YunoLight.h"
-
+#include "YunoCamera.h"
 
 
 void ObjectManager::CreateDirLight()
@@ -240,8 +240,7 @@ void ObjectManager::FrameDataSubmit()
 {
     // 여기서 서브밋할 예정
     auto* renderer = YunoEngine::GetRenderer();
-    if (!renderer)
-        return;
+    renderer->GetCamera().SetOrthoFlag(m_isOrtho);
 
     renderer->BindConstantBuffers_Camera(dirData);
 

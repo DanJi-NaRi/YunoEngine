@@ -259,7 +259,7 @@ void YunoSceneManager::Update(float dt)
     }
 }
 
-void YunoSceneManager::Submit()
+void YunoSceneManager::SubmitAndRender(IRenderer* renderer)
 {
     if (m_stack.empty()) return;
 
@@ -278,11 +278,19 @@ void YunoSceneManager::Submit()
         SceneEntry& e = m_stack[i];
 
         if (!EnsureCreated(e)) continue;
-        e.scene->Submit();
+        e.scene->SubmitObj();
 
-        //IRenderer* s_renderer = YunoEngine::GetRenderer();
+        renderer->Flush();
+    }
 
+    for (int i = start; i < static_cast<int>(m_stack.size()); ++i)
+    {
+        SceneEntry& e = m_stack[i];
 
-        //std::cout << "씬 렌더" << std::endl;
+        if (!EnsureCreated(e)) continue;
+        e.scene->SubmitUI();
+
+        renderer->Flush();
+
     }
 }

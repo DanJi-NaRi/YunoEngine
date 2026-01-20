@@ -16,12 +16,19 @@ bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
     if (!m_pInput || !m_pRenderer || !m_pTextures)
         return false;
-    //if (!CreateMesh())
-    //    return false;
-    m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
-    if (m_defaultMesh == 0)return false;
-    if (!CreateMaterial())
+
+
+    if (!CreateMesh())
+    {
         return false;
+    }
+
+
+    if (!CreateMaterial())
+    {
+        return false;
+    }
+
 
     m_MeshNode = std::make_unique<MeshNode>();
 
@@ -36,6 +43,8 @@ bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
         m_constant.shadowBias = 0.005f;
     }
     Backup();
+
+    return true;
 }
 
 bool Image::Update(float dTime)
@@ -55,6 +64,13 @@ bool Image::Submit(float dTime)
     }
     Widget::Submit(dTime);
 
+
+    return true;
+}
+
+bool Image::CreateMesh()
+{
+    m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
 
     return true;
 }

@@ -18,7 +18,8 @@ public:
 
 
     virtual void Update(float dt) = 0;
-    virtual void Submit() = 0;
+    virtual void SubmitObj() = 0;              // 오브젝트들
+    virtual void SubmitUI() = 0;                // UI들
 
     virtual const char* GetDebugName() const = 0;
 

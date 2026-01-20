@@ -11,7 +11,8 @@ public:
     void OnExit() override;
 
     void Update(float dt) override;
-    void Submit() override;
+    void SubmitObj() override;
+    void SubmitUI() override;
 
     const char* GetDebugName() const override { return "PlayScene"; }
 

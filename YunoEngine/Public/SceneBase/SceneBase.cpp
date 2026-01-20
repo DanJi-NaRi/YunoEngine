@@ -66,17 +66,23 @@ void SceneBase::Update(float dt)
     }
 }
 
-void SceneBase::Submit()
+void SceneBase::SubmitObj()
 {
     if (m_objectManager) 
     {
-        m_objectManager->Submit(m_lastDt);
         m_objectManager->ProcessPending();
-
-        m_objectManager->WidgetSubmit(m_lastDt);
-        m_objectManager->ProcessWidgetPending();
+        m_objectManager->Submit(m_lastDt);
     }
 
+}
+
+void SceneBase::SubmitUI()
+{
+    if (m_objectManager)
+    {
+        m_objectManager->ProcessWidgetPending();
+        m_objectManager->WidgetSubmit(m_lastDt);
+    }
 }
 
 bool SceneBase::OnCreateScene()

@@ -104,8 +104,10 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
     m_vPos = vPos;
 
+
     m_spriteSizeX = (float)50;
     m_spriteSizeY = (float)50;
+
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
@@ -130,8 +132,10 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOA
     m_vRot = vRot;
     m_vScale = vScale;
 
+
     m_spriteSizeX = (float)50;
     m_spriteSizeY = (float)50;
+
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
