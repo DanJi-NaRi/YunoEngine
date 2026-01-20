@@ -5,6 +5,9 @@
 #include "IScene.h"
 #include "IRenderer.h"
 
+// 테스트
+#include "YunoEngine.h"
+
 SceneEntry::~SceneEntry() = default;
 PendingOp::~PendingOp() = default;
 
@@ -276,5 +279,10 @@ void YunoSceneManager::Submit()
 
         if (!EnsureCreated(e)) continue;
         e.scene->Submit();
+
+        IRenderer* s_renderer = YunoEngine::GetRenderer();
+
+        s_renderer->Flush();
+        //std::cout << "씬 렌더" << std::endl;
     }
 }

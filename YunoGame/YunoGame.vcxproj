@@ -204,6 +204,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Game\UI\Text.cpp" />
+    <ClCompile Include="Scenes\UIScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h" />
@@ -224,6 +225,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Scenes\TitleScene.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Scenes\UIScene.h" />
     <ClInclude Include="System\GameInputContext.h" />
     <ClInclude Include="System\TestInputContexts.h" />
     <ClInclude Include="Game\UI\Text.h" />

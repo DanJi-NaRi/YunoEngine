@@ -32,7 +32,7 @@ bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     {
         m_constant.baseColor = XMFLOAT4(1, 1, 1, 1);
         m_constant.roughRatio = 1.0f;
-        m_constant.roughRatio = 1.0f;
+        m_constant.metalRatio = 1.0f;
         m_constant.shadowBias = 0.005f;
     }
     Backup();
@@ -64,13 +64,13 @@ bool Image::CreateMaterial()
     m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/woodbox.bmp");
 
     MaterialDesc md{};
-    md.passKey.vs = ShaderId::Basic;
-    md.passKey.ps = ShaderId::Basic;
-    md.passKey.vertexFlags = VSF_Pos | VSF_Nrm | VSF_UV;
+    md.passKey.vs = ShaderId::UIBase;
+    md.passKey.ps = ShaderId::UIBase;
+    md.passKey.vertexFlags = VSF_Pos | VSF_UV;
 
     md.passKey.blend = BlendPreset::AlphaBlend;
     md.passKey.raster = RasterPreset::CullNone;
-    md.passKey.depth = DepthPreset::ReadWrite;
+    md.passKey.depth = DepthPreset::Off;
 
     md.albedo = m_Albedo;
     //md.albedo = 0;

@@ -149,7 +149,8 @@ public:
     void Submit(const RenderItem& item) override;
     void Flush() override;     
 
-    void BindConstantBuffers_OneFrame(const Frame_Data_Dir& dirData) override;
+    void BindConstantBuffers_Camera(const Frame_Data_Dir& dirData) override;
+    void BindConstantBuffers_Light(const Frame_Data_Dir& dirData) override;
 
     YunoCamera& GetCamera() override { return m_camera; }
 

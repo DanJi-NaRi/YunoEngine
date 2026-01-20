@@ -62,8 +62,8 @@ void SceneBase::Update(float dt)
 
     if (m_objectManager)
     {
-        m_objectManager->WidgetUpdate(dt);
         m_objectManager->Update(dt);
+        m_objectManager->WidgetUpdate(dt);
     }
         
         

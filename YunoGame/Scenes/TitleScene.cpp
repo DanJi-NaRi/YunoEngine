@@ -4,6 +4,7 @@
 #include "TitleScene.h"
 
 #include "YunoEngine.h"
+#include "YunoCamera.h"
 
 #include "ObjectManager.h"
 
@@ -17,6 +18,7 @@
 bool TitleScene::OnCreateScene()
 {
     //std::cout << "[TitleScene] OnCreate\n";
+    YunoEngine::GetRenderer()->GetCamera().SetOrthoFlag(false);
 
     // 있는지 체크
     ObjectManager* om = GetObjectManager();
@@ -52,6 +54,7 @@ void TitleScene::OnExit()
 
 void TitleScene::Update(float dt)
 {
+    YunoEngine::GetRenderer()->GetCamera().SetOrthoFlag(false);
     SceneBase::Update(dt);
 
 }

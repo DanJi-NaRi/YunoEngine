@@ -6,7 +6,7 @@
 
 #include "ObjectManager.h"
 #include "YunoLight.h"
-
+#include "YunoCamera.h"
 
 #include "Building.h"
 #include "Triangle.h"
@@ -21,6 +21,8 @@
 bool PlayScene::OnCreateScene()
 {
     //std::cout << "[PlayScene] OnCreate\n";
+
+    YunoEngine::GetRenderer()->GetCamera().SetOrthoFlag(false);
 
     // 있는지 체크
     ObjectManager* om = GetObjectManager();
