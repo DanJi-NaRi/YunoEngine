@@ -39,6 +39,8 @@ bool Button::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     }
 
     Backup();
+
+    return true;
 }
 
 bool Button::Update(float dTime)
