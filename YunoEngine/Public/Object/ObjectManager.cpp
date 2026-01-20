@@ -243,9 +243,10 @@ void ObjectManager::FrameDataSubmit()
     if (!renderer)
         return;
 
+    renderer->BindConstantBuffers_Camera(dirData);
+
     if (m_directionLight)// 라이트가 있으면 프레임 데이터 넘기기
     {
-        renderer->BindConstantBuffers_Camera(dirData);
         renderer->BindConstantBuffers_Light(dirData);
     }
 

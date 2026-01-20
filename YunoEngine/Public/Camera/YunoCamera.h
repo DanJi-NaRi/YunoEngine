@@ -25,7 +25,7 @@ struct YunoCamera
     XMMATRIX Proj(float width, float height) const
     {
         using namespace DirectX;
-        return (useOrtho) ? XMMatrixOrthographicOffCenterLH(0.0f, (float)width, (float)height, 0.0f, nearZ, farZ) : XMMatrixPerspectiveFovLH(fovY, aspect, nearZ, farZ);
+        return (useOrtho) ? XMMatrixOrthographicOffCenterLH(0.0f, (float)width, (float)height, 0.0f, 0, 1) : XMMatrixPerspectiveFovLH(fovY, aspect, nearZ, farZ);
     }
 
     XMMATRIX ProjPerspective() const
@@ -37,7 +37,7 @@ struct YunoCamera
     XMMATRIX ProjOrtho(float width, float height) const
     {
         using namespace DirectX;
-        return XMMatrixOrthographicOffCenterLH(0.0f, width, height, 0.0f, nearZ, farZ);
+        return XMMatrixOrthographicOffCenterLH(0.0f, width, height, 0.0f, 0, 1);
         //return XMMatrixOrthographicOffCenterLH(0, width, height, 0.0f, 1.0f, 100.0f);
     }
 

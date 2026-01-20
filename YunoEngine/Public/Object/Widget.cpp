@@ -6,10 +6,10 @@
 #include "IWindow.h"
 
 VERTEX_Pos g_Widget_pos[] = {
-    { -0.5f,  0.5f,  0.0f },    // 좌상
-    {  0.5f,  0.5f,  0.0f },    // 우상
-    { -0.5f, -0.5f,  0.0f },    // 좌하
-    {  0.5f, -0.5f,  0.0f }     // 우하
+    { 0,0,0 },    // 좌상
+    { 1,0,0 },    // 우상
+    { 0,1,0 },    // 좌하
+    { 1,1,0 }     // 우하
 };
 
 // UI 쿼드는 노말 안씀
@@ -104,8 +104,8 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
     m_vPos = vPos;
 
-    m_spriteSizeX = (float)1000;
-    m_spriteSizeY = (float)1000;
+    m_spriteSizeX = (float)50;
+    m_spriteSizeY = (float)50;
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
@@ -130,8 +130,8 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOA
     m_vRot = vRot;
     m_vScale = vScale;
 
-    m_spriteSizeX = (float)500;
-    m_spriteSizeY = (float)500;
+    m_spriteSizeX = (float)50;
+    m_spriteSizeY = (float)50;
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
@@ -159,10 +159,10 @@ bool Widget::Update(float dTime)
     //m_vPos.y = (float)(clientHeight - m_height + 1);
     //m_vPos.z = 1.0f;
 
-    float sizex = (float)m_spriteSizeX;
-    float sizey = (float)m_spriteSizeY;
-    //float sizex = m_vScale.x * m_width;
-    //float sizey = m_vScale.y * m_height;
+    //float sizex = (float)m_spriteSizeX;
+    //float sizey = (float)m_spriteSizeY;
+    float sizex = m_vScale.x * m_width;
+    float sizey = m_vScale.y * m_height;
     //m_vScale.z = 1.0f; // UI는 z scale 의미 없음(일단 1로 고정)
 
     XMMATRIX mScale = XMMatrixScaling(sizex, sizey, 1.0f);

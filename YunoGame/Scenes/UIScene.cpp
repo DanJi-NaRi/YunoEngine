@@ -9,6 +9,7 @@
 #include "YunoLight.h"
 
 #include "Image.h"
+#include "Button.h"
 #include "Building.h"
 #include "Triangle.h"
 #include "Quad.h"
@@ -22,8 +23,7 @@
 
 bool UIScene::OnCreateScene()
 {
-
-
+    YunoEngine::GetRenderer()->GetCamera().SetOrthoFlag(true);
     //std::cout << "[UIScene] OnCreate\n";
 
     // 있는지 체크
@@ -38,7 +38,7 @@ bool UIScene::OnCreateScene()
     //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     om->CreateWidget<Image>(L"tst", XMFLOAT3(0, 0, 0));
-
+    om->CreateWidget<Button>(L"tst", XMFLOAT3(50, 0, 0));
     return true;
 }
 
@@ -60,7 +60,6 @@ void UIScene::OnExit()
 
 void UIScene::Update(float dt)
 {
-    YunoEngine::GetRenderer()->GetCamera().SetOrthoFlag(true);
     SceneBase::Update(dt); // 여기만 UI 출력하게끔 빼둘까?
 }
 

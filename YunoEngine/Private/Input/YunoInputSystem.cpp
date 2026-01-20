@@ -31,14 +31,16 @@ bool YunoInputSystem::IsKeyReleased(uint32_t key) const
     return (m_state.keyDown[key] == 0) && (m_state.prevKeyDown[key] != 0);
 }
 
-
+bool YunoInputSystem::IsMouseHovered() const
+{
+    return m_state.mouseHovered;
+}
 
 bool YunoInputSystem::IsMouseButtonDown(uint32_t button) const
 {
     if (button >= m_state.mouseDown.size()) return false;
     return m_state.mouseDown[button] != 0;
 }
-
 
 bool YunoInputSystem::IsMouseButtonPressed(uint32_t button) const
 {
@@ -71,6 +73,20 @@ void YunoInputSystem::RemoveContext(IInputContext* context)
     {
         m_contexts.erase(it, m_contexts.end());
     }
+}
+
+void YunoInputSystem::MouseTrack(HWND hWnd, BOOL bOn)
+{
+    DWORD flag = bOn ? TME_HOVER : TME_CANCEL;
+    DWORD time = bOn ? 100 : 0;
+
+    TRACKMOUSEEVENT ev = {};
+    //ZeroMemory(&ev, sizeof(ev));
+    ev.cbSize = sizeof(TRACKMOUSEEVENT);
+    ev.dwFlags = flag;
+    ev.hwndTrack = hWnd;
+    ev.dwHoverTime = time;
+    TrackMouseEvent(&ev);
 }
 
 void YunoInputSystem::SortContextsIfDirty()
@@ -150,8 +166,17 @@ void YunoInputSystem::ApplyToState(const InputEvent& evt)
 
         m_state.mouseDeltaX += (m_state.mouseX - prevX);
         m_state.mouseDeltaY += (m_state.mouseY - prevY);
+
+        m_state.mouseHovered = false;
+
+        std::cout << "moved" << std::endl;
         break;
     }
+    
+    case InputEventType::MouseHover:
+        std::cout << "hovered" << std::endl;
+        m_state.mouseHovered = true;
+        break;
 
     case InputEventType::MouseWheel:
         // 상태 기반 wheel 누적이 필요하면 InputState에 wheelDelta 추가해서 누적

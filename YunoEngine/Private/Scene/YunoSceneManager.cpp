@@ -280,9 +280,9 @@ void YunoSceneManager::Submit()
         if (!EnsureCreated(e)) continue;
         e.scene->Submit();
 
-        IRenderer* s_renderer = YunoEngine::GetRenderer();
+        //IRenderer* s_renderer = YunoEngine::GetRenderer();
 
-        s_renderer->Flush();
+
         //std::cout << "씬 렌더" << std::endl;
     }
 }

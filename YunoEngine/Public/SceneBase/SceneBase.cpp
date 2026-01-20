@@ -16,7 +16,6 @@ SceneBase::~SceneBase() = default;
 bool SceneBase::OnCreate()
 {
     //std::cout << "[SceneBase] OnCreate\n";
-
     m_objectManager = std::make_unique<ObjectManager>();
     if (!m_objectManager)
         return false;
@@ -65,8 +64,6 @@ void SceneBase::Update(float dt)
         m_objectManager->Update(dt);
         m_objectManager->WidgetUpdate(dt);
     }
-        
-        
 }
 
 void SceneBase::Submit()

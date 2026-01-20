@@ -54,7 +54,6 @@ void TitleScene::OnExit()
 
 void TitleScene::Update(float dt)
 {
-    YunoEngine::GetRenderer()->GetCamera().SetOrthoFlag(false);
     SceneBase::Update(dt);
 
 }
