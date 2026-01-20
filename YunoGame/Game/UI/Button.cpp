@@ -1,34 +1,29 @@
 #include "pch.h"
-#include "Image.h"
+#include "Button.h"
 
+#include "IInput.h"
 
-Image::Image()
+Button::Button()
+{
+    m_BtnState = ButtonState::Idle;
+}
+
+Button::~Button()
 {
 }
 
-Image::~Image()
-{
-}
-
-bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool Button::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Widget::Create(name, id, vPos);
 
     if (!m_pInput || !m_pRenderer || !m_pTextures)
         return false;
-
-
-    if (!CreateMesh())
-    {
-        return false;
-    }
-
-
+    //if (!CreateMesh())
+    //    return false;
+    m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
+    if (m_defaultMesh == 0)return false;
     if (!CreateMaterial())
-    {
         return false;
-    }
-
 
     m_MeshNode = std::make_unique<MeshNode>();
 
@@ -42,19 +37,23 @@ bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
         m_constant.metalRatio = 1.0f;
         m_constant.shadowBias = 0.005f;
     }
+
     Backup();
 
     return true;
 }
 
-bool Image::Update(float dTime)
+bool Button::Update(float dTime)
 {
+    ButtonUpdate(dTime);
     Widget::Update(dTime);
+
+    //std::cout << m_BtnState << std::endl;
 
     return true;
 }
 
-bool Image::Submit(float dTime)
+bool Button::Submit(float dTime)
 {
     static bool test = true;
     if (m_time >= 1.0f)
@@ -68,14 +67,24 @@ bool Image::Submit(float dTime)
     return true;
 }
 
-bool Image::CreateMesh()
+void Button::ButtonUpdate(float dTime)
 {
-    m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
+    assert(m_pInput);
+    //float mouseX = m_pInput->GetMouseX();
+    //float mouseY = m_pInput->GetMouseY();
+    //POINT mouseXY{ (LONG)mouseX, (LONG)mouseY };
+    POINT mouseXY{ (LONG)m_pInput->GetMouseX(), (LONG)m_pInput->GetMouseY() };
 
-    return true;
+    m_BtnState = ButtonState::Idle; // 커서 영역 검사 전 기본 상태 초기화.
+
+    if (!PtInRect(&m_rect, mouseXY)) return;	//커서/버튼 영역 검사.
+
+    if (m_pInput->IsMouseButtonDown(0)) { m_BtnState = ButtonState::Clicked; }
+    else if (m_BtnState != ButtonState::Clicked && m_pInput->IsMouseButtonPressed(0)) { m_BtnState = ButtonState::Pressed; }
+    else { m_BtnState = ButtonState::Hovered; } // 커서가 올라가있는 것은 확정이므로, 기본값은 Hovered
 }
 
-bool Image::CreateMaterial()
+bool Button::CreateMaterial()
 {
     m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/woodbox.bmp");
 

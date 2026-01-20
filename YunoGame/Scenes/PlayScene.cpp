@@ -6,7 +6,7 @@
 
 #include "ObjectManager.h"
 #include "YunoLight.h"
-
+#include "YunoCamera.h"
 
 #include "Building.h"
 #include "Triangle.h"
@@ -21,22 +21,18 @@
 bool PlayScene::OnCreateScene()
 {
     //std::cout << "[PlayScene] OnCreate\n";
-
-    // 있는지 체크
-    ObjectManager* om = GetObjectManager();
-    if (!om) return false;
     
     // 디렉션 라이트 생성
     m_objectManager->CreateDirLight();
 
-    om->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
+    m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
 
-    om->CreateObjectFromFile<Dwarf>(L"Buliding", XMFLOAT3(0, 0, -5), L"../Assets/fbx/Dwarf/Dwarf.fbx");
-    om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    m_objectManager->CreateObjectFromFile<Dwarf>(L"Buliding", XMFLOAT3(0, 0, -5), L"../Assets/fbx/Dwarf/Dwarf.fbx");
+    m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     // 플레이어(삼각형)
-    om->CreateObject<Triangle>(L"player", XMFLOAT3(0, 0, 0));
+    m_objectManager->CreateObject<Triangle>(L"player", XMFLOAT3(0, 0, 0));
     return true;
 }
 
@@ -58,12 +54,15 @@ void PlayScene::OnExit()
 
 void PlayScene::Update(float dt)
 {
-
-
     SceneBase::Update(dt);
 }
 
-void PlayScene::Submit()
+void PlayScene::SubmitObj()
 {
-    SceneBase::Submit();
+    SceneBase::SubmitObj();
+}
+
+void PlayScene::SubmitUI()
+{
+    SceneBase::SubmitUI();
 }

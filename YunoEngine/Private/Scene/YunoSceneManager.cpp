@@ -5,6 +5,9 @@
 #include "IScene.h"
 #include "IRenderer.h"
 
+// 테스트
+#include "YunoEngine.h"
+
 SceneEntry::~SceneEntry() = default;
 PendingOp::~PendingOp() = default;
 
@@ -256,7 +259,7 @@ void YunoSceneManager::Update(float dt)
     }
 }
 
-void YunoSceneManager::Submit()
+void YunoSceneManager::SubmitAndRender(IRenderer* renderer)
 {
     if (m_stack.empty()) return;
 
@@ -275,6 +278,19 @@ void YunoSceneManager::Submit()
         SceneEntry& e = m_stack[i];
 
         if (!EnsureCreated(e)) continue;
-        e.scene->Submit();
+        e.scene->SubmitObj();
+
+        renderer->Flush();
+    }
+
+    for (int i = start; i < static_cast<int>(m_stack.size()); ++i)
+    {
+        SceneEntry& e = m_stack[i];
+
+        if (!EnsureCreated(e)) continue;
+        e.scene->SubmitUI();
+
+        renderer->Flush();
+
     }
 }

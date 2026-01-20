@@ -15,8 +15,9 @@ public:
     void OnExit() override;
     void OnDestroy() override final;
 
-    void Update(float dt) override;
-    void Submit() override;
+    virtual void Update(float dt) override;
+    virtual void SubmitObj() override;
+    virtual void SubmitUI() override;
 
     const char* GetDebugName() const override { return "SceneBase"; }
 
