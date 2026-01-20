@@ -1,5 +1,5 @@
 #include "pch.h"
-
+#include "AudioScenePCH.h"
 // 인클루드 순서
 // 1.본인 씬 헤더
 #include "SceneBase.h"
@@ -19,6 +19,7 @@ std::string WStringToString(const std::wstring& wstr)
         nullptr, nullptr
     );
 
+
     std::string result(size_needed, 0);
     WideCharToMultiByte(
         CP_UTF8, 0,
@@ -30,13 +31,18 @@ std::string WStringToString(const std::wstring& wstr)
     return result;
 }
 
+
 SceneBase::SceneBase() = default;
 SceneBase::~SceneBase() = default;
+
+//AudioScene::AudioScene() {};
+//AudioScene::~AudioScene() {};
 
 // 생성
 bool SceneBase::OnCreate()
 {
     //std::cout << "[SceneBase] OnCreate\n";
+
     m_name = "SceneBase";
 
 #ifdef _DEBUG
@@ -44,11 +50,16 @@ bool SceneBase::OnCreate()
     m_selectedWidget = nullptr;
 #endif
 
+
     m_objectManager = std::make_unique<ObjectManager>();
     if (!m_objectManager)
         return false;
 
     if (!m_objectManager->Init())
+        return false;
+
+    m_audioScene = std::make_unique<AudioScene>();
+    if (!m_audioScene)
         return false;
 
     return OnCreateScene();
@@ -89,24 +100,31 @@ void SceneBase::Update(float dt)
 
     if (m_objectManager)
     {
-        m_objectManager->WidgetUpdate(dt);
         m_objectManager->Update(dt);
+        m_objectManager->WidgetUpdate(dt);
     }
-        
-        
+
+    m_audioScene->Update(dt);
+
 }
 
-void SceneBase::Submit()
+void SceneBase::SubmitObj()
 {
     if (m_objectManager) 
     {
-        m_objectManager->Submit(m_lastDt);
         m_objectManager->ProcessPending();
-
-        m_objectManager->WidgetSubmit(m_lastDt);
-        m_objectManager->ProcessWidgetPending();
+        m_objectManager->Submit(m_lastDt);
     }
 
+}
+
+void SceneBase::SubmitUI()
+{
+    if (m_objectManager)
+    {
+        m_objectManager->ProcessWidgetPending();
+        m_objectManager->WidgetSubmit(m_lastDt);
+    }
 }
 
 #ifdef _DEBUG

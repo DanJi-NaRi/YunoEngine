@@ -11,8 +11,11 @@ public:
         return s;
     }
 
+    // 게임 시작 시 엔진과 함께 꼬옥 초기화 해주기
     bool Init(int maxChannels = 1024);
+    // 게임 종료 시 꼬옥 호출해주기
     void Shutdown();
+
     void Update(float dt);
 
     // Bank
@@ -33,7 +36,8 @@ public:
     void SetBusMute(const std::string& busName, bool mute);
     void SetBusPaused(const std::string& busName, bool paused);
 
-    void DecRefAndEraseCaches(BankContent& content);    // bank unload 시, 캐시 삭제용
+    // bank unload 시, 캐시 삭제용
+    void DecRefAndEraseCaches(BankContent& content);
 
     // Listener (카메라/플레이어)
     void SetListener3DAttributes(
@@ -41,11 +45,14 @@ public:
         int listenerIndex = 0
     );
 
+    // 전역 파라미터 조절
+    void SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value);
+
     // 3D 세팅
     void Set3DSettings(float dopplerScale, float distanceFactor, float rolloffScale);
 
-    FMOD::Studio::System* Studio() { return mStudio; }
-    FMOD::System* Core() { return mCore; }
+    FMOD::Studio::System* Studio() { return m_Studio; }
+    FMOD::System* Core() { return m_Core; }
 
 private:
     AudioSystem() = default;
@@ -54,13 +61,12 @@ private:
     AudioSystem& operator=(const AudioSystem&) = delete;
 
 private:
-    FMOD::Studio::System* mStudio = nullptr;
-    FMOD::System* mCore = nullptr;
+    FMOD::Studio::System* m_Studio = nullptr;
+    FMOD::System* m_Core = nullptr;
 
-    BankHelper mBH;
-    std::unordered_map<std::string, FMOD::Studio::Bank*> mBanks;
-    std::unordered_map<std::string, FMOD::Studio::EventDescription*> mEventDescCache;
-    std::unordered_map<std::string, FMOD::Studio::Bus*> mBusCache;
-    std::unordered_map<std::string, FMOD::Studio::VCA*> mVCACache;
-    
+    BankHelper m_BH;
+    std::unordered_map<std::string, FMOD::Studio::Bank*> m_Banks;
+    std::unordered_map<std::string, FMOD::Studio::EventDescription*> m_EventDescList;
+    std::unordered_map<std::string, FMOD::Studio::Bus*> m_BusList;
+    std::unordered_map<std::string, FMOD::Studio::VCA*> m_VCAList;
 };

@@ -1,10 +1,12 @@
 #pragma once
 
 #include "IScene.h"
-
+#include "IAudioScene.h"
 class ObjectManager;
+
 class Unit;
 class Widget;
+
 
 class SceneBase : public IScene
 {
@@ -17,8 +19,9 @@ public:
     void OnExit() override;
     void OnDestroy() override final;
 
-    void Update(float dt) override;
-    void Submit() override;
+    virtual void Update(float dt) override;
+    virtual void SubmitObj() override;
+    virtual void SubmitUI() override;
 
     const char* GetDebugName() const override { return m_name.c_str(); }
 
@@ -50,4 +53,6 @@ protected:
 #endif
     float m_lastDt = 0.0f;
     std::string m_name;
+    std::unique_ptr<IAudioScene> m_audioScene;
+
 };

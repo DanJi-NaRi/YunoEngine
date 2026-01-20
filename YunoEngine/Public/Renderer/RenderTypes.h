@@ -118,6 +118,7 @@ enum class ShaderId : uint8_t
     DebugGrid,
     Unlit,
     Skybox,
+    UIBase,
 
     Count
 };

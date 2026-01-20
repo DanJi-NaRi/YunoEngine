@@ -6,17 +6,14 @@
 #include "ITextureManager.h"
 #include "Mesh.h"
 
-//struct Rect { float l = 0, t = 0, r = 0, b = 0; }; // left, top, right, bottom
-//struct Rect { float width, height; };
-struct RectPx { float x = 0, y = 0, w = 0, h = 0; };
-
 // 피봇 예정...
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
-enum class WIDGET_TYPE {
-    WIDGET_SPRITE,
-    WIDGET_BUTTON,
-    WIDGET_PROGRESS,
-    WIDGET_SLIDER,
+enum class widgetType {
+    Sprite,
+    Button,
+    Progress,
+    Slider,
+    Max,
 };
 
 class Widget
@@ -24,7 +21,7 @@ class Widget
 protected:
 
     uint32_t m_id;
-    WIDGET_TYPE m_type;
+    widgetType m_type;
 
     std::wstring m_name;
 
@@ -68,8 +65,7 @@ protected:
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
 
-    RectPx m_layoutRectPx;
-    RectPx m_clipRectPx;
+    RECT m_rect;
 
     // 상수버퍼 업데이트할 데이터들
     Update_Data   m_constant;
@@ -124,21 +120,6 @@ inline MeshHandle GetDefWidgetMesh(MeshHandle* out = nullptr)
     if (out) *out = g_defaultWidgetMesh;
     return g_defaultWidgetMesh;
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-// 버튼 상태 : 대기/커서입력/눌림 (standby/CursorOn/Push)
-//
-//enum BSTATE { BS_STANDBY, BS_CURSORON, BS_PUSH, BS_MAX };		//UI버튼 상태: "대기", "커서올라감", "눌림" 
-//BOOL g_BtnState[3] = { BS_STANDBY, };							//UI버튼별 상태 저장.
-
-/*
-#define MS_STANDBY   0x0000		//대기중.
-#define MS_LBTNDOWN  0x0100		//버튼 눌림.
-#define MS_LBTNUP	 0x8100		//버튼 눌린후 떨어짐.
-#define MS_RBTNDOWN  0x0001		//버튼 눌림.
-#define MS_RBTNUP	 0x0081		//버튼 눌린후 떨어짐.
-*/
 
 /*
 // UI 그리기 (일반 2D)

@@ -126,7 +126,9 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
+
       <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(ProjectDir)EnginePCH;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Parser;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Private\Singleton;$(ProjectDir)Public;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Light;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Sound;$(SolutionDir)ThirdParty\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -151,7 +153,9 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
+
       <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(ProjectDir)EnginePCH;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Parser;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Private\Singleton;$(ProjectDir)Public;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Light;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Sound;$(SolutionDir)ThirdParty\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -212,11 +216,15 @@
     <ClInclude Include="Public\Renderer\RenderTypes.h" />
     <ClInclude Include="Public\SceneBase\SceneBase.h" />
     <ClInclude Include="Private\Singleton\Singleton.h" />
+    <ClInclude Include="Public\Sound\AudioQueue.h" />
     <ClInclude Include="Public\Sound\AudioScene.h" />
+    <ClInclude Include="Public\Sound\AudioScenePCH.h" />
     <ClInclude Include="Public\Sound\AudioSystem.h" />
+    <ClInclude Include="Public\Sound\AudioSystemPCH.h" />
     <ClInclude Include="Public\Sound\Bank.h" />
     <ClInclude Include="Public\Sound\EventHandle.h" />
     <ClInclude Include="Public\Sound\fmodPCH.h" />
+    <ClInclude Include="Public\Sound\IAudioScene.h" />
     <ClInclude Include="Public\YunoEngine.h" />
     <ClInclude Include="Public\Object\Widget.h" />
   </ItemGroup>
@@ -250,11 +258,15 @@
     <ClCompile Include="Public\Renderer\Mesh.cpp" />
     <ClCompile Include="Public\SceneBase\SceneBase.cpp" />
     <ClCompile Include="Public\Object\Widget.cpp" />
+    <ClCompile Include="Public\Sound\AudioQueue.cpp" />
     <ClCompile Include="Public\Sound\AudioScene.cpp" />
+    <ClCompile Include="Public\Sound\AudioScenePCH.cpp" />
     <ClCompile Include="Public\Sound\AudioSystem.cpp" />
+    <ClCompile Include="Public\Sound\AudioSystemPCH.cpp" />
     <ClCompile Include="Public\Sound\Bank.cpp" />
     <ClCompile Include="Public\Sound\EventHandle.cpp" />
     <ClCompile Include="Public\Sound\fmodPCH.cpp" />
+    <ClCompile Include="Public\Sound\IAudioScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">
@@ -274,6 +286,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\PBR_Base.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_Base.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

@@ -1,9 +1,9 @@
 #include "pch.h"
 
-
 #include "TitleScene.h"
 
 #include "YunoEngine.h"
+#include "YunoCamera.h"
 
 #include "ObjectManager.h"
 
@@ -14,38 +14,25 @@
 #include "AnimTest.h"
 #include "YunoLight.h"
 
+
 bool TitleScene::OnCreateScene()
 {
     //std::cout << "[TitleScene] OnCreate\n";
-
-    // 있는지 체크
-    ObjectManager* om = GetObjectManager();
-    if (!om) return false;
-    om->CreateDirLight();
     
     m_name = "TitleScene";
+   
+    m_objectManager->CreateDirLight();
     
-    om->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
+    m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
     
-    om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
-    //auto building = om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
-    /*for (int i = 0; i < building->GetMeshNum(); i++)
-    {
-        std::wstring fullpath = L"../Assets/fbx/Building/";
-        std::wstring filepath = fullpath + L"building_Albedo" + std::to_wstring(i) + L".png";
-        building->SetTexture(i, TextureUse::Albedo, filepath);
 
-        filepath = fullpath + L"building_Metallic" + std::to_wstring(i) + L".png";
-        building->SetTexture(i, TextureUse::Metallic, filepath);
+    m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
-        filepath = fullpath + L"building_Normal" + std::to_wstring(i) + L".png";
-        building->SetTexture(i, TextureUse::Normal, filepath);
+    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
+    m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
 
-        filepath = fullpath + L"building_Roughness" + std::to_wstring(i) + L".png";
-        building->SetTexture(i, TextureUse::Roughness, filepath);
-    }*/
-    //om->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
-    //om->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
 
     return true;
 }
@@ -58,20 +45,29 @@ void TitleScene::OnDestroyScene()
 void TitleScene::OnEnter()
 {
     //std::cout << "[TitleScene] OnEnter\n";
+    m_audioScene->Load("Title");
+    m_audioScene->PlayEvent("BGM/Playlist");
 }
 
 void TitleScene::OnExit()
 {
     //std::cout << "[TitleScene] OnExit\n";
+    //m_audioScene->Unload();
 }
+
+
 
 void TitleScene::Update(float dt)
 {
     SceneBase::Update(dt);
-
 }
 
-void TitleScene::Submit()
+void TitleScene::SubmitObj()
 {
-    SceneBase::Submit();
+    SceneBase::SubmitObj();
+}
+
+void TitleScene::SubmitUI()
+{
+    SceneBase::SubmitUI();
 }

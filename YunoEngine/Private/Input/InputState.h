@@ -13,7 +13,7 @@ struct InputState
     std::array<uint8_t, 256>    prevKeyDown{};
     std::array<uint8_t, 3>      prevMouseDown{};
 
-
+    bool mouseHovered;
 
     float mouseX = 0.0f;
     float mouseY = 0.0f;

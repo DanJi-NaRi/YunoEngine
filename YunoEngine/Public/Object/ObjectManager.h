@@ -31,6 +31,9 @@ private:
     std::vector<UINT> m_widgetPendingDestoryQ;
     std::vector<std::unique_ptr<Widget>> m_widgetPendingCreateQ;
 
+    //Camera 투영
+    bool m_isOrtho = false;
+
     template<typename T>
     T* CreateObject(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 오브젝트 생성용
     std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> CreateMeshNode(const std::wstring& filepath);
@@ -42,7 +45,7 @@ private:
 
 public:
     void CreateDirLight();
-
+    void SetOrthoFlag(bool flag) { m_isOrtho = flag; };
 
 public:
     explicit ObjectManager();
@@ -136,6 +139,7 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, std::uniq
 // 현재 Object와 같은 ID 체계를 사용하고 있음. 분리할지 고민중..
 // 매니저 분리까지는 굳이 필요 없을 것 같아서 일단은 큐만 추가해서 사용 중.
 template<typename T>
+__declspec(noinline)
 T* ObjectManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
 {
     static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
@@ -146,7 +150,8 @@ T* ObjectManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
 
     auto* pWidget = widget.get();
     m_widgetPendingCreateQ.emplace_back(std::move(widget));
-    ++m_ObjectIDs;
+    m_ObjectIDs++;
+
     return pWidget;
 }
 
@@ -160,14 +165,14 @@ T* ObjectManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos, std::uniq
     std::wstring newname = name + L'_' + node->m_name;
 
     auto widget = std::make_unique<T>();
-    if (!widget->Create(newname, m_ObjectIDs, pos))
+    if (!widget->Create(newname, m_ObjectIDs++, pos))
         return nullptr;
 
     widget->SetMesh(std::move(node));
 
     auto* pWidget = widget.get();
     m_widgetPendingCreateQ.emplace_back(std::move(widget));
-    ++m_ObjectIDs;
+
     return pWidget;
 }
 

@@ -2,9 +2,7 @@
 
 #include "SceneBase.h"
 
-class Triangle;
-
-class PlayScene final : public SceneBase
+class UIScene final : public SceneBase
 {
 public:
     void OnEnter() override;
@@ -14,7 +12,7 @@ public:
     void SubmitObj() override;
     void SubmitUI() override;
 
-    const char* GetDebugName() const override { return m_name.c_str(); }
+    const char* GetDebugName() const override { return "UIScene"; }
 
 protected:
     bool OnCreateScene() override;
