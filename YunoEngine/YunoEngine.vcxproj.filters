@@ -1,0 +1,380 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- ===== Filters (folder view in Solution Explorer) ===== -->
+  <ItemGroup>
+    <Filter Include="EnginePCH">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E001}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Parser">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Input">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E004}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E005}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Mesh">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E006}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\RenderPass">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Shader">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E008}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\ConstBuffer">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E009}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Material">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Resource">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Singleton">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Timer">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Window">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E010}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Camera">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E011}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Input">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Interface">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E013}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Math">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E014}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Object">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E015}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Renderer">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Include">
+      <UniqueIdentifier>{4cc2b856-b3d6-459a-9e23-866c449184b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Scene">
+      <UniqueIdentifier>{0170ffaa-52a9-4ad9-a9ea-a5490f1015d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\SceneBase">
+      <UniqueIdentifier>{3ce47353-34f6-4914-bfaa-aad64ee2159f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Light">
+      <UniqueIdentifier>{491ca366-9401-4be6-8d32-293d3261bdc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Bone">
+      <UniqueIdentifier>{16ad65e1-9a9e-4a8e-965e-f224ac0e004e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Bone\Node">
+      <UniqueIdentifier>{b07fa004-a577-42d0-a94e-7ba1408de09e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Renderer\Bone\Animation">
+      <UniqueIdentifier>{31a6296c-5dca-4d1d-948d-ca1e4f9e0e4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Animator">
+      <UniqueIdentifier>{dd759dd7-be6c-427f-8246-0d67659cd3e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\UI">
+      <UniqueIdentifier>{26a1c0cf-4dff-466e-81ba-cd90b6a032e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Sound">
+      <UniqueIdentifier>{8e3efd06-278b-499d-99ee-e02a38b56f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Sound\header">
+      <UniqueIdentifier>{ceb72912-103f-45b3-a3b2-b4d09a364809}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Sound\src">
+      <UniqueIdentifier>{13bdd158-89af-47af-86bd-12a0b27bb2df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Renderer\3DAnimation">
+      <UniqueIdentifier>{73b595f9-262f-40dc-97a8-c7c18b0f7dc2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <!-- ===== Source files ===== -->
+  <ItemGroup>
+    <ClCompile Include="EnginePCH\pch.cpp">
+      <Filter>EnginePCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Input\YunoInputSystem.cpp">
+      <Filter>Private\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\Mesh\YunoMeshBuffer.cpp">
+      <Filter>Private\Renderer\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\RenderPass\YunoRenderPass.cpp">
+      <Filter>Private\Renderer\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\Shader\YunoShader.cpp">
+      <Filter>Private\Renderer\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\Shader\YunoShaderCompiler.cpp">
+      <Filter>Private\Renderer\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\YunoRenderer.cpp">
+      <Filter>Private\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Resource\YunoTextureManager.cpp">
+      <Filter>Private\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Timer\YunoTimer.cpp">
+      <Filter>Private\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Window\YunoWindow.cpp">
+      <Filter>Private\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\YunoEngine.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\ObjectManager.cpp">
+      <Filter>Public\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\Unit.cpp">
+      <Filter>Public\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Scene\YunoSceneManager.cpp">
+      <Filter>Private\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Parser\Parser.cpp">
+      <Filter>Private\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Renderer\Mesh.cpp">
+      <Filter>Private\Renderer\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\SceneBase\SceneBase.cpp">
+      <Filter>Public\SceneBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Light\YunoLight.cpp">
+      <Filter>Public\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Renderer\3DAnimation\Animator.cpp">
+      <Filter>Public\Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\BoneAnimation\BoneAnimation.cpp">
+      <Filter>Private\Renderer\Bone\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\BoneNode\BoneNode.cpp">
+      <Filter>Private\Renderer\Bone\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\Widget.cpp">
+      <Filter>Public\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Sound\AudioSystem.cpp">
+      <Filter>Public\Sound\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Sound\fmodPCH.cpp">
+      <Filter>Public\Sound\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Sound\Bank.cpp">
+      <Filter>Public\Sound\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Sound\EventHandle.cpp">
+      <Filter>Public\Sound\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Sound\AudioScene.cpp">
+      <Filter>Public\Sound\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\AnimationUnit.cpp">
+      <Filter>Public\Object</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <!-- ===== Header files ===== -->
+  <ItemGroup>
+    <ClInclude Include="EnginePCH\pch.h">
+      <Filter>EnginePCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Input\InputState.h">
+      <Filter>Private\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Input\YunoInputSystem.h">
+      <Filter>Private\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\Material\YunoMaterial.h">
+      <Filter>Private\Renderer\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Resource\YunoTextureManager.h">
+      <Filter>Private\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h">
+      <Filter>Private\Renderer\ConstBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\Mesh\YunoMeshBuffer.h">
+      <Filter>Private\Renderer\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\RenderPass\YunoRenderPass.h">
+      <Filter>Private\Renderer\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\Shader\YunoShader.h">
+      <Filter>Private\Renderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\Shader\YunoShaderCompiler.h">
+      <Filter>Private\Renderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\YunoRenderer.h">
+      <Filter>Private\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Timer\YunoTimer.h">
+      <Filter>Private\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Window\YunoWindow.h">
+      <Filter>Private\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Camera\YunoCamera.h">
+      <Filter>Public\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Input\InputEvent.h">
+      <Filter>Public\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IInputContext.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IGameApp.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IInput.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IMesh.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IRenderer.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\ISceneManager.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\ISound.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\ITextureManager.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\ITime.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IWindow.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Math\YunoTransform.h">
+      <Filter>Public\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\ObjectManager.h">
+      <Filter>Public\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\Unit.h">
+      <Filter>Public\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\MaterialDesc.h">
+      <Filter>Public\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\RenderTypes.h">
+      <Filter>Public\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\YunoEngine.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Scene\YunoSceneManager.h">
+      <Filter>Private\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Interface\IScene.h">
+      <Filter>Public\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Parser\Parser.h">
+      <Filter>Private\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\Mesh.h">
+      <Filter>Private\Renderer\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Singleton\Singleton.h">
+      <Filter>Private\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\SceneBase\SceneBase.h">
+      <Filter>Public\SceneBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Light\YunoLight.h">
+      <Filter>Public\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\3DAnimation\Animator.h">
+      <Filter>Public\Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\BoneAnimation\BoneAnimation.h">
+      <Filter>Private\Renderer\Bone\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\AnimationUnit.h">
+      <Filter>Public\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\Widget.h">
+      <Filter>Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Sound\AudioScene.h">
+      <Filter>Public\Sound\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Sound\AudioSystem.h">
+      <Filter>Public\Sound\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Sound\Bank.h">
+      <Filter>Public\Sound\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Sound\EventHandle.h">
+      <Filter>Public\Sound\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Sound\fmodPCH.h">
+      <Filter>Public\Sound\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\3DAnimation\BoneAnimation.h">
+      <Filter>Public\Renderer\3DAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Renderer\3DAnimation\BoneNode.h">
+      <Filter>Public\Renderer\3DAnimation</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <!-- ===== Shaders / None ===== -->
+  <ItemGroup>
+    <FxCompile Include="..\Assets\Shaders\DebugGrid.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PBR_Base.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PBR_Animation.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_Base.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\Shaders\ConstantBuffers.hlsli">
+      <Filter>Shaders\Include</Filter>
+    </None>
+    <None Include="..\Assets\Shaders\TexturesSampler.hlsli">
+      <Filter>Shaders\Include</Filter>
+    </None>
+    <None Include="..\Assets\Shaders\Light.hlsli">
+      <Filter>Shaders\Include</Filter>
+    </None>
+  </ItemGroup>
+</Project>
