@@ -11,8 +11,7 @@ struct SceneView
 };
 
 class IRenderer;
-class AudioQ;
-enum class SceneID : uint8_t;
+
 
 struct SceneEntry
 {
@@ -26,7 +25,7 @@ struct SceneEntry
     SceneEntry& operator=(const SceneEntry&) = delete;
 
     std::unique_ptr<IScene> scene;
-    SceneID id;
+
     SceneState state = SceneState::Uninitialized;
     ScenePolicy policy{};
 };
