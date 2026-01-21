@@ -103,11 +103,8 @@ void AudioManager::Unload(std::string bankName)
     for (const auto& eventName : eventList)
     {
         auto insIt = m_InstList.find(eventName);
-        if (insIt == m_InstList.end())
-        {
-            std::cerr << "not found: [" << eventName << "]\n";
-            continue;
-        }
+        if (insIt == m_InstList.end()) continue;
+            
         if (insIt->second.Valid())          // 객체가 재생 상태라면
         {
             insIt->second.Stop(true, true); // fadeout + release
