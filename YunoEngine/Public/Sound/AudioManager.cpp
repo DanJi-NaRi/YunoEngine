@@ -171,7 +171,7 @@ void AudioManager::Update(float dt)
 
 
         case AudioCmdType::SetUserVolume:
-            SetUserVolume(to_string(cmd.suv.volumetype), cmd.suv.value);
+            SetUserVolume(to_string(cmd.suv.volumetype), cmd.suv.volume);
             break;
         }
     }

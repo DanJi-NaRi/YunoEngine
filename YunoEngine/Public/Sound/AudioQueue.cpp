@@ -27,51 +27,86 @@ void AudioQ::Clear()
         AudioQue.pop();
 }
 
-static const AudioCmd LoadBank(BankName bank)
+
+AudioCmd AudioQ::LoadBank(BankName bank)
 {
     AudioCmd cmd{ AudioCmdType::LoadBank };
+    cmd.lb.bank = bank;
+    return cmd;
 }
-static const AudioCmd UnLoadBank(BankName bank)
+AudioCmd AudioQ::UnLoadBank(BankName bank)
 {
-    AudioCmd cmd{ AudioCmdType::LoadBank };
+    AudioCmd cmd{ AudioCmdType::UnloadBank };
+    cmd.ulb.bank = bank;
+    return cmd;
 }
-static const AudioCmd ListenerUpdate(float x, float y, float z)
+AudioCmd AudioQ::ListenerUpdate(float x, float y, float z)
 {
-    AudioCmd cmd{ AudioCmdType::LoadBank };
+    AudioCmd cmd{ AudioCmdType::ListenerUpdate };
+    cmd.lu.pos = { x, y, z };
+    return cmd;
 }
-static const AudioCmd EmitterUpdate(EventName event, float x, float y, float z)
+AudioCmd AudioQ::EmitterUpdate(EventName event, float x, float y, float z)
 {
-    AudioCmd cmd{ AudioCmdType::LoadBank };
+    AudioCmd cmd{ AudioCmdType::EmitterUpdate };
+    cmd.eu.event = event;
+    cmd.eu.pos = { x, y, z };
+    return cmd;
 }
-static const AudioCmd PlayEvent(EventName event, bool is3D = false, float x = 0, float y = 0, float z = 0)
+AudioCmd AudioQ::PlayEvent(EventName event, bool is3D, float x, float y, float z)
 {
-    AudioCmd cmd{ AudioCmdType::LoadBank };
+    AudioCmd cmd{ AudioCmdType::PlayEvent };
+    cmd.pe.event = event;
+    cmd.pe.is3D = is3D;
+    cmd.pe.pos = { x, y, z };
+    return cmd;
 }
-static const AudioCmd PlayOneShot(EventName event)
+AudioCmd AudioQ::PlayOneShot(EventName event)
 {
-    AudioCmd cmd{ AudioCmdType::LoadBank };
+    AudioCmd cmd{ AudioCmdType::PlayOneShot };
+    cmd.po.event = event;
+    return cmd;
 }
-static const AudioCmd StopOrRestartEvent(EventName event, bool isStop)
+AudioCmd AudioQ::StopOrRestartEvent(EventName event, bool isStop)
 {
-    AudioCmd cmd{ AudioCmdType::LoadBank };
+    AudioCmd cmd{ AudioCmdType::StopOrRestartEvent };
+    cmd.sre.event = event;
+    cmd.sre.is = isStop;
+    return cmd;
 }
-static const AudioCmd PauseOrResumeEvent(EventName event, bool isPaused)
+AudioCmd AudioQ::PauseOrResumeEvent(EventName event, bool isPaused)
 {
-    AudioCmd cmd{ AudioCmdType::LoadBank };
+    AudioCmd cmd{ AudioCmdType::PauseOrResumeEvent };
+    cmd.pre.event = event;
+    cmd.pre.is = isPaused;
+    return cmd;
 }
-static const AudioCmd SetParam(EventName event, ParamName param, float value)
+AudioCmd AudioQ::SetParam(EventName event, ParamName param, float value)
 {
-    AudioCmd cmd{ AudioCmdType::LoadBank };
+    AudioCmd cmd{ AudioCmdType::SetParam };
+    cmd.sp.event = event;
+    cmd.sp.param = param;
+    cmd.sp.value = value;
+    return cmd;
 }
-static const AudioCmd SetGroupMute(GroupName group, bool isMute)
+AudioCmd AudioQ::SetGroupMute(GroupName group, bool isMute)
 {
-    AudioCmd cmd{ AudioCmdType::LoadBank };
+    AudioCmd cmd{ AudioCmdType::SetGroupMute };
+    cmd.sgm.group = group;
+    cmd.sgm.is = isMute;
+    return cmd;
 }
-static const AudioCmd SetGroupPaused(GroupName group, bool isPaused)
+AudioCmd AudioQ::SetGroupPaused(GroupName group, bool isPaused)
 {
-    AudioCmd cmd{ AudioCmdType::LoadBank };
+    AudioCmd cmd{ AudioCmdType::SetGroupPaused };
+    cmd.sgp.group = group;
+    cmd.sgp.is = isPaused;
+    return cmd;
 }
-static const AudioCmd SetUserVolume(VolumeType volumeType, float volume);
+AudioCmd AudioQ::SetUserVolume(VolumeType volumeType, float volume)
 {
-    AudioCmd cmd{ AudioCmdType::LoadBank };
+    AudioCmd cmd{ AudioCmdType::SetUserVolume };
+    cmd.suv.volumetype = volumeType;
+    cmd.suv.volume = volume;
+    return cmd;
 }
