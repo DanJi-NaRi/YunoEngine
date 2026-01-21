@@ -1,6 +1,6 @@
 #pragma once
 
-class IAudioScene
+class IAudioManager
 {
 public:
     virtual void Load(std::string bankName) = 0;
@@ -15,6 +15,6 @@ public:
     
     virtual void SetParam(const std::string& eventName, const std::string& paramName, float value) = 0;
 
-    virtual ~IAudioScene() = default;
+    virtual ~IAudioManager() = default;
 };
 

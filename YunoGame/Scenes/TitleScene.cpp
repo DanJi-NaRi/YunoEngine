@@ -42,17 +42,22 @@ void TitleScene::OnDestroyScene()
 
 }
 
+TitleScene::TitleScene()
+{
+    m_id = SceneID::Title;
+}
+
 void TitleScene::OnEnter()
 {
     //std::cout << "[TitleScene] OnEnter\n";
-    m_audioScene->Load("Title");
-    m_audioScene->PlayEvent("BGM/Playlist");
+    m_AudioManager->Load("Title");
+    m_AudioManager->PlayEvent("BGM/Playlist");
 }
 
 void TitleScene::OnExit()
 {
     //std::cout << "[TitleScene] OnExit\n";
-    //m_audioScene->Unload();
+    m_AudioManager->Unload();
 }
 
 

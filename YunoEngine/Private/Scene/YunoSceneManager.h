@@ -1,7 +1,6 @@
 #pragma once
 #include "ISceneManager.h"
 
-
 class IScene;
 
 struct SceneView
@@ -12,8 +11,8 @@ struct SceneView
 };
 
 class IRenderer;
-
-
+class AudioQ;
+enum class SceneID : uint8_t;
 
 struct SceneEntry
 {
@@ -27,6 +26,7 @@ struct SceneEntry
     SceneEntry& operator=(const SceneEntry&) = delete;
 
     std::unique_ptr<IScene> scene;
+    SceneID id;
     SceneState state = SceneState::Uninitialized;
     ScenePolicy policy{};
 };
@@ -53,7 +53,7 @@ struct PendingOp
 class YunoSceneManager final : public ISceneManager
 {
 public:
-    YunoSceneManager() = default;
+    YunoSceneManager();
     ~YunoSceneManager() override;
 
 #ifdef _DEBUG
@@ -77,10 +77,14 @@ private:
     bool EnsureCreated(SceneEntry& e);                  // 씬 유효성 검증 함수
     void CreateView(const SceneEntry& e, UINT idx);
 
+private:
+    void DispatchAQ();
 private: // 디버그용
     void DumpStack_Console(const char* reason) const;
 
 private:
+    std::unique_ptr<AudioQ> m_AQ;
+
     std::vector<SceneEntry> m_stack;
     std::vector<std::unique_ptr<SceneView>> m_views;
     SceneView* m_selectView = nullptr;

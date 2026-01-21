@@ -1,16 +1,16 @@
 #pragma once
-#include "IAudioScene.h"
+#include "IAudioManager.h"
 
 struct ParamContent
 {
     FMOD_STUDIO_PARAMETER_ID paramID;
     bool is3D = false;
 };
-// Base AudioScene
-class AudioScene : public IAudioScene
+// Base AudioManager
+class AudioManager : public IAudioManager
 {
 public:
-    virtual ~AudioScene();                // cpp에서 default
+    virtual ~AudioManager();                // cpp에서 default
 
     // 씬 진입 시
     void Load(std::string bankName) override;
@@ -53,7 +53,7 @@ protected:
     std::queue<AudioCmd> m_aq;
 };
 
-class AudioTitleScene : public AudioScene
+class AudioTitleScene : public AudioManager
 {
 public:
 
@@ -61,7 +61,7 @@ private:
     
 };
 
-class AudioUIScene : public AudioScene
+class AudioUIScene : public AudioManager
 {
 public:
 

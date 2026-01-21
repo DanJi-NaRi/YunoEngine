@@ -2,12 +2,12 @@
 #include <unordered_map>
 #include <vector>
 
-class AudioSystem
+class AudioCore
 {
 public:
-    static AudioSystem& Get()
+    static AudioCore& Get()
     {
-        static AudioSystem s;
+        static AudioCore s;
         return s;
     }
 
@@ -58,10 +58,10 @@ public:
     FMOD::System* Core() { return m_Core; }
 
 private:
-    AudioSystem() = default;
-    ~AudioSystem() = default;
-    AudioSystem(const AudioSystem&) = delete;
-    AudioSystem& operator=(const AudioSystem&) = delete;
+    AudioCore() = default;
+    ~AudioCore() = default;
+    AudioCore(const AudioCore&) = delete;
+    AudioCore& operator=(const AudioCore&) = delete;
 
 private:
     FMOD::Studio::System* m_Studio = nullptr;

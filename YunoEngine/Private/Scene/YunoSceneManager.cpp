@@ -6,13 +6,18 @@
 #include "SceneBase.h"
 #include "IRenderer.h"
 
-
 #include "ImGuiManager.h"
 #include "UImgui.h"
 
+#include "AudioQueue.h"
 
 SceneEntry::~SceneEntry() = default;
 PendingOp::~PendingOp() = default;
+
+YunoSceneManager::YunoSceneManager()
+{
+    m_AQ = std::make_unique<AudioQ>();
+}
 
 YunoSceneManager::~YunoSceneManager()
 {
@@ -156,6 +161,14 @@ void YunoSceneManager::CreateView(const SceneEntry& e, UINT idx)
     m_views.push_back(std::move(v));
 }
 
+void YunoSceneManager::DispatchAQ()
+{
+    while (!m_AQ->Empty())
+    {
+
+    }
+}
+
 void YunoSceneManager::DumpStack_Console(const char* reason) const
 {
     std::cout << "\n[SceneStack] "
@@ -232,6 +245,7 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
             // 새 씬 1개로 교체
             SceneEntry e{};
             e.scene = std::move(op.scene);
+            e.id = e.scene->GetID();
             e.policy = op.policy;
 
             if (!EnsureCreated(e))
@@ -262,6 +276,7 @@ void YunoSceneManager::ApplyPending(std::vector<PendingOp>& ops)
 
             SceneEntry e{};
             e.scene = std::move(op.scene);
+            e.id = e.scene->GetID();
             e.policy = op.policy;
 
             if (!EnsureCreated(e))

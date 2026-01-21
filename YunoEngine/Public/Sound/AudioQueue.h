@@ -11,7 +11,7 @@ enum class AudioCmdType
     EmitterUpdate   // 3D음원 위치 갱신
 };
 
-enum class SceneType : uint32_t
+enum class SceneType : uint8_t
 {
     Title,
     Play,
@@ -79,7 +79,7 @@ public:
     bool Empty();
     const AudioCmd& Pop();
 
-    // 씬 전환 시, AudioScene에서 호출
+    // 씬 전환 시, AudioManager에서 호출
     void Clear();
 };
 

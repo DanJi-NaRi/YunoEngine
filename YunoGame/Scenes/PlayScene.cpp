@@ -47,6 +47,12 @@ void PlayScene::OnDestroyScene()
 
 }
 
+
+PlayScene::PlayScene()
+{
+    m_id = SceneID::Play;
+}
+
 void PlayScene::OnEnter()
 {
     //std::cout << "[PlayScene] OnEnter\n"; 

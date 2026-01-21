@@ -6,29 +6,29 @@
 #include <vector>
 
 #include "Bank.h"
-#include "AudioSystem.h"
+#include "AudioCore.h"
 #include "EventHandle.h"
 #include "AudioQueue.h"
 
-#include "AudioScene.h"
+#include "AudioManager.h"
 
 
-AudioScene::~AudioScene() = default;
+AudioManager::~AudioManager() = default;
 
-void AudioScene::Load(std::string bankName)
+void AudioManager::Load(std::string bankName)
 {
     m_BankName = bankName;
-    AudioSystem::Get().LoadBank(m_BankName);
+    AudioCore::Get().LoadBank(m_BankName);
 }
 
-void AudioScene::Unload()
+void AudioManager::Unload()
 {
     ClearInstList();
     m_AQ.Clear();
-    AudioSystem::Get().UnloadBank(m_BankName);
+    AudioCore::Get().UnloadBank(m_BankName);
 }
 
-void AudioScene::Update(float dt)
+void AudioManager::Update(float dt)
 {
     while (!m_AQ.Empty())
     {
@@ -54,7 +54,7 @@ void AudioScene::Update(float dt)
     }
 }
 
-void AudioScene::Listener3DUpdate(XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up, XMFLOAT3 vel)
+void AudioManager::Listener3DUpdate(XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up, XMFLOAT3 vel)
 {
     FMOD_3D_ATTRIBUTES attr = {};
     attr.position = { pos.x, pos.y, pos.z };
@@ -62,15 +62,15 @@ void AudioScene::Listener3DUpdate(XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up, X
     attr.up = { up.x, up.y, up.z };
     attr.velocity = { vel.x, vel.y, vel.z };
 
-    AudioSystem::Get().SetListener3DAttributes(attr);
+    AudioCore::Get().SetListener3DAttributes(attr);
 }
 
-void AudioScene::Emitter3DUpdate(std::string eventName, XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up, XMFLOAT3 vel)
+void AudioManager::Emitter3DUpdate(std::string eventName, XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up, XMFLOAT3 vel)
 {
     auto it = m_InstList.find(eventName);
     if (it == m_InstList.end())
     {
-        std::cerr << "[AudioScene]" <<"Emitter3DUpdate : " << "Failed to find the Instance with that name.\n";
+        std::cerr << "[AudioManager]" <<"Emitter3DUpdate : " << "Failed to find the Instance with that name.\n";
         return;
     }
     it->second.Set3DAttributes(pos, forward, up, vel);
@@ -82,7 +82,7 @@ void AudioScene::Emitter3DUpdate(std::string eventName, XMFLOAT3 pos, XMFLOAT3 f
 //  eventGroup 종류: BGM, UI, ...
 //  ex) BGM의 JaneDoe면 -> "BGM/JaneDoe"
 // 3D음원일 경우: is3D = true, pos = 월드 상 위치, forward = 월드 상 전방벡터, up = 월드 상 상방벡터, vel = 스피드
-void AudioScene::PlayEvent(const std::string& eventName, bool is3D, XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up, XMFLOAT3 vel)
+void AudioManager::PlayEvent(const std::string& eventName, bool is3D, XMFLOAT3 pos, XMFLOAT3 forward, XMFLOAT3 up, XMFLOAT3 vel)
 {
     auto it = m_InstList.find(eventName);
     if (it != m_InstList.end())
@@ -91,7 +91,7 @@ void AudioScene::PlayEvent(const std::string& eventName, bool is3D, XMFLOAT3 pos
         return;
     }
 
-    auto desc = AudioSystem::Get().GetEventDesc(eventName);
+    auto desc = AudioCore::Get().GetEventDesc(eventName);
 
     FMOD::Studio::EventInstance* inst = nullptr;
     desc->createInstance(&inst);
@@ -112,9 +112,9 @@ void AudioScene::PlayEvent(const std::string& eventName, bool is3D, XMFLOAT3 pos
     BuildParamCache(eventName, desc);
 }
 
-void AudioScene::PlayOneShot(const std::string& eventName)
+void AudioManager::PlayOneShot(const std::string& eventName)
 {
-    auto desc = AudioSystem::Get().GetEventDesc(eventName);
+    auto desc = AudioCore::Get().GetEventDesc(eventName);
     if (!desc) return;
 
     FMOD::Studio::EventInstance* inst = nullptr;
@@ -125,7 +125,7 @@ void AudioScene::PlayOneShot(const std::string& eventName)
     inst->release();
 }
 
-void AudioScene::ClearInstList()
+void AudioManager::ClearInstList()
 {
     for (auto& [name, inst] : m_InstList)
     {
@@ -138,7 +138,7 @@ void AudioScene::ClearInstList()
     m_EventParamCache.clear();
 }
 
-void AudioScene::BuildParamCache(const std::string& eventName, FMOD::Studio::EventDescription* desc)
+void AudioManager::BuildParamCache(const std::string& eventName, FMOD::Studio::EventDescription* desc)
 {
     auto it = m_EventParamCache.find("eventName");
     if (it == m_EventParamCache.end())
@@ -165,7 +165,7 @@ void AudioScene::BuildParamCache(const std::string& eventName, FMOD::Studio::Eve
     m_EventParamCache.emplace(eventName, std::move(cache));
 }
 
-void AudioScene::SetParam(const std::string& eventName, const std::string& paramName, float value)
+void AudioManager::SetParam(const std::string& eventName, const std::string& paramName, float value)
 {
     auto it = m_EventParamCache.find(eventName);
     if (it == m_EventParamCache.end())
@@ -197,7 +197,7 @@ void AudioScene::SetParam(const std::string& eventName, const std::string& param
     }
 }
 
-void AudioScene::SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value)
+void AudioManager::SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value)
 {
-    AudioSystem::Get().SetGlobalParam(paramID, value);
+    AudioCore::Get().SetGlobalParam(paramID, value);
 }
