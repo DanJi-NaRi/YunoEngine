@@ -41,6 +41,16 @@ namespace UI
         ImGui::EndDisabled();
     }
 
+    bool UI::BeginCombo(const char* label, const char* str)
+    {
+        return ImGui::BeginCombo(label, str);
+    }
+
+    void UI::EndCombo()
+    {
+        return ImGui::EndCombo();
+    }
+
     void SameLine(float offsetFromX, float space )
     {
         ImGui::SameLine(offsetFromX, space);
@@ -49,6 +59,11 @@ namespace UI
     void Separator()
     {
         ImGui::Separator();
+    }
+
+    void SetItemDefaultFocus()
+    {
+        ImGui::SetItemDefaultFocus();
     }
 
     bool IsItemHovered()

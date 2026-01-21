@@ -326,9 +326,6 @@
     <ClInclude Include="Public\Renderer\3DAnimation\Animator.h">
       <Filter>Public\Animator</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Renderer\BoneAnimation\BoneAnimation.h">
-      <Filter>Private\Renderer\Bone\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="Public\Object\AnimationUnit.h">
       <Filter>Public\Object</Filter>
     </ClInclude>

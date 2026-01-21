@@ -5,7 +5,8 @@
 
 void AnimationUnit::AnimationUpdate(float dTime)
 {
-    m_animator->Update(dTime);
+    if(m_animator)
+        m_animator->Update(dTime);
 }
 
 bool AnimationUnit::Update(float dTime)
@@ -20,7 +21,8 @@ bool AnimationUnit::Update(float dTime)
 bool AnimationUnit::Submit(float dTime)
 {
     m_MeshNode->Submit(m_mWorld);
-    m_MeshNode->AnimSubmit(m_animator->GetBoneTMs());
+    if (m_animator)
+        m_MeshNode->AnimSubmit(m_animator->GetBoneTMs());
 
     LastSubmit(dTime);
 
@@ -39,5 +41,6 @@ void AnimationUnit::AddAnimationClip(const std::string& name, const std::wstring
 
 void AnimationUnit::Serialize()
 {
-    m_animator->Serialize();
+    if (m_animator)
+        m_animator->Serialize();
 }

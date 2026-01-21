@@ -25,12 +25,25 @@ private:
 
     AnimationClip* m_CurAnim;
 
-    std::vector<XMFLOAT4X4> m_BoneTMs;
+    //std::vector<XMFLOAT4X4> m_prevBoneTMs;
+    //std::vector<XMFLOAT4X4> m_BoneTMs;
+    std::vector<XMMATRIX> m_LocalBoneA;
+    std::vector<XMMATRIX> m_LocalBoneB;
+    std::vector<XMMATRIX> m_BlendBoneTM;
+    std::vector<XMFLOAT4X4> m_FinalBoneTM;
+
     UINT m_BoneCount;
 
     float CurTickTime = 0;
 
     bool isPlay = true;
+
+    //애니메이션 블랜딩 관련
+    bool isBlending = false;
+    float blendAlpha = 0.0f;
+    float blendDuration = 0.001f;
+    float PrevTickTime = 0;
+    AnimationClip* m_prevAnim;
 public:
     Animator();
     virtual ~Animator();
@@ -43,14 +56,16 @@ public:
     bool AddAnimationClip(const std::string& id, std::unique_ptr<AnimationClip>&& clip);
     bool AddAnimationFromFile(const std::string& name, const std::wstring& filepath);
     void Update(float dTime);
+    void BlendLocalPose(const std::vector<XMMATRIX>& A, const std::vector<XMMATRIX>& B, float alpha, std::vector<XMMATRIX>& out);
 
     UINT GetAnimationNum() { return m_AnimationClips.size(); }
 
-    void ChangeAnimation(UINT id);
+    void BlendingUpdate(float dTime);
 
-    UINT GetCurAnimFrameCount();
+    void Change(UINT id, float duration = 0.5f);
+    void Change(const std::string& name, float duration = 0.5f);
 
     void Serialize();
 
-    const std::vector<XMFLOAT4X4>& GetBoneTMs() { return m_BoneTMs; }
+    const std::vector<XMFLOAT4X4>& GetBoneTMs() { return m_FinalBoneTM; }
 };

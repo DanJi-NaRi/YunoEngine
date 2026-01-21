@@ -15,5 +15,5 @@ public:
     TextureHandle metallic = 0;
     TextureHandle roughness = 0;
     TextureHandle ao = 0;
-
+    TextureHandle emissive = 0;
 };

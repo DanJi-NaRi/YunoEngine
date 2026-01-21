@@ -1,5 +1,9 @@
 #include "pch.h"
 
+#include <sstream>
+#include <iomanip>
+
+
 #include "YunoRenderer.h"
 #include "IMesh.h"
 #include "YunoEngine.h"
@@ -137,12 +141,25 @@ std::unique_ptr<AnimationClip> Parser::LoadAnimationClipFromFile(const std::wstr
     std::unordered_map<std::string, UINT> BoneNameToIndex;
     std::unordered_map<std::string, XMMATRIX> BoneNameToOffset;
 
-    std::unique_ptr<AnimationClip> clip = nullptr;
+    std::unique_ptr<AnimationClip> clip = std::make_unique<AnimationClip>();
 
     if (scene->HasAnimations())
         if (CheckSkeletalModel(scene))
         {
             CreateBoneNameSet(scene, BoneNameToIndex, BoneNameToOffset);
+            size_t index = 0;
+            std::unique_ptr<BoneNode> bRoot = std::make_unique<BoneNode>("RootBone", -1);
+            XMMATRIX root = XMMatrixIdentity();
+            CreateBoneNode(scene->mRootNode, index, bRoot.get(), nullptr, root, root, BoneNameToIndex, BoneNameToOffset);
+
+            auto aiAnim = scene->mAnimations[0];
+
+            clip->duration = (UINT)aiAnim->mDuration;
+            clip->TickPerSec =
+                aiAnim->mTicksPerSecond != 0
+                ? (UINT)aiAnim->mTicksPerSecond
+                : 25.0f;
+            clip->channels.resize(BoneNameToIndex.size());
             CreateAnimationClip(scene->mAnimations[0], scene, BoneNameToIndex, clip.get());
         }
 
@@ -550,6 +567,9 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
 
     aiMaterial* aiMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 
+    std::wstringstream meshNum;
+    meshNum << std::setw(3) << std::setfill(L'0') << nodeNum + 1;
+
     if (aiMaterial)
     {
         aiString texPath;
@@ -566,7 +586,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         else
         {
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_Albedo" + std::to_wstring(nodeNum) + L".png";
+            texPath += L"_BaseColor_" + meshNum.str() + L".png";
 
             TextureHandle diff = renderer->CreateTexture2DFromFile(texPath.c_str());
 
@@ -583,7 +603,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         else 
         {
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_Normal" + std::to_wstring(nodeNum) + L".png";
+            texPath += L"_Normal_" + meshNum.str() + L".png";
 
             TextureHandle nrm = renderer->CreateTexture2DFromFile(texPath.c_str());
 
@@ -600,7 +620,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         else
         {
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_Metallic" + std::to_wstring(nodeNum) + L".png";
+            texPath += L"_Metallic_" + meshNum.str() + L".png";
 
             TextureHandle metal = renderer->CreateTexture2DFromFile(texPath.c_str());
 
@@ -617,7 +637,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         else
         {
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_Roughness" + std::to_wstring(nodeNum) + L".png";
+            texPath += L"_Roughness_" + meshNum.str() + L".png";
 
             TextureHandle rough = renderer->CreateTexture2DFromFile(texPath.c_str());
 
@@ -634,7 +654,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         else 
         {
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_AO" + std::to_wstring(nodeNum) + L".png";
+            texPath += L"_AO_" + meshNum.str() + L".png";
 
             TextureHandle ao = renderer->CreateTexture2DFromFile(texPath.c_str());
 

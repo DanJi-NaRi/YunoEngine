@@ -8,28 +8,32 @@ void BoneNode::Attach(std::unique_ptr<BoneNode>&& child)
     m_Childs[m_Childs.size() - 1]->SetParent(this);
 }
 
-void BoneNode::UpdateBoneMatrix(float CurTickTime, std::vector<std::unique_ptr<BoneAnimation>>& clip, std::vector<XMFLOAT4X4>& outArr, const XMMATRIX& globalTM)
+void BoneNode::SampleLocalPose(float CurTickTime, std::vector<std::unique_ptr<BoneAnimation>>& clip, std::vector<XMMATRIX>& outArr)
 {
-    XMMATRIX animTM = m_BindLocal;
-
-    if (boneIndex >= 0 && boneIndex < clip.size() && clip[boneIndex])
+    if (boneIndex >= 0 && boneIndex < clip.size())
     {
-        animTM = XMLoadFloat4x4(&clip[boneIndex]->Update(CurTickTime));
+        if (clip[boneIndex])
+            outArr[boneIndex] = clip[boneIndex]->Update(CurTickTime);
+        else
+            outArr[boneIndex] = m_BindLocal;
     }
-
-    XMMATRIX userTM = animTM * globalTM;
 
     for (auto& child : m_Childs)
     {
-        child->UpdateBoneMatrix(CurTickTime, clip, outArr, userTM);
+        child->SampleLocalPose(CurTickTime, clip, outArr);
     }
+}
 
-    XMMATRIX finalTM = m_BoneOffset * userTM;
+void BoneNode::UpdateBoneMatrix(const std::vector<XMMATRIX>& localPose, std::vector<XMFLOAT4X4>& out, const XMMATRIX& parentGlobal)
+{
+    XMMATRIX local =
+        (boneIndex >= 0) ? localPose[boneIndex] : m_BindLocal;
 
-    XMStoreFloat4x4(&m_mUser, finalTM);
-    
-    if (boneIndex >= 0 && boneIndex < outArr.size())
-    {
-        outArr[boneIndex] = m_mUser;
-    }
+    XMMATRIX global = local * parentGlobal;
+
+    for (auto& c : m_Childs)
+        c->UpdateBoneMatrix(localPose, out, global);
+
+    if(boneIndex >= 0 && boneIndex < out.size())
+        XMStoreFloat4x4(&out[boneIndex], m_BoneOffset * global);
 }

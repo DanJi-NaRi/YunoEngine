@@ -92,7 +92,7 @@ void BoneAnimation::Init()
         frameCount = std::max(std::max(m_AnimationClips->QuatKeys.size(), m_AnimationClips->TransKeys.size()), m_AnimationClips->ScaleKeys.size());
 }
 
-const XMFLOAT4X4& BoneAnimation::Update(float CurrentTick)
+const XMMATRIX& BoneAnimation::Update(float CurrentTick)
 {
     CurTickTime = CurrentTick;
     // 본행렬 계산
@@ -101,9 +101,7 @@ const XMFLOAT4X4& BoneAnimation::Update(float CurrentTick)
         XMMATRIX quat = SLerpQuatKey();
         XMMATRIX trans = LerpTransKey();
 
-        XMMATRIX AnimTM = scale * quat * trans;
-
-        XMStoreFloat4x4(&m_mAnim, AnimTM);
+        m_mAnim = scale * quat * trans;
     }
 
     return m_mAnim;

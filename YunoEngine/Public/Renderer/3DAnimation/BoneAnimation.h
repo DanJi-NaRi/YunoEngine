@@ -38,7 +38,7 @@ private:
 
     std::unique_ptr<AnimationClips> m_AnimationClips;
 
-    XMFLOAT4X4 m_mAnim; //애니메이션 행렬-> 본의 로컬 공간
+    XMMATRIX m_mAnim; //애니메이션 행렬-> 본의 로컬 공간
 
     XMMATRIX LerpTransKey();
     XMMATRIX SLerpQuatKey();
@@ -56,5 +56,5 @@ public:
 
     void Init();
 
-    const XMFLOAT4X4& Update(float CurrentTick);
+    const XMMATRIX& Update(float CurrentTick);
 };

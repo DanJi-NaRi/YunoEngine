@@ -11,9 +11,14 @@ namespace UI
     void BeginDisabled(bool b = true);
     void EndDisabled();
 
+    bool BeginCombo(const char* label, const char* str);
+    void EndCombo();
+
     void SameLine(float offsetFromX = 0.0f, float space = -1.0f);
 
     void Separator();
+
+    void SetItemDefaultFocus();
 
     bool IsItemHovered();
     bool IsLeftMouseDoubleClicked();
