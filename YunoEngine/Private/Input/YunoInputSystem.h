@@ -12,7 +12,7 @@ class YunoInputSystem final : public IInput
 public:
 
     void BeginFrame();   // 델타 초기화 등
-    void Dispatch();     // 이벤트 큐 >> 컨텍스트로 전달
+    void Dispatch() override;     // 이벤트 큐 >> 컨텍스트로 전달
 
 public:
     // 입력 이벤트 큐에 삽입

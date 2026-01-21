@@ -84,27 +84,27 @@ void Button::ButtonUpdate(float dTime) // 버튼 상태 갱신
 
 bool Button::IdleEvent()
 {
-    //std::cout << IdleEvent << std::endl;
+    //std::cout << "IdleEvent" << std::endl;
     return true;
 }
 bool Button::HoveredEvent()
 {
-    //std::cout << HoveredEvent << std::endl;
+    //std::cout << "HoveredEvent" << std::endl;
     return true;
 }
 bool Button::DownEvent()
 {
-    //std::cout << DownEvent << std::endl;
+    std::cout << "DownEvent" << std::endl;
     return true;
 }
 bool Button::PressedEvent()
 {
-    //std::cout << PressedEvent << std::endl;
+    std::cout << "PressedEvent" << std::endl;
     return true;
 }
 bool Button::ReleasedEvent()
 {
-    //std::cout << ReleasedEvent << std::endl;
+    std::cout << "ReleasedEvent" << std::endl;
     return true;
 }
 

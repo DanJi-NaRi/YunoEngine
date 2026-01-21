@@ -170,26 +170,114 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
     // 버튼 : 마우스 입력 상태 확인
     for (auto& widget : m_widgets)
     {
-        if (Btn = dynamic_cast<Button*>(widget.get())) { // 클릭 가능(버튼 파생)일 경우
-            Btn->SetButtonState(ButtonState::Idle); // 커서 영역 검사 전 기본 상태 초기화.
-        }
+        if (Btn = dynamic_cast<Button*>(widget.get()); !Btn) continue;
+
+        Btn->SetButtonState(ButtonState::Idle);
 
         if (!widget->IsCursorOverWidget(mouseXY)) { // 커서가 위젯 위에 있는지 체크
-            if (Btn) Btn->IdleEvent();
             Btn = nullptr;
             continue;
         }
 
         if (Btn) {
-            Btn->SetButtonState(ButtonState::Hovered);
-            Btn->HoveredEvent();
-            //std::cout << "Hovered!!" << std::endl;
+            if (m_pInput->IsMouseButtonPressed(0)) {
+                Btn->SetButtonState(ButtonState::Pressed);
+                //Btn->PressedEvent();
+                //std::cout << "Pressed!!" << std::endl;
+            }
+            else if (m_pInput->IsMouseButtonDown(0)) {
+                Btn->SetButtonState(ButtonState::Down);
+                //Btn->DownEvent();
+                //std::cout << "Down!!" << std::endl;
+            }
+            else if (m_pInput->IsMouseButtonReleased(0)) {
+                Btn->SetButtonState(ButtonState::Released);
+                //Btn->ReleasedEvent();
+                //std::cout << "Released!!" << std::endl;
+            }
+            else {
+                Btn->SetButtonState(ButtonState::Hovered);
+                //Btn->HoveredEvent();
+                //std::cout << "Hovered!!" << std::endl;
+            }
         }
         Btn = nullptr; // 다음 검사를 위해 초기화
     }
 }
 
+bool UIManager::ProcessButtonCursor(ButtonState state) // 특정 입력이 있을 때만 검사
+{
+    /*{
+        assert(m_pInput);
+    UpdateButtonStates();
+    POINT mouseXY{ (LONG)m_pInput->GetMouseX(), (LONG)m_pInput->GetMouseY() };
+    Button* Btn = nullptr;
+    // 버튼 : 마우스 입력 상태 확인
+    for (auto& widget : m_widgets)
+    {
+        if (Btn = dynamic_cast<Button*>(widget.get()); !Btn) { continue; } // 버튼이면 통과
+        if (!widget->IsCursorOverWidget(mouseXY)) { continue; } // 커서 있으면 통과
+        ButtonState bst = Btn->GetButtonState();
+        if (bst != state) { continue; } // 찾는 state가 같으면 통과 (업데이트에서 갱신함)
 
+        switch (state) {
+        case ButtonState::Idle:     Btn->IdleEvent();     return true; break;
+        case ButtonState::Pressed:  Btn->PressedEvent();  return true; break; // 누르고 있는 동안 유지 
+        case ButtonState::Down:     Btn->DownEvent();     return true; break;
+        case ButtonState::Released: Btn->ReleasedEvent(); return true; break;
+        case ButtonState::Hovered:  Btn->HoveredEvent();  return true; break;
+        default: assert(false && "Invalid ButtonState");  return true; break;
+        }
+    }
+    }*/ 
+
+    bool a = m_pInput->IsMouseButtonPressed(0);
+
+    // 1단계 : 이번 프레임 입력 발생 체크
+    switch (state) {
+    case ButtonState::Pressed:
+        if (!m_pInput->IsMouseButtonPressed(0)) { return false; } break;
+    case ButtonState::Down:
+        if (!m_pInput->IsMouseButtonDown(0)) { return false; } break;
+    case ButtonState::Released:
+        if (!m_pInput->IsMouseButtonReleased(0)) { return false; } break;
+    case ButtonState::Hovered:  return false;
+    case ButtonState::Idle:     return false;
+    default:
+        assert(false && "Invalid ButtonState");
+        return false;
+    }
+
+
+    // 2단계 : 입력이 발생한 프레임이므로, 상태 갱신
+    UpdateButtonStates();
+
+    POINT mouseXY{ (LONG)m_pInput->GetMouseX(), (LONG)m_pInput->GetMouseY() };
+    Button* Btn = nullptr;
+
+
+    // 3단계 : 커서 안의 버튼 중, 상태가 동일하면 선택
+    for (auto& widget : m_widgets)
+    {
+        Btn = dynamic_cast<Button*>(widget.get());
+        if (!Btn) { continue; }
+        if (!widget->IsCursorOverWidget(mouseXY)) { continue; }
+
+        // (여기에 "컨텍스트 동일" 조건을 추가해야 요구사항 충족)
+        // 예: if (Btn->GetContext() != m_currentContext) continue;
+
+        ButtonState bst = Btn->GetButtonState();
+        if (bst != state) { continue; } // state가 동일하지 않으면 넘어감
+
+        switch (state) {
+        case ButtonState::Pressed:  Btn->PressedEvent();  return true;
+        case ButtonState::Down:     Btn->DownEvent();     return true;
+        case ButtonState::Released: Btn->ReleasedEvent(); return true;
+        default: assert(false && "Unreachable"); return false;
+        }
+    }
+    return false;
+}
 
 void UIManager::CheckDedicateWidgetName(std::wstring& name)
 {
