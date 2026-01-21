@@ -71,8 +71,8 @@ public:
     const std::unordered_map<UINT, Widget*>& GetWidgetlist() { return m_widgetMap; }
 
     void UpdateButtonStates(); // 모든 위젯 업데이트
-    bool ProcessButtonCursor(ButtonState state); // 커서 <-> 위젯 Rect 위치 비교
-
+    bool ProcessButtonMouse(ButtonState state, uint32_t mouseButton = 0); // 커서 <-> 위젯 Rect 위치 비교
+    bool ProcessButtonKey(ButtonState state, uint32_t key);
 private:
     void CheckDedicateWidgetName(std::wstring& name);
 

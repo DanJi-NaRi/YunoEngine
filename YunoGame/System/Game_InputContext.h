@@ -16,7 +16,7 @@ public:
         //std::cout << "[Game] Event type=" << (int)evt.type << " key=" << evt.key << "\n";
         if (evt.type == InputEventType::MouseButtonDown && evt.key == 0)
         {
-            std::cout << "[GAME] Consumed LMB\n";
+            //std::cout << "[GAME] Consumed LMB\n";
             evt.consumed = true;
             return true;
         }
