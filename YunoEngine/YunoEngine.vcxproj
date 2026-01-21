@@ -262,7 +262,6 @@
     <ClCompile Include="Public\Sound\Bank.cpp" />
     <ClCompile Include="Public\Sound\EventHandle.cpp" />
     <ClCompile Include="Public\Sound\fmodPCH.cpp" />
-    <ClCompile Include="Public\Sound\IAudioManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">
