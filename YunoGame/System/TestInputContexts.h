@@ -17,7 +17,10 @@ public:
 
         if (evt.type == InputEventType::MouseButtonDown && evt.key == 0)
         {
-            AudioQ::Insert({ AudioCmdType::PlayOneShot, SceneType::Title, EventName::UI_Click} ); // 사운드!
+            AudioCmd cmd = { AudioCmdType::PlayOneShot };
+            cmd.po.event = EventName::UI_Click;
+            AudioQ::Insert(cmd); // 사운드!
+
             std::cout << "[UI] Consumed LMB\n";
             evt.consumed = true;
             return true;

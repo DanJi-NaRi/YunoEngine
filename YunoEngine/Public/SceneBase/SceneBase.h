@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IScene.h"
-#include "IAudioManager.h"
+
 class ObjectManager;
 
 class Unit;
@@ -24,7 +24,6 @@ public:
     virtual void SubmitUI() override;
 
     const char* GetDebugName() const override { return m_name.c_str(); }
-    virtual SceneID GetID() const override { return m_id; }
 
 #ifdef _DEBUG
     void DrawObjectListUI();
@@ -54,6 +53,4 @@ protected:
 #endif
     float m_lastDt = 0.0f;
     std::string m_name;
-    std::unique_ptr<IAudioManager> m_AudioManager;
-    SceneID m_id;
 };

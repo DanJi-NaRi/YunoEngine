@@ -117,52 +117,52 @@ void AudioCore::UnloadBank(const std::string& bankName)
 //  ex) BGM의 JaneDoe면 -> "BGM/JaneDoe"
 FMOD::Studio::EventDescription* AudioCore::GetEventDesc(const std::string& eventName)
 {
-    std::string eventPath = "event:/";
-    std::string totalPath = eventPath + eventName;
-    auto it = m_EventDescList.find(totalPath);
+    auto it = m_EventDescList.find(eventName);
     if (it != m_EventDescList.end())
         return it->second;
 
     FMOD::Studio::EventDescription* desc = nullptr;
+    std::string eventPath = "event:/";
+    std::string totalPath = eventPath + eventName;
     FMOD_RESULT r = m_Studio->getEvent(totalPath.c_str(), &desc);
     CheckFMOD(r, "Studio::System::getEvent");
     if (r != FMOD_OK || !desc) return nullptr;
     
-    m_EventDescList[totalPath] = desc;
+    m_EventDescList[eventName] = desc;
     return desc;
 }
 
 FMOD::Studio::Bus* AudioCore::GetBus(const std::string& busName)
 {
-    std::string busPath = "bus:/";
-    std::string totalPath = busPath + busName;
-    auto it = m_BusList.find(totalPath);
+    auto it = m_BusList.find(busName);
     if (it != m_BusList.end())
         return it->second;
 
     FMOD::Studio::Bus* bus = nullptr;
+    std::string busPath = "bus:/";
+    std::string totalPath = busPath + busName;
     FMOD_RESULT r = m_Studio->getBus(totalPath.c_str(), &bus);
     CheckFMOD(r, "getBus");
     if (r != FMOD_OK || !bus) return nullptr;
 
-    m_BusList[totalPath] = bus;
+    m_BusList[busName] = bus;
     return bus;
 }
 
 FMOD::Studio::VCA* AudioCore::GetVCA(const std::string& vcaName)
 {
-    std::string vcaPath = "vca:/";
-    std::string totalPath = vcaPath + vcaName;
-    auto it = m_VCAList.find(totalPath);
+    auto it = m_VCAList.find(vcaName);
     if (it != m_VCAList.end())
         return it->second;
 
     FMOD::Studio::VCA* vca = nullptr;
+    std::string vcaPath = "vca:/";
+    std::string totalPath = vcaPath + vcaName;
     FMOD_RESULT r = m_Studio->getVCA(totalPath.c_str(), &vca);
     CheckFMOD(r, "getVCA");
     if (r != FMOD_OK || !vca) return nullptr;
 
-    m_VCAList[totalPath] = vca;
+    m_VCAList[vcaName] = vca;
     return vca;
 }
 
@@ -269,4 +269,15 @@ void AudioCore::Set3DSettings(float dopplerScale, float distanceFactor, float ro
 {
     if (!m_Core) return;
     m_Core->set3DSettings(dopplerScale, distanceFactor, rolloffScale);
+}
+
+const std::vector<std::string>& AudioCore::GetEventList(const std::string bankName)
+{
+    auto it = m_BH.m_BankContents.find(bankName);
+    if (it == m_BH.m_BankContents.end())
+    {
+        std::cerr << "[AudioCore]" << "GetEventList : " << "Failed to find the eventList with that bankName.\n";
+    }
+
+    return it->second.events;
 }

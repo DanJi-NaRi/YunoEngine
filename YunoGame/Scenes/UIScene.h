@@ -5,7 +5,7 @@
 class UIScene final : public SceneBase
 {
 public:
-    UIScene();
+
     void OnEnter() override;
     void OnExit() override;
 

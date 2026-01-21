@@ -53,7 +53,7 @@ struct PendingOp
 class YunoSceneManager final : public ISceneManager
 {
 public:
-    YunoSceneManager();
+    YunoSceneManager() = default;
     ~YunoSceneManager() override;
 
 #ifdef _DEBUG
@@ -77,13 +77,10 @@ private:
     bool EnsureCreated(SceneEntry& e);                  // 씬 유효성 검증 함수
     void CreateView(const SceneEntry& e, UINT idx);
 
-private:
-    void DispatchAQ();
 private: // 디버그용
     void DumpStack_Console(const char* reason) const;
 
 private:
-    std::unique_ptr<AudioQ> m_AQ;
 
     std::vector<SceneEntry> m_stack;
     std::vector<std::unique_ptr<SceneView>> m_views;

@@ -51,10 +51,6 @@ void UIScene::OnDestroyScene()
 
 }
 
-UIScene::UIScene()
-{
-    m_id = SceneID::UI;
-}
 
 void UIScene::OnEnter()
 {

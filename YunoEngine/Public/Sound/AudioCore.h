@@ -18,8 +18,6 @@ public:
 
     void Update(float dt);
 
-    void DispatchQue();
-
     // Bank
     bool LoadBank(const std::string& bankName, bool loadSampleData = true);
     void UnloadBank(const std::string& bankName);
@@ -53,6 +51,8 @@ public:
 
     // 3D 세팅
     void Set3DSettings(float dopplerScale, float distanceFactor, float rolloffScale);
+
+    const std::vector<std::string>& GetEventList(const std::string bankName);
 
     FMOD::Studio::System* Studio() { return m_Studio; }
     FMOD::System* Core() { return m_Core; }

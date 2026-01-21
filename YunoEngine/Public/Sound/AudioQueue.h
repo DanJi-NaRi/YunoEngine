@@ -1,70 +1,117 @@
 #pragma once
 #include <queue>
 
-enum class AudioCmdType
+enum class AudioCmdType : uint8_t
 {
-    PlayEvent,      // 루프 음원 재생 시
-    PlayOneShot,    // 단일성 음원 재생 시
-    SetParam,       // 루프 음원의 파라미터 조절하고 싶을 때
+    LoadBank,
+    UnloadBank,
 
     ListenerUpdate, // 청자의 위치 갱신
-    EmitterUpdate   // 3D음원 위치 갱신
+    EmitterUpdate,   // 3D음원 위치 갱신
+
+    PlayEvent,      // 루프 음원 재생 시
+    PlayOneShot,    // 단일성 음원 재생 시
+
+    StopOrRestartEvent,
+    PauseOrResumeEvent,
+
+    SetParam,       // 루프 음원의 파라미터 조절하고 싶을 때
+
+    SetGroupMute,
+    SetGroupPaused,
+
+    SetUserVolume
 };
 
-enum class SceneType : uint8_t
+enum class BankName : uint8_t
 {
     Title,
     Play,
     UI
 };
 
-enum class EventName : uint32_t
+enum class GroupName : uint8_t
+{
+};
+
+enum class VolumeType : uint8_t
+{
+};
+
+enum class EventName : uint8_t
 {
     BGM_Playlist,
     UI_Click
 };
-const std::string to_string(EventName event);
 
-enum class ParamName : uint32_t
+enum class ParamName : uint8_t
 {
     Health
 };
-const std::string to_string(ParamName param);
+
+struct float3
+{
+    float x, y, z;
+};
+
 
 struct AudioCmd
 {
     AudioCmdType type;
+
     union
     {
         struct
         {
-            SceneType scene;
-            EventName event;
-            bool is3D;
-            XMFLOAT3 pos;
-        } pe;       // PlayEvent
-        struct
-        {
-            SceneType scene;
-            EventName event;
-            XMFLOAT3 pos;
-        } eu;       // EmitterUpdate
-        struct
-        {
-            SceneType scene;
-            EventName event;
-        } po;       // PlayOneShot
-        struct
-        {
-            SceneType scene;
-            EventName event;
-            ParamName param;
-            float value;
-        } sp;       // SetParam
+            BankName bank;
+        } lb, ulb;   // LoadBank, UnloadBank
+
         struct
         {
             XMFLOAT3 pos;
         } lu;       // ListenerUpdate
+        struct
+        {
+            EventName event;
+            XMFLOAT3 pos;
+        } eu;       // EmitterUpdate
+
+        struct
+        {
+            EventName event;
+            bool is3D;
+            float3 pos;
+        } pe;       // PlayEvent
+        struct
+        {
+            EventName event;
+        } po;       // PlayOneShot
+
+        struct
+        {
+            EventName event;
+            bool is;// isStop            , isPaused   
+        } sre, pre; // StopOrRestartEvent, PauseOrResumeEvent
+
+        struct
+        {
+            EventName event;
+            ParamName param;
+            float value;
+        } sp;       // SetParam
+
+        struct
+        {
+            GroupName group;
+            bool is;// isMute      , isPaused
+        } sgm, sgp; // SetGroupMute, SetGroupPaused
+
+        struct
+        {
+            VolumeType volumetype;
+            float value;
+        } suv;      // SetUserVolume
+
     };
  
 };

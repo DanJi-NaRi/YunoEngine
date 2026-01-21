@@ -35,8 +35,6 @@ std::string WStringToString(const std::wstring& wstr)
 SceneBase::SceneBase() = default;
 SceneBase::~SceneBase() = default;
 
-//AudioManager::AudioManager() {};
-//AudioManager::~AudioManager() {};
 
 // 생성
 bool SceneBase::OnCreate()
@@ -56,10 +54,6 @@ bool SceneBase::OnCreate()
         return false;
 
     if (!m_objectManager->Init())
-        return false;
-
-    m_AudioManager = std::make_unique<AudioManager>();
-    if (!m_AudioManager)
         return false;
 
     return OnCreateScene();
@@ -103,8 +97,6 @@ void SceneBase::Update(float dt)
         m_objectManager->Update(dt);
         m_objectManager->WidgetUpdate(dt);
     }
-
-    m_AudioManager->Update(dt);
 
 }
 

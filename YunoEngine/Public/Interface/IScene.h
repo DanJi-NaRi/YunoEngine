@@ -2,13 +2,6 @@
 
 class IRenderer;
 
-enum class SceneID : uint8_t
-{
-    Title,
-    Play,
-    UI
-};
-
 class IScene
 {
 public:
@@ -29,5 +22,4 @@ public:
     virtual void SubmitUI() = 0;                // UI들
 
     virtual const char* GetDebugName() const = 0;
-    virtual SceneID GetID() const = 0;
 };

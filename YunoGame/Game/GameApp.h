@@ -5,6 +5,7 @@
 #include "Quad.h"
 #include "Triangle.h"
 
+class IAudioManager;
 
 class GameApp : public IGameApp
 {
@@ -20,6 +21,9 @@ public:
 private:
     std::unique_ptr<Quad> m_quad;
     std::unique_ptr<Triangle> m_triangle;
+
+    //std::unique_ptr<IAudioManager> m_AM;
+    //IAudioManager* m_AM;
 };
 
 

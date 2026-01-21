@@ -53,6 +53,9 @@ bool GameApp::OnInit()
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
 
+   // 오디어 매니저 생성
+   //m_AM = std::make_unique<AudioManager>();
+   //m_AM = new AudioManager();
     return true;
 }
 

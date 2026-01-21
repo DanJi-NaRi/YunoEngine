@@ -12,20 +12,110 @@
 
 #include "AudioManager.h"
 
-
-AudioManager::~AudioManager() = default;
-
-void AudioManager::Load(std::string bankName)
+const std::string to_string(BankName event)
 {
-    m_BankName = bankName;
-    AudioCore::Get().LoadBank(m_BankName);
+    std::string res;
+    switch (event)
+    {
+    case BankName::Title:
+        res = "Title";
+        break;
+    case BankName::Play:
+        res = "Play";
+        break;
+    case BankName::UI:
+        res = "UI";
+        break;
+    }
+    return res;
 }
 
-void AudioManager::Unload()
+const std::string to_string(GroupName event)
+{
+    return std::string();
+}
+
+const std::string to_string(VolumeType event)
+{
+    return std::string();
+}
+
+const std::string to_string(EventName event)
+{
+    std::string res;
+    switch (event)
+    {
+    case EventName::BGM_Playlist:
+        res = "BGM/Playlist";
+        break;
+    case EventName::UI_Click:
+        res = "UI/Click";
+        break;
+    }
+    return res;
+}
+
+const std::string to_string(ParamName param)
+{
+    std::string res;
+    switch (param)
+    {
+    case ParamName::Health:
+        res = "Health";
+        break;
+    }
+    return res;
+}
+
+
+AudioManager::~AudioManager()
 {
     ClearInstList();
     m_AQ.Clear();
-    AudioCore::Get().UnloadBank(m_BankName);
+}
+
+void AudioManager::Load(std::string bankName)
+{
+    m_Banks.push_back(bankName);
+    AudioCore::Get().LoadBank(bankName);
+}
+
+auto DumpStr = [](const std::string& s)
+    {
+        std::cerr << "len=" << s.size() << " [";
+        for (unsigned char c : s)
+            std::cerr << std::hex << (int)c << ' ';
+        std::cerr << std::dec << "] \"" << s << "\"\n";
+    };
+
+void AudioManager::Unload(std::string bankName)
+{
+    auto it = std::find(m_Banks.begin(), m_Banks.end(), bankName);
+    if (it == m_Banks.end())
+    {
+        std::cerr << "[AudioManager]" << "Unload : " << "The bank has never loaded before.\n";
+        return;
+    }
+    m_Banks.erase(it);
+
+    const auto& eventList = AudioCore::Get().GetEventList(bankName);
+
+    for (const auto& eventName : eventList)
+    {
+        auto insIt = m_InstList.find(eventName);
+        if (insIt == m_InstList.end())
+        {
+            std::cerr << "not found: [" << eventName << "]\n";
+            continue;
+        }
+        if (insIt->second.Valid())          // 객체가 재생 상태라면
+        {
+            insIt->second.Stop(true, true); // fadeout + release
+        }
+        m_InstList.erase(insIt);
+    }
+    
+    AudioCore::Get().UnloadBank(bankName);
 }
 
 void AudioManager::Update(float dt)
@@ -35,20 +125,53 @@ void AudioManager::Update(float dt)
         const AudioCmd& cmd = m_AQ.Pop();
         switch (cmd.type)
         {
-        case AudioCmdType::PlayEvent:
-            PlayEvent(to_string(cmd.pe.event), cmd.pe.is3D, cmd.pe.pos);
+        case AudioCmdType::LoadBank:
+            Load(to_string(cmd.lb.bank));
             break;
-        case AudioCmdType::PlayOneShot:
-            PlayOneShot(to_string(cmd.po.event));
+        case AudioCmdType::UnloadBank:
+            Unload(to_string(cmd.ulb.bank));
             break;
-        case AudioCmdType::SetParam:
-            SetParam(to_string(cmd.sp.event), to_string(cmd.sp.param), cmd.sp.value);
-            break;
+
+
         case AudioCmdType::ListenerUpdate:
             Listener3DUpdate(cmd.lu.pos);
             break;
         case AudioCmdType::EmitterUpdate:
             Emitter3DUpdate(to_string(cmd.eu.event), cmd.eu.pos);
+            break;
+
+
+        case AudioCmdType::PlayEvent:
+            PlayEvent(to_string(cmd.pe.event), cmd.pe.is3D, { cmd.pe.pos.x, cmd.pe.pos.y, cmd.pe.pos.z });
+            break;
+        case AudioCmdType::PlayOneShot:
+            PlayOneShot(to_string(cmd.po.event));
+            break;
+
+
+        case AudioCmdType::StopOrRestartEvent:
+            StopOrRestartEvent(to_string(cmd.sre.event), cmd.sre.is);
+            break;
+        case AudioCmdType::PauseOrResumeEvent:
+            PauseOrResumeEvent(to_string(cmd.pre.event), cmd.pre.is);
+            break;
+
+
+        case AudioCmdType::SetParam:
+            SetParam(to_string(cmd.sp.event), to_string(cmd.sp.param), cmd.sp.value);
+            break;
+
+
+        case AudioCmdType::SetGroupMute:
+            SetGroupMute(to_string(cmd.sgm.group), cmd.sgm.is);
+            break;
+        case AudioCmdType::SetGroupPaused:
+            SetGroupPaused(to_string(cmd.sgp.group), cmd.sgp.is);
+            break;
+
+
+        case AudioCmdType::SetUserVolume:
+            SetUserVolume(to_string(cmd.suv.volumetype), cmd.suv.value);
             break;
         }
     }
@@ -94,7 +217,7 @@ void AudioManager::PlayEvent(const std::string& eventName, bool is3D, XMFLOAT3 p
     auto desc = AudioCore::Get().GetEventDesc(eventName);
 
     FMOD::Studio::EventInstance* inst = nullptr;
-    desc->createInstance(&inst);
+    FMOD_RESULT fres = desc->createInstance(&inst);
     if (!inst) return;
     
     EventHandle h(inst);
@@ -125,6 +248,48 @@ void AudioManager::PlayOneShot(const std::string& eventName)
     inst->release();
 }
 
+void AudioManager::StopOrRestartEvent(const std::string& eventName, bool stop)
+{
+    auto it = m_InstList.find(eventName);
+    if (it == m_InstList.end())
+    {
+        std::cerr << "[AudioManager]" << "StopOrRestartEvent : " << "Failed to find the instance with the eventName.\n";
+        return;
+    }
+
+    if (stop)
+        it->second.Stop(true, false);
+    else
+        it->second.Start();
+}
+
+void AudioManager::PauseOrResumeEvent(const std::string& eventName, bool paused)
+{
+    auto it = m_InstList.find(eventName);
+    if (it == m_InstList.end())
+    {
+        std::cerr << "[AudioManager]" << "PauseOrResumeEvent : " << "Failed to find the instance with the eventName.\n";
+        return;
+    }
+
+    it->second.SetPaused(paused);
+}
+
+void AudioManager::SetGroupMute(const std::string& groupName, bool mute)
+{
+    AudioCore::Get().SetBusMute(groupName, mute);
+}
+
+void AudioManager::SetGroupPaused(const std::string& groupName, bool paused)
+{
+    AudioCore::Get().SetBusPaused(groupName, paused);
+}
+
+void AudioManager::SetUserVolume(const std::string& volumeType, float volume)
+{
+    AudioCore::Get().SetVCAVolume(volumeType, volume);
+}
+
 void AudioManager::ClearInstList()
 {
     for (auto& [name, inst] : m_InstList)
@@ -134,13 +299,14 @@ void AudioManager::ClearInstList()
             inst.Stop(true, true); // fadeout + release
         }
     }
+    m_Banks.clear();
     m_InstList.clear();
     m_EventParamCache.clear();
 }
 
 void AudioManager::BuildParamCache(const std::string& eventName, FMOD::Studio::EventDescription* desc)
 {
-    auto it = m_EventParamCache.find("eventName");
+    auto it = m_EventParamCache.find(eventName);
     if (it == m_EventParamCache.end())
         return;
 
@@ -170,7 +336,7 @@ void AudioManager::SetParam(const std::string& eventName, const std::string& par
     auto it = m_EventParamCache.find(eventName);
     if (it == m_EventParamCache.end())
     {
-        std::cerr << "[TitleAudio]" << "SetParam : " << "Failed to find the param cache with the eventName.\n";
+        std::cerr << "[AudioManager]" << "SetParam : " << "Failed to find the param cache with the eventName.\n";
         return;
     }
     const auto& cache = it->second;
@@ -178,26 +344,21 @@ void AudioManager::SetParam(const std::string& eventName, const std::string& par
 
     if (pcIt == cache.end())
     {
-        std::cerr << "[TitleAudio]" << "SetParam : " << "Failed to find the ParamContent with the paramName.\n";
+        std::cerr << "[AudioManager]" << "SetParam : " << "Failed to find the ParamContent with the paramName.\n";
         return;
     }
 
     const auto& pc = pcIt->second;
     if (pc.is3D)
-        SetGlobalParam(pc.paramID, value);
+        AudioCore::Get().SetGlobalParam(pc.paramID, value);
     else
     {
         auto instIt = m_InstList.find(eventName);
         if (instIt == m_InstList.end())
         {
-            std::cerr << "[TitleAudio]" << "SetParam : " << "Failed to find the instance with the eventName.\n";
+            std::cerr << "[AudioManager]" << "SetParam : " << "Failed to find the instance with the eventName.\n";
             return;
         }
         instIt->second.SetParameter(pc.paramID, value);
     }
-}
-
-void AudioManager::SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value)
-{
-    AudioCore::Get().SetGlobalParam(paramID, value);
 }
