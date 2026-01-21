@@ -1,6 +1,7 @@
 #pragma once
 #include "BoneNode.h"
 
+
 struct AnimationClip
 {
     std::string name;
@@ -22,6 +23,8 @@ private:
     UINT animCount = 0;
     UINT curAnim = 0;
 
+    AnimationClip* m_CurAnim;
+
     std::vector<XMFLOAT4X4> m_BoneTMs;
     UINT m_BoneCount;
 
@@ -38,7 +41,16 @@ public:
     void SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, UINT boneCount);
     //겹치는 id 이미 있으면 실패 false 반환
     bool AddAnimationClip(const std::string& id, std::unique_ptr<AnimationClip>&& clip);
+    bool AddAnimationFromFile(const std::string& name, const std::wstring& filepath);
     void Update(float dTime);
+
+    UINT GetAnimationNum() { return m_AnimationClips.size(); }
+
+    void ChangeAnimation(UINT id);
+
+    UINT GetCurAnimFrameCount();
+
+    void Serialize();
 
     const std::vector<XMFLOAT4X4>& GetBoneTMs() { return m_BoneTMs; }
 };

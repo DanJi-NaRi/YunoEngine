@@ -2,6 +2,8 @@
 
 #include "Animator.h"
 #include "RenderTypes.h"
+#include "UImgui.h"
+#include "Parser.h"
 
 Animator::Animator()
 {
@@ -38,6 +40,8 @@ bool Animator::AddAnimationClip(const std::string& name, std::unique_ptr<Animati
         m_AnimationClips.emplace(animCount, std::move(clip));
         if (curAnim == -1) curAnim = animCount;
 
+        ChangeAnimation(curAnim);
+
         animCount++;
        
         return true;
@@ -46,27 +50,89 @@ bool Animator::AddAnimationClip(const std::string& name, std::unique_ptr<Animati
     return false;
 }
 
+bool Animator::AddAnimationFromFile(const std::string& name, const std::wstring& filepath)
+{
+    auto clip = Parser::Instance().LoadAnimationClipFromFile(filepath);
+
+    AddAnimationClip(name, std::move(clip));
+
+    return true;
+}
+
 void Animator::Update(float dTime)
 {
-    if (!isPlay) return;
-
-    auto it = m_AnimationClips.find(curAnim);
-    if (it == m_AnimationClips.end())
-        return;
-
-    auto& curClip = it->second;
+    if (!isPlay || !m_CurAnim) return;
 
     //본 애니메이션 계산
-    float TickTime = curClip->TickPerSec * dTime;
+    float TickTime = m_CurAnim->TickPerSec * dTime;
     CurTickTime += TickTime;
 
-    if (CurTickTime >= curClip->duration)
+    if (CurTickTime >= m_CurAnim->duration)
     {
-        if (curClip->isLoop)
+        if (m_CurAnim->isLoop)
             CurTickTime = 0;
         else
             isPlay = false;
     }
    
-    m_RootBone->UpdateBoneMatrix(CurTickTime, it->second->channels, m_BoneTMs, XMMatrixIdentity());
+    m_RootBone->UpdateBoneMatrix(CurTickTime, m_CurAnim->channels, m_BoneTMs, XMMatrixIdentity());
+}
+
+void Animator::ChangeAnimation(UINT id)
+{
+    auto it = m_AnimationClips.find(id);
+
+    if (it != m_AnimationClips.end())   
+        m_CurAnim = it->second.get();
+}
+
+UINT Animator::GetCurAnimFrameCount()
+{
+    return 0;
+}
+
+void Animator::Serialize()
+{
+    if (UI::CollapsingHeader("Animator"))
+    {
+        if (UI::Button("Play"))
+        {
+            isPlay = true;
+        }
+
+        UI::SameLine();
+
+        if (UI::Button("Stop"))
+        {
+            isPlay = false;
+        }
+
+        float curTimeSec = CurTickTime / m_CurAnim->TickPerSec;
+        float durationSec = (float)m_CurAnim->duration / m_CurAnim->TickPerSec;
+
+        UI::BeginDisabled(isPlay);
+        if (UI::SliderFloat("TickTime", &CurTickTime, 0.0f, m_CurAnim->duration))
+        {
+            //CurTickTime = curTimeSec * m_CurAnim->TickPerSec;
+
+            m_RootBone->UpdateBoneMatrix(
+                CurTickTime,
+                m_CurAnim->channels,
+                m_BoneTMs,
+                XMMatrixIdentity()
+            );
+        }
+        if (UI::SliderFloat("RealTime", &curTimeSec, 0.0f, durationSec))
+        {
+            CurTickTime = curTimeSec * m_CurAnim->TickPerSec;
+
+            m_RootBone->UpdateBoneMatrix(
+                CurTickTime,
+                m_CurAnim->channels,
+                m_BoneTMs,
+                XMMatrixIdentity()
+            );
+        }
+        UI::EndDisabled();
+    }
 }

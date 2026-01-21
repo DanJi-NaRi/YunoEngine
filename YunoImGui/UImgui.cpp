@@ -31,6 +31,21 @@ namespace UI
         ImGui::End();
     }
 
+    void BeginDisabled(bool b)
+    {
+        ImGui::BeginDisabled(b);
+    }
+
+    void EndDisabled()
+    {
+        ImGui::EndDisabled();
+    }
+
+    void SameLine(float offsetFromX, float space )
+    {
+        ImGui::SameLine(offsetFromX, space);
+    }
+
     void Separator()
     {
         ImGui::Separator();
@@ -118,5 +133,10 @@ namespace UI
 
             return changed;
         }
+    }
+
+    bool SliderFloat(const char* label, float* v, float v_min, float v_max, const char* fmt)
+    {
+        return ImGui::SliderFloat(label, v, v_min, v_max, fmt);
     }
 }

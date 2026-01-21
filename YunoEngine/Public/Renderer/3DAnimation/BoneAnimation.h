@@ -52,6 +52,8 @@ public:
         Init();
     }
 
+    UINT frameCount;
+
     void Init();
 
     const XMFLOAT4X4& Update(float CurrentTick);

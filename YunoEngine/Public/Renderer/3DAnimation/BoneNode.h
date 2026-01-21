@@ -25,6 +25,7 @@ public:
 
     void SetBoneOffset(const XMMATRIX& mOffset) { m_BoneOffset = mOffset; }
     void SetBindLocal(const XMMATRIX& mBindLocal) { m_BindLocal = mBindLocal; }
+    const XMMATRIX& GetBindLocal() { return m_BindLocal; }
 
     void UpdateBoneMatrix(float CurTickTime, std::vector<std::unique_ptr<BoneAnimation>>& clip, std::vector<XMFLOAT4X4>& outArr, const XMMATRIX& globalTM);
 

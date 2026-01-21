@@ -14,12 +14,12 @@
 
 
 std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, XMMATRIX& parentTM, const std::wstring& filepath);
-std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std::unordered_map<std::string, UINT>& boneNameSet, std::unordered_map<std::string, XMMATRIX>& nameToOffset);
+std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std::unordered_map<std::string, UINT>& boneNameSet, std::unordered_map<std::string, XMMATRIX>& nameToOffset, const std::string& name);
 void CreateAnimationClip(aiAnimation* anim, const aiScene* scene, std::unordered_map<std::string, UINT>& nameToIndex, AnimationClip* out);
 void CreateBoneNameSet(const aiScene* scene, std::unordered_map<std::string, UINT>& indexOut, std::unordered_map<std::string, XMMATRIX>& matrixOut);
 std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, const std::wstring& filepath);
 bool CheckSkeletalModel(const aiScene* scene);
-void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* parent,
+void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* parent, XMMATRIX parentNodeGlobal, XMMATRIX parentBoneGlobal,
     std::unordered_map<std::string, UINT>& nameToIndex, std::unordered_map<std::string, XMMATRIX>& nameTomOffset);
 
 std::wstring Utf8ToWString(const char* s)
@@ -37,7 +37,7 @@ std::wstring Utf8ToWString(const char* s)
     return w;
 }
 
-std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> Parser::LoadFile(const std::wstring& filepath)
+std::unique_ptr<MeshNode> Parser::LoadFile(const std::wstring& filepath)
 {
     Assimp::Importer importer;
 
@@ -66,14 +66,87 @@ std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> Parser::LoadFile
         if (CheckSkeletalModel(scene))
         {
             CreateBoneNameSet(scene, BoneNameToIndex, BoneNameToOffset);
-            animator = CreateAnimator(scene->mRootNode, scene, BoneNameToIndex, BoneNameToOffset);
+            size_t index = 0;
+            std::unique_ptr<BoneNode> bRoot = std::make_unique<BoneNode>("RootBone", -1);
+            XMMATRIX root = XMMatrixIdentity();
+            CreateBoneNode(scene->mRootNode, index, bRoot.get(), nullptr, root, root, BoneNameToIndex, BoneNameToOffset);
         }
 
     XMMATRIX root = XMMatrixIdentity();
 
     auto MeshNode = CreateNode(scene->mRootNode, scene, 0, BoneNameToIndex, root, filepath);
 
-    return std::make_pair(std::move(MeshNode), std::move(animator));
+    return MeshNode;
+}
+
+std::unique_ptr<Animator> Parser::LoadAnimatorFromFile(const std::string& name, const std::wstring& filepath)
+{
+    Assimp::Importer importer;
+
+    std::string pathUtf8 = std::filesystem::path(filepath).u8string();
+
+    const aiScene* scene = importer.ReadFile(
+        pathUtf8,
+        aiProcess_Triangulate |
+        aiProcess_ConvertToLeftHanded |
+        aiProcess_GenSmoothNormals |
+        aiProcess_CalcTangentSpace |
+        aiProcess_GlobalScale
+    );
+
+    if (!scene || !scene->mRootNode)
+        return {};
+
+    bool HasSkeletal = false;
+
+    std::unordered_map<std::string, UINT> BoneNameToIndex;
+    std::unordered_map<std::string, XMMATRIX> BoneNameToOffset;
+
+    std::unique_ptr<Animator> animator = nullptr;
+
+    if (scene->HasAnimations())
+        if (CheckSkeletalModel(scene))
+        {
+            CreateBoneNameSet(scene, BoneNameToIndex, BoneNameToOffset);
+            animator = CreateAnimator(scene->mRootNode, scene, BoneNameToIndex, BoneNameToOffset, name);
+        }
+
+    return animator;
+}
+
+std::unique_ptr<AnimationClip> Parser::LoadAnimationClipFromFile(const std::wstring& filepath)
+{
+    Assimp::Importer importer;
+
+    std::string pathUtf8 = std::filesystem::path(filepath).u8string();
+
+    const aiScene* scene = importer.ReadFile(
+        pathUtf8,
+        aiProcess_Triangulate |
+        aiProcess_ConvertToLeftHanded |
+        aiProcess_GenSmoothNormals |
+        aiProcess_CalcTangentSpace |
+        aiProcess_GlobalScale
+    );
+
+    if (!scene || !scene->mRootNode)
+        return {};
+
+    bool HasSkeletal = false;
+
+    std::unordered_map<std::string, UINT> BoneNameToIndex;
+    std::unordered_map<std::string, XMMATRIX> BoneNameToOffset;
+
+    std::unique_ptr<AnimationClip> clip = nullptr;
+
+    if (scene->HasAnimations())
+        if (CheckSkeletalModel(scene))
+        {
+            CreateBoneNameSet(scene, BoneNameToIndex, BoneNameToOffset);
+            CreateAnimationClip(scene->mAnimations[0], scene, BoneNameToIndex, clip.get());
+        }
+
+    return clip;
 }
 
 bool CheckSkeletalModel(const aiScene* scene)
@@ -124,7 +197,7 @@ void CreateBoneNameSet(const aiScene* scene, std::unordered_map<std::string, UIN
 }
 
 std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std::unordered_map<std::string, UINT>& nameToIndex, //<- Use BoneName Set Too 본 네임 집합으로도 쓰임
-    std::unordered_map<std::string, XMMATRIX>& nameToOffset)
+    std::unordered_map<std::string, XMMATRIX>& nameToOffset, const std::string& name)
 {
     std::unique_ptr<Animator> animator = std::make_unique<Animator>();
 
@@ -136,7 +209,8 @@ std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
-        CreateBoneNode(node->mChildren[i], index, bRoot.get(), nullptr, nameToIndex, nameToOffset);
+        XMMATRIX root = XMMatrixIdentity();
+        CreateBoneNode(node->mChildren[i], index, bRoot.get(), nullptr, root, root, nameToIndex, nameToOffset);
     }
 
     animator->SetBoneTree(std::move(bRoot), nameToIndex.size());
@@ -158,7 +232,7 @@ std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std
         //임시임시임시
         clip->isLoop = true;
 
-        animator->AddAnimationClip(std::to_string(i), std::move(clip));
+        animator->AddAnimationClip(name, std::move(clip));
     }
 
     return animator;
@@ -209,7 +283,7 @@ void CreateAnimationClip(aiAnimation* anim, const aiScene* scene, std::unordered
     }
 }
 
-void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* parent,
+void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* parent, XMMATRIX parentNodeGlobal, XMMATRIX parentBoneGlobal,
                                         std::unordered_map<std::string, UINT>& nameToIndex, std::unordered_map<std::string, XMMATRIX>& nameTomOffset)
 {
     std::string name(node->mName.C_Str());
@@ -217,6 +291,9 @@ void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* pa
     bool isBone = it != nameToIndex.end();
 
     BoneNode* parentBone = parent;
+    XMMATRIX nodeGlobal = XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4*>(&node->mTransformation.Transpose())) * parentNodeGlobal;
+
+    XMMATRIX curBoneGlobal = parentBoneGlobal;
 
     if (isBone)
     {
@@ -224,9 +301,21 @@ void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* pa
         nameToIndex[name] = curIndex;
         curIndex++;
 
-        XMMATRIX bindLocal = XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4*>(&node->mTransformation.Transpose()));
-        bone->SetBindLocal(bindLocal);
+        if (parentBone)
+        {
+            XMMATRIX bindLocal = nodeGlobal * XMMatrixInverse(nullptr, curBoneGlobal);
 
+            bone->SetBindLocal(bindLocal);
+
+            curBoneGlobal = bindLocal * parentBoneGlobal;
+        }
+        else
+        {
+            XMMATRIX bindLocal = nodeGlobal;
+            bone->SetBindLocal(bindLocal);
+            curBoneGlobal = bindLocal;
+        }
+        
         bool check = nameTomOffset.find(name) != nameTomOffset.end();
         bone->SetBoneOffset(check ? nameTomOffset[name] : XMMatrixIdentity());
 
@@ -235,7 +324,7 @@ void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* pa
 
         BoneNode* raw = bone.get();
 
-        if (parentIsBone && parent)
+        if (parentIsBone)
         {
             parent->Attach(std::move(bone));
         }
@@ -249,7 +338,7 @@ void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* pa
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
-        CreateBoneNode(node->mChildren[i], curIndex, root, parentBone, nameToIndex, nameTomOffset);
+        CreateBoneNode(node->mChildren[i], curIndex, root, parentBone, nodeGlobal, curBoneGlobal, nameToIndex, nameTomOffset);
     }
 }
 
@@ -506,7 +595,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             auto wPath = Utf8ToWString(texPath.C_Str());
             TextureHandle metal = renderer->CreateTexture2DFromFile(wPath.c_str());
 
-            md.metal = 123; //pbr셰이더용 쓰레기값 안넣어주면 터짐 추가 텍스쳐 안넣어주면 터짐
+            md.metal = 123; //pbr셰이더용 쓰레기값 추가 텍스쳐 안넣어주면 터짐
         }
         else
         {
@@ -515,7 +604,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
 
             TextureHandle metal = renderer->CreateTexture2DFromFile(texPath.c_str());
 
-            md.metal = 1;
+            md.metal = metal;
         }
         //Roughness
         if (aiMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &texPath) == AI_SUCCESS)

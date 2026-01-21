@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "AnimationUnit.h"
+#include "Parser.h"
 
 void AnimationUnit::AnimationUpdate(float dTime)
 {
@@ -24,4 +25,19 @@ bool AnimationUnit::Submit(float dTime)
     LastSubmit(dTime);
 
     return true;
+}
+
+void AnimationUnit::AddAnimationClip(const std::string& name, const std::wstring& filepath)
+{
+    if (m_animator)
+    {
+        m_animator->AddAnimationFromFile(name, filepath);
+    }
+    else
+        m_animator = Parser::Instance().LoadAnimatorFromFile(name, filepath);
+}
+
+void AnimationUnit::Serialize()
+{
+    m_animator->Serialize();
 }
