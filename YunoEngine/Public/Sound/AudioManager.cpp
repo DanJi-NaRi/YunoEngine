@@ -80,13 +80,6 @@ void AudioManager::Load(std::string bankName)
     AudioCore::Get().LoadBank(bankName);
 }
 
-auto DumpStr = [](const std::string& s)
-    {
-        std::cerr << "len=" << s.size() << " [";
-        for (unsigned char c : s)
-            std::cerr << std::hex << (int)c << ' ';
-        std::cerr << std::dec << "] \"" << s << "\"\n";
-    };
 
 void AudioManager::Unload(std::string bankName)
 {
