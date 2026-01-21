@@ -15,6 +15,8 @@
 #include "PlayScene.h"
 #include "UIScene.h"
 
+#include "AudioQueue.h"
+
 #include "GameApp.h"
 
 
@@ -156,6 +158,12 @@ void GameApp::OnUpdate(float dt)
             policy.blockRenderBelow = false;
             //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
             sm->RequestPush(std::make_unique<UIScene>(), policy);
+        }
+
+        if (input->IsKeyPressed(VK_OEM_PERIOD))
+        {
+            AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, true));
+            AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, false));
         }
     }
 
