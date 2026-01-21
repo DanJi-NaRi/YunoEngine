@@ -12,7 +12,6 @@
 // 카드도 Button 상속해서 쓰게 하면 될 듯??
 
 enum class ButtonState : int { Idle, Hovered, Pressed, Down, Released, Count };
-
 class Button : public Widget {
 public:
     explicit Button();
@@ -27,24 +26,29 @@ public:
 
     virtual bool IdleEvent();
     virtual bool HoveredEvent();
-    virtual bool PressedEvent();
+    virtual bool LMBPressedEvent();
+    virtual bool RMBPressedEvent();
+    virtual bool KeyPressedEvent(uint32_t key = 0);
     virtual bool DownEvent();
     virtual bool ReleasedEvent();
 
+
     ButtonState GetButtonState() { return m_BtnState; }
     void        SetButtonState(ButtonState state) { m_BtnState = state; }
-
+    uint32_t    GetBindKey() { return m_Bindkey; }
+    bool        IsBindkey() { return (m_Bindkey != 0); }
+    void        SetBindKey(uint32_t bindkey) { m_Bindkey = bindkey; }
 protected:
     // 버튼 상태 : 대기/커서입력/눌림 (standby/CursorOn/Push)
     ButtonState m_BtnState;							//UI버튼별 상태 저장.
-    
+    uint32_t m_Bindkey = 'A';
 private:
     //bool CreateMesh() override;      // 메시 생성 (한 번만)
     bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
     //void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 
     //추가 머테리얼 - 필요할까?
-    //MaterialHandle m_addMaterial = 0;
+    MaterialHandle m_addMaterial = 0;
 };
 
 
