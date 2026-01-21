@@ -4,7 +4,6 @@
 #include <IInputContext.h>
 #include <InputEvent.h>
 
-#include "AudioQueue.h"
 
 class UITestContext final : public IInputContext
 {
@@ -17,9 +16,9 @@ public:
 
         if (evt.type == InputEventType::MouseButtonDown && evt.key == 0)
         {
-            AudioCmd cmd = { AudioCmdType::PlayOneShot };
-            cmd.po.event = EventName::UI_Click;
-            AudioQ::Insert(cmd); // 사운드!
+            //AudioCmd cmd = { AudioCmdType::PlayOneShot };
+            //cmd.po.event = EventName::UI_Click;
+            //AudioQ::Insert(cmd); // 사운드!
 
             std::cout << "[UI] Consumed LMB\n";
             evt.consumed = true;

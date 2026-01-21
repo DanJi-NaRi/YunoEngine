@@ -48,11 +48,16 @@ void TitleScene::OnDestroyScene()
 void TitleScene::OnEnter()
 {
     //std::cout << "[TitleScene] OnEnter\n";
+    AudioQ::Insert({AudioCmdType::LoadBank, BankName::Title});
+    AudioCmd cmd{ AudioCmdType::PlayEvent };
+    cmd.pe.event = EventName::BGM_Playlist;
+    AudioQ::Insert(cmd);
 }
 
 void TitleScene::OnExit()
 {
     //std::cout << "[TitleScene] OnExit\n";
+    AudioQ::Insert({ AudioCmdType::UnloadBank, BankName::Title });
 }
 
 

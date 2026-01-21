@@ -79,7 +79,7 @@ struct AudioCmd
         struct
         {
             EventName event;
-            bool is3D;
+            bool is3D = false;
             float3 pos;
         } pe;       // PlayEvent
         struct
@@ -130,3 +130,16 @@ public:
     void Clear();
 };
 
+
+static const AudioCmd LoadBank(BankName bank);
+static const AudioCmd UnLoadBank(BankName bank);
+static const AudioCmd ListenerUpdate(float x, float y, float z);
+static const AudioCmd EmitterUpdate(EventName event, float x, float y, float z);
+static const AudioCmd PlayEvent(EventName event, bool is3D = false, float x = 0, float y = 0, float z = 0);
+static const AudioCmd PlayOneShot(EventName event);
+static const AudioCmd StopOrRestartEvent(EventName event, bool isStop);
+static const AudioCmd PauseOrResumeEvent(EventName event, bool isPaused);
+static const AudioCmd SetParam(EventName event, ParamName param, float value);
+static const AudioCmd SetGroupMute(GroupName group, bool isMute);
+static const AudioCmd SetGroupPaused(GroupName group, bool isPaused);
+static const AudioCmd SetUserVolume(VolumeType volumeType, float volume);

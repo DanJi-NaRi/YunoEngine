@@ -19,10 +19,8 @@
 #include "YunoSceneManager.h"
 
  // 사운드!
-#include "fmodPCH.h"
-#include "Bank.h"
-#include "AudioCore.h"
-#include "EventHandle.h"
+#include "AudioManagerPCH.h"
+
 #include "ImGuiManager.h"
 
 
@@ -31,6 +29,7 @@ ITextureManager* YunoEngine::s_textureManager = nullptr;
 IInput* YunoEngine::s_input = nullptr;
 IWindow* YunoEngine::s_window = nullptr;
 ISceneManager* YunoEngine::s_sceneManager = nullptr;
+IAudioManager* YunoEngine::s_audioManager = nullptr;
 
 YunoEngine::YunoEngine() = default;
 YunoEngine::~YunoEngine()
@@ -60,6 +59,13 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     // 씬 매니저 생성
     m_sceneManager = std::make_unique<YunoSceneManager>();
     s_sceneManager = m_sceneManager.get();
+
+    // 사운드!
+    // 사운드 매니저 초기화 
+    AudioCore::Get().Init();
+    // 오디오 매니저 생성
+    m_audioManager = std::make_unique<AudioManager>();
+    s_audioManager = m_audioManager.get();
 
 #ifdef _DEBUG
     auto YunoSmanager = dynamic_cast<YunoSceneManager*>(m_sceneManager.get());
@@ -95,9 +101,6 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
 
     m_running = true;
 
-    // 사운드!
-    // 사운드 매니저 초기화 
-    AudioCore::Get().Init();
     return true;
 }
 

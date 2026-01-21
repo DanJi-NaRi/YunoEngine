@@ -54,8 +54,6 @@ bool GameApp::OnInit()
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
 
    // 오디어 매니저 생성
-   //m_AM = std::make_unique<AudioManager>();
-   //m_AM = new AudioManager();
     return true;
 }
 
@@ -92,6 +90,7 @@ void GameApp::OnUpdate(float dt)
     IInput* input = YunoEngine::GetInput();
     IWindow* window = YunoEngine::GetWindow();
     ISceneManager* sm = YunoEngine::GetSceneManager();
+    IAudioManager* am = YunoEngine::GetAudioManager();
 
     if (input->IsKeyDown('O')) // >> 이거 인스턴스 호출해서 키다운하는거 불편하니까 나중에 바꾸기 ㄱㄱ
         window->SetClientSize(1920, 1080);
@@ -173,7 +172,7 @@ void GameApp::OnUpdate(float dt)
     //}
 
 
-    
+    am->Update(dt);
 }
 
 void GameApp::OnFixedUpdate(float fixedDt)

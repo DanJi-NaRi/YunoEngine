@@ -2,8 +2,6 @@
 
 #include "SceneBase.h"
 
-class IAudioManager;
-
 class TitleScene final : public SceneBase
 {
 public:
