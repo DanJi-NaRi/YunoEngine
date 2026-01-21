@@ -3,9 +3,9 @@
 
 #include "Bank.h"
 
-#include "AudioSystem.h"
+#include "AudioCore.h"
 
-bool AudioSystem::Init(int maxChannels)
+bool AudioCore::Init(int maxChannels)
 {
     FMOD_RESULT r;
 
@@ -40,7 +40,7 @@ bool AudioSystem::Init(int maxChannels)
     return true;
 }
 
-void AudioSystem::Shutdown()
+void AudioCore::Shutdown()
 {
     // banks unload
     for (auto& kv : m_Banks)
@@ -60,14 +60,14 @@ void AudioSystem::Shutdown()
     }
 }
 
-void AudioSystem::Update(float dt)
+void AudioCore::Update(float dt)
 {
     (void)dt;
     if (m_Studio)
         m_Studio->update();
 }
 
-bool AudioSystem::LoadBank(const std::string& bankName, bool loadSampleData)
+bool AudioCore::LoadBank(const std::string& bankName, bool loadSampleData)
 {
     auto it = m_Banks.find(bankName);
     if (it != m_Banks.end())
@@ -93,7 +93,7 @@ bool AudioSystem::LoadBank(const std::string& bankName, bool loadSampleData)
     return true;
 }
 
-void AudioSystem::UnloadBank(const std::string& bankName)
+void AudioCore::UnloadBank(const std::string& bankName)
 {
     auto it = m_Banks.find(bankName);
     if (it == m_Banks.end()) return;
@@ -115,54 +115,54 @@ void AudioSystem::UnloadBank(const std::string& bankName)
 //  eventGroup + "/" + event
 //  eventGroup 종류: BGM, UI, ...
 //  ex) BGM의 JaneDoe면 -> "BGM/JaneDoe"
-FMOD::Studio::EventDescription* AudioSystem::GetEventDesc(const std::string& eventName)
+FMOD::Studio::EventDescription* AudioCore::GetEventDesc(const std::string& eventName)
 {
-    std::string eventPath = "event:/";
-    std::string totalPath = eventPath + eventName;
-    auto it = m_EventDescList.find(totalPath);
+    auto it = m_EventDescList.find(eventName);
     if (it != m_EventDescList.end())
         return it->second;
 
     FMOD::Studio::EventDescription* desc = nullptr;
+    std::string eventPath = "event:/";
+    std::string totalPath = eventPath + eventName;
     FMOD_RESULT r = m_Studio->getEvent(totalPath.c_str(), &desc);
     CheckFMOD(r, "Studio::System::getEvent");
     if (r != FMOD_OK || !desc) return nullptr;
-
-    m_EventDescList[totalPath] = desc;
+    
+    m_EventDescList[eventName] = desc;
     return desc;
 }
 
-FMOD::Studio::Bus* AudioSystem::GetBus(const std::string& busName)
+FMOD::Studio::Bus* AudioCore::GetBus(const std::string& busName)
 {
-    std::string busPath = "bus:/";
-    std::string totalPath = busPath + busName;
-    auto it = m_BusList.find(totalPath);
+    auto it = m_BusList.find(busName);
     if (it != m_BusList.end())
         return it->second;
 
     FMOD::Studio::Bus* bus = nullptr;
+    std::string busPath = "bus:/";
+    std::string totalPath = busPath + busName;
     FMOD_RESULT r = m_Studio->getBus(totalPath.c_str(), &bus);
     CheckFMOD(r, "getBus");
     if (r != FMOD_OK || !bus) return nullptr;
 
-    m_BusList[totalPath] = bus;
+    m_BusList[busName] = bus;
     return bus;
 }
 
-FMOD::Studio::VCA* AudioSystem::GetVCA(const std::string& vcaName)
+FMOD::Studio::VCA* AudioCore::GetVCA(const std::string& vcaName)
 {
-    std::string vcaPath = "vca:/";
-    std::string totalPath = vcaPath + vcaName;
-    auto it = m_VCAList.find(totalPath);
+    auto it = m_VCAList.find(vcaName);
     if (it != m_VCAList.end())
         return it->second;
 
     FMOD::Studio::VCA* vca = nullptr;
+    std::string vcaPath = "vca:/";
+    std::string totalPath = vcaPath + vcaName;
     FMOD_RESULT r = m_Studio->getVCA(totalPath.c_str(), &vca);
     CheckFMOD(r, "getVCA");
     if (r != FMOD_OK || !vca) return nullptr;
 
-    m_VCAList[totalPath] = vca;
+    m_VCAList[vcaName] = vca;
     return vca;
 }
 
@@ -173,7 +173,7 @@ FMOD::Studio::VCA* AudioSystem::GetVCA(const std::string& vcaName)
 // volume:
 //  1.f : 기본값
 //  0.f : 무음
-void AudioSystem::SetVCAVolume(const std::string& vcaName, float volume)
+void AudioCore::SetVCAVolume(const std::string& vcaName, float volume)
 {
     auto vca = GetVCA(vcaName);
     if (!vca) return;
@@ -183,21 +183,21 @@ void AudioSystem::SetVCAVolume(const std::string& vcaName, float volume)
 ////////////////////////////////////////////
 // busName:
 //  Master = 전체 버스 
-void AudioSystem::SetBusMute(const std::string& busName, bool mute)
+void AudioCore::SetBusMute(const std::string& busName, bool mute)
 {
     auto bus = GetBus(busName);
     if (!bus) return;
     bus->setMute(mute);
 }
 
-void AudioSystem::SetBusPaused(const std::string& busName, bool paused)
+void AudioCore::SetBusPaused(const std::string& busName, bool paused)
 {
     auto bus = GetBus(busName);
     if (!bus) return;
     bus->setPaused(paused);
 }
 
-void AudioSystem::DecRefAndEraseCaches(BankContent& content)
+void AudioCore::DecRefAndEraseCaches(BankContent& content)
 {
     // Events
     for (const auto& name : content.events)
@@ -242,19 +242,42 @@ void AudioSystem::DecRefAndEraseCaches(BankContent& content)
     }
 }
 
-void AudioSystem::SetListener3DAttributes(const FMOD_3D_ATTRIBUTES& attrs, int listenerIndex)
+void AudioCore::SetListener3DAttributes(const FMOD_3D_ATTRIBUTES& attrs, int listenerIndex)
 {
     if (!m_Studio) return;
     m_Studio->setListenerAttributes(listenerIndex, &attrs);
 }
 
-void AudioSystem::SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value)
+void AudioCore::SetListener3DAttributes(const XMFLOAT3& pos)
+{
+    FMOD_3D_ATTRIBUTES attrs = {};
+    attrs.position = { pos.x, pos.y, pos.z };
+    attrs.forward = { 0, 0, 1 };
+    attrs.up = { 0, 1, 0 };
+    attrs.velocity = { 0, 0, 0 };
+
+    if (!m_Studio) return;
+    m_Studio->setListenerAttributes(0, &attrs);
+}
+
+void AudioCore::SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value)
 {
     m_Studio->setParameterByID(paramID, value, true);
 }
 
-void AudioSystem::Set3DSettings(float dopplerScale, float distanceFactor, float rolloffScale)
+void AudioCore::Set3DSettings(float dopplerScale, float distanceFactor, float rolloffScale)
 {
     if (!m_Core) return;
     m_Core->set3DSettings(dopplerScale, distanceFactor, rolloffScale);
+}
+
+const std::vector<std::string>& AudioCore::GetEventList(const std::string bankName)
+{
+    auto it = m_BH.m_BankContents.find(bankName);
+    if (it == m_BH.m_BankContents.end())
+    {
+        std::cerr << "[AudioCore]" << "GetEventList : " << "Failed to find the eventList with that bankName.\n";
+    }
+
+    return it->second.events;
 }

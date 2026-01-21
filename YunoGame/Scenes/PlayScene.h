@@ -7,6 +7,7 @@ class Triangle;
 class PlayScene final : public SceneBase
 {
 public:
+
     void OnEnter() override;
     void OnExit() override;
 
@@ -21,5 +22,5 @@ protected:
     void OnDestroyScene() override;
 
 private:
-
+    
 };

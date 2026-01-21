@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "AudioScenePCH.h"
+
 // 인클루드 순서
 // 1.본인 씬 헤더
 #include "SceneBase.h"
@@ -35,8 +35,6 @@ std::string WStringToString(const std::wstring& wstr)
 SceneBase::SceneBase() = default;
 SceneBase::~SceneBase() = default;
 
-//AudioScene::AudioScene() {};
-//AudioScene::~AudioScene() {};
 
 // 생성
 bool SceneBase::OnCreate()
@@ -56,10 +54,6 @@ bool SceneBase::OnCreate()
         return false;
 
     if (!m_objectManager->Init())
-        return false;
-
-    m_audioScene = std::make_unique<AudioScene>();
-    if (!m_audioScene)
         return false;
 
     return OnCreateScene();
@@ -103,8 +97,6 @@ void SceneBase::Update(float dt)
         m_objectManager->Update(dt);
         m_objectManager->WidgetUpdate(dt);
     }
-
-    m_audioScene->Update(dt);
 
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IScene.h"
-#include "IAudioScene.h"
+
 class ObjectManager;
 
 class Unit;
@@ -53,6 +53,4 @@ protected:
 #endif
     float m_lastDt = 0.0f;
     std::string m_name;
-    std::unique_ptr<IAudioScene> m_audioScene;
-
 };

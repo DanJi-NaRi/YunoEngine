@@ -1,6 +1,5 @@
 #pragma once
 
-
 class IGameApp;
 class IWindow;
 class IRenderer;
@@ -10,6 +9,7 @@ class IWindow;
 class IInput;
 class YunoInputSystem;
 class ISceneManager;
+class IAudioManager;
 class YunoRenderer;
 
 
@@ -30,7 +30,7 @@ public:
     static IInput* GetInput() { return s_input; }
     static IWindow* GetWindow() { return s_window; }
     static ISceneManager* GetSceneManager() { return s_sceneManager; }
-
+    static IAudioManager* GetAudioManager() { return s_audioManager; }
 
 private:
     bool m_running = false;                             // 엔진 작동 여부
@@ -41,6 +41,7 @@ private:
     std::unique_ptr<ITextureManager> m_textureManager;  // 텍스쳐 매니저
     std::unique_ptr<YunoInputSystem> m_input;           // 인풋 시스템
     std::unique_ptr<ISceneManager> m_sceneManager;      // 씬 매니저
+    std::unique_ptr<IAudioManager> m_audioManager;      // 오디오 매니저
     double  m_fixedAccumulator = 0.0;                   // FixedUpdate 누적 시간
 
     static IRenderer* s_renderer;
@@ -48,4 +49,5 @@ private:
     static IInput* s_input;
     static IWindow* s_window;
     static ISceneManager* s_sceneManager;
+    static IAudioManager* s_audioManager;
 };

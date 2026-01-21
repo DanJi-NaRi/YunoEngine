@@ -6,13 +6,13 @@
 #include "SceneBase.h"
 #include "IRenderer.h"
 
-
 #include "ImGuiManager.h"
 #include "UImgui.h"
 
 
 SceneEntry::~SceneEntry() = default;
 PendingOp::~PendingOp() = default;
+
 
 YunoSceneManager::~YunoSceneManager()
 {
@@ -155,6 +155,7 @@ void YunoSceneManager::CreateView(const SceneEntry& e, UINT idx)
 
     m_views.push_back(std::move(v));
 }
+
 
 void YunoSceneManager::DumpStack_Console(const char* reason) const
 {

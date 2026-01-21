@@ -22,5 +22,4 @@ public:
     virtual void SubmitUI() = 0;                // UI들
 
     virtual const char* GetDebugName() const = 0;
-
 };

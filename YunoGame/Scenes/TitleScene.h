@@ -2,11 +2,10 @@
 
 #include "SceneBase.h"
 
-class IAudioScene;
-
 class TitleScene final : public SceneBase
 {
 public:
+
     void OnEnter() override;
     void OnExit() override;
 

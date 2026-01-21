@@ -47,6 +47,7 @@ void PlayScene::OnDestroyScene()
 
 }
 
+
 void PlayScene::OnEnter()
 {
     //std::cout << "[PlayScene] OnEnter\n"; 

@@ -14,6 +14,8 @@
 #include "AnimTest.h"
 #include "YunoLight.h"
 
+#include "AudioQueue.h"
+
 
 bool TitleScene::OnCreateScene()
 {
@@ -42,17 +44,18 @@ void TitleScene::OnDestroyScene()
 
 }
 
+
 void TitleScene::OnEnter()
 {
     //std::cout << "[TitleScene] OnEnter\n";
-    m_audioScene->Load("Title");
-    m_audioScene->PlayEvent("BGM/Playlist");
+    AudioQ::Insert(AudioQ::LoadBank(BankName::Title));
+    AudioQ::Insert(AudioQ::PlayEvent(EventName::BGM_Playlist));
 }
 
 void TitleScene::OnExit()
 {
     //std::cout << "[TitleScene] OnExit\n";
-    //m_audioScene->Unload();
+    AudioQ::Insert(AudioQ::UnLoadBank(BankName::Title));
 }
 
 
