@@ -1,40 +1,40 @@
 #include "pch.h"
 
-#include "ObjectManager.h"
+#include "UIManager.h"
 #include "Parser.h"
 #include "YunoLight.h"
 #include "YunoCamera.h"
 
 
-void ObjectManager::CreateDirLight()
+void UIManager::CreateDirLight()
 {
     m_directionLight = std::make_unique<YunoDirectionalLight>();
 }
 
-ObjectManager::ObjectManager()
+UIManager::UIManager()
 {
 }
 
-ObjectManager::~ObjectManager()
+UIManager::~UIManager()
 {
 }
 
-bool ObjectManager::Init()
+bool UIManager::Init()
 {
-    m_objectCount = 0;
-    m_objectIDs = 0;
-    m_objMap.reserve(30); //30개 정도 메모리 잡고 시작
+    m_widgetCount = 0;
+    m_widgetIDs = 0;
+    m_widgetMap.reserve(30); //30개 정도 메모리 잡고 시작
     m_pendingCreateQ.reserve(30);
 
     return true;
 }
 
-void ObjectManager::Clear()
+void UIManager::Clear()
 {
 
-    m_objectCount = 0;
-    m_objectIDs = 0;
-    m_objs.clear(); //오브젝트 객체 완전 삭제
+    m_widgetCount = 0;
+    m_widgetIDs = 0;
+    m_widgets.clear(); //오브젝트 객체 완전 삭제
     m_pendingCreateQ.clear();
     m_pendingDestoryQ.clear();
     m_nameToID.clear();
@@ -42,38 +42,38 @@ void ObjectManager::Clear()
 
 
 //나중에 이벤트 큐 만들어서 바꿔야함
-void ObjectManager::Update(float dTime)
+void UIManager::Update(float dTime)
 {
     FrameDataUpdate();
-    for (auto& obj : m_objs)
+    for (auto& obj : m_widgets)
     {
         obj->Update(dTime);
     }
 }
 //나중에 이벤트 큐 만들어서 바꿔야함
-void ObjectManager::Submit(float dTime)
+void UIManager::Submit(float dTime)
 {
     FrameDataSubmit();
 
-    for (auto& obj : m_objs)
+    for (auto& widget : m_widgets)
     {
-        obj->Submit(dTime);
+        widget->Submit(dTime);
     }
 }
 
-void ObjectManager::ProcessPending()
+void UIManager::ProcessPending()
 {
     if (!m_pendingCreateQ.empty())
     {
-        for (auto& obj : m_pendingCreateQ)
+        for (auto& widget : m_pendingCreateQ)
         {
-            UINT id = obj->GetID();
-            auto name = obj->GetName();
-            auto* pObj = obj.get();
-            m_objs.push_back(std::move(obj));
-            m_objMap.emplace(id, pObj);
+            UINT id = widget->GetID();
+            auto name = widget->GetName();
+            auto* pWidget = widget.get();
+            m_widgets.push_back(std::move(widget));
+            m_widgetMap.emplace(id, pWidget);
             m_nameToID.emplace(name, id);
-            m_objectCount++;
+            m_widgetCount++;
         }
 
         m_pendingCreateQ.clear();
@@ -83,21 +83,21 @@ void ObjectManager::ProcessPending()
     {
         for (auto& id : m_pendingDestoryQ)
         {
-            auto name = m_objMap[id]->GetName();
+            auto name = m_widgetMap[id]->GetName();
 
-            auto it = std::find_if(m_objs.begin(), m_objs.end(), [id](const std::unique_ptr<Unit>& obj) { return obj->GetID() == id; });
+            auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [id](const std::unique_ptr<Widget>& widget) { return widget->GetID() == id; });
 
-            if (it == m_objs.end())
+            if (it == m_widgets.end())
                 continue;
 
             it->get()->DettachParent();
             it->get()->ClearChild();
 
             m_nameToID.erase(name);
-            m_objMap.erase(id);
+            m_widgetMap.erase(id);
 
-            m_objs.erase(it);
-            m_objectCount--;
+            m_widgets.erase(it);
+            m_widgetCount--;
         }
 
         m_pendingDestoryQ.clear();
@@ -105,30 +105,30 @@ void ObjectManager::ProcessPending()
 }
 
 //유니크 포인터의 생포인터 반환 외부에서 삭제 절대 금지
-const Unit* ObjectManager::FindObject(UINT id)//GetID랑 연동해서쓰기
+const Widget* UIManager::FindWidget(UINT id)//GetID랑 연동해서쓰기
 {
-    if(m_objMap.find(id) == m_objMap.end())
+    if (m_widgetMap.find(id) == m_widgetMap.end())
         return nullptr;
 
-    return m_objMap[id];
+    return m_widgetMap[id];
 }
 
-const Unit* ObjectManager::FindObject(const std::wstring& name)
+const Widget* UIManager::FindWidget(const std::wstring& name)
 {
     if (m_nameToID.find(name) == m_nameToID.end())
         return nullptr;
 
     UINT id = m_nameToID[name];
 
-    if (m_objMap.find(id) == m_objMap.end())
+    if (m_widgetMap.find(id) == m_widgetMap.end())
         return nullptr;
 
-    return m_objMap[id];
+    return m_widgetMap[id];
 }
 
-void ObjectManager::DestroyObject(UINT id)
+void UIManager::DestroyWidget(UINT id)
 {
-    if (m_objMap.find(id) == m_objMap.end())
+    if (m_widgetMap.find(id) == m_widgetMap.end())
         return;
 
     for (auto& checkID : m_pendingDestoryQ)//큐에 중복삭제 삽입 방지
@@ -140,7 +140,7 @@ void ObjectManager::DestroyObject(UINT id)
     m_pendingDestoryQ.push_back(id);
 }
 
-void ObjectManager::DestroyObject(const std::wstring& name)
+void UIManager::DestroyWidget(const std::wstring& name)
 {
     if (m_nameToID.find(name) == m_nameToID.end())
         return;
@@ -156,7 +156,14 @@ void ObjectManager::DestroyObject(const std::wstring& name)
     m_pendingDestoryQ.push_back(id);
 }
 
-void ObjectManager::CheckDedicateObjectName(std::wstring& name)
+bool UIManager::ProcessWidgetClick()
+{
+
+
+    return false;
+}
+
+void UIManager::CheckDedicateWidgetName(std::wstring& name)
 {
     int count = 0;
 
@@ -166,7 +173,7 @@ void ObjectManager::CheckDedicateObjectName(std::wstring& name)
             count++;
     }
 
-    for (auto& [id, obj] : m_objMap)
+    for (auto& [id, obj] : m_widgetMap)
     {
         if (obj->GetName().find(name) != std::wstring::npos)
             count++;
@@ -176,7 +183,7 @@ void ObjectManager::CheckDedicateObjectName(std::wstring& name)
         name += std::to_wstring(count);
 }
 
-void ObjectManager::FrameDataUpdate()
+void UIManager::FrameDataUpdate()
 {
     // 오브젝트 매니저가 라이트를 가지고 있는데
     // 이 라이트는 씬에서 만들어서 넘겨주는?
@@ -192,7 +199,7 @@ void ObjectManager::FrameDataUpdate()
 
 }
 
-void ObjectManager::FrameDataSubmit()
+void UIManager::FrameDataSubmit()
 {
     // 여기서 서브밋할 예정
     auto* renderer = YunoEngine::GetRenderer();
@@ -207,7 +214,7 @@ void ObjectManager::FrameDataSubmit()
 
 }
 
-std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> ObjectManager::CreateMeshNode(const std::wstring& filepath)
+std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> UIManager::CreateMeshNode(const std::wstring& filepath)
 {
     return Parser::Instance().LoadFile(filepath);
 }

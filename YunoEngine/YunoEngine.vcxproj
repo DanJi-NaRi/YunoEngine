@@ -223,6 +223,7 @@
     <ClInclude Include="Public\Sound\IAudioManager.h" />
     <ClInclude Include="Public\YunoEngine.h" />
     <ClInclude Include="Public\Object\Widget.h" />
+    <ClInclude Include="Public\UIManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EnginePCH\pch.cpp">
@@ -262,6 +263,8 @@
     <ClCompile Include="Public\Sound\Bank.cpp" />
     <ClCompile Include="Public\Sound\EventHandle.cpp" />
     <ClCompile Include="Public\Sound\fmodPCH.cpp" />
+    <ClCompile Include="Public\Sound\IAudioScene.cpp" />
+    <ClCompile Include="Public\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">

@@ -233,8 +233,8 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Scenes\UIScene.h" />
-    <ClInclude Include="System\GameInputContext.h" />
-    <ClInclude Include="System\TestInputContexts.h" />
+    <ClInclude Include="System\Game_InputContext.h" />
+    <ClInclude Include="System\UI_InputContext.h" />
     <ClInclude Include="Game\UI\Text.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

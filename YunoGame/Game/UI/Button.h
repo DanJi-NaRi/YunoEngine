@@ -5,7 +5,7 @@
 
 // 버튼 상태(Event Flag)
 // Idle    : 기본값(상호작용 X)
-// Hovered : 커서위치 버튼 위(Hoverd,Moved), 동시에 Up 역할도...
+// Hovered : 커서위치 버튼 위(Hovered,Moved), 동시에 Up 역할도...
 // Clicked : 이번 프레임에 버튼 누름
 // Pressed : 버튼 누르고 있음
 enum class ButtonState : int { Idle, Hovered, Clicked, Pressed, Count };

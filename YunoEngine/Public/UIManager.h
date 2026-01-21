@@ -1,0 +1,154 @@
+#pragma once
+
+#pragma once
+#include "RenderTypes.h"
+#include "Widget.h"
+#include "AnimationUnit.h"
+
+class YunoDirectionalLight;
+
+class UIManager
+{
+private:
+    size_t m_widgetCount;
+    UINT m_widgetIDs;
+
+    // Widgets
+    std::deque<std::unique_ptr<Widget>> m_widgets;
+
+    std::unordered_map<UINT, Widget*> m_widgetMap;
+    std::unordered_map<std::wstring, UINT> m_nameToID;
+
+    std::vector<UINT> m_pendingDestoryQ;
+    std::vector<std::unique_ptr<Widget>> m_pendingCreateQ;
+
+    //Camera 투영
+    bool m_isOrtho = false;
+
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 위젯 생성용
+
+    std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> CreateMeshNode(const std::wstring& filepath);
+
+    std::unique_ptr<YunoDirectionalLight> m_directionLight; // 필요할까?
+
+   
+
+public:
+    void CreateDirLight();
+    void SetOrthoFlag(bool flag) { m_isOrtho = flag; };
+
+public:
+    explicit UIManager();
+    virtual ~UIManager();
+
+    bool Init(); //생성 초기화
+    void Clear(); //삭제 초기화
+
+    void ProcessPending(); //프레임 맨 마지막에 호출
+
+    void Update(float dTime);
+    void Submit(float dTime);
+
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);
+    template<typename T>
+    T* CreateWidgetFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath);
+
+    //씬 매니저에 있어도 될것같은 놈들
+    const Widget* FindWidget(UINT id); //id로 검색
+    const Widget* FindWidget(const std::wstring& name); //이름으로 검색
+
+
+    void DestroyWidget(UINT id);
+    void DestroyWidget(const std::wstring& name);
+
+    const size_t GetWidgetCount() { return m_widgetCount; }
+    const std::unordered_map<UINT, Widget*>& GetWidgetlist() { return m_widgetMap; }
+
+    bool ProcessWidgetClick();
+private:
+    void CheckDedicateWidgetName(std::wstring& name);
+
+
+    // 프레임 상수버퍼 관리
+private:
+    Frame_Data_Dir dirData;
+    void FrameDataUpdate();
+    void FrameDataSubmit();
+};
+
+
+// 김장후 - 
+// 현재 Object와 같은 ID 체계를 사용하고 있음. 분리할지 고민중..
+// 매니저 분리까지는 굳이 필요 없을 것 같아서 일단은 큐만 추가해서 사용 중.
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name;
+
+    auto widget = std::make_unique<T>();
+    CheckDedicateWidgetName(newname);
+
+    widget->Create(name, m_widgetIDs, pos);
+
+    auto* pWidget = widget.get();
+
+    m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
+
+    return pWidget;
+}
+
+// 계층구조 오브젝트 재귀 생성용 (현재 안씀)
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name + L'_' + node->m_name;
+
+    auto widget = std::make_unique<T>();
+    widget->Create(newname, m_widgetIDs++, pos);
+
+    widget->SetMesh(std::move(node));
+
+    auto* pWidget = widget.get();
+    m_pendingCreateQ.emplace_back(std::move(widget));
+
+    return pWidget;
+}
+
+
+template<typename T>
+T* UIManager::CreateWidgetFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    auto meshAndAnim = CreateMeshNode(filepath);
+
+    auto meshnode = std::move(meshAndAnim.first);
+    auto animator = std::move(meshAndAnim.second);
+
+    std::wstring newname = name;
+
+    CheckDedicateWidgetName(newname);
+
+    auto obj = std::make_unique<T>();
+    obj->Create(newname, m_widgetIDs++, pos);
+
+    obj->SetMesh(std::move(meshnode));
+
+    if constexpr (std::is_base_of_v<AnimationUnit, T>)
+        if (animator)
+        {
+            obj->SetAnimator(std::move(animator));
+        }
+
+    auto* pObj = obj.get();
+    m_pendingCreateQ.emplace_back(std::move(obj));
+
+    return pObj;
+}
