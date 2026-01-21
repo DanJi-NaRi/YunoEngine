@@ -65,6 +65,7 @@ void PlayScene::OnExit()
 void PlayScene::Update(float dt)
 {
     SceneBase::Update(dt);
+    m_input->Dispatch();
 }
 
 void PlayScene::SubmitObj()

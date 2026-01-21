@@ -154,7 +154,7 @@ int YunoEngine::Run()
             m_fixedAccumulator = 0.0;
         }
 
-        m_input->Dispatch();
+        //m_input->Dispatch();
 
 
         const float dt = m_timer->DeltaSeconds();

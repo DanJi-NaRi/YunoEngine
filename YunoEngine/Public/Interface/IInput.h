@@ -12,6 +12,7 @@ public:
 
     // 입력 이벤트 큐에 삽입
     virtual void PushEvent(const InputEvent& evt) = 0;
+    virtual void Dispatch() = 0;
 
     // 게임에서 사용할 API함수들
     virtual bool IsKeyDown(uint32_t key) const = 0;

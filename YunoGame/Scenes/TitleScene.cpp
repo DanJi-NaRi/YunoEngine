@@ -72,6 +72,7 @@ void TitleScene::OnExit()
 void TitleScene::Update(float dt)
 {
     SceneBase::Update(dt);
+    m_input->Dispatch();
 }
 
 void TitleScene::SubmitObj()

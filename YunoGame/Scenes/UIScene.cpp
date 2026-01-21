@@ -73,6 +73,7 @@ void UIScene::OnExit()
 void UIScene::Update(float dt)
 {
     SceneBase::Update(dt); // 여기만 UI 출력하게끔 빼둘까?
+    m_input->Dispatch();
 }
 
 void UIScene::SubmitObj()

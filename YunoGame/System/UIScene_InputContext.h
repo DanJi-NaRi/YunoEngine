@@ -24,7 +24,7 @@ public:
             // 씬에서 가지고 있는 Button Rect 비교
             // 있으면 기-> Button Event()
             // 없으면 -> 컨슘 ㅋㅕ
-            //evt.consumed = m_uiManager->ProcessButtonCursor(ButtonState::Pressed);
+            evt.consumed = m_uiManager->ProcessButtonCursor(ButtonState::Pressed);
 
             AudioQ::Insert({ AudioCmdType::PlayOneShot, EventName::UI_Click} ); // 사운드!
             std::cout << "[UI] Consumed LMB\n";

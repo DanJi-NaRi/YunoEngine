@@ -4,7 +4,7 @@
 
 class ObjectManager;
 class UIManager;
-
+class IInput;
 class Unit;
 class Widget;
 
@@ -50,6 +50,7 @@ protected:
 protected:
     std::unique_ptr<ObjectManager> m_objectManager;
     std::unique_ptr<UIManager> m_uiManager;
+    IInput* m_input = nullptr;
 
 #ifdef _DEBUG
     Unit* m_selectedObject;

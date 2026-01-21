@@ -7,6 +7,7 @@
 #include "IRenderer.h"
 #include "ObjectManager.h"
 #include "UIManager.h"
+#include "YunoInputSystem.h"
 #include "UImgui.h"
 
 std::string WStringToString(const std::wstring& wstr)
@@ -56,6 +57,9 @@ bool SceneBase::OnCreate()
 
     m_uiManager = std::make_unique<UIManager>();
     if (!m_objectManager->Init())
+        return false;
+
+    if (m_input = YunoEngine::GetInput(); !m_input)
         return false;
 
     if (!m_uiManager->Init())
