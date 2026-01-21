@@ -212,6 +212,11 @@ void AudioManager::PlayEvent(const std::string& eventName, bool is3D, XMFLOAT3 p
     }
 
     auto desc = AudioCore::Get().GetEventDesc(eventName);
+    if (desc == nullptr)
+    {
+        std::cerr << "해당 음원은 현재 씬에 없습니다.\n";
+        return;
+    }
 
     FMOD::Studio::EventInstance* inst = nullptr;
     FMOD_RESULT fres = desc->createInstance(&inst);
@@ -235,7 +240,11 @@ void AudioManager::PlayEvent(const std::string& eventName, bool is3D, XMFLOAT3 p
 void AudioManager::PlayOneShot(const std::string& eventName)
 {
     auto desc = AudioCore::Get().GetEventDesc(eventName);
-    if (!desc) return;
+    if (desc == nullptr)
+    {
+        std::cerr << "해당 음원은 현재 씬에 없습니다.\n";
+        return;
+    }
 
     FMOD::Studio::EventInstance* inst = nullptr;
     desc->createInstance(&inst);
