@@ -48,7 +48,7 @@ void TitleScene::OnEnter()
     //std::cout << "[TitleScene] OnEnter\n";
     m_audioScene->Load("Title");
     m_audioScene->PlayEvent("BGM/Playlist");
-    YunoEngine::GetInput()->AddContext(&m_gameCtx);
+    YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
 }
 
 void TitleScene::OnExit()

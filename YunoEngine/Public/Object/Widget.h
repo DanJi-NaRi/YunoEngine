@@ -93,6 +93,8 @@ public:
     virtual bool  Submit(float dTime = 0);
     bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 xx
 
+    virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
+
     virtual void  Backup();
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
@@ -103,7 +105,7 @@ public:
 
     uint32_t GetID() { return m_id; }
     const std::wstring& GetName() const { return m_name; }
-
+    RECT GetRect() const { return m_rect; }
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
 
     void Attach(Widget* obj);

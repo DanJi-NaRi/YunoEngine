@@ -4,6 +4,8 @@
 #include "Parser.h"
 #include "YunoLight.h"
 #include "YunoCamera.h"
+#include "YunoInputSystem.h"
+
 
 
 void UIManager::CreateDirLight()
@@ -25,7 +27,7 @@ bool UIManager::Init()
     m_widgetIDs = 0;
     m_widgetMap.reserve(30); //30개 정도 메모리 잡고 시작
     m_pendingCreateQ.reserve(30);
-
+    m_pInput = YunoEngine::GetInput();
     return true;
 }
 
@@ -45,9 +47,10 @@ void UIManager::Clear()
 void UIManager::Update(float dTime)
 {
     FrameDataUpdate();
-    for (auto& obj : m_widgets)
+    UpdateButtonStates(); // 모든 버튼 상태 업데이트
+    for (auto& widget : m_widgets)
     {
-        obj->Update(dTime);
+        widget->Update(dTime);
     }
 }
 //나중에 이벤트 큐 만들어서 바꿔야함
@@ -156,12 +159,37 @@ void UIManager::DestroyWidget(const std::wstring& name)
     m_pendingDestoryQ.push_back(id);
 }
 
-bool UIManager::ProcessWidgetClick()
+void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
 {
+    assert(m_pInput);
 
+    POINT mouseXY{ (LONG)m_pInput->GetMouseX(), (LONG)m_pInput->GetMouseY() };
 
-    return false;
+    Button* Btn = nullptr;
+
+    // 버튼 : 마우스 입력 상태 확인
+    for (auto& widget : m_widgets)
+    {
+        if (Btn = dynamic_cast<Button*>(widget.get())) { // 클릭 가능(버튼 파생)일 경우
+            Btn->SetButtonState(ButtonState::Idle); // 커서 영역 검사 전 기본 상태 초기화.
+        }
+
+        if (!widget->IsCursorOverWidget(mouseXY)) { // 커서가 위젯 위에 있는지 체크
+            if (Btn) Btn->IdleEvent();
+            Btn = nullptr;
+            continue;
+        }
+
+        if (Btn) {
+            Btn->SetButtonState(ButtonState::Hovered);
+            Btn->HoveredEvent();
+            //std::cout << "Hovered!!" << std::endl;
+        }
+        Btn = nullptr; // 다음 검사를 위해 초기화
+    }
 }
+
+
 
 void UIManager::CheckDedicateWidgetName(std::wstring& name)
 {

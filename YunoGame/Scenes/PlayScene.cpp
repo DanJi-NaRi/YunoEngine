@@ -52,7 +52,7 @@ void PlayScene::OnDestroyScene()
 void PlayScene::OnEnter()
 {
     //std::cout << "[PlayScene] OnEnter\n"; 
-    YunoEngine::GetInput()->AddContext(&m_gameCtx);
+    YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
 }
 
 void PlayScene::OnExit()

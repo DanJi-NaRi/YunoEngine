@@ -1,9 +1,11 @@
 #pragma once
 #include <IInput.h>        
 #include <InputEvent.h>    
-#include <IInputContext.h> 
-
+#include <IScene.h>
 #include "InputState.h" 
+
+class IInputContext;
+class IScene;
 
 class YunoInputSystem final : public IInput
 {
@@ -32,7 +34,7 @@ public:
     float GetMouseDeltaY() const override { return m_state.mouseDeltaY; }
 
     // 인풋을 사용할 컨텍스트
-    void AddContext(IInputContext* context) override;
+    void AddContext(IInputContext* context, IScene* scene) override;
     void RemoveContext(IInputContext* context) override;
 
     // 호버링(HOVERING) 메세지 발생 함수

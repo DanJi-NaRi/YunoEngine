@@ -2,8 +2,10 @@
 
 #pragma once
 #include "RenderTypes.h"
-#include "Widget.h"
+
 #include "AnimationUnit.h"
+#include "Widget.h"
+#include "Button.h"
 
 class YunoDirectionalLight;
 
@@ -12,6 +14,8 @@ class UIManager
 private:
     size_t m_widgetCount;
     UINT m_widgetIDs;
+
+    IInput* m_pInput;
 
     // Widgets
     std::deque<std::unique_ptr<Widget>> m_widgets;
@@ -66,7 +70,9 @@ public:
     const size_t GetWidgetCount() { return m_widgetCount; }
     const std::unordered_map<UINT, Widget*>& GetWidgetlist() { return m_widgetMap; }
 
-    bool ProcessWidgetClick();
+    void UpdateButtonStates(); // 모든 위젯 업데이트
+    bool ProcessButtonCursor(ButtonState state); // 커서 <-> 위젯 Rect 위치 비교
+
 private:
     void CheckDedicateWidgetName(std::wstring& name);
 

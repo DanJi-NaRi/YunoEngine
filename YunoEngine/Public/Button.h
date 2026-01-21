@@ -8,10 +8,13 @@
 // Hovered : 커서위치 버튼 위(Hovered,Moved), 동시에 Up 역할도...
 // Clicked : 이번 프레임에 버튼 누름
 // Pressed : 버튼 누르고 있음
-enum class ButtonState : int { Idle, Hovered, Clicked, Pressed, Count };
+
+// 카드도 Button 상속해서 쓰게 하면 될 듯??
+
+enum class ButtonState : int { Idle, Hovered, Pressed, Down, Released, Count };
 
 class Button : public Widget {
-    public:
+public:
     explicit Button();
     virtual ~Button();
 
@@ -21,7 +24,20 @@ class Button : public Widget {
     bool Submit(float dTime = 0) override;
     
     void ButtonUpdate(float dTime = 0);
+
+    virtual bool IdleEvent();
+    virtual bool HoveredEvent();
+    virtual bool PressedEvent();
+    virtual bool DownEvent();
+    virtual bool ReleasedEvent();
+
     ButtonState GetButtonState() { return m_BtnState; }
+    void        SetButtonState(ButtonState state) { m_BtnState = state; }
+
+protected:
+    // 버튼 상태 : 대기/커서입력/눌림 (standby/CursorOn/Push)
+    ButtonState m_BtnState;							//UI버튼별 상태 저장.
+    
 private:
     //bool CreateMesh() override;      // 메시 생성 (한 번만)
     bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
@@ -29,12 +45,6 @@ private:
 
     //추가 머테리얼 - 필요할까?
     //MaterialHandle m_addMaterial = 0;
-
-private:
-
-    // 버튼 상태 : 대기/커서입력/눌림 (standby/CursorOn/Push)
-    ButtonState m_BtnState;							//UI버튼별 상태 저장.
-    
 };
 
 
