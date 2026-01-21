@@ -151,8 +151,6 @@ int YunoEngine::Run()
             m_fixedAccumulator = 0.0;
         }
 
-        
-
         m_input->Dispatch();
 
 

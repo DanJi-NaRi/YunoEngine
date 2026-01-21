@@ -3,6 +3,7 @@
 #include "IScene.h"
 #include "IAudioScene.h"
 class ObjectManager;
+class UIManager;
 
 class Unit;
 class Widget;
@@ -26,7 +27,8 @@ public:
     const char* GetDebugName() const override { return m_name.c_str(); }
 
 #ifdef _DEBUG
-    void DrawObjectListUI();
+    void DrawObjectList();
+    void DrawUIList();
     void DrawInspector();
 #endif
 
@@ -46,6 +48,7 @@ protected:
 
 protected:
     std::unique_ptr<ObjectManager> m_objectManager;
+    std::unique_ptr<UIManager> m_uiManager;
 
 #ifdef _DEBUG
     Unit* m_selectedObject;

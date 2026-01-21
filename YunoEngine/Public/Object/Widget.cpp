@@ -231,6 +231,43 @@ void Widget::SetMesh(std::unique_ptr<MeshNode>&& mesh)
     m_MeshNode = std::move(mesh);
 }
 
+void Widget::Attach(Widget* widget) //this가 부모, 파라미터로 자식
+{
+    if (widget->m_Parent)//기존 부모있으면 떨어진 후 결합
+        widget->DettachParent();
+
+    widget->m_Parent = this;
+
+    m_Childs.insert(std::make_pair(widget->GetID(), widget));
+}
+
+void Widget::DettachParent()
+{
+    m_Parent->DettachChild(m_id);
+}
+
+void Widget::DettachChild(uint32_t id)
+{
+    if (m_Childs.find(id) == m_Childs.end())
+        return;
+
+    m_Childs.erase(id);
+}
+
+void Widget::ClearChild()
+{
+    if (m_Childs.empty())
+        return;
+
+    for (auto& [id, child] : m_Childs)
+    {
+        child->DettachParent();
+    }
+
+    m_Childs.clear();
+}
+
+
 /// <summary>
 /// 전역 변수 함수들...
 /// </summary>
@@ -253,3 +290,4 @@ bool SetupDefWidgetMesh(MeshHandle& meshHandle, IRenderer* renderer)
 
     return true;
 }
+

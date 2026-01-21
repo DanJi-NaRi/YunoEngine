@@ -1,6 +1,8 @@
 #pragma once
 
 #include "SceneBase.h"
+#include "UI_InputContext.h"
+//class UI_InputContext;
 
 class UIScene final : public SceneBase
 {
@@ -19,5 +21,5 @@ protected:
     void OnDestroyScene() override;
 
 private:
-
+    UIScene_InputContext m_uiCtx;
 };

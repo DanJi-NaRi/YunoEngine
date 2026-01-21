@@ -6,6 +6,8 @@
 #include "YunoCamera.h"
 
 #include "ObjectManager.h"
+//#include "Game_InputContext.h"
+#include "IInput.h"
 
 #include "Quad.h"
 #include "Building.h"
@@ -13,7 +15,6 @@
 #include "Image.h"
 #include "AnimTest.h"
 #include "YunoLight.h"
-
 
 bool TitleScene::OnCreateScene()
 {
@@ -47,12 +48,14 @@ void TitleScene::OnEnter()
     //std::cout << "[TitleScene] OnEnter\n";
     m_audioScene->Load("Title");
     m_audioScene->PlayEvent("BGM/Playlist");
+    YunoEngine::GetInput()->AddContext(&m_gameCtx);
 }
 
 void TitleScene::OnExit()
 {
     //std::cout << "[TitleScene] OnExit\n";
     //m_audioScene->Unload();
+    YunoEngine::GetInput()->RemoveContext(&m_gameCtx);
 }
 
 

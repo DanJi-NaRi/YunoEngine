@@ -106,10 +106,10 @@ public:
 
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
 
-    //void Attach(Widget* obj);
-    //void DettachParent();
-    //void DettachChild(uint32_t id);
-    //void ClearChild();
+    void Attach(Widget* obj);
+    void DettachParent();
+    void DettachChild(uint32_t id);
+    void ClearChild();
 };
 
 extern MeshHandle g_defaultWidgetMesh;

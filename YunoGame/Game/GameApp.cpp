@@ -5,7 +5,6 @@
 #include "IRenderer.h"
 #include "IWindow.h"
 #include "YunoEngine.h"
-#include "TestInputContexts.h"
 #include "ISceneManager.h"
 #include "YunoCamera.h"
 
@@ -17,9 +16,6 @@
 
 #include "GameApp.h"
 
-
-static UITestContext s_uiCtx;
-static GameTestContext s_gameCtx;
 
 GameApp::~GameApp() = default;
 
@@ -33,13 +29,6 @@ bool GameApp::OnInit()
         std::cout << "[GameApp] Renderer not available.\n";
         return false;
     } // 렌더러 체크
-
-    //---------------- 인풋 테스트
-    IInput* input = YunoEngine::GetInput();
-    input->AddContext(&s_uiCtx);
-    input->AddContext(&s_gameCtx);
-    //---------------- 인풋 테스트
-
 
 
    ISceneManager* sm = YunoEngine::GetSceneManager();

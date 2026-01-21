@@ -1,7 +1,8 @@
 #pragma once
 
 #include "SceneBase.h"
-
+#include "Game_InputContext.h"
+//class Game_InputContext;
 class Triangle;
 
 class PlayScene final : public SceneBase
@@ -21,5 +22,6 @@ protected:
     void OnDestroyScene() override;
 
 private:
+    Game_InputContext m_gameCtx;
 
 };
