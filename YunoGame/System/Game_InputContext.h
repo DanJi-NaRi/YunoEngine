@@ -1,12 +1,12 @@
 #pragma once
 #include <iostream>
 
-#include <IInputContext.h>
 #include <InputEvent.h>
+#include "InputContextBase.h"
 
 #include "AudioQueue.h"
 
-class Game_InputContext final : public IInputContext
+class Game_InputContext final : public InputContextBase
 {
 public:
     int GetPriority() const override { return 0; } // 게임은 아래

@@ -168,10 +168,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h" />
+    <ClInclude Include="Public\InputContextBase.h" />
     <ClInclude Include="Private\Input\InputState.h" />
     <ClInclude Include="Private\Input\YunoInputSystem.h" />
     <ClInclude Include="Private\Renderer\BoneAnimation\BoneAnimation.h" />
     <ClInclude Include="Private\Scene\YunoSceneManager.h" />
+    <ClInclude Include="Public\Button.h" />
     <ClInclude Include="Public\Interface\IInputContext.h" />
     <ClInclude Include="Public\Input\InputEvent.h" />
     <ClInclude Include="Private\Renderer\Material\YunoMaterial.h" />
@@ -230,6 +232,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Public\InputContextBase.cpp" />
     <ClCompile Include="Private\Input\YunoInputSystem.cpp" />
     <ClCompile Include="Private\Renderer\BoneAnimation\BoneAnimation.cpp" />
     <ClCompile Include="Private\Renderer\BoneNode\BoneNode.cpp" />
@@ -246,6 +249,7 @@
     <ClCompile Include="Private\Timer\YunoTimer.cpp" />
     <ClCompile Include="Private\Window\YunoWindow.cpp" />
     <ClCompile Include="Private\YunoEngine.cpp" />
+    <ClCompile Include="Public\Button.cpp" />
     <ClCompile Include="Public\Light\YunoLight.cpp" />
     <ClCompile Include="Public\Object\AnimationUnit.cpp" />
     <ClCompile Include="Public\Object\ObjectManager.cpp" />

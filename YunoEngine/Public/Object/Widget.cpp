@@ -226,6 +226,11 @@ bool Widget::LastSubmit(float dTime /*= 0*/)
     return true;
 }
 
+bool Widget::IsCursorOverWidget(POINT mouseXY) // 마우스 커서가 위젯 위에 있는지 체크
+{
+    return PtInRect(&m_rect, mouseXY);
+}
+
 void Widget::SetMesh(std::unique_ptr<MeshNode>&& mesh)
 {
     m_MeshNode = std::move(mesh);

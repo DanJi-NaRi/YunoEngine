@@ -67,42 +67,47 @@ bool Button::Submit(float dTime)
     return true;
 }
 
-void Button::ButtonUpdate(float dTime)
+void Button::ButtonUpdate(float dTime) // 버튼 상태 갱신
 {
-    assert(m_pInput);
-    //float mouseX = m_pInput->GetMouseX();
-    //float mouseY = m_pInput->GetMouseY();
-    //POINT mouseXY{ (LONG)mouseX, (LONG)mouseY };
-    POINT mouseXY{ (LONG)m_pInput->GetMouseX(), (LONG)m_pInput->GetMouseY() };
-
-    XMFLOAT3 vPos;
-    vPos.x = (float)m_rect.left;
-    vPos.y = (float)m_rect.top;
-    vPos.z = 1.0f;
-
-    m_BtnState = ButtonState::Idle; // 커서 영역 검사 전 기본 상태 초기화.
-
-    if (!PtInRect(&m_rect, mouseXY)) return;	//커서/버튼 영역 검사.
-
-    // 버튼 State 업데이트
-    if (m_pInput->IsMouseButtonDown(0)) { m_BtnState = ButtonState::Clicked; }
-    else if (m_pInput->IsMouseButtonPressed(0)) { m_BtnState = ButtonState::Pressed; }
-    else { m_BtnState = ButtonState::Hovered; } // 커서가 올라가있는 것은 확정이므로, 기본값은 Hovered
-
-    if (!PtInRect(&m_rect, mouseXY)) {
-        m_BtnState = ButtonState::Idle;
+    // 영역 검사 및 이벤트 실행은 UIManager에게 위임...
+    
+    /*
+    switch (m_BtnState) {
+        case ButtonState::Idle:     IdleEvent();    break;
+        case ButtonState::Pressed:  PressedEvent(); break; // 누르고 있는 동안 유지 
+        case ButtonState::Down:     DownEvent();    break;            
+        case ButtonState::Hovered:  HoveredEvent(); break;  
+        default: assert(false && "Invalid ButtonState"); break;
     }
-    else if (m_pInput->IsMouseButtonDown(0)) {         // edge: 이번 프레임 눌림
-        m_BtnState = ButtonState::Clicked;             // 1프레임
-    }
-    else if (m_pInput->IsMouseButtonPressed(0)) {      // held: 누르고 있음
-        m_BtnState = ButtonState::Pressed;             // 누르고 있는 동안 유지
-    }
-    else {
-        m_BtnState = ButtonState::Hovered;
-    }
-
+    */
 }
+
+bool Button::IdleEvent()
+{
+    //std::cout << IdleEvent << std::endl;
+    return true;
+}
+bool Button::HoveredEvent()
+{
+    //std::cout << HoveredEvent << std::endl;
+    return true;
+}
+bool Button::DownEvent()
+{
+    //std::cout << DownEvent << std::endl;
+    return true;
+}
+bool Button::PressedEvent()
+{
+    //std::cout << PressedEvent << std::endl;
+    return true;
+}
+bool Button::ReleasedEvent()
+{
+    //std::cout << ReleasedEvent << std::endl;
+    return true;
+}
+
 
 bool Button::CreateMaterial()
 {

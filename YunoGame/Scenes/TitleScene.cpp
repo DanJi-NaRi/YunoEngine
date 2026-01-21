@@ -49,10 +49,11 @@ void TitleScene::OnEnter()
 {
     //std::cout << "[TitleScene] OnEnter\n";
 
+
     AudioQ::Insert(AudioQ::LoadBank(BankName::Title));
     AudioQ::Insert(AudioQ::PlayEvent(EventName::BGM_Playlist));
 
-    YunoEngine::GetInput()->AddContext(&m_gameCtx);
+    YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
 
 }
 

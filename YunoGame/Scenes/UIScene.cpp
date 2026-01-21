@@ -22,7 +22,6 @@
 
 
 
-
 bool UIScene::OnCreateScene()
 {
 
@@ -31,7 +30,7 @@ bool UIScene::OnCreateScene()
     
     // 디렉션 라이트 생성
     //m_objectManager->CreateDirLight();
-    //m_objectManager->SetOrthoFlag(true);
+    m_objectManager->SetOrthoFlag(true);
     
 
     //input->AddContext(&s_gameCtx);
@@ -60,7 +59,7 @@ void UIScene::OnEnter()
 {
     //std::cout << "[UIScene] OnEnter\n"; 
     // 컨텍스트 추가
-    YunoEngine::GetInput()->AddContext(&m_uiCtx);
+    YunoEngine::GetInput()->AddContext(&m_uiCtx, this);
 }
 
 void UIScene::OnExit()

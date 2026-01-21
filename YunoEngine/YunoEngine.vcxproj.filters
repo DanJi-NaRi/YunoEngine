@@ -107,6 +107,9 @@
     <Filter Include="Public\Renderer\3DAnimation">
       <UniqueIdentifier>{73b595f9-262f-40dc-97a8-c7c18b0f7dc2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\System">
+      <UniqueIdentifier>{984da9d0-6768-45ac-9828-30e5d3ba09b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -208,6 +211,10 @@
     </ClCompile>
     <ClCompile Include="Public\UIManager.cpp">
       <Filter>Public\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Button.cpp" />
+    <ClCompile Include="Public\InputContextBase.cpp">
+      <Filter>Public\System</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -373,6 +380,10 @@
     </ClInclude>
     <ClInclude Include="Public\UIManager.h">
       <Filter>Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Button.h" />
+    <ClInclude Include="Public\InputContextBase.h">
+      <Filter>Public\System</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->

@@ -3,7 +3,8 @@
 
 struct InputEvent;
 class IInputContext;
-
+class InputContextBase;
+class IScene;
 class IInput
 {
 public:
@@ -31,6 +32,6 @@ public:
     virtual void MouseTrack(HWND hWnd, BOOL bOn = TRUE) = 0;
 
     // 인풋을 사용할 컨텍스트
-    virtual void AddContext(IInputContext* context) = 0;
+    virtual void AddContext(IInputContext* context, IScene* scene) = 0;
     virtual void RemoveContext(IInputContext* context) = 0;
 };

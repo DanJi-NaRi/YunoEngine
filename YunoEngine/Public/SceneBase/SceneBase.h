@@ -32,9 +32,10 @@ public:
     void DrawInspector();
 #endif
 
-protected:
     ObjectManager* GetObjectManager() const { return m_objectManager.get(); }
+    UIManager* GetUIManager() const { return m_uiManager.get(); }
 
+protected:
 #ifdef _DEBUG
     Unit* GetSelectedObject() const { return m_selectedObject; }
     void    SelectObject(Unit* obj) { m_selectedObject = obj; }
