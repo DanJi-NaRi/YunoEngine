@@ -40,7 +40,7 @@ namespace yuno::net
         // 우리 헤더 규약인 패킷을 8Byte만 읽는 함수
         void ReadHeader();
         // 헤더에서 읽은 BodyLength 만큼 패킷을 읽는 함수
-        // bodyLength가 0이면 헤더만 있는 패킷
+        // bodyLength가 0이면 헤더만 있는 패킷임
         void ReadBody(std::uint32_t bodyLength);
         // 패킷 전송 함수
         void DoWrite();
@@ -63,5 +63,6 @@ namespace yuno::net
 
         OnPacketFn m_onPacket;
         OnDisconnectedFn m_onDisconnected;
+        bool m_disconnectedNotified = false;
     };
 }
