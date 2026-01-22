@@ -53,6 +53,8 @@ Widget::Widget()
     m_vScale = XMFLOAT3(1.0f, 1.0f, 1.0f);
     m_vRot = XMFLOAT3(0.0f, 0.0f, 0.0f);
     m_vPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+    m_anchor = Anchor::LeftTop;
 }
 
 Widget::~Widget()

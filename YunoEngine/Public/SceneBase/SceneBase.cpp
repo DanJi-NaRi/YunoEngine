@@ -7,7 +7,6 @@
 #include "IRenderer.h"
 #include "ObjectManager.h"
 #include "UIManager.h"
-#include "YunoInputSystem.h"
 #include "UImgui.h"
 
 std::string WStringToString(const std::wstring& wstr)

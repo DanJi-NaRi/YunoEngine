@@ -5,7 +5,8 @@
 
 #include "AnimationUnit.h"
 #include "Widget.h"
-#include "Button.h"
+
+enum class ButtonState;
 
 class YunoDirectionalLight;
 

@@ -4,9 +4,8 @@
 #include "Parser.h"
 #include "YunoLight.h"
 #include "YunoCamera.h"
-#include "YunoInputSystem.h"
-
-
+#include "IInput.h"
+#include "Button.h"
 
 void UIManager::CreateDirLight()
 {
@@ -203,17 +202,17 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
             continue;
         }
         
-        if (m_pInput->IsMouseButtonPressed(0)) {
+        if (m_pInput->IsMouseButtonPressed(0) || m_pInput->IsMouseButtonPressed(1)) {
             Btn->SetButtonState(ButtonState::Pressed);
             //Btn->PressedEvent();
             //std::cout << "Pressed!!" << std::endl;
         }
-        else if (m_pInput->IsMouseButtonDown(0)) {
+        else if (m_pInput->IsMouseButtonDown(0) || m_pInput->IsMouseButtonDown(1)) {
             Btn->SetButtonState(ButtonState::Down);
             //Btn->DownEvent();
             //std::cout << "Down!!" << std::endl;
         }
-        else if (m_pInput->IsMouseButtonReleased(0)) {
+        else if (m_pInput->IsMouseButtonReleased(0) || m_pInput->IsMouseButtonReleased(1)) {
             Btn->SetButtonState(ButtonState::Released);
             //Btn->ReleasedEvent();
             //std::cout << "Released!!" << std::endl;

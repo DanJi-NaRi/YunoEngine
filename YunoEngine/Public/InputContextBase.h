@@ -7,11 +7,20 @@
 class InputContextBase : public IInputContext
 {
 public:
+
+    virtual ~InputContextBase() { Clear(); }
+
     virtual int GetPriority() const override = 0;
 
     virtual bool OnInputEvent(InputEvent& evt) override = 0;
 
     virtual bool Event(InputEvent& evt) override;
+
+    void Clear() {
+        m_scene = nullptr;
+        m_objManager = nullptr;
+        m_uiManager = nullptr; 
+    };
 
     void SetScene(IScene* scene) {
         assert(scene);
