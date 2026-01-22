@@ -31,9 +31,39 @@ namespace UI
         ImGui::End();
     }
 
+    void BeginDisabled(bool b)
+    {
+        ImGui::BeginDisabled(b);
+    }
+
+    void EndDisabled()
+    {
+        ImGui::EndDisabled();
+    }
+
+    bool UI::BeginCombo(const char* label, const char* str)
+    {
+        return ImGui::BeginCombo(label, str);
+    }
+
+    void UI::EndCombo()
+    {
+        return ImGui::EndCombo();
+    }
+
+    void SameLine(float offsetFromX, float space )
+    {
+        ImGui::SameLine(offsetFromX, space);
+    }
+
     void Separator()
     {
         ImGui::Separator();
+    }
+
+    void SetItemDefaultFocus()
+    {
+        ImGui::SetItemDefaultFocus();
     }
 
     bool IsItemHovered()
@@ -118,5 +148,10 @@ namespace UI
 
             return changed;
         }
+    }
+
+    bool SliderFloat(const char* label, float* v, float v_min, float v_max, const char* fmt)
+    {
+        return ImGui::SliderFloat(label, v, v_min, v_max, fmt);
     }
 }

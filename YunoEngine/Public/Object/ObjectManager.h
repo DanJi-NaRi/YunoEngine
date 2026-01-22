@@ -26,8 +26,9 @@ private:
 
     template<typename T>
     T* CreateObject(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 오브젝트 생성용
-    
-    std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> CreateMeshNode(const std::wstring& filepath);
+
+    std::unique_ptr<MeshNode> CreateMeshNode(const std::wstring& filepath);
+
 
     std::unique_ptr<YunoDirectionalLight> m_directionLight;
 
@@ -120,10 +121,9 @@ T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, c
 {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
-    auto meshAndAnim = CreateMeshNode(filepath);
+    auto mesh = CreateMeshNode(filepath);
 
-    auto meshnode = std::move(meshAndAnim.first);
-    auto animator = std::move(meshAndAnim.second);
+    auto meshnode = std::move(mesh);
 
     std::wstring newname = name;
 
@@ -133,12 +133,6 @@ T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, c
     obj->Create(newname, m_objectIDs++, pos);
 
     obj->SetMesh(std::move(meshnode));
-
-    if constexpr (std::is_base_of_v<AnimationUnit, T>)
-        if (animator)
-        {
-            obj->SetAnimator(std::move(animator));
-        }
 
     auto* pObj = obj.get();
     m_pendingCreateQ.emplace_back(std::move(obj));

@@ -9,11 +9,15 @@ struct VertexWeight
     float weight;
 };
 
+class MeshNode;
+
 class Parser : public Singleton<Parser>
 {
 public:
     Parser() = default;
     virtual ~Parser() = default;
 
-    std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> LoadFile(const std::wstring& filename);
+    std::unique_ptr<MeshNode> LoadFile(const std::wstring& filename);
+    std::unique_ptr<AnimationClip> LoadAnimationClipFromFile(const std::wstring& filename);
+    std::unique_ptr<Animator> LoadAnimatorFromFile(const std::string& name, const std::wstring& filename);
 };

@@ -317,6 +317,7 @@ void SceneBase::DrawInspector()
                 }
             }
             
+            m_selectedObject->Serialize();
 
             if (isChange) m_selectedObject->Update();
         }

@@ -171,7 +171,6 @@
     <ClInclude Include="Public\InputContextBase.h" />
     <ClInclude Include="Private\Input\InputState.h" />
     <ClInclude Include="Private\Input\YunoInputSystem.h" />
-    <ClInclude Include="Private\Renderer\BoneAnimation\BoneAnimation.h" />
     <ClInclude Include="Private\Scene\YunoSceneManager.h" />
     <ClInclude Include="Public\Button.h" />
     <ClInclude Include="Public\Interface\IInputContext.h" />

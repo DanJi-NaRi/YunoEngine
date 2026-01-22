@@ -28,11 +28,14 @@ bool TitleScene::OnCreateScene()
     m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
     
 
-    m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
-    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
-    m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx");
+    auto capo = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/Capoeira2.fbx");
+    capo->AddAnimationClip("capoeira", L"../Assets/fbx/Human/Capoeira2.fbx");
+    //capo->SetScale(XMFLOAT3(10, 10, 10));
+    capo->AddAnimationClip("dying", L"../Assets/fbx/Human/Dying2.fbx");
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
 
 
@@ -48,6 +51,7 @@ void TitleScene::OnDestroyScene()
 void TitleScene::OnEnter()
 {
     //std::cout << "[TitleScene] OnEnter\n";
+
 
 
     AudioQ::Insert(AudioQ::LoadBank(BankName::Title));
