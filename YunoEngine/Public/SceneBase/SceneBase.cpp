@@ -6,6 +6,7 @@
 
 #include "IRenderer.h"
 #include "ObjectManager.h"
+#include "UIManager.h"
 #include "UImgui.h"
 
 std::string WStringToString(const std::wstring& wstr)
@@ -53,8 +54,16 @@ bool SceneBase::OnCreate()
     if (!m_objectManager)
         return false;
 
+    m_uiManager = std::make_unique<UIManager>();
     if (!m_objectManager->Init())
         return false;
+
+    if (m_input = YunoEngine::GetInput(); !m_input)
+        return false;
+
+    if (!m_uiManager->Init())
+        return false;
+
 
     return OnCreateScene();
 }
@@ -70,6 +79,12 @@ void SceneBase::OnDestroy()
     {
         m_objectManager->Clear();
         m_objectManager.reset();
+    }
+
+    if (m_uiManager)
+    {
+        m_uiManager->Clear();
+        m_uiManager.reset();
     }
 }
 
@@ -92,11 +107,8 @@ void SceneBase::Update(float dt)
 {
     m_lastDt = dt;
 
-    if (m_objectManager)
-    {
-        m_objectManager->Update(dt);
-        m_objectManager->WidgetUpdate(dt);
-    }
+    if (m_objectManager) m_objectManager->Update(dt);
+    if (m_uiManager)     m_uiManager->Update(dt);
 
 }
 
@@ -107,29 +119,27 @@ void SceneBase::SubmitObj()
         m_objectManager->ProcessPending();
         m_objectManager->Submit(m_lastDt);
     }
-
 }
 
 void SceneBase::SubmitUI()
 {
-    if (m_objectManager)
+    if (m_uiManager)
     {
-        m_objectManager->ProcessWidgetPending();
-        m_objectManager->WidgetSubmit(m_lastDt);
+        m_uiManager->ProcessPending();
+        m_uiManager->Submit(m_lastDt);
     }
 }
 
 #ifdef _DEBUG
-void SceneBase::DrawObjectListUI()
+void SceneBase::DrawObjectList()
 {
     if (!m_objectManager)
         return;
 
     const uint32_t objcount = m_objectManager->GetObjectCount();
-    const uint32_t widgetcount = m_objectManager->GetWidgetCount();
 
     auto& objlist = m_objectManager->GetObjectlist();
-    auto& widgetlist = m_objectManager->GetWidgetlist();
+
 
     for (uint32_t i = 0; i < objcount; ++i)
     {
@@ -148,6 +158,16 @@ void SceneBase::DrawObjectListUI()
             SelectObject(obj);
         }
     }
+}
+
+void SceneBase::DrawUIList()
+{
+    if (!m_uiManager)
+        return;
+
+    const uint32_t widgetcount = m_uiManager->GetWidgetCount();
+
+    auto& widgetlist = m_uiManager->GetWidgetlist();
 
     for (uint32_t i = 0; i < widgetcount; ++i)
     {
@@ -168,6 +188,7 @@ void SceneBase::DrawObjectListUI()
     }
 }
 
+
 void RadToDegree(XMFLOAT3& out)
 {
     out.x = XMConvertToDegrees(out.x);
@@ -181,6 +202,8 @@ void DegreeToRad(XMFLOAT3& out)
     out.y = XMConvertToRadians(out.y);
     out.z = XMConvertToRadians(out.z);
 }
+
+
 
 void SceneBase::DrawInspector()
 {

@@ -53,6 +53,8 @@ Widget::Widget()
     m_vScale = XMFLOAT3(1.0f, 1.0f, 1.0f);
     m_vRot = XMFLOAT3(0.0f, 0.0f, 0.0f);
     m_vPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+    m_anchor = Anchor::LeftTop;
 }
 
 Widget::~Widget()
@@ -226,10 +228,52 @@ bool Widget::LastSubmit(float dTime /*= 0*/)
     return true;
 }
 
+bool Widget::IsCursorOverWidget(POINT mouseXY) // 마우스 커서가 위젯 위에 있는지 체크
+{
+    return PtInRect(&m_rect, mouseXY);
+}
+
 void Widget::SetMesh(std::unique_ptr<MeshNode>&& mesh)
 {
     m_MeshNode = std::move(mesh);
 }
+
+void Widget::Attach(Widget* widget) //this가 부모, 파라미터로 자식
+{
+    if (widget->m_Parent)//기존 부모있으면 떨어진 후 결합
+        widget->DettachParent();
+
+    widget->m_Parent = this;
+
+    m_Childs.insert(std::make_pair(widget->GetID(), widget));
+}
+
+void Widget::DettachParent()
+{
+    m_Parent->DettachChild(m_id);
+}
+
+void Widget::DettachChild(uint32_t id)
+{
+    if (m_Childs.find(id) == m_Childs.end())
+        return;
+
+    m_Childs.erase(id);
+}
+
+void Widget::ClearChild()
+{
+    if (m_Childs.empty())
+        return;
+
+    for (auto& [id, child] : m_Childs)
+    {
+        child->DettachParent();
+    }
+
+    m_Childs.clear();
+}
+
 
 /// <summary>
 /// 전역 변수 함수들...
@@ -253,3 +297,4 @@ bool SetupDefWidgetMesh(MeshHandle& meshHandle, IRenderer* renderer)
 
     return true;
 }
+

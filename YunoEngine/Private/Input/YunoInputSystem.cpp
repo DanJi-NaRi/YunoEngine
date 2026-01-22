@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "YunoInputSystem.h"
 
+#include "InputContextBase.h"
+#include "SceneBase.h"
+
+
 void YunoInputSystem::BeginFrame()
 {
     m_state.BeginFrame();
@@ -54,20 +58,27 @@ bool YunoInputSystem::IsMouseButtonReleased(uint32_t button) const
     return (m_state.mouseDown[button] == 0) && (m_state.prevMouseDown[button] != 0);
 }
 
-void YunoInputSystem::AddContext(IInputContext* context)
+void YunoInputSystem::AddContext(IInputContext* context, IScene* scene)
 {
-    if (!context) return;
+    if (!context || !scene) return;
+    
+    InputContextBase* pContext = dynamic_cast<InputContextBase*>(context);
+
+    if (!pContext) return;
 
     auto it = std::find(m_contexts.begin(), m_contexts.end(), context);
     if (it != m_contexts.end())
         return;
 
+    pContext->SetScene(scene); // 씬 할당
     m_contexts.push_back(context);
     m_contextOrderDirty = true;
 }
 
 void YunoInputSystem::RemoveContext(IInputContext* context)
 {
+    InputContextBase* pContext = dynamic_cast<InputContextBase*>(context);
+    pContext->Clear();
     auto it = std::remove(m_contexts.begin(), m_contexts.end(), context);
     if (it != m_contexts.end())
     {

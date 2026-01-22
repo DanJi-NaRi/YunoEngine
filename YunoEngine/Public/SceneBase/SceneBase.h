@@ -3,7 +3,8 @@
 #include "IScene.h"
 
 class ObjectManager;
-
+class UIManager;
+class IInput;
 class Unit;
 class Widget;
 
@@ -26,13 +27,15 @@ public:
     const char* GetDebugName() const override { return m_name.c_str(); }
 
 #ifdef _DEBUG
-    void DrawObjectListUI();
+    void DrawObjectList();
+    void DrawUIList();
     void DrawInspector();
 #endif
 
-protected:
     ObjectManager* GetObjectManager() const { return m_objectManager.get(); }
+    UIManager* GetUIManager() const { return m_uiManager.get(); }
 
+protected:
 #ifdef _DEBUG
     Unit* GetSelectedObject() const { return m_selectedObject; }
     void    SelectObject(Unit* obj) { m_selectedObject = obj; }
@@ -46,6 +49,8 @@ protected:
 
 protected:
     std::unique_ptr<ObjectManager> m_objectManager;
+    std::unique_ptr<UIManager> m_uiManager;
+    IInput* m_input = nullptr;
 
 #ifdef _DEBUG
     Unit* m_selectedObject;

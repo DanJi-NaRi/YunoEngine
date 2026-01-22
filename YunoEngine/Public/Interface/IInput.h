@@ -3,7 +3,7 @@
 
 struct InputEvent;
 class IInputContext;
-
+class IScene;
 class IInput
 {
 public:
@@ -11,6 +11,7 @@ public:
 
     // 입력 이벤트 큐에 삽입
     virtual void PushEvent(const InputEvent& evt) = 0;
+    virtual void Dispatch() = 0;
 
     // 게임에서 사용할 API함수들
     virtual bool IsKeyDown(uint32_t key) const = 0;
@@ -31,6 +32,6 @@ public:
     virtual void MouseTrack(HWND hWnd, BOOL bOn = TRUE) = 0;
 
     // 인풋을 사용할 컨텍스트
-    virtual void AddContext(IInputContext* context) = 0;
+    virtual void AddContext(IInputContext* context, IScene* scene) = 0;
     virtual void RemoveContext(IInputContext* context) = 0;
 };
