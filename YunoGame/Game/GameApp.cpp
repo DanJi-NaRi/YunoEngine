@@ -5,7 +5,6 @@
 #include "IRenderer.h"
 #include "IWindow.h"
 #include "YunoEngine.h"
-#include "TestInputContexts.h"
 #include "ISceneManager.h"
 #include "YunoCamera.h"
 
@@ -15,11 +14,10 @@
 #include "PlayScene.h"
 #include "UIScene.h"
 
+#include "AudioQueue.h"
+
 #include "GameApp.h"
 
-
-static UITestContext s_uiCtx;
-static GameTestContext s_gameCtx;
 
 GameApp::~GameApp() = default;
 
@@ -34,13 +32,6 @@ bool GameApp::OnInit()
         return false;
     } // 렌더러 체크
 
-    //---------------- 인풋 테스트
-    IInput* input = YunoEngine::GetInput();
-    input->AddContext(&s_uiCtx);
-    input->AddContext(&s_gameCtx);
-    //---------------- 인풋 테스트
-
-
 
    ISceneManager* sm = YunoEngine::GetSceneManager();
    if (!sm) return false;
@@ -53,6 +44,7 @@ bool GameApp::OnInit()
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
 
+   // 오디어 매니저 생성
     return true;
 }
 
@@ -89,6 +81,7 @@ void GameApp::OnUpdate(float dt)
     IInput* input = YunoEngine::GetInput();
     IWindow* window = YunoEngine::GetWindow();
     ISceneManager* sm = YunoEngine::GetSceneManager();
+    IAudioManager* am = YunoEngine::GetAudioManager();
 
     if (input->IsKeyDown('O')) // >> 이거 인스턴스 호출해서 키다운하는거 불편하니까 나중에 바꾸기 ㄱㄱ
         window->SetClientSize(1920, 1080);
@@ -155,6 +148,12 @@ void GameApp::OnUpdate(float dt)
             //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
             sm->RequestPush(std::make_unique<UIScene>(), policy);
         }
+
+        if (input->IsKeyPressed(VK_OEM_PERIOD))
+        {
+            AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, true));
+            AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, false));
+        }
     }
 
 
@@ -170,7 +169,7 @@ void GameApp::OnUpdate(float dt)
     //}
 
 
-    
+    am->Update(dt);
 }
 
 void GameApp::OnFixedUpdate(float fixedDt)

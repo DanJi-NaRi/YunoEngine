@@ -11,4 +11,6 @@ public:
 
     // 입력 이벤트 소비
     virtual bool OnInputEvent(InputEvent& evt) = 0;   
+
+    virtual bool Event(InputEvent& evt) = 0;
 };

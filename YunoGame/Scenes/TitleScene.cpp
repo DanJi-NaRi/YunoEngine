@@ -6,6 +6,8 @@
 #include "YunoCamera.h"
 
 #include "ObjectManager.h"
+//#include "Game_InputContext.h"
+#include "IInput.h"
 
 #include "Quad.h"
 #include "Building.h"
@@ -13,7 +15,7 @@
 #include "Image.h"
 #include "AnimTest.h"
 #include "YunoLight.h"
-
+#include "AudioQueue.h"
 
 bool TitleScene::OnCreateScene()
 {
@@ -45,17 +47,28 @@ void TitleScene::OnDestroyScene()
 
 }
 
+
 void TitleScene::OnEnter()
 {
     //std::cout << "[TitleScene] OnEnter\n";
-    m_audioScene->Load("Title");
-    //m_audioScene->PlayEvent("BGM/Playlist");
+
+
+
+    AudioQ::Insert(AudioQ::LoadBank(BankName::Title));
+    AudioQ::Insert(AudioQ::PlayEvent(EventName::BGM_Playlist));
+
+    YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
+
 }
 
 void TitleScene::OnExit()
 {
     //std::cout << "[TitleScene] OnExit\n";
+
+    AudioQ::Insert(AudioQ::UnLoadBank(BankName::Title));
     //m_audioScene->Unload();
+    YunoEngine::GetInput()->RemoveContext(&m_gameCtx);
+
 }
 
 
@@ -63,6 +76,7 @@ void TitleScene::OnExit()
 void TitleScene::Update(float dt)
 {
     SceneBase::Update(dt);
+    m_input->Dispatch();
 }
 
 void TitleScene::SubmitObj()

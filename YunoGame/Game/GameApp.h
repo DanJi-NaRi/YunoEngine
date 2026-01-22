@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IGameApp.h"
+#include "IAudioManager.h"
 
 #include "Quad.h"
 #include "Triangle.h"
@@ -20,6 +21,7 @@ public:
 private:
     std::unique_ptr<Quad> m_quad;
     std::unique_ptr<Triangle> m_triangle;
+
 };
 
 

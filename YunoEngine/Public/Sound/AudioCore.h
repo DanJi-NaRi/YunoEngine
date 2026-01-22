@@ -2,12 +2,12 @@
 #include <unordered_map>
 #include <vector>
 
-class AudioSystem
+class AudioCore
 {
 public:
-    static AudioSystem& Get()
+    static AudioCore& Get()
     {
-        static AudioSystem s;
+        static AudioCore s;
         return s;
     }
 
@@ -44,6 +44,7 @@ public:
         const FMOD_3D_ATTRIBUTES& attrs,
         int listenerIndex = 0
     );
+    void SetListener3DAttributes(const XMFLOAT3& pos);
 
     // 전역 파라미터 조절
     void SetGlobalParam(const FMOD_STUDIO_PARAMETER_ID paramID, float value);
@@ -51,14 +52,16 @@ public:
     // 3D 세팅
     void Set3DSettings(float dopplerScale, float distanceFactor, float rolloffScale);
 
+    const std::vector<std::string>& GetEventList(const std::string bankName);
+
     FMOD::Studio::System* Studio() { return m_Studio; }
     FMOD::System* Core() { return m_Core; }
 
 private:
-    AudioSystem() = default;
-    ~AudioSystem() = default;
-    AudioSystem(const AudioSystem&) = delete;
-    AudioSystem& operator=(const AudioSystem&) = delete;
+    AudioCore() = default;
+    ~AudioCore() = default;
+    AudioCore(const AudioCore&) = delete;
+    AudioCore& operator=(const AudioCore&) = delete;
 
 private:
     FMOD::Studio::System* m_Studio = nullptr;

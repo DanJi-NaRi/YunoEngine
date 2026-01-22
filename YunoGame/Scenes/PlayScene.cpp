@@ -7,6 +7,8 @@
 #include "ObjectManager.h"
 #include "YunoLight.h"
 #include "YunoCamera.h"
+#include "IInput.h"
+//#include "Game_InputContext.h"
 
 #include "Building.h"
 #include "Triangle.h"
@@ -47,19 +49,23 @@ void PlayScene::OnDestroyScene()
 
 }
 
+
 void PlayScene::OnEnter()
 {
     //std::cout << "[PlayScene] OnEnter\n"; 
+    YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
 }
 
 void PlayScene::OnExit()
 {
     //std::cout << "[PlayScene] OnExit\n"; 
+    YunoEngine::GetInput()->RemoveContext(&m_gameCtx);
 }
 
 void PlayScene::Update(float dt)
 {
     SceneBase::Update(dt);
+    m_input->Dispatch();
 }
 
 void PlayScene::SubmitObj()
