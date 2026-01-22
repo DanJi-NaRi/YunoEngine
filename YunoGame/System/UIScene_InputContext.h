@@ -3,11 +3,10 @@
 
 #include "YunoEngine.h"
 
-#include <InputEvent.h>
+#include "InputEvent.h"
 #include "InputContextBase.h"
 #include "IInput.h"
 
-#include "AudioQueue.h"
 #include "UIManager.h"
 #include "UIScene.h"
 #include "Button.h"
@@ -47,7 +46,7 @@ public:
             // 마우스 먼저
             evt.consumed = m_uiManager->ProcessButtonMouse(ButtonState::Pressed, 0);
             if (evt.consumed) {
-                AudioQ::Insert({ AudioCmdType::PlayOneShot, EventName::UI_Click }); // 사운드!
+                
                 std::cout << "[UI] Consumed LMB\n";
             }
             return evt.consumed;

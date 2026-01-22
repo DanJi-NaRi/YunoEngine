@@ -64,10 +64,6 @@ bool SceneBase::OnCreate()
     if (!m_uiManager->Init())
         return false;
 
-    m_audioScene = std::make_unique<AudioScene>();
-    if (!m_audioScene)
-        return false;
-
 
     return OnCreateScene();
 }

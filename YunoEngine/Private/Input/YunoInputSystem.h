@@ -1,7 +1,7 @@
 #pragma once
-#include <IInput.h>        
-#include <InputEvent.h>    
-#include <IScene.h>
+#include "IInput.h"     
+#include "InputEvent.h"    
+#include "IScene.h"
 #include "InputState.h" 
 
 class IInputContext;

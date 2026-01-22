@@ -1,10 +1,9 @@
 #pragma once
 #include <iostream>
 
-#include <InputEvent.h>
+#include "InputEvent.h"
 #include "InputContextBase.h"
 
-#include "AudioQueue.h"
 #include "UIManager.h"
 
 class SettingScene_InputContext final : public InputContextBase
@@ -21,7 +20,7 @@ public:
             // 씬에서 가지고 있는 Button Rect 비교
             // 있으면 기-> Button Event()
             // 없으면 -> 컨슘 ㅋㅕ
-            AudioQ::Insert({ AudioCmdType::PlayOneShot, EventName::UI_Click }); // 사운드!
+            //AudioQ::Insert({ AudioCmdType::PlayOneShot, EventName::UI_Click }); // 사운드!
             std::cout << "[UI] Consumed LMB\n";
             evt.consumed = false;
             return false;
