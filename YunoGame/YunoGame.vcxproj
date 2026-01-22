@@ -205,6 +205,8 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\Object\Building.cpp" />
     <ClCompile Include="Game\Object\Dwarf.cpp" />
     <ClCompile Include="Game\UI\Image.cpp" />
+    <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="GridSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Object\Triangle.cpp" />
     <ClCompile Include="Game\Object\Quad.cpp" />
@@ -220,6 +222,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ClCompile>
     <ClCompile Include="Game\UI\Text.cpp" />
     <ClCompile Include="Scenes\UIScene.cpp" />
+    <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientNetwork\YunoClientNetwork.h">
@@ -234,6 +237,8 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\Object\Triangle.h" />
     <ClInclude Include="Game\Object\Quad.h" />
     <ClInclude Include="Game\UI\Image.h" />
+    <ClInclude Include="Grid.h" />
+    <ClInclude Include="GridSystem.h" />
     <ClInclude Include="Scenes\PlayScene.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
@@ -249,6 +254,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="System\SettingScene_InputContext.h" />
     <ClInclude Include="System\UIScene_InputContext.h" />
     <ClInclude Include="Game\UI\Text.h" />
+    <ClInclude Include="Tile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

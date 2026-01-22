@@ -54,6 +54,11 @@
     </Filter>
     <Filter Include="System\GameScene">
       <UniqueIdentifier>{5e610e02-9910-4288-8003-55dcb20743a5}</UniqueIdentifier>
+    <Filter Include="Game\Object\Grid">
+      <UniqueIdentifier>{7f14bc22-aa41-48fc-9e7b-06fd3b422c6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Tile">
+      <UniqueIdentifier>{d15592e8-202a-4afe-8c14-9f61c810719f}</UniqueIdentifier>
     </Filter>
     <Filter Include="main\GamePCH">
       <UniqueIdentifier>{38f5e7a6-3988-4694-b80c-2399a2758a86}</UniqueIdentifier>
@@ -106,6 +111,16 @@
       <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp" />
+
+    <ClCompile Include="GridSystem.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="GridLine.cpp">
+      <Filter>Game\Object\GridLine</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>Game\Object\Tile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -157,5 +172,16 @@
       <Filter>System\UIScene</Filter>
     </ClInclude>
     <ClInclude Include="ClientNetwork\YunoClientNetwork.h" />
+    <ClInclude Include="ClientNet\ClientNet.h" />
+
+    <ClInclude Include="GridSystem.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="GridLine.h">
+      <Filter>Game\Object\GridLine</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>Game\Object\Tile</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
