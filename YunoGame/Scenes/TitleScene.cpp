@@ -9,6 +9,8 @@
 //#include "Game_InputContext.h"
 #include "IInput.h"
 
+#include "GridSystem.h"
+#include "GridLine.h"
 #include "Quad.h"
 #include "Building.h"
 #include "Triangle.h"
@@ -20,13 +22,16 @@
 bool TitleScene::OnCreateScene()
 {
     //std::cout << "[TitleScene] OnCreate\n";
-    
+    // 그리드 오브젝트 안에서 그리드 시스템을 만들어
+    // 행렬, 사이즈.
+
     m_name = "TitleScene";
    
     m_objectManager->CreateDirLight();
     
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
-    
+    m_gridSystem = std::make_unique<GridSystem>(5, 7, 2, 1);
+    m_objectManager->CreateObject<GridLine>(L"DebugGridLine", XMFLOAT3(0, 3, 0));
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
@@ -51,11 +56,17 @@ void TitleScene::OnDestroyScene()
 }
 
 
+TitleScene::TitleScene()
+{
+}
+
+TitleScene::~TitleScene()
+{
+}
+
 void TitleScene::OnEnter()
 {
     //std::cout << "[TitleScene] OnEnter\n";
-
-
 
     AudioQ::Insert(AudioQ::LoadBank(BankName::Title));
     AudioQ::Insert(AudioQ::PlayEvent(EventName::BGM_Playlist));
@@ -68,7 +79,6 @@ void TitleScene::OnEnter()
 void TitleScene::OnExit()
 {
     //std::cout << "[TitleScene] OnExit\n";
-
 
     AudioQ::Insert(AudioQ::UnLoadBank(BankName::Title));
     //m_audioScene->Unload();

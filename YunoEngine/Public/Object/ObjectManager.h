@@ -77,6 +77,7 @@ private:
     void FrameDataSubmit();
 };
 
+
 template<typename T>
 T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos) {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
