@@ -119,8 +119,15 @@ enum class ShaderId : uint8_t
     Unlit,
     Skybox,
     UIBase,
+    PP_Default, //PostProcess
 
     Count
+};
+
+enum class MaterialDomain
+{
+    Surface,
+    PostProcess
 };
 
 struct PassKey
@@ -131,6 +138,7 @@ struct PassKey
     BlendPreset blend = BlendPreset::Opaque;
     RasterPreset raster = RasterPreset::CullBack;
     DepthPreset depth = DepthPreset::ReadWrite;
+    MaterialDomain domain = MaterialDomain::Surface;
 
     bool operator==(const PassKey& rhs) const
     {
@@ -139,7 +147,8 @@ struct PassKey
             && vertexFlags == rhs.vertexFlags
             && blend == rhs.blend
             && raster == rhs.raster
-            && depth == rhs.depth;
+            && depth == rhs.depth
+            && domain == rhs.domain;
     }
 };
 

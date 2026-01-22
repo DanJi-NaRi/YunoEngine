@@ -158,10 +158,7 @@ void SceneBase::DrawObjectList()
             SelectObject(obj);
         }
     }
-}
 
-void SceneBase::DrawUIList()
-{
     if (!m_uiManager)
         return;
 

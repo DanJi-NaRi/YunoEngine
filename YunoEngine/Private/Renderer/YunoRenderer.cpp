@@ -81,6 +81,10 @@ bool YunoRenderer::Initialize(IWindow* window)
     if (m_defaultMaterial == 0)     // 생성 실패하면 리턴
         return false;
 
+    if (!CreatePPRenderTarget(m_width, m_height)) return false;
+    if (!CreatePPMaterial()) return false;
+    SetPP_Pass();
+
     // 디버그 리소스 생성
     CreateDebugGridResources();
 
@@ -97,6 +101,8 @@ bool YunoRenderer::CreateShaders()
     if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
+
+    if (!CreatePPShader()) return false;
     return true;
 }
 
@@ -359,6 +365,227 @@ bool YunoRenderer::CheckMSAA()
     return true;
 }
 
+RenderTarget& YunoRenderer::NextPostRT()
+{
+    const float clearColor[4] = { 0.05f, 0.1f, 0.2f, 1.0f };
+
+    auto& dstRT = m_postRT[(m_postIndex + 1) & 1];
+
+    m_context->ClearRenderTargetView(dstRT.rtv.Get(), clearColor);
+
+    return dstRT;
+}
+
+bool YunoRenderer::CreatePPRenderTarget(uint32_t width, uint32_t height)
+{
+    m_sceneRT = {};
+    m_postRT[0] = {};
+    m_postRT[1] = {};
+
+    D3D11_TEXTURE2D_DESC td{};
+    td.Width = width;
+    td.Height = height;
+    td.MipLevels = 1;
+    td.ArraySize = 1;
+    td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    td.SampleDesc.Count = 1;
+    td.SampleDesc.Quality = 0;
+    td.Usage = D3D11_USAGE_DEFAULT;
+    td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    td.CPUAccessFlags = 0;
+    td.MiscFlags = 0;
+
+    if (FAILED(m_device->CreateTexture2D(&td, nullptr, m_sceneRT.tex.GetAddressOf())))
+        return false;
+
+    if (FAILED(m_device->CreateTexture2D(&td, nullptr, m_postRT[0].tex.GetAddressOf())))
+        return false;
+
+    if (FAILED(m_device->CreateTexture2D(&td, nullptr, m_postRT[1].tex.GetAddressOf())))
+        return false;
+
+    D3D11_RENDER_TARGET_VIEW_DESC rtvDesc{};
+    rtvDesc.Format = td.Format;
+    rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+    rtvDesc.Texture2D.MipSlice = 0;
+
+    if (FAILED(m_device->CreateRenderTargetView(m_sceneRT.tex.Get(), &rtvDesc, m_sceneRT.rtv.GetAddressOf())))
+        return false;
+
+    if (FAILED(m_device->CreateRenderTargetView(m_postRT[0].tex.Get(), &rtvDesc, m_postRT[0].rtv.GetAddressOf())))
+        return false;
+
+    if (FAILED(m_device->CreateRenderTargetView(m_postRT[1].tex.Get(), &rtvDesc, m_postRT[1].rtv.GetAddressOf())))
+        return false;
+
+    //셰이더리소스뷰 정보 구성.
+    D3D11_SHADER_RESOURCE_VIEW_DESC sd = {};
+    ZeroMemory(&sd, sizeof(sd));
+    sd.Format = td.Format;										//텍스처와 동일포멧유지.
+    sd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    sd.Texture2D.MipLevels = td.MipLevels;
+    sd.Texture2D.MostDetailedMip = 0;
+
+    if (FAILED(m_device->CreateShaderResourceView(m_sceneRT.tex.Get(), &sd, m_sceneRT.srv.GetAddressOf())))
+        return false;
+    if (FAILED(m_device->CreateShaderResourceView(m_postRT[0].tex.Get(), &sd, m_postRT[0].srv.GetAddressOf())))
+        return false;
+    if (FAILED(m_device->CreateShaderResourceView(m_postRT[1].tex.Get(), &sd, m_postRT[1].srv.GetAddressOf())))
+        return false;
+
+    m_sceneRT.w = width;
+    m_sceneRT.h = height;
+    m_sceneRT.fmt = td.Format;
+
+    m_postRT[0].w = width;
+    m_postRT[0].h = height;
+    m_postRT[0].fmt = td.Format;
+
+    m_postRT[1].w = width;
+    m_postRT[1].h = height;
+    m_postRT[1].fmt = td.Format;
+
+    return true;
+}
+
+bool YunoRenderer::CreatePPShader()
+{
+    if (!LoadShader(ShaderId::PP_Default, "../Assets/Shaders/PP_Default.hlsl", "VSMain", "PSMain")) return false;
+
+    return true;
+}
+
+bool YunoRenderer::CreatePPMaterial()
+{
+    //Default
+    MaterialDesc md{};
+    md.passKey.vs = ShaderId::PP_Default;
+    md.passKey.ps = ShaderId::PP_Default;
+    md.passKey.vertexFlags = 0;
+    md.passKey.blend = BlendPreset::Opaque;
+    md.passKey.raster = RasterPreset::CullNone;
+    md.passKey.depth = DepthPreset::Off;
+    md.passKey.domain = MaterialDomain::PostProcess;
+
+    const MaterialHandle h = CreateMaterial(md);
+    if (h)
+    {
+        m_PPMaterials.emplace(PostProcessFlag::Default, h);
+        m_ppDefaultMat = h;
+    }
+    else
+        return false;
+
+    return true;
+}
+
+void YunoRenderer::SetPP_Pass()
+{
+    if (m_PPFlag == 0) m_PPFlag = PostProcessFlag::Default;
+
+    m_ppChain.clear();
+
+    if (PostProcessFlag::Default & m_PPFlag)
+    {
+        PostProcessPass pp = {};
+        pp.enabled = true;
+        auto it = m_PPMaterials.find(PostProcessFlag::Default);
+        if(it != m_PPMaterials.end())
+            pp.material = it->second;
+        pp.rtIdx = 0;
+        m_ppChain.push_back(pp);
+    }
+
+    if (PostProcessFlag::Bloom & m_PPFlag)
+    {
+        PostProcessPass pp = {};
+        pp.enabled = true;
+        auto it = m_PPMaterials.find(PostProcessFlag::Bloom);
+        if (it != m_PPMaterials.end())
+            pp.material = it->second;
+        pp.rtIdx = 0;
+    }
+}
+
+void YunoRenderer::PostProcess()
+{
+    ID3D11ShaderResourceView* input = m_sceneRT.srv.Get();
+
+    BindSamplers();
+
+    for (auto& pp : m_ppChain)
+    {
+        if (!pp.enabled) continue;
+
+        auto& dst = NextPostRT();
+        UnBindAllSRV();
+        BindRT(dst.rtv.Get());
+
+        const YunoMaterial* material = nullptr;
+
+        if (pp.material > 0 && pp.material <= m_materials.size()) // 핸들 유효성 체크
+            material = &m_materials[pp.material - 1];
+
+        if (!material)
+            continue;
+
+        RenderPassHandle passHandle = material->pass;
+
+        if (passHandle == 0 || passHandle > m_passes.size())
+            continue;
+
+        m_context->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+        m_context->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+        m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+        // 렌더 패스 바인드
+        m_passes[passHandle - 1]->Bind(m_context.Get());
+
+        // 텍스쳐 바인드
+        m_context->PSSetShaderResources(0, 1, &input);
+
+        // 드로우
+        m_context->Draw(3, 0);
+
+        input = dst.srv.Get();
+        m_postIndex++;
+    }
+
+    UnBindAllSRV();
+    BindRT(m_backBufferRT.rtv.Get());
+
+    const YunoMaterial* material = nullptr;
+
+    if (m_ppDefaultMat > 0 && m_ppDefaultMat <= m_materials.size()) // 핸들 유효성 체크
+        material = &m_materials[m_ppDefaultMat - 1];
+
+    if (!material)
+        return;
+
+    RenderPassHandle passHandle = material->pass;
+
+    // 렌더 패스 바인드
+    m_passes[passHandle - 1]->Bind(m_context.Get());
+
+    // 텍스쳐 바인드
+    m_context->PSSetShaderResources(0, 1, &input);
+
+    // 드로우
+    m_context->Draw(3, 0);
+}
+
+void YunoRenderer::UnBindAllSRV()
+{
+    ID3D11ShaderResourceView* nullSRV[16] = {}; //이전에 바인드된 srv가 이제 set됄 rtv가 되는것을 방지->rtv를 동시에 텍스쳐와 렌더타겟으로 사용방지
+    m_context->PSSetShaderResources(0, 16, nullSRV);
+}
+
+void YunoRenderer::BindRT(ID3D11RenderTargetView* rt)
+{
+    m_context->OMSetRenderTargets(1, &rt, nullptr);
+    //SetViewPort();
+}
+
 void YunoRenderer::SetViewPort()
 {
     D3D11_VIEWPORT vp;
@@ -389,7 +616,7 @@ void YunoRenderer::BeginFrame()
     }
     else                                                    // MSAA 미사용
     {
-        m_context->OMSetRenderTargets(1, m_backBufferRT.rtv.GetAddressOf(), m_dsv.Get());
+        m_context->OMSetRenderTargets(1, m_sceneRT.rtv.GetAddressOf(), m_dsv.Get());
     }        
 
     SetViewPort();                                                                           // 뷰포트 설정
@@ -400,7 +627,9 @@ void YunoRenderer::BeginFrame()
     if (m_msaaSamples > 1 && m_msaaRT.rtv)                  // MSAA 사용
         m_context->ClearRenderTargetView(m_msaaRT.rtv.Get(), clearColor);
     else                                                    // MSAA 미사용
-        m_context->ClearRenderTargetView(m_backBufferRT.rtv.Get(), clearColor);   
+        m_context->ClearRenderTargetView(m_sceneRT.rtv.Get(), clearColor);
+
+    m_context->ClearRenderTargetView(m_backBufferRT.rtv.Get(), clearColor);
 
     // 뎁스/스텐실 클리어
     ClearDepthStencil();                                                                     
@@ -412,10 +641,12 @@ void YunoRenderer::EndFrame()
     if (m_msaaSamples > 1 && m_msaaRT.tex && m_backBufferTex)
     {
         m_context->ResolveSubresource(
-            m_backBufferTex.Get(), 0,
+            m_sceneRT.tex.Get(), 0,
             m_msaaRT.tex.Get(), 0,
             DXGI_FORMAT_R8G8B8A8_UNORM);
     }
+
+    PostProcess();
 
     // VSync가 뭔지는 다들 알죠? >> 화면 주사율이랑 게임 프레임이랑 동기화 시키는 겁니다
     // VSync ON
@@ -1081,6 +1312,14 @@ std::pair<int, int> YunoRenderer::GetTextureSize(TextureHandle handle) const
 
 }
 
+void YunoRenderer::SetPostProcessFlag(uint32_t flag)
+{
+    m_PPFlag = PostProcessFlag::Default;
+    m_PPFlag |= flag;
+
+    SetPP_Pass();
+}
+
 RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
 {
     auto it = m_passCache.find(key);
@@ -1098,17 +1337,23 @@ RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
     if (!shader.vs || !shader.ps || !shader.vsBytecode)
         return 0;
 
-
-    std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
-    if (!InputLayoutFromFlags(key.vertexFlags, layout)) // 플래그에 맞는 layout을 만들어서 담아줌
-        return 0;
-
     YunoRenderPassDesc pd{};
+    std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
+
+    if (key.domain == MaterialDomain::Surface)
+    {
+        if (!InputLayoutFromFlags(key.vertexFlags, layout)) // 플래그에 맞는 layout을 만들어서 담아줌
+            return 0;
+
+        pd.inputElements = layout.data();                                   // 키 기반 완료
+        pd.inputElementCount = static_cast<uint32_t>(layout.size());        // 키 기반 완료
+    }
+    
     pd.vs = shader.vs.get();                                            // 키 기반 완료
     pd.ps = shader.ps.get();                                            // 키 기반 완료
     pd.vsBytecode = shader.vsBytecode.Get();                            // 키 기반 완료
-    pd.inputElements = layout.data();                                   // 키 기반 완료
-    pd.inputElementCount = static_cast<uint32_t>(layout.size());        // 키 기반 완료
+    pd.domain = key.domain;
+    
 
     switch (key.depth)                                                  // 키 기반 완료
     {
@@ -1245,6 +1490,9 @@ void YunoRenderer::Flush()
 #endif
     // 렌더 전에 정렬 넣을예정
 
+    // 샘플러 바인드
+    BindSamplers();
+
     for (const RenderItem& item : m_renderQueue)
     {
         if (item.meshHandle == 0 || item.meshHandle > m_meshes.size())
@@ -1282,9 +1530,6 @@ void YunoRenderer::Flush()
 
         // 텍스쳐 바인드
         BindTextures(*material);
-
-        // 샘플러 바인드
-        BindSamplers();
 
         // 드로우
         if (mesh.ib && mesh.indexCount > 0)

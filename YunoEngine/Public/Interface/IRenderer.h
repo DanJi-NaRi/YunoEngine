@@ -53,6 +53,9 @@ public:
     // 카메라 받아오기
     virtual YunoCamera& GetCamera() = 0;
 
+    //포스트프로세싱 설정
+    virtual void SetPostProcessFlag(uint32_t flag) = 0;
+
     // 종료
     virtual void Shutdown() = 0;
 

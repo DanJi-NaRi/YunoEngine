@@ -567,27 +567,38 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
 
     aiMaterial* aiMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 
-    std::wstringstream meshNum;
-    meshNum << std::setw(3) << std::setfill(L'0') << nodeNum + 1;
+    /*std::wstringstream meshNum;
+    meshNum << std::setw(3) << std::setfill(L'0') << nodeNum + 1;*/
 
     if (aiMaterial)
     {
         aiString texPath;
         aiReturn ret;
+
+        std::wstring texNum;
         
         //AlbedoMap
         if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS)
         {
             auto wPath = Utf8ToWString(texPath.C_Str());
-            TextureHandle diff = renderer->CreateTexture2DFromFile(wPath.c_str());
+
+            //assert(wPath.find(L"Albedo") != std::wstring::npos, "Can't Find \"Albedo\" In Texture");
+
+            texNum = wPath.substr(wPath.find(L".png") - 1, 1);
+
+            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
+            texPath += L"_Albedo_" + texNum + L".png";
+            TextureHandle diff = renderer->CreateTexture2DFromFile(texPath.c_str());
 
             md.albedo = diff;
         }
         else
         {
+            //assert(false, "Not Include Albedo in File");
+            //texNum = wPath.substr(wPath.find(L".png") - 1, 1);
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_BaseColor_" + meshNum.str() + L".png";
-
+            texNum = std::to_wstring(nodeNum + 1);
+            texPath += L"_Albedo_" + texNum + L".png";
             TextureHandle diff = renderer->CreateTexture2DFromFile(texPath.c_str());
 
             md.albedo = diff;
@@ -603,7 +614,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         else 
         {
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_Normal_" + meshNum.str() + L".png";
+            texPath += L"_Normal_" + texNum + L".png";
 
             TextureHandle nrm = renderer->CreateTexture2DFromFile(texPath.c_str());
 
@@ -615,16 +626,16 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             auto wPath = Utf8ToWString(texPath.C_Str());
             TextureHandle metal = renderer->CreateTexture2DFromFile(wPath.c_str());
 
-            md.metal = 123; //pbr셰이더용 쓰레기값 추가 텍스쳐 안넣어주면 터짐
+            md.metal = metal; //pbr셰이더용 쓰레기값 추가 텍스쳐 안넣어주면 터짐
         }
         else
         {
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_Metallic_" + meshNum.str() + L".png";
+            texPath += L"_ORM_" + texNum + L".png";
 
-            TextureHandle metal = renderer->CreateTexture2DFromFile(texPath.c_str());
+            TextureHandle orm = renderer->CreateTexture2DFromFile(texPath.c_str());
 
-            md.metal = metal;
+            md.orm = orm;
         }
         //Roughness
         if (aiMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &texPath) == AI_SUCCESS)
@@ -637,11 +648,11 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         else
         {
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_Roughness_" + meshNum.str() + L".png";
+            texPath += L"_ORM_" + texNum + L".png";
 
-            TextureHandle rough = renderer->CreateTexture2DFromFile(texPath.c_str());
+            TextureHandle orm = renderer->CreateTexture2DFromFile(texPath.c_str());
 
-            md.rough = rough;
+            md.orm = orm;
         }
         //AO
         if (aiMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &texPath) == AI_SUCCESS)
@@ -654,11 +665,11 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         else 
         {
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_AO_" + meshNum.str() + L".png";
+            texPath += L"_ORM_" + texNum + L".png";
 
-            TextureHandle ao = renderer->CreateTexture2DFromFile(texPath.c_str());
+            TextureHandle orm = renderer->CreateTexture2DFromFile(texPath.c_str());
 
-            md.ao = ao;
+            md.orm = orm;
         }
     }
 

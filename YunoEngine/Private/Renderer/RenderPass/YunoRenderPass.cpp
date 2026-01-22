@@ -10,12 +10,13 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
     if (!device) return false;
     if (!desc.vs || !desc.ps) return false;
     if (!desc.vsBytecode) return false;
-    if (!desc.inputElements || desc.inputElementCount == 0) return false;
+    if ((!desc.inputElements || desc.inputElementCount == 0) && desc.domain == MaterialDomain::Surface) return false;
 
     m_vs = desc.vs;
     m_ps = desc.ps;
 
     // InputLayout
+    if(desc.domain == MaterialDomain::Surface)
     {
         Microsoft::WRL::ComPtr<ID3D11InputLayout> layout;
         const HRESULT hr = device->CreateInputLayout(
@@ -27,6 +28,10 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
 
         if (FAILED(hr)) return false;
         m_inputLayout = std::move(layout);
+    }
+    else
+    {
+        m_inputLayout = nullptr;
     }
 
     // RasterizerState

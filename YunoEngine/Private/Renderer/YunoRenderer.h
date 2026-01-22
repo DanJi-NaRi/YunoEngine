@@ -23,6 +23,21 @@ struct RenderTarget
     DXGI_FORMAT fmt = DXGI_FORMAT_R8G8B8A8_UNORM;
 };
 
+enum PostProcessFlag : uint32_t
+{
+    Default = 1u << 0,
+    Bloom = 1u << 1,
+
+    Max
+};
+
+struct PostProcessPass
+{
+    MaterialHandle   material;
+    UINT rtIdx;
+    bool enabled = true;
+};
+
 
 // 전방선언
 class IWindow;
@@ -155,7 +170,7 @@ public:
     YunoCamera& GetCamera() override { return m_camera; }
     std::pair<int, int> GetTextureSize(TextureHandle handle) const;
     
-
+    void SetPostProcessFlag(uint32_t flag);
 private:
     void BindConstantBuffers(const RenderItem& item);
 
@@ -170,8 +185,6 @@ private:
     void SetViewPort();
     void ClearDepthStencil();
     const ShaderId SetShaderKey(const MaterialDesc& desc);
-
-
 
 private:
     uint32_t m_width = 0;
@@ -210,6 +223,30 @@ private:
     bool CreateMSAARenderTarget(uint32_t width, uint32_t height);
     bool CreateMSAADepthStencil(uint32_t width, uint32_t height);
     bool CheckMSAA();
+
+    //PostProcessing
+private:
+    RenderTarget m_sceneRT;
+    RenderTarget m_postRT[2]; //chain방식
+
+    uint32_t m_postIndex = 0;
+
+    RenderTarget& CurPostRT() { return m_postRT[m_postIndex & 1]; }
+    RenderTarget& NextPostRT();
+
+    bool CreatePPRenderTarget(uint32_t width, uint32_t height);
+    bool CreatePPShader();
+    bool CreatePPMaterial();
+    void SetPP_Pass();
+
+    void PostProcess();
+    void UnBindAllSRV();
+    void BindRT(ID3D11RenderTargetView* rt);
+
+    uint32_t m_PPFlag;
+    std::unordered_map<PostProcessFlag, MaterialHandle> m_PPMaterials;
+    std::vector<PostProcessPass> m_ppChain;
+    MaterialHandle m_ppDefaultMat = 0;
 
     // 나중에 메쉬 매니저 이런걸로 뺼듯
 private:

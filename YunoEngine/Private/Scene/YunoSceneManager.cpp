@@ -48,26 +48,11 @@ void YunoSceneManager::RegisterDrawSceneUI()
         [this]() {
             UI::SetNextUIPos(800, 0);
             UI::SetNextUISize(200, 500);
-            UI::BeginPanel("UIHierarchy");
-
-            if (m_selectView)
-            {
-                dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawUIList();
-            }
-            UI::EndPanel();
-        }
-    );
-
-    ImGuiManager::RegisterDraw(
-        [this]() {
-            UI::SetNextUIPos(800, 0);
-            UI::SetNextUISize(200, 500);
             UI::BeginPanel("ObjectHierarchy");
 
             if (m_selectView)
             {
                 dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawObjectList();
-                dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawUIList();
             }
             UI::EndPanel();
         }
