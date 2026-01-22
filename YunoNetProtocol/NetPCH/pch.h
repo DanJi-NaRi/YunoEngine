@@ -2,10 +2,10 @@
 #define PCH_H
 
 // ===============================
-//           Network PCH
+//      NetworkProtocol PCH
 // ===============================
 
-// 1. 여기는 네트워크용 pch 입니다. 엔진,게임 pch와 별도의 영역입니다.
+// 1. 여기는 네트워크 프로토콜용 pch 입니다. 엔진,게임 pch와 별도의 영역입니다.
 // 2. 여기서 인클루드 한 헤더들은 YunoNetProtocol내에서만 작동합니다.
 // 3. 라이브러리만 인클루드 해서 사용할 예정입니다.
 // 4. 모든 cpp파일 최상단에 pch.h가 인클루드 되어야 합니다.
@@ -25,30 +25,6 @@
 #include <chrono>
 #include <array>
 #include <deque>
-
-// ===============================
-// Debug / Utility
-// ===============================
-#include <iostream>
-#include <sstream>
-#include <filesystem>
-
-
-// ===============================
-// DirectX Math
-// ===============================
-#include <DirectXMath.h>
-using namespace DirectX;
-
-
-// ===============================
-// Windows
-// ===============================
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <Windows.h>
-#include <Windowsx.h>
-
 
 
 

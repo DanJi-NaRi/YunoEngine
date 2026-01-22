@@ -250,12 +250,26 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             const uint32_t w = static_cast<uint32_t>(LOWORD(lParam));
             const uint32_t h = static_cast<uint32_t>(HIWORD(lParam));
 
+
+            if (wParam == SIZE_MINIMIZED || w == 0 || h == 0)
+            {
+                window->m_minimized = true;
+
+                window->m_clientWidth = w;
+                window->m_clientHeight = h;
+
+                window->m_resized = false;
+                return 0;
+            }
+
+            window->m_minimized = false;
+
             window->m_clientWidth = w;
             window->m_clientHeight = h;
 
             window->m_pendingW = w;
             window->m_pendingH = h;
-            window->m_resized = true;   //더티 플래그
+            window->m_resized = true;
         }
         return 0;
     }

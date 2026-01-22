@@ -120,7 +120,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)NetPCH;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)NetPCH;$(ProjectDir)Public;$(ProjectDir)Public\Net;$(ProjectDir)Public\Net\Packets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -139,7 +139,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)NetPCH;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)NetPCH;$(ProjectDir)Public;$(ProjectDir)Public\Net;$(ProjectDir)Public\Net\Packets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -152,6 +152,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="NetPCH\pch.h" />
+    <ClInclude Include="Public\Net\ByteIO.h" />
+    <ClInclude Include="Public\Net\PacketBuilder.h" />
+    <ClInclude Include="Public\Net\PacketDispatcher.h" />
+    <ClInclude Include="Public\Net\PacketHeader.h" />
+    <ClInclude Include="Public\Net\Packets\S2C_MatchResult.h" />
+    <ClInclude Include="Public\Net\PacketType.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NetPCH\pch.cpp">
@@ -160,6 +166,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Private\Net\ByteIO.cpp" />
+    <ClCompile Include="Private\Net\PacketBuilder.cpp" />
+    <ClCompile Include="Private\Net\PacketDispatcher.cpp" />
+    <ClCompile Include="Private\Net\Packets\S2C_MatchResult.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

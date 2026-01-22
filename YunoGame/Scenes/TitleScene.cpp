@@ -26,11 +26,11 @@ bool TitleScene::OnCreateScene()
     m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
     
 
-    m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
-    m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
+    m_objectManager->CreateObjectFromFile<AnimTest>(L"Human", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
 
 
@@ -46,13 +46,17 @@ void TitleScene::OnEnter()
 {
     //std::cout << "[TitleScene] OnEnter\n";
     m_audioScene->Load("Title");
+    
+    // 특정 이벤트때
+    //AudioQ::Insert({ AudioCmdType::PlayEvent, L"BGM/Playlist" });
     m_audioScene->PlayEvent("BGM/Playlist");
+    //m_audioScene->BGMInserQ({ AudioCmdType::PlayEvent, L"BGM/Playlist" });
 }
 
 void TitleScene::OnExit()
 {
     //std::cout << "[TitleScene] OnExit\n";
-    //m_audioScene->Unload();
+    m_audioScene->Unload();
 }
 
 

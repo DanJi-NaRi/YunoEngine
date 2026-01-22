@@ -15,6 +15,7 @@
 #include "PlayScene.h"
 #include "UIScene.h"
 
+
 #include "GameApp.h"
 
 
@@ -56,6 +57,9 @@ bool GameApp::OnInit()
 
    const bool ok = m_net->Connect("127.0.0.1", 9000);
    std::cout << (ok ? "[NET] Connected\n" : "[NET] Connect failed\n");
+
+   // Iaudio* audio = YunoEngine::GetAudio();
+   // audio 생겨
 
 
    SceneTransitionOptions opt{};
@@ -183,7 +187,7 @@ void GameApp::OnUpdate(float dt)
         }
     }
 
-
+    // audio-> StateCheck();
 
 
     //if (acc >= 1.0f)
@@ -305,3 +309,7 @@ void CameraMove(float dt)
     XMStoreFloat3(&camera.target, target);
     camera.up = { 0.0f, 1.0f, 0.0f };
 }
+
+
+// GameApp = 시스템적으로 관리 하는 애들
+// Scene = 게임적으로 필요한 애들

@@ -26,6 +26,9 @@ struct YunoCamera
     {
         using namespace DirectX;
 
+        if (width <= 0.0f || height <= 0.0f)
+            return XMMatrixIdentity(); // 또는 이전 프레임 proj 유지(멤버로 캐시한다면)
+
         return (useOrtho) ? XMMatrixOrthographicOffCenterLH(0.0f, (float)width, (float)height, 0.0f, 0, 1) : XMMatrixPerspectiveFovLH(fovY, aspect, nearZ, farZ);
 
     }

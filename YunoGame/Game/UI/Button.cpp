@@ -96,11 +96,11 @@ void Button::ButtonUpdate(float dTime)
         break;
 
     case ButtonState::Hovered:	//커서 접촉, "하이라이트" 출력.
-        std::cout << "Hovered" << std::endl;
+        //std::cout << "Hovered" << std::endl;
         break;
 
     case ButtonState::Clicked:	//"클릭" 상태. "눌림" 출력.
-        std::cout << "Clicked" << std::endl;
+        //std::cout << "Clicked" << std::endl;
         break;
 
     case ButtonState::Pressed:	//"클릭" 상태. "눌리고 있음" 출력.

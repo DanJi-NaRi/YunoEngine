@@ -37,4 +37,5 @@ private:
     bool     m_resized = false; // 더티 플래그
     uint32_t m_pendingW = 0;    // 바뀐 해상도
     uint32_t m_pendingH = 0;    // 바뀐 해상도
+    bool m_minimized = false;
 };
