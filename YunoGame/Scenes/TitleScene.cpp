@@ -37,6 +37,8 @@ bool TitleScene::OnCreateScene()
     capo->AddAnimationClip("capoeira", L"../Assets/fbx/Human/Capoeira2.fbx");
     //capo->SetScale(XMFLOAT3(10, 10, 10));
     capo->AddAnimationClip("dying", L"../Assets/fbx/Human/Dying2.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
+    //m_objectManager->CreateObjectFromFile<AnimTest>(L"Human", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
 
 
