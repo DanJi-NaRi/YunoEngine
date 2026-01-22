@@ -33,10 +33,10 @@ public:
     virtual bool ReleasedEvent();
 
 
-    ButtonState GetButtonState() { return m_BtnState; }
+    ButtonState GetButtonState() const { return m_BtnState; }
     void        SetButtonState(ButtonState state) { m_BtnState = state; }
-    uint32_t    GetBindKey() { return m_Bindkey; }
-    bool        IsBindkey() { return (m_Bindkey != 0); }
+    uint32_t    GetBindKey() const { return m_Bindkey; }
+    bool        IsBindkey() const { return (m_Bindkey != 0); }
     void        SetBindKey(uint32_t bindkey) { m_Bindkey = bindkey; }
 protected:
     // 버튼 상태 : 대기/커서입력/눌림 (standby/CursorOn/Push)

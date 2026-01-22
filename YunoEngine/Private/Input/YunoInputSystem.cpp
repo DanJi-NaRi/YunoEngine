@@ -77,6 +77,8 @@ void YunoInputSystem::AddContext(IInputContext* context, IScene* scene)
 
 void YunoInputSystem::RemoveContext(IInputContext* context)
 {
+    InputContextBase* pContext = dynamic_cast<InputContextBase*>(context);
+    pContext->Clear();
     auto it = std::remove(m_contexts.begin(), m_contexts.end(), context);
     if (it != m_contexts.end())
     {

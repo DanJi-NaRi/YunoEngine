@@ -8,7 +8,21 @@
 
 // 피봇 예정...
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
-enum class widgetType {
+
+enum class Anchor : int {
+    LeftTop,
+    Top,
+    RightTop,
+    Left,
+    Center,
+    Right,
+    LeftBottom,
+    Bottom,
+    RightBottom,
+    Max,
+};
+
+enum class widgetType : int {
     Sprite,
     Button,
     Progress,
@@ -43,7 +57,7 @@ protected:
     float m_spriteSizeX;
     float m_spriteSizeY;
 
-    int m_zOrder;
+    int m_zOrder; // 아직 미사용
 
     XMFLOAT2 m_pivot = { 0,0 }; // 아직 미사용
 
@@ -79,7 +93,7 @@ protected:
     IRenderer* m_pRenderer = nullptr;
     ITextureManager* m_pTextures = nullptr;
     IInput* m_pInput = nullptr;
-
+    Anchor m_anchor;
 public:
     explicit Widget();
 

@@ -3,7 +3,6 @@
 
 struct InputEvent;
 class IInputContext;
-class InputContextBase;
 class IScene;
 class IInput
 {

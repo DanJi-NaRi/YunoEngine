@@ -30,13 +30,13 @@ bool UIScene::OnCreateScene()
     
     // 디렉션 라이트 생성
     //m_objectManager->CreateDirLight();
-    m_objectManager->SetOrthoFlag(true);
+    m_uiManager->SetOrthoFlag(true);
     
 
     //input->AddContext(&s_gameCtx);
 
     m_uiManager->CreateWidget<Image>(L"tst", XMFLOAT3(0, 0, 0));
-    m_uiManager->CreateWidget<Button>(L"tst", XMFLOAT3(50, 0, 0));
+    m_uiManager->CreateWidget<Button>(L"tst", XMFLOAT3(500, 0, 0));
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
