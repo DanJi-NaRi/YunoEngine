@@ -46,11 +46,10 @@ namespace yuno::net
         m_acceptor.cancel(ec);
         m_acceptor.close(ec);
 
-        // 모든 세션 정상 종료(콜백 X 정책)
-        for (auto& kv : m_sessions)
+        for (auto& sess : m_sessions)
         {
-            if (kv.second)
-                kv.second->Close();
+            if (sess.second)
+                sess.second->Close();
         }
         m_sessions.clear();
     }
@@ -68,17 +67,16 @@ namespace yuno::net
 
                 if (ec)
                 {
-                    // acceptor가 닫히는 과정에서 operation_aborted가 올 수 있음
-                    // running 상태면 다음 accept 계속
                     DoAccept();
                     return;
                 }
 
+                // 서버
                 auto session = std::make_shared<TcpSession>(std::move(socket));
-                const std::uint64_t sid = NextSessionId();
+                const sessionId sid = NextSessionId();
                 m_sessions.emplace(sid, session);
 
-                HookSessionCallbacks(session);
+                HookSessionCallbacks(sid,session);
                 session->Start();
 
                 DoAccept();
@@ -86,9 +84,10 @@ namespace yuno::net
         );
     }
 
-    void TcpServer::HookSessionCallbacks(const TcpSession::YunoSession& session)
+    void TcpServer::HookSessionCallbacks(sessionId sid,  const TcpSession::YunoSession& session)
     {
         // 패킷 수신
+        // shared로 하면 순환 참조돼서 해제가 안됨!!
         session->SetOnPacket(
             [this, weak = std::weak_ptr<TcpSession>(session)](std::vector<std::uint8_t>&& pkt)
             {
@@ -100,51 +99,38 @@ namespace yuno::net
             });
 
         // 끊김(에러/상대 종료)
+        // shared로 하면 순환 참조돼서 해제가 안됨!!
         session->SetOnDisconnected(
-            [this, weak = std::weak_ptr<TcpSession>(session)](const boost::system::error_code& ec)
+            [this, sid, weak = std::weak_ptr<TcpSession>(session)](const boost::system::error_code& ec)
             {
-                auto s = weak.lock();
+                auto s = weak.lock(); 
                 if (!s) return;
 
-                // 세션 제거: 현재 session 포인터로 id를 찾는 대신,
-                // 맵을 스캔해서 제거(세션 수가 많아지면 개선 가능)
-                std::uint64_t foundId = 0;
-                for (const auto& kv : m_sessions)
-                {
-                    if (kv.second == s)
-                    {
-                        foundId = kv.first;
-                        break;
-                    }
-                }
-                if (foundId != 0)
-                    RemoveSession(foundId);
+                RemoveSession(sid);
 
                 if (m_onDisconnected)
                     m_onDisconnected(s, ec);
             });
     }
 
-    void TcpServer::RemoveSession(std::uint64_t sessionId)
+    void TcpServer::RemoveSession(sessionId id)
     {
-        auto it = m_sessions.find(sessionId);
+        auto it = m_sessions.find(id);
         if (it == m_sessions.end())
             return;
 
-        // Remove 시에도 Close는 불필요(이미 disconnect로 들어온 상황)
         m_sessions.erase(it);
     }
 
     void TcpServer::Broadcast(std::vector<std::uint8_t> packetBytes)
     {
-        // 각 세션 Send가 내부에서 pkt를 move 해서 큐에 넣으므로,
-        // 여기서는 복사가 불가피. (필요하면 shared buffer로 최적화 가능)
-        for (auto& kv : m_sessions)
+
+        for (auto& sess : m_sessions)
         {
-            if (!kv.second)
+            if (!sess.second)
                 continue;
 
-            kv.second->Send(packetBytes);
+            sess.second->Send(packetBytes);
         }
     }
 }

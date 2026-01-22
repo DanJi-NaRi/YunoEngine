@@ -1,45 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
+    <Filter Include="NetPCH">
+      <UniqueIdentifier>{30fe350d-68d8-42ba-89fe-68dc5b0efed6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="헤더 파일">
+    <Filter Include="Public">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Private\Net">
+      <UniqueIdentifier>{6b8d4288-e006-4611-aad8-5cf13431d0f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Net">
+      <UniqueIdentifier>{076c5f8d-caa7-42e2-afd5-2340ba189eb8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetPCH\pch.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>NetPCH</Filter>
     </ClInclude>
     <ClInclude Include="Public\Net\TcpClient.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Public\Net</Filter>
     </ClInclude>
     <ClInclude Include="Public\Net\TcpServer.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Public\Net</Filter>
     </ClInclude>
     <ClInclude Include="Public\Net\TcpSession.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Public\Net</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NetPCH\pch.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>NetPCH</Filter>
     </ClCompile>
     <ClCompile Include="Private\Net\TcpClient.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Net\TcpServer.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Private\Net</Filter>
     </ClCompile>
     <ClCompile Include="Private\Net\TcpSession.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Private\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\TcpServer.cpp">
+      <Filter>Private\Net</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -7,9 +7,6 @@
     <Filter Include="Game">
       <UniqueIdentifier>{e5031400-6bf3-4c86-ba41-ea8b0c14f304}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GamePCH">
-      <UniqueIdentifier>{38f5e7a6-3988-4694-b80c-2399a2758a86}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Object">
       <UniqueIdentifier>{4c21017b-91c4-436f-81a4-06b919079788}</UniqueIdentifier>
     </Filter>
@@ -58,13 +55,16 @@
     <Filter Include="System\GameScene">
       <UniqueIdentifier>{5e610e02-9910-4288-8003-55dcb20743a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\GamePCH">
+      <UniqueIdentifier>{38f5e7a6-3988-4694-b80c-2399a2758a86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="GamePCH\pch.cpp">
-      <Filter>GamePCH</Filter>
+      <Filter>main\GamePCH</Filter>
     </ClCompile>
     <ClCompile Include="Game\GameApp.cpp">
       <Filter>Game</Filter>
@@ -109,7 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
-      <Filter>GamePCH</Filter>
+      <Filter>main\GamePCH</Filter>
     </ClInclude>
     <ClInclude Include="Game\GameApp.h">
       <Filter>Game</Filter>

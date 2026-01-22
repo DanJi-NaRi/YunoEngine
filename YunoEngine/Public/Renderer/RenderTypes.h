@@ -32,10 +32,20 @@ enum VertexStreamFlags : uint32_t
     VSF_BoneWeight = 1u << 6
 };
 
+enum YunoTopology : uint8_t
+{
+    Yuno_LINELIST,
+    Yuno_LINESTRIP,
+    Yuno_TRIANGLELIST,
+    Yuno_TRIANGLESTRIP,
+    yuno_Count
+};
+
 struct VertexStreams
 {
     uint32_t flags = 0;         
     uint32_t vtx_count = 0;                 // 정점 개수
+    YunoTopology topology = Yuno_TRIANGLELIST; // 선택 옵션
 
     const VERTEX_Pos* pos = nullptr;
     const VERTEX_Nrm* nrm = nullptr;

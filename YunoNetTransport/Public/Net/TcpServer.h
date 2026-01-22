@@ -2,6 +2,15 @@
 
 #include "TcpSession.h"
 
+
+// 소유 관계 정리
+/*
+TCPServer 
+ㄴ m_sessions (sid가 키고 TCPSession이 밸류인 unordered_map)
+    ㄴ TCPSession
+        ㄴ async_read/write 콜백 소유
+*/
+
 namespace yuno::net
 {
     class TcpServer final
@@ -39,13 +48,12 @@ namespace yuno::net
         void DoAccept();
 
         // 세션 콜백 연결
-        void HookSessionCallbacks(const TcpSession::YunoSession& session);
+        void HookSessionCallbacks(sessionId sid, const TcpSession::YunoSession& session);
 
         // 세션 제거
-        void RemoveSession(std::uint64_t sessionId);
+        void RemoveSession(sessionId id);
 
-        // 단조 증가 세션 ID
-        std::uint64_t NextSessionId() { return ++m_nextSessionId; }
+        sessionId NextSessionId() { return ++m_nextSessionId; }
 
     private:
         boost::asio::io_context& m_io;
@@ -53,10 +61,10 @@ namespace yuno::net
 
         bool m_running = false;
 
-        std::uint64_t m_nextSessionId = 0;
+        sessionId m_nextSessionId = 0;
 
         // sessionId -> session
-        std::unordered_map<std::uint64_t, TcpSession::YunoSession> m_sessions;
+        std::unordered_map<sessionId, TcpSession::YunoSession> m_sessions;
 
         OnPacketFn m_onPacket;
         OnDisconnectedFn m_onDisconnected;

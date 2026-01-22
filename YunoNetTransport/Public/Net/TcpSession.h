@@ -1,5 +1,6 @@
 #pragma once
 
+#define sessionId std::uint64_t
 
 namespace yuno::net
 {

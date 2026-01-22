@@ -12,11 +12,9 @@ namespace yuno::net
 
     void TcpClient::Connect(const std::string& host, std::uint16_t port)
     {
-        // 이미 연결된 상태면 무시(정책)
         if (m_session)
             return;
 
-        // host:port resolve
         m_resolver.async_resolve(
             host,
             std::to_string(port),
@@ -25,7 +23,6 @@ namespace yuno::net
             {
                 if (ec)
                 {
-                    // resolve 실패를 disconnected로 보고 싶으면 여기서 콜백 호출 가능
                     if (m_onDisconnected)
                         m_onDisconnected(ec);
                     return;
@@ -65,7 +62,6 @@ namespace yuno::net
         if (!m_session)
             return;
 
-        // 정상 종료(콜백 X 정책). TcpSession::Close()가 OnDisconnected를 막음.
         m_session->Close();
         m_session.reset();
     }
@@ -90,7 +86,6 @@ namespace yuno::net
         session->SetOnDisconnected(
             [this](const boost::system::error_code& ec)
             {
-                // 에러/상대 종료로 인한 끊김만 여기로 들어온다(정상 Disconnect는 Close가 막음)
                 auto old = m_session;
                 m_session.reset();
 
