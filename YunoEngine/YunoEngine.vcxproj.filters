@@ -107,6 +107,9 @@
     <Filter Include="Public\Renderer\3DAnimation">
       <UniqueIdentifier>{73b595f9-262f-40dc-97a8-c7c18b0f7dc2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\System">
+      <UniqueIdentifier>{984da9d0-6768-45ac-9828-30e5d3ba09b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -176,7 +179,7 @@
     <ClCompile Include="Public\Object\Widget.cpp">
       <Filter>Public\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Sound\AudioSystem.cpp">
+    <ClCompile Include="Public\Sound\AudioCore.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
     <ClCompile Include="Public\Sound\fmodPCH.cpp">
@@ -188,7 +191,7 @@
     <ClCompile Include="Public\Sound\EventHandle.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Sound\AudioScene.cpp">
+    <ClCompile Include="Public\Sound\AudioManager.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
     <ClCompile Include="Public\Object\AnimationUnit.cpp">
@@ -197,14 +200,21 @@
     <ClCompile Include="Public\Sound\AudioQueue.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Sound\AudioScenePCH.cpp">
+    <ClCompile Include="Public\Sound\AudioManagerPCH.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Sound\AudioSystemPCH.cpp">
+    <ClCompile Include="Public\Sound\AudioCorePCH.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Sound\IAudioScene.cpp">
+    <ClCompile Include="Public\Sound\IAudioManager.cpp">
       <Filter>Public\Sound\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\UIManager.cpp">
+      <Filter>Public\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Button.cpp" />
+    <ClCompile Include="Public\InputContextBase.cpp">
+      <Filter>Public\System</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -326,19 +336,16 @@
     <ClInclude Include="Public\Renderer\3DAnimation\Animator.h">
       <Filter>Public\Animator</Filter>
     </ClInclude>
-    <ClInclude Include="Private\Renderer\BoneAnimation\BoneAnimation.h">
-      <Filter>Private\Renderer\Bone\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="Public\Object\AnimationUnit.h">
       <Filter>Public\Object</Filter>
     </ClInclude>
     <ClInclude Include="Public\Object\Widget.h">
       <Filter>Public\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Sound\AudioScene.h">
+    <ClInclude Include="Public\Sound\AudioManager.h">
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Sound\AudioSystem.h">
+    <ClInclude Include="Public\Sound\AudioCore.h">
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
     <ClInclude Include="Public\Sound\Bank.h">
@@ -359,14 +366,21 @@
     <ClInclude Include="Public\Sound\AudioQueue.h">
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Sound\AudioScenePCH.h">
+    <ClInclude Include="Public\Sound\AudioManagerPCH.h">
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Sound\AudioSystemPCH.h">
+    <ClInclude Include="Public\Sound\AudioCorePCH.h">
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Sound\IAudioScene.h">
+    <ClInclude Include="Public\Sound\IAudioManager.h">
       <Filter>Public\Sound\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UIManager.h">
+      <Filter>Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Button.h" />
+    <ClInclude Include="Public\InputContextBase.h">
+      <Filter>Public\System</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->

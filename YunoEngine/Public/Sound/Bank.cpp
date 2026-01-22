@@ -36,8 +36,9 @@ std::string BankHelper::GetPath(FMOD::Studio::EventDescription* d)
     d->getPath(nullptr, 0, &len);
     std::string s(len, '\0');
     d->getPath(s.data(), len, &len);
-    if (!s.empty() && s.back() == '\0') s.pop_back();
-    return s;
+    std::string res = s.substr(s.find("/")+1);
+    if (!res.empty() && res.back() == '\0') res.pop_back();
+    return res;
 }
 
 std::string BankHelper::GetPath(FMOD::Studio::Bus* b)
@@ -47,8 +48,9 @@ std::string BankHelper::GetPath(FMOD::Studio::Bus* b)
     b->getPath(nullptr, 0, &len);
     std::string s(len, '\0');
     b->getPath(s.data(), len, &len);
-    if (!s.empty() && s.back() == '\0') s.pop_back();
-    return s;
+    std::string res = s.substr(s.find("/") + 1);
+    if (!res.empty() && res.back() == '\0') res.pop_back();
+    return res;
 }
 
 std::string BankHelper::GetPath(FMOD::Studio::VCA* v)
@@ -58,8 +60,9 @@ std::string BankHelper::GetPath(FMOD::Studio::VCA* v)
     v->getPath(nullptr, 0, &len);
     std::string s(len, '\0');
     v->getPath(s.data(), len, &len);
-    if (!s.empty() && s.back() == '\0') s.pop_back();
-    return s;
+    std::string res = s.substr(s.find("/") + 1);
+    if (!res.empty() && res.back() == '\0') res.pop_back();
+    return res;
 }
 
 void BankHelper::IndexBankContent(const std::string& bankPath, FMOD::Studio::Bank* bank)

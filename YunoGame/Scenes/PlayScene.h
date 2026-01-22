@@ -1,12 +1,14 @@
 #pragma once
 
 #include "SceneBase.h"
-
+#include "Game_InputContext.h"
+//class Game_InputContext;
 class Triangle;
 
 class PlayScene final : public SceneBase
 {
 public:
+
     void OnEnter() override;
     void OnExit() override;
 
@@ -22,4 +24,5 @@ protected:
 
 private:
 
+    Game_InputContext m_gameCtx;
 };

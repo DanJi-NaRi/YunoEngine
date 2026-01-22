@@ -67,8 +67,9 @@ bool Button::Submit(float dTime)
     return true;
 }
 
-void Button::ButtonUpdate(float dTime)
+void Button::ButtonUpdate(float dTime) // 버튼 상태 갱신
 {
+
     assert(m_pInput);
     //float mouseX = m_pInput->GetMouseX();
     //float mouseY = m_pInput->GetMouseY();
@@ -106,9 +107,50 @@ void Button::ButtonUpdate(float dTime)
     case ButtonState::Pressed:	//"클릭" 상태. "눌리고 있음" 출력.
         std::cout << "Pressed" << std::endl;
         break;
-    }
 
+    }
+    */
 }
+
+bool Button::IdleEvent()
+{
+    std::cout << "IdleEvent" << std::endl;
+    return true;
+}
+
+bool Button::HoveredEvent()
+{
+    std::cout << "HoveredEvent" << std::endl;
+    return true;
+}
+bool Button::DownEvent()
+{
+    std::cout << "DownEvent" << std::endl;
+    return true;
+}
+bool Button::LMBPressedEvent()
+{
+    std::cout << "(LMB)PressedEvent" << std::endl;
+    return true;
+}
+bool Button::RMBPressedEvent()
+{
+    std::cout << "(RMB)PressedEvent" << std::endl;
+    return true;
+}
+
+bool Button::KeyPressedEvent(uint32_t key)
+{
+    if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
+    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;
+    return true;
+}
+bool Button::ReleasedEvent()
+{
+    std::cout << "ReleasedEvent" << std::endl;
+    return true;
+}
+
 
 bool Button::CreateMaterial()
 {

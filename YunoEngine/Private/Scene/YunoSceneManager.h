@@ -1,7 +1,6 @@
 #pragma once
 #include "ISceneManager.h"
 
-
 class IScene;
 
 struct SceneView
@@ -12,7 +11,6 @@ struct SceneView
 };
 
 class IRenderer;
-
 
 
 struct SceneEntry
@@ -27,6 +25,7 @@ struct SceneEntry
     SceneEntry& operator=(const SceneEntry&) = delete;
 
     std::unique_ptr<IScene> scene;
+
     SceneState state = SceneState::Uninitialized;
     ScenePolicy policy{};
 };
@@ -81,6 +80,7 @@ private: // 디버그용
     void DumpStack_Console(const char* reason) const;
 
 private:
+
     std::vector<SceneEntry> m_stack;
     std::vector<std::unique_ptr<SceneView>> m_views;
     SceneView* m_selectView = nullptr;

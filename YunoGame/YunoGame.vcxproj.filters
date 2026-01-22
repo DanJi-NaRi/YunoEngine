@@ -52,6 +52,12 @@
     <Filter Include="Scenes\SceneTemplate">
       <UniqueIdentifier>{24b754d7-a2f6-4d5c-9cb2-02394ae55327}</UniqueIdentifier>
     </Filter>
+    <Filter Include="System\UIScene">
+      <UniqueIdentifier>{1f741ae9-459b-421b-b0c8-0c44d2028232}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\GameScene">
+      <UniqueIdentifier>{5e610e02-9910-4288-8003-55dcb20743a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -94,7 +100,6 @@
       <Filter>Scenes\SceneTemplate</Filter>
     </ClCompile>
 
-
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
@@ -102,8 +107,11 @@
       <Filter>Game\UI\Button</Filter>
     </ClCompile>
 
-
     <ClCompile Include="ClientNet\ClientNet.cpp" />
+
+    <ClCompile Include="Scenes\UIScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
 
   </ItemGroup>
   <ItemGroup>
@@ -118,12 +126,6 @@
     </ClInclude>
     <ClInclude Include="Game\Object\Quad.h">
       <Filter>Game\Object\Quad</Filter>
-    </ClInclude>
-    <ClInclude Include="System\TestInputContexts.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="System\GameInputContext.h">
-      <Filter>System</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\Building.h">
       <Filter>Game\Object\Building</Filter>
@@ -149,15 +151,18 @@
     <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h">
       <Filter>Scenes\SceneTemplate</Filter>
     </ClInclude>
-
-
     <ClInclude Include="Scenes\UIScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Game\UI\Button.h">
-      <Filter>Game\UI\Button</Filter>
+    <ClInclude Include="System\UIScene_InputContext.h">
+      <Filter>System\UIScene</Filter>
     </ClInclude>
-
+    <ClInclude Include="System\Game_InputContext.h">
+      <Filter>System\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="System\SettingScene_InputContext.h">
+      <Filter>System\UIScene</Filter>
+    </ClInclude>
 
     <ClInclude Include="ClientNet\ClientNet.h" />
 

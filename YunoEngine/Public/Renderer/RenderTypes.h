@@ -46,7 +46,7 @@ struct VertexStreams
     const VERTEX_BoneIndex* boneIdx = nullptr;
 };
 
-#define MAX_BONE 70
+#define MAX_BONE 256
 struct Update_Data
 {
     DirectX::XMFLOAT4X4 world{};

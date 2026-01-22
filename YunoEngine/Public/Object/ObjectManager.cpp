@@ -21,8 +21,8 @@ ObjectManager::~ObjectManager()
 
 bool ObjectManager::Init()
 {
-    m_ObjectCount = 0;
-    m_ObjectIDs = 0;
+    m_objectCount = 0;
+    m_objectIDs = 0;
     m_objMap.reserve(30); //30개 정도 메모리 잡고 시작
     m_pendingCreateQ.reserve(30);
 
@@ -32,8 +32,8 @@ bool ObjectManager::Init()
 void ObjectManager::Clear()
 {
 
-    m_ObjectCount = 0;
-    m_ObjectIDs = 0;
+    m_objectCount = 0;
+    m_objectIDs = 0;
     m_objs.clear(); //오브젝트 객체 완전 삭제
     m_pendingCreateQ.clear();
     m_pendingDestoryQ.clear();
@@ -61,26 +61,6 @@ void ObjectManager::Submit(float dTime)
     }
 }
 
-//나중에 이벤트 큐 만들어서 바꿔야함
-void ObjectManager::WidgetUpdate(float dTime)
-{
-    FrameDataUpdate();
-    for (auto& obj : m_widgets)
-    {
-        obj->Update(dTime);
-    }
-}
-//나중에 이벤트 큐 만들어서 바꿔야함
-void ObjectManager::WidgetSubmit(float dTime)
-{
-    FrameDataSubmit();
-
-    for (auto& widget : m_widgets)
-    {
-        widget->Submit(dTime);
-    }
-}
-
 void ObjectManager::ProcessPending()
 {
     if (!m_pendingCreateQ.empty())
@@ -93,7 +73,7 @@ void ObjectManager::ProcessPending()
             m_objs.push_back(std::move(obj));
             m_objMap.emplace(id, pObj);
             m_nameToID.emplace(name, id);
-            m_ObjectCount++;
+            m_objectCount++;
         }
 
         m_pendingCreateQ.clear();
@@ -117,54 +97,10 @@ void ObjectManager::ProcessPending()
             m_objMap.erase(id);
 
             m_objs.erase(it);
-            m_ObjectCount--;
+            m_objectCount--;
         }
 
         m_pendingDestoryQ.clear();
-    }
-}
-
-void ObjectManager::ProcessWidgetPending()
-{
-    if (!m_widgetPendingCreateQ.empty())
-    {
-        for (auto& widget : m_widgetPendingCreateQ)
-        {
-            UINT id = widget->GetID();
-            auto name = widget->GetName();
-            auto* pWidget = widget.get();
-            m_widgets.push_back(std::move(widget));
-            m_WidgetMap.emplace(id, pWidget);
-            m_widgetNameToID.emplace(name, id);
-            m_WidgetCount++;
-        }
-
-        m_widgetPendingCreateQ.clear();
-    }
-
-    if (!m_widgetPendingDestoryQ.empty())
-    {
-        for (auto& id : m_widgetPendingDestoryQ)
-        {
-            auto name = m_WidgetMap[id]->GetName();
-
-            auto it = std::find_if(m_widgets.begin(), m_widgets.end(), [id](const std::unique_ptr<Widget>& widget) { return widget->GetID() == id; });
-
-            if (it == m_widgets.end())
-                continue;
-
-            // 임시 주석 처리
-            //it->get()->DettachParent();
-            //it->get()->ClearChild();
-
-            m_widgetNameToID.erase(name);
-            m_WidgetMap.erase(id);
-
-            m_widgets.erase(it);
-            m_WidgetCount--;
-        }
-
-        m_widgetPendingDestoryQ.clear();
     }
 }
 
@@ -271,7 +207,7 @@ void ObjectManager::FrameDataSubmit()
 
 }
 
-std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> ObjectManager::CreateMeshNode(const std::wstring& filepath)
+std::unique_ptr<MeshNode> ObjectManager::CreateMeshNode(const std::wstring& filepath)
 {
     return Parser::Instance().LoadFile(filepath);
 }

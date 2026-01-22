@@ -6,13 +6,13 @@
 #include "SceneBase.h"
 #include "IRenderer.h"
 
-
 #include "ImGuiManager.h"
 #include "UImgui.h"
 
 
 SceneEntry::~SceneEntry() = default;
 PendingOp::~PendingOp() = default;
+
 
 YunoSceneManager::~YunoSceneManager()
 {
@@ -48,17 +48,31 @@ void YunoSceneManager::RegisterDrawSceneUI()
         [this]() {
             UI::SetNextUIPos(800, 0);
             UI::SetNextUISize(200, 500);
+            UI::BeginPanel("UIHierarchy");
+
+            if (m_selectView)
+            {
+                dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawUIList();
+            }
+            UI::EndPanel();
+        }
+    );
+
+    ImGuiManager::RegisterDraw(
+        [this]() {
+            UI::SetNextUIPos(800, 0);
+            UI::SetNextUISize(200, 500);
             UI::BeginPanel("ObjectHierarchy");
 
             if (m_selectView)
             {
-                dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawObjectListUI();
+                dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawObjectList();
+                dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawUIList();
             }
-
-
             UI::EndPanel();
         }
     );
+
 
     ImGuiManager::RegisterDraw(
         [this]() {
@@ -155,6 +169,7 @@ void YunoSceneManager::CreateView(const SceneEntry& e, UINT idx)
 
     m_views.push_back(std::move(v));
 }
+
 
 void YunoSceneManager::DumpStack_Console(const char* reason) const
 {

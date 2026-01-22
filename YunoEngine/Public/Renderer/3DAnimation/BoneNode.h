@@ -9,7 +9,7 @@ private:
     BoneNode* m_Parent;
     std::vector<std::unique_ptr<BoneNode>> m_Childs;
 
-    XMFLOAT4X4 m_mUser;     //애니메이션만이 누적된 행렬
+    XMMATRIX m_mUser;     //애니메이션만이 누적된 행렬
     XMMATRIX m_BoneOffset; //정점을 본의 로컬로 보내는 행렬을 CPU에서 미리 누적
     XMMATRIX m_BindLocal;
 
@@ -25,8 +25,11 @@ public:
 
     void SetBoneOffset(const XMMATRIX& mOffset) { m_BoneOffset = mOffset; }
     void SetBindLocal(const XMMATRIX& mBindLocal) { m_BindLocal = mBindLocal; }
+    const XMMATRIX& GetBindLocal() { return m_BindLocal; }
 
-    void UpdateBoneMatrix(float CurTickTime, std::vector<std::unique_ptr<BoneAnimation>>& clip, std::vector<XMFLOAT4X4>& outArr, const XMMATRIX& globalTM);
+    void SampleLocalPose(float CurTickTime, std::vector<std::unique_ptr<BoneAnimation>>& clip, std::vector<XMMATRIX>& outArr);
 
-    const XMFLOAT4X4& GetBoneTM() { return m_mUser; }
+    void UpdateBoneMatrix(const std::vector<XMMATRIX>& localPose, std::vector<XMFLOAT4X4>& out, const XMMATRIX& parentGlobal);
+
+    const XMMATRIX& GetBoneTM() { return m_mUser; }
 };

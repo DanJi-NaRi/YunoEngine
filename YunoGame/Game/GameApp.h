@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IGameApp.h"
+#include "IAudioManager.h"
 
 #include "ClientNet.h"
 
@@ -19,8 +20,10 @@ public:
 
 // 네트워크
 private:
+
     std::unique_ptr<ClientNet> m_net;
     float m_netPingAcc = 0.0f;
+
 };
 
 

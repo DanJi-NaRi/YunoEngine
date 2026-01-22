@@ -1,6 +1,7 @@
 #pragma once
 #include "BoneNode.h"
 
+
 struct AnimationClip
 {
     std::string name;
@@ -22,12 +23,27 @@ private:
     UINT animCount = 0;
     UINT curAnim = 0;
 
-    std::vector<XMFLOAT4X4> m_BoneTMs;
+    AnimationClip* m_CurAnim;
+
+    //std::vector<XMFLOAT4X4> m_prevBoneTMs;
+    //std::vector<XMFLOAT4X4> m_BoneTMs;
+    std::vector<XMMATRIX> m_LocalBoneA;
+    std::vector<XMMATRIX> m_LocalBoneB;
+    std::vector<XMMATRIX> m_BlendBoneTM;
+    std::vector<XMFLOAT4X4> m_FinalBoneTM;
+
     UINT m_BoneCount;
 
     float CurTickTime = 0;
 
     bool isPlay = true;
+
+    //애니메이션 블랜딩 관련
+    bool isBlending = false;
+    float blendAlpha = 0.0f;
+    float blendDuration = 0.001f;
+    float PrevTickTime = 0;
+    AnimationClip* m_prevAnim;
 public:
     Animator();
     virtual ~Animator();
@@ -38,7 +54,18 @@ public:
     void SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, UINT boneCount);
     //겹치는 id 이미 있으면 실패 false 반환
     bool AddAnimationClip(const std::string& id, std::unique_ptr<AnimationClip>&& clip);
+    bool AddAnimationFromFile(const std::string& name, const std::wstring& filepath);
     void Update(float dTime);
+    void BlendLocalPose(const std::vector<XMMATRIX>& A, const std::vector<XMMATRIX>& B, float alpha, std::vector<XMMATRIX>& out);
 
-    const std::vector<XMFLOAT4X4>& GetBoneTMs() { return m_BoneTMs; }
+    UINT GetAnimationNum() { return m_AnimationClips.size(); }
+
+    void BlendingUpdate(float dTime);
+
+    void Change(UINT id, float duration = 0.5f);
+    void Change(const std::string& name, float duration = 0.5f);
+
+    void Serialize();
+
+    const std::vector<XMFLOAT4X4>& GetBoneTMs() { return m_FinalBoneTM; }
 };
