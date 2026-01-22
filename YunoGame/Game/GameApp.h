@@ -3,9 +3,7 @@
 #include "IGameApp.h"
 #include "IAudioManager.h"
 
-#include "Quad.h"
-#include "Triangle.h"
-
+#include "ClientNet.h"
 
 class GameApp : public IGameApp
 {
@@ -18,9 +16,13 @@ public:
     void OnFixedUpdate(float fixedDt) override;
     void OnShutdown() override;
 
+
+
+// 네트워크
 private:
-    std::unique_ptr<Quad> m_quad;
-    std::unique_ptr<Triangle> m_triangle;
+
+    std::unique_ptr<ClientNet> m_net;
+    float m_netPingAcc = 0.0f;
 
 };
 

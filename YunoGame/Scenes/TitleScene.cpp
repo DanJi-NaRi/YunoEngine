@@ -31,6 +31,7 @@ bool TitleScene::OnCreateScene()
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+
     //m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx");
     auto capo = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/Capoeira2.fbx");
     capo->AddAnimationClip("capoeira", L"../Assets/fbx/Human/Capoeira2.fbx");
@@ -59,11 +60,13 @@ void TitleScene::OnEnter()
 
     YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
 
+
 }
 
 void TitleScene::OnExit()
 {
     //std::cout << "[TitleScene] OnExit\n";
+
 
     AudioQ::Insert(AudioQ::UnLoadBank(BankName::Title));
     //m_audioScene->Unload();

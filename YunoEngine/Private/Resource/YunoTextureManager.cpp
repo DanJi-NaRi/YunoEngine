@@ -33,3 +33,13 @@ void YunoTextureManager::Clear()
 {
     m_cache.clear();
 }
+
+const std::pair<int,int> YunoTextureManager::GetTextureWH(TextureHandle handle) const
+{
+    if (!m_renderer)
+        return { -1, -1 };
+    const auto& textures = m_renderer->GetTextureSize(handle);
+
+    return { static_cast<int>(textures.first), static_cast<int>(textures.second) };
+
+}

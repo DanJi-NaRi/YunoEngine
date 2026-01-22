@@ -153,6 +153,8 @@ public:
     void BindConstantBuffers_Light(const Frame_Data_Dir& dirData) override;
 
     YunoCamera& GetCamera() override { return m_camera; }
+    std::pair<int, int> GetTextureSize(TextureHandle handle) const;
+    
 
 private:
     void BindConstantBuffers(const RenderItem& item);
