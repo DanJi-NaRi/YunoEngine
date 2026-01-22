@@ -67,6 +67,7 @@ void YunoSceneManager::RegisterDrawSceneUI()
             if (m_selectView)
             {
                 dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawObjectList();
+                dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawUIList();
             }
             UI::EndPanel();
         }
