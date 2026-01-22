@@ -368,7 +368,7 @@ void UIManager::FrameDataSubmit()
 
 }
 
-std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> UIManager::CreateMeshNode(const std::wstring& filepath)
+std::unique_ptr<MeshNode> UIManager::CreateMeshNode(const std::wstring& filepath)
 {
     return Parser::Instance().LoadFile(filepath);
 }

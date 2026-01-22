@@ -35,8 +35,8 @@ bool UIScene::OnCreateScene()
 
     //input->AddContext(&s_gameCtx);
 
-    m_uiManager->CreateWidget<Image>(L"tst", XMFLOAT3(0, 0, 0));
-    m_uiManager->CreateWidget<Button>(L"tst", XMFLOAT3(500, 0, 0));
+    m_uiManager->CreateWidget<Image>(L"tstImg", XMFLOAT3(0, 0, 0));
+    m_uiManager->CreateWidget<Button>(L"tstBtn", XMFLOAT3(500, 0, 0));
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");

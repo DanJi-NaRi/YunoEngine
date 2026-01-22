@@ -177,7 +177,7 @@ void SceneBase::DrawUIList()
 
         Widget* obj = it->second;
 
-        bool selected = false; // ← EditorState에서 가져오게 될 것
+        bool selected = false; //  EditorState에서 가져오게 될 것
 
         std::string name = WStringToString(obj->GetName());
 

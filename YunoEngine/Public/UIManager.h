@@ -33,7 +33,7 @@ private:
     template<typename T>
     T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 위젯 생성용
 
-    std::pair<std::unique_ptr<MeshNode>, std::unique_ptr<Animator>> CreateMeshNode(const std::wstring& filepath);
+    std::unique_ptr<MeshNode>CreateMeshNode(const std::wstring& filepath);
 
     std::unique_ptr<YunoDirectionalLight> m_directionLight; // 필요할까?
 
@@ -57,8 +57,6 @@ public:
 
     template<typename T>
     T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);
-    template<typename T>
-    T* CreateWidgetFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath);
 
     //씬 매니저에 있어도 될것같은 놈들
     const Widget* FindWidget(UINT id); //id로 검색
@@ -129,33 +127,3 @@ T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos, std::unique_p
 }
 
 
-template<typename T>
-T* UIManager::CreateWidgetFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath)
-{
-    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
-
-    auto meshAndAnim = CreateMeshNode(filepath);
-
-    auto meshnode = std::move(meshAndAnim.first);
-    auto animator = std::move(meshAndAnim.second);
-
-    std::wstring newname = name;
-
-    CheckDedicateWidgetName(newname);
-
-    auto obj = std::make_unique<T>();
-    obj->Create(newname, m_widgetIDs++, pos);
-
-    obj->SetMesh(std::move(meshnode));
-
-    if constexpr (std::is_base_of_v<AnimationUnit, T>)
-        if (animator)
-        {
-            obj->SetAnimator(std::move(animator));
-        }
-
-    auto* pObj = obj.get();
-    m_pendingCreateQ.emplace_back(std::move(obj));
-
-    return pObj;
-}
