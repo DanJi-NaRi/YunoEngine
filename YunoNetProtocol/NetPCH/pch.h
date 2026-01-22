@@ -25,7 +25,7 @@
 #include <chrono>
 #include <array>
 #include <deque>
-
+#include <functional>
 
 
 #endif //PCH_H
