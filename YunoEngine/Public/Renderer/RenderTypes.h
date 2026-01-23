@@ -52,6 +52,7 @@ struct Update_Data
     DirectX::XMFLOAT4X4 world{};
     DirectX::XMFLOAT4X4 boneAnim[MAX_BONE] = {};
     DirectX::XMFLOAT4 baseColor = { 1, 1, 1, 1 };
+    DirectX::XMFLOAT4 emissiveColor = { 1, 1, 1, 1 };
     float roughRatio = 1.0f;
     float metalRatio = 1.0f;
     float shadowBias = 0.005f;
@@ -76,6 +77,7 @@ struct RenderItem
     MaterialHandle materialHandle = 0;
 
     Update_Data Constant;
+    bool isEmissive = false;
     bool haveAnim = false;
 };
 
@@ -127,6 +129,7 @@ enum class ShaderId : uint8_t
     PP_BlurH, 
     PP_BlurV, 
     PP_Combine, 
+    PP_ToneMap, 
 
     Count
 };

@@ -384,8 +384,11 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
         aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
         auto [meshkey, matkey] = CreateMesh(aiMesh, scene, nodeNum, nameToIndex, filepath);
 
+        std::string meshname = node->mName.C_Str();
+
         auto model = std::make_unique<Mesh>();
         model->Create(meshkey, matkey);
+        model->SetName(meshname);
 
         meshnode->m_Meshs.push_back(std::move(model));
     }

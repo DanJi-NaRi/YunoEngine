@@ -270,16 +270,19 @@ private:
 
 public:
     void SetThreshold(float v) { m_Threshold = v; }
+    void SetExposure(float v) { m_Exposure = v; }
 
 private:
-    MaterialHandle m_ppThreshold = 0;
-    MaterialHandle m_ppDownSample = 0;
-    MaterialHandle m_ppBlurH = 0; //Horizontal
-    MaterialHandle m_ppBlurV = 0; //Vertical
-    MaterialHandle m_ppCombine = 0;
-    MaterialHandle m_ppToneMap = 0;
+    MaterialHandle m_ppThresholdMat = 0;
+    MaterialHandle m_ppDownSampleMat = 0;
+    MaterialHandle m_ppBlurHMat = 0; //Horizontal
+    MaterialHandle m_ppBlurVMat = 0; //Vertical
+    MaterialHandle m_ppCombineMat = 0;
+    MaterialHandle m_ppToneMapMat = 0;
 
-    float m_Threshold = 1.1f; //추출할 최소 밝기값
+    float m_Threshold = 1.05f; //추출할 최소 밝기값
+    float m_BloomIntensity = 0.6f; //Bloom 빛 번짐정도
+    float m_Exposure = 1.3f; //전체 화면 밝기조절 값
 
     //PP Default
     uint32_t m_PPFlag;

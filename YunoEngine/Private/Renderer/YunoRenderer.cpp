@@ -540,6 +540,7 @@ bool YunoRenderer::CreatePPShader()
     if (!LoadShader(ShaderId::PP_BlurH, "../Assets/Shaders/PP_BlurHorizon.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PP_BlurV, "../Assets/Shaders/PP_BlurVertical.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PP_Combine, "../Assets/Shaders/PP_Combine.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::PP_ToneMap, "../Assets/Shaders/PP_ToneMap.hlsl", "VSMain", "PSMain")) return false;
 
     return true;
 }
@@ -565,43 +566,57 @@ bool YunoRenderer::CreatePPMaterial()
     else
         return false;
 
+    //Threshold
     md.passKey.vs = ShaderId::PP_Threshold;
     md.passKey.ps = ShaderId::PP_Threshold;
     h = CreateMaterial(md);
     if (h)
-        m_ppThreshold = h;
+        m_ppThresholdMat = h;
     else
         return false;
 
+    //DownSampling
     md.passKey.vs = ShaderId::PP_DownSample;
     md.passKey.ps = ShaderId::PP_DownSample;
     h = CreateMaterial(md);
     if (h)
-        m_ppDownSample = h;
+        m_ppDownSampleMat = h;
     else
         return false;
 
+    //BlurH
     md.passKey.vs = ShaderId::PP_BlurH;
     md.passKey.ps = ShaderId::PP_BlurH;
     h = CreateMaterial(md);
     if (h)
-        m_ppBlurH = h;
+        m_ppBlurHMat = h;
     else
         return false;
 
+    //BlurV
     md.passKey.vs = ShaderId::PP_BlurV;
     md.passKey.ps = ShaderId::PP_BlurV;
     h = CreateMaterial(md);
     if (h)
-        m_ppBlurV = h;
+        m_ppBlurVMat = h;
     else
         return false;
 
+    //Combine
     md.passKey.vs = ShaderId::PP_Combine;
     md.passKey.ps = ShaderId::PP_Combine;
     h = CreateMaterial(md);
     if (h)
-        m_ppCombine = h;
+        m_ppCombineMat = h;
+    else
+        return false;
+
+    //ToneMapping
+    md.passKey.vs = ShaderId::PP_ToneMap;
+    md.passKey.ps = ShaderId::PP_ToneMap;
+    h = CreateMaterial(md);
+    if (h)
+        m_ppToneMapMat = h;
     else
         return false;
 
@@ -620,7 +635,7 @@ void YunoRenderer::SetPP_Pass()
 {
     if (m_PPFlag == 0)
     {
-        m_PPFlag = PostProcessFlag::Default 
+        m_PPFlag = PostProcessFlag::Default
                             | PostProcessFlag::Bloom;
     }
 
@@ -765,10 +780,10 @@ ID3D11ShaderResourceView* YunoRenderer::PostProcessBloom(ID3D11ShaderResourceVie
 
 void YunoRenderer::BindBloomThreshold(ID3D11ShaderResourceView* input)
 {
-    if (m_ppThreshold <= 0 || m_ppThreshold > m_materials.size())
+    if (m_ppThresholdMat <= 0 || m_ppThresholdMat > m_materials.size())
         return;
 
-    const YunoMaterial& material = m_materials[m_ppThreshold - 1];
+    const YunoMaterial& material = m_materials[m_ppThresholdMat - 1];
 
     RenderPassHandle passHandle = material.pass;
 
@@ -789,10 +804,10 @@ void YunoRenderer::BindBloomThreshold(ID3D11ShaderResourceView* input)
 
 void YunoRenderer::BindBloomDownSample(ID3D11ShaderResourceView* input)
 {
-    if (m_ppDownSample <= 0 || m_ppDownSample > m_materials.size())
+    if (m_ppDownSampleMat <= 0 || m_ppDownSampleMat > m_materials.size())
         return;
 
-    const YunoMaterial& material = m_materials[m_ppDownSample - 1];
+    const YunoMaterial& material = m_materials[m_ppDownSampleMat - 1];
 
     RenderPassHandle passHandle = material.pass;
 
@@ -813,10 +828,10 @@ void YunoRenderer::BindBloomDownSample(ID3D11ShaderResourceView* input)
 
 void YunoRenderer::BindBloomBlurH(ID3D11ShaderResourceView* input)
 {
-    if (m_ppBlurH <= 0 || m_ppBlurH > m_materials.size())
+    if (m_ppBlurHMat <= 0 || m_ppBlurHMat > m_materials.size())
         return;
 
-    const YunoMaterial& materialH = m_materials[m_ppBlurH - 1];
+    const YunoMaterial& materialH = m_materials[m_ppBlurHMat - 1];
 
     RenderPassHandle passHandle = materialH.pass;
 
@@ -836,10 +851,10 @@ void YunoRenderer::BindBloomBlurH(ID3D11ShaderResourceView* input)
 
 void YunoRenderer::BindBloomBlurV(ID3D11ShaderResourceView* input)
 {
-    if (m_ppBlurV <= 0 || m_ppBlurV > m_materials.size())
+    if (m_ppBlurVMat <= 0 || m_ppBlurVMat > m_materials.size())
         return;
 
-    const YunoMaterial& materialH = m_materials[m_ppBlurV - 1];
+    const YunoMaterial& materialH = m_materials[m_ppBlurVMat - 1];
 
     RenderPassHandle passHandle = materialH.pass;
 
@@ -859,10 +874,10 @@ void YunoRenderer::BindBloomBlurV(ID3D11ShaderResourceView* input)
 
 void YunoRenderer::BindBloomCombine(ID3D11ShaderResourceView* input)
 {
-    if (m_ppCombine <= 0 || m_ppCombine > m_materials.size())
+    if (m_ppCombineMat <= 0 || m_ppCombineMat > m_materials.size())
         return;
 
-    const YunoMaterial& materialH = m_materials[m_ppCombine - 1];
+    const YunoMaterial& materialH = m_materials[m_ppCombineMat - 1];
 
     RenderPassHandle passHandle = materialH.pass;
 
@@ -872,7 +887,7 @@ void YunoRenderer::BindBloomCombine(ID3D11ShaderResourceView* input)
     // 렌더 패스 바인드
     m_passes[passHandle - 1]->Bind(m_context.Get());
 
-    m_ppCBloom.Update(m_context.Get(), { XMFLOAT4(0.6, 0.8f, 1.0f, 1.2f) , 1.0f });
+    m_ppCBloom.Update(m_context.Get(), { XMFLOAT4(0.4, 0.6f, 0.8f, 1.0f) , m_BloomIntensity });
     // 텍스쳐 바인드
     ID3D11Buffer* cb = m_ppCBloom.Get();
     m_context->PSSetConstantBuffers(1, 1, &cb);
@@ -892,13 +907,20 @@ void YunoRenderer::PostProcessFinal(ID3D11ShaderResourceView* input)
 
     const YunoMaterial* material = nullptr;
 
-    if (m_ppDefaultMat > 0 && m_ppDefaultMat <= m_materials.size()) // 핸들 유효성 체크
-        material = &m_materials[m_ppDefaultMat - 1];
+    if (m_ppToneMapMat > 0 && m_ppToneMapMat <= m_materials.size()) // 핸들 유효성 체크
+        material = &m_materials[m_ppToneMapMat - 1];
+        //material = &m_materials[m_ppDefaultMat - 1];
 
     if (!material)
         return;
 
     RenderPassHandle passHandle = material->pass;
+
+    CBPostProcess cbpp{};
+    cbpp.exposure = m_Exposure;
+    m_ppCB.Update(m_context.Get(), cbpp);
+    auto cb = m_ppCB.Get();
+    m_context->PSSetConstantBuffers(0, 1, &cb);
 
     // 렌더 패스 바인드
     m_passes[passHandle - 1]->Bind(m_context.Get());
@@ -2022,10 +2044,10 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
     CBPerObject_Material cbPerObject_material{};
 
     cbPerObject_material.baseColor = item.Constant.baseColor;
+    cbPerObject_material.emissiveColor = item.Constant.emissiveColor;
     cbPerObject_material.roughRatio = item.Constant.roughRatio;
     cbPerObject_material.metalRatio = item.Constant.metalRatio;
     cbPerObject_material.shadowBias = item.Constant.shadowBias;
-    cbPerObject_material.padding = 0.0f;
 
     m_cbObject_Material.Update(m_context.Get(), cbPerObject_material);
 
@@ -2267,6 +2289,12 @@ void YunoRenderer::RegisterDrawUI()
             if (UI::CollapsingHeader("BloomFilter"))
             {
                 UI::DragFloatEditable("Threshold", &m_Threshold, 0.01f, 0.0f, 1.5f);
+                UI::DragFloatEditable("BloomIntensity", &m_BloomIntensity, 0.01f, 0.0f, 2.0f);
+            }
+
+            if (UI::CollapsingHeader("ToneMapping"))
+            {
+                UI::DragFloatEditable("Exposure", &m_Exposure, 0.01f, 0.0f, 5.0f);
             }
 
             UI::EndPanel();

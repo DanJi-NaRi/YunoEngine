@@ -61,8 +61,7 @@ void YunoSceneManager::RegisterDrawSceneUI()
 
     ImGuiManager::RegisterDraw(
         [this]() {
-            UI::SetNextUIPos(1000, 0);
-            UI::SetNextUISize(200, 500);
+            UI::SetNextUISize(400, 500);
             UI::BeginPanel("Inspector");
 
             if (m_selectView)
