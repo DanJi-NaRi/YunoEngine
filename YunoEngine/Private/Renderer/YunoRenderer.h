@@ -23,6 +23,21 @@ struct RenderTarget
     DXGI_FORMAT fmt = DXGI_FORMAT_R8G8B8A8_UNORM;
 };
 
+enum PostProcessFlag : uint32_t
+{
+    Default = 1u << 0,
+    Bloom = 1u << 1,
+
+    Max
+};
+
+struct PostProcessPass
+{
+    MaterialHandle   material;
+    UINT rtIdx;
+    bool enabled = true;
+};
+
 
 // 전방선언
 class IWindow;
@@ -143,11 +158,17 @@ public:
     MaterialHandle CreateMaterial_Default() override;
     MaterialHandle CreateMaterial(const MaterialDesc& desc) override;
 
-    TextureHandle CreateTexture2DFromFile(const wchar_t* path) override;
+    TextureHandle CreateColorTexture2DFromFile(const wchar_t* path) override;
+    TextureHandle CreateDataTexture2DFromFile(const wchar_t* path) override;
 
 
     void Submit(const RenderItem& item) override;
-    void Flush() override;     
+    void Flush() override;  
+
+#ifdef _DEBUG
+    void DrawDebug();
+    void RegisterDrawUI(); //imgui드로우 함수 등록
+#endif
 
     void BindConstantBuffers_Camera(const Frame_Data_Dir& dirData) override;
     void BindConstantBuffers_Light(const Frame_Data_Dir& dirData) override;
@@ -155,7 +176,8 @@ public:
     YunoCamera& GetCamera() override { return m_camera; }
     std::pair<int, int> GetTextureSize(TextureHandle handle) const;
     
-
+    void SetPostProcessOption(uint32_t flag); //Use PostProcessFlag (기존 설정된 옵션 있으면 +, 없으면 Set)
+    void ResetPostProcessOption(); //Reset PostProcessOption
 private:
     void BindConstantBuffers(const RenderItem& item);
 
@@ -168,10 +190,9 @@ private:
     bool CreateShaders();
 
     void SetViewPort();
+    void SetViewPort(uint32_t width, uint32_t height);
     void ClearDepthStencil();
     const ShaderId SetShaderKey(const MaterialDesc& desc);
-
-
 
 private:
     uint32_t m_width = 0;
@@ -211,6 +232,66 @@ private:
     bool CreateMSAADepthStencil(uint32_t width, uint32_t height);
     bool CheckMSAA();
 
+    //PostProcessing
+private:
+    RenderTarget m_sceneRT;
+    RenderTarget m_postRT[2]; //chain방식
+    RenderTarget m_bloomRT[4]; // 각각 해상도 다른 렌더타겟
+    RenderTarget m_blurTemp[4]; // 각 bloomRT에 대응
+
+    uint32_t m_postIndex = 0;
+
+    RenderTarget& CurPostRT();
+    RenderTarget& NextPostRT();
+
+    //PP Init
+    bool CreatePPRenderTarget(uint32_t width, uint32_t height);
+    bool CreateDefaultPPRT(uint32_t width, uint32_t height);
+    bool CreateBloomRT(uint32_t width, uint32_t height);
+    bool CreatePPShader();
+    bool CreatePPMaterial();
+    bool CreatePPCB();
+    void SetPP_Pass();
+
+    //PP Process
+    void PostProcess();
+    ID3D11ShaderResourceView* PostProcessScene();
+    ID3D11ShaderResourceView* PostProcessBloom(ID3D11ShaderResourceView* input);
+    void PostProcessFinal(ID3D11ShaderResourceView* input);
+    void UnBindAllSRV();
+    void BindRT(ID3D11RenderTargetView* rt);
+
+    //Bloom
+    void BindBloomThreshold(ID3D11ShaderResourceView* input);
+    void BindBloomDownSample(ID3D11ShaderResourceView* input);
+    void BindBloomBlurH(ID3D11ShaderResourceView* input);
+    void BindBloomBlurV(ID3D11ShaderResourceView* input);
+    void BindBloomCombine(ID3D11ShaderResourceView* input);
+
+public:
+    void SetThreshold(float v) { m_Threshold = v; }
+    void SetExposure(float v) { m_Exposure = v; }
+
+private:
+    MaterialHandle m_ppThresholdMat = 0;
+    MaterialHandle m_ppDownSampleMat = 0;
+    MaterialHandle m_ppBlurHMat = 0; //Horizontal
+    MaterialHandle m_ppBlurVMat = 0; //Vertical
+    MaterialHandle m_ppCombineMat = 0;
+    MaterialHandle m_ppToneMapMat = 0;
+
+    float m_Threshold = 1.05f; //추출할 최소 밝기값
+    float m_BloomIntensity = 0.6f; //Bloom 빛 번짐정도
+    float m_Exposure = 1.3f; //전체 화면 밝기조절 값
+
+    //PP Default
+    uint32_t m_PPFlag;
+    std::unordered_map<PostProcessFlag, MaterialHandle> m_PPMaterials;
+    std::vector<PostProcessPass> m_ppChain;
+    MaterialHandle m_ppDefaultMat = 0;
+    YunoConstantBuffer<CBPostProcess> m_ppCB;
+    YunoConstantBuffer<CBBloom> m_ppCBloom;
+    
     // 나중에 메쉬 매니저 이런걸로 뺼듯
 private:
     struct MeshResource

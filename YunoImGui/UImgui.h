@@ -34,7 +34,11 @@ namespace UI
 
     bool DragFloat3(const char* label, float* v, float speed = 0.1f/*움직이는 픽셀당 단위*/,
         float v_min = 0.0f, float v_max = 0.0f, const char* format = "%.1f");
-    bool DragFloat3Editable(const char* label, float* v, float speed);
+    bool DragFloat3Editable(const char* label, float* v, float speed, float v_min, float v_max);
+
+    bool DragFloat(const char* label, float* v, float speed = 0.1f/*움직이는 픽셀당 단위*/,
+        float v_min = 0.0f, float v_max = 0.0f, const char* format = "%.1f");
+    bool DragFloatEditable(const char* label, float* v, float speed, float v_min, float v_max);
     
     bool SliderFloat(const char* label, float* v, float v_min, float v_max, const char* fmt = "%.1f");
 

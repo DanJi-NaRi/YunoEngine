@@ -4,6 +4,7 @@
 #include "IRenderer.h"
 #include "YunoEngine.h"
 #include "YunoRenderer.h"
+#include "UImgui.h"
 
 Mesh::Mesh()
 {
@@ -22,6 +23,8 @@ void Mesh::Create(MeshHandle mesh, MaterialHandle mat)
 
     m_renderItem.materialHandle = m_Material;
     m_renderItem.meshHandle = m_Mesh;
+
+    CheckOption();
 }
 
 void Mesh::Create(MeshHandle mesh, MaterialHandle mat, const XMFLOAT3& vPos, const XMFLOAT3& vRot, const XMFLOAT3& vScale)
@@ -31,13 +34,34 @@ void Mesh::Create(MeshHandle mesh, MaterialHandle mat, const XMFLOAT3& vPos, con
 
     m_renderItem.materialHandle = m_Material;
     m_renderItem.meshHandle = m_Mesh;
+
+    CheckOption();
+}
+
+void Mesh::SetEmissiveColor(const XMFLOAT4& color)
+{
+    m_renderItem.Constant.emissiveColor = color;
+}
+
+void Mesh::CheckOption()
+{
+    const auto& renderer = YunoEngine::GetRenderer();
+    auto& material = dynamic_cast<YunoRenderer*>(renderer)->GetMaterial(m_renderItem.materialHandle);
+
+    if (material.emissive)
+        m_renderItem.isEmissive = true;
 }
 
 void Mesh::SetTexture(TextureUse use, const std::wstring& filepath)
 {
     const auto& renderer = YunoEngine::GetRenderer();
 
-    TextureHandle handle = renderer->CreateTexture2DFromFile(filepath.c_str());
+    TextureHandle handle;
+    
+    if(filepath.find(L"Albedo") != std::wstring::npos)
+        handle = renderer->CreateColorTexture2DFromFile(filepath.c_str());
+    else
+        handle = renderer->CreateDataTexture2DFromFile(filepath.c_str());
 
     if (!handle) return;
 
@@ -129,3 +153,26 @@ void MeshNode::LastSubmit()
     for (auto& child : m_Childs)
         child->LastSubmit();
 }
+
+#ifdef _DEBUG
+void Mesh::Serialize(int num)
+{
+    std::string numstr = std::to_string(num);
+    mat = "Material_" + numstr;
+    if (UI::CollapsingHeader(mat.c_str()))
+    {
+        if (m_renderItem.isEmissive)
+        {
+            emissive = "Emissive_" + m_name + "##" + numstr;
+            if (UI::CollapsingHeader(emissive.c_str()))
+            {
+                emissiveCol = "EmissiveColor##" + numstr;
+                if (UI::DragFloat3Editable(emissiveCol.c_str(), (float*)&m_renderItem.Constant.emissiveColor, 0.001f, 0.0f, 1.0f))
+                {
+
+                }
+            }
+        }
+    }
+}
+#endif

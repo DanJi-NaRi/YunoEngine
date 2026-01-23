@@ -70,6 +70,9 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
 #ifdef _DEBUG
     auto YunoSmanager = dynamic_cast<YunoSceneManager*>(m_sceneManager.get());
     YunoSmanager->RegisterDrawSceneUI();
+
+    auto renderer = dynamic_cast<YunoRenderer*>(m_renderer.get());
+    renderer->RegisterDrawUI();
 #endif
 
     // 인풋 시스템 생성

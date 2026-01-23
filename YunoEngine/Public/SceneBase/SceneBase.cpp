@@ -119,6 +119,8 @@ void SceneBase::SubmitObj()
         m_objectManager->ProcessPending();
         m_objectManager->Submit(m_lastDt);
     }
+
+
 }
 
 void SceneBase::SubmitUI()
@@ -158,10 +160,7 @@ void SceneBase::DrawObjectList()
             SelectObject(obj);
         }
     }
-}
 
-void SceneBase::DrawUIList()
-{
     if (!m_uiManager)
         return;
 

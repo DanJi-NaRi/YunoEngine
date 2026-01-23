@@ -1,5 +1,5 @@
 #pragma once
-
+#include "RenderTypes.h"
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
@@ -34,6 +34,7 @@ struct YunoRenderPassDesc
     DepthMode depth = DepthMode::ReadWrite;
     CullMode  cull = CullMode::Back;
     BlendMode blend = BlendMode::Opaque;
+    MaterialDomain domain = MaterialDomain::Surface;
 };
 
 class YunoRenderPass
