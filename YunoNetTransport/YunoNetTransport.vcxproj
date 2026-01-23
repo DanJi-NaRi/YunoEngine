@@ -121,7 +121,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)TransportPCH;$(ProjectDir)Public\Net</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)TransportPCH;$(ProjectDir)Public\Net;$(SolutionDir)vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -140,7 +140,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)TransportPCH;$(ProjectDir)Public\Net</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)TransportPCH;$(ProjectDir)Public\Net;$(SolutionDir)vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>

@@ -8,7 +8,6 @@ namespace yuno::game
         : m_workGuard(boost::asio::make_work_guard(m_io))
         , m_client(m_io)
     {
-        // 서버 peer는 일단 단일로 취급 (세션 aware로 갈 때 확장)
         m_serverPeer.sId = 0;
 
         m_client.SetOnPacket(

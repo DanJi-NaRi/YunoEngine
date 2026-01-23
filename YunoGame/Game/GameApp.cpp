@@ -68,8 +68,8 @@ bool GameApp::OnInit()
 
             ByteReader r(body, bodyLen);
             const auto pkt = yuno::net::packets::S2C_Pong::Deserialize(r);
+            std::cout << "InComing Data : " << pkt.nonce << std::endl;
 
-            OutputDebugStringA("[Client] S2C_Pong received\n");
         });
 
 
@@ -88,18 +88,7 @@ void GameApp::OnUpdate(float dt)
         sent = true;
         std::cout << "OnConnected" << std::endl;
 
-        using namespace yuno::net;
-        yuno::net::packets::C2S_Ping ping{};
-        ping.nonce = 1234;
 
-        auto bytes = PacketBuilder::Build(
-            PacketType::C2S_Ping,
-            [&](ByteWriter& w)
-            {
-                ping.Serialize(w);
-            });
-
-        m_clientNet.SendPacket(std::move(bytes));
 
     }
 
@@ -220,6 +209,23 @@ void GameApp::OnUpdate(float dt)
             AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, true));
             AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, false));
         }
+
+        if (input->IsKeyPressed('1'))
+        {
+            using namespace yuno::net;
+            yuno::net::packets::C2S_Ping ping{};
+            ping.nonce = 1000;
+
+            auto bytes = PacketBuilder::Build(
+                PacketType::C2S_Ping,
+                [&](ByteWriter& w)
+                {
+                    ping.Serialize(w);
+                });
+
+            m_clientNet.SendPacket(std::move(bytes));
+        }
+
     }
 
     // audio-> StateCheck();
