@@ -21,6 +21,9 @@ struct InputState
     float mouseDeltaX = 0.0f;
     float mouseDeltaY = 0.0f;
 
+    float pressedMouseX = 0.0f;
+    float pressedMouseY = 0.0f;
+
     // 프레임 시작 시 델타 초기화
     void BeginFrame()
     {
@@ -29,5 +32,9 @@ struct InputState
 
         mouseDeltaX = 0.0f;
         mouseDeltaY = 0.0f;
+
+        pressedMouseX = 0.0f;
+        pressedMouseY = 0.0f;
+
     }
 };

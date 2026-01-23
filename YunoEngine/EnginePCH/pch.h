@@ -34,6 +34,9 @@
 #include <cstring>
 #include <utility>
 #include <deque>
+#include <string_view>
+#include <type_traits>
+
 
 // ===============================
 // Win32

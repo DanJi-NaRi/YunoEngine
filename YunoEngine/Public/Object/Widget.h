@@ -6,7 +6,6 @@
 #include "ITextureManager.h"
 #include "Mesh.h"
 
-// 피봇 예정...
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
 
 enum class Anchor : int {
@@ -22,12 +21,18 @@ enum class Anchor : int {
     Max,
 };
 
-enum class widgetType : int {
+enum class widgetType : int { // 위젯 기본형
+    JustWidget,
     Sprite,
     Button,
-    Progress,
-    Slider,
+    //Progress,
+    //Slider,
     Max,
+};
+
+enum class widgetClass : int {
+    CardTable,
+    Card,
 };
 
 class Widget
@@ -75,6 +80,7 @@ protected:
     RenderItem      m_renderItem;
     MeshHandle      m_defaultMesh;
     MaterialHandle  m_defaultMaterial;
+    std::vector<MaterialHandle>  m_addMaterial;
     TextureHandle   m_Albedo;
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
@@ -91,9 +97,12 @@ protected:
 
 protected:
     IRenderer* m_pRenderer = nullptr;
+
     ITextureManager* m_pTextures = nullptr;
+
     IInput* m_pInput = nullptr;
-    Anchor m_anchor;
+
+    Anchor m_anchor; // 아직 안씀
 public:
     explicit Widget();
 
@@ -113,7 +122,27 @@ public:
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();
-    virtual bool CreateMaterial() { return false; };
+
+    bool CreateMaterial(std::wstring path, MaterialDesc* pDesc = nullptr);
+
+    template <typename Path, typename... Paths>
+    bool CreateMaterials(Path&& path, Paths&&... paths) // wstring_view 타입일 것
+    {
+        static_assert(
+            std::is_convertible<Path, std::wstring_view>::value &&
+            (std::is_convertible<Paths, std::wstring_view>::value && ...),
+            "CreateMaterials: all arguments must be convertible to std::wstring_view"
+            );
+
+        bool hr;
+        hr = CreateMaterial(path);
+        hr = (AddMaterial(std::wstring_view(paths)) && ...);
+        return hr;
+    }
+
+    virtual bool CreateMaterial() { return CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };
+
+    virtual bool AddMaterial(std::wstring path);
 
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 

@@ -99,20 +99,16 @@
     <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp">
       <Filter>Scenes\SceneTemplate</Filter>
     </ClCompile>
-
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Game\UI\Button.cpp">
-      <Filter>Game\UI\Button</Filter>
-    </ClCompile>
-
     <ClCompile Include="ClientNet\ClientNet.cpp" />
-
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-
+    <ClCompile Include="Card.cpp" />
+    <ClCompile Include="CardTable.cpp" />
+    <ClCompile Include="DragProvider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -163,8 +159,11 @@
     <ClInclude Include="System\SettingScene_InputContext.h">
       <Filter>System\UIScene</Filter>
     </ClInclude>
-
     <ClInclude Include="ClientNet\ClientNet.h" />
-
+    <ClInclude Include="Card.h" />
+    <ClInclude Include="CardTable.h" />
+    <ClInclude Include="CardActData.h" />
+    <ClInclude Include="CardData.h" />
+    <ClInclude Include="DragProvider.h" />
   </ItemGroup>
 </Project>

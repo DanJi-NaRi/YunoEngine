@@ -171,7 +171,7 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
     {
         if (Btn = dynamic_cast<Button*>(widget.get()); !Btn) continue;
 
-        Btn->SetButtonState(ButtonState::Idle);
+        Btn->SetButtonState(ButtonState::Idle); // 초기화
 
 
         ////////////////// 키보드 입력 검사 단계 //////////////////
@@ -201,22 +201,35 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
             Btn = nullptr;
             continue;
         }
-        
-        if (m_pInput->IsMouseButtonPressed(0) || m_pInput->IsMouseButtonPressed(1)) {
+        else if (m_pInput->IsMouseButtonPressed(0)) {
             Btn->SetButtonState(ButtonState::Pressed);
+            m_focusedWidget = Btn; // 마지막으로 누른 버튼 갱신
+            m_focusedMouseButton = 0;
             //Btn->PressedEvent();
-            //std::cout << "Pressed!!" << std::endl;
+            //std::cout << "LMBPressed!!" << std::endl;
+        }
+        else if (m_pInput->IsMouseButtonPressed(1)) {
+            Btn->SetButtonState(ButtonState::Pressed);
+            m_focusedWidget = Btn; // 마지막으로 누른 버튼 갱신
+            m_focusedMouseButton = 1;
+            //Btn->PressedEvent();
+            //std::cout << "RMBPressed!!" << std::endl;
         }
         else if (m_pInput->IsMouseButtonDown(0) || m_pInput->IsMouseButtonDown(1)) {
             Btn->SetButtonState(ButtonState::Down);
             //Btn->DownEvent();
             //std::cout << "Down!!" << std::endl;
         }
-        else if (m_pInput->IsMouseButtonReleased(0) || m_pInput->IsMouseButtonReleased(1)) {
-            Btn->SetButtonState(ButtonState::Released);
-            //Btn->ReleasedEvent();
-            //std::cout << "Released!!" << std::endl;
-        }
+        //else if (m_pInput->IsMouseButtonReleased(0)) {
+        //    Btn->SetButtonState(ButtonState::Released);
+        //    //Btn->ReleasedEvent();
+        //    //std::cout << "LMBReleased!!" << std::endl;
+        //}
+        //else if (m_pInput->IsMouseButtonReleased(1)) {
+        //    Btn->SetButtonState(ButtonState::Released);
+        //    //Btn->ReleasedEvent();
+        //    //std::cout << "RMBReleased!!" << std::endl;
+        //}
         else {
             Btn->SetButtonState(ButtonState::Hovered);
             //Btn->HoveredEvent();
@@ -240,6 +253,17 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
         break;
     case ButtonState::Released:
         if (!m_pInput->IsMouseButtonReleased(mouseButton)) return false;
+
+        // 커서가 밖이어도 포커스된 버튼이면 릴리즈 보장
+        if (m_focusedWidget)
+        {
+            if (m_focusedMouseButton != mouseButton) return false;
+            if (mouseButton == 0) m_focusedWidget->LMBReleasedEvent();
+            else if (mouseButton == 1) m_focusedWidget->RMBReleasedEvent();
+
+            m_focusedWidget = nullptr;
+            return true;
+        }
         break;
     default:
         // Hover/Idle는 "입력 발생" 기반 함수가 아님
@@ -255,18 +279,25 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
     for (auto& widget : m_widgets)
     {
         Button* Btn = dynamic_cast<Button*>(widget.get());
-        if (!Btn) continue;
-        if (!widget->IsCursorOverWidget(mouseXY)) continue;
+        if (!Btn) continue; // 버튼인지
 
-        if (Btn->GetButtonState() != state) continue;
+        if (Btn->GetButtonState() != state) continue; // 버튼과 State가 동일한지
+
+        // 커서가 위젯 위에 있는 지 검사
+        if (!widget->IsCursorOverWidget(mouseXY)) continue;
 
         switch (state) {
         case ButtonState::Pressed:  
             if(mouseButton == 0) Btn->LMBPressedEvent();
             else if(mouseButton == 1) Btn->RMBPressedEvent();
             return true;
-        case ButtonState::Down:     Btn->DownEvent();     return true;
-        case ButtonState::Released: Btn->ReleasedEvent(); return true;
+        case ButtonState::Down:     
+            Btn->DownEvent();     
+            return true;
+        //case ButtonState::Released: // 사실상 이전에 처리
+        //    if (mouseButton == 0) Btn->LMBReleasedEvent();
+        //    else if (mouseButton == 1) Btn->RMBReleasedEvent(); 
+        //    return true;
         default: return false;
         }
     }
@@ -309,7 +340,7 @@ bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)
         switch (state) {
         case ButtonState::Pressed:  Btn->KeyPressedEvent(key);  return true;
         case ButtonState::Down:     Btn->DownEvent();     return true;
-        case ButtonState::Released: Btn->ReleasedEvent(); return true;
+        case ButtonState::Released: Btn->KeyReleasedEvent(key); return true;
         default: return false;
         }
     }

@@ -6,12 +6,13 @@
 // 버튼 상태(Event Flag)
 // Idle    : 기본값(상호작용 X)
 // Hovered : 커서위치 버튼 위(Hovered,Moved), 동시에 Up 역할도...
-// Clicked : 이번 프레임에 버튼 누름
-// Pressed : 버튼 누르고 있음
+// Pressed : 이번 프레임에 버튼 누름
+// Down : 버튼 누르고 있음
 
 // 카드도 Button 상속해서 쓰게 하면 될 듯??
 
 enum class ButtonState : int { Idle, Hovered, Pressed, Down, Released, Count };
+
 class Button : public Widget {
 public:
     explicit Button();
@@ -29,8 +30,11 @@ public:
     virtual bool LMBPressedEvent();
     virtual bool RMBPressedEvent();
     virtual bool KeyPressedEvent(uint32_t key = 0);
+    virtual bool LMBReleasedEvent();
+    virtual bool RMBReleasedEvent();
+    virtual bool KeyReleasedEvent(uint32_t key = 0);
     virtual bool DownEvent();
-    virtual bool ReleasedEvent();
+    
 
 
     ButtonState GetButtonState() const { return m_BtnState; }
@@ -41,14 +45,12 @@ public:
 protected:
     // 버튼 상태 : 대기/커서입력/눌림 (standby/CursorOn/Push)
     ButtonState m_BtnState;							//UI버튼별 상태 저장.
-    uint32_t m_Bindkey = 'A';
+    uint32_t m_Bindkey = 0;
 private:
     //bool CreateMesh() override;      // 메시 생성 (한 번만)
-    bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)
     //void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 
-    //추가 머테리얼 - 필요할까?
-    MaterialHandle m_addMaterial = 0;
 };
 
 

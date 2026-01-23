@@ -27,6 +27,8 @@ public:
     virtual float GetMouseY() const = 0;
     virtual float GetMouseDeltaX() const = 0;
     virtual float GetMouseDeltaY() const = 0;
+    virtual float GetPressedMouseX() const = 0;
+    virtual float GetPressedMouseY() const = 0;
 
     // 호버링(HOVERING) 메세지 발생 함수
     virtual void MouseTrack(HWND hWnd, BOOL bOn = TRUE) = 0;

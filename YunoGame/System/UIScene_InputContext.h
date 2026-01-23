@@ -45,15 +45,12 @@ public:
         {
             // 마우스 먼저
             evt.consumed = m_uiManager->ProcessButtonMouse(ButtonState::Pressed, 0);
-            if (evt.consumed) {
-                
-                std::cout << "[UI] Consumed LMB\n";
-            }
+            //if (evt.consumed) std::cout << "[UI] Consumed LMB\n";
             return evt.consumed;
         }
         else if (RMB_Pressed) { 
             evt.consumed = m_uiManager->ProcessButtonMouse(ButtonState::Pressed, 1);     
-            if(evt.consumed) std::cout << "[UI] Consumed RMB\n";
+            //if(evt.consumed) std::cout << "[UI] Consumed RMB\n";
             return evt.consumed;
         }
         else if (LMB_Up)      { return evt.consumed = m_uiManager->ProcessButtonMouse(ButtonState::Released, 0);    }
