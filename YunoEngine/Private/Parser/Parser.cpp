@@ -588,7 +588,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
 
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
             texPath += L"_Albedo_" + texNum + L".png";
-            TextureHandle diff = renderer->CreateTexture2DFromFile(texPath.c_str());
+            TextureHandle diff = renderer->CreateColorTexture2DFromFile(texPath.c_str());
 
             md.albedo = diff;
         }
@@ -599,7 +599,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
             texNum = std::to_wstring(nodeNum + 1);
             texPath += L"_Albedo_" + texNum + L".png";
-            TextureHandle diff = renderer->CreateTexture2DFromFile(texPath.c_str());
+            TextureHandle diff = renderer->CreateColorTexture2DFromFile(texPath.c_str());
 
             md.albedo = diff;
         }
@@ -607,7 +607,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         if (aiMaterial->GetTexture(aiTextureType_NORMALS, 0, &texPath) == AI_SUCCESS)
         {
             auto wPath = Utf8ToWString(texPath.C_Str());
-            TextureHandle nrm = renderer->CreateTexture2DFromFile(wPath.c_str());
+            TextureHandle nrm = renderer->CreateDataTexture2DFromFile(wPath.c_str());
 
             md.normal = nrm; 
         }
@@ -616,7 +616,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
             texPath += L"_Normal_" + texNum + L".png";
 
-            TextureHandle nrm = renderer->CreateTexture2DFromFile(texPath.c_str());
+            TextureHandle nrm = renderer->CreateDataTexture2DFromFile(texPath.c_str());
 
             md.normal = nrm;
         }
@@ -624,7 +624,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         if (aiMaterial->GetTexture(aiTextureType_METALNESS, 0, &texPath) == AI_SUCCESS)
         {
             auto wPath = Utf8ToWString(texPath.C_Str());
-            TextureHandle metal = renderer->CreateTexture2DFromFile(wPath.c_str());
+            TextureHandle metal = renderer->CreateDataTexture2DFromFile(wPath.c_str());
 
             md.metal = metal; //pbr셰이더용 쓰레기값 추가 텍스쳐 안넣어주면 터짐
         }
@@ -633,7 +633,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
             texPath += L"_ORM_" + texNum + L".png";
 
-            TextureHandle orm = renderer->CreateTexture2DFromFile(texPath.c_str());
+            TextureHandle orm = renderer->CreateDataTexture2DFromFile(texPath.c_str());
 
             md.orm = orm;
         }
@@ -641,7 +641,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         if (aiMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &texPath) == AI_SUCCESS)
         {
             auto wPath = Utf8ToWString(texPath.C_Str());
-            TextureHandle rough = renderer->CreateTexture2DFromFile(wPath.c_str());
+            TextureHandle rough = renderer->CreateDataTexture2DFromFile(wPath.c_str());
 
             md.rough = rough;
         }
@@ -650,7 +650,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
             texPath += L"_ORM_" + texNum + L".png";
 
-            TextureHandle orm = renderer->CreateTexture2DFromFile(texPath.c_str());
+            TextureHandle orm = renderer->CreateDataTexture2DFromFile(texPath.c_str());
 
             md.orm = orm;
         }
@@ -658,7 +658,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         if (aiMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &texPath) == AI_SUCCESS)
         {
             auto wPath = Utf8ToWString(texPath.C_Str());
-            TextureHandle ao = renderer->CreateTexture2DFromFile(wPath.c_str());
+            TextureHandle ao = renderer->CreateDataTexture2DFromFile(wPath.c_str());
 
             md.ao = ao;
         }
@@ -667,10 +667,34 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             auto texPath = filepath.substr(0, filepath.find(L".fbx"));
             texPath += L"_ORM_" + texNum + L".png";
 
-            TextureHandle orm = renderer->CreateTexture2DFromFile(texPath.c_str());
+            TextureHandle orm = renderer->CreateDataTexture2DFromFile(texPath.c_str());
 
             md.orm = orm;
         }
+        //Emissive
+        {
+            auto wPath = filepath.substr(0, filepath.find(L".fbx"));
+            wPath += L"_Emissive_" + texNum + L".png";
+
+            TextureHandle emissive = renderer->CreateDataTexture2DFromFile(wPath.c_str());
+
+            md.emissive = emissive;
+        }
+        //Opacity
+        {
+            auto wPath = filepath.substr(0, filepath.find(L".fbx"));
+            wPath += L"_Opacity_" + texNum + L".png";
+
+            TextureHandle opacity = renderer->CreateDataTexture2DFromFile(wPath.c_str());
+
+            md.opacity = opacity;
+            if (opacity)
+            {
+                //md.passKey.blend = BlendPreset::AlphaBlend;
+                //md.passKey.raster = RasterPreset::CullNone;
+            }
+        }
+
     }
 
     auto materialHandle = renderer->CreateMaterial(md);

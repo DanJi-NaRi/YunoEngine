@@ -110,6 +110,9 @@
     <Filter Include="Public\System">
       <UniqueIdentifier>{984da9d0-6768-45ac-9828-30e5d3ba09b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\postprocess">
+      <UniqueIdentifier>{0adb9232-5754-4a49-9882-245db7380a41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -401,7 +404,22 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\PP_Default.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_Combine.hlsl">
+      <Filter>Shaders\postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_DownSample.hlsl">
+      <Filter>Shaders\postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_Threshold.hlsl">
+      <Filter>Shaders\postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_BlurHorizon.hlsl">
+      <Filter>Shaders\postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_BlurVertical.hlsl">
+      <Filter>Shaders\postprocess</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -119,7 +119,14 @@ enum class ShaderId : uint8_t
     Unlit,
     Skybox,
     UIBase,
-    PP_Default, //PostProcess
+
+    //PostProcess
+    PP_Default,
+    PP_Threshold,
+    PP_DownSample ,
+    PP_BlurH, 
+    PP_BlurV, 
+    PP_Combine, 
 
     Count
 };

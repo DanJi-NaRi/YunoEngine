@@ -150,6 +150,40 @@ namespace UI
         }
     }
 
+    bool DragFloat(const char* label, float* v, float speed, float v_min, float v_max, const char* format)
+    {
+        return ImGui::DragFloat(label, v, 0.1f, v_min, v_max, format);
+    }
+
+    bool DragFloatEditable(const char* label, float* v, float speed, float v_min, float v_max)
+    {
+        static bool edit = false;
+
+        if (!edit)
+        {
+            bool changed = ImGui::DragFloat(label, v, speed, v_min, v_max);
+
+            if (ImGui::IsItemHovered() &&
+                ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+            {
+                edit = true;
+            }
+
+            return changed;
+        }
+        else
+        {
+            bool changed = ImGui::InputFloat(label, v);
+
+            if (ImGui::IsItemDeactivatedAfterEdit())
+            {
+                edit = false;
+            }
+
+            return changed;
+        }
+    }
+
     bool SliderFloat(const char* label, float* v, float v_min, float v_max, const char* fmt)
     {
         return ImGui::SliderFloat(label, v, v_min, v_max, fmt);

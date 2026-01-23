@@ -351,6 +351,10 @@ void YunoSceneManager::SubmitAndRender(IRenderer* renderer)
         }
     }
 
+#if defined(_DEBUG)
+    renderer->DrawDebug();
+#endif
+
     for (int i = start; i < static_cast<int>(m_stack.size()); ++i)
     {
         SceneEntry& e = m_stack[i];
@@ -360,6 +364,8 @@ void YunoSceneManager::SubmitAndRender(IRenderer* renderer)
 
         renderer->Flush();
     }
+
+    renderer->PostProcess();
 
     for (int i = start; i < static_cast<int>(m_stack.size()); ++i)
     {

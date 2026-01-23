@@ -38,13 +38,18 @@ public:
 
     virtual MaterialHandle CreateMaterial(const MaterialDesc& desc) = 0;
 
-    virtual TextureHandle CreateTexture2DFromFile(const wchar_t* path) = 0;
+    virtual TextureHandle CreateColorTexture2DFromFile(const wchar_t* path) = 0; //Albedo, BaseColor용 -> 자동으로 Gpu에 넘길 때 감마커렉션 적용해줌
+    virtual TextureHandle CreateDataTexture2DFromFile(const wchar_t* path) = 0; //Data 텍스쳐용 -> 원본 손상 X
 
     // 매 프레임 렌더 요청 제출
     virtual void Submit(const RenderItem& item) = 0;
 
     // BeginFrame~EndFrame 사이에서 호출되어 실제 Draw 수행
     virtual void Flush() = 0;
+
+    virtual void DrawDebug() = 0;
+
+    virtual void PostProcess() = 0;
 
     // 프레임당 1회 상수 버퍼 업데이트
     virtual void BindConstantBuffers_Camera(const Frame_Data_Dir& dirData) = 0;
@@ -54,7 +59,8 @@ public:
     virtual YunoCamera& GetCamera() = 0;
 
     //포스트프로세싱 설정
-    virtual void SetPostProcessFlag(uint32_t flag) = 0;
+    virtual void SetPostProcessOption(uint32_t flag) = 0; //Use PostProcessFlag (기존 설정된 옵션 있으면 +, 없으면 Set)
+    virtual void ResetPostProcessOption() = 0; //Reset PostProcessOption
 
     // 종료
     virtual void Shutdown() = 0;

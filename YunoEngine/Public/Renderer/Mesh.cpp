@@ -37,7 +37,12 @@ void Mesh::SetTexture(TextureUse use, const std::wstring& filepath)
 {
     const auto& renderer = YunoEngine::GetRenderer();
 
-    TextureHandle handle = renderer->CreateTexture2DFromFile(filepath.c_str());
+    TextureHandle handle;
+    
+    if(filepath.find(L"Albedo") != std::wstring::npos)
+        handle = renderer->CreateColorTexture2DFromFile(filepath.c_str());
+    else
+        handle = renderer->CreateDataTexture2DFromFile(filepath.c_str());
 
     if (!handle) return;
 

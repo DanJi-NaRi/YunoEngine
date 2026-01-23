@@ -32,15 +32,13 @@ bool TitleScene::OnCreateScene()
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
-    m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx");
-    m_objectManager->CreateObjectFromFile<Building>(L"Drill", XMFLOAT3(2, 2, 0), L"../Assets/fbx/Drill/Drill.fbx");
+    auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx");
+    gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
+    m_objectManager->CreateObjectFromFile<Building>(L"Drill", XMFLOAT3(4, 2, 0), L"../Assets/fbx/Drill/Drill.fbx");
     m_objectManager->CreateObjectFromFile<Building>(L"Axe", XMFLOAT3(-2, 2, 0), L"../Assets/fbx/Ax/Ax.fbx");
     //auto capo = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/Capoeira2.fbx");
     //capo->AddAnimationClip("capoeira", L"../Assets/fbx/Human/Capoeira2.fbx");
    // capo->AddAnimationClip("dying", L"../Assets/fbx/Human/Dying2.fbx");
-    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building_TextureOn.fbx");
-    //m_objectManager->CreateObjectFromFile<AnimTest>(L"Human", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/human2.fbx");
-    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
 
 
     return true;

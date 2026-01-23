@@ -21,7 +21,7 @@ TextureHandle YunoTextureManager::LoadTexture2D(const wchar_t* path)
         return it->second;
 
 
-    const TextureHandle h = m_renderer->CreateTexture2DFromFile(path);
+    const TextureHandle h = m_renderer->CreateColorTexture2DFromFile(path);
 
     if (h != 0)
         m_cache.emplace(key, h);

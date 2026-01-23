@@ -12,6 +12,7 @@ struct MaterialDesc
     // 아트한테 채널별로 받을 수 있는지 체크하고 확정
     TextureHandle orm = 0;      // rough, metal, ao
     TextureHandle emissive = 0;
+    TextureHandle opacity = 0;
 
     TextureHandle metal = 0;    
     TextureHandle rough = 0;    
