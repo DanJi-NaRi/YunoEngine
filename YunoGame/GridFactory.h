@@ -5,10 +5,9 @@ class GridFactory
 public:
     GridFactory();
     ~GridFactory();
-    void Init(int row, int column, float cellSizeX, float cellSizeZ);
-    static void GetGridInfo(int& row, int& column, float& cellSizeX, float& cellSizeZ);
+    void Init(int row, int column);
+    static void GetGridInfo(int& row, int& column);
 
 private:
     static int m_row, m_column;
-    static float m_cellSizeX, m_cellSizeZ;
 };

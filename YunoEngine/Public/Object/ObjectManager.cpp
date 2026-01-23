@@ -105,7 +105,7 @@ void ObjectManager::ProcessPending()
 }
 
 //유니크 포인터의 생포인터 반환 외부에서 삭제 절대 금지
-const Unit* ObjectManager::FindObject(UINT id)//GetID랑 연동해서쓰기
+Unit* ObjectManager::FindObject(UINT id)//GetID랑 연동해서쓰기
 {
     if(m_objMap.find(id) == m_objMap.end())
         return nullptr;
@@ -113,7 +113,7 @@ const Unit* ObjectManager::FindObject(UINT id)//GetID랑 연동해서쓰기
     return m_objMap[id];
 }
 
-const Unit* ObjectManager::FindObject(const std::wstring& name)
+Unit* ObjectManager::FindObject(const std::wstring& name)
 {
     if (m_nameToID.find(name) == m_nameToID.end())
         return nullptr;

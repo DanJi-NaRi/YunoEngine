@@ -52,35 +52,35 @@ bool GridLine::Submit(float dTime)
 bool GridLine::CreateMesh()
 {
     int m_row, m_column;
-    float m_cellSizeX, m_cellSizeZ;
-    GridFactory::GetGridInfo(m_row, m_column, m_cellSizeX, m_cellSizeZ);
-    int m_halfX = std::floor((m_column + 1) / 2.f);
-    int m_halfZ = std::floor((m_row + 1) / 2.f);
-
+    GridFactory::GetGridInfo(m_row, m_column);
+    m_lineVtx.clear();
     m_lineVtx.reserve((m_row + 1) * 2 + (m_column + 1) * 2);
 
-    float y = 1.f;
-    float halfLength = ((m_row) / 2.f) * m_cellSizeZ;
-    int idx = 0;
-    for (int i = -m_halfX; i < m_halfX; i++)
-    {
-        float x = i * m_cellSizeX;
-        m_lineVtx.push_back({ x, y, -halfLength });
-        m_lineVtx.push_back({ x, y, halfLength });
+    float y = 1.0f;
+
+    // 전체 그리드의 반 길이 (셀 개수 기준!)
+    float halfX = m_column * 0.5f;
+    float halfZ = m_row * 0.5f;
+
+    // 세로선(= Z방향으로 뻗는 선): x가 변하고 z는 [-halfZ, +halfZ]
+    for (int i = 0; i <= m_column; ++i) {             // column+1개 라인
+        float x = -halfX + i;          // 일정 간격으로
+        m_lineVtx.push_back({ x, y, -halfZ });
+        m_lineVtx.push_back({ x, y,  halfZ });
     }
 
-    halfLength = ((m_column) / 2.f) * m_cellSizeX;
-    for (int i = -m_halfZ; i < m_halfZ; i++)
-    {
-        float z = i * m_cellSizeZ;
-        m_lineVtx.push_back({ -halfLength, y, z });
-        m_lineVtx.push_back({ halfLength, y, z });
+    // 가로선(= X방향으로 뻗는 선): z가 변하고 x는 [-halfX, +halfX]
+    for (int i = 0; i <= m_row; ++i) {               // row+1개 라인
+        float z = -halfZ + i;
+        m_lineVtx.push_back({ -halfX, y, z });
+        m_lineVtx.push_back({ halfX, y, z });
     }
 
     VertexStreams streams{};
     streams.flags = VSF_Pos;
     streams.vtx_count = m_lineVtx.size();
     streams.pos = m_lineVtx.data();
+    streams.topology = Yuno_LINELIST;
 
     m_defaultMesh = m_pRenderer->CreateMesh(streams, nullptr, 0);
     if (m_defaultMesh == 0)

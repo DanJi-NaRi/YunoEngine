@@ -10,7 +10,6 @@
 #include "IInput.h"
 
 #include "GridSystem.h"
-#include "GridLine.h"
 #include "Quad.h"
 #include "Building.h"
 #include "Triangle.h"
@@ -30,9 +29,10 @@ bool TitleScene::OnCreateScene()
     m_objectManager->CreateDirLight();
     
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
-    m_gridSystem = std::make_unique<GridSystem>(5, 7, 2, 1);
-    m_objectManager->CreateObject<GridLine>(L"DebugGridLine", XMFLOAT3(0, 3, 0));
-
+    m_gridSystem = std::make_unique<GridSystem>(m_objectManager.get());
+    m_gridSystem->Init(5, 7, 3, 2);
+    m_gridSystem->CreateObject(0, 5, 0);
+    
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
@@ -56,13 +56,9 @@ void TitleScene::OnDestroyScene()
 }
 
 
-TitleScene::TitleScene()
-{
-}
+TitleScene::TitleScene() = default;
 
-TitleScene::~TitleScene()
-{
-}
+TitleScene::~TitleScene() = default;
 
 void TitleScene::OnEnter()
 {
@@ -73,7 +69,7 @@ void TitleScene::OnEnter()
 
     YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
 
-
+    
 }
 
 void TitleScene::OnExit()
@@ -92,6 +88,7 @@ void TitleScene::Update(float dt)
 {
     SceneBase::Update(dt);
     m_input->Dispatch();
+    
 }
 
 void TitleScene::SubmitObj()
