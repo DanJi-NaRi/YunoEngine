@@ -39,8 +39,12 @@ void AnimationUnit::AddAnimationClip(const std::string& name, const std::wstring
         m_animator = Parser::Instance().LoadAnimatorFromFile(name, filepath);
 }
 
+#ifdef _DEBUG
 void AnimationUnit::Serialize()
 {
+    Unit::Serialize();
+
     if (m_animator)
         m_animator->Serialize();
 }
+#endif

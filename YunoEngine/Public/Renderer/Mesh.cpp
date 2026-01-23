@@ -154,6 +154,7 @@ void MeshNode::LastSubmit()
         child->LastSubmit();
 }
 
+#ifdef _DEBUG
 void Mesh::Serialize(int num)
 {
     std::string numstr = std::to_string(num);
@@ -174,3 +175,4 @@ void Mesh::Serialize(int num)
         }
     }
 }
+#endif

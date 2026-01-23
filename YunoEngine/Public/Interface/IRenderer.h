@@ -47,7 +47,9 @@ public:
     // BeginFrame~EndFrame 사이에서 호출되어 실제 Draw 수행
     virtual void Flush() = 0;
 
+#ifdef _DEBUG
     virtual void DrawDebug() = 0;
+#endif
 
     virtual void PostProcess() = 0;
 
