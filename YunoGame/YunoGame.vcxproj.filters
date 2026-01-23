@@ -102,10 +102,10 @@
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="ClientNet\ClientNet.cpp" />
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -156,6 +156,6 @@
     <ClInclude Include="System\SettingScene_InputContext.h">
       <Filter>System\UIScene</Filter>
     </ClInclude>
-    <ClInclude Include="ClientNet\ClientNet.h" />
+    <ClInclude Include="ClientNetwork\YunoClientNetwork.h" />
   </ItemGroup>
 </Project>

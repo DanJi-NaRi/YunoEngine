@@ -27,5 +27,10 @@
 #include <deque>
 #include <functional>
 
+// ===============================
+// Byte Reader/Writer
+// ===============================
+#include "ByteIO.h"
+
 
 #endif //PCH_H

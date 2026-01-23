@@ -1,16 +1,12 @@
 #pragma once
 
-#include <array>
-#include <cstdint>
-#include <cstddef>
-
 #include "PacketType.h"
 #include "ByteIO.h"
 
 namespace yuno::net
 {
     // 4 BodyLen, 1 PacketType, 1 Version, 2 Reserved
-    static constexpr std::size_t yunoPacketHeaderSize = 8;
+    inline constexpr std::size_t yunoPacketHeaderSize = 8;
     // 패킷 최대 크기
     inline constexpr std::uint32_t MaxLength = 4u * 1024u * 1024u;
 

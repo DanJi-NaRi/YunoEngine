@@ -39,10 +39,11 @@ namespace yuno::net
         void SetOnPacket(OnPacketFn fn) { m_onPacket = std::move(fn); }
         void SetOnDisconnected(OnDisconnectedFn fn) { m_onDisconnected = std::move(fn); }
 
-        // 브로드캐스트(현재 접속 중인 모든 세션)
+        // 브로드캐스트
         void Broadcast(std::vector<std::uint8_t> packetBytes);
 
         std::size_t GetSessionCount() const { return m_sessions.size(); }
+        TcpSession::YunoSession FindSession(sessionId sid) const;
 
     private:
         void DoAccept();

@@ -1,5 +1,7 @@
 #include "pch.h"
+#include "TcpSession.h"   
 #include "TcpServer.h"
+#include <iostream>
 
 namespace yuno::net
 {
@@ -70,11 +72,14 @@ namespace yuno::net
                     DoAccept();
                     return;
                 }
+                std::cout << "[TcpServer] accepted\n";
 
                 // 서버
-                auto session = std::make_shared<TcpSession>(std::move(socket));
                 const sessionId sid = NextSessionId();
+                auto session = std::make_shared<TcpSession>(sid, std::move(socket));
                 m_sessions.emplace(sid, session);
+
+                std::cout << "[TcpServer] new session sid=" << sid << "\n";
 
                 HookSessionCallbacks(sid,session);
                 session->Start();
@@ -133,4 +138,13 @@ namespace yuno::net
             sess.second->Send(packetBytes);
         }
     }
+
+    TcpSession::YunoSession TcpServer::FindSession(sessionId sid) const
+    {
+        auto it = m_sessions.find(sid);
+        if (it == m_sessions.end())
+            return nullptr;
+        return it->second;
+    }
+
 }

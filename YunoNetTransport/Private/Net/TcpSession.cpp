@@ -4,8 +4,9 @@
 
 namespace yuno::net
 {
-    TcpSession::TcpSession(boost::asio::ip::tcp::socket socket)
-        : m_socket(std::move(socket))
+    TcpSession::TcpSession(sessionId sid, boost::asio::ip::tcp::socket socket)
+        : m_sid(sid)
+        , m_socket(std::move(socket))
         , m_strand(m_socket.get_executor())
     {
     }
@@ -34,12 +35,12 @@ namespace yuno::net
     {
         boost::asio::dispatch(m_strand, [self = shared_from_this(), pkt = std::move(packetBytes)]() mutable
             {
-                if (pkt.size() < yunoPacketHeaderSize)
+                if (pkt.size() < yunoTCPPacketHeaderSize)
                     return;
-                assert(pkt.size() >= yunoPacketHeaderSize);
+                assert(pkt.size() >= yunoTCPPacketHeaderSize);
 
                 const bool isEmpty = self->m_writeQ.empty();
-                self->m_writeQ.push_back(std::move(pkt)); // 이때 패킷은 헤더+바디 전체임
+                self->m_writeQ.push_back(std::move(pkt)); // 이때 패킷은 헤더 + 바디 전체임
 
                 if (isEmpty && !self->m_writing)
                 {
@@ -92,7 +93,7 @@ namespace yuno::net
         {
             // 헤더만 있는 패킷도 허용
             std::vector<std::uint8_t> packet;
-            packet.reserve(yunoPacketHeaderSize);
+            packet.reserve(yunoTCPPacketHeaderSize);
             packet.insert(packet.end(), m_readHeader.begin(), m_readHeader.end());
 
             if (self->m_onPacket)
@@ -116,7 +117,7 @@ namespace yuno::net
 
                     // 완성 패킷(헤더8 + 바디N)을 한 덩어리로 올림
                     std::vector<std::uint8_t> packet;
-                    packet.reserve(yunoPacketHeaderSize + self->m_readBody.size());
+                    packet.reserve(yunoTCPPacketHeaderSize + self->m_readBody.size());
 
                     packet.insert(packet.end(),
                         self->m_readHeader.begin(), self->m_readHeader.end());

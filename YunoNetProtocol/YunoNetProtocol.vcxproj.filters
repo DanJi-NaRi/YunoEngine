@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NetPCH\pch.h">
+    <ClInclude Include="ProtocolPCH\pch.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Public\Net\PacketHeader.h">
@@ -36,9 +36,18 @@
     <ClInclude Include="Public\Net\Packets\S2C_MatchResult.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Net\NetPeer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\Packets\C2S_Ping.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\Packets\S2C_Pong.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="NetPCH\pch.cpp">
+    <ClCompile Include="ProtocolPCH\pch.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Private\Net\Packets\S2C_MatchResult.cpp">
@@ -51,6 +60,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Private\Net\PacketDispatcher.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\Packets\C2S_Ping.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\Packets\S2C_Pong.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

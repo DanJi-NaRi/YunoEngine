@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "NetPeer.h"
 #include "PacketHeader.h"
 #include "PacketType.h"
 
@@ -11,7 +11,9 @@ namespace yuno::net
     class PacketDispatcher final
     {
     public:
-        using RawHandler = std::function<void(const PacketHeader& header,
+        using RawHandler = std::function<void(
+            const NetPeer& peer,
+            const PacketHeader& header,
             const std::uint8_t* body,
             std::uint32_t bodyLen)>;
 
@@ -42,7 +44,8 @@ namespace yuno::net
         void Unregister(PacketType type);
 
 
-        bool Dispatch(const std::vector<std::uint8_t>& packetBytes);
+        //bool Dispatch(const std::vector<std::uint8_t>& packetBytes);
+        bool Dispatch(const NetPeer& peer, const std::vector<std::uint8_t>& packetBytes);
 
     private:
         // 패킷 최소 사이즈는 헤더와 같거나 커야 됨

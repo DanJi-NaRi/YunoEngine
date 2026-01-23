@@ -19,6 +19,11 @@
 
 #include "GameApp.h"
 
+#include "PacketBuilder.h"
+
+#include "S2C_Pong.h"
+#include "C2S_Ping.h"
+
 
 GameApp::~GameApp() = default;
 
@@ -38,19 +43,7 @@ bool GameApp::OnInit()
    if (!sm) return false;
 
 
-   // 네트워크 초기화
-   m_net = std::make_unique<ClientNet>();
-
-   m_net->SetOnLine([](const std::string& line)
-       {
-           std::cout << "[NET] " << line << "\n";
-       });
-
-   const bool ok = m_net->Connect("127.0.0.1", 9000);
-   std::cout << (ok ? "[NET] Connected\n" : "[NET] Connect failed\n");
-
-   // Iaudio* audio = YunoEngine::GetAudio();
-   // audio 생겨
+   //// 네트워크 초기화
 
 
    SceneTransitionOptions opt{};
@@ -61,12 +54,55 @@ bool GameApp::OnInit()
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
 
-   // 오디어 매니저 생성
+    // 네트워크 스레드 시작
+    m_clientNet.Start("127.0.0.1", 9000);
+
+    using namespace yuno::net;
+
+    m_clientNet.Dispatcher().RegisterRaw(
+        PacketType::S2C_Pong,
+        [this](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
+        {
+            if (bodyLen < 4)
+                return;
+
+            ByteReader r(body, bodyLen);
+            const auto pkt = yuno::net::packets::S2C_Pong::Deserialize(r);
+
+            OutputDebugStringA("[Client] S2C_Pong received\n");
+        });
+
+
+
+
     return true;
 }
 
 void GameApp::OnUpdate(float dt)
 {
+    m_clientNet.PumpIncoming();
+
+    static bool sent = false;
+    if (!sent && m_clientNet.IsConnected())
+    {
+        sent = true;
+        std::cout << "OnConnected" << std::endl;
+
+        using namespace yuno::net;
+        yuno::net::packets::C2S_Ping ping{};
+        ping.nonce = 1234;
+
+        auto bytes = PacketBuilder::Build(
+            PacketType::C2S_Ping,
+            [&](ByteWriter& w)
+            {
+                ping.Serialize(w);
+            });
+
+        m_clientNet.SendPacket(std::move(bytes));
+
+    }
+
     static float acc = 0.0f;
     static int frameCount = 0;
 
@@ -107,17 +143,17 @@ void GameApp::OnUpdate(float dt)
         window->SetClientSize(3440, 1440);
 
     // 네트워크
-    if (m_net && m_net->IsConnected())
-    {
-        m_net->Pump();
-
-        m_netPingAcc += dt;
-        if (m_netPingAcc >= 1.0f)
-        {
-            m_netPingAcc = 0.0f;
-            m_net->SendLine("C2S");
-        }
-    }
+    //if (m_net && m_net->IsConnected())
+    //{
+    //    m_net->Pump();
+    //
+    //    m_netPingAcc += dt;
+    //    if (m_netPingAcc >= 1.0f)
+    //    {
+    //        m_netPingAcc = 0.0f;
+    //        m_net->SendLine("C2S");
+    //    }
+    //}
 
 
     if (input && sm)
@@ -217,27 +253,16 @@ void GameApp::OnShutdown()
 {
     std::cout << "[GameApp] OnShutdown\n";
 
-    if (m_net)
-    {
-        m_net->Close();
-        m_net.reset();
-    }
+    // 네트워크 스레드종료
+    m_clientNet.Stop();
+
+    //if (m_net)
+    //{
+    //    m_net->Close();
+    //    m_net.reset();
+    //}
 }
 
-/*
-내 메모장임 - 준혁
-게임쪽에서 정점버퍼,인덱스 버퍼, 플래그를 넘김 
-CreateMesh(const VertexStreams& streams, const uint32_t* indices, uint32_t indexCount) 이 함수 사용
-그리고
-머테리얼핸들을 받기위해서 머테리얼 관련 데이터들을 넘길거임 (PBR 베이스) 
-
-감마 컬렉션 넣어야 됨
-상수버퍼 관리 넣어야 됨
-오브젝트 매니저 넣어야됨 (현승)
-FSM은 뭐 나중에 게임 나오고 만들기 ㄱㄱ
-오브젝트 매니저 씬매니저 얼른 만들고 임구이 ㄱㄱ
-
-*/
 
 void CameraMove(float dt)
 {
@@ -310,5 +335,4 @@ void CameraMove(float dt)
 }
 
 
-// GameApp = 시스템적으로 관리 하는 애들
-// Scene = 게임적으로 필요한 애들
+

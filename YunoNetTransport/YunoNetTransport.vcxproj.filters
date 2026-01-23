@@ -20,7 +20,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NetPCH\pch.h">
+    <ClInclude Include="TransportPCH\pch.h">
       <Filter>NetPCH</Filter>
     </ClInclude>
     <ClInclude Include="Public\Net\TcpClient.h">
@@ -34,7 +34,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="NetPCH\pch.cpp">
+    <ClCompile Include="TransportPCH\pch.cpp">
       <Filter>NetPCH</Filter>
     </ClCompile>
     <ClCompile Include="Private\Net\TcpClient.cpp">

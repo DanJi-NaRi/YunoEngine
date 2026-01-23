@@ -2,6 +2,8 @@
 
 #include "TcpClient.h"
 
+#include <iostream>
+
 namespace yuno::net
 {
     TcpClient::TcpClient(boost::asio::io_context& io)
@@ -15,35 +17,43 @@ namespace yuno::net
         if (m_session)
             return;
 
+        std::cout << "[TcpClient] Resolve start: " << host << ":" << port << "\n";
+
         m_resolver.async_resolve(
             host,
             std::to_string(port),
             [this](const boost::system::error_code& ec,
                 boost::asio::ip::tcp::resolver::results_type results)
             {
+                std::cout << "[TcpClient] Resolve cb. ec=" << ec.message() << "\n";
                 if (ec)
                 {
+                    std::cout << "[TcpClient] Resolve failed: " << ec.message() << "\n";
                     if (m_onDisconnected)
                         m_onDisconnected(ec);
                     return;
                 }
 
-                boost::asio::ip::tcp::socket socket(m_io);
+                auto socket = std::make_shared<boost::asio::ip::tcp::socket>(m_io);
 
                 boost::asio::async_connect(
-                    socket,
+                    *socket,
                     results,
-                    [this, socket = std::move(socket)](const boost::system::error_code& ec,
-                        const boost::asio::ip::tcp::endpoint& /*ep*/) mutable
+                    [this, socket](const boost::system::error_code& ec,
+                        const boost::asio::ip::tcp::endpoint& /*ep*/)
                     {
                         if (ec)
                         {
+                            std::cout << "[TcpClient] Connect failed: " << ec.message() << "\n";
                             if (m_onDisconnected)
                                 m_onDisconnected(ec);
                             return;
                         }
 
-                        auto session = std::make_shared<TcpSession>(std::move(socket));
+                        std::cout << "[TcpClient] Connect success\n";
+
+                        constexpr sessionId kClientSid = 0;
+                        auto session = std::make_shared<TcpSession>(kClientSid, std::move(*socket));
                         m_session = session;
 
                         HookSessionCallbacks(session);
