@@ -15,7 +15,7 @@
 #include "UIScene.h"
 
 #include "AudioQueue.h"
-
+#include "PieceQueue.h"
 
 #include "GameApp.h"
 

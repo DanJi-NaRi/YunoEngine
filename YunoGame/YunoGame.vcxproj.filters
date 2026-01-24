@@ -54,6 +54,11 @@
     </Filter>
     <Filter Include="System\GameScene">
       <UniqueIdentifier>{5e610e02-9910-4288-8003-55dcb20743a5}</UniqueIdentifier>
+    <Filter Include="Game\Object\GridLine">
+      <UniqueIdentifier>{7f14bc22-aa41-48fc-9e7b-06fd3b422c6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Tile">
+      <UniqueIdentifier>{d15592e8-202a-4afe-8c14-9f61c810719f}</UniqueIdentifier>
     </Filter>
     <Filter Include="main\GamePCH">
       <UniqueIdentifier>{38f5e7a6-3988-4694-b80c-2399a2758a86}</UniqueIdentifier>
@@ -106,6 +111,16 @@
       <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp" />
+
+    <ClCompile Include="GridSystem.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="GridLine.cpp">
+      <Filter>Game\Object\GridLine</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>Game\Object\Tile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -157,5 +172,67 @@
       <Filter>System\UIScene</Filter>
     </ClInclude>
     <ClInclude Include="ClientNetwork\YunoClientNetwork.h" />
+    <ClInclude Include="ClientNet\ClientNet.h" />
+
+    <ClInclude Include="GridSystem.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="GridLine.h">
+      <Filter>Game\Object\GridLine</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>Game\Object\Tile</Filter>
+    </ClInclude>
+    <ClCompile Include="ClientNet\ClientNet.cpp" />
+    <ClCompile Include="GamePCH\pch.cpp" />
+    <ClCompile Include="Game\GameApp.cpp" />
+    <ClCompile Include="Game\Object\AnimTest.cpp" />
+    <ClCompile Include="Game\Object\Building.cpp" />
+    <ClCompile Include="Game\Object\Dwarf.cpp" />
+    <ClCompile Include="Game\Object\GridLine.cpp" />
+    <ClCompile Include="Game\Object\Tile.cpp" />
+    <ClCompile Include="Game\UI\Image.cpp" />
+    <ClCompile Include="System\GridFactory.cpp" />
+    <ClCompile Include="System\PlayGridSystem.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Game\Object\Triangle.cpp" />
+    <ClCompile Include="Game\Object\Quad.cpp" />
+    <ClCompile Include="Scenes\PlayScene.cpp" />
+    <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp" />
+    <ClCompile Include="Scenes\TitleScene.cpp" />
+    <ClCompile Include="Game\UI\Text.cpp" />
+    <ClCompile Include="Scenes\UIScene.cpp" />
+    <ClCompile Include="Game\Object\Piece.cpp" />
+    <ClCompile Include="PieceQueue.cpp" />
+    <ClCompile Include="System\GridSystem.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ClientNet\ClientNet.h" />
+    <ClInclude Include="GamePCH\pch.h" />
+    <ClInclude Include="Game\GameApp.h" />
+    <ClInclude Include="Game\Object\AnimTest.h" />
+    <ClInclude Include="Game\Object\Building.h" />
+    <ClInclude Include="Game\Object\Dwarf.h" />
+    <ClInclude Include="Game\Object\GridLine.h" />
+    <ClInclude Include="Game\Object\Tile.h" />
+    <ClInclude Include="Game\Object\Triangle.h" />
+    <ClInclude Include="Game\Object\Quad.h" />
+    <ClInclude Include="Game\UI\Image.h" />
+    <ClInclude Include="System\GridFactory.h" />
+    <ClInclude Include="System\PlayGridSystem.h" />
+    <ClInclude Include="Scenes\PlayScene.h" />
+    <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h" />
+    <ClInclude Include="Scenes\TitleScene.h" />
+    <ClInclude Include="Scenes\UIScene.h" />
+    <ClInclude Include="System\Game_InputContext.h" />
+    <ClInclude Include="System\SettingScene_InputContext.h" />
+    <ClInclude Include="System\UIScene_InputContext.h" />
+    <ClInclude Include="Game\UI\Text.h" />
+    <ClInclude Include="Game\Object\Piece.h" />
+    <ClInclude Include="PieceQueue.h" />
+    <ClInclude Include="System\IGridSystem.h" />
+    <ClInclude Include="System\PieceHelper.h" />
+    <ClInclude Include="System\GridSystem.h" />
+    <ClInclude Include="System\TileHelper.h" />
   </ItemGroup>
 </Project>

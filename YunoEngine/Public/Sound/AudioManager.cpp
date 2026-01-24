@@ -124,12 +124,18 @@ void AudioManager::Update(float dt)
 
 
         case AudioCmdType::ListenerUpdate:
-            Listener3DUpdate(cmd.lu.pos);
+        {
+            auto [x, y, z] = cmd.lu.pos;
+            Listener3DUpdate({ x, y, z });
             break;
-        case AudioCmdType::EmitterUpdate:
-            Emitter3DUpdate(to_string(cmd.eu.event), cmd.eu.pos);
-            break;
+        }
 
+        case AudioCmdType::EmitterUpdate:
+        {
+            auto [x, y, z] = cmd.eu.pos;
+            Emitter3DUpdate(to_string(cmd.eu.event), { x, y, z });
+            break;
+        }
 
         case AudioCmdType::PlayEvent:
             PlayEvent(to_string(cmd.pe.event), cmd.pe.is3D, { cmd.pe.pos.x, cmd.pe.pos.y, cmd.pe.pos.z });
