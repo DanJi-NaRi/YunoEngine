@@ -62,6 +62,7 @@ struct Update_Data
     DirectX::XMFLOAT4X4 world{};
     DirectX::XMFLOAT4X4 boneAnim[MAX_BONE] = {};
     DirectX::XMFLOAT4 baseColor = { 1, 1, 1, 1 };
+    DirectX::XMFLOAT4 emissiveColor = { 1, 1, 1, 1 };
     float roughRatio = 1.0f;
     float metalRatio = 1.0f;
     float shadowBias = 0.005f;
@@ -86,6 +87,7 @@ struct RenderItem
     MaterialHandle materialHandle = 0;
 
     Update_Data Constant;
+    bool isEmissive = false;
     bool haveAnim = false;
 };
 
@@ -130,7 +132,22 @@ enum class ShaderId : uint8_t
     Skybox,
     UIBase,
 
+    //PostProcess
+    PP_Default,
+    PP_Threshold,
+    PP_DownSample ,
+    PP_BlurH, 
+    PP_BlurV, 
+    PP_Combine, 
+    PP_ToneMap, 
+
     Count
+};
+
+enum class MaterialDomain
+{
+    Surface,
+    PostProcess
 };
 
 struct PassKey
@@ -141,6 +158,7 @@ struct PassKey
     BlendPreset blend = BlendPreset::Opaque;
     RasterPreset raster = RasterPreset::CullBack;
     DepthPreset depth = DepthPreset::ReadWrite;
+    MaterialDomain domain = MaterialDomain::Surface;
 
     bool operator==(const PassKey& rhs) const
     {
@@ -149,7 +167,8 @@ struct PassKey
             && vertexFlags == rhs.vertexFlags
             && blend == rhs.blend
             && raster == rhs.raster
-            && depth == rhs.depth;
+            && depth == rhs.depth
+            && domain == rhs.domain;
     }
 };
 

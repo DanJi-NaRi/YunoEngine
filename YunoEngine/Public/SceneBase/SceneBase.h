@@ -28,7 +28,6 @@ public:
 
 #ifdef _DEBUG
     void DrawObjectList();
-    void DrawUIList();
     void DrawInspector();
 #endif
 

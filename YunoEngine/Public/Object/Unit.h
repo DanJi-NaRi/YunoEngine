@@ -92,6 +92,8 @@ public:
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
     void SaveMesh(std::unique_ptr<MeshNode>& node, std::vector<Mesh*>& out);
 
+    void SetEmissiveColor(int num, const XMFLOAT4& color);
+
     UINT GetMeshNum() { return m_Meshs.size(); }
 
     void SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepath);
@@ -106,7 +108,9 @@ public:
 
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
 
-    virtual void Serialize() {} //나중에 상속해서 새로운 오브젝트 만들 때 임구이에 띄우고 싶은거있으면 이 함수 오버라이드하면됌
+#ifdef _DEBUG
+    virtual void Serialize(); //나중에 상속해서 새로운 오브젝트 만들 때 임구이에 띄우고 싶은거있으면 이 함수 오버라이드하면됌
+#endif
 };
 
 

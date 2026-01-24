@@ -117,6 +117,7 @@
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
@@ -144,6 +145,7 @@
     <ClCompile Include="PieceQueue.cpp">
       <Filter>PieceQueue</Filter>
     </ClCompile>
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -227,5 +229,6 @@
     <ClInclude Include="PieceQueue.h">
       <Filter>PieceQueue</Filter>
     </ClInclude>
+
   </ItemGroup>
 </Project>

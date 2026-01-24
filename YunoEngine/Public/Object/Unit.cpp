@@ -143,6 +143,14 @@ void Unit::SaveMesh(std::unique_ptr<MeshNode>& node, std::vector<Mesh*>& out)
         SaveMesh(child, out);
 }
 
+void Unit::SetEmissiveColor(int num, const XMFLOAT4& color)
+{
+    if (num >= m_Meshs.size() && num < 0)
+        return;
+
+    m_Meshs[num]->SetEmissiveColor(color);
+}
+
 void Unit::SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepath)
 {
     if (meshindex >= m_Meshs.size())
@@ -188,3 +196,14 @@ void Unit::ClearChild()
     m_Childs.clear();
 }
 
+#ifdef _DEBUG
+void Unit::Serialize()
+{
+    int i = 0;
+    for (auto& mesh : m_Meshs)
+    {
+        mesh->Serialize(i);
+        i++;
+    }
+}
+#endif
