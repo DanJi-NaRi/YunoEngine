@@ -5,7 +5,6 @@
 
 Button::Button()
 {
-    m_BtnState = ButtonState::Idle;
 }
 
 Button::~Button()
@@ -37,6 +36,10 @@ bool Button::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
         m_constant.metalRatio = 1.0f;
         m_constant.shadowBias = 0.005f;
     }
+
+    m_BtnState = ButtonState::Idle;
+    m_Bindkey = 0;
+    m_anchor = Anchor::LeftTop;
 
     Backup();
 
@@ -107,9 +110,7 @@ void Button::ButtonUpdate(float dTime) // 버튼 상태 갱신
     case ButtonState::Down:	//"클릭" 상태. "눌리고 있음" 출력.
         std::cout << "Down" << std::endl;
         break;
-
     }
-    
 }
 
 bool Button::IdleEvent()
@@ -145,50 +146,19 @@ bool Button::KeyPressedEvent(uint32_t key)
     else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;
     return true;
 }
-bool Button::ReleasedEvent()
+bool Button::LMBReleasedEvent()
 {
-    std::cout << "ReleasedEvent" << std::endl;
+    std::cout << "(LMB)ReleasedEvent" << std::endl;
     return true;
 }
-
-
-bool Button::CreateMaterial()
+bool Button::RMBReleasedEvent()
 {
-    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/woodbox.bmp");
-
-    MaterialDesc md{};
-    md.passKey.vs = ShaderId::UIBase;
-    md.passKey.ps = ShaderId::UIBase;
-    md.passKey.vertexFlags = VSF_Pos | VSF_UV;
-
-    md.passKey.blend = BlendPreset::AlphaBlend;
-    md.passKey.raster = RasterPreset::CullNone;
-    md.passKey.depth = DepthPreset::Off;
-
-    md.albedo = m_Albedo;
-    //md.albedo = 0;
-    md.normal = 0;
-    md.orm = 0;
-
-    md.metal = 0;
-    md.rough = 0;
-    md.ao = 0;
-
-    // 첫번째 머테리얼 생성
-    m_defaultMaterial = m_pRenderer->CreateMaterial(md);
-    if (m_defaultMaterial == 0)
-        return false;
-
-    //m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
-
-    // 추가 머테리얼 생성
-    //md.passKey.raster = RasterPreset::CullNone;
-    //md.albedo = m_Albedo;
-
-    //m_addMaterial = m_pRenderer->CreateMaterial(md);
-    //if (m_addMaterial == 0)
-    //    return false;
-
+    std::cout << "(RMB)ReleasedEvent" << std::endl;
     return true;
 }
-
+bool Button::KeyReleasedEvent(uint32_t key)
+{
+    if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
+    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
+    return true;
+}

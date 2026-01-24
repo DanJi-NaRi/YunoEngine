@@ -177,6 +177,7 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         {
             InputEvent evt{};
             evt.type = InputEventType::MouseMove;
+            // [TODO] 클라이언트 바깥으로 포인터 나갈 때 디버깅
             evt.x = static_cast<float>(GET_X_LPARAM(lParam));
             evt.y = static_cast<float>(GET_Y_LPARAM(lParam));
             input->PushEvent(evt);
@@ -203,6 +204,8 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             evt.type = (msg == WM_LBUTTONDOWN) ? InputEventType::MouseButtonDown
                 : InputEventType::MouseButtonUp;
             evt.key = 0; // LMB
+            evt.x = static_cast<float>(GET_X_LPARAM(lParam));
+            evt.y = static_cast<float>(GET_Y_LPARAM(lParam));
             input->PushEvent(evt);
         }
         return 0;
@@ -216,6 +219,8 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             evt.type = (msg == WM_RBUTTONDOWN) ? InputEventType::MouseButtonDown
                 : InputEventType::MouseButtonUp;
             evt.key = 1; // RMB
+            evt.x = static_cast<float>(GET_X_LPARAM(lParam));
+            evt.y = static_cast<float>(GET_Y_LPARAM(lParam));
             input->PushEvent(evt);
         }
         return 0;

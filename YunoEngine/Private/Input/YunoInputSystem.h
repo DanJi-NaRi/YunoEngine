@@ -32,6 +32,8 @@ public:
     float GetMouseY() const override { return m_state.mouseY; }
     float GetMouseDeltaX() const override { return m_state.mouseDeltaX; }
     float GetMouseDeltaY() const override { return m_state.mouseDeltaY; }
+    float GetPressedMouseX() const override { return m_state.pressedMouseX; }
+    float GetPressedMouseY() const override { return m_state.pressedMouseY; }
 
     // 인풋을 사용할 컨텍스트
     void AddContext(IInputContext* context, IScene* scene) override;

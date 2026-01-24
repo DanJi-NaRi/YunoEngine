@@ -121,6 +121,9 @@
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Card.cpp" />
+    <ClCompile Include="CardTable.cpp" />
+    <ClCompile Include="DragProvider.cpp" />
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
       <Filter>ClientNetwork</Filter>
     </ClCompile>
@@ -196,6 +199,14 @@
     <ClInclude Include="System\SettingScene_InputContext.h">
       <Filter>System\UIScene</Filter>
     </ClInclude>
+
+    <ClInclude Include="ClientNet\ClientNet.h" />
+    <ClInclude Include="Card.h" />
+    <ClInclude Include="CardTable.h" />
+    <ClInclude Include="CardActData.h" />
+    <ClInclude Include="CardData.h" />
+    <ClInclude Include="DragProvider.h" />
+    <ClInclude Include="Game\UI\Button.h" />
     <ClInclude Include="ClientNetwork\YunoClientNetwork.h">
       <Filter>ClientNetwork</Filter>
     </ClInclude>

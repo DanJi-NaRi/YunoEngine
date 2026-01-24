@@ -40,6 +40,7 @@ bool TitleScene::OnCreateScene()
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/background.fbx");
 
+
     auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx");
     gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
     gun->SetEmissiveColor(0, XMFLOAT4(1, 0, 0, 1));
@@ -48,7 +49,6 @@ bool TitleScene::OnCreateScene()
     //auto capo = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/Capoeira2.fbx");
     //capo->AddAnimationClip("capoeira", L"../Assets/fbx/Human/Capoeira2.fbx");
    // capo->AddAnimationClip("dying", L"../Assets/fbx/Human/Dying2.fbx");
-
 
     return true;
 }

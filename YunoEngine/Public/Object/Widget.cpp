@@ -42,6 +42,7 @@ Widget::Widget()
 
     m_defaultMesh = 0;
     m_defaultMaterial = 0;
+    //m_defaultMaterial = 0;
     m_Albedo = 0;
     m_Normal = 0;
     m_Orm = 0;
@@ -83,6 +84,68 @@ bool Widget::CreateMesh()
         return false;
 
     return true;
+}
+
+bool Widget::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
+{
+    m_Albedo = m_pTextures->LoadTexture2D(path.c_str());
+
+    MaterialDesc md{};
+    if (pDesc) {
+        md =  *pDesc;
+    }
+    else {
+        md.passKey.vs = ShaderId::UIBase;
+        md.passKey.ps = ShaderId::UIBase;
+        md.passKey.vertexFlags = VSF_Pos | VSF_UV;
+
+        md.passKey.blend = BlendPreset::AlphaBlend;
+        md.passKey.raster = RasterPreset::CullNone;
+        md.passKey.depth = DepthPreset::Off;
+
+        md.albedo = m_Albedo;
+        //md.albedo = 0;
+        md.normal = 0;
+        md.orm = 0;
+
+        md.metal = 0;
+        md.rough = 0;
+        md.ao = 0;
+    }
+    
+    // 첫번째 머테리얼 생성
+    m_defaultMaterial = m_pRenderer->CreateMaterial(md);
+    if (m_defaultMaterial == 0) return false;
+
+    return true;
+}
+
+bool Widget::AddMaterial(std::wstring path)
+{
+    int beforeSize = m_addMaterial.size();
+
+    MaterialDesc md{};
+    md.passKey.vs = ShaderId::UIBase;
+    md.passKey.ps = ShaderId::UIBase;
+    md.passKey.vertexFlags = VSF_Pos | VSF_UV;
+
+    md.passKey.blend = BlendPreset::AlphaBlend;
+    md.passKey.raster = RasterPreset::CullNone;
+    md.passKey.depth = DepthPreset::Off;
+
+    md.albedo = m_Albedo;
+    //md.albedo = 0;
+    md.normal = 0;
+    md.orm = 0;
+
+    md.metal = 0;
+    md.rough = 0;
+    md.ao = 0;
+
+    m_addMaterial.push_back(m_pRenderer->CreateMaterial(md));
+    if (beforeSize == m_addMaterial.size()) return false;
+    
+    return false;
 }
 
 bool Widget::Create(XMFLOAT3 vPos)
@@ -297,4 +360,5 @@ bool SetupDefWidgetMesh(MeshHandle& meshHandle, IRenderer* renderer)
 
     return true;
 }
+
 

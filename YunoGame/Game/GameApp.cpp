@@ -301,8 +301,8 @@ void CameraMove(float dt)
     const float lookSpeed = 0.005f;
     if (input->IsMouseButtonDown(1))
     {
-        s_cameraYaw += input->GetMouseDeltaX() * lookSpeed;
-        s_cameraPitch -= input->GetMouseDeltaY() * lookSpeed;
+        s_cameraYaw += input->GetPressedMouseX() * lookSpeed;
+        s_cameraPitch -= input->GetPressedMouseY() * lookSpeed;
 
         const float maxPitch = XM_PIDIV2 - 0.01f;
         if (s_cameraPitch > maxPitch) s_cameraPitch = maxPitch;

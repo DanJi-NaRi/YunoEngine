@@ -159,11 +159,18 @@ void YunoInputSystem::ApplyToState(const InputEvent& evt)
     case InputEventType::MouseButtonDown:
         if (evt.key < m_state.mouseDown.size())
             m_state.mouseDown[evt.key] = 1;
+
+        // 클릭 시작했을 때 마우스 좌표
+        m_state.pressedMouseX = evt.x;
+        m_state.pressedMouseY = evt.y;
         break;
 
     case InputEventType::MouseButtonUp:
         if (evt.key < m_state.mouseDown.size())
             m_state.mouseDown[evt.key] = 0;
+
+        m_state.pressedMouseX = 0.0f;
+        m_state.pressedMouseY = 0.0f;
         break;
 
     case InputEventType::MouseMove:
