@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="NetPCH">
-      <UniqueIdentifier>{30fe350d-68d8-42ba-89fe-68dc5b0efed6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Private">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -18,10 +15,13 @@
     <Filter Include="Public\Net">
       <UniqueIdentifier>{076c5f8d-caa7-42e2-afd5-2340ba189eb8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TransportPCH">
+      <UniqueIdentifier>{30fe350d-68d8-42ba-89fe-68dc5b0efed6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TransportPCH\pch.h">
-      <Filter>NetPCH</Filter>
+      <Filter>TransportPCH</Filter>
     </ClInclude>
     <ClInclude Include="Public\Net\TcpClient.h">
       <Filter>Public\Net</Filter>
@@ -35,7 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TransportPCH\pch.cpp">
-      <Filter>NetPCH</Filter>
+      <Filter>TransportPCH</Filter>
     </ClCompile>
     <ClCompile Include="Private\Net\TcpClient.cpp">
       <Filter>Private\Net</Filter>

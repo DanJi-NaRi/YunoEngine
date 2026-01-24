@@ -4,7 +4,7 @@
     <Filter Include="main">
       <UniqueIdentifier>{f62417d9-ef44-4863-bdc0-76891466081a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Net">
+    <Filter Include="ServerNetwork">
       <UniqueIdentifier>{6292b59c-ca1c-41a5-a493-3472fecd1064}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -12,9 +12,13 @@
     <ClCompile Include="main\main.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="ServerNetwork\YunoServerNetwork.cpp" />
+    <ClCompile Include="ServerNetwork\YunoServerNetwork.cpp">
+      <Filter>ServerNetwork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ServerNetwork\YunoServerNetwork.h" />
+    <ClInclude Include="ServerNetwork\YunoServerNetwork.h">
+      <Filter>ServerNetwork</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
