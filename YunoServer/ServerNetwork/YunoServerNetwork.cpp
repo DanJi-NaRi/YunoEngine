@@ -48,11 +48,11 @@ namespace yuno::server
 
         using namespace yuno::net;
 
-        // === C2S_Ping 핸들러 바인딩 ===
+
         m_dispatcher.RegisterRaw(
             PacketType::C2S_Ping,
             [this](const NetPeer& peer,
-                const PacketHeader& /*header*/,
+                const PacketHeader& ,
                 const std::uint8_t* body,
                 std::uint32_t bodyLen)
             {
@@ -64,10 +64,13 @@ namespace yuno::server
                 ByteReader r(body, bodyLen);
                 const auto ping = yuno::net::packets::C2S_Ping::Deserialize(r);
 
+                // 데이터 핸들링
                 yuno::net::packets::S2C_Pong pong{};
                 pong.nonce = ping.nonce * 3;
                 std::cout << "InComing Data : " << pong.nonce << std::endl;
 
+
+                // 응답 패킷 생성
                 auto bytes = PacketBuilder::Build(
                     PacketType::S2C_Pong,
                     [&](ByteWriter& w)
@@ -75,6 +78,11 @@ namespace yuno::server
                         pong.Serialize(w);
                     });
 
+                // 응답 패킷 전송
+                // 브로드캐스트 방식
+                // m_server.Broadcast(std::move(bytes));
+
+                // 유니캐스트 방식
                 auto session = m_server.FindSession(peer.sId);
                 if (session)
                 {

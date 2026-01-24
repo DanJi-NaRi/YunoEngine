@@ -82,16 +82,6 @@ void GameApp::OnUpdate(float dt)
 {
     m_clientNet.PumpIncoming();
 
-    static bool sent = false;
-    if (!sent && m_clientNet.IsConnected())
-    {
-        sent = true;
-        std::cout << "OnConnected" << std::endl;
-
-
-
-    }
-
     static float acc = 0.0f;
     static int frameCount = 0;
 
