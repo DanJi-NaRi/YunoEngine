@@ -56,7 +56,7 @@ bool GridLine::CreateMesh()
     m_lineVtx.clear();
     m_lineVtx.reserve((m_row + 1) * 2 + (m_column + 1) * 2);
 
-    float y = 1.0f;
+    float y = 0.0f;
 
     // 전체 그리드의 반 길이 (셀 개수 기준!)
     float halfX = m_column * 0.5f;

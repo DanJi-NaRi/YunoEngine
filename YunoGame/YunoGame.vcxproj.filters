@@ -189,8 +189,11 @@
     <ClCompile Include="Game\Object\AnimTest.cpp" />
     <ClCompile Include="Game\Object\Building.cpp" />
     <ClCompile Include="Game\Object\Dwarf.cpp" />
+    <ClCompile Include="Game\Object\GridLine.cpp" />
+    <ClCompile Include="Game\Object\Tile.cpp" />
     <ClCompile Include="Game\UI\Image.cpp" />
-    <ClCompile Include="GridSystem.cpp" />
+    <ClCompile Include="System\GridFactory.cpp" />
+    <ClCompile Include="System\PlayGridSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Object\Triangle.cpp" />
     <ClCompile Include="Game\Object\Quad.cpp" />
@@ -199,9 +202,9 @@
     <ClCompile Include="Scenes\TitleScene.cpp" />
     <ClCompile Include="Game\UI\Text.cpp" />
     <ClCompile Include="Scenes\UIScene.cpp" />
-    <ClCompile Include="Game\Object\Tile.cpp" />
-    <ClCompile Include="Game\Object\GridLine.cpp" />
-    <ClCompile Include="GridFactory.cpp" />
+    <ClCompile Include="Game\Object\Piece.cpp" />
+    <ClCompile Include="PieceQueue.cpp" />
+    <ClCompile Include="System\GridSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientNet\ClientNet.h" />
@@ -210,11 +213,13 @@
     <ClInclude Include="Game\Object\AnimTest.h" />
     <ClInclude Include="Game\Object\Building.h" />
     <ClInclude Include="Game\Object\Dwarf.h" />
+    <ClInclude Include="Game\Object\GridLine.h" />
+    <ClInclude Include="Game\Object\Tile.h" />
     <ClInclude Include="Game\Object\Triangle.h" />
     <ClInclude Include="Game\Object\Quad.h" />
-    <ClInclude Include="Game\UI\Button.h" />
     <ClInclude Include="Game\UI\Image.h" />
-    <ClInclude Include="GridSystem.h" />
+    <ClInclude Include="System\GridFactory.h" />
+    <ClInclude Include="System\PlayGridSystem.h" />
     <ClInclude Include="Scenes\PlayScene.h" />
     <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h" />
     <ClInclude Include="Scenes\TitleScene.h" />
@@ -223,8 +228,11 @@
     <ClInclude Include="System\SettingScene_InputContext.h" />
     <ClInclude Include="System\UIScene_InputContext.h" />
     <ClInclude Include="Game\UI\Text.h" />
-    <ClInclude Include="Game\Object\Tile.h" />
-    <ClInclude Include="Game\Object\GridLine.h" />
-    <ClInclude Include="GridFactory.h" />
+    <ClInclude Include="Game\Object\Piece.h" />
+    <ClInclude Include="PieceQueue.h" />
+    <ClInclude Include="System\IGridSystem.h" />
+    <ClInclude Include="System\PieceHelper.h" />
+    <ClInclude Include="System\GridSystem.h" />
+    <ClInclude Include="System\TileHelper.h" />
   </ItemGroup>
 </Project>

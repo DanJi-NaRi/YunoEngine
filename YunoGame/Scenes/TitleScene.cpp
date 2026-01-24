@@ -9,7 +9,7 @@
 //#include "Game_InputContext.h"
 #include "IInput.h"
 
-#include "GridSystem.h"
+#include "PlayGridSystem.h"
 #include "Quad.h"
 #include "Building.h"
 #include "Triangle.h"
@@ -17,6 +17,7 @@
 #include "AnimTest.h"
 #include "YunoLight.h"
 #include "AudioQueue.h"
+#include "PieceQueue.h"
 
 bool TitleScene::OnCreateScene()
 {
@@ -29,9 +30,9 @@ bool TitleScene::OnCreateScene()
     m_objectManager->CreateDirLight();
     
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
-    m_gridSystem = std::make_unique<GridSystem>(m_objectManager.get());
+    m_gridSystem = std::make_unique<PlayGridSystem>(m_objectManager.get());
     m_gridSystem->Init(5, 7, 3, 2);
-    m_gridSystem->CreateObject(0, 5, 0);
+    m_gridSystem->CreateObject(0, 10, 0);
     
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
@@ -52,7 +53,7 @@ bool TitleScene::OnCreateScene()
 
 void TitleScene::OnDestroyScene()
 {   
-
+   
 }
 
 
@@ -87,8 +88,29 @@ void TitleScene::OnExit()
 void TitleScene::Update(float dt)
 {
     SceneBase::Update(dt);
+
+    if (m_input->IsKeyPressed(VK_OEM_PERIOD))
+    {
+        AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, true));
+        AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, false));
+    }
+
+    // 테스트용 -> ally1으로 부여한 기물이 움직여용
+    if (m_input->IsKeyPressed(0x31))
+    {
+        PieceQ::Insert({ PieceType::Ally1, CommandType::Move, {0, 0} });
+    }
+    if (m_input->IsKeyPressed(0x32))
+    {
+        PieceQ::Insert({ PieceType::Ally1, CommandType::Move, {1, 1} });
+    }
+    if (m_input->IsKeyPressed(0x33))
+    {
+        PieceQ::Insert({ PieceType::Ally1, CommandType::Move, {2, 2} });
+    }
+
     m_input->Dispatch();
-    
+    m_gridSystem->Update(dt);
 }
 
 void TitleScene::SubmitObj()

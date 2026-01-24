@@ -125,7 +125,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\Packets;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System;$(ProjectDir)ClientNetwork;$(SolutionDir)vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /Bt+ /showIncludes %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,7 +154,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\Packets;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System;$(ProjectDir)ClientNetwork;$(SolutionDir)vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /Bt+ /showIncludes %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -205,13 +205,16 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\Object\Building.cpp" />
     <ClCompile Include="Game\Object\Dwarf.cpp" />
     <ClCompile Include="Game\Object\GridLine.cpp" />
+    <ClCompile Include="Game\Object\Piece.cpp" />
     <ClCompile Include="Game\Object\Tile.cpp" />
     <ClCompile Include="Game\UI\Image.cpp" />
-    <ClCompile Include="GridFactory.cpp" />
-    <ClCompile Include="GridSystem.cpp" />
+    <ClCompile Include="System\GridFactory.cpp" />
+    <ClCompile Include="System\GridSystem.cpp" />
+    <ClCompile Include="System\PlayGridSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Object\Triangle.cpp" />
     <ClCompile Include="Game\Object\Quad.cpp" />
+    <ClCompile Include="PieceQueue.cpp" />
     <ClCompile Include="Scenes\PlayScene.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -236,12 +239,17 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\Object\Building.h" />
     <ClInclude Include="Game\Object\Dwarf.h" />
     <ClInclude Include="Game\Object\GridLine.h" />
+    <ClInclude Include="Game\Object\Piece.h" />
     <ClInclude Include="Game\Object\Tile.h" />
     <ClInclude Include="Game\Object\Triangle.h" />
     <ClInclude Include="Game\Object\Quad.h" />
     <ClInclude Include="Game\UI\Image.h" />
-    <ClInclude Include="GridFactory.h" />
-    <ClInclude Include="GridSystem.h" />
+    <ClInclude Include="System\GridFactory.h" />
+    <ClInclude Include="System\GridSystem.h" />
+    <ClInclude Include="System\PieceHelper.h" />
+    <ClInclude Include="System\PlayGridSystem.h" />
+    <ClInclude Include="System\IGridSystem.h" />
+    <ClInclude Include="PieceQueue.h" />
     <ClInclude Include="Scenes\PlayScene.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
@@ -255,6 +263,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Scenes\UIScene.h" />
     <ClInclude Include="System\Game_InputContext.h" />
     <ClInclude Include="System\SettingScene_InputContext.h" />
+    <ClInclude Include="System\TileHelper.h" />
     <ClInclude Include="System\UIScene_InputContext.h" />
     <ClInclude Include="Game\UI\Text.h" />
   </ItemGroup>

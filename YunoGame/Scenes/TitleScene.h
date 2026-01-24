@@ -5,7 +5,7 @@
 
 #include "Game_InputContext.h"
 
-class GridSystem;
+class IGridSystem;
 
 class TitleScene final : public SceneBase
 {
@@ -30,5 +30,5 @@ private:
     //Quad* m_plane = nullptr;   // 간단하게 raw로 들고, 오브젝트매니저가 delete
     //Building* m_building = nullptr;   // 간단하게 raw로 들고, 오브젝트매니저가 delete
     Game_InputContext m_gameCtx;
-    std::unique_ptr<GridSystem> m_gridSystem;
+    std::unique_ptr<IGridSystem> m_gridSystem;
 };
