@@ -54,7 +54,6 @@ struct float3
     float x, y, z;
 };
 
-
 struct AudioCmd
 {
     AudioCmdType type;
@@ -68,12 +67,12 @@ struct AudioCmd
 
         struct
         {
-            XMFLOAT3 pos;
+            float3 pos;
         } lu;       // ListenerUpdate
         struct
         {
             EventName event;
-            XMFLOAT3 pos;
+            float3 pos;
         } eu;       // EmitterUpdate
 
         struct

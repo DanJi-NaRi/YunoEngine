@@ -55,8 +55,8 @@ public:
     T* CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath);
 
     //씬 매니저에 있어도 될것같은 놈들
-    const Unit* FindObject(UINT id); //id로 검색
-    const Unit* FindObject(const std::wstring& name); //이름으로 검색
+    Unit* FindObject(UINT id); //id로 검색
+    Unit* FindObject(const std::wstring& name); //이름으로 검색
 
 
     void DestroyObject(UINT id);
@@ -76,6 +76,7 @@ private:
     void FrameDataUpdate();
     void FrameDataSubmit();
 };
+
 
 template<typename T>
 T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos) {

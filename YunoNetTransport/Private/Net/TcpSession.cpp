@@ -4,8 +4,9 @@
 
 namespace yuno::net
 {
-    TcpSession::TcpSession(boost::asio::ip::tcp::socket socket)
-        : m_socket(std::move(socket))
+    TcpSession::TcpSession(sessionId sid, boost::asio::ip::tcp::socket socket)
+        : m_sid(sid)
+        , m_socket(std::move(socket))
         , m_strand(m_socket.get_executor())
     {
     }
@@ -22,6 +23,8 @@ namespace yuno::net
     {
         boost::asio::dispatch(m_strand, [self = shared_from_this()]()
             {
+                self->m_disconnectedNotified = true;
+
                 boost::system::error_code ec;
                 self->m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
                 self->m_socket.close(ec);
@@ -32,8 +35,12 @@ namespace yuno::net
     {
         boost::asio::dispatch(m_strand, [self = shared_from_this(), pkt = std::move(packetBytes)]() mutable
             {
+                if (pkt.size() < yunoTCPPacketHeaderSize)
+                    return;
+                assert(pkt.size() >= yunoTCPPacketHeaderSize);
+
                 const bool isEmpty = self->m_writeQ.empty();
-                self->m_writeQ.push_back(std::move(pkt)); // 이때 패킷은 헤더+바디 전체임
+                self->m_writeQ.push_back(std::move(pkt)); // 이때 패킷은 헤더 + 바디 전체임
 
                 if (isEmpty && !self->m_writing)
                 {
@@ -58,12 +65,11 @@ namespace yuno::net
                         return;
                     }
 
-                    const std::uint32_t bodyLen = ReadU32LE(self->m_readHeader.data());
+                    const std::uint32_t bodyLen = TcpSession::ReadU32LE(self->m_readHeader.data());
 
-                    // 최소 방어: 말도 안 되는 길이 차단(필요시 값 조정)
-                    // 예: 4MB 상한
-                    constexpr std::uint32_t kMaxBody = 4u * 1024u * 1024u;
-                    if (bodyLen > kMaxBody)
+                    
+                    constexpr std::uint32_t MaxLength = 4u * 1024u * 1024u;
+                    if (bodyLen > MaxLength)
                     {
                         boost::system::error_code fake = boost::asio::error::message_size;
                         self->NotifyDisconnected(fake);
@@ -87,7 +93,7 @@ namespace yuno::net
         {
             // 헤더만 있는 패킷도 허용
             std::vector<std::uint8_t> packet;
-            packet.reserve(yunoPacketHeaderSize);
+            packet.reserve(yunoTCPPacketHeaderSize);
             packet.insert(packet.end(), m_readHeader.begin(), m_readHeader.end());
 
             if (self->m_onPacket)
@@ -111,7 +117,7 @@ namespace yuno::net
 
                     // 완성 패킷(헤더8 + 바디N)을 한 덩어리로 올림
                     std::vector<std::uint8_t> packet;
-                    packet.reserve(yunoPacketHeaderSize + self->m_readBody.size());
+                    packet.reserve(yunoTCPPacketHeaderSize + self->m_readBody.size());
 
                     packet.insert(packet.end(),
                         self->m_readHeader.begin(), self->m_readHeader.end());
@@ -161,6 +167,10 @@ namespace yuno::net
 
     void TcpSession::NotifyDisconnected(const boost::system::error_code& ec)
     {
+        if (m_disconnectedNotified)
+            return;
+        m_disconnectedNotified = true;
+
         // 콜백 먼저
         if (m_onDisconnected)
             m_onDisconnected(ec);
@@ -173,13 +183,13 @@ namespace yuno::net
 
     std::uint32_t TcpSession::ReadU32LE(const std::uint8_t* p)
     {
-        // 0이 LSB임 
+        // p0가 LSB임 
         // 4Byte를 읽을거임
         // 리틀 엔디안
-        // 0x[p0]
-        // 0x[p1]
-        // 0x[p2]
-        // 0x[p3]
+        // 0x000000[p0]
+        // 0x0000[p1]00
+        // 0x00[p2]0000
+        // 0x[p3]000000
 
         return (std::uint32_t)p[0]              
             | ((std::uint32_t)p[1] << 8)
