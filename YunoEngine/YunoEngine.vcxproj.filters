@@ -209,9 +209,11 @@
     <ClCompile Include="Public\UIManager.cpp">
       <Filter>Public\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Button.cpp" />
     <ClCompile Include="Public\InputContextBase.cpp">
       <Filter>Public\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Button.cpp">
+      <Filter>Public\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -372,9 +374,11 @@
     <ClInclude Include="Public\UIManager.h">
       <Filter>Public\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Button.h" />
     <ClInclude Include="Public\InputContextBase.h">
       <Filter>Public\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Button.h">
+      <Filter>Public\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->

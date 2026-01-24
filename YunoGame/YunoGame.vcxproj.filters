@@ -52,12 +52,6 @@
     <Filter Include="Scenes\SceneTemplate">
       <UniqueIdentifier>{24b754d7-a2f6-4d5c-9cb2-02394ae55327}</UniqueIdentifier>
     </Filter>
-    <Filter Include="System\UIScene">
-      <UniqueIdentifier>{1f741ae9-459b-421b-b0c8-0c44d2028232}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="System\GameScene">
-      <UniqueIdentifier>{5e610e02-9910-4288-8003-55dcb20743a5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ClientNetwork">
       <UniqueIdentifier>{2d17bd28-28ed-4da1-973f-f4a65f411c14}</UniqueIdentifier>
     </Filter>
@@ -72,6 +66,12 @@
     </Filter>
     <Filter Include="PieceQueue">
       <UniqueIdentifier>{deaeb8de-8471-4f23-a138-eb612efde854}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\GameContext">
+      <UniqueIdentifier>{5e610e02-9910-4288-8003-55dcb20743a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\UIContext">
+      <UniqueIdentifier>{1f741ae9-459b-421b-b0c8-0c44d2028232}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -117,7 +117,6 @@
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
@@ -148,7 +147,6 @@
     <ClCompile Include="PieceQueue.cpp">
       <Filter>PieceQueue</Filter>
     </ClCompile>
-
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -191,22 +189,19 @@
       <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="System\UIScene_InputContext.h">
-      <Filter>System\UIScene</Filter>
+      <Filter>System\UIContext</Filter>
     </ClInclude>
     <ClInclude Include="System\Game_InputContext.h">
-      <Filter>System\GameScene</Filter>
+      <Filter>System\GameContext</Filter>
     </ClInclude>
     <ClInclude Include="System\SettingScene_InputContext.h">
-      <Filter>System\UIScene</Filter>
+      <Filter>System\UIContext</Filter>
     </ClInclude>
-
-    <ClInclude Include="ClientNet\ClientNet.h" />
     <ClInclude Include="Card.h" />
     <ClInclude Include="CardTable.h" />
     <ClInclude Include="CardActData.h" />
     <ClInclude Include="CardData.h" />
     <ClInclude Include="DragProvider.h" />
-    <ClInclude Include="Game\UI\Button.h" />
     <ClInclude Include="ClientNetwork\YunoClientNetwork.h">
       <Filter>ClientNetwork</Filter>
     </ClInclude>
@@ -240,6 +235,5 @@
     <ClInclude Include="PieceQueue.h">
       <Filter>PieceQueue</Filter>
     </ClInclude>
-
   </ItemGroup>
 </Project>

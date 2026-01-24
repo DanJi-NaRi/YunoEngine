@@ -198,7 +198,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
   <ItemGroup>
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="CardTable.cpp" />
-    <ClCompile Include="ClientNet\ClientNet.cpp" />
     <ClCompile Include="DragProvider.cpp" />
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -239,7 +238,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
   <ItemGroup>
     <ClInclude Include="Card.h" />
     <ClInclude Include="CardTable.h" />
-    <ClInclude Include="ClientNet\ClientNet.h" />
     <ClInclude Include="DragProvider.h" />
     <ClInclude Include="ClientNetwork\YunoClientNetwork.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
