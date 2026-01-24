@@ -230,6 +230,7 @@
     <ClInclude Include="PieceQueue.h">
       <Filter>PieceQueue</Filter>
     </ClInclude>
+
     <ClInclude Include="CardTable.h">
       <Filter>Game\UI\Card</Filter>
     </ClInclude>

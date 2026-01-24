@@ -185,6 +185,11 @@
     <ClCompile Include="Private\Renderer\BoneNode\BoneNode.cpp">
       <Filter>Private\Renderer\Bone\Node</Filter>
     </ClCompile>
+
+    <ClCompile Include="Public\UI\Widget.cpp">
+      <Filter>Public\UI</Filter>
+    </ClCompile>
+
     <ClCompile Include="Public\Sound\AudioCore.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
@@ -209,6 +214,7 @@
     <ClCompile Include="Public\Sound\AudioManagerPCH.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
+
     <ClCompile Include="Public\InputContextBase.cpp">
       <Filter>Public\System</Filter>
     </ClCompile>
@@ -357,6 +363,10 @@
     <ClInclude Include="Public\Object\AnimationUnit.h">
       <Filter>Public\Object</Filter>
     </ClInclude>
+
+    <ClInclude Include="Public\UI\Widget.h">
+      <Filter>Public\UI</Filter>
+    </ClInclude>
     <ClInclude Include="Public\Sound\AudioManager.h">
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
@@ -411,6 +421,7 @@
     <ClInclude Include="Public\Slot.h" />
     <ClInclude Include="Public\CursurSystem.h">
       <Filter>Public\UI\UISystem</Filter>
+
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
