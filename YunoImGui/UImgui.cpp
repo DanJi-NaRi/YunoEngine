@@ -6,6 +6,7 @@
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
+#include "imgui_internal.h"
 
 #include "UImgui.h"
 
@@ -121,13 +122,84 @@ namespace UI
         return ImGui::DragFloat3(label, v, 0.1f, v_min, v_max, format);
     }
 
-    bool DragFloat3Editable(const char* label, float* v, float speed)
+    bool DragFloat3Editable(
+        const char* label,
+        float* v,
+        float speed,
+        float v_min,
+        float v_max)
+    {
+        bool changed = false;
+        static bool edit = false;
+
+        ImGui::PushID(label);
+
+        ImGui::TextUnformatted(label);
+        ImGui::SameLine();
+
+        const float width = ImGui::CalcItemWidth();
+        ImGui::PushMultiItemsWidths(3, width);
+
+        // ===== X (Red) =====
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 80, 80, 255));
+        if (!edit)
+            changed |= ImGui::DragFloat("##X", &v[0], speed, v_min, v_max);
+        else
+            changed |= ImGui::InputFloat("##X", &v[0]);
+        ImGui::PopStyleColor();
+        ImGui::PopItemWidth();
+
+        ImGui::SameLine();
+
+        // ===== Y (Green) =====
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(80, 255, 80, 255));
+        if (!edit)
+            changed |= ImGui::DragFloat("##Y", &v[1], speed, v_min, v_max);
+        else
+            changed |= ImGui::InputFloat("##Y", &v[1]);
+        ImGui::PopStyleColor();
+        ImGui::PopItemWidth();
+
+        ImGui::SameLine();
+
+        // ===== Z (Blue) =====
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(80, 80, 255, 255));
+        if (!edit)
+            changed |= ImGui::DragFloat("##Z", &v[2], speed, v_min, v_max);
+        else
+            changed |= ImGui::InputFloat("##Z", &v[2]);
+        ImGui::PopStyleColor();
+        ImGui::PopItemWidth();
+
+        // ===== 더블 클릭 → 입력 모드 =====
+        if (!edit &&
+            ImGui::IsItemHovered() &&
+            ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+        {
+            edit = true;
+        }
+
+        if (edit && ImGui::IsItemDeactivatedAfterEdit())
+        {
+            edit = false;
+        }
+
+        ImGui::PopID();
+        return changed;
+    }
+
+    bool DragFloat(const char* label, float* v, float speed, float v_min, float v_max, const char* format)
+    {
+        return ImGui::DragFloat(label, v, 0.1f, v_min, v_max, format);
+    }
+
+    bool DragFloatEditable(const char* label, float* v, float speed, float v_min, float v_max)
     {
         static bool edit = false;
 
         if (!edit)
         {
-            bool changed = ImGui::DragFloat3(label, v, speed);
+            bool changed = ImGui::DragFloat(label, v, speed, v_min, v_max);
 
             if (ImGui::IsItemHovered() &&
                 ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
@@ -139,7 +211,7 @@ namespace UI
         }
         else
         {
-            bool changed = ImGui::InputFloat3(label, v);
+            bool changed = ImGui::InputFloat(label, v);
 
             if (ImGui::IsItemDeactivatedAfterEdit())
             {

@@ -4,7 +4,6 @@ using namespace DirectX;
 
 struct CBPerFrame
 {
-
 	XMFLOAT4X4 mView;
 	XMFLOAT4X4 mProj;
     XMFLOAT3 camPos;
@@ -23,10 +22,10 @@ struct CBPerObject_Matrix
 struct CBPerObject_Material
 {
     XMFLOAT4 baseColor;
+    XMFLOAT4 emissiveColor;
     float roughRatio;
     float metalRatio;
     float shadowBias;
-    float padding;
 };
 
 struct CBDirLight
@@ -42,6 +41,23 @@ struct CBDirLight
 struct CBLight_All
 {
     CBDirLight dirLit;
+};
+
+struct CBPostProcess
+{
+    XMFLOAT2 InvScreenSize; // 1 / w, 1 / h
+    float blurRadius = 2.0f;
+    float threshold = 1.0f;
+
+    float exposure = 1.0f;
+    float padding[3];
+};
+
+struct CBBloom
+{
+    XMFLOAT4 bloomweights; //x : w0(1/2), y : w1(1/4), z : w2(1/8), w : w3(1/16)
+    float bloomIntensity = 1.0f;
+    XMFLOAT3 padding;
 };
 
 

@@ -165,5 +165,6 @@
     <ClInclude Include="CardActData.h" />
     <ClInclude Include="CardData.h" />
     <ClInclude Include="DragProvider.h" />
+    <ClInclude Include="Game\UI\Button.h" />
   </ItemGroup>
 </Project>
