@@ -2,8 +2,7 @@
 
 #include "IGameApp.h"
 #include "IAudioManager.h"
-
-#include "ClientNet.h"
+#include "YunoClientNetwork.h"
 
 class GameApp : public IGameApp
 {
@@ -17,13 +16,8 @@ public:
     void OnShutdown() override;
 
 
-
-// 네트워크
 private:
-
-    std::unique_ptr<ClientNet> m_net;
-    float m_netPingAcc = 0.0f;
-
+    yuno::game::YunoClientNetwork m_clientNet;
 };
 
 

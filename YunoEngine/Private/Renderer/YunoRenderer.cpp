@@ -1479,6 +1479,22 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
     mr.vertexCount = streams.vtx_count;
     mr.indexCount = indexCount;
 
+    switch (streams.topology) 
+    {
+    case Yuno_LINELIST:
+        mr.topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+        break;
+    case Yuno_LINESTRIP:
+        mr.topology = D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP;
+        break;
+    case Yuno_TRIANGLESTRIP:
+        mr.topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+        break;
+    default:
+        mr.topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        break;
+    }
+
     // 스트림별 VB 생성
     if (!CreateVB(streams.pos, sizeof(VERTEX_Pos), streams.vtx_count, mr.vbPos))
         return 0;

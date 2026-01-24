@@ -17,7 +17,9 @@ struct DirectionalLightDesc
 
     XMFLOAT4 spec = { 1.0f, 1.0f, 1.0f, 1.0f };
 
+
     float intensity = 3.0f;
+
 };
 
 class Light

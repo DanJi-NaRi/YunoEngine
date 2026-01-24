@@ -136,6 +136,9 @@ bool Quad::CreateMesh()
     streams.nrm = g_Quad_nrm;
     streams.uv = g_Terrain_uv;
 
+    // 옵셔널
+    //streams.topology = Yuno_TRIANGLESTRIP;
+
 
 
     m_defaultMesh = m_pRenderer->CreateMesh(streams, g_Quad_idx, _countof(g_Quad_idx));

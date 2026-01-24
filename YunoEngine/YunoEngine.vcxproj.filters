@@ -206,9 +206,6 @@
     <ClCompile Include="Public\Sound\AudioManagerPCH.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Sound\AudioCorePCH.cpp">
-      <Filter>Public\Sound\src</Filter>
-    </ClCompile>
     <ClCompile Include="Public\UIManager.cpp">
       <Filter>Public\UI</Filter>
     </ClCompile>
@@ -367,9 +364,6 @@
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
     <ClInclude Include="Public\Sound\AudioManagerPCH.h">
-      <Filter>Public\Sound\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Sound\AudioCorePCH.h">
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
     <ClInclude Include="Public\Sound\IAudioManager.h">
