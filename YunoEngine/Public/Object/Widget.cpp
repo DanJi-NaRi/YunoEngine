@@ -4,6 +4,7 @@
 
 #include "Widget.h"
 #include "IWindow.h"
+#include "UIManager.h"
 
 VERTEX_Pos g_Widget_pos[] = {
     { 0,0,0 },    // 좌상
