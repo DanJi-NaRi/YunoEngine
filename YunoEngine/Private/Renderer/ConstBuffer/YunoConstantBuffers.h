@@ -60,6 +60,13 @@ struct CBBloom
     XMFLOAT3 padding;
 };
 
+struct CBShadow
+{
+    XMMATRIX lightViewProj;
+    float shadowBias;
+    float padding[3];
+};
+
 
 template<typename T>
 class YunoConstantBuffer

@@ -89,6 +89,9 @@ bool YunoRenderer::Initialize(IWindow* window)
     if (!CreatePPMaterial()) return false;
     SetPP_Pass();
 
+    if (!CreateShadowMap(4096, 4096)) return false;
+    InitShadowPass();
+
     // 디버그 리소스 생성
     CreateDebugGridResources();
 
@@ -107,6 +110,19 @@ bool YunoRenderer::CreateShaders()
     if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
 
     if (!CreatePPShader()) return false;
+
+    //ps 안씀
+    if (!LoadShader(ShaderId::ShadowPass, "../Assets/Shaders/ShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
+
+    //픽셀셰이더 필요없을 때 쓰는 셰이더(섀도우맵)
+    YunoShader empty;
+    empty.CreateEmptyShader();
+    ShaderProgram sp{};
+    sp.vs = std::make_unique<YunoShader>(empty);
+    sp.ps = std::make_unique<YunoShader>(empty);
+    sp.vsBytecode = nullptr;
+    m_programs[ShaderId::None] = std::move(sp);
+
     return true;
 }
 
@@ -371,6 +387,75 @@ bool YunoRenderer::CheckMSAA()
         m_msaaQuality = 0;
     }
     return true;
+}
+
+bool YunoRenderer::CreateShadowMap(uint32_t width, uint32_t height)
+{
+    m_ShadowMap.width = width;
+    m_ShadowMap.height = height;
+    m_ShadowMap.texFormat = DXGI_FORMAT_R32_TYPELESS;
+    m_ShadowMap.dsvFormat = DXGI_FORMAT_D32_FLOAT;
+    m_ShadowMap.srvFormat = DXGI_FORMAT_R32_FLOAT;
+
+    D3D11_TEXTURE2D_DESC td{};
+    td.Width = width;
+    td.Height = height;
+    td.MipLevels = 1;
+    td.ArraySize = 1;
+    td.Format = m_ShadowMap.texFormat;
+    td.SampleDesc.Count = 1;
+    td.SampleDesc.Quality = 0;
+    td.Usage = D3D11_USAGE_DEFAULT;
+    td.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+    td.CPUAccessFlags = 0;
+    td.MiscFlags = 0;
+
+    if (FAILED(m_device->CreateTexture2D(&td, nullptr, m_ShadowMap.tex.GetAddressOf())))
+        return false;
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC dsvd{};
+    dsvd.Format = m_ShadowMap.dsvFormat;
+    dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    dsvd.Texture2D.MipSlice = 0;
+
+    if (FAILED(m_device->CreateDepthStencilView(m_ShadowMap.tex.Get(), &dsvd, m_ShadowMap.dsv.GetAddressOf())))
+        return false;
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Texture2D.MipLevels = 1;
+
+    if (FAILED(m_device->CreateShaderResourceView(m_ShadowMap.tex.Get(), &srvDesc, m_ShadowMap.srv.GetAddressOf())))
+        return false;
+
+    return true;
+}
+
+void YunoRenderer::InitShadowPass()
+{
+    m_ShadowPassKey.vs = ShaderId::ShadowPass;
+    m_ShadowPassKey.ps = ShaderId::None;
+    m_ShadowPassKey.vertexFlags = VSF_Pos;
+    m_ShadowPassKey.blend = BlendPreset::Opaque;
+    m_ShadowPassKey.raster = RasterPreset::CullFront;
+    m_ShadowPassKey.depth = DepthPreset::ReadWrite;
+
+    m_ShadowPass = GetOrCreatePass(m_ShadowPassKey);
+}
+
+void YunoRenderer::DrawShadowMap()
+{
+    m_context->ClearDepthStencilView(m_ShadowMap.dsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+    ID3D11RenderTargetView* nullRTV[1] = { nullptr };
+    m_context->OMSetRenderTargets(0, nullRTV, m_ShadowMap.dsv.Get());
+    
+    if (m_ShadowPass == 0 || m_ShadowPass > m_passes.size())
+        return;
+
+    // 렌더 패스 바인드
+    m_passes[m_ShadowPass - 1]->Bind(m_context.Get());
 }
 
 RenderTarget& YunoRenderer::CurPostRT()
@@ -1230,6 +1315,7 @@ bool YunoRenderer::LoadShader(
         return false;
     if (!prog.ps->CreatePixelShader(m_device.Get(), psBlob.Get()))
         return false;
+    
 
     m_programs[id] = std::move(prog);
     return true;
@@ -1788,7 +1874,7 @@ RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
     if (it != m_passCache.end())
         return it->second; // 패스가 이미 있으면 그거 주고 없으면 새로만듬
 
-    if (key.vs != key.ps)
+    if (key.vs != key.ps && key.ps != ShaderId::None)
         return 0;
 
     auto itProg = m_programs.find(key.vs);
@@ -1812,7 +1898,12 @@ RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
     }
     
     pd.vs = shader.vs.get();                                            // 키 기반 완료
-    pd.ps = shader.ps.get();                                            // 키 기반 완료
+    if (key.ps != ShaderId::None)
+        pd.ps = shader.ps.get();                                            // 키 기반 완료
+    else
+    {
+        pd.ps = m_programs[ShaderId::None].ps.get();
+    }
     pd.vsBytecode = shader.vsBytecode.Get();                            // 키 기반 완료
     pd.domain = key.domain;
     

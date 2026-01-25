@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 #include "YunoShader.h"
 
@@ -36,4 +36,10 @@ bool YunoShader::CreatePixelShader(ID3D11Device* device, ID3DBlob* bytecode)
 
     m_ps = std::move(ps);
     return true;
+}
+
+void YunoShader::CreateEmptyShader()
+{
+    m_vs = nullptr;
+    m_ps = nullptr;
 }

@@ -89,6 +89,8 @@ struct RenderItem
     Update_Data Constant;
     bool isEmissive = false;
     bool haveAnim = false;
+    bool castShadow = true; //그림자맵에 그릴 오브젝트
+    bool receiveShadow = true; //그림자가 적용될 오브젝트(파티클, 반투명 오브젝트 제외용)
 };
 
 // -------------------- PassKey --------------------
@@ -132,6 +134,9 @@ enum class ShaderId : uint8_t
     Skybox,
     UIBase,
 
+    //Shadow
+    ShadowPass,
+
     //PostProcess
     PP_Default,
     PP_Threshold,
@@ -140,6 +145,8 @@ enum class ShaderId : uint8_t
     PP_BlurV, 
     PP_Combine, 
     PP_ToneMap, 
+
+    None,
 
     Count
 };
