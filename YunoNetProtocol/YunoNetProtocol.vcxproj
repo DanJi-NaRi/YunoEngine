@@ -120,7 +120,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)ProtocolPCH;$(ProjectDir)Public;$(ProjectDir)Public\Net;$(ProjectDir)Public\Net\Packets;$(SolutionDir)vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ProtocolPCH;$(ProjectDir)Public;$(ProjectDir)Public\Net;$(ProjectDir)Public\Net\S2CPackets;$(ProjectDir)Public\Net\C2SPackets;$(ProjectDir)Public\Net\ErrorPackets;$(SolutionDir)vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -139,7 +139,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)ProtocolPCH;$(ProjectDir)Public;$(ProjectDir)Public\Net;$(ProjectDir)Public\Net\Packets;$(SolutionDir)vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ProtocolPCH;$(ProjectDir)Public;$(ProjectDir)Public\Net;$(ProjectDir)Public\Net\S2CPackets;$(ProjectDir)Public\Net\C2SPackets;$(ProjectDir)Public\Net\ErrorPackets;$(SolutionDir)vcpkg_installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -151,18 +151,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_MatchEnter.h" />
+    <ClInclude Include="Public\Net\C2SPackets\C2S_MatchLeave.h" />
     <ClInclude Include="ProtocolPCH\pch.h" />
-    <ClInclude Include="Public\Net\Packets\C2S_Ping.h" />
+    <ClInclude Include="Public\Net\C2SPackets\C2S_Ping.h" />
     <ClInclude Include="Public\Net\ByteIO.h" />
+    <ClInclude Include="Public\Net\ErrorPackets\S2C_Error.h" />
     <ClInclude Include="Public\Net\NetPeer.h" />
     <ClInclude Include="Public\Net\PacketBuilder.h" />
     <ClInclude Include="Public\Net\PacketDispatcher.h" />
     <ClInclude Include="Public\Net\PacketHeader.h" />
-    <ClInclude Include="Public\Net\Packets\S2C_Pong.h" />
-    <ClInclude Include="Public\Net\Packets\S2C_MatchResult.h" />
+    <ClInclude Include="Public\Net\S2CPackets\S2C_Pong.h" />
     <ClInclude Include="Public\Net\PacketType.h" />
+    <ClInclude Include="Public\Net\S2CPackets\S2C_EnterOK.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_MatchEnter.cpp" />
+    <ClCompile Include="Private\Net\C2SPackets\C2S_MatchLeave.cpp" />
+    <ClCompile Include="Private\Net\ErrorPackets\S2C_Error.cpp" />
     <ClCompile Include="ProtocolPCH\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -172,9 +178,9 @@
     <ClCompile Include="Private\Net\ByteIO.cpp" />
     <ClCompile Include="Private\Net\PacketBuilder.cpp" />
     <ClCompile Include="Private\Net\PacketDispatcher.cpp" />
-    <ClCompile Include="Private\Net\Packets\C2S_Ping.cpp" />
-    <ClCompile Include="Private\Net\Packets\S2C_Pong.cpp" />
-    <ClCompile Include="Private\Net\Packets\S2C_MatchResult.cpp" />
+    <ClCompile Include="Private\Net\C2SPackets\C2S_Ping.cpp" />
+    <ClCompile Include="Private\Net\S2CPackets\S2C_Pong.cpp" />
+    <ClCompile Include="Private\Net\S2CPackets\S2C_EnterOK.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

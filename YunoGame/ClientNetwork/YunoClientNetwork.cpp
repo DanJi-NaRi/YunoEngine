@@ -1,6 +1,16 @@
 #include "pch.h"
 
 #include "YunoClientNetwork.h"
+#include "YunoEngine.h"
+
+// 일단 임시로 해두고 나중에 씬 스테이트 머신 만들고 그거로 변경 ㄱㄱ
+#include "ISceneManager.h"
+#include "WeaponSelectScene.h"
+
+// 패킷들
+#include "S2C_Pong.h"
+#include "S2C_EnterOK.h"
+#include "S2C_Error.h"
 
 namespace yuno::game
 {
@@ -116,5 +126,88 @@ namespace yuno::game
         out = std::move(m_inQ.front());
         m_inQ.pop_front();
         return true;
+    }
+
+
+    // ------------------------------- 핸들 함수 등록 -------------------------------
+    void YunoClientNetwork::RegisterMatchPacketHandler() 
+    {
+        ISceneManager* sm = YunoEngine::GetSceneManager();
+        if (!sm) return;
+
+        using namespace yuno::net;
+
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_Pong,
+            [this](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
+            {
+                if (bodyLen < 4)
+                    return;
+
+                ByteReader r(body, bodyLen);
+                const auto pkt = yuno::net::packets::S2C_Pong::Deserialize(r);
+                std::cout << "InComing Data : " << pkt.nonce << std::endl;
+
+            });
+
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_EnterOK,
+            [this, sm](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
+            {
+                ByteReader r(body, bodyLen);
+                const auto pkt = yuno::net::packets::S2C_EnterOK::Deserialize(r);
+
+                std::cout << "Slot Idx : " << static_cast<int>(pkt.slotIndex) << ", Player Count : " << static_cast<int>(pkt.playerCount) << std::endl;
+
+                SceneTransitionOptions opt{};
+                opt.immediate = true;
+                sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
+
+            });
+
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_Error,
+            [this, sm](const NetPeer& /*peer*/,
+                const PacketHeader& /*header*/,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                if (body == nullptr || bodyLen < 4)
+                {
+                    std::cout << "[Client] S2C_Error invalid bodyLen=" << bodyLen << "\n";
+                    return;
+                }
+
+                ByteReader r(body, bodyLen);
+                const auto err = yuno::net::packets::S2C_Error::Deserialize(r);
+
+                const auto code = err.code;         // 어떤 에러가 났는지
+                const auto reason = err.reason;     // 왜 발생했는지
+                const auto ctx = err.contextType;   // 어떤 패킷에서 발생했는지
+
+
+                // MatchEnter 거부 처리
+                if (code == yuno::net::packets::ErrorCode::EnterDenied &&
+                    ctx == PacketType::C2S_MatchEnter)
+                {
+
+                    if (reason == yuno::net::packets::EnterDeniedReason::RoomFull)
+                    {
+                        std::cout << "[Client] Enter denied: RoomFull\n";
+
+                        return;
+                    }
+                    else if (reason == yuno::net::packets::EnterDeniedReason::AlreadyInMatch)
+                    {
+                        std::cout << "[Client] Enter denied: AlreadyInMatch\n";
+
+                        return;
+                    }
+
+                    return;
+                }
+
+            }
+        );
     }
 }

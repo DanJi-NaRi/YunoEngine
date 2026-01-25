@@ -21,8 +21,7 @@ namespace yuno::net
         C2S_Ping = 6,
 
         // S2C
-        S2C_MatchResult = 128,  // (예시) 매치 처리 결과/상태(네가 이미 파일 만들어둔 타입)
-        S2C_EnterOK = 129,  // 매치 진입 승인
+        S2C_EnterOK = 128,  // 매치 진입 승인
         S2C_ReadyState = 130,  // 양측 준비 상태 동기화
         S2C_CountDown = 131,  // 카운트다운 시작/동기화
         S2C_GameStart = 132,  // 게임 시작
@@ -31,8 +30,7 @@ namespace yuno::net
 
         // System / Error
         S2C_Error = 240, // 에러 코드/메시지
-        S2C_Ping = 241,
-        C2S_Pong = 242,
+        S2C_Error_EnterDenied = 255
     };
 
     inline constexpr bool IsValidPacketType(PacketType t)
@@ -57,3 +55,21 @@ namespace yuno::net
         return (static_cast<std::uint8_t>(t) & 0xF0u) == 0xF0u;
     }
 }
+namespace yuno::net::packets 
+{
+    enum class ErrorCode : std::uint16_t
+    {
+        None = 0,
+
+        // Match/Room
+        EnterDenied = 1,
+    };
+
+    enum class EnterDeniedReason : std::uint8_t
+    {
+        None = 0,
+        RoomFull = 1,
+        AlreadyInMatch = 2,
+    };
+}
+

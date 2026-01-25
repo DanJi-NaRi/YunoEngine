@@ -27,13 +27,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Public\Net\Packets\C2S_Ping.h">
+    <ClInclude Include="Public\Net\C2SPackets\C2S_Ping.h">
       <Filter>Public\Network\Packets</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Net\Packets\S2C_MatchResult.h">
-      <Filter>Public\Network\Packets</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Net\Packets\S2C_Pong.h">
+    <ClInclude Include="Public\Net\S2CPackets\S2C_Pong.h">
       <Filter>Public\Network\Packets</Filter>
     </ClInclude>
     <ClInclude Include="Public\Net\ByteIO.h">
@@ -57,18 +54,27 @@
     <ClInclude Include="ProtocolPCH\pch.h">
       <Filter>ProtocolPCH</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_EnterOK.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_MatchLeave.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_MatchEnter.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\ErrorPackets\S2C_Error.h">
+      <Filter>Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Net\ByteIO.cpp">
       <Filter>Private\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Net\Packets\C2S_Ping.cpp">
+    <ClCompile Include="Private\Net\C2SPackets\C2S_Ping.cpp">
       <Filter>Private\Network\Packets</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Net\Packets\S2C_Pong.cpp">
-      <Filter>Private\Network\Packets</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Net\Packets\S2C_MatchResult.cpp">
+    <ClCompile Include="Private\Net\S2CPackets\S2C_Pong.cpp">
       <Filter>Private\Network\Packets</Filter>
     </ClCompile>
     <ClCompile Include="Private\Net\PacketBuilder.cpp">
@@ -79,6 +85,18 @@
     </ClCompile>
     <ClCompile Include="ProtocolPCH\pch.cpp">
       <Filter>ProtocolPCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_MatchEnter.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_MatchLeave.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_EnterOK.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\ErrorPackets\S2C_Error.cpp">
+      <Filter>Private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
