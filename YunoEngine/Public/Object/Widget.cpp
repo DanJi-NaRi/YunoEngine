@@ -36,7 +36,7 @@ INDEX g_Widget_idx[] =
 };
 
 
-Widget::Widget()
+Widget::Widget(UIManager* uiManager) : m_uiManager(uiManager)
 {
     m_zOrder = 0;
 
@@ -60,7 +60,8 @@ Widget::Widget()
 
 Widget::~Widget()
 {
-
+    //ClearChild(); // 나중에 흐름 체크하고 넣기
+    Clear();
 }
 
 bool Widget::CreateMesh()
@@ -337,6 +338,11 @@ void Widget::ClearChild()
     m_Childs.clear();
 }
 
+void Widget::Clear() {
+    m_pRenderer = nullptr;
+    m_pTextures = nullptr;
+    m_pInput = nullptr;
+}
 
 /// <summary>
 /// 전역 변수 함수들...

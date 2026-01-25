@@ -11,9 +11,7 @@
 #include "IInput.h"
 #include "YunoLight.h"
 
-#include "Image.h"
-#include "Button.h"
-#include "Card.h"
+#include "UIWidgets.h"
 
 #include "Building.h"
 #include "Triangle.h"
@@ -38,9 +36,11 @@ bool UIScene::OnCreateScene()
     //input->AddContext(&s_gameCtx);
 
     m_uiManager->CreateWidget<Image>(L"tstImg", XMFLOAT3(0, 0, 0));
-    m_uiManager->CreateWidget<Button>(L"tstBtn", XMFLOAT3(500, 0, 0));
-    
-    m_uiManager->CreateWidget<Card>(L"tstCard", XMFLOAT3(500, 500, 0));
+    m_uiManager->CreateWidget<Button>(L"tstBtn", XMFLOAT3(400, 0, 0));
+    m_uiManager->CreateWidget<Card>(L"tstCard", XMFLOAT3(600, 0, 0));
+
+    m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0));
+
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");

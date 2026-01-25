@@ -245,5 +245,6 @@
     <ClInclude Include="CardSlot.h">
       <Filter>Game\UI\Card</Filter>
     </ClInclude>
+    <ClInclude Include="UIWidgets.h" />
   </ItemGroup>
 </Project>

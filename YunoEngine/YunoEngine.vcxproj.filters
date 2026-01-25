@@ -224,13 +224,14 @@
     <ClCompile Include="Public\Object\Widget.cpp">
       <Filter>Public\UI\BaseWidget</Filter>
     </ClCompile>
-    <ClCompile Include="Public\CursurSystem.cpp">
-      <Filter>Public\UI\UISystem</Filter>
-    </ClCompile>
     <ClCompile Include="Public\DragProvider.cpp">
       <Filter>Public\UI\UISystem</Filter>
     </ClCompile>
     <ClCompile Include="Public\UIManager.cpp">
+      <Filter>Public\UI\UISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Slot.cpp" />
+    <ClCompile Include="Public\CursurSystem.cpp">
       <Filter>Public\UI\UISystem</Filter>
     </ClCompile>
   </ItemGroup>
@@ -401,13 +402,14 @@
     <ClInclude Include="Public\Object\Widget.h">
       <Filter>Public\UI\BaseWidget</Filter>
     </ClInclude>
-    <ClInclude Include="Public\CursurSystem.h">
-      <Filter>Public\UI\UISystem</Filter>
-    </ClInclude>
     <ClInclude Include="Public\DragProvider.h">
       <Filter>Public\UI\UISystem</Filter>
     </ClInclude>
     <ClInclude Include="Public\UIManager.h">
+      <Filter>Public\UI\UISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Slot.h" />
+    <ClInclude Include="Public\CursurSystem.h">
       <Filter>Public\UI\UISystem</Filter>
     </ClInclude>
   </ItemGroup>

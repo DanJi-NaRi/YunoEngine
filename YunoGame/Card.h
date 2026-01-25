@@ -8,10 +8,11 @@ class Card : public Button
 {
 public:
     Card();
-    virtual ~Card() = default;
+    virtual ~Card();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
+    void Clear();
 
     virtual bool IdleEvent() override;
     virtual bool HoveredEvent() override;
@@ -32,7 +33,6 @@ public:
 protected:
     CardData m_data;                // 카드 데이터
     CardActData m_atkData;          // 공격 데이터
-    DragProvider m_Drag;            // 드래그 기능 공급자
 };
 
 

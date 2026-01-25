@@ -12,7 +12,7 @@ class Image : public Widget {
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
 
-    virtual WidgetType GetWidgetType() override { return WidgetType::Widget; }
+    virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::Image; }
 private:
 

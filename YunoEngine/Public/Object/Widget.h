@@ -8,6 +8,8 @@
 
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
 
+class UIManager;
+
 enum class Anchor : int {
     LeftTop,
     Top,
@@ -26,6 +28,7 @@ enum class WidgetType : int { // 자신 / 부모 클래스 타입
     Image,
     Button,
     Text,
+    Slot,
     //Progress,
     //Slider,
     Max,
@@ -36,6 +39,7 @@ enum class WidgetClass : int {
     Image,
     Button,
     Text,
+    Slot,
     CardTable,
     Card,
     CardSlot,
@@ -107,8 +111,6 @@ protected:
     Widget* m_Parent;
     std::unordered_map<uint32_t, Widget*> m_Childs;
 
-    std::vector<SnapPoint> m_snapPoint;    // 위젯이 배치할 구간이 있다면
-
 protected:
     IRenderer* m_pRenderer = nullptr;
 
@@ -118,9 +120,9 @@ protected:
 
     Anchor m_anchor; // 아직 안씀
 
+    UIManager* m_uiManager = nullptr; // UIManager
 public:
-    explicit Widget();
-
+    explicit Widget(UIManager* uiManager);
     virtual ~Widget();
     //Create는 오브젝트 매니저만 쓰기
     virtual bool  Create(XMFLOAT3 vPos);//일단 호환용으로 냅두고 나중에 무조건 이름 필요한걸로 바꾸는게 나을듯
@@ -170,9 +172,12 @@ public:
     void DettachParent();
     void DettachChild(uint32_t id);
     void ClearChild();
+    void Clear();
 
     virtual WidgetType GetWidgetType() { return WidgetType::Widget; }
     virtual WidgetClass GetWidgetClass() { return WidgetClass::Widget; }
+
+    
 };
 
 extern MeshHandle g_defaultWidgetMesh;

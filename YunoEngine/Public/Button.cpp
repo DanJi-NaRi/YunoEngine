@@ -2,13 +2,16 @@
 #include "Button.h"
 
 #include "IInput.h"
+#include "DragProvider.h"
 
 Button::Button()
 {
+    Clear();
 }
 
 Button::~Button()
 {
+    Clear();
 }
 
 bool Button::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
@@ -37,8 +40,8 @@ bool Button::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
         m_constant.shadowBias = 0.005f;
     }
 
-    m_BtnState = ButtonState::Idle;
-    m_Bindkey = 0;
+    m_btnState = ButtonState::Idle;
+    m_bindkey = 0;
     m_anchor = Anchor::LeftTop;
 
     Backup();
@@ -84,16 +87,16 @@ void Button::ButtonUpdate(float dTime) // 버튼 상태 갱신
     vPos.y = (float)m_rect.top;
     vPos.z = 1.0f;
 
-    m_BtnState = ButtonState::Idle; // 커서 영역 검사 전 기본 상태 초기화.
+    m_btnState = ButtonState::Idle; // 커서 영역 검사 전 기본 상태 초기화.
 
     if (!PtInRect(&m_rect, mouseXY)) return;	//커서/버튼 영역 검사.
 
     // 버튼 State 업데이트
-    if (m_pInput->IsMouseButtonDown(0)) { m_BtnState = ButtonState::Pressed; }
-    else if (m_BtnState != ButtonState::Pressed && m_pInput->IsMouseButtonPressed(0)) { m_BtnState = ButtonState::Pressed; }
-    else { m_BtnState = ButtonState::Hovered; } // 커서가 올라가있는 것은 확정이므로, 기본값은 Hovered
+    if (m_pInput->IsMouseButtonDown(0)) { m_btnState = ButtonState::Pressed; }
+    else if (m_btnState != ButtonState::Pressed && m_pInput->IsMouseButtonPressed(0)) { m_btnState = ButtonState::Pressed; }
+    else { m_btnState = ButtonState::Hovered; } // 커서가 올라가있는 것은 확정이므로, 기본값은 Hovered
 
-    switch (m_BtnState) // 버튼 상태에 따른 그리기 셋업
+    switch (m_btnState) // 버튼 상태에 따른 그리기 셋업
     {
     case ButtonState::Idle:	    //버튼 "대기","일반" 출력.
         std::cout << "Idle" << std::endl;
@@ -161,4 +164,8 @@ bool Button::KeyReleasedEvent(uint32_t key)
     if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
     else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
     return true;
+}
+
+void Button::Clear() {
+    m_pDrag = nullptr;
 }

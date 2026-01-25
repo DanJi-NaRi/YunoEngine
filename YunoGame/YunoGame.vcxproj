@@ -270,6 +270,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="System\SettingScene_InputContext.h" />
     <ClInclude Include="System\TileHelper.h" />
     <ClInclude Include="System\UIScene_InputContext.h" />
+    <ClInclude Include="UIWidgets.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

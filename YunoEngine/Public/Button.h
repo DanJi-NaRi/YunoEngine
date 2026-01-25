@@ -11,6 +11,8 @@
 
 // 카드도 Button 상속해서 쓰게 하면 될 듯??
 
+class DragProvider;
+
 enum class ButtonState : int { Idle, Hovered, Pressed, Down, Released, Count };
 
 class Button : public Widget {
@@ -38,16 +40,21 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::Button; }
 
+    DragProvider* GetDragProvider() { return m_pDrag.get(); } // 없으면 nullptr 반환
 
-    ButtonState GetButtonState() const { return m_BtnState; }
-    void        SetButtonState(ButtonState state) { m_BtnState = state; }
-    uint32_t    GetBindKey() const { return m_Bindkey; }
-    bool        IsBindkey() const { return (m_Bindkey != 0); }
-    void        SetBindKey(uint32_t bindkey) { m_Bindkey = bindkey; }
+    ButtonState GetButtonState() const { return m_btnState; }
+    void        SetButtonState(ButtonState state) { m_btnState = state; }
+    uint32_t    GetBindKey() const { return m_bindkey; }
+    bool        IsBindkey() const { return (m_bindkey != 0); }
+    void        SetBindKey(uint32_t bindkey) { m_bindkey = bindkey; }
+
+    void        Clear();
 protected:
     // 버튼 상태 : 대기/커서입력/눌림 (standby/CursorOn/Push)
-    ButtonState m_BtnState;							//UI버튼별 상태 저장.
-    uint32_t m_Bindkey = 0;
+    ButtonState m_btnState;							//UI버튼별 상태 저장.
+    uint32_t m_bindkey = 0;
+    std::unique_ptr<DragProvider> m_pDrag = nullptr; // 드래그 기능 공급자. 기본은 null이니 파생해서 초기화 때 채워줄 것.
+
 private:
     //bool CreateMesh() override;      // 메시 생성 (한 번만)
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)

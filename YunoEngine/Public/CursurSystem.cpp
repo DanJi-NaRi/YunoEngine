@@ -13,12 +13,12 @@ void CursurSystem::UpdateCheckSnap()
 {
     if (!m_focusedWidget) return;
 
+    WidgetClass focusClass = m_focusedWidget->GetWidgetClass();
+
     for (auto& widget : *m_pWidgets) {
         if (widget->GetWidgetType() != WidgetType::Button) continue;
-        switch (widget->GetWidgetClass()) {
-        case WidgetClass::Card: break;
-        default: break;
-        }
+
+
     }
 }
 void CursurSystem::FindSnapWidget()
