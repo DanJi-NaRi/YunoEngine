@@ -23,6 +23,9 @@ public:
     virtual bool KeyReleasedEvent(uint32_t key = 0) override;
     //virtual bool DownEvent() override;
 
+    virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::Card; }
+
     PieceMask GetUnitMask() const { return m_data.m_allowedUnits; }
     CardData GetCardData() const { return m_data; }
 

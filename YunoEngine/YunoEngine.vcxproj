@@ -168,6 +168,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h" />
+    <ClInclude Include="Public\DragProvider.h" />
+    <ClInclude Include="Public\Image.h" />
     <ClInclude Include="Public\InputContextBase.h" />
     <ClInclude Include="Private\Input\InputState.h" />
     <ClInclude Include="Private\Input\YunoInputSystem.h" />
@@ -224,12 +226,16 @@
     <ClInclude Include="Public\YunoEngine.h" />
     <ClInclude Include="Public\Object\Widget.h" />
     <ClInclude Include="Public\UIManager.h" />
+    <ClInclude Include="Public\CursurSystem.h" />
+    <ClInclude Include="Public\Text.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EnginePCH\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Public\DragProvider.cpp" />
+    <ClCompile Include="Public\Image.cpp" />
     <ClCompile Include="Public\InputContextBase.cpp" />
     <ClCompile Include="Private\Input\YunoInputSystem.cpp" />
     <ClCompile Include="Private\Renderer\BoneAnimation\BoneAnimation.cpp" />
@@ -265,6 +271,8 @@
     <ClCompile Include="Public\Sound\EventHandle.cpp" />
     <ClCompile Include="Public\Sound\fmodPCH.cpp" />
     <ClCompile Include="Public\UIManager.cpp" />
+    <ClCompile Include="Public\CursurSystem.cpp" />
+    <ClCompile Include="Public\Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">

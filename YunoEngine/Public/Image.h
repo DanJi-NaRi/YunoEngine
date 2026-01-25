@@ -11,6 +11,9 @@ class Image : public Widget {
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
+
+    virtual WidgetType GetWidgetType() override { return WidgetType::Widget; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::Image; }
 private:
 
     bool CreateMesh() override;      // 메시 생성 (한 번만)

@@ -21,18 +21,30 @@ enum class Anchor : int {
     Max,
 };
 
-enum class widgetType : int { // 위젯 기본형
-    JustWidget,
-    Sprite,
+enum class WidgetType : int { // 자신 / 부모 클래스 타입
+    Widget,
+    Image,
     Button,
+    Text,
     //Progress,
     //Slider,
     Max,
 };
 
-enum class widgetClass : int {
+enum class WidgetClass : int {
+    Widget,
+    Image,
+    Button,
+    Text,
     CardTable,
     Card,
+    CardSlot,
+};
+
+struct SnapPoint {
+    XMFLOAT2 m_snapPoint;
+    RECT m_snapRange;
+    WidgetClass m_snapTargetClass; // 스냅 조건
 };
 
 class Widget
@@ -40,7 +52,7 @@ class Widget
 protected:
 
     uint32_t m_id;
-    widgetType m_type;
+    WidgetType m_type;
 
     std::wstring m_name;
 
@@ -95,6 +107,8 @@ protected:
     Widget* m_Parent;
     std::unordered_map<uint32_t, Widget*> m_Childs;
 
+    std::vector<SnapPoint> m_snapPoint;    // 위젯이 배치할 구간이 있다면
+
 protected:
     IRenderer* m_pRenderer = nullptr;
 
@@ -103,6 +117,7 @@ protected:
     IInput* m_pInput = nullptr;
 
     Anchor m_anchor; // 아직 안씀
+
 public:
     explicit Widget();
 
@@ -155,6 +170,9 @@ public:
     void DettachParent();
     void DettachChild(uint32_t id);
     void ClearChild();
+
+    virtual WidgetType GetWidgetType() { return WidgetType::Widget; }
+    virtual WidgetClass GetWidgetClass() { return WidgetClass::Widget; }
 };
 
 extern MeshHandle g_defaultWidgetMesh;

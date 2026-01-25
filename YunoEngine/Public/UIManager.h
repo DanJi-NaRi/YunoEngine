@@ -4,6 +4,7 @@
 #include "RenderTypes.h"
 
 #include "AnimationUnit.h"
+#include "CursurSystem.h"
 #include "Widget.h"
 
 enum class ButtonState;
@@ -18,9 +19,7 @@ private:
     UINT m_widgetIDs;
 
     IInput* m_pInput;
-
-    Button* m_focusedWidget;
-    int m_focusedMouseButton;
+    CursurSystem m_cursurSystem;
 
     // Widgets
     std::deque<std::unique_ptr<Widget>> m_widgets;

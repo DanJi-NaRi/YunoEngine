@@ -35,6 +35,8 @@ public:
     virtual bool KeyReleasedEvent(uint32_t key = 0);
     virtual bool DownEvent();
     
+    virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::Button; }
 
 
     ButtonState GetButtonState() const { return m_BtnState; }
