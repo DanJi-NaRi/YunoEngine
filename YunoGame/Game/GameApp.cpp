@@ -13,6 +13,7 @@
 #include "TitleScene.h"
 #include "PlayScene.h"
 #include "UIScene.h"
+#include "WeaponSelectScene.h"
 
 #include "AudioQueue.h"
 #include "PieceQueue.h"
@@ -21,8 +22,13 @@
 
 #include "PacketBuilder.h"
 
-#include "S2C_Pong.h"
+
+// 패킷들
+
 #include "C2S_Ping.h"
+#include "C2S_MatchEnter.h"
+#include "C2S_MatchLeave.h"
+
 
 
 GameApp::~GameApp() = default;
@@ -57,21 +63,7 @@ bool GameApp::OnInit()
     // 네트워크 스레드 시작
     m_clientNet.Start("127.0.0.1", 9000);
 
-    using namespace yuno::net;
-
-    m_clientNet.Dispatcher().RegisterRaw(
-        PacketType::S2C_Pong,
-        [this](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
-        {
-            if (bodyLen < 4)
-                return;
-
-            ByteReader r(body, bodyLen);
-            const auto pkt = yuno::net::packets::S2C_Pong::Deserialize(r);
-            std::cout << "InComing Data : " << pkt.nonce << std::endl;
-
-        });
-
+    m_clientNet.RegisterMatchPacketHandler();
 
 
 
@@ -81,16 +73,6 @@ bool GameApp::OnInit()
 void GameApp::OnUpdate(float dt)
 {
     m_clientNet.PumpIncoming();
-
-    static bool sent = false;
-    if (!sent && m_clientNet.IsConnected())
-    {
-        sent = true;
-        std::cout << "OnConnected" << std::endl;
-
-
-
-    }
 
     static float acc = 0.0f;
     static int frameCount = 0;
@@ -149,9 +131,22 @@ void GameApp::OnUpdate(float dt)
     {
         if (input->IsKeyPressed(VK_F1))
         {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+            using namespace yuno::net;
+            yuno::net::packets::C2S_MatchEnter pkt{};
+            
+
+            auto bytes = PacketBuilder::Build(
+                PacketType::C2S_MatchEnter,
+                [&](ByteWriter& w)
+                {
+                    pkt.Serialize(w);
+                });
+
+            m_clientNet.SendPacket(std::move(bytes));
+
+            //SceneTransitionOptions opt{};
+            //opt.immediate = true;
+            //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
             //sm->RequestPush(std::make_unique<PlayScene>());
         }
 

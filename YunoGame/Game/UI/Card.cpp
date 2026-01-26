@@ -4,20 +4,33 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 
-Card::Card()
+Card::Card(UIManager* uiManager) : Button(uiManager)
+{
+    Clear();
+}
+
+Card::~Card()
+{
+    Clear();
+}
+
+void Card::Clear()
 {
 }
 
 bool Card::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Button::Create(name, id, vPos);
-    m_Drag.Init(m_pInput, &m_vPos, true);
+    m_pDrag = std::make_unique<DragProvider>(); // 드래그 기능 사용
+    if (!m_pDrag) return false;
+
+    m_pDrag->Init(m_pInput, &m_vPos, true);
     return true;
 }
 
 bool Card::Update(float dTime)
 {
-    m_Drag.UpdateDrag(dTime);
+    m_pDrag->UpdateDrag(dTime);
     Button::Update(dTime);
     return true;
 }
@@ -41,7 +54,7 @@ bool Card::HoveredEvent()
 bool Card::LMBPressedEvent()
 {
     std::cout << "(Card - LMB)PressedEvent" << std::endl;
-    m_Drag.StartDrag();
+    m_pDrag->StartDrag();
     return true;
 }
 
@@ -58,7 +71,7 @@ bool Card::KeyPressedEvent(uint32_t key)
 bool Card::LMBReleasedEvent()
 {
     std::cout << "(Card - LMB)ReleasedEvent" << std::endl;
-    m_Drag.EndDrag();
+    m_pDrag->EndDrag();
     return true;
 }
 

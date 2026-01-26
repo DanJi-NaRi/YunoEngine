@@ -31,7 +31,6 @@ protected:
     int m_halfCellsX, m_halfCellsZ;
     float m_cellSizeX, m_cellSizeZ;
     float m_invX, m_invZ;
-    float m_y;
     
 protected:
 
