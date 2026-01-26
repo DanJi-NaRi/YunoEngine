@@ -120,9 +120,6 @@
     <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp">
       <Filter>Scenes\SceneTemplate</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\UIScene.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
       <Filter>ClientNetwork</Filter>
     </ClCompile>
@@ -175,6 +172,9 @@
       <Filter>Game\UI\Button</Filter>
     </ClCompile>
     <ClCompile Include="Game\Object\Test_Unit.cpp" />
+    <ClCompile Include="Scenes\UIScene.cpp">
+      <Filter>Scenes\99.Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
