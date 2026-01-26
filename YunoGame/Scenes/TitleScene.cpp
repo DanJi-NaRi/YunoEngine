@@ -33,7 +33,7 @@ bool TitleScene::OnCreateScene()
 
     m_gridSystem = std::make_unique<PlayGridSystem>(m_objectManager.get());
     m_gridSystem->Init(5, 7, 3, 2);
-    m_gridSystem->CreateObject(0, 10, 0);
+    m_gridSystem->CreateObject(0, 1, 0);
 
     
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
@@ -98,17 +98,21 @@ void TitleScene::Update(float dt)
     }
 
     // 테스트용 -> ally1으로 부여한 기물이 움직여용
+    if (m_input->IsKeyPressed(0x30))
+    {
+        PieceQ::Insert(PieceQ::Move_S(PieceType::Ally1, 1, 1));
+    }
     if (m_input->IsKeyPressed(0x31))
     {
-        PieceQ::Insert({ PieceType::Ally1, CommandType::Move, {0, 0} });
+        PieceQ::Insert(PieceQ::Move_S(PieceType::Ally1, 1, 2));
     }
     if (m_input->IsKeyPressed(0x32))
     {
-        PieceQ::Insert({ PieceType::Ally1, CommandType::Move, {1, 1} });
+        PieceQ::Insert(PieceQ::Move_S(PieceType::Ally1, 1, 3));
     }
     if (m_input->IsKeyPressed(0x33))
     {
-        PieceQ::Insert({ PieceType::Ally1, CommandType::Move, {2, 2} });
+        PieceQ::Insert(PieceQ::Move_S(PieceType::Ally1, 2, 1));
     }
 
     m_input->Dispatch();

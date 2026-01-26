@@ -5,7 +5,8 @@ enum class TileOccupancy : uint8_t
     Collapesed,
     Unoccupied,
     Ally_Occupied,
-    Enemy_Occupied
+    Enemy_Occupied,
+    Both_Occupied
 };
 
 enum class TileEvent : uint8_t
@@ -13,12 +14,12 @@ enum class TileEvent : uint8_t
     None,
     Heal,
     Lazer,
-    Fall
+    Meet
 };
 
 struct TileState
 {
-    TileOccupancy co;
-    TileEvent ce;
-    TileState() : co(TileOccupancy::Unoccupied), ce(TileEvent::None) {}
+    TileOccupancy to;
+    TileEvent te;
+    TileState() : to(TileOccupancy::Unoccupied), te(TileEvent::None) {}
 };

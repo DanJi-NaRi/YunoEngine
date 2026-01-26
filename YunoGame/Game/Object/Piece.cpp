@@ -2,142 +2,152 @@
 
 #include "Piece.h"
 
-
+float scaleAdjust = 0.2f;
 VERTEX_Pos g_cubeMesh_2[] =
 {
-    //정면. ( Face#0) :   
-    { -1.0, 2.0,-1.0} ,		//v0 : Position + Normal.★
-    {  1.0, 2.0,-1.0} ,		//v1
-    { -1.0, 0.0,-1.0} ,		//v2
-    //       ( Face#1)
-    {  1.0, 0.0,-1.0} ,		//v3
+    { -7.0f * scaleAdjust,  0.0f, 0.0f},
+    {0.0f, 14.0f * scaleAdjust, -1.f * scaleAdjust},
+    {7.0f * scaleAdjust,  0.0f, 0.0f},
 
-    //뒷면.  (Face#2) :  
-    {  1.0, 2.0, 1.0} ,		//v4
-    { -1.0, 2.0, 1.0} ,		//v5
-    { -1.0, 0.0, 1.0} ,		//v6
-    //		  (Face#3)
-    {  1.0, 0.0, 1.0} ,		//v7
+    {-1.0f * scaleAdjust,  6.0f * scaleAdjust, -0.5f * scaleAdjust},
+    {-2.0f * scaleAdjust,  0.0f, -2.0f * scaleAdjust},
+    {-3.0f * scaleAdjust,  6.0f * scaleAdjust, -0.5f * scaleAdjust},
 
+    {3.0f * scaleAdjust,  6.0f * scaleAdjust, -0.5f * scaleAdjust},
+    {2.0f * scaleAdjust,  0.0f, -2.f * scaleAdjust},
+    {1.0f * scaleAdjust,  6.0f * scaleAdjust, -0.5f * scaleAdjust},
 
-    // 우측면. (Face#4)
-    {  1.0, 2.0,-1.0} ,		//v8
-    {  1.0, 2.0, 1.0} ,		//v9
-    {  1.0, 0.0,-1.0} ,		//v10
-    //			(Face#5)
-    {  1.0, 0.0, 1.0} ,		//v11
+    {0.0f,  17.0f * scaleAdjust, 0.f},
+    {0.0f,  9.0f * scaleAdjust, -3.f * scaleAdjust},
+    {-6.0f * scaleAdjust,  22.0f * scaleAdjust, 2.f * scaleAdjust},
 
+    {6.0f * scaleAdjust,  22.0f * scaleAdjust, 2.f * scaleAdjust},
+    {0.0f,  9.0f * scaleAdjust, -3.f * scaleAdjust},
+    {0.0f,  17.0f * scaleAdjust, 0.f},
 
-    // 좌측면. (Face#6)
-    { -1.0, 2.0, 1.0} ,		//v12
-    { -1.0, 2.0,-1.0} ,		//v13
-    { -1.0, 0.0,-1.0} ,		//v14
-    //			(Face#7)
-    { -1.0, 0.0, 1.0} ,		//v15
+    {0.0f,  0.0f, scaleAdjust * scaleAdjust},
+    {-15.0f * scaleAdjust,  6.0f * scaleAdjust, 5.f * scaleAdjust},
+    {-12.0f * scaleAdjust,  8.0f * scaleAdjust, 5.f * scaleAdjust},
 
+    {0.0f,  0.0f, scaleAdjust * scaleAdjust},
+    {-10.0f * scaleAdjust,  12.0f * scaleAdjust, 5.f * scaleAdjust},
+    {-7.0f * scaleAdjust,  13.0f * scaleAdjust, 5.f * scaleAdjust},
 
-    //상부.  ( Face#8)
-    { -1.0, 2.0, 1.00} ,		//v16
-    {  1.0, 2.0, 1.0} ,		//v17
-    { -1.0, 2.0,-1.0} ,		//v18
-    //		 ( Face#9)
-    {  1.0, 2.0,-1.0} ,		//v19
+    {0.0f,  0.0f, scaleAdjust * scaleAdjust},
+    {-1.5f * scaleAdjust,  15.0f * scaleAdjust, 5.f * scaleAdjust},
+    {1.5f * scaleAdjust,  15.0f * scaleAdjust, 5.f * scaleAdjust},
 
+    {0.0f,  0.0f, scaleAdjust * scaleAdjust},
+    {7.f * scaleAdjust,  13.0f * scaleAdjust, 5.f * scaleAdjust},
+    {10.f * scaleAdjust,  12.0f * scaleAdjust, 5.f * scaleAdjust},
 
-    //하부.  ( Face#10)
-    {  1.0, 0.0, 1.0} ,		//v20
-    { -1.0, 0.0, 1.0} ,		//v21
-    { -1.0, 0.0,-1.0} ,		//v22
-    //		 ( Face#11)
-    {  1.0, 0.0,-1.0}		//v23
-};
+    {0.0f,  0.0f, scaleAdjust * scaleAdjust},
+    {12.f * scaleAdjust,  8.0f * scaleAdjust, 5.f * scaleAdjust},
+    {15.f * scaleAdjust,  6.0f * scaleAdjust, 5.f * scaleAdjust}
+    
+ };
 
 VERTEX_Nrm g_cubeNrm_2[] =
 {
-    {0.0, 0.0,-1.0},
-    {0.0, 0.0,-1.0},
-    {0.0, 0.0,-1.0},
+    {0.0f, 0.071f, -0.997f},
+    {0.0f, 0.071f, -0.997f},
+    {0.0f, 0.071f, -0.997f},
 
-    {0.0, 0.0,-1.0},
+    {0.0f, 0.0f, -1.0f},
+    {0.0f, 0.0f, -1.0f},
+    {0.0f, 0.0f, -1.0f},
 
-    {0.0, 0.0, 1.0},
-    {0.0, 0.0, 1.0},
-    {0.0, 0.0, 1.0},
+    {0.0f, 0.0f, -1.0f},
+    {0.0f, 0.0f, -1.0f},
+    {0.0f, 0.0f, -1.0f},
 
-    {0.0, 0.0, 1.0},
+    {-0.444f, 0.148f, -0.884f},
+    {-0.444f, 0.148f, -0.884f},
+    {-0.444f, 0.148f, -0.884f},
 
-    {1.0, 0.0, 0.0},
-    {1.0, 0.0, 0.0},
-    {1.0, 0.0, 0.0},
+    {0.444f, 0.148f, -0.884f},
+    {0.444f, 0.148f, -0.884f},
+    {0.444f, 0.148f, -0.884f},
 
-    {1.0, 0.0, 0.0},
+    {0.0f, 0.0f, -1.f},
+    {0.0f, 0.0f, -1.f},
+    {0.0f, 0.0f, -1.f},
 
-    {-1.0, 0.0, 0.0},
-    {-1.0, 0.0, 0.0},
-    {-1.0, 0.0, 0.0},
+    {0.0f, 0.0f, -1.f},
+    {0.0f, 0.0f, -1.f},
+    {0.0f, 0.0f, -1.f},
 
-    {-1.0, 0.0, 0.0},
+    {0.0f, 0.0f, -1.f},
+    {0.0f, 0.0f, -1.f},
+    {0.0f, 0.0f, -1.f},
 
-    {0.0, 1.0, 0.0},
-    {0.0, 1.0, 0.0},
-    {0.0, 1.0, 0.0},
+    {0.0f, 0.0f, -1.f},
+    {0.0f, 0.0f, -1.f},
+    {0.0f, 0.0f, -1.f},
 
-    {0.0, 1.0, 0.0},
-
-    {0.0,-1.0, 0.0},
-    {0.0,-1.0, 0.0},
-    {0.0,-1.0, 0.0},
-
-    {0.0,-1.0, 0.0}
-};
+    {0.0f, 0.0f, -1.f},
+    {0.0f, 0.0f, -1.f},
+    {0.0f, 0.0f, -1.f}
+    
+ };
 
 VERTEX_UV g_cubeUV_2[] =
 {
-    {0, 0},
-    {1, 0},
-    {0, 1},
+    {0.525f, 0.988f},
+    {0.758f, 0.521f},
+    {0.992f, 0.988f},
 
-    {1, 1},
+    {0.037f, 0.004f},
+    {0.068f, 0.211f},
+    {0.102f, 0.004f},
 
-    {0, 0},
-    {1, 0},
-    {1, 1},
+    {0.102f, 0.004f},
+    {0.068f, 0.211f},
+    {0.037f, 0.004f},
 
-    {0, 1},
+    {0.248f, 0.738f},
+    {0.248f, 0.992f},
+    {0.0469f, 0.561f},
 
-    {0, 0},
-    {1, 0},
-    {0, 1},
+    {0.0469f, 0.561f},
+    {0.248f, 0.992f},
+    {0.248f, 0.738f},
 
-    {1, 1},
+    {0.455f, 0.451f},
+    {0.166f, 0.002f},
+    {0.275f, 0.002f},
 
-    {0, 0},
-    {1, 0},
-    {1, 1},
+    {0.529f, 0.484f},
+    {0.346f, 0.002f},
+    {0.447f, 0.002f},
 
-    {0, 1},
+    {0.588f, 0.516f},
+    {0.537f, 0.002f},
+    {0.637f, 0.002f},
 
-    {0, 0},
-    {1, 0},
-    {0, 1},
+    {0.637f, 0.484f},
+    {0.723f, 0.002f},
+    {0.822f, 0.002f},
 
-    {1, 1},
-
-    {0, 0},
-    {1, 0},
-    {1, 1},
-
-    {0, 1}
-};
+    {0.707f, 0.455f},
+    {0.883f, 0.002f},
+    {0.996f, 0.002f}
+    
+ };
 
 INDEX g_cubeIndex_2[] =
 {
-    {0, 1, 2}, {2, 1, 3},		// 정면
-    {4, 5, 7}, {7, 5, 6},		// 뒷면
-    {8, 9, 10}, {10, 9, 11},	// 우측면
-    {12, 13, 15}, {15, 13, 14},	// 좌측면
-    {16, 17, 18}, {18, 17, 19},	// 상부
-    {22, 23, 21}, {21, 23, 20},	//	하부
+    {0, 1, 2},
+    {3, 4, 5},
+    {6, 7, 8},
+    {9, 10, 11},    // 왼쪽 머리
+    {12, 13, 14},   // 오른쪽 머리
+    {15, 16, 17},
+    {18, 19, 20},
+    {21, 22, 23},
+    {24, 25, 26},
+    {27, 28, 29}
+    
 };
 
 Piece::Piece()
@@ -176,10 +186,28 @@ bool Piece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool Piece::Update(float dTime)
 {
+
+    if (isRotating)
+    {
+        m_rotTime += dTime * m_rotSpeed;
+        if (m_rotTime >= 1.f)
+        {
+            m_yaw = m_targetYaw;
+            m_rotTime = 0.f;
+            isRotating = false;
+        }
+        else
+        {
+            m_yaw = m_startYaw * (1 - m_rotTime) + m_targetYaw * m_rotTime;
+        }
+    }
+
+
     if (isMoving)
     {
         if (dTime >= 1.f) return true;
         m_AnimTime += dTime / m_Dist * m_speed;
+        
 
         if (m_AnimTime >= 1.f)
         {
@@ -192,10 +220,46 @@ bool Piece::Update(float dTime)
             XMVECTOR res = XMVectorLerp(m_Start, m_Target, m_AnimTime);
             XMStoreFloat3(&m_vPos, res);
         }
+
+    }
+
+    while (!m_Q.empty() && !isMoving)
+    {
+        auto tp = m_Q.front();
+        m_Q.pop();
+        switch (tp.cmdType)
+        {
+        case CommandType::Move:
+        {
+            auto [wx, wy, wz, dir] = tp.mv_p;
+            SetTarget({ wx, wy, wz });
+            SetDir(dir);
+            break;
+        }
+        case CommandType::Attack:
+            break;
+        }
+        
+        
     }
 
 
-    Unit::Update(dTime);
+    XMMATRIX mScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
+    XMMATRIX mRot = XMMatrixRotationY(m_yaw);
+    XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z);
+
+    XMMATRIX mTM;
+
+    if (m_Parent)
+        mTM = mScale * mRot * mTrans * m_Parent->GetWorldMatrix();
+    else
+        mTM = mScale * mRot * mTrans;
+
+    XMStoreFloat4x4(&m_mScale, mScale);
+    XMStoreFloat4x4(&m_mRot, mRot);
+    XMStoreFloat4x4(&m_mTrans, mTrans);
+    XMStoreFloat4x4(&m_mWorld, mTM);
+    //Unit::Update(dTime);
     return true;
 }
 
@@ -223,7 +287,7 @@ bool Piece::CreateMesh()
 
 bool Piece::CreateMaterial()
 {
-    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/black.png");
+    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/foxUV.png");
 
     MaterialDesc md{};
     md.passKey.vs = ShaderId::Basic;
@@ -248,6 +312,44 @@ bool Piece::CreateMaterial()
         return false;
 
     return true;
+}
+
+void Piece::InsertQ(PieceCmd cmd)
+{
+    m_Q.push(cmd);
+}
+
+void Piece::SetDir(Direction dir)
+{
+    switch (dir)
+    {
+    case Direction::Up:
+        m_targetYaw = atan2(0, -1);
+        break;
+    case Direction::Down:
+        m_targetYaw = atan2(0, 1);
+        break;
+    case Direction::Right:
+        m_targetYaw = atan2(-1, 0);
+        break;
+    case Direction::Left:
+        m_targetYaw = atan2(1, 0);
+        break;
+    case Direction::UpLeft:
+        m_targetYaw = atan2(1, -1);
+        break;
+    case Direction::UpRight:
+        m_targetYaw = atan2(-1, -1);
+        break;
+    case Direction::DownLeft:
+        m_targetYaw = atan2(1, 1);
+        break;
+    case Direction::DownRight:
+        m_targetYaw = atan2(-1, 1);
+        break;
+    }
+    m_startYaw = m_yaw;
+    isRotating = true;
 }
 
 void Piece::SetTarget(XMFLOAT3 targetPos)

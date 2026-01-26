@@ -24,4 +24,20 @@ const PieceCmd PieceQ::Pop()
     return res;
 }
 
+PieceCmd PieceQ::Move_S(PieceType pieceType, int cx, int cz)
+{
+    PieceCmd cmd;
+    cmd.cmdType = CommandType::Move;
+    cmd.mv_s = { pieceType, cx, cz };
+    return cmd;
+}
+
+PieceCmd PieceQ::Move_P(Direction dir, float wx, float wy, float wz)
+{
+    PieceCmd cmd;
+    cmd.cmdType = CommandType::Move;
+    cmd.mv_p = { wx, wy, wz, dir };
+    return cmd;
+}
+
 std::queue<PieceCmd> PieceQ::pieceQue;

@@ -4,11 +4,12 @@
 #include "TileHelper.h"
 
 class PieceQ;
+class Piece;
 
 class PlayGridSystem : public GridSystem
 {
 public:
-    PlayGridSystem(ObjectManager* objmng);                                      // 씬에서 objmanager 받기
+    PlayGridSystem(ObjectManager* objmng);                   // 씬에서 objmanager 받기
     virtual ~PlayGridSystem();
 
     void Init(int row, int column, float cellSizeX, float cellSizeZ) override;  
@@ -16,9 +17,19 @@ public:
     void Update(float dt) override;
     
 private:
+    void MoveEvent(const PieceType& pieceType, int cx, int cz);
+
+private:
+    void ChangeTileTO(int cx, int cz, const TileOccupancy to);
+    const TileOccupancy GetTileTO(int cx, int cz);
+    Direction GetDir(float oldcx, float oldcz, float cx, float cz);
+
+private:
     void ClearTileState();
  
 private:
+    float m_wy;
+
     std::vector<TileState> m_tiles;                         // 타일 상태
     std::vector<uint32_t> m_tilesIDs;                       // 타일 오브젝트 아이디
     std::unordered_map<PieceType, PieceInfo> m_pieces;      // 기물 정보
