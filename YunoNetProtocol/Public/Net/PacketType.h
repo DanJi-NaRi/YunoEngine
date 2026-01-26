@@ -22,7 +22,7 @@ namespace yuno::net
 
         // S2C
         S2C_EnterOK = 128,  // 매치 진입 승인
-        S2C_ReadyState = 130,  // 양측 준비 상태 동기화
+        S2C_ReadyState = 129,  // 양측 준비 상태 동기화
         S2C_CountDown = 131,  // 카운트다운 시작/동기화
         S2C_GameStart = 132,  // 게임 시작
         S2C_BattleResult = 133,  // 전투 결과/상태 갱신

@@ -2,6 +2,8 @@
 
 #include "SceneBase.h"
 
+class Test_Unit;
+
 class WeaponSelectScene final : public SceneBase
 {
 public:
@@ -20,4 +22,8 @@ protected:
 
 private:
 
+    Test_Unit* unit1 = nullptr;
+    Test_Unit* unit2 = nullptr;
+    Test_Unit* unit3 = nullptr;
+    Test_Unit* unit4 = nullptr;
 };

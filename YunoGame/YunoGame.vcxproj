@@ -198,8 +198,9 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
   <ItemGroup>
 
     <ClCompile Include="CardSlot.cpp" />
-    <ClCompile Include="CardTable.cpp" />
-    <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="Game\Object\Test_Unit.cpp" />
+    <ClCompile Include="System\GameManager.cpp" />
+
     <ClCompile Include="Game\Object\Card.cpp" />
     <ClCompile Include="Game\Object\CardTable.cpp" />
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
@@ -235,12 +236,15 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Scenes\UIScene.cpp" />
-    <ClCompile Include="WeaponSelectScene.cpp" />
+    <ClCompile Include="Scenes\WeaponSelectScene.cpp" />
+    <ClCompile Include="WeaponButton.cpp" />
   </ItemGroup>
   <ItemGroup>
 
+
     <ClInclude Include="CardSlot.h" />
-    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="Game\Object\Test_Unit.h" />
+    <ClInclude Include="System\GameManager.h" />
     <ClInclude Include="Game\Object\Card.h" />
     <ClInclude Include="Game\Object\CardTable.h" />
     <ClInclude Include="System\DragProvider.h" />
@@ -286,7 +290,8 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="System\UIScene_InputContext.h" />
     <ClInclude Include="UIWidgets.h" />
     <ClInclude Include="Game\UI\Text.h" />
-    <ClInclude Include="WeaponSelectScene.h" />
+    <ClInclude Include="Scenes\WeaponSelectScene.h" />
+    <ClInclude Include="WeaponButton.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

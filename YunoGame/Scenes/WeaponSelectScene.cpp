@@ -9,6 +9,7 @@
 
 // 여러 오브젝트들 ;; 
 #include "Building.h"
+#include "Test_Unit.h"
 
 
 bool WeaponSelectScene::OnCreateScene()
@@ -20,8 +21,12 @@ bool WeaponSelectScene::OnCreateScene()
     // 직교투영 필요한 씬만 ㄱㄱ
     //m_objectManager->SetOrthoFlag(true);
 
+    unit1 = m_objectManager->CreateObject<Test_Unit>(L"P1 U1", XMFLOAT3(-5, 5, 0));
+    unit2 = m_objectManager->CreateObject<Test_Unit>(L"P1 U2", XMFLOAT3(-5, 1, 0));
 
-    m_objectManager->CreateObjectFromFile<Building>(L"Drill", XMFLOAT3(4, 2, 0), L"../Assets/fbx/Drill/Drill.fbx");
+    unit3 = m_objectManager->CreateObject<Test_Unit>(L"P2 U1", XMFLOAT3(5, 5, 0));
+    unit4 = m_objectManager->CreateObject<Test_Unit>(L"P2 U2", XMFLOAT3(5, 1, 0));
+    //m_objectManager->CreateObjectFromFile<Building>(L"Drill", XMFLOAT3(4, 2, 0), L"../Assets/fbx/Drill/Drill.fbx");
 
     return true;
 }

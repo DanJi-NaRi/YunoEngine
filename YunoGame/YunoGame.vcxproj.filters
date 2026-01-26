@@ -159,7 +159,7 @@
     <ClCompile Include="Scenes\TitleScene.cpp">
       <Filter>Scenes\0.Title</Filter>
     </ClCompile>
-    <ClCompile Include="WeaponSelectScene.cpp">
+    <ClCompile Include="Scenes\WeaponSelectScene.cpp">
       <Filter>Scenes\1.WeaponSelect</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\PlayScene.cpp">
@@ -168,9 +168,13 @@
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes\99.Test</Filter>
     </ClCompile>
-    <ClCompile Include="GameManager.cpp">
+    <ClCompile Include="System\GameManager.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="WeaponButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Test_Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -262,7 +266,7 @@
     <ClInclude Include="Scenes\TitleScene.h">
       <Filter>Scenes\0.Title</Filter>
     </ClInclude>
-    <ClInclude Include="WeaponSelectScene.h">
+    <ClInclude Include="Scenes\WeaponSelectScene.h">
       <Filter>Scenes\1.WeaponSelect</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\PlayScene.h">
@@ -271,9 +275,14 @@
     <ClInclude Include="Scenes\UIScene.h">
       <Filter>Scenes\99.Test</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h">
+    <ClInclude Include="System\GameManager.h">
       <Filter>Game</Filter>
     </ClInclude>
+
+    <ClInclude Include="WeaponButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Test_Unit.h" />
 
   </ItemGroup>
 </Project>
