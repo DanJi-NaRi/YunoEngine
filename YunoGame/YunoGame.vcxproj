@@ -192,6 +192,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+
     <ClCompile Include="Game\UI\CardSlot.cpp" />
     <ClCompile Include="Game\Object\Test_Unit.cpp" />
     <ClCompile Include="System\GameManager.cpp" />
@@ -240,6 +241,11 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\Card.h" />
     <ClInclude Include="Game\UI\CardTable.h" />
     <ClInclude Include="System\DragProvider.h" />
+    <ClInclude Include="ButtonTemplate.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+
     <ClInclude Include="ClientNetwork\YunoClientNetwork.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>

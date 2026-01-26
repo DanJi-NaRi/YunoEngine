@@ -79,6 +79,7 @@
     <Filter Include="Game\UI\System">
       <UniqueIdentifier>{4d554d76-e075-4e88-9400-c5edee8bae71}</UniqueIdentifier>
     </Filter>
+
     <Filter Include="Scenes\1.WeaponSelect">
       <UniqueIdentifier>{1c2f987f-6b77-44ce-a3a6-b92c2ad7a991}</UniqueIdentifier>
     </Filter>
@@ -90,6 +91,9 @@
     </Filter>
     <Filter Include="Scenes\99.Test">
       <UniqueIdentifier>{2c6d8a18-2ee4-4ef6-b526-3a3819858a75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Button\ButtonTemplate">
+      <UniqueIdentifier>{a8ec8e61-394a-48f5-845c-18c4d9b5f4d8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +175,11 @@
     </ClCompile>
     <ClCompile Include="Game\UI\Card.cpp" />
     <ClCompile Include="Game\UI\CardTable.cpp" />
+
+    <ClCompile Include="ButtonTemplate.cpp">
+      <Filter>Game\UI\Button\ButtonTemplate</Filter>
+    </ClCompile>
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -255,6 +264,7 @@
     <ClInclude Include="Scenes\UIScene.h">
       <Filter>Scenes\99.Test</Filter>
     </ClInclude>
+
     <ClInclude Include="System\GameManager.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -269,5 +279,9 @@
     <ClInclude Include="Game\Object\CardData.h" />
     <ClInclude Include="Game\UI\Image.h" />
     <ClInclude Include="Game\UI\Text.h" />
+
+    <ClInclude Include="ButtonTemplate.h">
+      <Filter>Game\UI\Button\ButtonTemplate</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
