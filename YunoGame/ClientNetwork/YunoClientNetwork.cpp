@@ -1,16 +1,18 @@
 #include "pch.h"
 
 #include "YunoClientNetwork.h"
-#include "YunoEngine.h"
 
-// 일단 임시로 해두고 나중에 씬 스테이트 머신 만들고 그거로 변경 ㄱㄱ
-#include "ISceneManager.h"
-#include "WeaponSelectScene.h"
+// 이거로 게임 관리할거임
+#include "GameManager.h"
 
 // 패킷들
 #include "S2C_Pong.h"
 #include "S2C_EnterOK.h"
 #include "S2C_Error.h"
+#include "S2C_CountDown.h"
+
+
+
 
 namespace yuno::game
 {
@@ -18,6 +20,8 @@ namespace yuno::game
         : m_workGuard(boost::asio::make_work_guard(m_io))
         , m_client(m_io)
     {
+        m_gameManager = std::make_unique<GameManager>();
+
         m_serverPeer.sId = 0;
 
         m_client.SetOnPacket(
@@ -101,8 +105,9 @@ namespace yuno::game
             });
     }
 
-    void YunoClientNetwork::PumpIncoming()
+    void YunoClientNetwork::PumpIncoming(float dt)
     {
+        m_gameManager->Tick(dt);
         // 메인 스레드에서만 호출
         std::vector<std::uint8_t> pkt;
         while (PopIncoming(pkt))
@@ -132,8 +137,6 @@ namespace yuno::game
     // ------------------------------- 핸들 함수 등록 -------------------------------
     void YunoClientNetwork::RegisterMatchPacketHandler() 
     {
-        ISceneManager* sm = YunoEngine::GetSceneManager();
-        if (!sm) return;
 
         using namespace yuno::net;
 
@@ -152,22 +155,41 @@ namespace yuno::game
 
         Dispatcher().RegisterRaw(
             PacketType::S2C_EnterOK,
-            [this, sm](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
+            [this](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
             {
                 ByteReader r(body, bodyLen);
                 const auto pkt = yuno::net::packets::S2C_EnterOK::Deserialize(r);
 
                 std::cout << "Slot Idx : " << static_cast<int>(pkt.slotIndex) << ", Player Count : " << static_cast<int>(pkt.playerCount) << std::endl;
 
-                SceneTransitionOptions opt{};
-                opt.immediate = true;
-                sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
+                m_gameManager->SetSceneState(CurrentSceneState::GameStart);
+
+                //SceneTransitionOptions opt{};
+                //opt.immediate = true;
+                //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
+
+            });
+
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_CountDown,
+            [this](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
+            {
+                ByteReader r(body, bodyLen);
+                const auto pkt = yuno::net::packets::S2C_CountDown::Deserialize(r);
+
+
+                m_gameManager->StartCountDown(pkt.countTime,pkt.slot1_UnitId1,pkt.slot1_UnitId2,pkt.slot2_UnitId1,pkt.slot2_UnitId2);   // 이렇게만해도 로컬환경이기 때문에 어지간해선 동기화 맞지 않을까....
+                //m_gameManager->SetSceneState(CurrentSceneState::RoundStart);
+
+                //SceneTransitionOptions opt{};
+                //opt.immediate = true;
+                //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
 
             });
 
         Dispatcher().RegisterRaw(
             PacketType::S2C_Error,
-            [this, sm](const NetPeer& /*peer*/,
+            [this](const NetPeer& /*peer*/,
                 const PacketHeader& /*header*/,
                 const std::uint8_t* body,
                 std::uint32_t bodyLen)
@@ -177,7 +199,7 @@ namespace yuno::game
                     std::cout << "[Client] S2C_Error invalid bodyLen=" << bodyLen << "\n";
                     return;
                 }
-
+                 
                 ByteReader r(body, bodyLen);
                 const auto err = yuno::net::packets::S2C_Error::Deserialize(r);
 

@@ -37,7 +37,7 @@ namespace yuno::server
             {
                 const auto sid = static_cast<uint64_t>(session->GetSessionId());
 
-                FreeSlotBySid(sid);
+                m_match.DetachBySessionId(sid);
 
                 std::cout << "[Server] Disconnected sid=" << sid
                     << " ec=" << ec.message()
@@ -72,50 +72,6 @@ namespace yuno::server
     void YunoServerNetwork::Tick()
     {
         const std::size_t n = m_io.poll_one();
-    }
-
-    int YunoServerNetwork::FindSlotBySid(uint64_t sid) const
-    {
-        for (int i = 0; i < 2; ++i)
-        {
-            if (m_slots[i].occupied && m_slots[i].sessionId == sid)
-                return i;
-        }
-        return -1;
-    }
-
-    int YunoServerNetwork::AllocateSlot(uint64_t sid)
-    {
-        const int existing = FindSlotBySid(sid);
-        if (existing >= 0) return -2;
-
-        for (int i = 0; i < 2; ++i)
-        {
-            if (!m_slots[i].occupied)
-            {
-                m_slots[i].occupied = true;
-                m_slots[i].sessionId = sid;
-                return i;
-            }
-        }
-        // 꽉차있으면 -1
-        return -1;
-    }
-
-    void YunoServerNetwork::FreeSlotBySid(uint64_t sid)
-    {
-        const int idx = FindSlotBySid(sid);
-        if (idx < 0) return;
-
-        m_slots[idx].occupied = false;
-        m_slots[idx].sessionId = 0;
-    }
-
-    std::uint8_t YunoServerNetwork::GetOccupiedCount() const
-    {
-        return static_cast<std::uint8_t>(
-            (m_slots[0].occupied ? 1 : 0) + (m_slots[1].occupied ? 1 : 0)
-            );
     }
 
 
@@ -177,7 +133,7 @@ namespace yuno::server
                 auto session = m_server.FindSession(peer.sId);
                 if (!session) return;
 
-                const int slotIdx = AllocateSlot(peer.sId);
+                const int slotIdx = m_match.AllocateOrAttachUser(pkt.userId, peer.sId);
 
                 if (slotIdx == -1 ) // 1P, 2P 둘 다 있으면 에러 패킷 전송
                 {
@@ -199,31 +155,11 @@ namespace yuno::server
 
                     session->Send(std::move(bytes));
                 }
-                else if (slotIdx == -2) 
-                {
-                    yuno::net::packets::S2C_Error error{};
-
-                    error.code = yuno::net::packets::ErrorCode::EnterDenied;
-                    error.reason = yuno::net::packets::EnterDeniedReason::AlreadyInMatch;
-                    error.contextType = PacketType::C2S_MatchEnter;
-
-                    auto bytes = yuno::net::PacketBuilder::Build(
-                        yuno::net::PacketType::S2C_Error,
-                        [&](yuno::net::ByteWriter& w)
-                        {
-                            error.Serialize(w);
-                        });
-
-                    auto session = m_server.FindSession(peer.sId);
-                    if (!session) return;
-
-                    session->Send(std::move(bytes));
-                }
                 else                                            // 빈 자리 존재
                 {
                     yuno::net::packets::S2C_EnterOK ok{};
                     ok.slotIndex = static_cast<std::uint8_t>(slotIdx);
-                    ok.playerCount = GetOccupiedCount();
+                    ok.playerCount = m_match.GetOccupiedCount();
 
                     auto bytes = yuno::net::PacketBuilder::Build(
                         yuno::net::PacketType::S2C_EnterOK,
@@ -250,7 +186,13 @@ namespace yuno::server
 
                 std::cout << "Leave :" << peer.sId << std::endl;
 
-                FreeSlotBySid(peer.sId);
+                const int idx = m_match.FindSlotBySessionId(peer.sId);
+                if (idx >= 0)
+                {
+                    const auto& slots = m_match.Slots();
+                    const auto uid = slots[static_cast<std::size_t>(idx)].userId;
+                    m_match.LeaveByUserId(uid);
+                }
             }
         );// Leave Packet End
 

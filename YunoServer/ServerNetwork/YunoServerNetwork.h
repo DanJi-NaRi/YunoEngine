@@ -6,6 +6,7 @@
 #include "TcpServer.h"          // YunoNetTransport
 #include "PacketDispatcher.h"   // YunoNetProtocol
 #include "NetPeer.h"            // YunoNetProtocol
+#include "MatchManager.h"
 
 namespace yuno::server
 {
@@ -35,16 +36,7 @@ namespace yuno::server
     
         // 매치 데이터
     private:
-        struct MatchSlot
-        {
-            bool occupied = false;
-            uint64_t sessionId = 0;
-        };
-        std::array< MatchSlot, 2> m_slots;
-        int FindSlotBySid(uint64_t sid) const;
-        int AllocateSlot(uint64_t sid);   
-        void FreeSlotBySid(uint64_t sid);
-        std::uint8_t GetOccupiedCount() const;
+        MatchManager m_match;
 
     };
 }

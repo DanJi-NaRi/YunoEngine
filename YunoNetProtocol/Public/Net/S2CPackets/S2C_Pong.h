@@ -9,8 +9,6 @@ namespace yuno::net::packets
 
         void Serialize(ByteWriter& w) const;
 
-
         static S2C_Pong Deserialize(ByteReader& r);
-
     };
 }

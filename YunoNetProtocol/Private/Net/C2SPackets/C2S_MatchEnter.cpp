@@ -6,10 +6,13 @@ namespace yuno::net::packets
 {
     void C2S_MatchEnter::Serialize(ByteWriter& w) const
     {
+        w.WriteU32LE(userId);
     }
 
     C2S_MatchEnter C2S_MatchEnter::Deserialize(ByteReader& r)
     {
-        return {};
+        C2S_MatchEnter pkt{};
+        pkt.userId = r.ReadU32LE();
+        return pkt;
     }
 }
