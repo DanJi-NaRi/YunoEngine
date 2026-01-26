@@ -20,7 +20,6 @@ namespace yuno::game
         : m_workGuard(boost::asio::make_work_guard(m_io))
         , m_client(m_io)
     {
-        m_gameManager = std::make_unique<GameManager>();
 
         m_serverPeer.sId = 0;
 
@@ -107,7 +106,6 @@ namespace yuno::game
 
     void YunoClientNetwork::PumpIncoming(float dt)
     {
-        m_gameManager->Tick(dt);
         // 메인 스레드에서만 호출
         std::vector<std::uint8_t> pkt;
         while (PopIncoming(pkt))
@@ -162,7 +160,8 @@ namespace yuno::game
 
                 std::cout << "Slot Idx : " << static_cast<int>(pkt.slotIndex) << ", Player Count : " << static_cast<int>(pkt.playerCount) << std::endl;
 
-                m_gameManager->SetSceneState(CurrentSceneState::GameStart);
+                GameManager::Get().SetSlotIdx(pkt.slotIndex);
+                GameManager::Get().SetSceneState(CurrentSceneState::GameStart);
 
                 //SceneTransitionOptions opt{};
                 //opt.immediate = true;
@@ -178,7 +177,7 @@ namespace yuno::game
                 const auto pkt = yuno::net::packets::S2C_CountDown::Deserialize(r);
 
 
-                m_gameManager->StartCountDown(pkt.countTime,pkt.slot1_UnitId1,pkt.slot1_UnitId2,pkt.slot2_UnitId1,pkt.slot2_UnitId2);   // 이렇게만해도 로컬환경이기 때문에 어지간해선 동기화 맞지 않을까....
+                GameManager::Get().StartCountDown(pkt.countTime,pkt.slot1_UnitId1,pkt.slot1_UnitId2,pkt.slot2_UnitId1,pkt.slot2_UnitId2);   // 이렇게만해도 로컬환경이기 때문에 어지간해선 동기화 맞지 않을까....
                 //m_gameManager->SetSceneState(CurrentSceneState::RoundStart);
 
                 //SceneTransitionOptions opt{};

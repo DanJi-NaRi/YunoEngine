@@ -78,8 +78,7 @@ bool GameApp::OnInit()
    ISceneManager* sm = YunoEngine::GetSceneManager();
    if (!sm) return false;
 
-
-   //// 네트워크 초기화
+   m_gameManager = std::make_unique<GameManager>();
 
 
    SceneTransitionOptions opt{};
@@ -103,7 +102,8 @@ bool GameApp::OnInit()
 
 void GameApp::OnUpdate(float dt)
 {
-    m_clientNet.PumpIncoming();
+    m_gameManager->Tick(dt);
+    m_clientNet.PumpIncoming(dt);
 
     static float acc = 0.0f;
     static int frameCount = 0;

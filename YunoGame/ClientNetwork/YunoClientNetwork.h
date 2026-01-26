@@ -60,12 +60,6 @@ namespace yuno::game
         std::mutex m_inMtx;
         std::deque<std::vector<std::uint8_t>> m_inQ;
 
-        std::unique_ptr<GameManager> m_gameManager;
+
     };
 }
-
-/*
-
-
-
-*/

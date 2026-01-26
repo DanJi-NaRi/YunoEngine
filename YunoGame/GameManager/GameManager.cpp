@@ -5,8 +5,30 @@
 #include "YunoEngine.h"
 #include "ISceneManager.h"
 
+#include "ISceneManager.h"
 #include "WeaponSelectScene.h"
 #include "PlayScene.h"
+
+GameManager* GameManager::s_instance = nullptr;
+
+void GameManager::Initialize(GameManager* inst)
+{
+    assert(inst);
+    assert(!s_instance);
+    s_instance = inst;
+}
+
+void GameManager::Shutdown()
+{
+    assert(s_instance);
+    s_instance = nullptr;
+}
+
+GameManager& GameManager::Get()
+{
+    assert(s_instance);
+    return *s_instance;
+}
 
 void GameManager::SetSceneState(CurrentSceneState state)
 {
@@ -24,6 +46,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
+        // 씬에 관련된 데이터들을 같이 넘길거야
         break;
     }
     case CurrentSceneState::CountDown:

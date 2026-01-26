@@ -6,6 +6,8 @@
 #include "YunoEngine.h"
 // 다음 오브젝트 매니저 여기까지 고정
 #include "ObjectManager.h"
+// 게임 매니저
+#include "GameManager.h"
 
 // 여러 오브젝트들 ;; 
 

@@ -4,6 +4,7 @@
 
 #include "YunoEngine.h"
 #include "IInput.h"
+#include "GameManager.h"
 
 WeaponButton::WeaponButton(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
@@ -65,7 +66,10 @@ bool WeaponButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool WeaponButton::LMBPressedEvent()
 {
-    std::cout << "(LMB)PressedEvent" << std::endl;
+    const int myIdx = GameManager::Get().GetSlotiIdx();
+    if (myIdx != 0 && myIdx != 1)
+        return true;
+
     return true;
 }
 
@@ -106,5 +110,10 @@ bool WeaponButton::KeyReleasedEvent(uint32_t key)
     return true;
 }
 
+void WeaponButton::SetUserImages(Widget* U1I1, Widget* U1I2, Widget* U2I1, Widget* U2I2)
+{
+
+
+}
 
 
