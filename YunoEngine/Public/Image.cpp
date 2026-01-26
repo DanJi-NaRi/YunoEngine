@@ -2,7 +2,7 @@
 #include "Image.h"
 
 
-Image::Image()
+Image::Image(UIManager* uiManager) : Widget(uiManager)
 {
 }
 

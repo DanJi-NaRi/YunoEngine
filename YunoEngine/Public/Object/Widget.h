@@ -8,6 +8,8 @@
 
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
 
+class UIManager;
+
 enum class Anchor : int {
     LeftTop,
     Top,
@@ -21,18 +23,32 @@ enum class Anchor : int {
     Max,
 };
 
-enum class widgetType : int { // 위젯 기본형
-    JustWidget,
-    Sprite,
+enum class WidgetType : int { // 자신 / 부모 클래스 타입
+    Widget,
+    Image,
     Button,
+    Text,
+    Slot,
     //Progress,
     //Slider,
     Max,
 };
 
-enum class widgetClass : int {
+enum class WidgetClass : int {
+    Widget,
+    Image,
+    Button,
+    Text,
+    Slot,
     CardTable,
     Card,
+    CardSlot,
+};
+
+struct SnapPoint {
+    XMFLOAT2 m_snapPoint;
+    RECT m_snapRange;
+    WidgetClass m_snapTargetClass; // 스냅 조건
 };
 
 class Widget
@@ -40,7 +56,7 @@ class Widget
 protected:
 
     uint32_t m_id;
-    widgetType m_type;
+    WidgetType m_type;
 
     std::wstring m_name;
 
@@ -103,9 +119,11 @@ protected:
     IInput* m_pInput = nullptr;
 
     Anchor m_anchor; // 아직 안씀
-public:
-    explicit Widget();
 
+    UIManager* m_uiManager = nullptr; // UIManager
+public:
+    Widget() = delete; // 기본 생성 금지
+    explicit Widget(UIManager* uiManager);
     virtual ~Widget();
     //Create는 오브젝트 매니저만 쓰기
     virtual bool  Create(XMFLOAT3 vPos);//일단 호환용으로 냅두고 나중에 무조건 이름 필요한걸로 바꾸는게 나을듯
@@ -155,6 +173,12 @@ public:
     void DettachParent();
     void DettachChild(uint32_t id);
     void ClearChild();
+    void Clear();
+
+    virtual WidgetType GetWidgetType() { return WidgetType::Widget; }
+    virtual WidgetClass GetWidgetClass() { return WidgetClass::Widget; }
+
+    
 };
 
 extern MeshHandle g_defaultWidgetMesh;

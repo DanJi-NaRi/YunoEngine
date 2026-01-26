@@ -56,10 +56,12 @@ void UIManager::Update(float dTime)
 void UIManager::Submit(float dTime)
 {
     FrameDataSubmit();
+    
+    // 우선순위에 따라서 정렬
 
     for (auto& widget : m_widgets)
     {
-        widget->Submit(dTime);
+         widget->Submit(dTime);
     }
 }
 
@@ -203,15 +205,15 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
         }
         else if (m_pInput->IsMouseButtonPressed(0)) {
             Btn->SetButtonState(ButtonState::Pressed);
-            m_focusedWidget = Btn; // 마지막으로 누른 버튼 갱신
-            m_focusedMouseButton = 0;
+            m_cursurSystem.SetFocusedWidget(Btn); // 마지막으로 누른 버튼 갱신
+            m_cursurSystem.SetFocusedMouseButton(0);
             //Btn->PressedEvent();
             //std::cout << "LMBPressed!!" << std::endl;
         }
         else if (m_pInput->IsMouseButtonPressed(1)) {
             Btn->SetButtonState(ButtonState::Pressed);
-            m_focusedWidget = Btn; // 마지막으로 누른 버튼 갱신
-            m_focusedMouseButton = 1;
+            m_cursurSystem.SetFocusedWidget(Btn); // 마지막으로 누른 버튼 갱신
+            m_cursurSystem.SetFocusedMouseButton(1);
             //Btn->PressedEvent();
             //std::cout << "RMBPressed!!" << std::endl;
         }
@@ -255,13 +257,13 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
         if (!m_pInput->IsMouseButtonReleased(mouseButton)) return false;
 
         // 커서가 밖이어도 포커스된 버튼이면 릴리즈 보장
-        if (m_focusedWidget)
+        if (m_cursurSystem.GetFocusedWidget())
         {
-            if (m_focusedMouseButton != mouseButton) return false;
-            if (mouseButton == 0) m_focusedWidget->LMBReleasedEvent();
-            else if (mouseButton == 1) m_focusedWidget->RMBReleasedEvent();
+            if (m_cursurSystem.GetFocusedMouseButton() != mouseButton) return false;
+            if (mouseButton == 0) m_cursurSystem.GetFocusedWidget()->LMBReleasedEvent();
+            else if (mouseButton == 1) m_cursurSystem.GetFocusedWidget()->RMBReleasedEvent();
 
-            m_focusedWidget = nullptr;
+            m_cursurSystem.SetFocusedWidget(nullptr);
             return true;
         }
         break;

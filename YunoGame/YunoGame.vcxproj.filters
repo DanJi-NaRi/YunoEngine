@@ -73,6 +73,12 @@
     <Filter Include="System\UIContext">
       <UniqueIdentifier>{1f741ae9-459b-421b-b0c8-0c44d2028232}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\UI\Card">
+      <UniqueIdentifier>{5dfe4c0c-0b5d-493b-8267-0e0bf6b67d3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\System">
+      <UniqueIdentifier>{4d554d76-e075-4e88-9400-c5edee8bae71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -92,12 +98,6 @@
     </ClCompile>
     <ClCompile Include="Game\Object\Building.cpp">
       <Filter>Game\Object\Building</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\UI\Text.cpp">
-      <Filter>Game\UI\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\UI\Image.cpp">
-      <Filter>Game\UI\Image</Filter>
     </ClCompile>
     <ClCompile Include="Game\Object\AnimTest.cpp">
       <Filter>Game\Object\Animation</Filter>
@@ -120,9 +120,6 @@
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Card.cpp" />
-    <ClCompile Include="CardTable.cpp" />
-    <ClCompile Include="DragProvider.cpp" />
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
       <Filter>ClientNetwork</Filter>
     </ClCompile>
@@ -147,6 +144,15 @@
     <ClCompile Include="PieceQueue.cpp">
       <Filter>PieceQueue</Filter>
     </ClCompile>
+    <ClCompile Include="Card.cpp">
+      <Filter>Game\UI\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="CardSlot.cpp">
+      <Filter>Game\UI\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="CardTable.cpp">
+      <Filter>Game\UI\Card</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -163,12 +169,6 @@
     </ClInclude>
     <ClInclude Include="Game\Object\Building.h">
       <Filter>Game\Object\Building</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\UI\Text.h">
-      <Filter>Game\UI\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\UI\Image.h">
-      <Filter>Game\UI\Image</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\AnimTest.h">
       <Filter>Game\Object\Animation</Filter>
@@ -197,11 +197,6 @@
     <ClInclude Include="System\SettingScene_InputContext.h">
       <Filter>System\UIContext</Filter>
     </ClInclude>
-    <ClInclude Include="Card.h" />
-    <ClInclude Include="CardTable.h" />
-    <ClInclude Include="CardActData.h" />
-    <ClInclude Include="CardData.h" />
-    <ClInclude Include="DragProvider.h" />
     <ClInclude Include="ClientNetwork\YunoClientNetwork.h">
       <Filter>ClientNetwork</Filter>
     </ClInclude>
@@ -235,5 +230,21 @@
     <ClInclude Include="PieceQueue.h">
       <Filter>PieceQueue</Filter>
     </ClInclude>
+    <ClInclude Include="CardTable.h">
+      <Filter>Game\UI\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="Card.h">
+      <Filter>Game\UI\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="CardActData.h">
+      <Filter>Game\UI\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="CardData.h">
+      <Filter>Game\UI\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="CardSlot.h">
+      <Filter>Game\UI\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="UIWidgets.h" />
   </ItemGroup>
 </Project>
