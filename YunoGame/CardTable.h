@@ -8,7 +8,7 @@ class CardSlot;
 class CardTable : public Widget
 {
 public:
-    CardTable();
+    CardTable(UIManager* uiManager);
     virtual ~CardTable();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;

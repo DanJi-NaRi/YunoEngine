@@ -56,10 +56,12 @@ void UIManager::Update(float dTime)
 void UIManager::Submit(float dTime)
 {
     FrameDataSubmit();
+    
+    // 우선순위에 따라서 정렬
 
     for (auto& widget : m_widgets)
     {
-        widget->Submit(dTime);
+         widget->Submit(dTime);
     }
 }
 

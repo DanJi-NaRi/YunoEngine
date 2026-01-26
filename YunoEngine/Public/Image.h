@@ -4,7 +4,7 @@
 // 각 오브젝트 헤더 파일 최상단에는 Widget 헤더가 있어야됨
 class Image : public Widget {
     public:
-    explicit Image();
+    explicit Image(UIManager* uiManager);
     virtual ~Image();
 
     //bool Create(XMFLOAT3 vPos) override;

@@ -121,6 +121,8 @@ void Mesh::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
 void Mesh::LastSubmit()
 {
     YunoEngine::GetRenderer()->Submit(m_renderItem);
+
+    // 
 }
 
 void MeshNode::Submit(XMFLOAT4X4& mWorld)

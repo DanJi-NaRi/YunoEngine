@@ -17,8 +17,6 @@ void CursurSystem::UpdateCheckSnap()
 
     for (auto& widget : *m_pWidgets) {
         if (widget->GetWidgetType() != WidgetType::Button) continue;
-
-
     }
 }
 void CursurSystem::FindSnapWidget()

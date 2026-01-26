@@ -4,9 +4,17 @@
 // 스냅 포인트가 탑재된 위젯.
 // SnapPoint만 필요하다면 SnapPoint타입 멤버를 추가해서 활용해도 되지만...
 // '카드 빈자리' 등의 스프라이트가 필요하다면, 해당 클래스를 상속하자.
-class Slot : public Image
+class Slot : public Widget
 {
 public:
+    Slot(UIManager* uiManager);
+    virtual ~Slot();
+
+    bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    bool Update(float dTime = 0) override;
+    bool Submit(float dTime = 0) override;
+
+
     virtual WidgetType GetWidgetType() override { return WidgetType::Slot; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::Slot; }
     // [TODO] 스냅기능 여기다 기본적으로 넣는걸로..

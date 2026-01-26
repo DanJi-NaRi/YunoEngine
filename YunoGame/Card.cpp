@@ -4,7 +4,7 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 
-Card::Card()
+Card::Card(UIManager* uiManager) : Button(uiManager)
 {
     Clear();
 }

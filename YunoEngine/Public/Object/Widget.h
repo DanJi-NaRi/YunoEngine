@@ -122,6 +122,7 @@ protected:
 
     UIManager* m_uiManager = nullptr; // UIManager
 public:
+    Widget() = delete; // 기본 생성 금지
     explicit Widget(UIManager* uiManager);
     virtual ~Widget();
     //Create는 오브젝트 매니저만 쓰기
