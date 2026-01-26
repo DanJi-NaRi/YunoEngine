@@ -37,6 +37,6 @@ namespace yuno::server
         // 매치 데이터
     private:
         MatchManager m_match;
-
+        bool m_countdownSent = false;
     };
 }

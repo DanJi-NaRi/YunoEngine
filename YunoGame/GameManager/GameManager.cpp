@@ -51,7 +51,9 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::CountDown:
     {
-        // 여기서 상대가 무슨 유닛 골랐는지 보이게 텍스쳐 변경
+
+        std::cout << "3...2...1...Battle Start!!!!!" << std::endl;
+        SetSceneState(CurrentSceneState::RoundStart);
 
         break;
     }
@@ -115,4 +117,15 @@ void GameManager::Tick(float dt)
             SetSceneState(CurrentSceneState::RoundStart);
         }
     }
+}
+
+void GameManager::SendPacket(std::vector<std::uint8_t>&& bytes)
+{
+    //m_clientNet.SendPacket(std::move(bytes));
+}
+
+bool GameManager::ToggleReady()
+{
+    m_isReady = !m_isReady;
+    return m_isReady;
 }

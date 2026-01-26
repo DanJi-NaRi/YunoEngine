@@ -21,10 +21,15 @@ public:
     void StartCountDown(int countTime,int S1U1,int S1U2,int S2U1,int S2U2);
     void Tick(float dt);
 
+    void SendPacket(std::vector<std::uint8_t>&& bytes);
+
     void SetSlotIdx(int idx) { m_mySlot = idx; };
     int GetSlotiIdx() { return m_mySlot; };
 
     PieceType GetMyPiece(int idx) { return m_myPick[idx]; };
+
+    bool ToggleReady();
+    bool IsReady() const { return m_isReady; }
 
 private:
     static GameManager* s_instance;
@@ -37,6 +42,8 @@ private:
     PieceType m_myPick[2] = { PieceType::None, PieceType::None };
 
     int m_mySlot = -1; // 0 또는 1  >> 0이면 왼쪽 1이면 오른쪽
+
+    bool m_isReady = false;
 
     bool m_countdownActive = false;
     float m_countdownRemaining = 0.0f;

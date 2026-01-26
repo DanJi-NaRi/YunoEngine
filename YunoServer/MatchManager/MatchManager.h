@@ -19,7 +19,13 @@ namespace yuno::server
             std::uint32_t unitId1 = 0;
             std::uint32_t unitId2 = 0;
 
+            bool ready = false;
+
             bool IsReady() const { return (unitId1 != 0 && unitId2 != 0); }
+            bool IsUnitsFilled() const
+            {
+                return unitId1 != 0 && unitId2 != 0;
+            }
         };
     public:
         MatchManager() = default;
@@ -42,6 +48,8 @@ namespace yuno::server
         bool ClearUnitByUserId(std::uint32_t uid, int slotWeaponIndex);
 
         bool SetUnitsByUserId(std::uint32_t uid, std::uint32_t u1, std::uint32_t u2);
+
+        bool SetReadyBySessionId(std::uint64_t sid, bool isReady);
 
     private:
         std::array<MatchSlot, kMaxSlots> m_slots{};

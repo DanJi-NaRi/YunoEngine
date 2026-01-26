@@ -12,6 +12,7 @@
 #include "S2C_Pong.h"
 #include "S2C_EnterOK.h"
 #include "S2C_Error.h"
+#include "S2C_ReadyState.h"
 #include "S2C_CountDown.h"
 
 #include "C2S_SubmitWeapon.h"
@@ -156,6 +157,7 @@ namespace yuno::game
 
             });
 
+        // EnterOK Packet Start
         Dispatcher().RegisterRaw(
             PacketType::S2C_EnterOK,
             [this](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
@@ -167,36 +169,63 @@ namespace yuno::game
 
                 GameManager::Get().SetSlotIdx(pkt.slotIndex);
                 GameManager::Get().SetSceneState(CurrentSceneState::GameStart);
+            });// EnterOK Packet End
 
-                //SceneTransitionOptions opt{};
-                //opt.immediate = true;
-                //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
 
-            });
-
+        // ReadyState Packet Start
         Dispatcher().RegisterRaw(
             PacketType::S2C_ReadyState,
             [this](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
             {
                 ByteReader r(body, bodyLen);
-                const auto pkt = yuno::net::packets::S2C_CountDown::Deserialize(r);
+                const auto pkt = yuno::net::packets::S2C_ReadyState::Deserialize(r);
 
-                yuno::net::packets::C2S_SubmitWeapon response{};
-                response.WeaponId1 = static_cast<int>(GameManager::Get().GetMyPiece(0));
-                response.WeaponId2 = static_cast<int>(GameManager::Get().GetMyPiece(1));
+                const bool p1Ready = (pkt.p1_isReady != 0);
+                const bool p2Ready = (pkt.p2_isReady != 0);
+
+                if (!(p1Ready && p2Ready))
+                    return;
+
+                GameManager& gm = GameManager::Get();
+                const std::uint32_t weapon1 = static_cast<std::uint32_t>(gm.GetMyPiece(0));
+                const std::uint32_t weapon2 = static_cast<std::uint32_t>(gm.GetMyPiece(1));
+                if (weapon1 == 0 || weapon2 == 0)
+                    return;
+
+                yuno::net::packets::C2S_SubmitWeapon req{};
+                req.WeaponId1 = weapon1;
+                req.WeaponId2 = weapon2;
 
                 auto bytes = PacketBuilder::Build(
-                    PacketType::S2C_ReadyState,
+                    PacketType::C2S_SubmitWeapon,
                     [&](ByteWriter& w)
                     {
-                        response.Serialize(w);
+                        req.Serialize(w);
                     });
 
-                SendPacket(std::move(bytes)); // 응답 전송
+                SendPacket(std::move(bytes));
+            });// ReadyState Packet End
 
-                GameManager::Get().StartCountDown(pkt.countTime,pkt.slot1_UnitId1,pkt.slot1_UnitId2,pkt.slot2_UnitId1,pkt.slot2_UnitId2);   // 이렇게만해도 로컬환경이기 때문에 어지간해선 동기화 맞지 않을까....
+        // CountDown Packet Start
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_CountDown,
+            [this](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
+            {
+                ByteReader r(body, bodyLen);
+                const auto pkt = yuno::net::packets::S2C_CountDown::Deserialize(r);
 
-            });
+                const int countTime = static_cast<int>(pkt.countTime);
+                if (countTime <= 0)
+                    return;
+
+                GameManager& gm = GameManager::Get();
+
+                gm.StartCountDown(
+                    countTime,
+                    pkt.slot1_UnitId1, pkt.slot1_UnitId2,
+                    pkt.slot2_UnitId1, pkt.slot2_UnitId2
+                );
+            });// CountDown Packet End
 
         Dispatcher().RegisterRaw(
             PacketType::S2C_Error,

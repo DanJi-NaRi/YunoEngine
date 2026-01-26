@@ -6,11 +6,13 @@
 #include "C2S_MatchEnter.h"
 #include "C2S_MatchLeave.h"
 #include "C2S_SubmitWeapon.h"
+#include "C2S_ReadySet.h"
 
 #include "S2C_Pong.h"
 #include "S2C_EnterOK.h"
 #include "S2C_Error.h"
 #include "S2C_CountDown.h"
+#include "S2C_ReadyState.h"
 
 
 #include <iostream>
@@ -199,6 +201,44 @@ namespace yuno::server
             }
         );// Leave Packet End
         
+        // ReadySet Packet Start
+        m_dispatcher.RegisterRaw(
+            PacketType::C2S_ReadySet,
+            [this](const NetPeer& peer,
+                const PacketHeader& /*header*/,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                yuno::net::ByteReader r(body, bodyLen);
+                const auto pkt = yuno::net::packets::C2S_ReadySet::Deserialize(r);
+
+                auto session = m_server.FindSession(peer.sId);
+                if (!session) return;
+
+                const bool isReady = (pkt.readyState != 0);
+                if (!m_match.SetReadyBySessionId(peer.sId, isReady))
+                    return;
+
+                if (!isReady)
+                {
+                    m_countdownSent = false;
+                }
+
+                yuno::net::packets::S2C_ReadyState response{};
+                response.p1_isReady = static_cast<std::uint8_t>(m_match.Slots()[0].ready ? 1 : 0);
+                response.p2_isReady = static_cast<std::uint8_t>(m_match.Slots()[1].ready ? 1 : 0);
+
+                auto bytes = PacketBuilder::Build(
+                    PacketType::S2C_ReadyState,
+                    [&](ByteWriter& w)
+                    {
+                        response.Serialize(w);
+                    });
+
+                m_server.Broadcast(std::move(bytes));
+
+            }
+        ); // ReadySet Packet End
 
         // Submit Weapon Packet Start
         m_dispatcher.RegisterRaw(
@@ -220,28 +260,29 @@ namespace yuno::server
                 if (uid == 0)
                     return;
 
-                const bool ok = m_match.SetUnitsByUserId(uid, pkt.WeaponId1, pkt.WeaponId1);
-                if (!ok)
+                if (!m_match.SetUnitsByUserId(uid, pkt.WeaponId1, pkt.WeaponId2))
                     return;
 
                 const auto& s = m_match.Slots();
 
-                // 슬롯이 2명 다 차 있고 + 둘 다 unit 2개가 채워졌을 때만
                 const bool bothOccupied = (s[0].occupied && s[1].occupied);
-                const bool bothReady = (s[0].IsReady() && s[1].IsReady());
+                const bool bothReady = (s[0].ready && s[1].ready);
+                const bool bothUnitsFilled = (s[0].IsUnitsFilled() && s[1].IsUnitsFilled());
 
-                if (!(bothOccupied && bothReady))
-                {
-                    // 둘 중 한명이 제출 안함
+                if (!(bothOccupied && bothReady && bothUnitsFilled))
                     return;
-                }
+
+                if (m_countdownSent)
+                    return;
+
+                m_countdownSent = true;
 
                 yuno::net::packets::S2C_CountDown cd{};
-                cd.countTime = 3;  // 3 초
-                cd.slot1_UnitId1 = static_cast<uint8_t>(s[0].unitId1);
-                cd.slot1_UnitId2 = static_cast<uint8_t>(s[0].unitId2);
-                cd.slot2_UnitId1 = static_cast<uint8_t>(s[1].unitId1);
-                cd.slot2_UnitId2 = static_cast<uint8_t>(s[1].unitId2);
+                cd.countTime = 3;
+                cd.slot1_UnitId1 = s[0].unitId1;
+                cd.slot1_UnitId2 = s[0].unitId2;
+                cd.slot2_UnitId1 = s[1].unitId1;
+                cd.slot2_UnitId2 = s[1].unitId2;
 
                 auto bytes = yuno::net::PacketBuilder::Build(
                     yuno::net::PacketType::S2C_CountDown,

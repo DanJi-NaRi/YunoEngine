@@ -4,6 +4,14 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 
+
+#include "GameManager.h"
+
+//#include "PacketBuilder.h"
+//
+//#include "C2S_ReadySet.h"
+
+
 ReadyButton::ReadyButton(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
@@ -66,6 +74,22 @@ bool ReadyButton::HoveredEvent()
 bool ReadyButton::LMBPressedEvent()
 {
     std::cout << "(LMB)PressedEvent" << std::endl;
+
+    GameManager& gm = GameManager::Get();
+    const bool isReady = gm.ToggleReady();
+
+    //yuno::net::packets::C2S_ReadySet req{};
+    //req.readyState = isReady ? 1 : 0;
+    //
+    //auto bytes = yuno::net::PacketBuilder::Build(
+    //    yuno::net::PacketType::C2S_ReadySet,
+    //    [&](yuno::net::ByteWriter& w)
+    //    {
+    //        req.Serialize(w);
+    //    });
+
+    //gm.SendPacket(std::move(bytes)); 
+
     return true;
 }
 

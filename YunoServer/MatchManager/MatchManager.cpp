@@ -79,4 +79,36 @@ namespace yuno::server
         }
         return c;
     }
+
+    bool MatchManager::ClearUnitByUserId(std::uint32_t uid, int slotWeaponIndex)
+    {
+        return false;
+    }
+    bool MatchManager::SetUnitsByUserId(std::uint32_t uid, std::uint32_t u1, std::uint32_t u2)
+    {
+        const int idx = FindSlotByUserId(uid);
+        if (idx < 0)
+            return false;
+
+        auto& slot = m_slots[static_cast<std::size_t>(idx)];
+        if (!slot.occupied)
+            return false;
+
+        slot.unitId1 = u1;
+        slot.unitId2 = u2;
+        return true;
+    }
+
+
+    bool MatchManager::SetReadyBySessionId(std::uint64_t sid, bool isReady)
+    {
+        const int idx = FindSlotBySessionId(sid);
+        if (idx < 0) return false;
+
+        auto& slot = m_slots[static_cast<std::size_t>(idx)];
+        if (!slot.occupied) return false;
+
+        slot.ready = isReady;
+        return true;
+    }
 }
