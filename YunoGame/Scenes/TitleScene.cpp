@@ -102,18 +102,18 @@ void TitleScene::Update(float dt)
     // 테스트용 -> ally1으로 부여한 기물이 움직여용
     if (m_input->IsKeyPressed(0x31))
     {
-        PieceQ::Insert(PieceQ::Move_S(PieceType::Ally1, 0, 3));
+        PieceQ::Insert(PieceQ::Move_S(GamePiece::Ally1, 0, 3));
     }
     if (m_input->IsKeyPressed(0x32))
     {
-        PieceQ::Insert(PieceQ::Move_S(PieceType::Ally1, 1, 3));
+        PieceQ::Insert(PieceQ::Move_S(GamePiece::Ally1, 1, 3));
     }
     if (m_input->IsKeyPressed(0x33))
     {
-        PieceQ::Insert(PieceQ::Move_S(PieceType::Ally1, 2, 3));
+        PieceQ::Insert(PieceQ::Move_S(GamePiece::Ally1, 2, 3));
     }
 
-    m_input->Dispatch();
+    //m_input->Dispatch();
     //m_gridSystem->Update(dt);
 }
 

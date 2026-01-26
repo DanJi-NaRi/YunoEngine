@@ -24,7 +24,7 @@ const PieceCmd PieceQ::Pop()
     return res;
 }
 
-PieceCmd PieceQ::Move_S(PieceType pieceType, int cx, int cz, bool isEnd)
+PieceCmd PieceQ::Move_S(GamePiece pieceType, int cx, int cz, bool isEnd)
 {
     PieceCmd cmd;
     cmd.cmdType = CommandType::Move;

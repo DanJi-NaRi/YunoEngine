@@ -39,7 +39,7 @@ public:
     //CardData* GetCardData() const { return m_pData; }
     //CardData* GetCardDataPtr() const { return m_pData; } // 멤버를 포인터로 반환할 때 이렇게 하는 것을 추천
 
-
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)
 protected:
     // 예시 멤버 데이터
     // CardData m_data;                      // 헤더 인클루드
@@ -48,4 +48,37 @@ protected:
 };
 
 
+// 아래는 주석 제거 버전
 
+/*
+#pragma once
+#include "Button.h"
+
+class ButtonTemplate : public Button
+{
+public:
+    ButtonTemplate(UIManager* uiManager);
+    virtual ~ButtonTemplate();
+    bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    bool Update(float dTime = 0) override;
+    bool Submit(float dTime = 0) override;
+    void Clear();
+
+    // 버튼 이벤트 핸들
+    virtual bool IdleEvent() override;                          // 아무것도 안할 때
+    virtual bool HoveredEvent() override;                       // 커서가 위에 있을 때
+    virtual bool LMBPressedEvent() override;                    // 왼클릭 눌렀을 때
+    virtual bool RMBPressedEvent() override;                    // 우클릭 눌렀을 때
+    virtual bool KeyPressedEvent(uint32_t key = 0) override;    // 바인딩한 키 눌렀을 때
+    virtual bool LMBReleasedEvent() override;                   // 왼클릭 뗐을 때
+    virtual bool RMBReleasedEvent() override;                   // 우클릭 뗐을 때
+    virtual bool KeyReleasedEvent(uint32_t key = 0) override;   // 바인딩한 키 뗐을 때
+
+
+    virtual WidgetType GetWidgetType() override { return WidgetType::Button; } 
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::Card; } // 바꾸기
+
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)
+protected:
+};
+*/

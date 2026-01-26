@@ -6,12 +6,14 @@ enum class CardType : uint8_t {
     Attack,
     Utility, // 특수
     Count,
+    None,
 };
 
 enum class CardRarity : uint8_t {
     Common, // 일반 등급
     Unique, // 고유 등급
     Count,
+    None,
 };
 
 enum class PieceType : uint8_t { // 비트마스크로도 활용 가능
@@ -22,6 +24,7 @@ enum class PieceType : uint8_t { // 비트마스크로도 활용 가능
     Scythe,
     Cleaver,
     Count,
+    None,
 };
 
 enum Dir : uint8_t {

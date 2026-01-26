@@ -2,7 +2,7 @@
 
 #include "SceneBase.h"
 
-class Test_Unit;
+#include "WeaponSelectScene_InputContext.h"
 
 class WeaponSelectScene final : public SceneBase
 {
@@ -22,8 +22,22 @@ protected:
 
 private:
 
-    Test_Unit* unit1 = nullptr;
-    Test_Unit* unit2 = nullptr;
-    Test_Unit* unit3 = nullptr;
-    Test_Unit* unit4 = nullptr;
+    //std::array<Widget*, 4> m_pUserImages;
+    Widget* m_pUserImage0 = nullptr;
+    Widget* m_pUserImage1 = nullptr;
+    Widget* m_pUserImage2 = nullptr;
+    Widget* m_pUserImage3 = nullptr;
+
+    //std::array<Widget*, 6> m_pWeaponBtns;
+    Widget* m_PWeaponBtn_Blaster    = nullptr;
+    Widget* m_PWeaponBtn_Breacher   = nullptr;
+    Widget* m_PWeaponBtn_Impactor   = nullptr;
+    Widget* m_PWeaponBtn_Chakram    = nullptr;
+    Widget* m_PWeaponBtn_Scythe     = nullptr;
+    Widget* m_PWeaponBtn_Cleaver    = nullptr;
+
+    Widget* m_pReadyBtn = nullptr;
+    Widget* m_pExitBtn  = nullptr;
+
+    WeaponSelectScene_InputContext m_weaponCtx;
 };
