@@ -24,6 +24,8 @@ public:
     void SetSlotIdx(int idx) { m_mySlot = idx; };
     int GetSlotiIdx() { return m_mySlot; };
 
+    PieceType GetMyPiece(int idx) { return m_myPick[idx]; };
+
 private:
     static GameManager* s_instance;
 

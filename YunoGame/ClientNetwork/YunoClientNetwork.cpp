@@ -5,11 +5,16 @@
 // 이거로 게임 관리할거임
 #include "GameManager.h"
 
+
+#include "PacketBuilder.h"
+
 // 패킷들
 #include "S2C_Pong.h"
 #include "S2C_EnterOK.h"
 #include "S2C_Error.h"
 #include "S2C_CountDown.h"
+
+#include "C2S_SubmitWeapon.h"
 
 
 
@@ -170,19 +175,26 @@ namespace yuno::game
             });
 
         Dispatcher().RegisterRaw(
-            PacketType::S2C_CountDown,
+            PacketType::S2C_ReadyState,
             [this](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
             {
                 ByteReader r(body, bodyLen);
                 const auto pkt = yuno::net::packets::S2C_CountDown::Deserialize(r);
 
+                yuno::net::packets::C2S_SubmitWeapon response{};
+                response.WeaponId1 = static_cast<int>(GameManager::Get().GetMyPiece(0));
+                response.WeaponId2 = static_cast<int>(GameManager::Get().GetMyPiece(1));
+
+                auto bytes = PacketBuilder::Build(
+                    PacketType::S2C_ReadyState,
+                    [&](ByteWriter& w)
+                    {
+                        response.Serialize(w);
+                    });
+
+                SendPacket(std::move(bytes)); // 응답 전송
 
                 GameManager::Get().StartCountDown(pkt.countTime,pkt.slot1_UnitId1,pkt.slot1_UnitId2,pkt.slot2_UnitId1,pkt.slot2_UnitId2);   // 이렇게만해도 로컬환경이기 때문에 어지간해선 동기화 맞지 않을까....
-                //m_gameManager->SetSceneState(CurrentSceneState::RoundStart);
-
-                //SceneTransitionOptions opt{};
-                //opt.immediate = true;
-                //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
 
             });
 

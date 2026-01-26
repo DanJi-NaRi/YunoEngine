@@ -3,11 +3,14 @@
 #include "PacketBuilder.h"
 
 #include "C2S_Ping.h"
-#include "S2C_Pong.h"
 #include "C2S_MatchEnter.h"
 #include "C2S_MatchLeave.h"
+#include "C2S_SubmitWeapon.h"
+
+#include "S2C_Pong.h"
 #include "S2C_EnterOK.h"
 #include "S2C_Error.h"
+#include "S2C_CountDown.h"
 
 
 #include <iostream>
@@ -195,7 +198,62 @@ namespace yuno::server
                 }
             }
         );// Leave Packet End
+        
 
+        // Submit Weapon Packet Start
+        m_dispatcher.RegisterRaw(
+            PacketType::C2S_SubmitWeapon,
+            [this](const NetPeer& peer,
+                const PacketHeader& /*header*/,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                yuno::net::ByteReader r(body, bodyLen);
+                const auto pkt = yuno::net::packets::C2S_SubmitWeapon::Deserialize(r);
+
+                const int slotIdx = m_match.FindSlotBySessionId(peer.sId);
+                if (slotIdx < 0)
+                    return;
+
+                const auto& slots = m_match.Slots();
+                const std::uint32_t uid = slots[slotIdx].userId;
+                if (uid == 0)
+                    return;
+
+                const bool ok = m_match.SetUnitsByUserId(uid, pkt.WeaponId1, pkt.WeaponId1);
+                if (!ok)
+                    return;
+
+                const auto& s = m_match.Slots();
+
+                // 슬롯이 2명 다 차 있고 + 둘 다 unit 2개가 채워졌을 때만
+                const bool bothOccupied = (s[0].occupied && s[1].occupied);
+                const bool bothReady = (s[0].IsReady() && s[1].IsReady());
+
+                if (!(bothOccupied && bothReady))
+                {
+                    // 둘 중 한명이 제출 안함
+                    return;
+                }
+
+                yuno::net::packets::S2C_CountDown cd{};
+                cd.countTime = 3;  // 3 초
+                cd.slot1_UnitId1 = static_cast<uint8_t>(s[0].unitId1);
+                cd.slot1_UnitId2 = static_cast<uint8_t>(s[0].unitId2);
+                cd.slot2_UnitId1 = static_cast<uint8_t>(s[1].unitId1);
+                cd.slot2_UnitId2 = static_cast<uint8_t>(s[1].unitId2);
+
+                auto bytes = yuno::net::PacketBuilder::Build(
+                    yuno::net::PacketType::S2C_CountDown,
+                    [&](yuno::net::ByteWriter& w)
+                    {
+                        cd.Serialize(w);
+                    });
+
+                m_server.Broadcast(std::move(bytes));
+
+            }
+        );// Submit Weapon Packet End
 
     }
 }

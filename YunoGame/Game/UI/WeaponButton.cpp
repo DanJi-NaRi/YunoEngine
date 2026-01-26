@@ -5,6 +5,7 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 #include "GameManager.h"
+#include "UserImage.h"
 
 WeaponButton::WeaponButton(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
@@ -70,6 +71,34 @@ bool WeaponButton::LMBPressedEvent()
     if (myIdx != 0 && myIdx != 1)
         return true;
 
+    UserImage* slotImage0 = nullptr;
+    UserImage* slotImage1 = nullptr;
+
+    if (myIdx == 0)
+    {
+        slotImage0 = dynamic_cast<UserImage*>(m_pUserImage0);
+        slotImage1 = dynamic_cast<UserImage*>(m_pUserImage1);
+    }
+    else
+    {
+        slotImage0 = dynamic_cast<UserImage*>(m_pUserImage2);
+        slotImage1 = dynamic_cast<UserImage*>(m_pUserImage3);
+    }
+
+    if (!slotImage0 || !slotImage1)
+        return true;
+
+    UserImage* targetImage = nullptr;
+    if (slotImage0->GetPieceType() == PieceType::None)
+        targetImage = slotImage0;
+    else if (slotImage1->GetPieceType() == PieceType::None)
+        targetImage = slotImage1;
+    else
+        targetImage = slotImage0;
+
+    targetImage->SetPieceType(m_pieceType);
+    targetImage->ChangeMaterial(static_cast<int>(m_pieceType));
+
     return true;
 }
 
@@ -112,8 +141,10 @@ bool WeaponButton::KeyReleasedEvent(uint32_t key)
 
 void WeaponButton::SetUserImages(Widget* U1I1, Widget* U1I2, Widget* U2I1, Widget* U2I2)
 {
-
-
+    m_pUserImage0 = U1I1;
+    m_pUserImage1 = U1I2;
+    m_pUserImage2 = U2I1;
+    m_pUserImage3 = U2I2;
 }
 
 

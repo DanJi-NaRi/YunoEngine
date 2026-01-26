@@ -156,7 +156,8 @@
     <ClInclude Include="ProtocolPCH\pch.h" />
     <ClInclude Include="Public\Net\C2SPackets\C2S_Ping.h" />
     <ClInclude Include="Public\Net\ByteIO.h" />
-    <ClInclude Include="Public\Net\C2SPackets\C2S_ReadyState.h" />
+    <ClInclude Include="Public\Net\C2SPackets\C2S_ReadySet.h" />
+    <ClInclude Include="Public\Net\C2SPackets\C2S_SubmitWeapon.h" />
     <ClInclude Include="Public\Net\C2SPackets\ReadyState.h" />
     <ClInclude Include="Public\Net\ErrorPackets\S2C_Error.h" />
     <ClInclude Include="Public\Net\NetPeer.h" />
@@ -171,7 +172,8 @@
   <ItemGroup>
     <ClCompile Include="Private\Net\C2SPackets\C2S_MatchEnter.cpp" />
     <ClCompile Include="Private\Net\C2SPackets\C2S_MatchLeave.cpp" />
-    <ClCompile Include="Private\Net\C2SPackets\C2S_ReadyState.cpp" />
+    <ClCompile Include="Private\Net\C2SPackets\C2S_ReadySet.cpp" />
+    <ClCompile Include="Private\Net\C2SPackets\C2S_SubmitWeapon.cpp" />
     <ClCompile Include="Private\Net\ErrorPackets\S2C_Error.cpp" />
     <ClCompile Include="ProtocolPCH\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

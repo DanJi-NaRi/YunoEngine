@@ -79,7 +79,7 @@ bool GameApp::OnInit()
    if (!sm) return false;
 
    m_gameManager = std::make_unique<GameManager>();
-
+   GameManager::Initialize(m_gameManager.get());
 
    SceneTransitionOptions opt{};
    opt.immediate = true;
@@ -280,6 +280,9 @@ void GameApp::OnFixedUpdate(float fixedDt)
 void GameApp::OnShutdown()
 {
     std::cout << "[GameApp] OnShutdown\n";
+
+    GameManager::Shutdown();
+    m_gameManager.reset();
 
     // 네트워크 스레드종료
     m_clientNet.Stop();

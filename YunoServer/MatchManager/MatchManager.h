@@ -15,8 +15,12 @@ namespace yuno::server
             bool occupied = false;
             std::uint32_t userId = 0;        // 고정 ID (OS한테 받아올 예정)
             std::uint64_t sessionId = 0; 
-        };
 
+            std::uint32_t unitId1 = 0;
+            std::uint32_t unitId2 = 0;
+
+            bool IsReady() const { return (unitId1 != 0 && unitId2 != 0); }
+        };
     public:
         MatchManager() = default;
 
@@ -32,6 +36,12 @@ namespace yuno::server
         std::uint8_t GetOccupiedCount() const;
 
         const std::array<MatchSlot, kMaxSlots>& Slots() const { return m_slots; }
+
+        bool SetUnitByUserId(std::uint32_t uid, int slotWeaponIndex, std::uint32_t unitId);
+
+        bool ClearUnitByUserId(std::uint32_t uid, int slotWeaponIndex);
+
+        bool SetUnitsByUserId(std::uint32_t uid, std::uint32_t u1, std::uint32_t u2);
 
     private:
         std::array<MatchSlot, kMaxSlots> m_slots{};
