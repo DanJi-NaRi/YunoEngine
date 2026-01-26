@@ -1,5 +1,11 @@
 #pragma once
 
+namespace yuno::net
+{
+    class ByteWriter;
+    class ByteReader;
+}
+
 namespace yuno::net::packets
 {
     struct C2S_MatchEnter final

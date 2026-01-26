@@ -80,6 +80,7 @@ bool GameApp::OnInit()
 
    m_gameManager = std::make_unique<GameManager>();
    GameManager::Initialize(m_gameManager.get());
+   m_gameManager->BindClientNetwork(&m_clientNet);
 
    SceneTransitionOptions opt{};
    opt.immediate = true;

@@ -7,9 +7,10 @@
 
 #include "GameManager.h"
 
-//#include "PacketBuilder.h"
-//
-//#include "C2S_ReadySet.h"
+#include "PacketBuilder.h"
+
+#include "C2S_ReadySet.h"
+
 
 
 ReadyButton::ReadyButton(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
@@ -73,22 +74,34 @@ bool ReadyButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool ReadyButton::LMBPressedEvent()
 {
-    std::cout << "(LMB)PressedEvent" << std::endl;
 
     GameManager& gm = GameManager::Get();
+    if (gm.GetMyPiece(0)==PieceType::None|| gm.GetMyPiece(1) == PieceType::None) 
+    {
+        return false;
+    }
+
+
     const bool isReady = gm.ToggleReady();
+    std::wstring texturePath;
+    if(!isReady)
+        texturePath = L"../Assets/Test/BtnOn.png";
+    else
+        texturePath = L"../Assets/Test/BtnOff.png";
 
-    //yuno::net::packets::C2S_ReadySet req{};
-    //req.readyState = isReady ? 1 : 0;
-    //
-    //auto bytes = yuno::net::PacketBuilder::Build(
-    //    yuno::net::PacketType::C2S_ReadySet,
-    //    [&](yuno::net::ByteWriter& w)
-    //    {
-    //        req.Serialize(w);
-    //    });
+    m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
 
-    //gm.SendPacket(std::move(bytes)); 
+    yuno::net::packets::C2S_ReadySet req{};
+    req.readyState = isReady ? 1 : 0;
+
+    auto bytes = yuno::net::PacketBuilder::Build(
+        yuno::net::PacketType::C2S_ReadySet,
+        [&](yuno::net::ByteWriter& w)
+        {
+            req.Serialize(w);
+        });
+
+    gm.SendPacket(std::move(bytes));
 
     return true;
 }
@@ -96,7 +109,6 @@ bool ReadyButton::LMBPressedEvent()
 // 우클릭 눌렀을 때
 bool ReadyButton::RMBPressedEvent()
 {
-    std::cout << "(RMB)PressedEvent" << std::endl;
     return true;
 }
 
@@ -111,7 +123,7 @@ bool ReadyButton::KeyPressedEvent(uint32_t key)
 // 왼클릭 뗐을 때
 bool ReadyButton::LMBReleasedEvent()
 {
-    std::cout << "(LMB)ReleasedEvent" << std::endl;
+    //std::cout << "(LMB)ReleasedEvent" << std::endl;
     return true;
 }
 

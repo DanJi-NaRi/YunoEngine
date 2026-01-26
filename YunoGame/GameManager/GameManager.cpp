@@ -5,9 +5,10 @@
 #include "YunoEngine.h"
 #include "ISceneManager.h"
 
-#include "ISceneManager.h"
+#include "TitleScene.h"
 #include "WeaponSelectScene.h"
 #include "PlayScene.h"
+#include "YunoClientNetwork.h"
 
 GameManager* GameManager::s_instance = nullptr;
 
@@ -39,6 +40,9 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
     case CurrentSceneState::Title:
     {
+        SceneTransitionOptions opt{};
+        opt.immediate = false;
+        sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
         break;
     }
     case CurrentSceneState::GameStart:
@@ -121,7 +125,26 @@ void GameManager::Tick(float dt)
 
 void GameManager::SendPacket(std::vector<std::uint8_t>&& bytes)
 {
-    //m_clientNet.SendPacket(std::move(bytes));
+    if (!m_clientNet)
+    {
+        std::cout << "[GameManager] Client network not bound.\n";
+        return;
+    }
+
+    m_clientNet->SendPacket(std::move(bytes));
+}
+
+void GameManager::SetMyPick(int index, PieceType type)
+{
+    if (index < 0 || index >= 2)
+        return;
+
+    m_myPick[index] = type;
+}
+
+bool GameManager::HasTwoPicks() const
+{
+    return (m_myPick[0] != PieceType::None) && (m_myPick[1] != PieceType::None);
 }
 
 bool GameManager::ToggleReady()

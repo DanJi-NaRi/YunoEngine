@@ -184,13 +184,19 @@ namespace yuno::game
                 const bool p2Ready = (pkt.p2_isReady != 0);
 
                 if (!(p1Ready && p2Ready))
+                {
                     return;
+                }
+                    
 
                 GameManager& gm = GameManager::Get();
                 const std::uint32_t weapon1 = static_cast<std::uint32_t>(gm.GetMyPiece(0));
                 const std::uint32_t weapon2 = static_cast<std::uint32_t>(gm.GetMyPiece(1));
-                if (weapon1 == 0 || weapon2 == 0)
+                if (weapon1 == 0 || weapon2 == 0) 
+                {
                     return;
+                }
+
 
                 yuno::net::packets::C2S_SubmitWeapon req{};
                 req.WeaponId1 = weapon1;

@@ -1,6 +1,10 @@
 #pragma once
 
-
+namespace yuno::net
+{
+    class ByteWriter;
+    class ByteReader;
+}
 
 namespace yuno::net::packets
 {

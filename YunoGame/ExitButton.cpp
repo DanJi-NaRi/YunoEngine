@@ -6,6 +6,12 @@
 
 #include "ISceneManager.h"
 #include "IScene.h"
+#include "PacketBuilder.h"
+
+#include "C2S_MatchLeave.h"
+
+#include "GameManager.h"
+
 
 ExitButton::ExitButton(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
@@ -69,7 +75,18 @@ bool ExitButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool ExitButton::LMBPressedEvent()
 {
-    std::cout << "(LMB)PressedEvent" << std::endl;
+    auto bytes = yuno::net::PacketBuilder::Build(
+        yuno::net::PacketType::C2S_MatchLeave,
+        [&](yuno::net::ByteWriter& w)
+        {
+            yuno::net::packets::C2S_MatchLeave req{};
+            req.Serialize(w);
+        });
+
+    GameManager::Get().SendPacket(std::move(bytes));
+
+    GameManager::Get().SetSceneState(CurrentSceneState::Title);
+
     return true;
 }
 

@@ -89,15 +89,28 @@ bool WeaponButton::LMBPressedEvent()
         return true;
 
     UserImage* targetImage = nullptr;
+    int pickIndex = 0;
+
     if (slotImage0->GetPieceType() == PieceType::None)
+    {
         targetImage = slotImage0;
+        pickIndex = 0;
+    }
     else if (slotImage1->GetPieceType() == PieceType::None)
+    {
         targetImage = slotImage1;
+        pickIndex = 1;
+    }
     else
+    {
         targetImage = slotImage0;
+        pickIndex = 0;
+    }
 
     targetImage->SetPieceType(m_pieceType);
     targetImage->ChangeMaterial(static_cast<int>(m_pieceType));
+
+    GameManager::Get().SetMyPick(pickIndex, m_pieceType);
 
     return true;
 }

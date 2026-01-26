@@ -209,6 +209,7 @@ namespace yuno::server
                 const std::uint8_t* body,
                 std::uint32_t bodyLen)
             {
+
                 yuno::net::ByteReader r(body, bodyLen);
                 const auto pkt = yuno::net::packets::C2S_ReadySet::Deserialize(r);
 
