@@ -62,9 +62,10 @@ struct CBBloom
 
 struct CBShadow
 {
-    XMMATRIX lightViewProj;
+    XMFLOAT4X4 lightViewProj;
+    float shadowMapSize;
     float shadowBias;
-    float padding[3];
+    float padding[2];
 };
 
 

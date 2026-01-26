@@ -17,6 +17,7 @@ enum class SampleMode : uint8_t
     WrapAniso,           // 슬롯 1
     ClampAniso,          // 슬롯 2
     Border0000Aniso,     // 슬롯 3
+    ShadowMap,     // 슬롯 4
     Count
 };
 
@@ -56,7 +57,7 @@ struct VertexStreams
     const VERTEX_BoneIndex* boneIdx = nullptr;
 };
 
-#define MAX_BONE 256
+#define MAX_BONE 64
 struct Update_Data
 {
     DirectX::XMFLOAT4X4 world{};
