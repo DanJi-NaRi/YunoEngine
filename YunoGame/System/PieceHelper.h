@@ -34,13 +34,16 @@ enum class Direction : uint8_t
     UpLeft,
     UpRight,
     DownLeft,
-    DownRight
+    DownRight,
+
+    Same
 };
 
 struct PieceCmd
 {
     
     CommandType cmdType;
+    bool isEnd = false;
     union
     {
         struct
@@ -53,17 +56,23 @@ struct PieceCmd
         {
             float wx, wy, wz;
             Direction dir;
+            float speed;
         } mv_p;
     };
 };
 
 struct PieceInfo
 { 
-    Team team;
-    int health = 100;
-    int cx, cz;
-    uint32_t id;
+    Team team;          // 불변
+    Direction dir;      // 가변
+    int health = 100;   // 가변
+    int cx, cz;         // 가변
+    uint32_t id;        // 불변
 
-    PieceInfo() : cx(-1), cz(-1), id(-1), team(Team::Undefined) {}
-    PieceInfo(int _cx, int _cz, uint32_t _id, Team _team) : cx(_cx), cz(_cz), id(_id), team(_team) {}
+    PieceInfo() : cx(-1), cz(-1), id(-1), dir(Direction::Same), team(Team::Undefined) {}
+    PieceInfo(int _cx, int _cz, uint32_t _id, Direction _dir,  Team _team) 
+        : cx(_cx), cz(_cz), id(_id), team(_team) 
+    {
+        dir = (_dir == Direction::Same) ? dir : _dir;
+    }
 };

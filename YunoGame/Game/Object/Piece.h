@@ -18,16 +18,20 @@ private:
 
 public:
     void InsertQ(PieceCmd targetPos);
-    void SetDir(Direction dir);
+    void SetDir(Direction dir, bool isAnim = true);
 
 private:
-    void SetTarget(XMFLOAT3 targetPos);
+    void SetTarget(XMFLOAT3 targetPos, float speed);
+    void SendDone();
 
 private:
+    bool m_isDone = false;
+
     XMVECTOR m_Target{};
     XMVECTOR m_Start{};
     float m_Dist = 0;
     float m_speed = 10;
+    float m_fixSpeed = 1;
     float m_AnimTime = 0.f;
     bool isMoving = false;
 

@@ -20,9 +20,14 @@ private:
     void MoveEvent(const PieceType& pieceType, int cx, int cz);
 
 private:
-    void ChangeTileTO(int cx, int cz, const TileOccupancy to);
-    const TileOccupancy GetTileTO(int cx, int cz);
+    void ChangeTileTO(int cx, int cz, const TileOccupy to);
+    const TileOccupy GetTileTO(int cx, int cz);
     Direction GetDir(float oldcx, float oldcz, float cx, float cz);
+    Direction GetConverseDir(Direction dir);                // 매개변수에 Direction::Same이 절대 들어가면 안됨
+
+    Direction GetCollisionDir(float oldcx, float oldcz, float cx, float cz);
+    F2 GetCollisionEnterPos(Direction dir, Direction pieceDir, int cx, int cz);
+    F2 GetCollisionExistPos(Direction dir, Direction pieceDir, int cx, int cz);
 
 private:
     void ClearTileState();

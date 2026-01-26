@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include "PieceQueue.h"
+
 #include "Piece.h"
 
 float scaleAdjust = 0.2f;
@@ -206,7 +208,7 @@ bool Piece::Update(float dTime)
     if (isMoving)
     {
         if (dTime >= 1.f) return true;
-        m_AnimTime += dTime / m_Dist * m_speed;
+        m_AnimTime += dTime / m_Dist * m_speed * m_fixSpeed;
         
 
         if (m_AnimTime >= 1.f)
@@ -223,7 +225,7 @@ bool Piece::Update(float dTime)
 
     }
 
-    while (!m_Q.empty() && !isMoving)
+    while (!m_Q.empty() && !isMoving && !isRotating)
     {
         auto tp = m_Q.front();
         m_Q.pop();
@@ -231,16 +233,14 @@ bool Piece::Update(float dTime)
         {
         case CommandType::Move:
         {
-            auto [wx, wy, wz, dir] = tp.mv_p;
-            SetTarget({ wx, wy, wz });
+            auto [wx, wy, wz, dir, speed] = tp.mv_p;
+            SetTarget({ wx, wy, wz }, speed);
             SetDir(dir);
             break;
         }
         case CommandType::Attack:
             break;
-        }
-        
-        
+        }  
     }
 
 
@@ -259,7 +259,7 @@ bool Piece::Update(float dTime)
     XMStoreFloat4x4(&m_mRot, mRot);
     XMStoreFloat4x4(&m_mTrans, mTrans);
     XMStoreFloat4x4(&m_mWorld, mTM);
-    //Unit::Update(dTime);
+
     return true;
 }
 
@@ -319,15 +319,12 @@ void Piece::InsertQ(PieceCmd cmd)
     m_Q.push(cmd);
 }
 
-void Piece::SetDir(Direction dir)
+void Piece::SetDir(Direction dir, bool isAnim)
 {
     switch (dir)
     {
-    case Direction::Up:
-        m_targetYaw = atan2(0, -1);
-        break;
-    case Direction::Down:
-        m_targetYaw = atan2(0, 1);
+    case Direction::Same:
+        return;
         break;
     case Direction::Right:
         m_targetYaw = atan2(-1, 0);
@@ -335,27 +332,18 @@ void Piece::SetDir(Direction dir)
     case Direction::Left:
         m_targetYaw = atan2(1, 0);
         break;
-    case Direction::UpLeft:
-        m_targetYaw = atan2(1, -1);
-        break;
-    case Direction::UpRight:
-        m_targetYaw = atan2(-1, -1);
-        break;
-    case Direction::DownLeft:
-        m_targetYaw = atan2(1, 1);
-        break;
-    case Direction::DownRight:
-        m_targetYaw = atan2(-1, 1);
-        break;
     }
     m_startYaw = m_yaw;
-    isRotating = true;
+    isRotating = isAnim;
+
+    m_yaw = (isAnim) ? m_yaw : m_targetYaw;
 }
 
-void Piece::SetTarget(XMFLOAT3 targetPos)
+void Piece::SetTarget(XMFLOAT3 targetPos, float speed)
 {
     if (isMoving) return;
 
+    m_fixSpeed = speed;
     m_Target = XMLoadFloat3(&targetPos);
     m_Start = XMLoadFloat3(&m_vPos);
     XMVECTOR Dist = XMVectorAbs(XMVector3Length(m_Target - m_Start));
@@ -365,4 +353,9 @@ void Piece::SetTarget(XMFLOAT3 targetPos)
         return;
 
     isMoving = true;
+}
+
+void Piece::SendDone()
+{
+    
 }
