@@ -54,9 +54,9 @@ bool GameApp::OnInit()
 
    SceneTransitionOptions opt{};
    opt.immediate = true;
-   //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+   sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
-   sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
+   //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
 
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
