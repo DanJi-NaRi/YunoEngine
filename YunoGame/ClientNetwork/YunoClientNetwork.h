@@ -33,6 +33,10 @@ namespace yuno::game
         // 게임에서 핸들러 등록할 수 있게 dispatcher 접근 제공
         yuno::net::PacketDispatcher& Dispatcher() { return m_dispatcher; }
 
+        // 핸들러 등록
+    public:
+        void RegisterMatchPacketHandler();
+
     private:
         void PushIncoming(std::vector<std::uint8_t>&& packetBytes);
         bool PopIncoming(std::vector<std::uint8_t>& out);
@@ -57,3 +61,8 @@ namespace yuno::game
     };
 }
 
+/*
+
+
+
+*/

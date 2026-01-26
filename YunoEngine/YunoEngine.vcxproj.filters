@@ -185,6 +185,9 @@
     <ClCompile Include="Private\Renderer\BoneNode\BoneNode.cpp">
       <Filter>Private\Renderer\Bone\Node</Filter>
     </ClCompile>
+    <ClCompile Include="Private\UI\Widget.cpp">
+      <Filter>Public\UI</Filter>
+    </ClCompile>
     <ClCompile Include="Public\Sound\AudioCore.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
@@ -209,31 +212,22 @@
     <ClCompile Include="Public\Sound\AudioManagerPCH.cpp">
       <Filter>Public\Sound\src</Filter>
     </ClCompile>
-    <ClCompile Include="Public\InputContextBase.cpp">
-      <Filter>Public\System</Filter>
-    </ClCompile>
-    <ClCompile Include="Public\Button.cpp">
+    <ClCompile Include="Private\UI\Image.cpp">
       <Filter>Public\UI\BaseWidget</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Image.cpp">
+    <ClCompile Include="Private\UI\Text.cpp">
       <Filter>Public\UI\BaseWidget</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Text.cpp">
-      <Filter>Public\UI\BaseWidget</Filter>
-    </ClCompile>
-    <ClCompile Include="Public\Object\Widget.cpp">
-      <Filter>Public\UI\BaseWidget</Filter>
-    </ClCompile>
-    <ClCompile Include="Public\DragProvider.cpp">
+    <ClCompile Include="Private\UI\UITool\DragProvider.cpp">
       <Filter>Public\UI\UISystem</Filter>
     </ClCompile>
-    <ClCompile Include="Public\UIManager.cpp">
+    <ClCompile Include="Private\UI\Slot.cpp" />
+    <ClCompile Include="Private\UI\UITool\CursurSystem.cpp">
       <Filter>Public\UI\UISystem</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Slot.cpp" />
-    <ClCompile Include="Public\CursurSystem.cpp">
-      <Filter>Public\UI\UISystem</Filter>
-    </ClCompile>
+    <ClCompile Include="Private\Input\InputContextBase.cpp" />
+    <ClCompile Include="Public\Object\Button.cpp" />
+    <ClCompile Include="Private\UI\UITool\UIManager.cpp" />
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -357,6 +351,9 @@
     <ClInclude Include="Public\Object\AnimationUnit.h">
       <Filter>Public\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Public\UI\Widget.h">
+      <Filter>Public\UI</Filter>
+    </ClInclude>
     <ClInclude Include="Public\Sound\AudioManager.h">
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
@@ -387,31 +384,22 @@
     <ClInclude Include="Public\Sound\IAudioManager.h">
       <Filter>Public\Sound\header</Filter>
     </ClInclude>
-    <ClInclude Include="Public\InputContextBase.h">
-      <Filter>Public\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Button.h">
+    <ClInclude Include="Public\UI\Image.h">
       <Filter>Public\UI\BaseWidget</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Image.h">
+    <ClInclude Include="Public\UI\Text.h">
       <Filter>Public\UI\BaseWidget</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Text.h">
-      <Filter>Public\UI\BaseWidget</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Object\Widget.h">
-      <Filter>Public\UI\BaseWidget</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\DragProvider.h">
+    <ClInclude Include="Public\UI\UITool\DragProvider.h">
       <Filter>Public\UI\UISystem</Filter>
     </ClInclude>
-    <ClInclude Include="Public\UIManager.h">
+    <ClInclude Include="Public\UI\Slot.h" />
+    <ClInclude Include="Public\UI\UITool\CursurSystem.h">
       <Filter>Public\UI\UISystem</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Slot.h" />
-    <ClInclude Include="Public\CursurSystem.h">
-      <Filter>Public\UI\UISystem</Filter>
-    </ClInclude>
+    <ClInclude Include="Public\Input\InputContextBase.h" />
+    <ClInclude Include="Public\Object\Button.h" />
+    <ClInclude Include="Public\UI\UITool\UIManager.h" />
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>

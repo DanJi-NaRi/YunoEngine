@@ -79,6 +79,18 @@
     <Filter Include="Game\UI\System">
       <UniqueIdentifier>{4d554d76-e075-4e88-9400-c5edee8bae71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes\1.WeaponSelect">
+      <UniqueIdentifier>{1c2f987f-6b77-44ce-a3a6-b92c2ad7a991}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\0.Title">
+      <UniqueIdentifier>{27fecdf2-c2ce-454b-8699-682c736c1721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\2.Play">
+      <UniqueIdentifier>{189cae2d-f9fe-415c-9418-9da38eb5e240}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\99.Test">
+      <UniqueIdentifier>{2c6d8a18-2ee4-4ef6-b526-3a3819858a75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -105,20 +117,8 @@
     <ClCompile Include="Game\Object\Dwarf.cpp">
       <Filter>Game\Object\Dwarf</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\PlayScene.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="Scenes\TitleScene.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp">
       <Filter>Scenes\SceneTemplate</Filter>
-    </ClCompile>
-    <ClCompile Include="Scenes\UIScene.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="Scenes\UIScene.cpp">
-      <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
       <Filter>ClientNetwork</Filter>
@@ -141,18 +141,36 @@
     <ClCompile Include="Game\Object\Piece.cpp">
       <Filter>Game\Object\Piece</Filter>
     </ClCompile>
-    <ClCompile Include="PieceQueue.cpp">
+    <ClCompile Include="System\PieceQueue.cpp">
       <Filter>PieceQueue</Filter>
     </ClCompile>
-    <ClCompile Include="Card.cpp">
+    <ClCompile Include="Game\UI\CardSlot.cpp">
       <Filter>Game\UI\Card</Filter>
     </ClCompile>
-    <ClCompile Include="CardSlot.cpp">
-      <Filter>Game\UI\Card</Filter>
+    <ClCompile Include="Scenes\TitleScene.cpp">
+      <Filter>Scenes\0.Title</Filter>
     </ClCompile>
-    <ClCompile Include="CardTable.cpp">
-      <Filter>Game\UI\Card</Filter>
+    <ClCompile Include="Scenes\WeaponSelectScene.cpp">
+      <Filter>Scenes\1.WeaponSelect</Filter>
     </ClCompile>
+    <ClCompile Include="Scenes\PlayScene.cpp">
+      <Filter>Scenes\2.Play</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\UIScene.cpp">
+      <Filter>Scenes\99.Test</Filter>
+    </ClCompile>
+    <ClCompile Include="System\GameManager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\WeaponButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Test_Unit.cpp" />
+    <ClCompile Include="Scenes\UIScene.cpp">
+      <Filter>Scenes\99.Test</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\Card.cpp" />
+    <ClCompile Include="Game\UI\CardTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -176,17 +194,8 @@
     <ClInclude Include="Game\Object\Dwarf.h">
       <Filter>Game\Object\Dwarf</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\PlayScene.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenes\TitleScene.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h">
       <Filter>Scenes\SceneTemplate</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenes\UIScene.h">
-      <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="System\UIScene_InputContext.h">
       <Filter>System\UIContext</Filter>
@@ -227,24 +236,38 @@
     <ClInclude Include="Game\Object\Piece.h">
       <Filter>Game\Object\Piece</Filter>
     </ClInclude>
-    <ClInclude Include="PieceQueue.h">
+    <ClInclude Include="System\PieceQueue.h">
       <Filter>PieceQueue</Filter>
     </ClInclude>
-    <ClInclude Include="CardTable.h">
+    <ClInclude Include="Game\UI\CardSlot.h">
       <Filter>Game\UI\Card</Filter>
     </ClInclude>
-    <ClInclude Include="Card.h">
-      <Filter>Game\UI\Card</Filter>
+    <ClInclude Include="Game\UI\UIWidgets.h" />
+    <ClInclude Include="Scenes\TitleScene.h">
+      <Filter>Scenes\0.Title</Filter>
     </ClInclude>
-    <ClInclude Include="CardActData.h">
-      <Filter>Game\UI\Card</Filter>
+    <ClInclude Include="Scenes\WeaponSelectScene.h">
+      <Filter>Scenes\1.WeaponSelect</Filter>
     </ClInclude>
-    <ClInclude Include="CardData.h">
-      <Filter>Game\UI\Card</Filter>
+    <ClInclude Include="Scenes\PlayScene.h">
+      <Filter>Scenes\2.Play</Filter>
     </ClInclude>
-    <ClInclude Include="CardSlot.h">
-      <Filter>Game\UI\Card</Filter>
+    <ClInclude Include="Scenes\UIScene.h">
+      <Filter>Scenes\99.Test</Filter>
     </ClInclude>
-    <ClInclude Include="UIWidgets.h" />
+    <ClInclude Include="System\GameManager.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\WeaponButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Test_Unit.h" />
+    <ClInclude Include="Game\UI\Card.h" />
+    <ClInclude Include="Game\UI\CardTable.h" />
+    <ClInclude Include="System\DragProvider.h" />
+    <ClInclude Include="Game\Object\CardActData.h" />
+    <ClInclude Include="Game\Object\CardData.h" />
+    <ClInclude Include="Game\UI\Image.h" />
+    <ClInclude Include="Game\UI\Text.h" />
   </ItemGroup>
 </Project>
