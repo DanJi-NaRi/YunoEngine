@@ -144,13 +144,7 @@
     <ClCompile Include="System\PieceQueue.cpp">
       <Filter>PieceQueue</Filter>
     </ClCompile>
-    <ClCompile Include="Card.cpp">
-      <Filter>Game\UI\Card</Filter>
-    </ClCompile>
-    <ClCompile Include="CardSlot.cpp">
-      <Filter>Game\UI\Card</Filter>
-    </ClCompile>
-    <ClCompile Include="CardTable.cpp">
+    <ClCompile Include="Game\UI\CardSlot.cpp">
       <Filter>Game\UI\Card</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\TitleScene.cpp">
@@ -168,13 +162,15 @@
     <ClCompile Include="System\GameManager.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="WeaponButton.cpp">
+    <ClCompile Include="Game\UI\WeaponButton.cpp">
       <Filter>Game\UI\Button</Filter>
     </ClCompile>
     <ClCompile Include="Game\Object\Test_Unit.cpp" />
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes\99.Test</Filter>
     </ClCompile>
+    <ClCompile Include="Game\UI\Card.cpp" />
+    <ClCompile Include="Game\UI\CardTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -243,26 +239,10 @@
     <ClInclude Include="System\PieceQueue.h">
       <Filter>PieceQueue</Filter>
     </ClInclude>
-
-
-    <ClInclude Include="CardTable.h">
+    <ClInclude Include="Game\UI\CardSlot.h">
       <Filter>Game\UI\Card</Filter>
     </ClInclude>
-    <ClInclude Include="Card.h">
-      <Filter>Game\UI\Card</Filter>
-    </ClInclude>
-    <ClInclude Include="CardActData.h">
-      <Filter>Game\UI\Card</Filter>
-    </ClInclude>
-    <ClInclude Include="CardData.h">
-      <Filter>Game\UI\Card</Filter>
-    </ClInclude>
-    <ClInclude Include="CardSlot.h">
-      <Filter>Game\UI\Card</Filter>
-    </ClInclude>
-    <ClInclude Include="UIWidgets.h" />
-
-
+    <ClInclude Include="Game\UI\UIWidgets.h" />
     <ClInclude Include="Scenes\TitleScene.h">
       <Filter>Scenes\0.Title</Filter>
     </ClInclude>
@@ -278,11 +258,16 @@
     <ClInclude Include="System\GameManager.h">
       <Filter>Game</Filter>
     </ClInclude>
-
-    <ClInclude Include="WeaponButton.h">
+    <ClInclude Include="Game\UI\WeaponButton.h">
       <Filter>Game\UI\Button</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\Test_Unit.h" />
-
+    <ClInclude Include="Game\UI\Card.h" />
+    <ClInclude Include="Game\UI\CardTable.h" />
+    <ClInclude Include="System\DragProvider.h" />
+    <ClInclude Include="Game\Object\CardActData.h" />
+    <ClInclude Include="Game\Object\CardData.h" />
+    <ClInclude Include="Game\UI\Image.h" />
+    <ClInclude Include="Game\UI\Text.h" />
   </ItemGroup>
 </Project>
