@@ -192,12 +192,14 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ExitButton.cpp" />
     <ClCompile Include="Game\UI\ButtonTemplate.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Game\UI\CardSlot.cpp" />
     <ClCompile Include="Game\Object\Test_Unit.cpp" />
+    <ClCompile Include="ReadyButton.cpp" />
     <ClCompile Include="System\GameManager.cpp" />
     <ClCompile Include="Game\UI\Card.cpp" />
     <ClCompile Include="Game\UI\CardTable.cpp" />
@@ -236,14 +238,17 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Scenes\UIScene.cpp" />
     <ClCompile Include="Scenes\WeaponSelectScene.cpp" />
     <ClCompile Include="Game\UI\WeaponButton.cpp" />
+    <ClCompile Include="UserImage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ExitButton.h" />
     <ClInclude Include="Game\UI\ButtonTemplate.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Game\UI\CardSlot.h" />
     <ClInclude Include="Game\Object\Test_Unit.h" />
+    <ClInclude Include="ReadyButton.h" />
     <ClInclude Include="System\GameManager.h" />
     <ClInclude Include="Game\UI\Card.h" />
     <ClInclude Include="Game\UI\CardTable.h" />
@@ -290,6 +295,8 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\Text.h" />
     <ClInclude Include="Scenes\WeaponSelectScene.h" />
     <ClInclude Include="Game\UI\WeaponButton.h" />
+    <ClInclude Include="UserImage.h" />
+    <ClInclude Include="WeaponSelectScene_InputContext.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

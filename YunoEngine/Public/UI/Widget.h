@@ -43,6 +43,13 @@ enum class WidgetClass : int {
     CardTable,
     Card,
     CardSlot,
+
+    // 첫 무기 선택 페이즈
+    UserImage,
+    ReadyButton,
+    ExitButton,
+    WeaponButton,
+    
 };
 
 struct SnapPoint {

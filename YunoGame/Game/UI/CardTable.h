@@ -1,11 +1,11 @@
 #pragma once
-#include "Widget.h"
+#include "Image.h"
 
 class Card;
 class CardSlot;
 
 
-class CardTable : public Widget
+class CardTable : public Image
 {
 public:
     CardTable(UIManager* uiManager);
@@ -17,7 +17,7 @@ public:
     //void LoadDeck(); void DataSend(); // 외부 서비스로 분리
     //void CardDrag();    // 카드 드래그
 
-    virtual WidgetType GetWidgetType() override { return WidgetType::Widget; }
+    virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardTable; }
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/white.png"); };    // 머테리얼 생성 (한 번만)

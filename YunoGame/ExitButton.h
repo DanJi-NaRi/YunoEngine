@@ -1,12 +1,13 @@
 #pragma once
 #include "Button.h"
-#include "CardData.h"
 
-class WeaponButton : public Button
+class IScene;
+
+class ExitButton : public Button
 {
 public:
-    WeaponButton(UIManager* uiManager);
-    virtual ~WeaponButton();
+    ExitButton(UIManager* uiManager);
+    virtual ~ExitButton();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
@@ -22,13 +23,16 @@ public:
     virtual bool RMBReleasedEvent() override;                   // 우클릭 뗐을 때
     virtual bool KeyReleasedEvent(uint32_t key = 0) override;   // 바인딩한 키 뗐을 때
 
-    PieceType GetPieceType() { return m_pieceType; }
-    PieceType SetPieceType(PieceType pieceType) { m_pieceType = pieceType; return m_pieceType; }
+    virtual void Exit(); // 나가기 버튼은 많으니 파생해서 쓸수도?
+
+    void SetExitScene(IScene* scene) { m_pExitScene = scene; }
+    IScene* GetExitScene() { return m_pExitScene; }
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
-    virtual WidgetClass GetWidgetClass() override { return WidgetClass::WeaponButton; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::ExitButton; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); }    // 머테리얼 생성 (한 번만)
 protected:
-    PieceType m_pieceType = PieceType::None;
+    IScene* m_pExitScene = nullptr;
+    // SceneEnum m_ExitScene = SceneEnum::Default;
 };

@@ -17,7 +17,7 @@ public:
     void Update(float dt) override;
     
 private:
-    void MoveEvent(const PieceType& pieceType, int cx, int cz);
+    void MoveEvent(const GamePiece& pieceType, int cx, int cz);
 
 private:
     void ChangeTileTO(int cx, int cz, const TileOccupy to);
@@ -37,7 +37,7 @@ private:
 
     std::vector<TileState> m_tiles;                         // 타일 상태
     std::vector<uint32_t> m_tilesIDs;                       // 타일 오브젝트 아이디
-    std::unordered_map<PieceType, PieceInfo> m_pieces;      // 기물 정보
+    std::unordered_map<GamePiece, PieceInfo> m_pieces;      // 기물 정보
 
     std::unique_ptr<PieceQ> m_pieceQ;
 };

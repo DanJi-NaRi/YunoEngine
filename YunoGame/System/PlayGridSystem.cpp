@@ -31,7 +31,7 @@ void PlayGridSystem::Update(float dt)
         {
         case CommandType::Move:
         {
-            const PieceType& pieceType = cmd.mv_s.whichPiece;
+            const GamePiece& pieceType = cmd.mv_s.whichPiece;
             int cx = cmd.mv_s.cx;
             int cz = cmd.mv_s.cz;
             
@@ -43,7 +43,7 @@ void PlayGridSystem::Update(float dt)
     }
 }
 
-void PlayGridSystem::MoveEvent(const PieceType& pieceType, int cx, int cz)
+void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
 {
     PieceInfo& pieceInfo = m_pieces[pieceType];                 // 해당 piece의 수정을 위해 참조로 받음
     Unit* pUnit = m_objectManager->FindObject(pieceInfo.id);
@@ -77,7 +77,7 @@ void PlayGridSystem::MoveEvent(const PieceType& pieceType, int cx, int cz)
         std::cout << "[PlayGridSystem]::Both_Occupied\n";
 
         auto remainWho = (oldTo.mainWho != (TileWho)pieceType) ? oldTo.mainWho : oldTo.subWho;
-        auto& remainer = m_pieces[(PieceType)remainWho];
+        auto& remainer = m_pieces[(GamePiece)remainWho];
         int id = remainer.id;
         remainer.team;
         Piece* otherP = dynamic_cast<Piece*>(m_objectManager->FindObject(id));
@@ -117,7 +117,7 @@ void PlayGridSystem::MoveEvent(const PieceType& pieceType, int cx, int cz)
         pPiece->InsertQ(PieceQ::Move_P(dir, colX, m_wy, colZ));
 
         auto mainWho = m_tiles[GetID(cx, cz)].to.mainWho;
-        PieceType w = static_cast<PieceType>(mainWho);
+        GamePiece w = static_cast<GamePiece>(mainWho);
         Piece* otherP = dynamic_cast<Piece*>(m_objectManager->FindObject(m_pieces[w].id));
 
         Direction newDir = GetConverseDir(pieceInfo.dir);
@@ -313,7 +313,7 @@ void PlayGridSystem::CreateObject(float x, float y, float z)
     }
 
     m_wy = y;
-    for (auto i = PieceType::Ally1; i < PieceType::MAX; ++i)
+    for (auto i = GamePiece::Ally1; i < GamePiece::MAX; ++i)
     {
         int cx = 0; int cz = 0;
         TileOccupy to{};
@@ -322,25 +322,25 @@ void PlayGridSystem::CreateObject(float x, float y, float z)
     
         switch (i)
         {
-        case PieceType::Ally1:
+        case GamePiece::Ally1:
             cx = 1; cz = 1;
             to = TileOccupy{ TileOccuType::Ally_Occupied, TileWho::Ally1 };
             team = Team::Ally;
             dir = Direction::Right;
             break;
-        case PieceType::Ally2:
+        case GamePiece::Ally2:
             cx = 1; cz = 3;
             to = TileOccupy{ TileOccuType::Ally_Occupied, TileWho::Ally2 };
             team = Team::Ally;
             dir = Direction::Right;
             break;
-        case PieceType::Enemy1:
+        case GamePiece::Enemy1:
             cx = 5; cz = 1;
             to = TileOccupy{ TileOccuType ::Enemy_Occupied, TileWho::Enemy1 };
             team = Team::Enemy;
             dir = Direction::Left;
             break;
-        case PieceType::Enemy2:
+        case GamePiece::Enemy2:
             cx = 5; cz = 3;
             to = TileOccupy{ TileOccuType::Enemy_Occupied, TileWho::Enemy2 };
             team = Team::Enemy;

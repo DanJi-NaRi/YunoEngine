@@ -1,5 +1,5 @@
 #pragma once
-enum class PieceType : uint8_t
+enum class GamePiece : uint8_t
 {
     Ally1,
     Ally2,
@@ -9,7 +9,7 @@ enum class PieceType : uint8_t
 
     MAX,
 };
-inline PieceType& operator++(PieceType& p) { p = static_cast<PieceType>(static_cast<uint8_t>(p) + 1);  return p; }
+inline GamePiece& operator++(GamePiece& p) { p = static_cast<GamePiece>(static_cast<uint8_t>(p) + 1);  return p; }
 
 enum class Team : uint8_t
 {
@@ -48,7 +48,7 @@ struct PieceCmd
     {
         struct
         {
-            PieceType whichPiece;
+            GamePiece whichPiece;
             int cx, cz;
         } mv_s;  // Move
 

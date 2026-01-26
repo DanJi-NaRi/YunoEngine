@@ -54,8 +54,9 @@ bool GameApp::OnInit()
 
    SceneTransitionOptions opt{};
    opt.immediate = true;
-   sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+   //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
+   sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
 
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
@@ -215,9 +216,9 @@ void GameApp::OnUpdate(float dt)
 
     if (acc >= 1.0f)
     {
-        std::cout << "[GameApp] dt = " << dt << "\n";
+        //std::cout << "[GameApp] dt = " << dt << "\n";
         const float fps = static_cast<float>(frameCount) / acc;
-        std::cout << "[GameApp] FPS = " << fps << "\n";
+        //std::cout << "[GameApp] FPS = " << fps << "\n";
         acc = 0.0f;
         frameCount = 0;
     }
