@@ -45,6 +45,7 @@ public:
     virtual void Submit(const RenderItem& item) = 0;
 
     // BeginFrame~EndFrame 사이에서 호출되어 실제 Draw 수행
+    virtual void DrawShadowMap() = 0;
     virtual void Flush() = 0;
 
 #ifdef _DEBUG

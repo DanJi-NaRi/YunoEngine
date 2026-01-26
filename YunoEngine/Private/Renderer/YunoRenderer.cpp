@@ -89,6 +89,9 @@ bool YunoRenderer::Initialize(IWindow* window)
     if (!CreatePPMaterial()) return false;
     SetPP_Pass();
 
+    if (!CreateShadowMap(4096, 4096)) return false;
+    InitShadowPass();
+
     // 디버그 리소스 생성
     CreateDebugGridResources();
 
@@ -107,6 +110,19 @@ bool YunoRenderer::CreateShaders()
     if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
 
     if (!CreatePPShader()) return false;
+
+    //ps 안씀
+    if (!LoadShader(ShaderId::ShadowPass, "../Assets/Shaders/ShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
+
+    //픽셀셰이더 필요없을 때 쓰는 셰이더(섀도우맵)
+    YunoShader empty;
+    empty.CreateEmptyShader();
+    ShaderProgram sp{};
+    sp.vs = std::make_unique<YunoShader>(empty);
+    sp.ps = std::make_unique<YunoShader>(empty);
+    sp.vsBytecode = nullptr;
+    m_programs[ShaderId::None] = std::move(sp);
+
     return true;
 }
 
@@ -371,6 +387,203 @@ bool YunoRenderer::CheckMSAA()
         m_msaaQuality = 0;
     }
     return true;
+}
+
+bool YunoRenderer::CreateShadowMap(uint32_t width, uint32_t height)
+{
+    m_ShadowMap.width = width;
+    m_ShadowMap.height = height;
+    m_ShadowMap.texFormat = DXGI_FORMAT_R32_TYPELESS;
+    m_ShadowMap.dsvFormat = DXGI_FORMAT_D32_FLOAT;
+    m_ShadowMap.srvFormat = DXGI_FORMAT_R32_FLOAT;
+
+    m_shadowInfo.shadowMapSize = width;
+    m_shadowBias = 0.00005f;
+
+    m_cbShadow.Create(m_device.Get());
+
+    D3D11_TEXTURE2D_DESC td{};
+    td.Width = width;
+    td.Height = height;
+    td.MipLevels = 1;
+    td.ArraySize = 1;
+    td.Format = m_ShadowMap.texFormat;
+    td.SampleDesc.Count = 1;
+    td.SampleDesc.Quality = 0;
+    td.Usage = D3D11_USAGE_DEFAULT;
+    td.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+    td.CPUAccessFlags = 0;
+    td.MiscFlags = 0;
+
+    if (FAILED(m_device->CreateTexture2D(&td, nullptr, m_ShadowMap.dstex.GetAddressOf())))
+        return false;
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC dsvd{};
+    dsvd.Format = m_ShadowMap.dsvFormat;
+    dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    dsvd.Texture2D.MipSlice = 0;
+
+    if (FAILED(m_device->CreateDepthStencilView(m_ShadowMap.dstex.Get(), &dsvd, m_ShadowMap.dsv.GetAddressOf())))
+        return false;
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Texture2D.MipLevels = 1;
+
+    if (FAILED(m_device->CreateShaderResourceView(m_ShadowMap.dstex.Get(), &srvDesc, m_ShadowMap.dssrv.GetAddressOf())))
+        return false;
+
+    td.Width = width;	
+    td.Height = height;
+    td.MipLevels = 1;
+    td.ArraySize = 1;
+    td.Format = DXGI_FORMAT_R32_FLOAT;					
+    td.SampleDesc.Count = 1;			
+    td.Usage = D3D11_USAGE_DEFAULT;
+    td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;	
+    td.CPUAccessFlags = 0;
+    td.MiscFlags = 0;
+
+    if (FAILED(m_device->CreateTexture2D(&td, nullptr, m_ShadowMap.rttex.GetAddressOf())))
+        return false;
+
+    D3D11_RENDER_TARGET_VIEW_DESC rd = {};
+    rd.Format = DXGI_FORMAT_R32_FLOAT;									
+    rd.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;		
+    rd.Texture2D.MipSlice = 0;					
+
+    if (FAILED(m_device->CreateRenderTargetView(m_ShadowMap.rttex.Get(), &rd, m_ShadowMap.rtv.GetAddressOf())))
+        return false;
+
+    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    srvDesc.Texture2D.MipLevels = 1;
+
+    if (FAILED(m_device->CreateShaderResourceView(m_ShadowMap.rttex.Get(), &srvDesc, m_ShadowMap.rtsrv.GetAddressOf())))
+        return false;
+
+    m_shadowCamera.position = XMFLOAT3(0, 20, 0);
+    m_shadowCamera.target = XMFLOAT3(0, 0, -0.01f);
+    m_shadowCamera.up = XMFLOAT3(0, 1, 0);
+
+    return true;
+}
+
+void YunoRenderer::InitShadowPass()
+{
+    m_ShadowPassKey.vs = ShaderId::ShadowPass;
+    m_ShadowPassKey.ps = ShaderId::ShadowPass;
+    m_ShadowPassKey.vertexFlags = VSF_Pos;
+    m_ShadowPassKey.blend = BlendPreset::Opaque;
+    m_ShadowPassKey.raster = RasterPreset::CullFront;
+    m_ShadowPassKey.depth = DepthPreset::ReadWrite;
+
+    m_ShadowPass = GetOrCreatePass(m_ShadowPassKey);
+}
+
+void YunoRenderer::DrawShadowMap()
+{
+    ID3D11RenderTargetView* curRTV;
+    ID3D11DepthStencilView* curDSV;
+    m_context->OMGetRenderTargets(1, &curRTV, &curDSV);
+
+    //ViewProj Bind
+    XMMATRIX LightView = m_shadowCamera.View();
+    XMMATRIX LightProj = m_shadowCamera.ProjShadowOrtho(100, 100);
+
+    XMStoreFloat4x4(&m_shadowInfo.lightViewProj, XMMatrixTranspose(LightView * LightProj));
+    m_shadowInfo.shadowBias = m_shadowBias;
+
+    m_cbShadow.Update(m_context.Get(), m_shadowInfo);
+
+    UnBindAllSRV();
+        
+    m_context->ClearDepthStencilView(m_ShadowMap.dsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+    ID3D11RenderTargetView* RTV[1] = { m_ShadowMap.rtv.Get() };
+    m_context->OMSetRenderTargets(1, RTV, m_ShadowMap.dsv.Get());
+    SetViewPort(m_ShadowMap.width, m_ShadowMap.height);
+    
+    if (m_ShadowPass == 0 || m_ShadowPass > m_passes.size())
+        return;
+
+    // 렌더 패스 바인드
+    m_passes[m_ShadowPass - 1]->Bind(m_context.Get());
+
+    ID3D11Buffer* cb = m_cbShadow.Get();
+
+    m_context->VSSetConstantBuffers(4, 1, &cb);
+    //m_context->PSSetConstantBuffers(4, 1, &cb);
+
+    for (const RenderItem& item : m_renderQueue)
+    {
+        if (!item.castShadow)
+            continue;
+
+        if (item.meshHandle == 0 || item.meshHandle > m_meshes.size())
+            continue;
+
+        const YunoMaterial* material = nullptr;
+
+        if (item.materialHandle > 0 && item.materialHandle <= m_materials.size()) // 핸들 유효성 체크
+            material = &m_materials[item.materialHandle - 1];
+
+        if (!material)
+        {
+            if (m_defaultMaterial > 0 && m_defaultMaterial <= m_materials.size())
+                material = &m_materials[m_defaultMaterial - 1];
+        }
+
+        // 메쉬 바인드
+        const MeshResource& mesh = m_meshes[item.meshHandle - 1];
+        mesh.Bind(m_context.Get());
+
+        // 상수 버퍼 바인드
+        CBPerObject_Matrix cbPerObject_matrix{};
+
+        XMMATRIX W = XMLoadFloat4x4(&item.Constant.world);
+
+        XMMATRIX mAnim[MAX_BONE];
+        if (item.haveAnim)
+        {
+            size_t i = 0;
+            for (auto& animTM : item.Constant.boneAnim)
+            {
+                mAnim[i] = XMLoadFloat4x4(&animTM);
+                i++;
+            }
+        }
+
+        XMStoreFloat4x4(&cbPerObject_matrix.mWorld, XMMatrixTranspose(W));
+
+        if (item.haveAnim)
+        {
+            size_t i = 0;
+            for (auto& animTM : mAnim)
+            {
+                XMStoreFloat4x4(&cbPerObject_matrix.mBoneAnim[i], XMMatrixTranspose(animTM));
+                i++;
+            }
+        }
+
+        m_cbObject_Matrix.Update(m_context.Get(), cbPerObject_matrix);
+
+        ID3D11Buffer* cbPerObj_Matrix_Buffers[] = { m_cbObject_Matrix.Get() };
+        m_context->VSSetConstantBuffers(0, 1, cbPerObj_Matrix_Buffers);
+
+        // 드로우
+        if (mesh.ib && mesh.indexCount > 0)
+            m_context->DrawIndexed(mesh.indexCount, 0, 0);
+        else
+            m_context->Draw(mesh.vertexCount, 0);
+    }
+
+    m_context->OMSetRenderTargets(1, &curRTV, curDSV);
+    SetViewPort();
+    curRTV->Release();
+    curDSV->Release();
 }
 
 RenderTarget& YunoRenderer::CurPostRT()
@@ -677,13 +890,14 @@ void YunoRenderer::PostProcess()
 
     auto input = PostProcessScene();
     if(m_PPFlag & PostProcessFlag::Bloom)
-        input = PostProcessBloom(input);
+        //input = PostProcessBloom(input);
     PostProcessFinal(input);
 }
 
 ID3D11ShaderResourceView* YunoRenderer::PostProcessScene()
 {
     ID3D11ShaderResourceView* input = m_sceneRT.srv.Get();
+    //ID3D11ShaderResourceView* input = m_ShadowMap.dssrv.Get();
 
     for (auto& pp : m_ppChain)
     {
@@ -1230,6 +1444,7 @@ bool YunoRenderer::LoadShader(
         return false;
     if (!prog.ps->CreatePixelShader(m_device.Get(), psBlob.Get()))
         return false;
+    
 
     m_programs[id] = std::move(prog);
     return true;
@@ -1410,7 +1625,7 @@ bool YunoRenderer::CreateSamplerPresets()
 
     // 2) Clamp + Aniso
     {
-        const float border[4] = { 0,0,0,0 };
+        const float border[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
         m_samplers[(uint8_t)SampleMode::ClampAniso] = MakeAniso(D3D11_TEXTURE_ADDRESS_CLAMP, border);
         if (!m_samplers[(uint8_t)SampleMode::ClampAniso]) return false;
     }
@@ -1420,6 +1635,32 @@ bool YunoRenderer::CreateSamplerPresets()
         const float border[4] = { 0,0,0,0 };
         m_samplers[(uint8_t)SampleMode::Border0000Aniso] = MakeAniso(D3D11_TEXTURE_ADDRESS_BORDER, border);
         if (!m_samplers[(uint8_t)SampleMode::Border0000Aniso]) return false;
+    }
+
+    // 4) Border(0,0,0,0) + MIP_POINT (섀도우맵 전용)
+    {
+        D3D11_SAMPLER_DESC sd{};
+        sd.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+        sd.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+        sd.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+        sd.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+        sd.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+
+        sd.BorderColor[0] = 1.0f;
+        sd.BorderColor[1] = 1.0f;
+        sd.BorderColor[2] = 1.0f;
+        sd.BorderColor[3] = 1.0f;
+
+        sd.MinLOD = 0;
+        sd.MaxLOD = D3D11_FLOAT32_MAX;
+
+        Microsoft::WRL::ComPtr<ID3D11SamplerState> samp;
+        if (FAILED(m_device->CreateSamplerState(&sd, samp.GetAddressOf())))
+            return {};
+
+        m_samplers[(uint8_t)SampleMode::ShadowMap] = samp;
+        if (!m_samplers[(uint8_t)SampleMode::ShadowMap]) return false;
     }
 
     return true;
@@ -1788,7 +2029,7 @@ RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
     if (it != m_passCache.end())
         return it->second; // 패스가 이미 있으면 그거 주고 없으면 새로만듬
 
-    if (key.vs != key.ps)
+    if (key.vs != key.ps && key.ps != ShaderId::None)
         return 0;
 
     auto itProg = m_programs.find(key.vs);
@@ -1812,7 +2053,12 @@ RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
     }
     
     pd.vs = shader.vs.get();                                            // 키 기반 완료
-    pd.ps = shader.ps.get();                                            // 키 기반 완료
+    if (key.ps != ShaderId::None)
+        pd.ps = shader.ps.get();                                            // 키 기반 완료
+    else
+    {
+        pd.ps = m_programs[ShaderId::None].ps.get();
+    }
     pd.vsBytecode = shader.vsBytecode.Get();                            // 키 기반 완료
     pd.domain = key.domain;
     
@@ -2117,10 +2363,11 @@ void YunoRenderer::BindConstantBuffers_Light(const Frame_Data_Dir& dirData)
     cbLight_all.dirLit.intensity = dirData.intensity;
 
     m_cbLight.Update(m_context.Get(), cbLight_all);
+    m_cbShadow.Update(m_context.Get(), m_shadowInfo);
 
-    ID3D11Buffer* cbLight[] = { m_cbLight.Get() };
+    ID3D11Buffer* cbLight[] = { m_cbLight.Get(), m_cbShadow.Get()};
     m_context->VSSetConstantBuffers(3, 1, cbLight);
-    m_context->PSSetConstantBuffers(3, 1, cbLight);
+    m_context->PSSetConstantBuffers(3, 2, cbLight);
 }
 
 
@@ -2132,8 +2379,8 @@ void YunoRenderer::BindSamplers()
         m_samplers[(uint8_t)SampleMode::WrapAniso].Get(),
         m_samplers[(uint8_t)SampleMode::ClampAniso].Get(),
         m_samplers[(uint8_t)SampleMode::Border0000Aniso].Get(),
+        m_samplers[(uint8_t)SampleMode::ShadowMap].Get(),
     };
-
 
     m_context->PSSetSamplers(0, (uint8_t)SampleMode::Count, samps);
 }
@@ -2152,7 +2399,7 @@ void YunoRenderer::BindTextures(const YunoMaterial& material)
     TextureHandle hRoughness = (material.roughness != 0) ? material.roughness : m_texBlack;
     TextureHandle hAO = (material.ao != 0) ? material.ao : m_texBlack;
 
-    ID3D11ShaderResourceView* srvs[8] =
+    ID3D11ShaderResourceView* srvs[9] =
     {
         ResolveSRV(hAlbedo),
         ResolveSRV(hNormal),
@@ -2161,11 +2408,12 @@ void YunoRenderer::BindTextures(const YunoMaterial& material)
         ResolveSRV(hRoughness),
         ResolveSRV(hAO),
         ResolveSRV(hEmissive),
-        ResolveSRV(hOpacity)
+        ResolveSRV(hOpacity),
+        m_ShadowMap.dssrv.Get()
     };
 
     // 혹시라도 ResolveSRV가 nullptr이면 안전하게 nullptr 바인딩(디버그에서 보이게)
-    m_context->PSSetShaderResources(0, 8, srvs);
+    m_context->PSSetShaderResources(0, 9, srvs);
 }
 
 // ------------------------------------------------------------

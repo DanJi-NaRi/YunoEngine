@@ -17,6 +17,7 @@ enum class SampleMode : uint8_t
     WrapAniso,           // 슬롯 1
     ClampAniso,          // 슬롯 2
     Border0000Aniso,     // 슬롯 3
+    ShadowMap,     // 슬롯 4
     Count
 };
 
@@ -56,7 +57,7 @@ struct VertexStreams
     const VERTEX_BoneIndex* boneIdx = nullptr;
 };
 
-#define MAX_BONE 256
+#define MAX_BONE 64
 struct Update_Data
 {
     DirectX::XMFLOAT4X4 world{};
@@ -89,6 +90,8 @@ struct RenderItem
     Update_Data Constant;
     bool isEmissive = false;
     bool haveAnim = false;
+    bool castShadow = true; //그림자맵에 그릴 오브젝트
+    bool receiveShadow = true; //그림자가 적용될 오브젝트(파티클, 반투명 오브젝트 제외용)
 };
 
 // -------------------- PassKey --------------------
@@ -132,6 +135,9 @@ enum class ShaderId : uint8_t
     Skybox,
     UIBase,
 
+    //Shadow
+    ShadowPass,
+
     //PostProcess
     PP_Default,
     PP_Threshold,
@@ -140,6 +146,8 @@ enum class ShaderId : uint8_t
     PP_BlurV, 
     PP_Combine, 
     PP_ToneMap, 
+
+    None,
 
     Count
 };

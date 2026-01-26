@@ -361,6 +361,7 @@ void YunoSceneManager::SubmitAndRender(IRenderer* renderer)
         if (!EnsureCreated(e)) continue;
         e.scene->SubmitObj();
 
+        renderer->DrawShadowMap();
         renderer->Flush();
     }
 

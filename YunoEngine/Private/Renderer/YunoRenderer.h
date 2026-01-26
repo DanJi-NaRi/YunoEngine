@@ -38,6 +38,23 @@ struct PostProcessPass
     bool enabled = true;
 };
 
+struct ShadowMap
+{
+    uint32_t width;
+    uint32_t height;
+
+    DXGI_FORMAT texFormat = DXGI_FORMAT_R32_TYPELESS;
+    DXGI_FORMAT dsvFormat = DXGI_FORMAT_D32_FLOAT;
+    DXGI_FORMAT srvFormat = DXGI_FORMAT_R32_FLOAT;
+
+    ComPtr<ID3D11Texture2D> dstex;
+    ComPtr<ID3D11Texture2D> rttex;
+    ComPtr<ID3D11DepthStencilView> dsv;
+    ComPtr<ID3D11ShaderResourceView> dssrv;
+    ComPtr<ID3D11ShaderResourceView> rtsrv;
+    ComPtr<ID3D11RenderTargetView> rtv;
+};
+
 
 // 전방선언
 class IWindow;
@@ -232,6 +249,22 @@ private:
     bool CreateMSAADepthStencil(uint32_t width, uint32_t height);
     bool CheckMSAA();
 
+    //ShadowMap
+private:
+    ShadowMap m_ShadowMap;
+    YunoConstantBuffer<CBShadow> m_cbShadow;
+    CBShadow m_shadowInfo;
+    YunoCamera m_shadowCamera;
+    float m_shadowBias = 0.0001f;
+
+    PassKey m_ShadowPassKey;
+    RenderPassHandle m_ShadowPass;
+
+    bool CreateShadowMap(uint32_t width, uint32_t height);
+    void InitShadowPass();
+
+    void DrawShadowMap();
+
     //PostProcessing
 private:
     RenderTarget m_sceneRT;
@@ -268,11 +301,6 @@ private:
     void BindBloomBlurV(ID3D11ShaderResourceView* input);
     void BindBloomCombine(ID3D11ShaderResourceView* input);
 
-public:
-    void SetThreshold(float v) { m_Threshold = v; }
-    void SetExposure(float v) { m_Exposure = v; }
-
-private:
     MaterialHandle m_ppThresholdMat = 0;
     MaterialHandle m_ppDownSampleMat = 0;
     MaterialHandle m_ppBlurHMat = 0; //Horizontal
@@ -291,6 +319,10 @@ private:
     MaterialHandle m_ppDefaultMat = 0;
     YunoConstantBuffer<CBPostProcess> m_ppCB;
     YunoConstantBuffer<CBBloom> m_ppCBloom;
+
+public:
+    void SetThreshold(float v) { m_Threshold = v; }
+    void SetExposure(float v) { m_Exposure = v; }
     
     // 나중에 메쉬 매니저 이런걸로 뺼듯
 private:

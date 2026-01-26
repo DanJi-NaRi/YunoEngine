@@ -31,21 +31,23 @@ bool TitleScene::OnCreateScene()
     
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
+
     m_gridSystem = std::make_unique<PlayGridSystem>(m_objectManager.get());
     m_gridSystem->Init(5, 7, 2, 2);
     m_gridSystem->CreateObject(0, 1, 0);
 
+
     
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
-    //m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/background.fbx");
-
+    auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/background.fbx");
+    map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
 
     auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx");
     gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
-    gun->SetEmissiveColor(0, XMFLOAT4(1, 0, 0, 1));
-    m_objectManager->CreateObjectFromFile<Building>(L"Drill", XMFLOAT3(4, 2, 0), L"../Assets/fbx/Drill/Drill.fbx");
-    m_objectManager->CreateObjectFromFile<Building>(L"Axe", XMFLOAT3(-2, 2, 0), L"../Assets/fbx/Ax/Ax.fbx");
+    //gun->SetEmissiveColor(0, XMFLOAT4(1, 0, 0, 1));
+    //m_objectManager->CreateObjectFromFile<Building>(L"Drill", XMFLOAT3(4, 2, 0), L"../Assets/fbx/Drill/Drill.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Axe", XMFLOAT3(-2, 2, 0), L"../Assets/fbx/Ax/Ax.fbx");
     //auto capo = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/Capoeira2.fbx");
     //capo->AddAnimationClip("capoeira", L"../Assets/fbx/Human/Capoeira2.fbx");
    // capo->AddAnimationClip("dying", L"../Assets/fbx/Human/Dying2.fbx");
@@ -112,7 +114,7 @@ void TitleScene::Update(float dt)
     }
 
     m_input->Dispatch();
-    m_gridSystem->Update(dt);
+    //m_gridSystem->Update(dt);
 }
 
 void TitleScene::SubmitObj()

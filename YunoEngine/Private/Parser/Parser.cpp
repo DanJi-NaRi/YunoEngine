@@ -453,9 +453,11 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         vs.flags = VSF_Pos;
         md.passKey.vertexFlags = VSF_Pos;
 
+        VERTEX_Nrm vNrm;
+        bool hasNormal = false;
         if (aiMesh->HasNormals())
         {
-            VERTEX_Nrm vNrm;
+            hasNormal = true;
             vNrm.nx = aiMesh->mNormals[i].x;
             vNrm.ny = aiMesh->mNormals[i].y;
             vNrm.nz = aiMesh->mNormals[i].z;
@@ -496,6 +498,17 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             vtxB.by = aiMesh->mBitangents[i].y;
             vtxB.bz = aiMesh->mBitangents[i].z;
 
+            if (hasNormal)
+            {
+                XMVECTOR T = XMVectorSet(vtxT.tx, vtxT.ty, vtxT.tz, 0);
+                XMVECTOR B = XMVectorSet(vtxB.bx, vtxB.by, vtxB.bz, 0);
+                XMVECTOR N = XMVectorSet(vNrm.nx, vNrm.ny, vNrm.nz, 0);
+
+                vtxT.tw = (XMVectorGetX
+                                    (XMVector3Dot
+                                        (XMVector3Cross(T, B), N)) < 0.0f) ? -1.0f : 1.0f; //handedness = sign( dot( cross(T, B), N ) )
+            }
+            
             vtxTan.push_back(vtxT);
             vtxBi.push_back(vtxB);
 

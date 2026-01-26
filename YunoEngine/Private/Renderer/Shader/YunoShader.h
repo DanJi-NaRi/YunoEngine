@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 
 
@@ -11,6 +11,8 @@ class YunoShader
 public:
     bool CreateVertexShader(ID3D11Device* device, ID3DBlob* bytecode);
     bool CreatePixelShader(ID3D11Device* device, ID3DBlob* bytecode);
+
+    void CreateEmptyShader();
 
     ID3D11VertexShader* VS() const { return m_vs.Get(); }
     ID3D11PixelShader* PS() const { return m_ps.Get(); }

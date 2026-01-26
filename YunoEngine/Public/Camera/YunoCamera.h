@@ -46,6 +46,13 @@ struct YunoCamera
         //return XMMatrixOrthographicOffCenterLH(0, width, height, 0.0f, 1.0f, 100.0f);
     }
 
+    XMMATRIX ProjShadowOrtho(float width, float height) const
+    {
+        using namespace DirectX;
+        return XMMatrixOrthographicLH( width, height, nearZ, farZ);
+        //return XMMatrixOrthographicOffCenterLH(0, width, height, 0.0f, 1.0f, 100.0f);
+    }
+
     void SetOrthoFlag(bool useOrtho) { this->useOrtho = useOrtho; } // 투영 활용 플래그 Set 함수.
 
     XMFLOAT3 Position() const { return position; }

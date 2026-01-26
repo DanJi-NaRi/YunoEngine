@@ -113,6 +113,10 @@
     <Filter Include="Shaders\postprocess">
       <UniqueIdentifier>{0adb9232-5754-4a49-9882-245db7380a41}</UniqueIdentifier>
     </Filter>
+
+    <Filter Include="Shaders\shadowMap">
+      <UniqueIdentifier>{98fa6131-e9a5-4191-80a5-dcf524f84082}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Public\UI\UISystem">
       <UniqueIdentifier>{f11d4759-85dc-49af-9062-4d42aabda16a}</UniqueIdentifier>
     </Filter>
@@ -441,6 +445,9 @@
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\PP_ToneMap.hlsl">
       <Filter>Shaders\postprocess</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\ShadowMapWrite.hlsl">
+      <Filter>Shaders\shadowMap</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
