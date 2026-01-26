@@ -24,4 +24,22 @@ const PieceCmd PieceQ::Pop()
     return res;
 }
 
+PieceCmd PieceQ::Move_S(PieceType pieceType, int cx, int cz, bool isEnd)
+{
+    PieceCmd cmd;
+    cmd.cmdType = CommandType::Move;
+    cmd.isEnd = isEnd;
+    cmd.mv_s = { pieceType, cx, cz };
+    return cmd;
+}
+
+PieceCmd PieceQ::Move_P(Direction dir, float wx, float wy, float wz, float speed, bool isEnd)
+{
+    PieceCmd cmd;
+    cmd.cmdType = CommandType::Move;
+    cmd.isEnd = isEnd;
+    cmd.mv_p = { wx, wy, wz, dir, speed };
+    return cmd;
+}
+
 std::queue<PieceCmd> PieceQ::pieceQue;
