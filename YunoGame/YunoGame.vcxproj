@@ -192,6 +192,10 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Game\UI\ButtonTemplate.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Game\UI\CardSlot.cpp" />
     <ClCompile Include="Game\Object\Test_Unit.cpp" />
     <ClCompile Include="System\GameManager.cpp" />
@@ -234,6 +238,10 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\UI\WeaponButton.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\UI\ButtonTemplate.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Game\UI\CardSlot.h" />
     <ClInclude Include="Game\Object\Test_Unit.h" />
     <ClInclude Include="System\GameManager.h" />

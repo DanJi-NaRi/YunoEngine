@@ -91,6 +91,9 @@
     <Filter Include="Scenes\99.Test">
       <UniqueIdentifier>{2c6d8a18-2ee4-4ef6-b526-3a3819858a75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\UI\Button\ButtonTemplate">
+      <UniqueIdentifier>{b0617999-7a4b-4fcf-9ae3-a04170141035}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -171,6 +174,9 @@
     </ClCompile>
     <ClCompile Include="Game\UI\Card.cpp" />
     <ClCompile Include="Game\UI\CardTable.cpp" />
+    <ClCompile Include="Game\UI\ButtonTemplate.cpp">
+      <Filter>Game\UI\Button\ButtonTemplate</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -269,5 +275,8 @@
     <ClInclude Include="Game\Object\CardData.h" />
     <ClInclude Include="Game\UI\Image.h" />
     <ClInclude Include="Game\UI\Text.h" />
+    <ClInclude Include="Game\UI\ButtonTemplate.h">
+      <Filter>Game\UI\Button\ButtonTemplate</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

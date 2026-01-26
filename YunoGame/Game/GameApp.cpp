@@ -113,19 +113,6 @@ void GameApp::OnUpdate(float dt)
     if (input->IsKeyDown('P'))
         window->SetClientSize(3440, 1440);
 
-    // 네트워크
-    //if (m_net && m_net->IsConnected())
-    //{
-    //    m_net->Pump();
-    //
-    //    m_netPingAcc += dt;
-    //    if (m_netPingAcc >= 1.0f)
-    //    {
-    //        m_netPingAcc = 0.0f;
-    //        m_net->SendLine("C2S");
-    //    }
-    //}
-
 
     if (input && sm)
     {
@@ -226,14 +213,14 @@ void GameApp::OnUpdate(float dt)
     // audio-> StateCheck();
 
 
-    //if (acc >= 1.0f)
-    //{
-    //    std::cout << "[GameApp] dt = " << dt << "\n";
-    //    const float fps = static_cast<float>(frameCount) / acc;
-    //    std::cout << "[GameApp] FPS = " << fps << "\n";
-    //    acc = 0.0f;
-    //    frameCount = 0;
-    //}
+    if (acc >= 1.0f)
+    {
+        std::cout << "[GameApp] dt = " << dt << "\n";
+        const float fps = static_cast<float>(frameCount) / acc;
+        std::cout << "[GameApp] FPS = " << fps << "\n";
+        acc = 0.0f;
+        frameCount = 0;
+    }
 
 
     am->Update(dt);
