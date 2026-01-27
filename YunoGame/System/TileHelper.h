@@ -23,12 +23,11 @@ enum class TileWho : uint8_t        // PieceHelper의 PieceType과 동일 구조
 struct TileOccupy
 {
     TileOccuType occuType;
-    TileWho mainWho;
-    TileWho subWho;
+    TileWho who;
     TileOccupy() 
-        : occuType(TileOccuType::Unoccupied), mainWho(TileWho::None), subWho(TileWho::None) {}
-    TileOccupy(TileOccuType ot, TileWho w1, TileWho w2 = TileWho::None)
-        : occuType(ot), mainWho(w1), subWho(w2) {}
+        : occuType(TileOccuType::Unoccupied), who(TileWho::None) {}
+    TileOccupy(TileOccuType ot, TileWho w)
+        : occuType(ot), who(w) {}
 };
 
 enum class TileEvent : uint8_t

@@ -188,6 +188,16 @@ bool Piece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool Piece::Update(float dTime)
 {
+    if (isDead && m_deadTime != -1)
+    {
+        m_deadTime += dTime;
+        if (m_deadTime >= m_deathDelay)
+        {
+            PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead,m_who));
+            m_deadTime = -1;
+        }  
+        return true;
+    }
 
     if (isRotating)
     {
@@ -216,6 +226,12 @@ bool Piece::Update(float dTime)
             XMStoreFloat3(&m_vPos, m_Target);
             isMoving = false;
             m_AnimTime = 0.f;
+            if (m_AnimDone)
+            {
+                PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Turn_Over, m_who));
+                ClearQ();
+                m_AnimDone = false;
+            }
         }
         else
         {
@@ -225,6 +241,7 @@ bool Piece::Update(float dTime)
 
     }
 
+    // 애니메이션이 끝나면 하나씩 빼가게 하기
     while (!m_Q.empty() && !isMoving && !isRotating)
     {
         auto tp = m_Q.front();
@@ -236,9 +253,13 @@ bool Piece::Update(float dTime)
             auto [wx, wy, wz, dir, speed] = tp.mv_p;
             SetTarget({ wx, wy, wz }, speed);
             SetDir(dir);
+            m_AnimDone = tp.isDone;        // 슬롯 턴 종료 메세지 보내라
             break;
         }
         case CommandType::Attack:
+            break;
+        case CommandType::Dead:
+            SetDead();
             break;
         }  
     }
@@ -314,9 +335,14 @@ bool Piece::CreateMaterial()
     return true;
 }
 
-void Piece::InsertQ(PieceCmd cmd)
+void Piece::InsertQ(PGridCmd cmd)
 {
     m_Q.push(cmd);
+}
+
+void Piece::SetWho(GamePiece type)
+{
+    m_who = type;
 }
 
 void Piece::SetDir(Direction dir, bool isAnim)
@@ -355,7 +381,20 @@ void Piece::SetTarget(XMFLOAT3 targetPos, float speed)
     isMoving = true;
 }
 
+void Piece::SetDead()
+{
+    isDead = true;
+}
+
 void Piece::SendDone()
 {
     
+}
+
+void Piece::ClearQ()
+{
+    while (!m_Q.empty())
+    {
+        m_Q.pop();
+    }
 }

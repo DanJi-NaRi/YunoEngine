@@ -173,6 +173,7 @@
     <ClCompile Include="Game\UI\ButtonTemplate.cpp">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClCompile>
+    <ClCompile Include="GridBox.cpp" />
     <ClCompile Include="Game\UI\CardTable.cpp">
       <Filter>Game\UI\Image</Filter>
     </ClCompile>
@@ -289,6 +290,7 @@
     <ClInclude Include="Game\UI\ButtonTemplate.h">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClInclude>
+    <ClInclude Include="GridBox.h" />
     <ClInclude Include="Game\UI\CardTable.h">
       <Filter>Game\UI\Image</Filter>
     </ClInclude>
