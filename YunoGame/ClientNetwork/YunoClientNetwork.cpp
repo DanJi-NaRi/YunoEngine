@@ -168,7 +168,7 @@ namespace yuno::game
 
                 std::cout << "Slot Idx : " << static_cast<int>(pkt.slotIndex) << ", Player Count : " << static_cast<int>(pkt.playerCount) << std::endl;
 
-                GameManager::Get().SetSlotIdx(pkt.slotIndex);
+                GameManager::Get().SetSlotIdx(pkt.slotIndex-1);
                 GameManager::Get().SetSceneState(CurrentSceneState::GameStart);
             });// EnterOK Packet End
 
@@ -246,6 +246,13 @@ namespace yuno::game
                 for (const auto& u : pkt.units)
                 {
                     gm.SetWeaponData(u.PID, u.slotID, u.WeaponID, u.hp, u.stamina, u.SpawnTileId);
+                }
+
+                auto wVector = gm.GetWeaponData();
+
+                for (const auto& data : wVector) 
+                {
+                    std::cout << "Weapon data : " << data.pId << " ," << data.slotId << " ," << data.weaponId << " ," << data.hp << " ," << data.stamina << " ," << data.currentTile << std::endl;
                 }
 
             });// RoundStart Packet End

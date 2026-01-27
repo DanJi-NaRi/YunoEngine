@@ -164,7 +164,7 @@ namespace yuno::server
                 else                                            // 빈 자리 존재
                 {
                     yuno::net::packets::S2C_EnterOK ok{};
-                    ok.slotIndex = static_cast<std::uint8_t>(slotIdx);
+                    ok.slotIndex = static_cast<std::uint8_t>(slotIdx+1);
                     ok.playerCount = m_match.GetOccupiedCount();
 
                     auto bytes = yuno::net::PacketBuilder::Build(
@@ -295,9 +295,51 @@ namespace yuno::server
 
                 m_server.Broadcast(std::move(bytes));
 
-                // 무기 확정 후 준비 취소 못하니까  여기서 초기화 패킷도 같이 ㄱㄱ
-                yuno::net::packets::S2C_RoundStart rs{};
+                std::cout <<"0slot user Env id : " << m_match.Slots()[0].userId << "1slot user Env id : "<< m_match.Slots()[1].userId << std::endl;
 
+                // 무기 확정 후 준비 취소 못하니까  여기서 초기화 패킷도 같이 ㄱㄱ
+                // 일단 체력, 스테미너는 기본값인데 추후 무기의 hp,스태미너 받아와서 넣기 ㄱㄱ
+                yuno::net::packets::S2C_RoundStart rs{};
+                {
+                    // slot0
+                    rs.units[0].PID = 1;
+                    rs.units[0].slotID = 1;
+                    rs.units[0].WeaponID = static_cast<std::uint8_t>(s[0].unitId1);
+                    rs.units[0].hp = 100;          
+                    rs.units[0].stamina = 100;     
+                    rs.units[0].SpawnTileId = 9;  
+
+                    rs.units[1].PID = 1;
+                    rs.units[1].slotID = 2;
+                    rs.units[1].WeaponID = static_cast<std::uint8_t>(s[0].unitId2);
+                    rs.units[1].hp = 100;
+                    rs.units[1].stamina = 100;
+                    rs.units[1].SpawnTileId = 21;
+
+                    // slot1
+                    rs.units[2].PID = 2;
+                    rs.units[2].slotID = 1;
+                    rs.units[2].WeaponID = static_cast<std::uint8_t>(s[1].unitId1);
+                    rs.units[2].hp = 100;
+                    rs.units[2].stamina = 100;
+                    rs.units[2].SpawnTileId = 15;
+
+                    rs.units[3].PID = 2;
+                    rs.units[3].slotID = 2;
+                    rs.units[3].WeaponID = static_cast<std::uint8_t>(s[1].unitId2);
+                    rs.units[3].hp = 100;
+                    rs.units[3].stamina = 100;
+                    rs.units[3].SpawnTileId = 27;
+                }
+
+                auto rsBytes = yuno::net::PacketBuilder::Build(
+                    yuno::net::PacketType::S2C_RoundStart,
+                    [&](yuno::net::ByteWriter& w)
+                    {
+                        rs.Serialize(w);
+                    });
+
+                m_server.Broadcast(std::move(rsBytes));
             }
         );// Submit Weapon Packet End
 
