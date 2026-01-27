@@ -29,8 +29,8 @@ public:
 
     void SendPacket(std::vector<std::uint8_t>&& bytes);
 
-    void SetSlotIdx(int idx) { m_mySlot = idx; };
-    int GetSlotiIdx() { return m_mySlot; };
+    void SetSlotIdx(int idx) { m_PID = idx; };
+    int GetSlotiIdx() { return m_PID; };
 
 
     void SetMyPick(int index, PieceType type);
@@ -39,6 +39,8 @@ public:
 
     bool ToggleReady();
     bool IsReady() const { return m_isReady; }
+
+    //void RoundInit(yuno::net::packets::S2C_Error data);
 
 private:
     static GameManager* s_instance;
@@ -50,7 +52,7 @@ private:
 
     PieceType m_myPick[2] = { PieceType::None, PieceType::None };
 
-    int m_mySlot = -1; // 0 또는 1  >> 0이면 왼쪽 1이면 오른쪽
+    int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽
 
     bool m_isReady = false;
 
@@ -63,4 +65,26 @@ private:
     int m_S2U2 = 0;
 
     yuno::game::YunoClientNetwork* m_clientNet = nullptr;
+
+
+    // 라운드 초기화 데이터
+private:
+    struct Wdata 
+    {
+        int pId = 0;
+        int slotId = 0;
+        int weaponId = 0;
+        int hp = 0;
+        int stamina = 0;
+        int currentTile = 0;
+    };
+    // m_weapons에 데이터 담는 함수 만들기
+    // m_weapons에 데이터 가져오는 함수 만들기
+    std::vector<Wdata> m_weapons;
+
+public:
+    void SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, int _stamina, int _currentTile);
+    std::vector<Wdata> GetWeaponData() {
+        return m_weapons;
+    }
 };

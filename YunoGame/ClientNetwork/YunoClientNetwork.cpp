@@ -14,6 +14,7 @@
 #include "S2C_Error.h"
 #include "S2C_ReadyState.h"
 #include "S2C_CountDown.h"
+#include "S2C_RoundStart.h"
 
 #include "C2S_SubmitWeapon.h"
 
@@ -231,13 +232,30 @@ namespace yuno::game
                     pkt.slot2_UnitId1, pkt.slot2_UnitId2
                 );
             });// CountDown Packet End
+        
+        // RoundStart Packet Start
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_RoundStart,
+            [this](const NetPeer& peer, const PacketHeader& header, const std::uint8_t* body, std::uint32_t bodyLen)
+            {
+                ByteReader r(body, bodyLen);
+                const auto pkt = yuno::net::packets::S2C_RoundStart::Deserialize(r);
 
+                GameManager& gm = GameManager::Get();
+
+                for (const auto& u : pkt.units)
+                {
+                    gm.SetWeaponData(u.PID, u.slotID, u.WeaponID, u.hp, u.stamina, u.SpawnTileId);
+                }
+
+            });// RoundStart Packet End
+
+        // Error Packet Start
         Dispatcher().RegisterRaw(
             PacketType::S2C_Error,
             [this](const NetPeer& /*peer*/,
                 const PacketHeader& /*header*/,
-                const std::uint8_t* body,
-                std::uint32_t bodyLen)
+                const std::uint8_t* body, std::uint32_t bodyLen)
             {
                 if (body == nullptr || bodyLen < 4)
                 {
@@ -274,9 +292,11 @@ namespace yuno::game
                     return;
                 }
 
-            }
-        );
-    }
+            } );// Error Packet End
+    
+
+
+}
 
 
 }

@@ -13,6 +13,20 @@
 
 GameManager* GameManager::s_instance = nullptr;
 
+
+void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, int _stamina, int _currentTile)
+{
+    Wdata data;
+    data.pId = _pId;
+    data.slotId = _slotId;
+    data.weaponId = _weaponId;
+    data.hp = _hp;
+    data.stamina = _stamina;
+    data.currentTile = _currentTile;
+
+    m_weapons.push_back(data);
+}
+
 void GameManager::Initialize(GameManager* inst)
 {
     assert(inst);
@@ -153,3 +167,11 @@ bool GameManager::ToggleReady()
     m_isReady = !m_isReady;
     return m_isReady;
 }
+
+//void GameManager::RoundInit(yuno::net::packets::S2C_Error data)
+//{
+//    // 너가 패킷 사용해서 하고싶은거하면돼
+//    // 데이터 어디 담아두는 멤버 만들어서 저장만했다가
+//    // 그리드 GM.GetErrorPkt();
+//    //
+//}

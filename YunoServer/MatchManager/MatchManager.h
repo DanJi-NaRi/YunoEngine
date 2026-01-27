@@ -5,6 +5,8 @@
 
 namespace yuno::server
 {
+
+    // 무기 선택 페이즈때 필요한 데이터
     class MatchManager final
     {
     public:
@@ -20,7 +22,7 @@ namespace yuno::server
             std::uint32_t unitId2 = 0;
 
             std::uint32_t hp = 0;
-            std::uint32_t atk = 0;
+            std::uint32_t stamina = 0;
 
             bool ready = false;
 

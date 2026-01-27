@@ -13,6 +13,7 @@
 #include "S2C_Error.h"
 #include "S2C_CountDown.h"
 #include "S2C_ReadyState.h"
+#include "S2C_RoundStart.h"
 
 
 #include <iostream>
@@ -293,6 +294,9 @@ namespace yuno::server
                     });
 
                 m_server.Broadcast(std::move(bytes));
+
+                // 무기 확정 후 준비 취소 못하니까  여기서 초기화 패킷도 같이 ㄱㄱ
+                yuno::net::packets::S2C_RoundStart rs{};
 
             }
         );// Submit Weapon Packet End
