@@ -91,9 +91,14 @@ bool ReadyButton::LMBPressedEvent()
 
     m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
 
+
+    // 패킷 초기화
     yuno::net::packets::C2S_ReadySet req{};
+
+    // 패킷에 데이터 담기
     req.readyState = isReady ? 1 : 0;
 
+    // 패킷 바이너리화
     auto bytes = yuno::net::PacketBuilder::Build(
         yuno::net::PacketType::C2S_ReadySet,
         [&](yuno::net::ByteWriter& w)
@@ -101,6 +106,7 @@ bool ReadyButton::LMBPressedEvent()
             req.Serialize(w);
         });
 
+    // 패킷 보내기
     gm.SendPacket(std::move(bytes));
 
     return true;
