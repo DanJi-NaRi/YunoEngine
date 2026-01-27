@@ -25,6 +25,8 @@ public:
     void StartCountDown(int countTime,int S1U1,int S1U2,int S2U1,int S2U2);
     void Tick(float dt);
 
+    void RequestAtk() {};
+
     void SendPacket(std::vector<std::uint8_t>&& bytes);
 
     void SetSlotIdx(int idx) { m_mySlot = idx; };
