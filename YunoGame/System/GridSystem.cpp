@@ -41,6 +41,15 @@ int GridSystem::GetID(int cx, int cz)
     return id;
 }
 
+I2 GridSystem::GetCellByID(int tileID)
+{
+    int id = tileID - 1;
+    int cx = id % m_column;
+    int cz = id / m_column;
+\
+    return { cx, cz };
+}
+
 void GridSystem::CreateGridBox(float x, float y, float z)
 {
     m_gridBox = m_objectManager->CreateObject<GridBox>(L"Tile", XMFLOAT3(x, y, z));

@@ -17,7 +17,6 @@ public:
     void Update(float dt) override;
     
 private:
-
     void CreateTileAndPiece(float x, float y, float z);
 
 private:
@@ -36,6 +35,8 @@ private:
 
     Direction GetCollisionDir(float oldcx, float oldcz, float cx, float cz);
     F2 GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cz);
+
+    std::wstring GetWeaponFileName(int weaponID);   // 테스트용
 
 private:
     void ClearTileState();

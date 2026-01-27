@@ -4,6 +4,7 @@
 #include "PieceQueue.h"
 
 #include "ObjectManager.h"
+#include "GameManager.h"
 
 #include "GridBox.h"
 #include "GridLine.h"
@@ -121,52 +122,38 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         m_gridBox->Attach(pTile);
     }
 
+    // 기물 생성
+    const auto& wData = GameManager::Get().GetWeaponData();
     m_wy = y;
-    for (auto i = GamePiece::Ally1; i < GamePiece::MAX; ++i)
+    int cx = 0; int cz = 0;
+    TileOccupy to{};
+    Team team = Team::Undefined;
+    Direction dir;
+
+    for (const auto& w : wData)
     {
-        int cx = 0; int cz = 0;
-        TileOccupy to{};
-        Team team = Team::Undefined;
-        Direction dir;
+        team = (w.pId == GameManager::Get().GetSlotiIdx()) ? Team::Ally : Team::Enemy;
 
-        switch (i)
-        {
-
-        case GamePiece::Ally1:
-            cx = 1; cz = 1;
-            to = TileOccupy{ TileOccuType::Ally_Occupied, TileWho::Ally1 };
-            team = Team::Ally;
-            dir = Direction::Right;
-            break;
-        case GamePiece::Ally2:
-            cx = 1; cz = 3;
-            to = TileOccupy{ TileOccuType::Ally_Occupied, TileWho::Ally2 };
-            team = Team::Ally;
-            dir = Direction::Right;
-            break;
-        case GamePiece::Enemy1:
-            cx = 5; cz = 1;
-            to = TileOccupy{ TileOccuType::Enemy_Occupied, TileWho::Enemy1 };
-            team = Team::Enemy;
-            dir = Direction::Left;
-            break;
-        case GamePiece::Enemy2:
-            cx = 5; cz = 3;
-            to = TileOccupy{ TileOccuType::Enemy_Occupied, TileWho::Enemy2 };
-            team = Team::Enemy;
-            dir = Direction::Left;
-            break;
-        }
-        ChangeTileTO(cx, cz, to);
+        dir = (w.pId == 1) ? Direction::Right : Direction::Left;
+        auto cellPos = GetCellByID(w.currentTile);
+        cx = cellPos.x;     cz = cellPos.z;
 
         auto [px, pz] = CellToWorld(cx, cz);
-        auto pPiece = m_objectManager->CreateObject<Piece>(L"Piece", XMFLOAT3(px, m_wy, pz));
-        //auto pPiece = m_objectManager->CreateObjectFromFile<Piece>(L"LaserGun", XMFLOAT3(px, m_wy, pz), L"../Assets/fbx/LaserGun/LaserGun.fbx");
-        pPiece->SetWho((GamePiece)to.who);
-        pPiece->SetScale({ 0.5f, 0.5f, 0.5f });
-        pPiece->SetDir(dir, false);
-        m_pieces.emplace(i, PieceInfo{ cx, cz, pPiece->GetID(), dir, team });
 
+        std::wstring fileName = GetWeaponFileName(w.weaponId);
+        auto pPiece = m_objectManager->CreateObjectFromFile<Piece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
+        pPiece->SetWho((GamePiece)to.who);
+        pPiece->SetScale({ 0.8f, 0.8f, 0.8f });
+        pPiece->SetDir(dir, false);
+
+        // 기물 정보 등록
+        m_pieces.emplace((GamePiece)to.who, PieceInfo{ cx, cz, pPiece->GetID(), dir, team });
+        // 타일 상태 갱신
+        m_tiles[w.currentTile].to = (team == Team::Ally) ?
+            TileOccupy{ TileOccuType::Ally_Occupied, (w.slotId == 1) ? TileWho::Ally1 : TileWho::Ally2 } :
+            TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
+
+        // 빈 박스에 자식 객체로 등록. (for 정리)
         m_gridBox->Attach(pPiece);
     }
 }
@@ -378,6 +365,33 @@ F2 PlayGridSystem::GetCollisionPos(Direction dir, Direction pieceDir, int cx, in
         break;
     }
     return { newX, newZ };
+}
+
+std::wstring PlayGridSystem::GetWeaponFileName(int weaponID)
+{
+    std::wstring filaName;
+    switch (weaponID)
+    {
+    case 1:
+        filaName = L"../Assets/fbx/Ax/Ax.fbx";
+        break;
+    case 2:
+        filaName = L"../Assets/fbx/Drill/Drill.fbx";
+        break;
+    case 3:
+        filaName = L"../Assets/fbx/LaserGun/LaserGun.fbx";
+        break;
+    case 4:
+        filaName = L"../Assets/fbx/Ax/Ax.fbx";
+        break;
+    case 5:
+        filaName = L"../Assets/fbx/Drill/Drill.fbx";
+        break;
+    case 6:
+        filaName = L"../Assets/fbx/LaserGun/LaserGun.fbx";
+        break;
+    }
+    return filaName;
 }
 
 

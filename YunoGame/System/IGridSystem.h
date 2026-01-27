@@ -25,4 +25,5 @@ protected:
     virtual F2 CellToWorld(int cx, int cz) = 0;                                     // 셀 좌표 -> 월드 중심(x, z)
 
     virtual int GetID(int cx, int cz) = 0;                                          // 셀 좌표 -> 셀 아이디
+    virtual I2 GetCellByID(int tileID) = 0;                                         // 셀 아이디 -> 셀 좌표
 };

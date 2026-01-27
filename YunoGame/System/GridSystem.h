@@ -27,6 +27,7 @@ protected:
     F2 CellToWorld(int cx, int cz) override;
 
     int GetID(int cx, int cz) override;
+    I2 GetCellByID(int tileID) override;
 
 protected:
     int m_row, m_column;

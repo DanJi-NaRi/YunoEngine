@@ -315,7 +315,7 @@ namespace yuno::server
                     rs.units[1].WeaponID = static_cast<std::uint8_t>(s[0].unitId2);
                     rs.units[1].hp = 100;
                     rs.units[1].stamina = 100;
-                    rs.units[1].SpawnTileId = 21;
+                    rs.units[1].SpawnTileId = 23;
 
                     // slot1
                     rs.units[2].PID = 2;
@@ -323,7 +323,7 @@ namespace yuno::server
                     rs.units[2].WeaponID = static_cast<std::uint8_t>(s[1].unitId1);
                     rs.units[2].hp = 100;
                     rs.units[2].stamina = 100;
-                    rs.units[2].SpawnTileId = 15;
+                    rs.units[2].SpawnTileId = 13;
 
                     rs.units[3].PID = 2;
                     rs.units[3].slotID = 2;
