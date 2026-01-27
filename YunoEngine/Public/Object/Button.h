@@ -54,7 +54,6 @@ protected:
     ButtonState m_btnState;							//UI버튼별 상태 저장.
     uint32_t m_bindkey = 'A';
     std::unique_ptr<DragProvider> m_pDrag = nullptr; // 드래그 기능 공급자. 기본은 null이니 파생해서 초기화 때 채워줄 것.
-
 private:
     //bool CreateMesh() override;      // 메시 생성 (한 번만)
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)

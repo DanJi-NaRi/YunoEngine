@@ -7,7 +7,7 @@
 // 다음 오브젝트 매니저 여기까지 고정
 //#include "ObjectManager.h"
 #include "UIManager.h"
-
+#include "CursurSystem.h"
 // 여러 오브젝트들 ;; 
 //#include "Building.h"
 #include "UIWidgets.h"
@@ -20,6 +20,8 @@ bool WeaponSelectScene::OnCreateScene()
     //m_objectManager->CreateDirLight();
     // 직교투영 필요한 씬만 ㄱㄱ
     m_uiManager->SetOrthoFlag(true);
+    m_pCursurSys = m_uiManager->GetCursurStstem();
+
 
     // 선택창 UI
     {
@@ -68,6 +70,7 @@ void WeaponSelectScene::Update(float dt)
 {
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);
+    m_pCursurSys->UpdateCheckSnap();
 }
 
 void WeaponSelectScene::SubmitObj()

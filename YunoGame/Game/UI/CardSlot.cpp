@@ -35,3 +35,10 @@ void CardSlot::Clear()
     m_pCard = nullptr;
 }
 
+void CardSlot::SetDefaultSnapPoint()
+{
+    m_snapPoint.m_snapPos = XMFLOAT2(m_vPos.x, m_vPos.y);
+    //m_snapPoint.m_snapRange;
+    //m_snapPoint.m_correction = 0;
+}
+

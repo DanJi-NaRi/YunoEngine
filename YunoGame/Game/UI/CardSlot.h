@@ -20,7 +20,7 @@ public:
 
     Card* GetCard() { return m_pCard; }
     void SetCard(Card* card) { m_pCard; }
-    
+    void SetDefaultSnapPoint();
 
     bool IsSetCard() { return (m_pCard); }
     // [TODO] 머테리얼 할당정도??
@@ -28,6 +28,7 @@ public:
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/black.png"); };    // 머테리얼 생성 (한 번만)
 
 protected:
+    SnapPoint m_snapPoint;
     Card* m_pCard = nullptr; // 해당 슬롯에 등록된 카드
 };
 

@@ -72,6 +72,8 @@ public:
     const size_t GetWidgetCount() { return m_widgetCount; }
     const std::unordered_map<UINT, Widget*>& GetWidgetlist() { return m_widgetMap; }
 
+    CursurSystem* GetCursurStstem() { return &m_cursurSystem; }
+
     void UpdateButtonStates(); // 모든 위젯 업데이트
     bool ProcessButtonMouse(ButtonState state, uint32_t mouseButton = 0); // 커서 <-> 위젯 Rect 위치 비교
     bool ProcessButtonKey(ButtonState state, uint32_t key);

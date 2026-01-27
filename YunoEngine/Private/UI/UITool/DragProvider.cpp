@@ -1,7 +1,16 @@
 #include "pch.h"
-
+#
 #include "DragProvider.h"
 #include "IInput.h"
+#include "YunoTransform.h"
+
+//DragProvider::DragProvider(IInput* pInput)
+//{
+//    Clear();
+//    m_pInput = pInput;
+//    m_canDrag = false;
+//    m_isDrag = false;
+//}
 
 DragProvider::DragProvider()
 {
@@ -104,9 +113,6 @@ bool DragProvider::IsNowDragging()
 bool DragProvider::SearchSnapPoint()
 {
     bool hr = false;
-    for (const auto& point : m_snapPoint) {
-        // 스냅 포인트 맞는지 보정 + 검사
-    }
     return true;
 }
 

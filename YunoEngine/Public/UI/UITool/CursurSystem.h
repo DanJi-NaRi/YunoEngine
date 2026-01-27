@@ -36,11 +36,19 @@ public:
     void SetFocusedWidget(Button* widget) { m_focusedWidget = widget; };
     int GetFocusedMouseButton() { return m_focusedMouseButton; }
     void SetFocusedMouseButton(int mouseButton) { m_focusedMouseButton = mouseButton; };
-
 private:
     std::deque<std::unique_ptr<Widget>>* m_pWidgets = nullptr;
 
+    
     Button* m_focusedWidget;    // 클릭 효과는 Button  클래스 파생부터 있으므로, Button* 타입.
     int m_focusedMouseButton;   // 현재 누른 마우스 버튼 (LMB, RMB)
+    bool m_isDrag;
 };
 
+inline bool IsIntersect(const RECT& a, const RECT& b)
+{
+    return !(a.right <= b.left ||
+        a.left >= b.right ||
+        a.bottom <= b.top ||
+        a.top >= b.bottom);
+}

@@ -1,6 +1,7 @@
 #pragma once
 
 class IInput;
+//class UIManager;
 
 // 드래그 기능 공급자
 class DragProvider
@@ -18,13 +19,16 @@ public:
     bool SearchSnapPoint();
     XMFLOAT2 GetDeltaFromDragStart(const XMFLOAT2& prevPos, const XMFLOAT2& nowPos);
 
-    const std::vector<XMFLOAT3>& GetSnapPoints() const { return m_snapPoint; }
+   //const std::vector<XMFLOAT3>& GetSnapPoints() const { return m_snapPoint; }
     void SetBkPos(XMFLOAT3 bkPos) { m_bkPos = bkPos; }
     // 스냅 포인트 받는 함수 빼두기??
 protected:
     bool m_canDrag;                 // 드래그 가능 여부
     bool m_isDrag;                  // 현재 드래그 여부
+    
     IInput* m_pInput;
+    //UIManager* m_pUImanager;
+
 
     // 소유자 Position
     XMFLOAT3* m_pPos;               // DragProvider 소유자 포지션
@@ -39,6 +43,6 @@ protected:
 
 
     //XMFLOAT2 m_dragDelta;          // 커서 델타
-    std::vector<XMFLOAT3> m_snapPoint; // 스냅 포인트
+    //std::vector<XMFLOAT3> m_snapPoint; // 스냅 포인트
 };
 

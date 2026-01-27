@@ -72,6 +72,7 @@ bool Card::LMBReleasedEvent()
 {
     std::cout << "(Card - LMB)ReleasedEvent" << std::endl;
     m_pDrag->EndDrag();
+    
     return true;
 }
 

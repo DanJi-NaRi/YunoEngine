@@ -53,9 +53,11 @@ enum class WidgetClass : int {
 };
 
 struct SnapPoint {
-    XMFLOAT2 m_snapPoint;
-    RECT m_snapRange;
+    XMFLOAT2 m_snapPos; // 스냅 위치 : 기본적으로 slot과 1:1이겠지만, 슬롯이 여러 스냅포인트를 가진 경우 달라질 수 있다.
+    RECT m_snapRange;   // 스냅 검사 Rect : 위젯이 해당 Rect와 AABB가 통과되면, snapPos로 스냅한다.
+    float m_correction; // 범위 보정치 : Rect 감지 범위에 correction만큼 추가 보정을 한다.
     WidgetClass m_snapTargetClass; // 스냅 조건
+    // 추가 조건 있으면 추가...
 };
 
 class Widget
@@ -129,9 +131,11 @@ protected:
 
     UIManager* m_uiManager = nullptr; // UIManager
 public:
+
     Widget() = delete; // 기본 생성 금지
     explicit Widget(UIManager* uiManager);
     virtual ~Widget();
+
     //Create는 오브젝트 매니저만 쓰기
     virtual bool  Create(XMFLOAT3 vPos);//일단 호환용으로 냅두고 나중에 무조건 이름 필요한걸로 바꾸는게 나을듯
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
@@ -139,7 +143,15 @@ public:
 
     virtual bool  Update(float dTime = 0);
     virtual bool  Submit(float dTime = 0);
-    bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 xx
+    bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 X
+
+    // 위치 세팅
+    void          SetPos(XMFLOAT3 vPos) { m_vPos = vPos; }
+    void          SetPosBK(XMFLOAT3 vPosBk) { m_vPosBk = vPosBk; }
+    void          SetRot(XMFLOAT3 vRot) { m_vRot = vRot; }
+    void          SetRotBK(XMFLOAT3 vRotBk) { m_vRotBk = vRotBk; }
+    void          SetScale(XMFLOAT3 vScale) { m_vScale = vScale; }
+    void          SetScaleBK(XMFLOAT3 vScaleBk) { m_vScaleBk = vScaleBk; }
 
     virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
 
@@ -173,8 +185,8 @@ public:
 
     uint32_t GetID() { return m_id; }
     const std::wstring& GetName() const { return m_name; }
-    RECT GetRect() const { return m_rect; }
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
+    const RECT GetRect() const { return m_rect; }
 
     void Attach(Widget* obj);
     void DettachParent();
@@ -185,6 +197,13 @@ public:
     virtual WidgetType GetWidgetType() { return WidgetType::Widget; }
     virtual WidgetClass GetWidgetClass() { return WidgetClass::Widget; }
 
+    //bool IsIntersect(const RECT& other)
+    //{
+    //    return !(this->m_rect.left <= other.left ||
+    //        this->m_rect.left >= other.right ||
+    //        this->m_rect.bottom <= other.top ||
+    //        this->m_rect.top >= other.bottom);
+    //}
     
 };
 
@@ -196,6 +215,9 @@ inline MeshHandle GetDefWidgetMesh(MeshHandle* out = nullptr)
     if (out) *out = g_defaultWidgetMesh;
     return g_defaultWidgetMesh;
 }
+
+
+
 
 /*
 // UI 그리기 (일반 2D)

@@ -254,19 +254,31 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
         if (!m_pInput->IsMouseButtonDown(mouseButton)) return false;
         break;
     case ButtonState::Released:
+    {
         if (!m_pInput->IsMouseButtonReleased(mouseButton)) return false;
 
         // 커서가 밖이어도 포커스된 버튼이면 릴리즈 보장
-        if (m_cursurSystem.GetFocusedWidget())
+
+        Button* focusWidget = m_cursurSystem.GetFocusedWidget();
+        if (focusWidget)
         {
             if (m_cursurSystem.GetFocusedMouseButton() != mouseButton) return false;
-            if (mouseButton == 0) m_cursurSystem.GetFocusedWidget()->LMBReleasedEvent();
-            else if (mouseButton == 1) m_cursurSystem.GetFocusedWidget()->RMBReleasedEvent();
 
+            focusWidget->SetButtonState(ButtonState::Released);
+
+            if (mouseButton == 0) {
+                focusWidget->LMBReleasedEvent();
+            }
+            else if (mouseButton == 1)
+            {
+                focusWidget->RMBReleasedEvent();
+            }
             m_cursurSystem.SetFocusedWidget(nullptr);
+            focusWidget = nullptr;
             return true;
         }
         break;
+    }
     default:
         // Hover/Idle는 "입력 발생" 기반 함수가 아님
         return false;
