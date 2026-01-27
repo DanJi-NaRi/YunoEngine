@@ -28,6 +28,8 @@ Unit::Unit()
     m_Albedo = 0;
     m_Normal = 0;
     m_Orm = 0;
+
+    m_Parent = nullptr;
 }
 
 Unit::~Unit()

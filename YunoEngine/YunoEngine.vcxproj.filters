@@ -113,7 +113,6 @@
     <Filter Include="Shaders\postprocess">
       <UniqueIdentifier>{0adb9232-5754-4a49-9882-245db7380a41}</UniqueIdentifier>
     </Filter>
-
     <Filter Include="Shaders\shadowMap">
       <UniqueIdentifier>{98fa6131-e9a5-4191-80a5-dcf524f84082}</UniqueIdentifier>
     </Filter>

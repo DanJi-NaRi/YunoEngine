@@ -42,6 +42,52 @@ namespace UI
         ImGui::EndDisabled();
     }
 
+    void DrawFps()
+    {
+        ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
+        ImGui::SetNextWindowBgAlpha(0.35f);
+
+        ImGui::Begin("Stats",
+            nullptr,
+            ImGuiWindowFlags_NoDecoration |
+            ImGuiWindowFlags_AlwaysAutoResize |
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoSavedSettings |
+            ImGuiWindowFlags_NoFocusOnAppearing |
+            ImGuiWindowFlags_NoNav);
+
+        ImGuiIO& io = ImGui::GetIO();
+        ImGui::Text("FPS: %.1f", io.Framerate);
+        //ImGui::Text("Frame Time: %.3f ms", io.DeltaTime * 1000.0f);
+
+        ImGui::End();
+    }
+
+    bool TreeNodeEx(const void* id, bool selected, bool haschild, const char* name)
+    {
+        ImGuiTreeNodeFlags flags =
+            ImGuiTreeNodeFlags_OpenOnArrow |
+            ImGuiTreeNodeFlags_SpanFullWidth;
+
+        if(selected)
+            flags |= ImGuiTreeNodeFlags_Selected;
+        
+        if(!haschild)
+            flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+        return ImGui::TreeNodeEx(id, flags, name);
+    }
+
+    void TreePop()
+    {
+        ImGui::TreePop();
+    }
+
+    bool IsItemClicked()
+    {
+        return ImGui::IsItemClicked();
+    }
+
     bool UI::BeginCombo(const char* label, const char* str)
     {
         return ImGui::BeginCombo(label, str);
@@ -190,7 +236,7 @@ namespace UI
 
     bool DragFloat(const char* label, float* v, float speed, float v_min, float v_max, const char* format)
     {
-        return ImGui::DragFloat(label, v, 0.1f, v_min, v_max, format);
+        return ImGui::DragFloat(label, v, speed, v_min, v_max, format);
     }
 
     bool DragFloatEditable(const char* label, float* v, float speed, float v_min, float v_max)

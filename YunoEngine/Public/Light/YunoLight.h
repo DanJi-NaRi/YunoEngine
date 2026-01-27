@@ -4,6 +4,7 @@
 enum class LightType : uint8_t
 {
     Directional = 0,
+    Point = 1,
 };
 
 struct DirectionalLightDesc
@@ -29,6 +30,10 @@ public:
     virtual LightType GetType() const = 0;
     //virtual bool IsEnabled() const = 0;
     //virtual void SetEnabled(bool v) = 0;
+
+#ifdef _DEBUG
+    virtual void Serialize() = 0;
+#endif
 };
 
 
@@ -72,6 +77,56 @@ public:
     const DirectionalLightDesc& GetDesc(); 
     void SetDesc(const DirectionalLightDesc& d); 
 
+
+#ifdef _DEBUG
+    virtual void Serialize() override;
+#endif
+
 private:
     DirectionalLightDesc m_desc{};
+};
+
+
+/// <summary>///////////////////////////////////////////////////////
+/// 
+/// YunoPointLight
+/// 
+/// </summary>
+struct PointLightDesc
+{
+    XMFLOAT3 lightpos = { 0, 0, 0 };
+
+    XMFLOAT4 lightCol = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    float intensity = 3.0f;
+};
+
+
+class YunoPointLight : public Light
+{
+public:
+    YunoPointLight() = default;
+    YunoPointLight(const PointLightDesc& desc) : m_desc(desc){}
+    virtual ~YunoPointLight();
+
+    LightType GetType() const override { return LightType::Point; }
+
+    void SetPos(const XMFLOAT3& pos);
+    const XMFLOAT3& GetPos();
+
+    void SetLightColor(const XMFLOAT4& col);
+    const XMFLOAT4& GetLightColor();
+
+    void SetIntensity(const float& i);
+    float GetIntensity();
+
+    const PointLightDesc& GetDesc();
+    void SetDesc(const PointLightDesc& d);
+
+#ifdef _DEBUG
+    virtual void Serialize() override;
+#endif
+
+private:
+    PointLightDesc m_desc;
 };

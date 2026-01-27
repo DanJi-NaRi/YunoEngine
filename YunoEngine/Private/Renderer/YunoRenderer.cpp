@@ -398,7 +398,7 @@ bool YunoRenderer::CreateShadowMap(uint32_t width, uint32_t height)
     m_ShadowMap.srvFormat = DXGI_FORMAT_R32_FLOAT;
 
     m_shadowInfo.shadowMapSize = width;
-    m_shadowBias = 0.00005f;
+    m_shadowBias = 0.0005f;
 
     m_cbShadow.Create(m_device.Get());
 
@@ -435,36 +435,6 @@ bool YunoRenderer::CreateShadowMap(uint32_t width, uint32_t height)
     if (FAILED(m_device->CreateShaderResourceView(m_ShadowMap.dstex.Get(), &srvDesc, m_ShadowMap.dssrv.GetAddressOf())))
         return false;
 
-    td.Width = width;	
-    td.Height = height;
-    td.MipLevels = 1;
-    td.ArraySize = 1;
-    td.Format = DXGI_FORMAT_R32_FLOAT;					
-    td.SampleDesc.Count = 1;			
-    td.Usage = D3D11_USAGE_DEFAULT;
-    td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;	
-    td.CPUAccessFlags = 0;
-    td.MiscFlags = 0;
-
-    if (FAILED(m_device->CreateTexture2D(&td, nullptr, m_ShadowMap.rttex.GetAddressOf())))
-        return false;
-
-    D3D11_RENDER_TARGET_VIEW_DESC rd = {};
-    rd.Format = DXGI_FORMAT_R32_FLOAT;									
-    rd.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;		
-    rd.Texture2D.MipSlice = 0;					
-
-    if (FAILED(m_device->CreateRenderTargetView(m_ShadowMap.rttex.Get(), &rd, m_ShadowMap.rtv.GetAddressOf())))
-        return false;
-
-    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
-    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MostDetailedMip = 0;
-    srvDesc.Texture2D.MipLevels = 1;
-
-    if (FAILED(m_device->CreateShaderResourceView(m_ShadowMap.rttex.Get(), &srvDesc, m_ShadowMap.rtsrv.GetAddressOf())))
-        return false;
-
     m_shadowCamera.position = XMFLOAT3(0, 20, 0);
     m_shadowCamera.target = XMFLOAT3(0, 0, -0.01f);
     m_shadowCamera.up = XMFLOAT3(0, 1, 0);
@@ -475,7 +445,7 @@ bool YunoRenderer::CreateShadowMap(uint32_t width, uint32_t height)
 void YunoRenderer::InitShadowPass()
 {
     m_ShadowPassKey.vs = ShaderId::ShadowPass;
-    m_ShadowPassKey.ps = ShaderId::ShadowPass;
+    m_ShadowPassKey.ps = ShaderId::None;
     m_ShadowPassKey.vertexFlags = VSF_Pos;
     m_ShadowPassKey.blend = BlendPreset::Opaque;
     m_ShadowPassKey.raster = RasterPreset::CullFront;
@@ -502,8 +472,8 @@ void YunoRenderer::DrawShadowMap()
     UnBindAllSRV();
         
     m_context->ClearDepthStencilView(m_ShadowMap.dsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-    ID3D11RenderTargetView* RTV[1] = { m_ShadowMap.rtv.Get() };
-    m_context->OMSetRenderTargets(1, RTV, m_ShadowMap.dsv.Get());
+    ID3D11RenderTargetView* nullRTV[1] = { nullptr };
+    m_context->OMSetRenderTargets(0, nullRTV, m_ShadowMap.dsv.Get());
     SetViewPort(m_ShadowMap.width, m_ShadowMap.height);
     
     if (m_ShadowPass == 0 || m_ShadowPass > m_passes.size())
@@ -890,7 +860,7 @@ void YunoRenderer::PostProcess()
 
     auto input = PostProcessScene();
     if(m_PPFlag & PostProcessFlag::Bloom)
-        //input = PostProcessBloom(input);
+        input = PostProcessBloom(input);
     PostProcessFinal(input);
 }
 
@@ -954,7 +924,7 @@ ID3D11ShaderResourceView* YunoRenderer::PostProcessBloom(ID3D11ShaderResourceVie
     m_ppCB.Update(m_context.Get(), cbpp);
     BindBloomThreshold(input);
 
-    for (int i = 1; i < 4; i++)
+    for (int i = 1; i < 3; i++)
     {
         UnBindAllSRV();
         BindRT(m_bloomRT[i].rtv.Get());
@@ -1101,7 +1071,7 @@ void YunoRenderer::BindBloomCombine(ID3D11ShaderResourceView* input)
     // 렌더 패스 바인드
     m_passes[passHandle - 1]->Bind(m_context.Get());
 
-    m_ppCBloom.Update(m_context.Get(), { XMFLOAT4(0.4, 0.6f, 0.8f, 1.0f) , m_BloomIntensity });
+    m_ppCBloom.Update(m_context.Get(), { XMFLOAT4(0.4, 0.3f, 0.2f, 0.1f) , m_BloomIntensity });
     // 텍스쳐 바인드
     ID3D11Buffer* cb = m_ppCBloom.Get();
     m_context->PSSetConstantBuffers(1, 1, &cb);
@@ -2348,26 +2318,43 @@ void YunoRenderer::BindConstantBuffers_Camera(const Frame_Data_Dir& dirData)
 
 }
 
-void YunoRenderer::BindConstantBuffers_Light(const Frame_Data_Dir& dirData)
+void YunoRenderer::BindConstantBuffers_Light(const Frame_Data_Dir& dirData, const std::vector<Frame_Data_Point>& plData, UINT plCount)
 {
     using namespace DirectX;
     // -----------------------------
     // CBLight (b3)
     // -----------------------------
-    CBLight_All cbLight_all;
+    m_LightInfo.dirLit.dir = dirData.Lightdir;
+    m_LightInfo.dirLit.diff = dirData.Lightdiff;
+    m_LightInfo.dirLit.amb = dirData.Lightamb;
+    m_LightInfo.dirLit.spec = dirData.Lightspec;
+    m_LightInfo.dirLit.intensity.x = dirData.intensity;
 
-    cbLight_all.dirLit.dir = dirData.Lightdir;
-    cbLight_all.dirLit.diff = dirData.Lightdiff;
-    cbLight_all.dirLit.amb = dirData.Lightamb;
-    cbLight_all.dirLit.spec = dirData.Lightspec;
-    cbLight_all.dirLit.intensity = dirData.intensity;
+    if (plCount)
+    {
+        int i = 0;
+        for (auto& data : plData)
+        {
+            m_LightInfo.pointLit[i].col = data.col;
+            m_LightInfo.pointLit[i].pos_intensity.x = data.pos.x;
+            m_LightInfo.pointLit[i].pos_intensity.y = data.pos.y;
+            m_LightInfo.pointLit[i].pos_intensity.z = data.pos.z;
+            m_LightInfo.pointLit[i].pos_intensity.w = data.intensity;
+            i++;
+        }
+        m_LightInfo.plCount.x = plCount;
+    }
 
-    m_cbLight.Update(m_context.Get(), cbLight_all);
+    m_cbLight.Update(m_context.Get(), m_LightInfo);
     m_cbShadow.Update(m_context.Get(), m_shadowInfo);
 
-    ID3D11Buffer* cbLight[] = { m_cbLight.Get(), m_cbShadow.Get()};
+    ID3D11Buffer* cbLight[] = { m_cbLight.Get() };
     m_context->VSSetConstantBuffers(3, 1, cbLight);
-    m_context->PSSetConstantBuffers(3, 2, cbLight);
+    m_context->PSSetConstantBuffers(3, 1, cbLight);
+
+    ID3D11Buffer* cbShadow = m_cbShadow.Get();
+    m_context->VSSetConstantBuffers(4, 1, &cbShadow);
+    m_context->PSSetConstantBuffers(4, 1, &cbShadow);
 }
 
 

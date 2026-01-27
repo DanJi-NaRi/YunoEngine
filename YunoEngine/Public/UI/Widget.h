@@ -175,6 +175,9 @@ public:
     void ClearChild();
     void Clear();
 
+    Widget* GetParent() { return m_Parent; }
+    std::unordered_map<uint32_t, Widget*>& GetChilds() { return m_Childs; }
+
     virtual WidgetType GetWidgetType() { return WidgetType::Widget; }
     virtual WidgetClass GetWidgetClass() { return WidgetClass::Widget; }
 

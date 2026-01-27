@@ -34,13 +34,21 @@ struct CBDirLight
     XMFLOAT4 diff;
     XMFLOAT4 amb;
     XMFLOAT4 spec;
-    float intensity;
-    float pad[3] = { 0,0,0 };
+    XMFLOAT4 intensity;// Only Use x
+};
+
+struct CBPointLight
+{
+    XMFLOAT4 col;
+    XMFLOAT4 pos_intensity;//xyz pos, w intensity
 };
 
 struct CBLight_All
 {
     CBDirLight dirLit;
+    CBPointLight pointLit[10];
+    XMFLOAT4 plCount = { 0, 0, 0, 1 }; // Only Use x
+    //XMFLOAT4 padding[3];
 };
 
 struct CBPostProcess
