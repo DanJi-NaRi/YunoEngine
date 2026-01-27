@@ -171,7 +171,6 @@ namespace yuno::game
                 GameManager::Get().SetSceneState(CurrentSceneState::GameStart);
             });// EnterOK Packet End
 
-
         // ReadyState Packet Start
         Dispatcher().RegisterRaw(
             PacketType::S2C_ReadyState,
@@ -278,4 +277,6 @@ namespace yuno::game
             }
         );
     }
+
+
 }

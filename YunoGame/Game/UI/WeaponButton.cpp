@@ -88,6 +88,8 @@ bool WeaponButton::LMBPressedEvent()
     if (!slotImage0 || !slotImage1)
         return true;
 
+
+
     UserImage* targetImage = nullptr;
     int pickIndex = 0;
 

@@ -12,6 +12,7 @@
 
 #include "Widget.h"
 
+#include "Title.h"
 #include "TitleScene.h"
 #include "PlayScene.h"
 #include "UIScene.h"
@@ -84,7 +85,7 @@ bool GameApp::OnInit()
 
    SceneTransitionOptions opt{};
    opt.immediate = true;
-   sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+   sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
 

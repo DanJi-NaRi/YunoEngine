@@ -5,6 +5,7 @@
 #include "YunoEngine.h"
 #include "ISceneManager.h"
 
+#include "Title.h"
 #include "TitleScene.h"
 #include "WeaponSelectScene.h"
 #include "PlayScene.h"
@@ -42,7 +43,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
         SceneTransitionOptions opt{};
         opt.immediate = false;
-        sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+        sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
         break;
     }
     case CurrentSceneState::GameStart:
