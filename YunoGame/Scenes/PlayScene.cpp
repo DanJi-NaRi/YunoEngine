@@ -28,23 +28,24 @@ bool PlayScene::OnCreateScene()
     m_name = "PlayScene";
 
     // 플레이 그리드 시스템 생성
+    m_playGrid = std::make_unique<PlayGridSystem>(m_objectManager.get());
     m_playGrid->Init(5, 7, 3, 3);
-    //m_playGrid->CreateObject();
+    m_playGrid->CreateObject(0, 0, 0);
     
     // 디렉션 라이트 생성
-    m_objectManager->CreateDirLight();
+    //m_objectManager->CreateDirLight();
 
 
-    m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
+    //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
 
 
     //m_objectManager->CreateObjectFromFile<Dwarf>(L"Dwarf", XMFLOAT3(-5, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
 
-    m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     // 플레이어(삼각형)
-    m_objectManager->CreateObject<Triangle>(L"player", XMFLOAT3(5, 0, 0));
+    //m_objectManager->CreateObject<Triangle>(L"player", XMFLOAT3(5, 0, 0));
 
 
     return true;
