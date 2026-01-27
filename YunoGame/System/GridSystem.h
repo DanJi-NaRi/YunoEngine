@@ -3,6 +3,7 @@
 
 class ObjectManager;
 class GridFactory;
+class GridBox;
 
 class GridSystem : public IGridSystem
 {
@@ -17,6 +18,7 @@ public:
     void CreateObject(float x, float y, float z) = 0;
     void Update(float dt) = 0;
     
+    void CreateGridBox(float x, float y, float z);
     void CreateGridLine(float x, float y, float z);                         // 그리드 라인 오브젝트 생성
 
 protected:
@@ -33,6 +35,7 @@ protected:
     float m_invX, m_invZ;
     
 protected:
+    GridBox* m_gridBox = nullptr;
 
     std::unique_ptr<GridFactory> m_gridFactory;
 };
