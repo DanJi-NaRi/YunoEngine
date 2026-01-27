@@ -4,12 +4,15 @@
 #include "RenderTypes.h"
 #include "Unit.h"
 #include "AnimationUnit.h"
+#include "SerializeScene.h"
 
 class YunoDirectionalLight;
+class YunoPointLight;
 
 class ObjectManager
 {
 private:
+    using CreateFn = std::function<std::unique_ptr<Unit>(ObjectManager&, const UnitDesc&)>;
     size_t m_objectCount;
     UINT m_objectIDs;
 
@@ -31,11 +34,16 @@ private:
 
 
     std::unique_ptr<YunoDirectionalLight> m_directionLight;
+    std::vector<std::unique_ptr<YunoPointLight>> m_pointLights;
 
 
 public:
     void CreateDirLight();
+    void CreatePointLight(const XMFLOAT3& pos, const XMFLOAT4& col, float intensity);
     void SetOrthoFlag(bool flag) { m_isOrtho = flag; };
+
+    YunoDirectionalLight* GetDirLight() { return m_directionLight.get(); }
+    std::vector<std::unique_ptr<YunoPointLight>>& GetPointLights() { return m_pointLights; }
 
 public:
     explicit ObjectManager();
@@ -73,6 +81,7 @@ private:
     // 프레임 상수버퍼 관리
 private:
     Frame_Data_Dir dirData;
+    std::vector<Frame_Data_Point> plData;
     void FrameDataUpdate();
     void FrameDataSubmit();
 };

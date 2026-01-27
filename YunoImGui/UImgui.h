@@ -11,6 +11,13 @@ namespace UI
     void BeginDisabled(bool b = true);
     void EndDisabled();
 
+    void DrawFps();
+
+    bool TreeNodeEx(const void* id, bool selected, bool haschild, const char* name);
+    void TreePop();
+
+    bool IsItemClicked();
+
     bool BeginCombo(const char* label, const char* str);
     void EndCombo();
 

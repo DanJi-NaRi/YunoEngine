@@ -22,6 +22,7 @@
 #include "AudioManagerPCH.h"
 
 #include "ImGuiManager.h"
+#include "UImgui.h"
 
 
 IRenderer* YunoEngine::s_renderer = nullptr;
@@ -96,6 +97,12 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     auto yunorenderer = dynamic_cast<YunoRenderer*>(m_renderer.get());
 
     ImGuiManager::Initialize(static_cast<HWND>(m_window->GetNativeHandle()), yunorenderer->m_device.Get(), yunorenderer->m_context.Get());
+
+    ImGuiManager::RegisterDraw([]()
+        {
+            UI::DrawFps();
+        }
+    );
 #endif
 
     // Game 초기화
@@ -173,6 +180,8 @@ int YunoEngine::Run()
         m_renderer->BeginFrame();
 
         m_sceneManager->SubmitAndRender(s_renderer);
+
+        
 
         //s_renderer->Flush();
 

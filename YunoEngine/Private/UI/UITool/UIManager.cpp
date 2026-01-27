@@ -393,12 +393,6 @@ void UIManager::FrameDataSubmit()
     renderer->GetCamera().SetOrthoFlag(m_isOrtho);
 
     renderer->BindConstantBuffers_Camera(dirData);
-
-    if (m_directionLight)// 라이트가 있으면 프레임 데이터 넘기기
-    {
-        renderer->BindConstantBuffers_Light(dirData);
-    }
-
 }
 
 std::unique_ptr<MeshNode> UIManager::CreateMeshNode(const std::wstring& filepath)

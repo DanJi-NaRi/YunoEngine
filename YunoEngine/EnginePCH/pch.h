@@ -26,6 +26,7 @@
 #include <unordered_set>
 #include <algorithm>
 #include <functional>
+#include <optional>
 #include <chrono>
 #include <stdexcept>
 #include <cstring>

@@ -168,6 +168,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h" />
+    <ClInclude Include="Public\SceneBase\SerializeScene.h" />
     <ClInclude Include="Public\UI\UITool\CursurSystem.h" />
     <ClInclude Include="Public\UI\UITool\DragProvider.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -271,6 +272,7 @@
     <ClCompile Include="Public\Renderer\Mesh.cpp" />
     <ClCompile Include="Public\SceneBase\SceneBase.cpp" />
     <ClCompile Include="Private\UI\Widget.cpp" />
+    <ClCompile Include="Public\SceneBase\SerializeScene.cpp" />
     <ClCompile Include="Public\Sound\AudioQueue.cpp" />
     <ClCompile Include="Public\Sound\AudioManager.cpp" />
     <ClCompile Include="Public\Sound\AudioManagerPCH.cpp" />

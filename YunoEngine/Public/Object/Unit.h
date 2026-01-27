@@ -17,6 +17,7 @@ class Unit
 protected:
     uint32_t m_id;
     std::wstring m_name;
+    std::string m_nameS;
 
     XMFLOAT3	m_vPos;
     XMFLOAT3	m_vRot;
@@ -105,6 +106,9 @@ public:
     void DettachParent();
     void DettachChild(uint32_t id);
     void ClearChild();
+
+    Unit* GetParent() { return m_Parent; }
+    std::unordered_map<uint32_t, Unit*>& GetChilds() { return m_Childs; }
 
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
 

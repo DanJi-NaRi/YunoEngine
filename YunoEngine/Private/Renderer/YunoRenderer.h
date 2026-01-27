@@ -48,11 +48,8 @@ struct ShadowMap
     DXGI_FORMAT srvFormat = DXGI_FORMAT_R32_FLOAT;
 
     ComPtr<ID3D11Texture2D> dstex;
-    ComPtr<ID3D11Texture2D> rttex;
     ComPtr<ID3D11DepthStencilView> dsv;
     ComPtr<ID3D11ShaderResourceView> dssrv;
-    ComPtr<ID3D11ShaderResourceView> rtsrv;
-    ComPtr<ID3D11RenderTargetView> rtv;
 };
 
 
@@ -188,7 +185,7 @@ public:
 #endif
 
     void BindConstantBuffers_Camera(const Frame_Data_Dir& dirData) override;
-    void BindConstantBuffers_Light(const Frame_Data_Dir& dirData) override;
+    void BindConstantBuffers_Light(const Frame_Data_Dir& dirData, const std::vector<Frame_Data_Point>& plData, UINT plCount) override;
 
     YunoCamera& GetCamera() override { return m_camera; }
     std::pair<int, int> GetTextureSize(TextureHandle handle) const;
@@ -230,6 +227,8 @@ private:
     YunoConstantBuffer<CBPerObject_Matrix> m_cbObject_Matrix;
     YunoConstantBuffer<CBPerObject_Material> m_cbObject_Material;
     YunoConstantBuffer<CBLight_All> m_cbLight;
+
+    CBLight_All m_LightInfo;
 
     YunoCamera m_camera;
     float m_aspect = 1.0f;

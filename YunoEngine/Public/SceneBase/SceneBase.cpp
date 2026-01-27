@@ -5,6 +5,7 @@
 #include "SceneBase.h"
 
 #include "IRenderer.h"
+#include "YunoLight.h"
 #include "ObjectManager.h"
 #include "UIManager.h"
 #include "UImgui.h"
@@ -138,52 +139,113 @@ void SceneBase::DrawObjectList()
     if (!m_objectManager)
         return;
 
-    const uint32_t objcount = m_objectManager->GetObjectCount();
-
-    auto& objlist = m_objectManager->GetObjectlist();
-
-
-    for (uint32_t i = 0; i < objcount; ++i)
+    if (UI::CollapsingHeader("Lights"))
     {
-        auto it = objlist.find(i);
-        if(it == objlist.end())
-            continue;
+        auto dirLight = m_objectManager->GetDirLight();
 
-        Unit* obj = it->second;
-
-        bool selected = false; // ← EditorState에서 가져오게 될 것
-
-        std::string name = WStringToString(obj->GetName());
-
-        if (UI::Selectable(name.c_str(), selected))
+        if (dirLight)
         {
-            SelectObject(obj);
+            bool selected = false;
+            if (UI::Selectable("DirectionalLight", selected))
+            {
+                SelectLight(dirLight);
+            }
+        }
+
+        auto& pointLights = m_objectManager->GetPointLights();
+        if (!pointLights.empty())
+        {
+            int i = 0;
+            for (auto& pl : pointLights)
+            {
+                bool selected = false;
+                std::string name = "PointLight" + std::to_string(i);
+                if (UI::Selectable(name.c_str(), selected))
+                {
+                    SelectLight(pl.get());
+                }
+                i++;
+            }
         }
     }
 
-    if (!m_uiManager)
-        return;
-
-    const uint32_t widgetcount = m_uiManager->GetWidgetCount();
-
-    auto& widgetlist = m_uiManager->GetWidgetlist();
-
-    for (uint32_t i = 0; i < widgetcount; ++i)
+    if (UI::CollapsingHeader("Objects"))
     {
-        auto it = widgetlist.find(i);
-        if (it == widgetlist.end())
-            continue;
+        const uint32_t objcount = m_objectManager->GetObjectCount();
 
-        Widget* obj = it->second;
+        auto& objlist = m_objectManager->GetObjectlist();
 
-        bool selected = false; //  EditorState에서 가져오게 될 것
-
-        std::string name = WStringToString(obj->GetName());
-
-        if (UI::Selectable(name.c_str(), selected))
+        for (auto [id, unit] : objlist)
         {
-            SelectWidget(obj);
+            Unit* obj = unit;
+
+            if (obj->GetParent())
+                continue;
+
+            DrawObjectNode(obj);
         }
+    }
+    
+    if (UI::CollapsingHeader("Widgets"))
+    {
+        if (!m_uiManager)
+            return;
+
+        const uint32_t widgetcount = m_uiManager->GetWidgetCount();
+
+        auto& widgetlist = m_uiManager->GetWidgetlist();
+
+        for (auto [id, widget] : widgetlist)
+        {
+            Widget* obj = widget;
+
+            bool selected = false; //  EditorState에서 가져오게 될 것
+
+            std::string name = WStringToString(obj->GetName());
+
+            if (UI::Selectable(name.c_str(), selected))
+            {
+                SelectWidget(obj);
+            }
+        }
+    }
+}
+
+void SceneBase::DrawObjectNode(Unit* obj)
+{
+    bool selected = obj == m_selectedObject;
+    std::string name = WStringToString(obj->GetName());
+
+    bool opened = UI::TreeNodeEx(obj, selected, !obj->GetChilds().empty(), name.c_str());
+
+    if (UI::IsItemClicked())
+        SelectObject(obj);
+
+    if (opened && !obj->GetChilds().empty())
+    {
+        for (auto [id, child] : obj->GetChilds())
+            DrawObjectNode(child);
+
+        UI::TreePop();
+    }
+}
+
+void SceneBase::DrawWidgetNode(Widget* obj)
+{
+    bool selected = obj == m_selectedWidget;
+    std::string name = WStringToString(obj->GetName());
+
+    bool opened = UI::TreeNodeEx(obj, selected, !obj->GetChilds().empty(), name.c_str());
+
+    if (UI::IsItemClicked())
+        SelectWidget(obj);
+
+    if (opened && !obj->GetChilds().empty())
+    {
+        for (auto [id, child] : obj->GetChilds())
+            DrawWidgetNode(child);
+
+        UI::TreePop();
     }
 }
 
@@ -206,7 +268,11 @@ void DegreeToRad(XMFLOAT3& out)
 
 void SceneBase::DrawInspector()
 {
-    if (m_selectedObject)
+    if (m_selectedLight)
+    {
+        m_selectedLight->Serialize();
+    }
+    else if (m_selectedObject)
     {
         if (UI::CollapsingHeader("Transform"))
         {

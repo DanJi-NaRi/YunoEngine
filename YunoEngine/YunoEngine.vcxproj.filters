@@ -113,7 +113,6 @@
     <Filter Include="Shaders\postprocess">
       <UniqueIdentifier>{0adb9232-5754-4a49-9882-245db7380a41}</UniqueIdentifier>
     </Filter>
-
     <Filter Include="Shaders\shadowMap">
       <UniqueIdentifier>{98fa6131-e9a5-4191-80a5-dcf524f84082}</UniqueIdentifier>
     </Filter>
@@ -232,6 +231,9 @@
     <ClCompile Include="Private\Input\InputContextBase.cpp" />
     <ClCompile Include="Public\Object\Button.cpp" />
     <ClCompile Include="Private\UI\UITool\UIManager.cpp" />
+    <ClCompile Include="Public\SceneBase\SerializeScene.cpp">
+      <Filter>Public\SceneBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -404,6 +406,9 @@
     <ClInclude Include="Public\Input\InputContextBase.h" />
     <ClInclude Include="Public\Object\Button.h" />
     <ClInclude Include="Public\UI\UITool\UIManager.h" />
+    <ClInclude Include="Public\SceneBase\SerializeScene.h">
+      <Filter>Public\SceneBase</Filter>
+    </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>
