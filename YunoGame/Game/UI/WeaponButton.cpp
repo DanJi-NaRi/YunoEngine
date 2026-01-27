@@ -152,6 +152,40 @@ bool WeaponButton::KeyReleasedEvent(uint32_t key)
     return true;
 }
 
+bool WeaponButton::SetPieceType(PieceType pieceType)
+{
+    m_pieceType = pieceType; 
+    std::wstring texturePath = L"../Assets/Test/X.png";
+    switch (m_pieceType)
+    {
+    case PieceType::Blaster:
+        texturePath = L"../Assets/Test/unit1.png";
+        break;
+    case PieceType::Breacher:
+        texturePath = L"../Assets/Test/unit2.png";
+        break;
+    case PieceType::Impactor:
+        texturePath = L"../Assets/Test/unit3.png";
+        break;
+    case PieceType::Chakram:
+        texturePath = L"../Assets/Test/unit4.png";
+        break;
+    case PieceType::Scythe:
+        texturePath = L"../Assets/Test/unit5.png";
+        break;
+    case PieceType::Cleaver:
+        texturePath = L"../Assets/Test/unit6.png";
+        break;
+    case PieceType::None:
+    default:
+        break;
+    }
+
+    m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
+
+    return true;
+}
+
 void WeaponButton::SetUserImages(Widget* U1I1, Widget* U1I2, Widget* U2I1, Widget* U2I2)
 {
     m_pUserImage0 = U1I1;
