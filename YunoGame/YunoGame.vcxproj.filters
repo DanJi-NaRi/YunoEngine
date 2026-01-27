@@ -73,9 +73,6 @@
     <Filter Include="System\UIContext">
       <UniqueIdentifier>{1f741ae9-459b-421b-b0c8-0c44d2028232}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\UI\Card">
-      <UniqueIdentifier>{5dfe4c0c-0b5d-493b-8267-0e0bf6b67d3f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\UI\System">
       <UniqueIdentifier>{4d554d76-e075-4e88-9400-c5edee8bae71}</UniqueIdentifier>
     </Filter>
@@ -93,6 +90,9 @@
     </Filter>
     <Filter Include="Game\UI\Button\ButtonTemplate">
       <UniqueIdentifier>{b0617999-7a4b-4fcf-9ae3-a04170141035}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Slot">
+      <UniqueIdentifier>{5dfe4c0c-0b5d-493b-8267-0e0bf6b67d3f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -148,7 +148,7 @@
       <Filter>PieceQueue</Filter>
     </ClCompile>
     <ClCompile Include="Game\UI\CardSlot.cpp">
-      <Filter>Game\UI\Card</Filter>
+      <Filter>Game\UI\Slot</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\TitleScene.cpp">
       <Filter>Scenes\0.Title</Filter>
@@ -173,11 +173,22 @@
       <Filter>Scenes\99.Test</Filter>
     </ClCompile>
     <ClCompile Include="Game\UI\Card.cpp" />
-    <ClCompile Include="Game\UI\CardTable.cpp" />
     <ClCompile Include="Game\UI\ButtonTemplate.cpp">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClCompile>
     <ClCompile Include="GridBox.cpp" />
+    <ClCompile Include="Game\UI\CardTable.cpp">
+      <Filter>Game\UI\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="ReadyButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="UserImage.cpp">
+      <Filter>Game\UI\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="ExitButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -247,7 +258,7 @@
       <Filter>PieceQueue</Filter>
     </ClInclude>
     <ClInclude Include="Game\UI\CardSlot.h">
-      <Filter>Game\UI\Card</Filter>
+      <Filter>Game\UI\Slot</Filter>
     </ClInclude>
     <ClInclude Include="Game\UI\UIWidgets.h" />
     <ClInclude Include="Scenes\TitleScene.h">
@@ -270,7 +281,6 @@
     </ClInclude>
     <ClInclude Include="Game\Object\Test_Unit.h" />
     <ClInclude Include="Game\UI\Card.h" />
-    <ClInclude Include="Game\UI\CardTable.h" />
     <ClInclude Include="System\DragProvider.h" />
     <ClInclude Include="Game\Object\CardActData.h" />
     <ClInclude Include="Game\Object\CardData.h" />
@@ -280,5 +290,20 @@
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClInclude>
     <ClInclude Include="GridBox.h" />
+    <ClInclude Include="Game\UI\CardTable.h">
+      <Filter>Game\UI\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadyButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="UserImage.h">
+      <Filter>Game\UI\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="ExitButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponSelectScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

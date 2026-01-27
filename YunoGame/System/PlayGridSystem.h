@@ -17,6 +17,7 @@ public:
     void Update(float dt) override;
     
 private:
+
     void CreateTileAndPiece(float x, float y, float z);
 
 private:
@@ -24,6 +25,7 @@ private:
     
     bool CheckExisting(const GamePiece pieceType);
     void CheckHealth(PieceInfo& pieceInfo);
+
 
 private:
     void ChangeTileTO(int cx, int cz, const TileOccupy to);

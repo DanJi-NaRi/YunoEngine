@@ -1,12 +1,11 @@
 #pragma once
 #include "Button.h"
-#include "CardData.h"
 
-class WeaponButton : public Button
+class ReadyButton : public Button
 {
 public:
-    WeaponButton(UIManager* uiManager);
-    virtual ~WeaponButton();
+    ReadyButton(UIManager* uiManager);
+    virtual ~ReadyButton();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
@@ -22,13 +21,13 @@ public:
     virtual bool RMBReleasedEvent() override;                   // 우클릭 뗐을 때
     virtual bool KeyReleasedEvent(uint32_t key = 0) override;   // 바인딩한 키 뗐을 때
 
-    PieceType GetPieceType() { return m_pieceType; }
-    PieceType SetPieceType(PieceType pieceType) { m_pieceType = pieceType; return m_pieceType; }
+    bool ChangeReadyFlag() { m_isReady = !m_isReady; return m_isReady; }
+    bool SetReadyFlag(bool ready) { m_isReady = ready; return m_isReady; }
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
-    virtual WidgetClass GetWidgetClass() override { return WidgetClass::WeaponButton; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::ReadyButton; }
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)
 protected:
-    PieceType m_pieceType = PieceType::None;
+    bool m_isReady = false;
 };

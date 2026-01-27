@@ -131,6 +131,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
 
         switch (i)
         {
+
         case GamePiece::Ally1:
             cx = 1; cz = 1;
             to = TileOccupy{ TileOccuType::Ally_Occupied, TileWho::Ally1 };
@@ -208,6 +209,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
         std::cout << "[PlayGridSystem]::It's Already there\n";
         return;
     }
+
     else if (to.occuType == TileOccuType::Collapesed)       // 없어진 자리
     {
         std::cout << "[PlayGridSystem]::Collapesed\n";
@@ -217,6 +219,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
     else if (to.occuType == TileOccuType::Enemy_Occupied || to.occuType == TileOccuType::Ally_Occupied)
     {                                                       // 적군 or 아군 존재
         std::cout << "[PlayGridSystem]::Occupied\n";
+
 
         // 충돌지점까지 이동 후 원래 자리로 되돌아감
         pPiece->InsertQ(PlayGridQ::Move_P(dir, colX, m_wy, colZ));
@@ -233,6 +236,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
         pieceInfo.health -= 10;
         CheckHealth(pieceInfo);
         std::cout << "currentPiece.health: " << pieceInfo.health << std::endl;
+
         return;
     }
     else                                                    // 비어있는 자리

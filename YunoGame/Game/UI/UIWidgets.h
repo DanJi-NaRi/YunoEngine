@@ -17,6 +17,7 @@ Slot,
 
 // Image 파생 클래스
 #include "CardTable.h"
+#include "UserImage.h"
 //////////////////////////////
 
 
@@ -26,6 +27,9 @@ Slot,
 
 // Button 파생 클래스
 #include "Card.h"
+#include "ReadyButton.h"
+#include "ExitButton.h"
+#include "WeaponButton.h"
 //////////////////////////////
 
 

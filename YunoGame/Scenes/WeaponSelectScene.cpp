@@ -5,12 +5,12 @@
 // 다음 엔진
 #include "YunoEngine.h"
 // 다음 오브젝트 매니저 여기까지 고정
-#include "ObjectManager.h"
+//#include "ObjectManager.h"
+#include "UIManager.h"
 
 // 여러 오브젝트들 ;; 
-#include "Building.h"
-#include "Test_Unit.h"
-
+//#include "Building.h"
+#include "UIWidgets.h"
 
 bool WeaponSelectScene::OnCreateScene()
 {
@@ -19,13 +19,28 @@ bool WeaponSelectScene::OnCreateScene()
     // 디렉션 라이트 생성
     //m_objectManager->CreateDirLight();
     // 직교투영 필요한 씬만 ㄱㄱ
-    //m_objectManager->SetOrthoFlag(true);
+    m_uiManager->SetOrthoFlag(true);
 
-    unit1 = m_objectManager->CreateObject<Test_Unit>(L"P1 U1", XMFLOAT3(-5, 5, 0));
-    unit2 = m_objectManager->CreateObject<Test_Unit>(L"P1 U2", XMFLOAT3(-5, 1, 0));
+    // 선택창 UI
+    {
+        m_pUserImage0 = m_uiManager->CreateWidget<UserImage>(L"P1 U1", XMFLOAT3(0, 0, 0));
+        m_pUserImage1 = m_uiManager->CreateWidget<UserImage>(L"P1 U2", XMFLOAT3(0, 150, 0));
 
-    unit3 = m_objectManager->CreateObject<Test_Unit>(L"P2 U1", XMFLOAT3(5, 5, 0));
-    unit4 = m_objectManager->CreateObject<Test_Unit>(L"P2 U2", XMFLOAT3(5, 1, 0));
+        // 그리드 기능 쓰기??
+        m_PWeaponBtn_Blaster    = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Blaster",  XMFLOAT3(250, 100, 0));
+        m_PWeaponBtn_Impactor   = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Impactor", XMFLOAT3(750, 100, 0));
+        m_PWeaponBtn_Breacher   = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Breacher", XMFLOAT3(500, 100, 0));
+        m_PWeaponBtn_Chakram    = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Chakra",   XMFLOAT3(250, 300, 0));
+        m_PWeaponBtn_Scythe     = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Scythe",   XMFLOAT3(500, 300, 0));
+        m_PWeaponBtn_Cleaver    = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Cleaver",  XMFLOAT3(750, 300, 0));
+
+        m_pReadyBtn             = m_uiManager->CreateWidget<ReadyButton>(L"ReadyButton",      XMFLOAT3(450, 500, 0));
+        m_pExitBtn              = m_uiManager->CreateWidget<ExitButton>(L"ExitButton",        XMFLOAT3(750, 500, 0));
+
+        m_pUserImage2 = m_uiManager->CreateWidget<UserImage>(L"P2 U1", XMFLOAT3(1000, 0, 0));
+        m_pUserImage3 = m_uiManager->CreateWidget<UserImage>(L"P2 U2", XMFLOAT3(1000, 150, 0));
+    }
+
     //m_objectManager->CreateObjectFromFile<Building>(L"Drill", XMFLOAT3(4, 2, 0), L"../Assets/fbx/Drill/Drill.fbx");
 
     return true;
@@ -39,11 +54,13 @@ void WeaponSelectScene::OnDestroyScene()
 
 void WeaponSelectScene::OnEnter()
 {
+    YunoEngine::GetInput()->AddContext(&m_weaponCtx, this); 
     //std::cout << "[WeaponSelectScene] OnEnter\n"; 
 }
 
 void WeaponSelectScene::OnExit()
 {
+    YunoEngine::GetInput()->RemoveContext(&m_weaponCtx);
     //std::cout << "[WeaponSelectScene] OnExit\n"; 
 }
 

@@ -7,7 +7,7 @@
 #include "IInput.h"
 #include "UIManager.h"
 
-CardTable::CardTable(UIManager* uiManager) : Widget(uiManager)
+CardTable::CardTable(UIManager* uiManager) : Image(uiManager)
 {
     Clear();
 }
@@ -23,7 +23,7 @@ void CardTable::Clear()
 
 bool CardTable::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
-    Widget::Create(name, id, vPos);
+    Image::Create(name, id, vPos);
 
     if (!m_pInput || !m_pRenderer || !m_pTextures)
         return false;
@@ -78,13 +78,13 @@ bool CardTable::Update(float dTime)
 
     if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50.0f * dTime; }
     if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50.0f * dTime; }
-    Widget::Update(dTime);
+    Image::Update(dTime);
     return false;
 }
 
 bool CardTable::Submit(float dTime)
 {
-     Widget::Submit(dTime);
+    Image::Submit(dTime);
     return false;
 }
 

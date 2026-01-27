@@ -24,6 +24,7 @@ const PGridCmd PlayGridQ::Pop()
     return res;
 }
 
+
 PGridCmd PlayGridQ::Move_S(GamePiece pieceType, int cx, int cz)
 {
     PGridCmd cmd;

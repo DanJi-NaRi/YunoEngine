@@ -102,6 +102,7 @@ void TitleScene::Update(float dt)
     // 테스트용 -> ally1으로 부여한 기물이 움직여용
     if (m_input->IsKeyPressed(0x31))
     {
+
         PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 3));
     }
     if (m_input->IsKeyPressed(0x32))
@@ -125,8 +126,9 @@ void TitleScene::Update(float dt)
         PlayGridQ::Insert(PlayGridQ::Attack_S_TST(GamePiece::Ally1));
     }
 
-    m_input->Dispatch();
+    //m_input->Dispatch();
     m_gridSystem->Update(dt);
+
 }
 
 void TitleScene::SubmitObj()

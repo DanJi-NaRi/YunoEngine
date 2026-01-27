@@ -52,10 +52,12 @@ public:
     const PGridCmd Pop();
 
 public:
+
     static PGridCmd Move_S(GamePiece pieceType, int cx, int cz);
     static PGridCmd Move_P(Direction dir, float wx, float wy, float wz, float speed = 1, bool isDone = false);
 
     static PGridCmd Attack_S_TST(GamePiece pieceType);
 
     static PGridCmd Cmd_S(CommandType cmdType, GamePiece pieceType);
+
 };

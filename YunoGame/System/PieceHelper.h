@@ -43,6 +43,7 @@ enum class Direction : uint8_t
     Same
 };
 
+
 struct PieceInfo
 { 
     uint32_t id;        // 불변
