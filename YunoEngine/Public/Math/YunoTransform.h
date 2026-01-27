@@ -27,6 +27,15 @@ struct Float2
 {
     float x{}, y{};
 
+    Float2() = default;
+    Float2(float _x, float _y) : x(_x), y(_y) {}
+
+    // XMFLOAT2 -> Float2
+    explicit Float2(const XMFLOAT2& v) : x(v.x), y(v.y) {}
+
+    // Float2 -> XMFLOAT2 (명시 함수 권장)
+    XMFLOAT2 ToXM() const { return XMFLOAT2{ x, y }; }
+
     // same-dim compound
     Float2& operator+=(const Float2& o) { x += o.x; y += o.y; return *this; }
     Float2& operator-=(const Float2& o) { x -= o.x; y -= o.y; return *this; }
@@ -41,11 +50,19 @@ struct Float2
     // modulus
     Float2& operator%=(float m) { x = std::fmod(x, m); y = std::fmod(y, m); return *this; }
     Float2& operator%=(int   m) { x = float(int(x) % m); y = float(int(y) % m); return *this; }
+
 };
 
 struct Float3
 {
     float x{}, y{}, z{};
+
+    Float3() = default;
+    Float3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
+
+    explicit Float3(const XMFLOAT3& v) : x(v.x), y(v.y), z(v.z) {}
+
+    XMFLOAT3 ToXM() const { return XMFLOAT3{ x, y, z }; }
 
     // same-dim compound
     Float3& operator+=(const Float3& o) { x += o.x; y += o.y; z += o.z; return *this; }
@@ -72,6 +89,13 @@ struct Float3
 struct Float4
 {
     float x{}, y{}, z{}, w{};
+
+    Float4() = default;
+    Float4(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
+
+    explicit Float4(const XMFLOAT4& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
+
+    XMFLOAT4 ToXM() const { return XMFLOAT4{ x, y, z, w }; }
 
     // same-dim compound
     Float4& operator+=(const Float4& o) { x += o.x; y += o.y; z += o.z; w += o.w; return *this; }
