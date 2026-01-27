@@ -60,3 +60,7 @@ namespace yuno::server
         std::array<MatchSlot, kMaxSlots> m_slots{};
     };
 }
+// 이동 공격 까지 되면 굿 >> 카드랑 웨폰 데이터를 로드하는걸 만들어야돼
+// 피0 >> 승패판정 
+// 라운드시작 (Init)
+// 루프가 돌아간다 
