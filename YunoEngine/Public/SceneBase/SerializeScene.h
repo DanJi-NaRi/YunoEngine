@@ -28,8 +28,30 @@ struct UnitDesc
     std::wstring unitType;
 };
 
-struct DirectionalLightDesc;
-struct PointLightDesc;
+struct DirectionalLightDesc
+{
+
+    XMFLOAT4 direction = { 0.58f, -0.58f, 0.58f, 0.0f };
+
+    XMFLOAT4 diff = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    XMFLOAT4 amb = { 0.2f, 0.2f, 0.2f, 1.0f };
+
+    XMFLOAT4 spec = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+
+    float intensity = 3.0f;
+
+};
+
+struct PointLightDesc
+{
+    XMFLOAT3 lightpos = { 0, 0, 0 };
+
+    XMFLOAT4 lightCol = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    float intensity = 3.0f;
+};
 
 struct SceneDesc
 {

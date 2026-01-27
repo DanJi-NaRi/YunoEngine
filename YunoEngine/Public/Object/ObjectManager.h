@@ -4,6 +4,7 @@
 #include "RenderTypes.h"
 #include "Unit.h"
 #include "AnimationUnit.h"
+#include "SerializeScene.h"
 
 class YunoDirectionalLight;
 class YunoPointLight;
@@ -11,6 +12,7 @@ class YunoPointLight;
 class ObjectManager
 {
 private:
+    using CreateFn = std::function<std::unique_ptr<Unit>(ObjectManager&, const UnitDesc&)>;
     size_t m_objectCount;
     UINT m_objectIDs;
 
