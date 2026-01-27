@@ -34,7 +34,7 @@ void YunoTextureManager::Clear()
     m_cache.clear();
 }
 
-const std::pair<int,int> YunoTextureManager::GetTextureWH(TextureHandle handle) const
+const std::pair<int,int> YunoTextureManager::GetTextureWH(TextureHandle handle)
 {
     if (!m_renderer)
         return { -1, -1 };

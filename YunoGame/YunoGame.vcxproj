@@ -123,7 +123,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(SolutionDir)YunoEngine\Public\UI;$(SolutionDir)YunoEngine\Public\UI\UITool;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System;$(ProjectDir)ClientNetwork;$(SolutionDir)vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(SolutionDir)YunoEngine\Public\UI;$(SolutionDir)YunoEngine\Public\UI\UITool;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System;$(ProjectDir)GameManager;$(ProjectDir)ClientNetwork;$(SolutionDir)vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/utf-8 /Bt+ /showIncludes %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -152,7 +152,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(SolutionDir)YunoEngine\Public\UI;$(SolutionDir)YunoEngine\Public\UI\UITool;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System;$(ProjectDir)ClientNetwork;$(SolutionDir)vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(SolutionDir)YunoEngine\Public\UI;$(SolutionDir)YunoEngine\Public\UI\UITool;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System;$(ProjectDir)GameManager;$(ProjectDir)ClientNetwork;$(SolutionDir)vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/utf-8 /Bt+ /showIncludes %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -192,13 +192,25 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ExitButton.cpp" />
     <ClCompile Include="Game\UI\ButtonTemplate.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Game\UI\CardSlot.cpp" />
     <ClCompile Include="Game\Object\Test_Unit.cpp" />
-    <ClCompile Include="System\GameManager.cpp" />
+
+    <ClCompile Include="Game\UI\ExitButton.cpp" />
+    <ClCompile Include="Game\UI\ReadyButton.cpp" />
+    <ClCompile Include="Game\UI\TitleImage.cpp" />
+    <ClCompile Include="Game\UI\UserImage.cpp" />
+    <ClCompile Include="ReadyButton.cpp" />
+    <ClCompile Include="GameManager\GameManager.cpp" />
+
+
+    <ClCompile Include="GridBox.cpp" />
+
+
     <ClCompile Include="Game\UI\Card.cpp" />
     <ClCompile Include="Game\UI\CardTable.cpp" />
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
@@ -236,18 +248,27 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Scenes\UIScene.cpp" />
     <ClCompile Include="Scenes\WeaponSelectScene.cpp" />
     <ClCompile Include="Game\UI\WeaponButton.cpp" />
+    <ClCompile Include="Scenes\Title.cpp" />
+    <ClCompile Include="UserImage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ExitButton.h" />
+    <ClInclude Include="GameManager\SceneState.h" />
     <ClInclude Include="Game\UI\ButtonTemplate.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Game\UI\CardSlot.h" />
     <ClInclude Include="Game\Object\Test_Unit.h" />
-    <ClInclude Include="System\GameManager.h" />
+    <ClInclude Include="Game\UI\ExitButton.h" />
+    <ClInclude Include="Game\UI\ReadyButton.h" />
+    <ClInclude Include="Game\UI\TitleImage.h" />
+    <ClInclude Include="Game\UI\UserImage.h" />
+    <ClInclude Include="ReadyButton.h" />
+    <ClInclude Include="GameManager\GameManager.h" />
+    <ClInclude Include="GridBox.h" />
     <ClInclude Include="Game\UI\Card.h" />
     <ClInclude Include="Game\UI\CardTable.h" />
-    <ClInclude Include="System\DragProvider.h" />
     <ClInclude Include="ClientNetwork\YunoClientNetwork.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -290,6 +311,9 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\Text.h" />
     <ClInclude Include="Scenes\WeaponSelectScene.h" />
     <ClInclude Include="Game\UI\WeaponButton.h" />
+    <ClInclude Include="Scenes\Title.h" />
+    <ClInclude Include="UserImage.h" />
+    <ClInclude Include="WeaponSelectScene_InputContext.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

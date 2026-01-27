@@ -64,15 +64,21 @@
       <Filter>Public\Network\Packets</Filter>
     </ClInclude>
     <ClInclude Include="Public\Net\ErrorPackets\S2C_Error.h">
-      <Filter>Public</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Net\C2SPackets\ReadyState.h">
-      <Filter>Public</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Net\C2SPackets\C2S_ReadyState.h">
-      <Filter>Public</Filter>
+      <Filter>Public\Network\Packets</Filter>
     </ClInclude>
     <ClInclude Include="Public\Net\S2CPackets\S2C_CountDown.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_ReadySet.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_SubmitWeapon.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_ReadyState.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_RoundStart.h">
       <Filter>Public</Filter>
     </ClInclude>
   </ItemGroup>
@@ -105,12 +111,21 @@
       <Filter>Private\Network\Packets</Filter>
     </ClCompile>
     <ClCompile Include="Private\Net\ErrorPackets\S2C_Error.cpp">
-      <Filter>Private</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Net\C2SPackets\C2S_ReadyState.cpp">
-      <Filter>Private</Filter>
+      <Filter>Private\Network\Packets</Filter>
     </ClCompile>
     <ClCompile Include="Private\Net\S2CPackets\S2C_CountDown.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_ReadySet.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_SubmitWeapon.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_ReadyState.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_RoundStart.cpp">
       <Filter>Private</Filter>
     </ClCompile>
   </ItemGroup>

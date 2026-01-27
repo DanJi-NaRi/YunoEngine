@@ -20,7 +20,4 @@ private:
 
     bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
     //void SetMesh(std::unique_ptr<MeshNode>&& mesh);
-
-    //추가 머테리얼 - 필요할까?
-    //MaterialHandle m_addMaterial = 0;
 };

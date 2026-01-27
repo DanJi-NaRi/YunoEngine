@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include <cstdlib>              // OS 한테 환경변수 받아오기
+
 #include "RenderTypes.h"
 #include "IInput.h"
 #include "IRenderer.h"
@@ -10,6 +12,7 @@
 
 #include "Widget.h"
 
+#include "Title.h"
 #include "TitleScene.h"
 #include "PlayScene.h"
 #include "UIScene.h"
@@ -30,6 +33,34 @@
 #include "C2S_MatchLeave.h"
 
 
+namespace
+{
+    std::uint32_t ReadUserIdFromEnv()
+    {
+        char* buf = nullptr;
+        size_t len = 0;
+
+        if (_dupenv_s(&buf, &len, "YUNO_USER_ID") != 0 || buf == nullptr)
+        {
+            std::cout << "[GameApp] YUNO_USER_ID env not set\n";
+            return 0;
+        }
+
+        std::uint32_t uid = 0;
+        try
+        {
+            uid = static_cast<std::uint32_t>(std::stoul(buf));
+        }
+        catch (...)
+        {
+            uid = 0;
+        }
+
+        free(buf);
+        return uid;
+    }
+}
+
 
 GameApp::~GameApp() = default;
 
@@ -48,14 +79,15 @@ bool GameApp::OnInit()
    ISceneManager* sm = YunoEngine::GetSceneManager();
    if (!sm) return false;
 
-
-   //// 네트워크 초기화
-
+   m_gameManager = std::make_unique<GameManager>();
+   GameManager::Initialize(m_gameManager.get());
+   m_gameManager->BindClientNetwork(&m_clientNet);
 
    SceneTransitionOptions opt{};
    opt.immediate = true;
-   sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+   sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
+   //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
 
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
@@ -72,7 +104,8 @@ bool GameApp::OnInit()
 
 void GameApp::OnUpdate(float dt)
 {
-    m_clientNet.PumpIncoming();
+    m_gameManager->Tick(dt);
+    m_clientNet.PumpIncoming(dt);
 
     static float acc = 0.0f;
     static int frameCount = 0;
@@ -120,7 +153,14 @@ void GameApp::OnUpdate(float dt)
         {
             using namespace yuno::net;
             yuno::net::packets::C2S_MatchEnter pkt{};
+            pkt.userId = ReadUserIdFromEnv();
             
+            if (pkt.userId == 0)
+            {
+                std::cout << "[GameApp] MatchEnter aborted: invalid userId\n";
+                return; // 또는 UI 메시지 띄우고 종료
+            }
+            std::cout << "Env Id : " << pkt.userId << std::endl;
 
             auto bytes = PacketBuilder::Build(
                 PacketType::C2S_MatchEnter,
@@ -213,14 +253,16 @@ void GameApp::OnUpdate(float dt)
     // audio-> StateCheck();
 
 
-    if (acc >= 1.0f)
-    {
-        std::cout << "[GameApp] dt = " << dt << "\n";
-        const float fps = static_cast<float>(frameCount) / acc;
-        std::cout << "[GameApp] FPS = " << fps << "\n";
-        acc = 0.0f;
-        frameCount = 0;
-    }
+
+    //if (acc >= 1.0f)
+    //{
+    //    std::cout << "[GameApp] dt = " << dt << "\n";
+    //    const float fps = static_cast<float>(frameCount) / acc;
+    //    std::cout << "[GameApp] FPS = " << fps << "\n";
+    //    acc = 0.0f;
+    //    frameCount = 0;
+    //}
+
 
 
     am->Update(dt);
@@ -240,6 +282,9 @@ void GameApp::OnFixedUpdate(float fixedDt)
 void GameApp::OnShutdown()
 {
     std::cout << "[GameApp] OnShutdown\n";
+
+    GameManager::Shutdown();
+    m_gameManager.reset();
 
     // 네트워크 스레드종료
     m_clientNet.Stop();

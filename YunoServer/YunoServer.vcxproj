@@ -113,7 +113,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)ServerNetwork;$(SolutionDir)vcpkg_installed\x64-windows\include;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)ServerNetwork;$(ProjectDir)MatchManager;$(SolutionDir)vcpkg_installed\x64-windows\include;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -129,7 +129,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)ServerNetwork;$(SolutionDir)vcpkg_installed\x64-windows\include;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)ServerNetwork;$(ProjectDir)MatchManager;$(SolutionDir)vcpkg_installed\x64-windows\include;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -139,12 +139,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main\main.cpp" />
+    <ClCompile Include="MatchManager\MatchManager.cpp" />
     <ClCompile Include="ServerNetwork\YunoServerNetwork.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MatchManager\MatchManager.h" />
     <ClInclude Include="ServerNetwork\YunoServerNetwork.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>

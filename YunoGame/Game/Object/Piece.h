@@ -17,16 +17,21 @@ private:
     bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
 
 public:
-    void InsertQ(PieceCmd targetPos);
+    void InsertQ(PGridCmd targetPos);
+    void SetWho(GamePiece type);
     void SetDir(Direction dir, bool isAnim = true);
 
 private:
     void SetTarget(XMFLOAT3 targetPos, float speed);
+    void SetDead();
     void SendDone();
 
-private:
-    bool m_isDone = false;
+    void ClearQ();
 
+private:
+    bool m_AnimDone = false;
+
+    // 이동
     XMVECTOR m_Target{};
     XMVECTOR m_Start{};
     float m_Dist = 0;
@@ -35,6 +40,7 @@ private:
     float m_AnimTime = 0.f;
     bool isMoving = false;
 
+    // 회전
     float m_rotTime = 0.f;
     float m_rotSpeed = 2.f;
     float m_yaw = atan2(0, 1);
@@ -42,6 +48,14 @@ private:
     float m_targetYaw = 0;
     bool isRotating = false;
 
-    std::queue<PieceCmd> m_Q;
+    // 죽음 체크
+    bool isDead = false;
+    float m_deadTime = 0.f;
+    float m_deathDelay = 1.f;
+
+    GamePiece m_who = GamePiece::None;
+
+    // 큐
+    std::queue<PGridCmd> m_Q;
 };
 

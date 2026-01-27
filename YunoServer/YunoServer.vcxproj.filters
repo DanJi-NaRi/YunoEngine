@@ -15,10 +15,12 @@
     <ClCompile Include="ServerNetwork\YunoServerNetwork.cpp">
       <Filter>ServerNetwork</Filter>
     </ClCompile>
+    <ClCompile Include="MatchManager\MatchManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ServerNetwork\YunoServerNetwork.h">
       <Filter>ServerNetwork</Filter>
     </ClInclude>
+    <ClInclude Include="MatchManager\MatchManager.h" />
   </ItemGroup>
 </Project>

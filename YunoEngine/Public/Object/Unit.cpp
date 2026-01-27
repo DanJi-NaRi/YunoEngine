@@ -107,6 +107,7 @@ bool Unit::Update(float dTime)
 
 bool Unit::Submit(float dTime)
 {
+    if (!m_MeshNode) return true;
     m_MeshNode->Submit(m_mWorld);
 
     LastSubmit(dTime);

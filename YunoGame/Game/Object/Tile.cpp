@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "PieceQueue.h"
 #include "Tile.h"
 
 
@@ -229,3 +230,12 @@ bool Tile::CreateMaterial()
 
     return true;
 }
+
+void Tile::FlashColor(C3 color, int count, float diff, float speed)
+{
+    m_maskColor = color;
+    m_count = count;
+    m_diff = diff;
+    m_FxSpeed = speed;
+}
+

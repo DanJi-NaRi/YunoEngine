@@ -43,6 +43,14 @@ enum class WidgetClass : int {
     CardTable,
     Card,
     CardSlot,
+
+    // 첫 무기 선택 페이즈
+    UserImage,
+    TitleImage,
+    ReadyButton,
+    ExitButton,
+    WeaponButton,
+    
 };
 
 struct SnapPoint {
@@ -137,6 +145,10 @@ public:
     virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
 
     virtual void  Backup();
+
+    virtual void  SetPos(XMFLOAT3 pos) { m_vPos = pos; };
+    virtual void  SetScale(XMFLOAT3 scale) { m_vScale = scale; };
+    virtual void  SetRot(XMFLOAT3 rot) { m_vRot = rot; };
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();
