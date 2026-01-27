@@ -1,34 +1,34 @@
 #include "pch.h"
-#include "ExitButton.h"
+#include "ReadyButton.h"
 
 #include "YunoEngine.h"
 #include "IInput.h"
 
-#include "ISceneManager.h"
-#include "IScene.h"
-#include "PacketBuilder.h"
-
-#include "C2S_MatchLeave.h"
 
 #include "GameManager.h"
 
+#include "PacketBuilder.h"
 
-ExitButton::ExitButton(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+#include "C2S_ReadySet.h"
+
+
+
+ReadyButton::ReadyButton(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
 
-ExitButton::~ExitButton()
+ReadyButton::~ReadyButton()
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
 
-void ExitButton::Clear()
+void ReadyButton::Clear()
 {
-    m_pExitScene = nullptr;
+    m_isReady = false;
 }
 
-bool ExitButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool ReadyButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Button::Create(name, id, vPos);
 
@@ -37,21 +37,20 @@ bool ExitButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool ExitButton::Update(float dTime)
+bool ReadyButton::Update(float dTime)
 {
-
     Button::Update(dTime);
     return true;
 }
 
-bool ExitButton::Submit(float dTime)
+bool ReadyButton::Submit(float dTime)
 {
     Button::Submit();
     return true;
 }
 
 // 가만히 있을 때
-bool ExitButton::IdleEvent()
+bool ReadyButton::IdleEvent()
 {
     //std::cout << "IdleEvent" << std::endl;
     // 내용 작성
@@ -59,7 +58,7 @@ bool ExitButton::IdleEvent()
 }
 
 // 커서가 위에 올라있을 때
-bool ExitButton::HoveredEvent()
+bool ReadyButton::HoveredEvent()
 {
     std::cout << "HoveredEvent" << std::endl;
     return true;
@@ -73,32 +72,54 @@ bool ExitButton::HoveredEvent()
 //}
 
 // 왼클릭 눌렀을 때
-bool ExitButton::LMBPressedEvent()
+bool ReadyButton::LMBPressedEvent()
 {
+
+    GameManager& gm = GameManager::Get();
+    if (gm.GetMyPiece(0)==PieceType::None|| gm.GetMyPiece(1) == PieceType::None) 
+    {
+        return false;
+    }
+
+
+    const bool isReady = gm.ToggleReady();
+    std::wstring texturePath;
+    if(!isReady)
+        texturePath = L"../Assets/Test/BtnOn.png";
+    else
+        texturePath = L"../Assets/Test/BtnOff.png";
+
+    m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
+
+
+    // 패킷 초기화
+    yuno::net::packets::C2S_ReadySet req{};
+
+    // 패킷에 데이터 담기
+    req.readyState = isReady ? 1 : 0;
+
+    // 패킷 바이너리화
     auto bytes = yuno::net::PacketBuilder::Build(
-        yuno::net::PacketType::C2S_MatchLeave,
+        yuno::net::PacketType::C2S_ReadySet,
         [&](yuno::net::ByteWriter& w)
         {
-            yuno::net::packets::C2S_MatchLeave req{};
             req.Serialize(w);
         });
 
-    GameManager::Get().SendPacket(std::move(bytes));
-
-    GameManager::Get().SetSceneState(CurrentSceneState::Title);
+    // 패킷 보내기
+    gm.SendPacket(std::move(bytes));
 
     return true;
 }
 
 // 우클릭 눌렀을 때
-bool ExitButton::RMBPressedEvent()
+bool ReadyButton::RMBPressedEvent()
 {
-    std::cout << "(RMB)PressedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 눌렀을 때
-bool ExitButton::KeyPressedEvent(uint32_t key)
+bool ReadyButton::KeyPressedEvent(uint32_t key)
 {
     if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
     else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;
@@ -106,28 +127,24 @@ bool ExitButton::KeyPressedEvent(uint32_t key)
 }
 
 // 왼클릭 뗐을 때
-bool ExitButton::LMBReleasedEvent()
+bool ReadyButton::LMBReleasedEvent()
 {
-    std::cout << "(LMB)ReleasedEvent" << std::endl;
+    //std::cout << "(LMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 우클릭 뗐을 때
-bool ExitButton::RMBReleasedEvent()
+bool ReadyButton::RMBReleasedEvent()
 {
     std::cout << "(RMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 뗐을 때
-bool ExitButton::KeyReleasedEvent(uint32_t key)
+bool ReadyButton::KeyReleasedEvent(uint32_t key)
 {
     if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
     else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
     return true;
-}
-
-void ExitButton::Exit()
-{
 }
 

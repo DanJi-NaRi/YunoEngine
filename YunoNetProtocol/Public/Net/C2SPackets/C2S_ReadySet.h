@@ -8,11 +8,11 @@ namespace yuno::net
 
 namespace yuno::net::packets
 {
-    struct C2S_Ping final
+    struct C2S_ReadySet final
     {
-        std::uint32_t nonce = 0;
+        std::uint8_t readyState = 0; // 0은 준비해제, 1은 준비완료
 
         void Serialize(ByteWriter& w) const;
-        static C2S_Ping Deserialize(ByteReader& r);
+        static C2S_ReadySet Deserialize(ByteReader& r);
     };
 }

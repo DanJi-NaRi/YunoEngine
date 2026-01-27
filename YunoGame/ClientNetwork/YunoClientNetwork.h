@@ -6,6 +6,7 @@
 #include "PacketDispatcher.h"   // YunoNetProtocol
 #include "NetPeer.h"            // YunoNetProtocol
 
+class GameManager;
 
 namespace yuno::game
 {
@@ -25,7 +26,7 @@ namespace yuno::game
         bool IsConnected() const;
 
         // 서버한테 받은 패킷을 디스패쳐로 전달
-        void PumpIncoming();
+        void PumpIncoming(float dt);
 
         // 메인 스레드에서 호출: "완성 패킷(헤더+바디)" 바이트를 송신 요청
         void SendPacket(std::vector<std::uint8_t> packetBytes);
@@ -58,11 +59,7 @@ namespace yuno::game
         // --- Incoming queue (net thread -> main thread) ---
         std::mutex m_inMtx;
         std::deque<std::vector<std::uint8_t>> m_inQ;
+
+
     };
 }
-
-/*
-
-
-
-*/

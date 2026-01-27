@@ -1,7 +1,7 @@
 #include "pch.h"
 
 // 본인 씬 최상단 ㄱㄱ
-#include "SceneTemplate.h"
+#include "Title.h"
 // 다음 엔진
 #include "YunoEngine.h"
 // 다음 오브젝트 매니저 여기까지 고정
@@ -9,62 +9,65 @@
 // 게임 매니저
 #include "GameManager.h"
 #include "UIManager.h"
-// 여러 오브젝트들 ;; 
 
+// 여러 오브젝트들 ;; 
+#include "TitleImage.h"
 
 // 사용법
 // 컨트롤 + H 누르면 이름 변경 나옴
-// 위쪽 칸에 SceneTemplate 적고
+// 위쪽 칸에 Title 적고
 // 아래 칸에 원하는 씬 이름 적고
 // 모두 바꾸기 누르면 됨 .h 파일도 동일하게 ㄱㄱ
 
-bool SceneTemplate::OnCreateScene()
+bool Title::OnCreateScene()
 {
-    //std::cout << "[SceneTemplate] OnCreate\n";
+    //std::cout << "[Title] OnCreate\n";
 
     // 디렉션 라이트 생성
     //m_objectManager->CreateDirLight();
     // 직교투영 필요한 씬만 ㄱㄱ
-    //m_uiManager->SetOrthoFlag(true);
+    m_uiManager->SetOrthoFlag(true);
 
     // Sample Object 생성 예시
     //m_objectManager->CreateObject<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0));
-    
+
     // FBX 파일로부터 오브젝트 생성 예시
     //m_objectManager->CreateObjectFromFile<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
+    m_titleImage = m_uiManager->CreateWidget<TitleImage>(L"Title", XMFLOAT3(0, 0, 0));
+    m_titleImage->SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
     return true;
 }
 
-void SceneTemplate::OnDestroyScene()
+void Title::OnDestroyScene()
 {
-    //std::cout << "[SceneTemplate] OnDestroy\n";
+    //std::cout << "[Title] OnDestroy\n";
 
 }
 
-void SceneTemplate::OnEnter()
+void Title::OnEnter()
 {
-    //std::cout << "[SceneTemplate] OnEnter\n"; 
+    //std::cout << "[Title] OnEnter\n"; 
 }
 
-void SceneTemplate::OnExit()
+void Title::OnExit()
 {
-    //std::cout << "[SceneTemplate] OnExit\n"; 
+    //std::cout << "[Title] OnExit\n"; 
 }
 
-void SceneTemplate::Update(float dt)
+void Title::Update(float dt)
 {
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);
 }
 
-void SceneTemplate::SubmitObj()
+void Title::SubmitObj()
 {
     // 이거만 있으면 오브젝트 렌더 됨 따로 서브밋 ㄴㄴ
     SceneBase::SubmitObj();
 }
 
-void SceneTemplate::SubmitUI()
+void Title::SubmitUI()
 {
     // 이거만 있으면 오브젝트 렌더 됨 따로 서브밋 ㄴㄴ
     SceneBase::SubmitUI();

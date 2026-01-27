@@ -109,6 +109,7 @@ bool Image::CreateMaterial()
     if (m_defaultMaterial == 0)
         return false;
 
+
     //m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
 
     // 추가 머테리얼 생성

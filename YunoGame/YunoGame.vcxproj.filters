@@ -162,9 +162,6 @@
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes\99.Test</Filter>
     </ClCompile>
-    <ClCompile Include="System\GameManager.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Game\UI\WeaponButton.cpp">
       <Filter>Game\UI\Button</Filter>
     </ClCompile>
@@ -188,6 +185,14 @@
     </ClCompile>
     <ClCompile Include="ExitButton.cpp">
       <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager\GameManager.cpp" />
+    <ClCompile Include="Game\UI\ExitButton.cpp" />
+    <ClCompile Include="Game\UI\ReadyButton.cpp" />
+    <ClCompile Include="Game\UI\TitleImage.cpp" />
+    <ClCompile Include="Game\UI\UserImage.cpp" />
+    <ClCompile Include="Scenes\Title.cpp">
+      <Filter>Scenes\0.Title</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -273,15 +278,11 @@
     <ClInclude Include="Scenes\UIScene.h">
       <Filter>Scenes\99.Test</Filter>
     </ClInclude>
-    <ClInclude Include="System\GameManager.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\UI\WeaponButton.h">
       <Filter>Game\UI\Button</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\Test_Unit.h" />
     <ClInclude Include="Game\UI\Card.h" />
-    <ClInclude Include="System\DragProvider.h" />
     <ClInclude Include="Game\Object\CardActData.h" />
     <ClInclude Include="Game\Object\CardData.h" />
     <ClInclude Include="Game\UI\Image.h" />
@@ -304,6 +305,15 @@
     </ClInclude>
     <ClInclude Include="WeaponSelectScene_InputContext.h">
       <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager\GameManager.h" />
+    <ClInclude Include="GameManager\SceneState.h" />
+    <ClInclude Include="Game\UI\ExitButton.h" />
+    <ClInclude Include="Game\UI\ReadyButton.h" />
+    <ClInclude Include="Game\UI\TitleImage.h" />
+    <ClInclude Include="Game\UI\UserImage.h" />
+    <ClInclude Include="Scenes\Title.h">
+      <Filter>Scenes\0.Title</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

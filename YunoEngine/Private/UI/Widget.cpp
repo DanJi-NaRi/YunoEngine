@@ -13,6 +13,15 @@ VERTEX_Pos g_Widget_pos[] = {
     { 1,1,0 }     // 우하
 };
 
+/*
+VERTEX_Pos g_Widget_pos[] = {
+    { -0.5f,0.5f,0 },    // 좌상
+    { 0.5f,0.5f,0 },    // 우상
+    { -0.5f,-0.5f,0 },    // 좌하
+    { 0.5f,-0.5f,0 }     // 우하
+};
+*/
+
 // UI 쿼드는 노말 안씀
 VERTEX_Nrm g_Widget_nrm[] =
 {
@@ -176,8 +185,6 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     m_spriteSizeY = (float)50;
 
 
-    // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
-    // (추후 에디터 기능으로 flag 추가 가능)
     m_width = m_spriteSizeX;
     m_height = m_spriteSizeY;
 

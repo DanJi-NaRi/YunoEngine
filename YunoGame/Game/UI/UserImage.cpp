@@ -56,6 +56,7 @@ bool UserImage::ChangeMaterial(int num)
 bool UserImage::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Image::Create(name, id, vPos);
+    //m_vScale = XMFLOAT3(0.01f, 0.01f, 0.01f);
     m_userJoined = false;
     m_selectPiece = PieceType::None;
     return true;
