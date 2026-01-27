@@ -295,6 +295,7 @@ namespace yuno::server
 
                 m_server.Broadcast(std::move(bytes));
 
+
                 std::cout <<"0slot user Env id : " << m_match.Slots()[0].userId << "1slot user Env id : "<< m_match.Slots()[1].userId << std::endl;
 
                 // 무기 확정 후 준비 취소 못하니까  여기서 초기화 패킷도 같이 ㄱㄱ
@@ -340,6 +341,7 @@ namespace yuno::server
                     });
 
                 m_server.Broadcast(std::move(rsBytes));
+
             }
         );// Submit Weapon Packet End
 
