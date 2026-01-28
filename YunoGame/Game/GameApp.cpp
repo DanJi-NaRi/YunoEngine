@@ -17,9 +17,12 @@
 #include "PlayScene.h"
 #include "UIScene.h"
 #include "WeaponSelectScene.h"
+#include "RenderTest.h"
 
 #include "AudioQueue.h"
 #include "PieceQueue.h"
+
+#include "CardManager.h"
 
 #include "GameApp.h"
 
@@ -85,13 +88,14 @@ bool GameApp::OnInit()
 
    SceneTransitionOptions opt{};
    opt.immediate = true;
-   sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
+   sm->RequestReplaceRoot(std::make_unique<RenderTest>(), opt);  // 본인이 작업중인 씬으로 넣으면 됨
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
 
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
 
+   CardManager::Get().LoadFromCSV("../Assets/CardData/CardData.csv");
     // 네트워크 스레드 시작
     m_clientNet.Start("127.0.0.1", 9000);
 

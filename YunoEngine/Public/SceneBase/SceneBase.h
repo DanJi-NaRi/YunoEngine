@@ -47,8 +47,11 @@ protected:
 #endif
 
     // 파생 씬에서 구현 ㄱㄱ
+    bool LoadScene(const std::wstring& filepath, SceneDesc& out);
     virtual bool OnCreateScene();
     virtual void OnDestroyScene();
+
+    virtual SceneDesc BuildSceneDesc() override;
 
 protected:
     std::unique_ptr<ObjectManager> m_objectManager;

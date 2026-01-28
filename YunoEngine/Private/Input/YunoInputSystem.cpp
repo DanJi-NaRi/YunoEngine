@@ -131,6 +131,8 @@ void YunoInputSystem::Dispatch()
             if (!ctx) continue;
 
             const bool consumed = ctx->OnInputEvent(evt);
+            m_contexts;
+
             if (/*consumed ||*/ evt.consumed)
             {
                 // 상위 컨텍스트에서 이벤트 소모되면 하위 컨텍스트로 안내려감

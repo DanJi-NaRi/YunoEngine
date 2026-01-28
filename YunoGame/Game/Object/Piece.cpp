@@ -4,6 +4,9 @@
 
 #include "Piece.h"
 
+#include "ObjectTypeRegistry.h"
+#include "ObjectManager.h"
+
 float scaleAdjust = 0.2f;
 VERTEX_Pos g_cubeMesh_2[] =
 {
@@ -152,8 +155,22 @@ INDEX g_cubeIndex_2[] =
     
 };
 
+
+//오브젝트 타입.h
+
+namespace {
+    struct AutoReg_Piece
+    {
+        AutoReg_Piece()
+        {
+            ObjectTypeRegistry::Instance().Register(L"Piece", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Piece>(d); });
+        }
+    } s_reg_Piece;
+}
+
 Piece::Piece()
 {
+    unitType = L"Piece";
 }
 
 Piece::~Piece()

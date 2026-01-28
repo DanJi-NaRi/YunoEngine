@@ -4,11 +4,26 @@
 #include "Parser.h"
 #include "YunoLight.h"
 #include "YunoCamera.h"
+#include "ObjectTypeRegistry.h"
 
+
+void ObjectManager::CreateObjectFromDesc(const UnitDesc& desc)
+{
+    auto* fn = ObjectTypeRegistry::Instance().Find(desc.unitType);
+
+    if (!fn)
+    {
+        std::cerr << "Unknown type(ObjectManager.cpp, 16), Please Register Type" << std::endl;
+        return;
+    }
+
+    (*fn)(*this, desc);
+}
 
 void ObjectManager::CreateDirLight()
 {
-    m_directionLight = std::make_unique<YunoDirectionalLight>();
+    if(!m_directionLight)
+        m_directionLight = std::make_unique<YunoDirectionalLight>();
 }
 
 void ObjectManager::CreatePointLight(const XMFLOAT3& pos, const XMFLOAT4& col, float intensity)
@@ -16,10 +31,25 @@ void ObjectManager::CreatePointLight(const XMFLOAT3& pos, const XMFLOAT4& col, f
     if (m_pointLights.size() >= 10) return;
 
     PointLightDesc pd{};
+    pd.id = m_pointLightIDs++;
     pd.lightpos = pos;
     pd.lightCol = col;
     pd.intensity = intensity;
     
+    auto pl = std::make_unique<YunoPointLight>(pd);
+    m_pointLights.push_back(std::move(pl));
+}
+
+void ObjectManager::CreateDirLightFromDesc(const DirectionalLightDesc& dd)
+{
+    if (!m_directionLight)
+        m_directionLight = std::make_unique<YunoDirectionalLight>(dd);
+}
+
+void ObjectManager::CreatePointLightFromDesc(const PointLightDesc& pd)
+{
+    if (m_pointLights.size() >= 10) return;
+
     auto pl = std::make_unique<YunoPointLight>(pd);
     m_pointLights.push_back(std::move(pl));
 }
@@ -35,7 +65,8 @@ ObjectManager::~ObjectManager()
 bool ObjectManager::Init()
 {
     m_objectCount = 0;
-    m_objectIDs = 0;
+    m_objectIDs = 1;
+    m_pointLightIDs = 1;
     m_objMap.reserve(30); //30개 정도 메모리 잡고 시작
     m_pendingCreateQ.reserve(30);
 
@@ -49,7 +80,8 @@ void ObjectManager::Clear()
 {
 
     m_objectCount = 0;
-    m_objectIDs = 0;
+    m_objectIDs = 1;
+    m_pointLightIDs = 1;
     m_objs.clear(); //오브젝트 객체 완전 삭제
     m_pendingCreateQ.clear();
     m_pendingDestoryQ.clear();
@@ -170,6 +202,62 @@ void ObjectManager::DestroyObject(const std::wstring& name)
     }
 
     m_pendingDestoryQ.push_back(id);
+}
+
+SceneDesc ObjectManager::BuildSceneDesc()
+{
+    SceneDesc scene;
+    scene.version = 1;
+    scene.isOrtho = m_isOrtho;
+
+    // Objects
+    for (auto& [id, obj] : m_objMap)
+    {
+        scene.units.push_back(obj->GetDesc());
+    }
+
+    // Lights
+    if (m_directionLight)
+        scene.dirLight = m_directionLight->GetDesc();
+
+    for (auto& pl : m_pointLights)
+        scene.pointLights.push_back(pl->GetDesc());
+
+    return scene;
+}
+
+void ObjectManager::ApplyUnitFromDesc(const std::vector<UnitDesc>& uds)
+{
+    if (m_objs.empty()) return;
+ 
+    for (auto& d : uds)
+    {
+        Unit* o = FindObject(d.ID);
+        if (!o || o->GetName() != d.name) return;
+
+        XMFLOAT3 radRot = { XMConvertToRadians(d.transform.rotation.x), XMConvertToRadians(d.transform.rotation.y), XMConvertToRadians(d.transform.rotation.z) };
+
+        o->SetPos(ToXM(d.transform.position));
+        o->SetRot(radRot);
+        o->SetScale(ToXM(d.transform.scale));
+    }
+}
+
+void ObjectManager::ApplyDirLightFromDesc(const DirectionalLightDesc& dd)
+{
+    if (!m_directionLight) return;
+
+    m_directionLight->SetDesc(dd);
+}
+
+void ObjectManager::ApplyPointLightsFromDesc(const std::vector<PointLightDesc>& pds)
+{
+    if (m_pointLights.empty()) return;
+
+    for (auto& d : m_pointLights)
+    {
+        d->SetDesc(pds[d->GetDesc().id - 1]);
+    }
 }
 
 void ObjectManager::CheckDedicateObjectName(std::wstring& name)

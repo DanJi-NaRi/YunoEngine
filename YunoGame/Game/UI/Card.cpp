@@ -2,6 +2,8 @@
 #include "Card.h"
 
 #include "YunoEngine.h"
+#include "DragProvider.h"
+#include "UIManager.h"
 #include "IInput.h"
 
 Card::Card(UIManager* uiManager) : Button(uiManager)

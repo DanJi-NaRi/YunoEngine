@@ -7,6 +7,7 @@
 // 다음 오브젝트 매니저 여기까지 고정
 //#include "ObjectManager.h"
 #include "UIManager.h"
+#include "CursurSystem.h"
 
 #include "GameManager.h"
 
@@ -23,6 +24,8 @@ bool WeaponSelectScene::OnCreateScene()
     //m_objectManager->CreateDirLight();
     // 직교투영 필요한 씬만 ㄱㄱ
     m_uiManager->SetOrthoFlag(true);
+    m_pCursurSys = m_uiManager->GetCursurStstem();
+
 
     // 선택창 UI
     {

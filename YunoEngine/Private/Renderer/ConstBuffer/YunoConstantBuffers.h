@@ -26,6 +26,7 @@ struct CBPerObject_Material
     float roughRatio;
     float metalRatio;
     float shadowBias;
+    float opacity;
 };
 
 struct CBDirLight

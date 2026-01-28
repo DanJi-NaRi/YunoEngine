@@ -42,7 +42,7 @@ bool Button::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
     m_btnState = ButtonState::Idle;
     m_bindkey = 0;
-    m_anchor = Anchor::LeftTop;
+    m_anchor = UIDirection::LeftTop;
 
     Backup();
 

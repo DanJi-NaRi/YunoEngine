@@ -7,6 +7,7 @@
 #include "IRenderer.h"
 #include "YunoLight.h"
 #include "ObjectManager.h"
+#include "SerializeScene.h"
 #include "UIManager.h"
 #include "UImgui.h"
 
@@ -31,6 +32,15 @@ std::string WStringToString(const std::wstring& wstr)
     );
 
     return result;
+}
+
+inline std::wstring Utf8ToWString(const std::string& s)
+{
+    if (s.empty()) return {};
+    int size = MultiByteToWideChar(CP_UTF8, 0, s.data(), (int)s.size(), nullptr, 0);
+    std::wstring w(size, 0);
+    MultiByteToWideChar(CP_UTF8, 0, s.data(), (int)s.size(), w.data(), size);
+    return w;
 }
 
 
@@ -64,9 +74,49 @@ bool SceneBase::OnCreate()
 
     if (!m_uiManager->Init())
         return false;
+    
+    std::wstring filepath = L"../Assets/Scenes/" + Utf8ToWString(GetDebugName()) + L".json";
 
+    SceneDesc sd;
+
+    if (LoadScene(filepath, sd))
+    {
+        OnCreateScene();
+
+        m_objectManager->ProcessPending();
+        if(sd.dirLight)
+            m_objectManager->ApplyDirLightFromDesc(*sd.dirLight);
+        m_objectManager->ApplyUnitFromDesc(sd.units);
+        m_objectManager->ApplyPointLightsFromDesc(sd.pointLights);
+
+        if (!sd.widgets.empty())
+        {
+            m_uiManager->ProcessPending();
+            m_uiManager->ApplyWidgetFromDesc(sd.widgets);
+        }
+
+        return true;
+    }
 
     return OnCreateScene();
+    //return true;
+}
+
+
+bool SceneBase::LoadScene(const std::wstring& filepath, SceneDesc& out)
+{
+    bool res = LoadSceneFromFile(filepath, out);
+
+    return res;
+}
+
+SceneDesc SceneBase::BuildSceneDesc()
+{
+    SceneDesc sd = m_objectManager->BuildSceneDesc();
+    sd.sceneName = Utf8ToWString(GetDebugName());
+    sd.widgets = m_uiManager->BuildWidgetDesc();
+
+    return sd;
 }
 
 // 삭제
@@ -389,10 +439,48 @@ void SceneBase::DrawInspector()
     }
     else if(m_selectedWidget)
     {
-       
+        if (UI::CollapsingHeader("Transform"))
+        {
+            auto& pos = m_selectedWidget->GetPos();
+            auto& rot = m_selectedWidget->GetRot();
+            auto& scale = m_selectedWidget->GetScale();
+
+            XMFLOAT3 degRot = rot;
+            RadToDegree(degRot);
+
+            bool isChange = false;
+
+            if (UI::Button("Reset"))
+            {
+                m_selectedWidget->SetBackUpTransform();
+                isChange = true;
+            }
+
+            UI::Separator();
+
+            if (UI::DragFloat3Editable("Position", &pos.x, 1.0f))
+            {
+                isChange = true;
+            }
+            if (UI::DragFloat3Editable("Rotation", &degRot.x, 0.1f))
+            {
+                DegreeToRad(degRot);
+                rot = degRot;
+                isChange = true;
+            }
+            if (UI::DragFloat3Editable("Scale", &scale.x, 0.1f))
+            {
+                isChange = true;
+            }
+
+            m_selectedWidget->Serialize();
+
+            if (isChange) m_selectedWidget->Update();
+        }
     }
 }
 #endif
+
 
 
 bool SceneBase::OnCreateScene()
@@ -406,3 +494,5 @@ void SceneBase::OnDestroyScene()
 {
     // 각 씬에서 여기에 씬 파괴시 할 행동 구현하면 됨
 }
+
+

@@ -4,13 +4,15 @@
 #include "RenderTypes.h"
 #include "IRenderer.h"
 #include "ITextureManager.h"
+#include "YunoTransform.h"
 #include "Mesh.h"
 
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
 
 class UIManager;
+struct WidgetDesc;
 
-enum class Anchor : int {
+enum class UIDirection : int {
     LeftTop,
     Top,
     RightTop,
@@ -20,7 +22,7 @@ enum class Anchor : int {
     LeftBottom,
     Bottom,
     RightBottom,
-    Max,
+    Count,
 };
 
 enum class WidgetType : int { // 자신 / 부모 클래스 타입
@@ -31,7 +33,7 @@ enum class WidgetType : int { // 자신 / 부모 클래스 타입
     Slot,
     //Progress,
     //Slider,
-    Max,
+    Count,
 };
 
 enum class WidgetClass : int {
@@ -50,13 +52,39 @@ enum class WidgetClass : int {
     ReadyButton,
     ExitButton,
     WeaponButton,
-    
 };
 
+struct Float2;
+struct Float3;
+struct Float4;
+
+constexpr float pivotMin = 0.0f;
+constexpr float pivotMax = 1.0f;
+
+inline constexpr Float2 kPivot[(int)UIDirection::Count] = {
+    {0.0f, 0.0f}, // LeftTop
+    {0.5f, 0.0f}, // Top
+    {1.0f, 0.0f}, // RightTop
+    {0.0f, 0.5f}, // Left
+    {0.5f, 0.5f}, // Center
+    {1.0f, 0.5f}, // Right
+    {0.0f, 1.0f}, // LeftBottom
+    {0.5f, 1.0f}, // Bottom
+    {1.0f, 1.0f}, // RightBottom
+};
+
+constexpr Float2 PivotFromUIDirection(UIDirection pivot) { // 피벗 전용 할당값
+    const int i = (int)pivot;
+    assert(0 <= i && i < (int)UIDirection::Count);
+    return kPivot[(int)pivot];
+}
+
 struct SnapPoint {
-    XMFLOAT2 m_snapPoint;
-    RECT m_snapRange;
+    XMFLOAT2 m_snapPos; // 스냅 위치 : 기본적으로 slot과 1:1이겠지만, 슬롯이 여러 스냅포인트를 가진 경우 달라질 수 있다.
+    RECT m_snapRange;   // 스냅 검사 Rect : 위젯이 해당 Rect와 AABB가 통과되면, snapPos로 스냅한다.
+    float m_snapPadding; // 범위 보정치 : Rect 감지 범위에 padding만큼 추가 보정을 한다.
     WidgetClass m_snapTargetClass; // 스냅 조건
+    // 추가 조건 있으면 추가...
 };
 
 class Widget
@@ -73,24 +101,31 @@ protected:
     XMFLOAT3	m_vScale;   // 스크린상의 위젯 크기 배율 (z는 의미 없음, 사용 안함)
     
     XMFLOAT4X4	m_mWorld;
-    XMFLOAT4X4	m_mScale, m_mRot, m_mTrans;
+    XMFLOAT4X4	m_mScale;
+    XMFLOAT4X4  m_mRot;
+    XMFLOAT4X4  m_mTrans;
 
     XMFLOAT3	m_vPosBk;
     XMFLOAT3	m_vRotBk;
     XMFLOAT3	m_vScaleBk;
     XMFLOAT3 	m_vDirBk;
 
-    float m_width;
-    float m_height;
+    float m_width;              // 위젯 자체의 가로 사이즈
+    float m_height;             // 위젯 자체의 세로 사이즈
 
-    float m_spriteSizeX;
-    float m_spriteSizeY;
+    float m_spriteSizeX;        // 적용된 Albedo(스프라이트) 원본 사이즈 X
+    float m_spriteSizeY;        // 적용된 Albedo(스프라이트) 원본 사이즈 Y
 
-    int m_zOrder; // 아직 미사용
+    float m_sizeX;              // 최종 위젯 사이즈 X // m_width * m_scale.x
+    float m_sizeY;              // 최종 위젯 사이즈 Y // m_height * m_scale.y
 
-    XMFLOAT2 m_pivot = { 0,0 }; // 아직 미사용
+    RECT m_rect;                // 현재 위젯을 RECT로 치환한 값
 
-    Visibility m_visible; // 보이기 여부
+    int m_zOrder;               // 아직 미사용
+
+    Float2 m_pivot;             // 위젯 피벗 (보정위치)
+
+    Visibility m_visible;       // 보이기 여부
 
     std::wstring m_inputString; // 텍스트 입력 내용
 
@@ -109,8 +144,6 @@ protected:
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
 
-    RECT m_rect;
-
     // 상수버퍼 업데이트할 데이터들
     Update_Data   m_constant;
 
@@ -126,29 +159,43 @@ protected:
 
     IInput* m_pInput = nullptr;
 
-    Anchor m_anchor; // 아직 안씀
+    UIDirection m_anchor; // 아직 안씀
 
-    UIManager* m_uiManager = nullptr; // UIManager
+    UIManager* m_pUIManager = nullptr; // UIManager
 public:
+
     Widget() = delete; // 기본 생성 금지
     explicit Widget(UIManager* uiManager);
     virtual ~Widget();
+
     //Create는 오브젝트 매니저만 쓰기
-    virtual bool  Create(XMFLOAT3 vPos);//일단 호환용으로 냅두고 나중에 무조건 이름 필요한걸로 바꾸는게 나을듯
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
 
     virtual bool  Update(float dTime = 0);
     virtual bool  Submit(float dTime = 0);
-    bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 xx
+    bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 X
 
+    void          UpdateRect();
+
+    // 위치 세팅
+    void          SetPos(XMFLOAT3 vPos)         { m_vPos = vPos; }
+    void          SetPosBK(XMFLOAT3 vPosBk)     { m_vPosBk = vPosBk; }
+    void          SetRot(XMFLOAT3 vRot)         { m_vRot = vRot; }
+    void          SetRotBK(XMFLOAT3 vRotBk)     { m_vRotBk = vRotBk; }
+    void          SetScale(XMFLOAT3 vScale)     { m_vScale = vScale; }
+    void          SetScaleBK(XMFLOAT3 vScaleBk) { m_vScaleBk = vScaleBk; }
+    void          SetPivot(Float2 pivot)        { m_pivot = pivot; }
+    void          SetPivot(UIDirection dir)     { m_pivot = PivotFromUIDirection(dir); }
     virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
 
     virtual void  Backup();
+    void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
 
-    virtual void  SetPos(XMFLOAT3 pos) { m_vPos = pos; };
-    virtual void  SetScale(XMFLOAT3 scale) { m_vScale = scale; };
-    virtual void  SetRot(XMFLOAT3 rot) { m_vRot = rot; };
+    XMFLOAT3& GetPos() { return m_vPos; }
+    XMFLOAT3& GetRot() { return m_vRot; }
+    XMFLOAT3& GetScale() { return m_vScale; }
+
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();
@@ -178,8 +225,10 @@ public:
 
     uint32_t GetID() { return m_id; }
     const std::wstring& GetName() const { return m_name; }
-    RECT GetRect() const { return m_rect; }
+
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
+    const RECT GetRect() const { return m_rect; }
+    const Float2 GetPivot() { return m_pivot; }
 
     void Attach(Widget* obj);
     void DettachParent();
@@ -193,6 +242,19 @@ public:
     virtual WidgetType GetWidgetType() { return WidgetType::Widget; }
     virtual WidgetClass GetWidgetClass() { return WidgetClass::Widget; }
 
+    WidgetDesc BuildWidgetDesc();
+
+#ifdef _DEBUG
+    virtual void Serialize() {}
+#endif
+
+    //bool IsIntersect(const RECT& other)
+    //{
+    //    return !(this->m_rect.left <= other.left ||
+    //        this->m_rect.left >= other.right ||
+    //        this->m_rect.bottom <= other.top ||
+    //        this->m_rect.top >= other.bottom);
+    //}
     
 };
 
@@ -204,6 +266,9 @@ inline MeshHandle GetDefWidgetMesh(MeshHandle* out = nullptr)
     if (out) *out = g_defaultWidgetMesh;
     return g_defaultWidgetMesh;
 }
+
+
+
 
 /*
 // UI 그리기 (일반 2D)

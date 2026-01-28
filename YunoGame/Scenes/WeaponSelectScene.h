@@ -4,6 +4,8 @@
 
 #include "WeaponSelectScene_InputContext.h"
 
+class CursurSystem;
+
 class WeaponSelectScene final : public SceneBase
 {
 public:
@@ -41,4 +43,5 @@ private:
     Widget* m_pExitBtn  = nullptr;
 
     WeaponSelectScene_InputContext m_weaponCtx;
+    CursurSystem* m_pCursurSys = nullptr;
 };

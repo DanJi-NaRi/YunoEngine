@@ -13,7 +13,6 @@ Image::~Image()
 bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Widget::Create(name, id, vPos);
-
     if (!m_pInput || !m_pRenderer || !m_pTextures)
         return false;
 

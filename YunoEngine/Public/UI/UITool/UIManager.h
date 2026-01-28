@@ -11,6 +11,7 @@ enum class ButtonState;
 
 class Button;
 class YunoDirectionalLight;
+struct WidgetDesc;
 
 class UIManager
 {
@@ -40,12 +41,13 @@ private:
 
     std::unique_ptr<YunoDirectionalLight> m_directionLight; // 필요할까?
 
-   
-
 public:
     void CreateDirLight();
     void SetOrthoFlag(bool flag) { m_isOrtho = flag; };
 
+    // 상위 캔버스의 사이즈를 반환하는 함수.
+    // 현재는 Canvas 개념이 없으므로 클라이언트 사이즈를 적용한다.
+    void GetSurface(); 
 public:
     explicit UIManager();
     virtual ~UIManager();
@@ -62,8 +64,8 @@ public:
     T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);
 
     //씬 매니저에 있어도 될것같은 놈들
-    const Widget* FindWidget(UINT id); //id로 검색
-    const Widget* FindWidget(const std::wstring& name); //이름으로 검색
+    Widget* FindWidget(UINT id); //id로 검색
+    Widget* FindWidget(const std::wstring& name); //이름으로 검색
 
 
     void DestroyWidget(UINT id);
@@ -72,9 +74,18 @@ public:
     const size_t GetWidgetCount() { return m_widgetCount; }
     const std::unordered_map<UINT, Widget*>& GetWidgetlist() { return m_widgetMap; }
 
+    CursurSystem* GetCursurStstem() { return &m_cursurSystem; }
+
     void UpdateButtonStates(); // 모든 위젯 업데이트
+
+    // 입력값 업데이트
     bool ProcessButtonMouse(ButtonState state, uint32_t mouseButton = 0); // 커서 <-> 위젯 Rect 위치 비교
     bool ProcessButtonKey(ButtonState state, uint32_t key);
+
+    Float2 GetCanvasSize();
+
+    std::vector<WidgetDesc> BuildWidgetDesc();
+    void ApplyWidgetFromDesc(const std::vector<WidgetDesc>& wds);
 private:
     void CheckDedicateWidgetName(std::wstring& name);
 

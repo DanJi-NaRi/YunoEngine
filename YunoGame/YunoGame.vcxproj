@@ -192,7 +192,12 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CardManager.cpp" />
     <ClCompile Include="ExitButton.cpp" />
+    <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Game\UI\ButtonTemplate.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -223,6 +228,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\Object\GridLine.cpp" />
     <ClCompile Include="Game\Object\Piece.cpp" />
     <ClCompile Include="Game\Object\Tile.cpp" />
+    <ClCompile Include="Scenes\RenderTest.cpp" />
     <ClCompile Include="System\GridFactory.cpp" />
     <ClCompile Include="System\GridSystem.cpp" />
     <ClCompile Include="System\PlayGridSystem.cpp" />
@@ -247,6 +253,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="UserImage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CardManager.h" />
     <ClInclude Include="ExitButton.h" />
     <ClInclude Include="GameManager\SceneState.h" />
     <ClInclude Include="Game\UI\ButtonTemplate.h">
@@ -282,6 +289,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\Object\CardActData.h" />
     <ClInclude Include="Game\Object\CardData.h" />
     <ClInclude Include="Game\UI\Image.h" />
+    <ClInclude Include="Scenes\RenderTest.h" />
     <ClInclude Include="System\GridFactory.h" />
     <ClInclude Include="System\GridSystem.h" />
     <ClInclude Include="System\PieceHelper.h" />

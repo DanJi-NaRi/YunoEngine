@@ -14,6 +14,10 @@ CardSlot::~CardSlot()
 bool CardSlot::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Slot::Create(name, id, vPos);
+
+    //m_pivot = PivotFromUIDirection(UIDirection::Center);
+    //SetPivotDir(UIDirection::Center);
+    SetDefaultSnapPoint(0.0f, WidgetClass::Card);
     return true;
 }
 
@@ -34,4 +38,5 @@ void CardSlot::Clear()
 {
     m_pCard = nullptr;
 }
+
 
