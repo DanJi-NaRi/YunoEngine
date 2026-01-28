@@ -21,6 +21,8 @@
 #include "AudioQueue.h"
 #include "PieceQueue.h"
 
+#include "CardManager.h"
+
 #include "GameApp.h"
 
 #include "PacketBuilder.h"
@@ -92,6 +94,7 @@ bool GameApp::OnInit()
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
 
+   CardManager::Get().LoadFromCSV("../Assets/CardData/CardData.csv");
     // 네트워크 스레드 시작
     m_clientNet.Start("127.0.0.1", 9000);
 

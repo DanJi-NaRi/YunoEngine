@@ -94,6 +94,9 @@
     <Filter Include="Game\UI\Slot">
       <UniqueIdentifier>{5dfe4c0c-0b5d-493b-8267-0e0bf6b67d3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Card">
+      <UniqueIdentifier>{dcb893cc-151f-4aae-a92d-b87a6e5a817e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -169,7 +172,6 @@
     <ClCompile Include="Scenes\UIScene.cpp">
       <Filter>Scenes\99.Test</Filter>
     </ClCompile>
-    <ClCompile Include="Game\UI\Card.cpp" />
     <ClCompile Include="Game\UI\ButtonTemplate.cpp">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClCompile>
@@ -193,6 +195,12 @@
     <ClCompile Include="Game\UI\UserImage.cpp" />
     <ClCompile Include="Scenes\Title.cpp">
       <Filter>Scenes\0.Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\Card.cpp">
+      <Filter>Card</Filter>
+    </ClCompile>
+    <ClCompile Include="CardManager.cpp">
+      <Filter>Card</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -282,9 +290,6 @@
       <Filter>Game\UI\Button</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\Test_Unit.h" />
-    <ClInclude Include="Game\UI\Card.h" />
-    <ClInclude Include="Game\Object\CardActData.h" />
-    <ClInclude Include="Game\Object\CardData.h" />
     <ClInclude Include="Game\UI\Image.h" />
     <ClInclude Include="Game\UI\Text.h" />
     <ClInclude Include="Game\UI\ButtonTemplate.h">
@@ -314,6 +319,18 @@
     <ClInclude Include="Game\UI\UserImage.h" />
     <ClInclude Include="Scenes\Title.h">
       <Filter>Scenes\0.Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\Card.h">
+      <Filter>Card</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\CardActData.h">
+      <Filter>Card</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\CardData.h">
+      <Filter>Card</Filter>
+    </ClInclude>
+    <ClInclude Include="CardManager.h">
+      <Filter>Card</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
