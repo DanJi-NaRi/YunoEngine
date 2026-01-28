@@ -15,6 +15,7 @@ private:
     using CreateFn = std::function<std::unique_ptr<Unit>(ObjectManager&, const UnitDesc&)>;
     size_t m_objectCount;
     UINT m_objectIDs;
+    UINT m_pointLightIDs;
 
     std::deque<std::unique_ptr<Unit>> m_objs;
 
@@ -74,6 +75,9 @@ public:
     const std::unordered_map<UINT, Unit*>& GetObjectlist() { return m_objMap; }
 
     SceneDesc BuildSceneDesc();
+    void ApplyUnitFromDesc(const std::vector<UnitDesc>& uds);
+    void ApplyDirLightFromDesc(const DirectionalLightDesc& dd);
+    void ApplyPointLightsFromDesc(const std::vector<PointLightDesc>& pds);
 private:
     void CheckDedicateObjectName(std::wstring& name);
 
