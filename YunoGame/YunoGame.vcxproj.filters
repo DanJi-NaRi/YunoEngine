@@ -315,5 +315,11 @@
     <ClInclude Include="Scenes\Title.h">
       <Filter>Scenes\0.Title</Filter>
     </ClInclude>
+    <ClInclude Include="MiniMap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GridLine.tpp">
+      <Filter>Grid</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -24,6 +24,9 @@ protected:
     void OnDestroyScene() override;
 
 private:
+    void TestInput();
+
+private:
     std::unique_ptr<IGridSystem> m_playGrid;
     Game_InputContext m_gameCtx;
 };

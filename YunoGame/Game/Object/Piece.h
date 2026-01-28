@@ -20,12 +20,11 @@ public:
     void InsertQ(PGridCmd targetPos);
     void SetWho(GamePiece type);
     void SetDir(Direction dir, bool isAnim = true);
+    void SetDead();
 
 private:
     void SetTarget(XMFLOAT3 targetPos, float speed);
-    void SetDead();
     void SendDone();
-
     void ClearQ();
 
 private:

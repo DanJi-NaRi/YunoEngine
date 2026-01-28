@@ -59,7 +59,7 @@ void GridSystem::CreateGridLine(float x, float y, float z)
 {
     if (m_gridBox == nullptr) return;
 
-    auto pLine = m_objectManager->CreateObject<GridLine>(L"DebugGridLine", XMFLOAT3(x, y + 0.01f, z));
+    auto pLine = m_objectManager->CreateObject<GridLine<Unit>>(L"DebugGridLine", XMFLOAT3(x, y + 0.01f, z));
     pLine->SetScale({ m_cellSizeX, 1, m_cellSizeZ });
     m_gridBox->Attach(pLine);
 }

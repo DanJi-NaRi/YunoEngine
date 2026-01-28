@@ -199,18 +199,13 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ClCompile>
     <ClCompile Include="Game\UI\CardSlot.cpp" />
     <ClCompile Include="Game\Object\Test_Unit.cpp" />
-
     <ClCompile Include="Game\UI\ExitButton.cpp" />
     <ClCompile Include="Game\UI\ReadyButton.cpp" />
     <ClCompile Include="Game\UI\TitleImage.cpp" />
     <ClCompile Include="Game\UI\UserImage.cpp" />
     <ClCompile Include="ReadyButton.cpp" />
     <ClCompile Include="GameManager\GameManager.cpp" />
-
-
     <ClCompile Include="GridBox.cpp" />
-
-
     <ClCompile Include="Game\UI\Card.cpp" />
     <ClCompile Include="Game\UI\CardTable.cpp" />
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
@@ -264,6 +259,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\ReadyButton.h" />
     <ClInclude Include="Game\UI\TitleImage.h" />
     <ClInclude Include="Game\UI\UserImage.h" />
+    <ClInclude Include="MiniMap.h" />
     <ClInclude Include="ReadyButton.h" />
     <ClInclude Include="GameManager\GameManager.h" />
     <ClInclude Include="GridBox.h" />
@@ -314,6 +310,9 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Scenes\Title.h" />
     <ClInclude Include="UserImage.h" />
     <ClInclude Include="WeaponSelectScene_InputContext.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GridLine.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

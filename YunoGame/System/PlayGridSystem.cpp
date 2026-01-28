@@ -85,7 +85,17 @@ void PlayGridSystem::Update(float dt)
                 
                 break;
             }
-
+        case CommandType::Hit:
+            {
+            const GamePiece pieceType = cmd.hit.whichPiece;
+            int damage = cmd.hit.damage1;
+            auto& pieceInfo = m_pieces[pieceType];
+            pieceInfo.health -= damage;
+            CheckHealth(pieceInfo);
+            std::cout << pieceInfo.id <<". health: " << pieceInfo.health << std::endl;
+                break;
+            }
+            
         case CommandType::Dead:
             {
                 const GamePiece pieceType = cmd.die_s.whichPiece;
@@ -116,9 +126,12 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     for (int i = 0; i < m_tiles.size() - 1; i++)
     {
         auto [wx, wz] = CellToWorld(i % m_column, i / m_column);
-        auto pTile = m_objectManager->CreateObject<Tile>(L"Tile", XMFLOAT3(wx, y, wz));
-        pTile->SetScale({ m_cellSizeX * 0.5f, 1, m_cellSizeZ * 0.5f });
+        //auto pTile = m_objectManager->CreateObject<Tile>(L"Tile", XMFLOAT3(wx, y, wz));
+        auto pTile = m_objectManager->CreateObjectFromFile<Piece>(L"Tile", XMFLOAT3(wx, y, wz), L"../Assets/fbx/Tile.fbx");
+        pTile->SetScale({ m_cellSizeX * 0.8f, 1, m_cellSizeZ * 0.8f });
         m_tilesIDs.push_back(pTile->GetID());
+
+        // 빈 박스에 자식 객체로 등록. (for 정리)
         m_gridBox->Attach(pTile);
     }
 
@@ -126,7 +139,6 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     const auto& wData = GameManager::Get().GetWeaponData();
     m_wy = y;
     int cx = 0; int cz = 0;
-    TileOccupy to{};
     Team team = Team::Undefined;
     Direction dir;
 
@@ -140,18 +152,22 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
 
         auto [px, pz] = CellToWorld(cx, cz);
 
-        std::wstring fileName = GetWeaponFileName(w.weaponId);
-        auto pPiece = m_objectManager->CreateObjectFromFile<Piece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
-        pPiece->SetWho((GamePiece)to.who);
-        pPiece->SetScale({ 0.8f, 0.8f, 0.8f });
-        pPiece->SetDir(dir, false);
-
-        // 기물 정보 등록
-        m_pieces.emplace((GamePiece)to.who, PieceInfo{ cx, cz, pPiece->GetID(), dir, team });
         // 타일 상태 갱신
         m_tiles[w.currentTile].to = (team == Team::Ally) ?
             TileOccupy{ TileOccuType::Ally_Occupied, (w.slotId == 1) ? TileWho::Ally1 : TileWho::Ally2 } :
             TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
+
+        GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
+
+        std::wstring fileName = GetWeaponFileName(w.weaponId);
+        auto pPiece = m_objectManager->CreateObject<Piece>(L"Piece", XMFLOAT3(px, m_wy, pz));
+        //auto pPiece = m_objectManager->CreateObjectFromFile<Piece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
+        pPiece->SetWho(gp);
+        pPiece->SetScale({ 0.8f, 0.8f, 0.8f });
+        pPiece->SetDir(dir, false);
+
+        // 기물 정보 등록
+        m_pieces.emplace(gp, PieceInfo{ cx, cz, pPiece->GetID(), w.hp, dir, team });
 
         // 빈 박스에 자식 객체로 등록. (for 정리)
         m_gridBox->Attach(pPiece);
@@ -203,27 +219,29 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
 
         return;
     }
-    else if (to.occuType == TileOccuType::Enemy_Occupied || to.occuType == TileOccuType::Ally_Occupied)
-    {                                                       // 적군 or 아군 존재
-        std::cout << "[PlayGridSystem]::Occupied\n";
-
+    else if(to.occuType == TileOccuType::Ally_Occupied)     // 아군 존재
+    {
+        std::cout << "[PlayGridSystem]::Ally_Occupied\n";
 
         // 충돌지점까지 이동 후 원래 자리로 되돌아감
         pPiece->InsertQ(PlayGridQ::Move_P(dir, colX, m_wy, colZ));
         auto [oldwx, oldwz] = CellToWorld(oldcx, oldcz);
-        pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, oldwx, m_wy, oldwz, 1, true));
+        pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, oldwx, m_wy, oldwz, 1));
 
-        // 부딪힌 기물들의 체력 변경 및 죽음 확인
-        auto existWho = m_tiles[GetID(cx, cz)].to.who;
-        auto& remainer = m_pieces[(GamePiece)existWho];
-        remainer.health -= 5;
-        CheckHealth(remainer);
-        std::cout << "remainer.health: " << remainer.health << std::endl;
+    }
+    else if (to.occuType == TileOccuType::Enemy_Occupied)
+    {                                                       // 적군 존재
+        std::cout << "[PlayGridSystem]::Enemy_Occupied\n";
 
-        pieceInfo.health -= 10;
-        CheckHealth(pieceInfo);
-        std::cout << "currentPiece.health: " << pieceInfo.health << std::endl;
+        // 부딪힌 기물 타입 확인
+        GamePiece existWho = (GamePiece)m_tiles[GetID(cx, cz)].to.who;
 
+        // 충돌지점까지 이동 후 원래 자리로 되돌아감
+        auto [oldwx, oldwz] = CellToWorld(oldcx, oldcz);
+        pPiece->InsertQ(PlayGridQ::Move_P(dir, colX, m_wy, colZ));                  // 충돌 위치까지 이동 후
+        pPiece->InsertQ(PlayGridQ::Hit_P(10, existWho, 5));                                      // 피 감소
+        pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, oldwx, m_wy, oldwz, 1)); // 제자리로 돌아감
+        
         return;
     }
     else                                                    // 비어있는 자리
@@ -231,7 +249,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
         std::cout << "[PlayGridSystem]::Unoccupied\n";
         
         // 기물 이동
-        pPiece->InsertQ(PlayGridQ::Move_P(dir, wx, m_wy, wz, 1, true));
+        pPiece->InsertQ(PlayGridQ::Move_P(dir, wx, m_wy, wz, 1));
 
         // 타일 상태 변경
         ChangeTileTO(oldcx, oldcz, TileOccupy{ TileOccuType::Unoccupied, TileWho::None });
@@ -265,8 +283,7 @@ void PlayGridSystem::CheckHealth(PieceInfo& pieceInfo)
         // 해당 기물 렌더X
         auto pPiece = dynamic_cast<Piece*>(m_objectManager->FindObject(pieceInfo.id));
 
-        // 해당 기물 죽는 시간 지연을 위해
-        pPiece->InsertQ({ CommandType::Dead });
+        pPiece->SetDead();
 
         // 해당 타일 정보 초기화
         int tileID = GetID(pieceInfo.cx, pieceInfo.cz);
@@ -328,32 +345,28 @@ F2 PlayGridSystem::GetCollisionPos(Direction dir, Direction pieceDir, int cx, in
     switch (dir)
     {
     case Direction::Up:
-        //newX = wx + (width * inverse);
         newX = wx;
         newZ = wz - hight;
         break;
     case Direction::Down:
-        //newX = wx - (width * inverse);
         newX = wx;
         newZ = wz + hight;
         break;
     case Direction::Right:
         newX = wx - (width * inverse);
         newZ = wz;
-        //newZ = wz + hight;
         break;
     case Direction::Left:
         newX = wx - (width * inverse);
         newZ = wz;
-        //newZ = wz + hight;
         break;
     case Direction::UpLeft:
-        newX = wx + (width * inverse);
-        newZ = wz + hight;
+        newX = wx - (width * inverse);
+        newZ = wz - hight;
         break;
     case Direction::UpRight:
-        newX = wx + (width * inverse);
-        newZ = wz + hight;
+        newX = wx - (width * inverse);
+        newZ = wz - hight;
         break;
     case Direction::DownLeft:
         newX = wx - (width * inverse);
