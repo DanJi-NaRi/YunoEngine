@@ -1,6 +1,22 @@
 #include "pch.h"
 #include "Test_Unit.h"
 
+#include "ObjectTypeRegistry.h"
+#include "ObjectManager.h"
+
+//오브젝트 타입.h
+
+namespace {
+    struct AutoReg_Test_Unit //<- 이름은 자유
+    {
+        AutoReg_Test_Unit()
+        {
+            //아래줄 주석 풀고 이름만 바꿔주고 등록하면됩니다
+            ObjectTypeRegistry::Instance().Register(L"Test_Unit", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Test_Unit>(d); });
+        }
+    } s_reg_Test_Unit;//<- 이름은 자유
+}
+
 
 VERTEX_Pos g_Test_Unit_pos[] = {
     { -1.0f,  1.0f,  0.0f },    // 좌상

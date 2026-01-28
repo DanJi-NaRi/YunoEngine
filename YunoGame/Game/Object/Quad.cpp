@@ -2,6 +2,10 @@
 #include "Quad.h"
 
 
+#include "ObjectTypeRegistry.h"
+#include "ObjectManager.h"
+
+
 VERTEX_Pos g_Quad_pos[] = {
     { -1.0f,  1.0f,  0.0f },    // 좌상
     {  1.0f,  1.0f,  0.0f },    // 우상
@@ -39,9 +43,20 @@ INDEX g_Quad_idx[] =
     { 2, 1, 3 }
 };
 
+namespace {
+    struct AutoReg_Quad
+    {
+        AutoReg_Quad()
+        {
+            ObjectTypeRegistry::Instance().Register(L"Quad", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Quad>(d); });
+        }
+    } s_reg_Quad;
+}
+
 
 Quad::Quad()
 {
+    unitType = L"Quad";
 }
 
 Quad::~Quad()

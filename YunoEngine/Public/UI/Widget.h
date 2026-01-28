@@ -192,8 +192,6 @@ public:
 
     virtual WidgetType GetWidgetType() { return WidgetType::Widget; }
     virtual WidgetClass GetWidgetClass() { return WidgetClass::Widget; }
-
-    
 };
 
 extern MeshHandle g_defaultWidgetMesh;

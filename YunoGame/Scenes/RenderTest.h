@@ -1,14 +1,10 @@
 #pragma once
 
 #include "SceneBase.h"
-#include "Game_InputContext.h"
-//class Game_InputContext;
-class Triangle;
 
-class PlayScene final : public SceneBase
+class RenderTest final : public SceneBase
 {
 public:
-
     void OnEnter() override;
     void OnExit() override;
 
@@ -16,7 +12,7 @@ public:
     void SubmitObj() override;
     void SubmitUI() override;
 
-    const char* GetDebugName() const override { return "PlayScene"; }
+    const char* GetDebugName() const override { return "RenderTest"; }
 
 protected:
     bool OnCreateScene() override;
@@ -24,5 +20,4 @@ protected:
 
 private:
 
-    Game_InputContext m_gameCtx;
 };
