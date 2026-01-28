@@ -2,6 +2,20 @@
 #include "PieceQueue.h"
 #include "Tile.h"
 
+#include "ObjectTypeRegistry.h"
+#include "ObjectManager.h"
+
+//오브젝트 타입.h
+
+namespace {
+    struct AutoReg_Tile
+    {
+        AutoReg_Tile()
+        {
+            ObjectTypeRegistry::Instance().Register(L"Tile", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Tile>(d); });
+        }
+    } s_reg_Tile;
+}
 
 VERTEX_Pos g_cubeMesh[] =
 {
@@ -142,6 +156,7 @@ INDEX g_cubeIndex[] =
 
 Tile::Tile()
 {
+    unitType = L"Tile";
 }
 
 Tile::~Tile()

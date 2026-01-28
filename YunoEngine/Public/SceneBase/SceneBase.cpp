@@ -7,6 +7,7 @@
 #include "IRenderer.h"
 #include "YunoLight.h"
 #include "ObjectManager.h"
+#include "SerializeScene.h"
 #include "UIManager.h"
 #include "UImgui.h"
 
@@ -31,6 +32,15 @@ std::string WStringToString(const std::wstring& wstr)
     );
 
     return result;
+}
+
+inline std::wstring Utf8ToWString(const std::string& s)
+{
+    if (s.empty()) return {};
+    int size = MultiByteToWideChar(CP_UTF8, 0, s.data(), (int)s.size(), nullptr, 0);
+    std::wstring w(size, 0);
+    MultiByteToWideChar(CP_UTF8, 0, s.data(), (int)s.size(), w.data(), size);
+    return w;
 }
 
 
@@ -64,9 +74,30 @@ bool SceneBase::OnCreate()
 
     if (!m_uiManager->Init())
         return false;
+    
+    std::wstring filepath = L"../Assets/Scenes/" + Utf8ToWString(GetDebugName()) + L".json";
+
+    if (LoadScene(filepath))
+        return true;
+
+    //return OnCreateScene();
+    return true;
+}
 
 
-    return OnCreateScene();
+bool SceneBase::LoadScene(const std::wstring& filepath)
+{
+    bool res = nlohmann::LoadSceneFromFile(m_objectManager, filepath);
+
+    return res;
+}
+
+SceneDesc SceneBase::BuildSceneDesc()
+{
+    SceneDesc sd = m_objectManager->BuildSceneDesc();
+    sd.sceneName = Utf8ToWString(GetDebugName());
+
+    return sd;
 }
 
 // 삭제
@@ -395,6 +426,7 @@ void SceneBase::DrawInspector()
 #endif
 
 
+
 bool SceneBase::OnCreateScene()
 {
     // 각 씬에서 여기에 씬 생성시 할 행동 구현하면 됨
@@ -406,3 +438,5 @@ void SceneBase::OnDestroyScene()
 {
     // 각 씬에서 여기에 씬 파괴시 할 행동 구현하면 됨
 }
+
+

@@ -14,6 +14,34 @@ struct TransformDesc
     Vec3Desc scale{ 1, 1, 1 };
 };
 
+struct Vec4Desc
+{
+    float x = 0.f;
+    float y = 0.f;
+    float z = 0.f;
+    float w = 0.f;
+};
+
+inline XMFLOAT3 ToXM(const Vec3Desc& vd)
+{
+    return XMFLOAT3(vd.x, vd.y, vd.z);
+}
+
+inline Vec3Desc FromXM(const XMFLOAT3& xm)
+{
+    return Vec3Desc{ xm.x, xm.y, xm.z };
+}
+
+inline XMFLOAT4 ToXM(const Vec4Desc& vd)
+{
+    return XMFLOAT4(vd.x, vd.y, vd.z, vd.w);
+}
+
+inline Vec4Desc FromXM(const XMFLOAT4& xm)
+{
+    return Vec4Desc{ xm.x, xm.y, xm.z, xm.w };
+}
+
 using ObjectID = uint64_t;
 
 struct UnitDesc
@@ -21,7 +49,7 @@ struct UnitDesc
     ObjectID ID;
     ObjectID parentID = 0;
     std::wstring name;
-    std::wstring meshPath;
+    std::wstring meshPath = L"None";
     
     TransformDesc transform;
 
@@ -30,7 +58,6 @@ struct UnitDesc
 
 struct DirectionalLightDesc
 {
-
     XMFLOAT4 direction = { 0.58f, -0.58f, 0.58f, 0.0f };
 
     XMFLOAT4 diff = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -39,9 +66,20 @@ struct DirectionalLightDesc
 
     XMFLOAT4 spec = { 1.0f, 1.0f, 1.0f, 1.0f };
 
+    float intensity = 3.0f;
+};
+
+struct DirectionalLightDescSave
+{
+    Vec4Desc direction = { 0.58f, -0.58f, 0.58f, 0.0f };
+
+    Vec4Desc diff = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    Vec4Desc amb = { 0.2f, 0.2f, 0.2f, 1.0f };
+
+    Vec4Desc spec = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     float intensity = 3.0f;
-
 };
 
 struct PointLightDesc
@@ -49,6 +87,15 @@ struct PointLightDesc
     XMFLOAT3 lightpos = { 0, 0, 0 };
 
     XMFLOAT4 lightCol = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    float intensity = 3.0f;
+};
+
+struct PointLightDescSave
+{
+    Vec3Desc lightpos = { 0, 0, 0 };
+
+    Vec4Desc lightCol = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     float intensity = 3.0f;
 };
@@ -65,4 +112,13 @@ struct SceneDesc
     std::optional<DirectionalLightDesc> dirLight;
     std::vector<PointLightDesc> pointLights;
 };
+
+class ObjectManager;
+
+namespace nlohmann
+{
+    void SaveSceneToFile(const SceneDesc& scene, const std::wstring& path);
+
+    bool LoadSceneFromFile(std::unique_ptr<ObjectManager>& om, const std::wstring& path);
+}
 

@@ -97,6 +97,9 @@
     <Filter Include="Card">
       <UniqueIdentifier>{dcb893cc-151f-4aae-a92d-b87a6e5a817e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes\999.RenderTest">
+      <UniqueIdentifier>{901ca8d6-4b9c-4f90-bdac-f4eacc332766}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -201,6 +204,12 @@
     </ClCompile>
     <ClCompile Include="CardManager.cpp">
       <Filter>Card</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\RenderTest.cpp">
+      <Filter>Scenes\999.RenderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp">
+      <Filter>Game\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -331,6 +340,9 @@
     </ClInclude>
     <ClInclude Include="CardManager.h">
       <Filter>Card</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\RenderTest.h">
+      <Filter>Scenes\999.RenderTest</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

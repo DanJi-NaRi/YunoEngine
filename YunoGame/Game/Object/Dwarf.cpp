@@ -5,8 +5,24 @@
 #include <IInput.h>
 #include "YunoEngine.h"
 
+#include "ObjectTypeRegistry.h"
+#include "ObjectManager.h"
+
+//오브젝트 타입.h
+
+namespace {
+    struct AutoReg_Dwarf
+    {
+        AutoReg_Dwarf()
+        {
+            ObjectTypeRegistry::Instance().Register(L"Dwarf", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Dwarf>(d); });
+        }
+    } s_reg_Dwarf;
+}
+
 Dwarf::Dwarf()
 {
+    unitType = L"Dwarf";
 }
 
 Dwarf::~Dwarf()

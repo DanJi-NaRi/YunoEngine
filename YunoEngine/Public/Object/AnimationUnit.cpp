@@ -3,6 +3,24 @@
 #include "AnimationUnit.h"
 #include "Parser.h"
 
+#include "ObjectTypeRegistry.h"
+#include "ObjectManager.h"
+
+namespace {
+    struct AutoReg_AnimUnit
+    {
+        AutoReg_AnimUnit()
+        {
+            ObjectTypeRegistry::Instance().Register(L"AnimationUnit", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<AnimationUnit>(d); });
+        }
+    } s_reg_AnimUnit;
+}
+
+AnimationUnit::AnimationUnit()
+{
+    unitType = L"AnimationUnit";
+}
+
 void AnimationUnit::AnimationUpdate(float dTime)
 {
     if(m_animator)
