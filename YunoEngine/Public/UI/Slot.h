@@ -17,8 +17,6 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Slot; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::Slot; }
     void SetDefaultSnapPoint(float padding, WidgetClass target); // padding : 보정치, target : 받아들일 클래스 타입
-
-    // [TODO] 스냅기능 여기다 기본적으로 넣는걸로..
     SnapPoint GetSnapPoint() { return m_snapPoint; }
     //virtual void ChangeSprite(int mtrlNum); // 이거 이미지 or 위젯이 들고 있어도 되는 거 아님??
 protected:

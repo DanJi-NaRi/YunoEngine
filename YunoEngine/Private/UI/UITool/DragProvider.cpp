@@ -62,12 +62,6 @@ void DragProvider::UpdateDrag(float dTime)
 
     //std::cout << m_dragDelta.x << ", " << m_dragDelta.y << std::endl;
 
-    //if (m_dragDelta.x != 0 || m_dragDelta.y != 0) {
-    //    // [TODO] 마우스에 붙을 때 위젯 가운데로 가게끔 보정
-    //    m_pPos->x = m_bkPos.x + m_dragDelta.x;
-    //    m_pPos->y = m_bkPos.y + m_dragDelta.y;
-    //}
-
     m_pPos->x = m_mousePos.x + m_dragOffset.x;
     m_pPos->y = m_mousePos.y + m_dragOffset.y;
 
@@ -101,7 +95,7 @@ void DragProvider::EndDrag()
         //std::cout << "endDrag!! bk!!" << std::endl;
         *m_pPos = m_bkPos;
         m_pressedPos = XMFLOAT2{};
-        m_isDrag = false; // [TODO] 스냅 태그 확인하고 원위치 체크해야됨
+        m_isDrag = false;
     }
 }
 

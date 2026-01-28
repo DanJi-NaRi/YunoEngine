@@ -20,8 +20,8 @@ public:
     { 
        Widget::CreateMaterial(L"../Assets/UI/TITLE/Background.png"); 
 
-       m_width = m_pTextures->GetTextureWH(m_Albedo).first;
-       m_height = m_pTextures->GetTextureWH(m_Albedo).second;
+       m_size.x = m_pTextures->GetTextureWH(m_Albedo).first;
+       m_size.y = m_pTextures->GetTextureWH(m_Albedo).second;
        return true;
     };    // 머테리얼 생성 (한 번만)
 

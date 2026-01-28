@@ -57,6 +57,8 @@ INDEX g_Widget_idx[] =
 
 Widget::Widget(UIManager* uiManager) : m_pUIManager(uiManager)
 {
+    Clear();
+
     m_zOrder = 0;
 
     m_defaultMesh = 0;
@@ -67,18 +69,24 @@ Widget::Widget(UIManager* uiManager) : m_pUIManager(uiManager)
     m_Orm = 0;
 
     // 단순 출력 우선 기본값
-    m_width = 100.0f;
-    m_height = 100.0f;
+    m_size.x = 100.0f;
+    m_size.y = 100.0f;
 
     m_vScale = XMFLOAT3(1.0f, 1.0f, 1.0f);
     m_vRot = XMFLOAT3(0.0f, 0.0f, 0.0f);
     m_vPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-    m_spriteSizeX = 0;
-    m_spriteSizeY = 0;
+    m_spriteSize.x = 0;
+    m_spriteSize.y = 0;
 
-    m_sizeX = m_width * m_vScale.x;
-    m_sizeY = m_height * m_vScale.y;
+    m_canvasSize.x = 0;
+    m_canvasSize.y = 0;
+
+    m_finalSize.x = 0;
+    m_finalSize.y = 0;
+
+    m_finalSize.x = m_size.x * m_vScale.x;
+    m_finalSize.y = m_size.y * m_vScale.y;
 
     m_anchor = UIDirection::LeftTop;
     m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
@@ -189,17 +197,17 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     //m_vRot = vRot;
     //m_vScale = vScale;
 
-    m_spriteSizeX = (float)50;
-    m_spriteSizeY = (float)50;
+    m_spriteSize.x = (float)50;
+    m_spriteSize.y = (float)50;
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
 
-    m_width = m_spriteSizeX;
-    m_height = m_spriteSizeY;
-
-    m_sizeX = m_vScale.x * m_width;
-    m_sizeY = m_vScale.y * m_height;
+    m_size.x = m_spriteSize.x;
+    m_size.y = m_spriteSize.y;
+    
+    //m_finalSize.x = m_vScale.x * m_width;
+    //m_finalSize.y = m_vScale.y * m_height;
 
     //m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
 
@@ -222,16 +230,19 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOA
     m_vRot = vRot;
     m_vScale = vScale;
 
-    m_spriteSizeX = (float)50;
-    m_spriteSizeY = (float)50;
+    m_spriteSize.x = (float)50;
+    m_spriteSize.y = (float)50;
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
-    m_width = m_spriteSizeX;
-    m_height = m_spriteSizeY;
+    m_size.x = m_spriteSize.x;
+    m_size.y = m_spriteSize.y;
 
-    m_sizeX = m_vScale.x * m_width;
-    m_sizeY = m_vScale.y * m_height;
+    m_canvasSize.x = 0;
+    m_canvasSize.y = 0;
+
+    m_finalSize.x = m_vScale.x * m_size.x;
+    m_finalSize.y = m_vScale.y * m_size.y;
 
     //m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
 
@@ -248,7 +259,7 @@ bool Widget::Update(float dTime)
 {
     if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vRot.z -= 1 * dTime; } // 회전 디버깅 [
     if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vRot.z += 1 * dTime; } // 회전 디버깅 ]
-    if (m_pInput->IsKeyPressed(VK_OEM_7)) {                          // 피벗 디버깅 '
+    if (m_pInput->IsKeyPressed(VK_OEM_7)) {                       // 피벗 디버깅 '
         tst = !tst;
         std::cout << "pressed!" << std::endl;
 
@@ -258,32 +269,51 @@ bool Widget::Update(float dTime)
     // DX 의 레스터라이즈 규칙에 따른 2D 픽셀좌표 보정.
     //m_vPos.x -= 0.5f;	m_vPos.y -= 0.5f;
 
-    float clientWidth = (float)YunoEngine::GetWindow()->GetClientWidth();
-    float clientHeight = (float)YunoEngine::GetWindow()->GetClientHeight();
+    m_clientSize = Float2((float)YunoEngine::GetWindow()->GetClientWidth(),
+                         (float)YunoEngine::GetWindow()->GetClientHeight());
+
+    
+   
+        Float2 origin = Float2(1920.0f, 1080.0f); // 기준(디자인) 해상도
+        Float2 canvas = m_pUIManager->GetCanvasSize(); // 현재 클라이언트/캔버스
+
+        float sx = canvas.x / origin.x;
+        float sy = canvas.y / origin.y;
+
+        // 레터박스(전체가 보이도록) => 더 작은 스케일 채택
+        float s = (sx < sy) ? sx : sy;
+
+        // 16:9 유효영역(스케일 적용 후 origin 크기)
+        Float2 fitted = Float2(origin.x * s, origin.y * s);
+
+        // 남는 공간(레터박스) 분배: 중앙 정렬
+        Float2 letterboxOffset = Float2(
+            (canvas.x - fitted.x) * 0.5f,
+            (canvas.y - fitted.y) * 0.5f);
+
+        m_canvasOffset = Float2(s, s);
+        Float2 m_canvasLetterboxOffset = letterboxOffset; // 이동
+
+        XMFLOAT3 finalSize;
+        finalSize.x = m_size.x * m_vScale.x * m_canvasOffset.x;
+        finalSize.y = m_size.y * m_vScale.y * m_canvasOffset.y;
+        finalSize.z = 1.0f;
+
+        XMFLOAT3 finalPos;
+        finalPos.x = m_vPos.x * m_canvasOffset.x + m_canvasLetterboxOffset.x;
+        finalPos.y = m_vPos.y * m_canvasOffset.y + m_canvasLetterboxOffset.y;
+        finalPos.z = m_vPos.z;
 
 
-    /*m_vPos.x = (float)(clientWidth - m_width) / 2.0f;
-    m_vPos.y = (float)(clientHeight - m_height + 1);
-    m_vPos.z = 1.0f;*/
-
-    //m_vPos.x = (float)(clientWidth - m_width) / 2.0f;
-    //m_vPos.y = (float)(clientHeight - m_height + 1);
-    //m_vPos.z = 1.0f;
-
-    //float sizex = (float)m_spriteSizeX;
-    //float sizey = (float)m_spriteSizeY;
-
-    //m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
-
-    m_sizeX = m_vScale.x * m_width;
-    m_sizeY = m_vScale.y * m_height;
+    m_finalSize = Float2(m_size.x * m_vScale.x, m_size.y * m_vScale.y);
 
     //m_vScale.z = 1.0f; // UI는 z scale 의미 없음(일단 1로 고정)
 
-    XMMATRIX mScale = XMMatrixScaling(m_sizeX, m_sizeY, 1.0f);
-
+    //XMMATRIX mScale = XMMatrixScaling(m_finalSize.x, m_finalSize.y, 1.0f);
+    XMMATRIX mScale = XMMatrixScaling(finalSize.x, finalSize.y, 1.0f);
     XMMATRIX mRot =   XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
-    XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
+    //XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
+    XMMATRIX mTrans = XMMatrixTranslation(finalPos.x, finalPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
     XMMATRIX mPivot = XMMatrixTranslation(-m_pivot.x, -m_pivot.y, 0.0f); // 피벗
 
     XMMATRIX mTM;
@@ -332,10 +362,10 @@ bool Widget::LastSubmit(float dTime /*= 0*/)
 void Widget::UpdateRect()
 {
     // 회전 무시된 Rect 크기
-    float left = m_vPos.x - (m_pivot.x * m_sizeX);
-    float top = m_vPos.y - (m_pivot.y * m_sizeY);
-    float right = left + m_sizeX;
-    float bottom = top + m_sizeY;
+    float left = m_vPos.x - (m_pivot.x * m_finalSize.x);
+    float top = m_vPos.y - (m_pivot.y * m_finalSize.y);
+    float right = left + m_finalSize.x;
+    float bottom = top + m_finalSize.y;
 
     // 뒤집기(음수 스케일) 대비
     float minX = (left < right) ? left : right;
@@ -350,67 +380,6 @@ void Widget::UpdateRect()
         (LONG)std::ceil(maxX),
         (LONG)std::ceil(maxY)
     };
-    
-    /*
-    // 회전 없는 Rect 크기
-    if (fabsf(m_vRot.z) <= 0.0001f) {
-            float left = m_vPos.x - (m_pivot.x * m_sizeX);
-        float top = m_vPos.y - (m_pivot.y * m_sizeY);
-        float right = left + m_sizeX;
-        float bottom = top + m_sizeY;
-
-        // 뒤집기(음수 스케일) 대비
-        float minX = (left < right) ? left : right;
-        float maxX = (left > right) ? left : right;
-        float minY = (top < bottom) ? top : bottom;
-        float maxY = (top > bottom) ? top : bottom;
-
-        m_rect =
-        {
-            (LONG)std::floor(minX),
-            (LONG)std::floor(minY),
-            (LONG)std::ceil(maxX),
-            (LONG)std::ceil(maxY)
-        };
-    }
-    else { // 회전 적용 있는 Rect 계산식..
-        XMFLOAT2 local[4] =
-        {
-            { 0.0f - m_pivot.x, 0.0f - m_pivot.y }, // LT
-            { 1.0f - m_pivot.x, 0.0f - m_pivot.y }, // RT
-            { 1.0f - m_pivot.x, 1.0f - m_pivot.y }, // RB
-            { 0.0f - m_pivot.x, 1.0f - m_pivot.y }, // LB
-        };
-        // 2) 월드행렬 로드
-        XMMATRIX W = XMLoadFloat4x4(&m_mWorld);
-
-        // 3) 4점 변환 후 min/max
-        float minX =  FLT_MAX,  minY =  FLT_MAX;
-        float maxX = -FLT_MAX,  maxY = -FLT_MAX;
-
-        for (int k = 0; k < 4; ++k)
-        {
-            XMVECTOR p = XMVectorSet(local[k].x, local[k].y, 0.0f, 1.0f);
-            p = XMVector4Transform(p, W); // 행벡터/열벡터 걱정 없이 DirectXMath가 처리
-
-            XMFLOAT4 out;
-            XMStoreFloat4(&out, p);
-
-            minX = (out.x < minX) ? out.x : minX;
-            minY = (out.y < minY) ? out.y : minY;
-            maxX = (out.x > maxX) ? out.x : maxX;
-            maxY = (out.y > maxY) ? out.y : maxY;
-        }
-
-        m_rect =
-        {
-            (LONG)std::lround(minX),
-            (LONG)std::lround(minY),
-            (LONG)std::lround(maxX),
-            (LONG)std::lround(maxY)
-        };
-    }
-    */
 }
 
 bool Widget::IsCursorOverWidget(POINT mouseXY) // 마우스 커서가 위젯 위에 있는지 체크

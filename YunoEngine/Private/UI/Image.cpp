@@ -81,7 +81,7 @@ bool Image::CreateMesh()
 
 bool Image::CreateMaterial()
 {
-    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/woodbox.bmp");
+    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/black.png");
 
     MaterialDesc md{};
 

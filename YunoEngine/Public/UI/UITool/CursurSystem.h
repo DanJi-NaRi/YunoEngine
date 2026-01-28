@@ -75,11 +75,42 @@ inline RECT ExpandRect(const RECT& r, float padding) // 보정치를 통한 RECT
     return out;
 }
 
+inline RECT RotateRect(const RECT& rc, float rotRad, float pivotX, float pivotY)
+{
+    auto rot = [&](float x, float y) {
+        float dx = x - pivotX;
+        float dy = y - pivotY;
+        float c = cosf(rotRad);
+        float s = sinf(rotRad);
+        float rx = dx * c - dy * s + pivotX;
+        float ry = dx * s + dy * c + pivotY;
+        return std::pair<float, float>(rx, ry);
+        };
+
+    auto [x0, y0] = rot((float)rc.left, (float)rc.top);
+    auto [x1, y1] = rot((float)rc.right, (float)rc.top);
+    auto [x2, y2] = rot((float)rc.right, (float)rc.bottom);
+    auto [x3, y3] = rot((float)rc.left, (float)rc.bottom);
+
+    float minX = x0, maxX = x0, minY = y0, maxY = y0;
+    auto acc = [&](float x, float y) {
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+        };
+    acc(x1, y1); acc(x2, y2); acc(x3, y3);
+
+    RECT out;
+    out.left = (LONG)floorf(minX);
+    out.top = (LONG)floorf(minY);
+    out.right = (LONG)ceilf(maxX);
+    out.bottom = (LONG)ceilf(maxY);
+    return out;
+}
+
 
 // IsIntersectWin32()와 동일 기능
 inline bool IsIntersect(const RECT& a, const RECT& b)
 {
-
     // 경계 닿으면 판정 O
     return !(a.right < b.left ||
         a.left > b.right ||
@@ -92,3 +123,4 @@ inline bool IsIntersect(const RECT& a, const RECT& b)
     //    a.bottom <= b.top ||
     //    a.top >= b.bottom);
 }
+

@@ -51,7 +51,10 @@ bool UIScene::OnCreateScene()
 
     //m_objectManager->CreateWidget<Image>(L"tst", XMFLOAT3(0, 0, 0));
 
-
+    auto* a = m_uiManager->CreateWidget<Letterbox>(L"LetterBoxA", XMFLOAT3(0, 0, 0));
+    a->SetRole(Letterbox::Role::BarA);
+    auto* b = m_uiManager->CreateWidget<Letterbox>(L"LetterBoxB", XMFLOAT3(0, 0, 0));
+    b->SetRole(Letterbox::Role::BarB);
     return true;
 }
 

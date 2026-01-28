@@ -44,13 +44,14 @@ enum class WidgetClass : int {
     CardTable,
     Card,
     CardSlot,
-
+    LetterBox,
     // 첫 무기 선택 페이즈
     UserImage,
     TitleImage,
     ReadyButton,
     ExitButton,
     WeaponButton,
+
 };
 
 struct Float2;
@@ -90,10 +91,14 @@ class Widget
 {
 protected:
 
+    // 정보 데이터
+
     uint32_t m_id;
     WidgetType m_type;
 
     std::wstring m_name;
+
+    // 트랜스폼 데이터
 
     XMFLOAT3	m_vPos;     // 스크린상의 위치 (z는 사용 안 함(camera-near 문제))
     XMFLOAT3	m_vRot;     // 스크린상의 위젯 Rot
@@ -109,24 +114,51 @@ protected:
     XMFLOAT3	m_vScaleBk;
     XMFLOAT3 	m_vDirBk;
 
-    float m_width;              // 위젯 자체의 가로 사이즈
-    float m_height;             // 위젯 자체의 세로 사이즈
+    Float2 m_pivot;             // 위젯 피벗 (보정위치)
 
-    float m_spriteSizeX;        // 적용된 Albedo(스프라이트) 원본 사이즈 X
-    float m_spriteSizeY;        // 적용된 Albedo(스프라이트) 원본 사이즈 Y
 
-    float m_sizeX;              // 최종 위젯 사이즈 X // m_width * m_scale.x
-    float m_sizeY;              // 최종 위젯 사이즈 Y // m_height * m_scale.y
+    // 사이즈 데이터
+
+    //float m_width;              // 위젯 자체의 가로 사이즈
+    //float m_height;             // 위젯 자체의 세로 사이즈
+    Float3  m_size;               // 위젯 자체의 사이즈
+
+    //float m_spriteSizeX;        // 적용된 Albedo(스프라이트) 원본 사이즈 X
+    //float m_spriteSizeY;        // 적용된 Albedo(스프라이트) 원본 사이즈 Y
+    Float2  m_spriteSize;
+
+    //float m_sizeX;              // 최종 위젯 사이즈 X // m_width * m_scale.x * m_canvasOffsetX
+    //float m_sizeY;              // 최종 위젯 사이즈 Y // m_height * m_scale.y * m_canvasOffsetY
+    Float2 m_finalSize;           // 최종 위젯 사이즈 XY // m_height * m_scale.y * m_canvasOffset
+
+
+
+
+    // 캔버스 관련 데이터
+
+    Float2 m_canvasSize;        // 캔버스 사이즈 XY (아무런 캔버스도 없을 땐 클라이언트 사이즈 = 클라가 캔버스 역할)
+    //float m_canvasSizeX;        // 캔버스 사이즈 X (아무런 캔버스도 없을 땐 클라이언트 사이즈 = 클라가 캔버스 역할)
+    //float m_canvasSizeY;        // 캔버스 사이즈 Y (아무런 캔버스도 없을 땐 클라이언트 사이즈 = 클라가 캔버스 역할)
+          
+    Float2 m_clientSize;        // 클라이언트 사이즈 XY
+
+    Float2 m_canvasOffset;       // 캔버스 결과 적용 오프셋 (canvasSizeXY/clientSizeXY)
+
+    //Canvas* m_canvas;
+
+
+
+
+    // 기타 데이터
 
     RECT m_rect;                // 현재 위젯을 RECT로 치환한 값
 
     int m_zOrder;               // 아직 미사용
 
-    Float2 m_pivot;             // 위젯 피벗 (보정위치)
+    Visibility m_visible;       // 보이기 여부 // 아직 미사용
 
-    Visibility m_visible;       // 보이기 여부
+    std::wstring m_inputString; // 텍스트 입력 내용 // 아직 미사용
 
-    std::wstring m_inputString; // 텍스트 입력 내용
 
     // 자주 변하지 않는 UI 최적화를 위한 더티 플래그.
     // 자식이 있을 경우 자식들의 더티 플래그도 조절해야 함.
@@ -187,6 +219,7 @@ public:
     void          SetPivot(Float2 pivot)        { m_pivot = pivot; }
     void          SetPivot(UIDirection dir)     { m_pivot = PivotFromUIDirection(dir); }
     virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
+    Float2        SetCanvasSizeX(Float2 sizeXY)   { m_canvasSize = sizeXY; }
 
     virtual void  Backup();
 

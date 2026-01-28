@@ -237,6 +237,7 @@
     <ClCompile Include="Public\Object\ObjectTypeRegistry.cpp">
       <Filter>Public\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Private\UI\Letterbox.cpp" />
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -415,6 +416,7 @@
     <ClInclude Include="Public\Object\ObjectTypeRegistry.h">
       <Filter>Public\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Public\UI\Letterbox.h" />
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>
