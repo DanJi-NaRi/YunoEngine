@@ -383,6 +383,7 @@ private:
 
     std::vector<MeshResource> m_meshes;        // handle -> m_meshes[handle-1]
     std::vector<RenderItem>   m_renderQueue;   // 이번 프레임 제출된 드로우 요청
+    std::vector<RenderItem>   m_renderBlendQueue;   // 반투명 메쉬 별도 관리 큐
     std::vector<RenderItem>   m_widgetRenderQueue;
 
     struct MaterialResource

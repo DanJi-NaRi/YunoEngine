@@ -48,15 +48,26 @@ bool RenderTest::OnCreateScene()
     //m_gridSystem->Init(5, 7, 2, 2);
     //m_gridSystem->CreateObject(0, 1, 0);
 
-
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/background.fbx");
     map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
     map->SetScale(XMFLOAT3(2, 2, 2));
 
-    auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx");
+    PassOption po;
+    po.blend = BlendPreset::AlphaBlend;
+    po.depth = DepthPreset::ReadOnly;
+    po.raster = RasterPreset::CullNone;
+
+    auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
     gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
+    gun->SetOpacity(0.5f);
+
+    auto gun2 = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun2", XMFLOAT3(0, 2, 2), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
+    gun2->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
+    gun2->SetOpacity(0.5f);
+
+
 
     return true;
 }

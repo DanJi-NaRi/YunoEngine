@@ -17,4 +17,6 @@ public:
     TextureHandle ao = 0;
     TextureHandle emissive = 0;
     TextureHandle opacity = 0;
+
+    bool isAlphaBlend = false;
 };

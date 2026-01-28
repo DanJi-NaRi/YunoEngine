@@ -28,7 +28,7 @@ private:
     //Camera 투영
     bool m_isOrtho = false;
 
-    std::unique_ptr<MeshNode> CreateMeshNode(const std::wstring& filepath);
+    std::unique_ptr<MeshNode> CreateMeshNode(const std::wstring& filepath, PassOption opt);
 
     std::unique_ptr<YunoDirectionalLight> m_directionLight;
     std::vector<std::unique_ptr<YunoPointLight>> m_pointLights;
@@ -61,7 +61,7 @@ public:
     template<typename T>
     T* CreateObject(const std::wstring& name, XMFLOAT3 pos, UINT id = 0);
     template<typename T>
-    T* CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath, UINT id = 0);
+    T* CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath, PassOption opt = {}, UINT id = 0);
 
     //씬 매니저에 있어도 될것같은 놈들
     Unit* FindObject(UINT id); //id로 검색
@@ -100,7 +100,7 @@ void ObjectManager::CreateObjectInternal(const UnitDesc& desc)
     }
     else
     {
-        obj = CreateObjectFromFile<T>(desc.name, ToXM(desc.transform.position), desc.meshPath, desc.ID);
+        obj = CreateObjectFromFile<T>(desc.name, ToXM(desc.transform.position), desc.meshPath, {}, desc.ID);
     }
 
     auto& degRot = desc.transform.rotation;
@@ -116,8 +116,6 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, UINT id) 
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
     UINT newID = m_objectIDs++;
-    if (id != 0)
-        newID = id;
 
     std::wstring newname = name;
     
@@ -134,15 +132,13 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, UINT id) 
 }
 
 template<typename T>
-T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath, UINT id)
+T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath, PassOption opt, UINT id)
 {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
     UINT newID = m_objectIDs++;
-    if (id != 0)
-        newID = id;
 
-    auto mesh = CreateMeshNode(filepath);
+    auto mesh = CreateMeshNode(filepath, opt);
 
     auto meshnode = std::move(mesh);
 

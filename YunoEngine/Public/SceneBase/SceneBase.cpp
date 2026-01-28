@@ -170,8 +170,6 @@ void SceneBase::SubmitObj()
         m_objectManager->ProcessPending();
         m_objectManager->Submit(m_lastDt);
     }
-
-
 }
 
 void SceneBase::SubmitUI()

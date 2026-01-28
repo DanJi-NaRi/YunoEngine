@@ -1787,7 +1787,7 @@ MaterialHandle YunoRenderer::CreateMaterial(const MaterialDesc& desc)
     YunoMaterial mat{};
     mat.pass = pass;
 
-
+    mat.isAlphaBlend = desc.passKey.blend != BlendPreset::Opaque;
     mat.albedo = desc.albedo;
     mat.normal = desc.normal;
     mat.orm = desc.orm;
@@ -2155,7 +2155,12 @@ void YunoRenderer::Submit(const RenderItem& item)
     if (copy.materialHandle == 0 || copy.materialHandle > m_materials.size())
         return;
 
-    m_renderQueue.push_back(copy);
+    if (m_materials[item.materialHandle - 1].isAlphaBlend)
+    {
+        m_renderBlendQueue.push_back(copy);
+    }
+    else
+        m_renderQueue.push_back(copy);
 }
 
 void YunoRenderer::Flush()
@@ -2164,6 +2169,22 @@ void YunoRenderer::Flush()
         return;
 
     // 렌더 전에 정렬 넣을예정
+   /* XMVECTOR campos = XMLoadFloat3(&m_camera.Position());
+    XMVECTOR camForward = m_camera.GetForward();*/
+    XMMATRIX view = m_camera.View();
+
+    for (auto& item : m_renderBlendQueue)
+    {
+        XMVECTOR pos = XMLoadFloat3(&item.Constant.worldPos);
+        XMVECTOR viewPos = XMVector3TransformCoord(pos, view);
+        item.sortkey = XMVectorGetZ(viewPos);
+    }
+
+    std::sort(m_renderBlendQueue.begin(), m_renderBlendQueue.end(),
+        [](const RenderItem& r, const RenderItem& l)
+        {
+            return r.sortkey > l.sortkey;
+        });
 
     // 샘플러 바인드
     BindSamplers();
@@ -2214,6 +2235,52 @@ void YunoRenderer::Flush()
     }
 
     m_renderQueue.clear();
+
+    for (auto& item : m_renderBlendQueue)
+    {
+        if (item.meshHandle == 0 || item.meshHandle > m_meshes.size())
+            continue;
+
+        const YunoMaterial* material = nullptr;
+
+        if (item.materialHandle > 0 && item.materialHandle <= m_materials.size()) // 핸들 유효성 체크
+            material = &m_materials[item.materialHandle - 1];
+
+        if (!material)
+        {
+            if (m_defaultMaterial > 0 && m_defaultMaterial <= m_materials.size())
+                material = &m_materials[m_defaultMaterial - 1];
+        }
+
+        RenderPassHandle passHandle = material->pass;
+
+        if (passHandle == 0)
+            passHandle = m_defaultPass;
+
+        if (passHandle == 0 || passHandle > m_passes.size())
+            continue;
+
+        // 렌더 패스 바인드
+        m_passes[passHandle - 1]->Bind(m_context.Get());
+
+        // 메쉬 바인드
+        const MeshResource& mesh = m_meshes[item.meshHandle - 1];
+        mesh.Bind(m_context.Get());
+
+        // 상수 버퍼 바인드
+        BindConstantBuffers(item);
+
+        // 텍스쳐 바인드
+        BindTextures(*material);
+
+        // 드로우
+        if (mesh.ib && mesh.indexCount > 0)
+            m_context->DrawIndexed(mesh.indexCount, 0, 0);
+        else
+            m_context->Draw(mesh.vertexCount, 0);
+    }
+
+    m_renderBlendQueue.clear();
 }
 
 // ------------------------------------------------------------

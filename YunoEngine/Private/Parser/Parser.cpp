@@ -17,11 +17,11 @@
 #include <assimp/postprocess.h>
 
 
-std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, XMMATRIX& parentTM, const std::wstring& filepath);
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, XMMATRIX& parentTM, const std::wstring& filepath, PassOption opt);
 std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std::unordered_map<std::string, UINT>& boneNameSet, std::unordered_map<std::string, XMMATRIX>& nameToOffset, const std::string& name);
 void CreateAnimationClip(aiAnimation* anim, const aiScene* scene, std::unordered_map<std::string, UINT>& nameToIndex, AnimationClip* out);
 void CreateBoneNameSet(const aiScene* scene, std::unordered_map<std::string, UINT>& indexOut, std::unordered_map<std::string, XMMATRIX>& matrixOut);
-std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, const std::wstring& filepath);
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, const std::wstring& filepath, PassOption opt);
 bool CheckSkeletalModel(const aiScene* scene);
 void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* parent, XMMATRIX parentNodeGlobal, XMMATRIX parentBoneGlobal,
     std::unordered_map<std::string, UINT>& nameToIndex, std::unordered_map<std::string, XMMATRIX>& nameTomOffset);
@@ -41,7 +41,7 @@ std::wstring Utf8ToWString(const char* s)
     return w;
 }
 
-std::unique_ptr<MeshNode> Parser::LoadFile(const std::wstring& filepath)
+std::unique_ptr<MeshNode> Parser::LoadFile(const std::wstring& filepath, PassOption opt)
 {
     Assimp::Importer importer;
 
@@ -78,7 +78,7 @@ std::unique_ptr<MeshNode> Parser::LoadFile(const std::wstring& filepath)
 
     XMMATRIX root = XMMatrixIdentity();
 
-    auto MeshNode = CreateNode(scene->mRootNode, scene, 0, BoneNameToIndex, root, filepath);
+    auto MeshNode = CreateNode(scene->mRootNode, scene, 0, BoneNameToIndex, root, filepath, opt);
 
     return MeshNode;
 }
@@ -359,7 +359,8 @@ void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* pa
     }
 }
 
-std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, XMMATRIX& parentTM, const std::wstring& filepath)
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, 
+                                                                            XMMATRIX& parentTM, const std::wstring& filepath, PassOption opt)
 {
     std::wstring name(Utf8ToWString(node->mName.C_Str()));
 
@@ -382,7 +383,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
     for (size_t i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
-        auto [meshkey, matkey] = CreateMesh(aiMesh, scene, nodeNum, nameToIndex, filepath);
+        auto [meshkey, matkey] = CreateMesh(aiMesh, scene, nodeNum, nameToIndex, filepath, opt);
 
         std::string meshname = node->mName.C_Str();
 
@@ -397,7 +398,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
-        auto child = CreateNode(node->mChildren[i], scene, num, nameToIndex, current, filepath); //자식 노드 탐색
+        auto child = CreateNode(node->mChildren[i], scene, num, nameToIndex, current, filepath, opt); //자식 노드 탐색
         if(!child)
             continue;
         meshnode->m_Childs.push_back(std::move(child));
@@ -408,7 +409,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 }
 
 std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, 
-                                            std::unordered_map<std::string, UINT>& nameToIndex, const std::wstring& filepath)
+                                            std::unordered_map<std::string, UINT>& nameToIndex, const std::wstring& filepath, PassOption opt)
 {
     std::vector<VERTEX_Pos> vtxPos;
     std::vector<VERTEX_Nrm> vtxNrm;
@@ -704,13 +705,21 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             TextureHandle opacity = renderer->CreateDataTexture2DFromFile(wPath.c_str());
 
             md.opacity = opacity;
-            if (opacity)
-            {
-                md.passKey.blend = BlendPreset::AlphaBlend;
-                //md.passKey.raster = RasterPreset::CullNone;
-            }
+            md.passKey.blend = BlendPreset::AlphaBlend;
         }
 
+        //사용자 설정 패스 Set
+        {
+            if (md.passKey.blend == BlendPreset::Opaque)//다른곳에서 변경됐으면 옵션 무시
+                md.passKey.blend = opt.blend;
+            md.passKey.depth = opt.depth;
+            if (opt.shader != ShaderId::None) //None이면 사용자가 설정 안함->기본 패스 따라감
+            {
+                md.passKey.vs = opt.shader;
+                md.passKey.ps = opt.shader;
+            }
+            md.passKey.raster = opt.raster;
+        }
     }
 
     auto materialHandle = renderer->CreateMaterial(md);

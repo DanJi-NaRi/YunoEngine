@@ -38,7 +38,7 @@ bool AnimationUnit::Update(float dTime)
 
 bool AnimationUnit::Submit(float dTime)
 {
-    m_MeshNode->Submit(m_mWorld);
+    m_MeshNode->Submit(m_mWorld, m_vPos);
     if (m_animator)
         m_MeshNode->AnimSubmit(m_animator->GetBoneTMs());
 

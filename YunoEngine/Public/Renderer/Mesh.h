@@ -14,7 +14,7 @@ struct MeshNode {
 
     std::vector<std::unique_ptr<Mesh>> m_Meshs;
 
-    void Submit(XMFLOAT4X4& mWorld);
+    void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 };
@@ -67,13 +67,14 @@ public:
 
     void SetTexture(TextureUse use, const std::wstring& filepath);
     void SetMaskColor(const XMFLOAT4& col);
+    void SetOpacity(const float opacity);
 
     void UpdateRenderItem(XMFLOAT4X4 mWorld);
 
     void SetObjectConstants(const Update_Data& constants);
 
 
-    void Submit(XMFLOAT4X4& mWorld);
+    void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 

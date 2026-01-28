@@ -64,6 +64,7 @@ struct Update_Data
     DirectX::XMFLOAT4X4 boneAnim[MAX_BONE] = {};
     DirectX::XMFLOAT4 baseColor = { 1, 1, 1, 1 };
     DirectX::XMFLOAT4 emissiveColor = { 1, 1, 1, 1 };
+    XMFLOAT3 worldPos = { 0, 0, 0 }; //반투명 오브젝트 정렬용
     float roughRatio = 1.0f;
     float metalRatio = 1.0f;
     float shadowBias = 0.005f;
@@ -95,6 +96,7 @@ struct RenderItem
     MaterialHandle materialHandle = 0;
 
     Update_Data Constant;
+    float sortkey;
     bool isEmissive = false;
     bool haveAnim = false;
     bool castShadow = true; //그림자맵에 그릴 오브젝트
@@ -163,6 +165,14 @@ enum class MaterialDomain
 {
     Surface,
     PostProcess
+};
+
+struct PassOption
+{
+    ShaderId shader = ShaderId::None;
+    BlendPreset blend = BlendPreset::Opaque;
+    RasterPreset raster = RasterPreset::CullBack;
+    DepthPreset depth = DepthPreset::ReadWrite;
 };
 
 struct PassKey

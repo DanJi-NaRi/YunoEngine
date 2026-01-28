@@ -98,6 +98,11 @@ void Mesh::SetMaskColor(const XMFLOAT4& col)
     m_renderItem.Constant.baseColor = col;
 }
 
+void Mesh::SetOpacity(const float opacity)
+{
+    m_renderItem.Constant.opacity = opacity;
+}
+
 void Mesh::UpdateRenderItem(XMFLOAT4X4 mWorld)
 {
     m_renderItem.Constant.world = mWorld;
@@ -108,9 +113,10 @@ void Mesh::SetObjectConstants(const Update_Data& constants)
     m_renderItem.Constant = constants;
 }
 
-void Mesh::Submit(XMFLOAT4X4& mWorld)
+void Mesh::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
 {
     XMStoreFloat4x4(&m_renderItem.Constant.world, XMLoadFloat4x4(&mWorld));
+    m_renderItem.Constant.worldPos = pos;
 }
 
 void Mesh::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
@@ -130,17 +136,17 @@ void Mesh::LastSubmit()
     // 
 }
 
-void MeshNode::Submit(XMFLOAT4X4& mWorld)
+void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
 {
     XMMATRIX world = mUserTM * XMLoadFloat4x4(&mWorld);
     XMFLOAT4X4 worldF;
     XMStoreFloat4x4(&worldF, world);
 
     for (auto& mesh : m_Meshs)
-        mesh->Submit(worldF);
+        mesh->Submit(worldF, pos);
 
     for (auto& child : m_Childs)
-        child->Submit(worldF);
+        child->Submit(worldF, pos);
 }
 
 void MeshNode::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)

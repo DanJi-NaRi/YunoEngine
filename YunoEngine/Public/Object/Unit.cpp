@@ -125,7 +125,7 @@ bool Unit::Update(float dTime)
 bool Unit::Submit(float dTime)
 {
     if (!m_MeshNode) return true;
-    m_MeshNode->Submit(m_mWorld);
+    m_MeshNode->Submit(m_mWorld, m_vPos);
 
     LastSubmit(dTime);
 
@@ -184,6 +184,14 @@ void Unit::SetMaskColor(const XMFLOAT4& col)
     for (auto& m : m_Meshs)
     {
         m->SetMaskColor(col);
+    }
+}
+
+void Unit::SetOpacity(const float opacity)
+{
+    for (auto& m : m_Meshs)
+    {
+        m->SetOpacity(opacity);
     }
 }
 
