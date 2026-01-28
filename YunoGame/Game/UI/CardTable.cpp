@@ -45,7 +45,7 @@ bool CardTable::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
         m_constant.shadowBias = 0.005f;
     }
 
-    m_anchor = Anchor::LeftTop;
+    m_anchor = UIDirection::LeftTop;
     
     m_vScale.y = 5;
     m_vScale.x = 7;
@@ -76,8 +76,8 @@ bool CardTable::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 bool CardTable::Update(float dTime)
 {
 
-    if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50.0f * dTime; }
-    if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50.0f * dTime; }
+    /*if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50.0f * dTime; }
+    if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50.0f * dTime; }*/
     Image::Update(dTime);
     return false;
 }

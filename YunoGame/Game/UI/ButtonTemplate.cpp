@@ -28,6 +28,13 @@ bool ButtonTemplate::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos
 {
     Button::Create(name, id, vPos);
 
+    // 피벗 설정 2가지 // 기본값 : LeftTop // 1, 2번을 추천한다.
+    // DragProvider를 통해 스냅을 할 경우, Slot과 피벗을 맞추도록 하자.
+    //방법 1 : SetPivot(Float2{1,1});                               // 세부적으로 피벗 설정하고 싶으면
+    //방법 2 : SetPivot(UIDirection::Center);                       // 고정값으로 피벗 설정하고 싶으면
+    //방법 3 : m_pivot = PivotFromUIDirection(UIDirection::Center); // 전역함수(비추천)
+   
+
     // 키 바인드가 필요하면 할당할 수 있음. 
     // 알파벳은 'A'와 같은 형태로도 할당 가능.
     // 아닐 경우, 여타 다른 키처럼 등록

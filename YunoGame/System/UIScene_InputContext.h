@@ -41,9 +41,9 @@ public:
         bool KeyUp =       (evt.type == InputEventType::KeyUp           
             && evt.key != 0 && input->IsKeyReleased(evt.key));
 
+
         if (LMB_Pressed)
         {
-            // 마우스 먼저
             evt.consumed = m_uiManager->ProcessButtonMouse(ButtonState::Pressed, 0);
             //if (evt.consumed) std::cout << "[UI] Consumed LMB\n";
             return evt.consumed;
@@ -53,10 +53,17 @@ public:
             //if(evt.consumed) std::cout << "[UI] Consumed RMB\n";
             return evt.consumed;
         }
-        else if (LMB_Up)      { return evt.consumed = m_uiManager->ProcessButtonMouse(ButtonState::Released, 0);    }
+        else if (LMB_Up)      { 
+            this;
+            evt.consumed = m_uiManager->ProcessButtonMouse(ButtonState::Released, 0);
+            return evt.consumed;
+        }
         else if (RMB_Up)      { return evt.consumed = m_uiManager->ProcessButtonMouse(ButtonState::Released, 1);    }
         else if (KeyPressed)  { return evt.consumed = m_uiManager->ProcessButtonKey(ButtonState::Pressed, evt.key); }
-        else if (KeyUp) { return evt.consumed = m_uiManager->ProcessButtonKey(ButtonState::Released, evt.key);      };
+        else if (KeyUp) { 
+             evt.consumed = m_uiManager->ProcessButtonKey(ButtonState::Released, evt.key);      
+             return evt.consumed;
+        }
         return false;
     }
 

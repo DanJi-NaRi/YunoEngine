@@ -110,12 +110,6 @@ bool DragProvider::IsNowDragging()
     return m_isDrag;
 }
 
-bool DragProvider::SearchSnapPoint()
-{
-    bool hr = false;
-    return true;
-}
-
 XMFLOAT2 DragProvider::GetDeltaFromDragStart(const XMFLOAT2& prevPos, const XMFLOAT2& nowPos)
 {
     return XMFLOAT2(nowPos.x - prevPos.x , nowPos.y - prevPos.y);

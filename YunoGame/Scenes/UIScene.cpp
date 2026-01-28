@@ -40,8 +40,9 @@ bool UIScene::OnCreateScene()
 
     m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0));
     auto* slot0 = m_uiManager->CreateWidget<CardSlot>( L"S0", XMFLOAT3(300, 50, 0));
-    auto* slot1 = m_uiManager->CreateWidget<CardSlot>( L"S1", XMFLOAT3(600, 50, 0));
-
+    auto* slot1 = m_uiManager->CreateWidget<CardSlot>( L"S1", XMFLOAT3(400, 50, 0));
+    auto* slot2 = m_uiManager->CreateWidget<CardSlot>( L"S2", XMFLOAT3(500, 50, 0));
+    auto* slot3 = m_uiManager->CreateWidget<CardSlot>( L"S3", XMFLOAT3(600, 50, 0));
     m_uiManager->CreateWidget<Card>(L"tstCard", XMFLOAT3(600, 0, 0));
     m_uiManager->CreateWidget<Button>(L"tstBtn", XMFLOAT3(400, 0, 0));
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
@@ -78,6 +79,7 @@ void UIScene::OnExit()
 
 void UIScene::Update(float dt)
 {
+    //m_uiManager->GetCursurStstem()->UpdateCheckSnap();
     SceneBase::Update(dt); // 여기만 UI 출력하게끔 빼둘까?
     //m_input->Dispatch();
 }

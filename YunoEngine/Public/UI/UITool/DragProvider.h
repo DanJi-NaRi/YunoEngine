@@ -4,6 +4,7 @@ class IInput;
 //class UIManager;
 
 // 드래그 기능 공급자
+// 슬롯과 피봇이 동일하지 않으면 차이가 벌어질 수 있음.
 class DragProvider
 {
 public:
@@ -16,7 +17,6 @@ public:
     void StartDrag();
     void EndDrag();
     bool IsNowDragging();
-    bool SearchSnapPoint();
     XMFLOAT2 GetDeltaFromDragStart(const XMFLOAT2& prevPos, const XMFLOAT2& nowPos);
 
    //const std::vector<XMFLOAT3>& GetSnapPoints() const { return m_snapPoint; }
@@ -40,7 +40,7 @@ protected:
 
     // 보정 Position
     XMFLOAT2 m_dragOffset;          // 드래그 시 위젯 위치 보정 오프셋
-
+    //float m_padding;           // 범위 보정치 : Rect 감지 범위에 padding만큼 추가 보정을 한다. (드래그 당하는 위젯 쪽)
 
     //XMFLOAT2 m_dragDelta;          // 커서 델타
     //std::vector<XMFLOAT3> m_snapPoint; // 스냅 포인트

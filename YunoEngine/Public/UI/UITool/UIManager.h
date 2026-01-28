@@ -46,6 +46,9 @@ public:
     void CreateDirLight();
     void SetOrthoFlag(bool flag) { m_isOrtho = flag; };
 
+    // 상위 캔버스의 사이즈를 반환하는 함수.
+    // 현재는 Canvas 개념이 없으므로 클라이언트 사이즈를 적용한다.
+    void GetSurface(); 
 public:
     explicit UIManager();
     virtual ~UIManager();

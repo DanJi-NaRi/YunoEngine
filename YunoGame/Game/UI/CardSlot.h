@@ -20,7 +20,7 @@ public:
 
     Card* GetCard() { return m_pCard; }
     void SetCard(Card* card) { m_pCard; }
-    void SetDefaultSnapPoint();
+    
 
     bool IsSetCard() { return (m_pCard); }
     // [TODO] 머테리얼 할당정도??

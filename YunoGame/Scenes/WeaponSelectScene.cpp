@@ -70,7 +70,6 @@ void WeaponSelectScene::Update(float dt)
 {
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);
-    m_pCursurSys->UpdateCheckSnap();
 }
 
 void WeaponSelectScene::SubmitObj()

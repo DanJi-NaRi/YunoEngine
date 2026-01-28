@@ -27,8 +27,8 @@ struct Float2
 {
     float x{}, y{};
 
-    Float2() = default;
-    Float2(float _x, float _y) : x(_x), y(_y) {}
+    constexpr Float2() = default;
+    constexpr Float2(float _x, float _y) : x(_x), y(_y) {}
 
     // XMFLOAT2 -> Float2
     explicit Float2(const XMFLOAT2& v) : x(v.x), y(v.y) {}
@@ -57,8 +57,8 @@ struct Float3
 {
     float x{}, y{}, z{};
 
-    Float3() = default;
-    Float3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
+    constexpr Float3() = default;
+    constexpr Float3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
 
     explicit Float3(const XMFLOAT3& v) : x(v.x), y(v.y), z(v.z) {}
 
@@ -90,8 +90,8 @@ struct Float4
 {
     float x{}, y{}, z{}, w{};
 
-    Float4() = default;
-    Float4(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
+    constexpr Float4() = default;
+    constexpr Float4(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
 
     explicit Float4(const XMFLOAT4& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
 
