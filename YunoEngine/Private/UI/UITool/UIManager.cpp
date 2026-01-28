@@ -382,6 +382,23 @@ bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)
     return false;
 }
 
+// 아직 캔버스 개념이 없으므로 클라이언트가 곧 캔버스임. (단일 캔버스 느낌..)
+Float2 UIManager::GetCanvasSize() // 개선사항 : 멤버에 this라던가 위젯 식별자를 넣고
+{
+    Float2 canvas{ 0,0 };
+
+    // 부모를 따라가다가 부모가 가진 Canvas 정보가 있다면 최상위 부모의 Canvas가 있다면, if로 해당 sizeXY 반환
+    
+    //최상위 부모가 캔버스 타입이 아니면
+    {
+        canvas.x = YunoEngine::GetWindow()->GetClientWidth();
+        canvas.y = YunoEngine::GetWindow()->GetClientHeight();
+    }
+
+
+    return canvas;
+}
+
 void UIManager::CheckDedicateWidgetName(std::wstring & name)
 {
     int count = 0;
