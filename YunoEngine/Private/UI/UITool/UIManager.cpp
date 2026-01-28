@@ -432,7 +432,6 @@ void UIManager::FrameDataUpdate()
         dirData.Lightspec = m_directionLight->GetSpecFloat4();
         dirData.intensity = m_directionLight->GetIntensity();
     }
-
 }
 
 void UIManager::FrameDataSubmit()
