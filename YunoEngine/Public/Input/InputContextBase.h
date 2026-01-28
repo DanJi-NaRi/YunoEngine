@@ -32,6 +32,7 @@ public:
         m_objManager = m_scene->GetObjectManager();
         m_uiManager = m_scene->GetUIManager();
     }
+
     //void SetObjectManager(ObjectManager* objManger) { m_objManager = m_objManager; }
     //void SetUIManager(UIManager* uiManger) { m_uiManager = uiManger; }
 

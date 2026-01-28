@@ -164,12 +164,13 @@ int YunoEngine::Run()
             m_fixedAccumulator = 0.0;
         }
 
-        m_input->Dispatch();
+    
 
 
         const float dt = m_timer->DeltaSeconds();
         m_game->OnUpdate(dt);
 
+        m_input->Dispatch();
         // 씬 업데이트 (씬 전환 ApplyPending 포함)
         m_sceneManager->Update(dt);
 

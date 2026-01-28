@@ -7,10 +7,6 @@
 #include "IInput.h"
 #include "Button.h"
 
-void UIManager::CreateDirLight()
-{
-    m_directionLight = std::make_unique<YunoDirectionalLight>();
-}
 
 UIManager::UIManager()
 {
@@ -27,6 +23,7 @@ bool UIManager::Init()
     m_widgetMap.reserve(30); //30개 정도 메모리 잡고 시작
     m_pendingCreateQ.reserve(30);
     m_pInput = YunoEngine::GetInput();
+    m_cursurSystem.Init(&m_widgets); // 커서 시스템에 위젯 정보 넘기기
     return true;
 }
 
@@ -63,6 +60,16 @@ void UIManager::Submit(float dTime)
     {
          widget->Submit(dTime);
     }
+}
+
+void UIManager::CreateDirLight()
+{
+    m_directionLight = std::make_unique<YunoDirectionalLight>();
+}
+
+void UIManager::GetSurface()
+{
+
 }
 
 void UIManager::ProcessPending()
@@ -254,19 +261,32 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
         if (!m_pInput->IsMouseButtonDown(mouseButton)) return false;
         break;
     case ButtonState::Released:
+    {
         if (!m_pInput->IsMouseButtonReleased(mouseButton)) return false;
 
         // 커서가 밖이어도 포커스된 버튼이면 릴리즈 보장
-        if (m_cursurSystem.GetFocusedWidget())
+
+        Button* focusWidget = m_cursurSystem.GetFocusedWidget();
+        if (focusWidget)
         {
             if (m_cursurSystem.GetFocusedMouseButton() != mouseButton) return false;
-            if (mouseButton == 0) m_cursurSystem.GetFocusedWidget()->LMBReleasedEvent();
-            else if (mouseButton == 1) m_cursurSystem.GetFocusedWidget()->RMBReleasedEvent();
 
+            focusWidget->SetButtonState(ButtonState::Released);
+
+            if (mouseButton == 0) {
+                m_cursurSystem.FindSnapWidget(); // DragProvider가 있을 경우, 스냅 검색 // LMBReleasedEvent와 순서 주의. IsDrag가 여기서 처리됨.
+                focusWidget->LMBReleasedEvent();
+            }
+            else if (mouseButton == 1)
+            {
+                focusWidget->RMBReleasedEvent();
+            }
             m_cursurSystem.SetFocusedWidget(nullptr);
+            focusWidget = nullptr;
             return true;
         }
         break;
+    }
     default:
         // Hover/Idle는 "입력 발생" 기반 함수가 아님
         return false;
@@ -318,12 +338,25 @@ bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)
         if (!m_pInput->IsKeyDown(key)) return false;
         break;
     case ButtonState::Released:
+    {
         if (!m_pInput->IsKeyReleased(key)) return false;
-        break;
+        Button* usekeyWidget = m_cursurSystem.GetUseKeyWidget();
+        if (usekeyWidget)
+        {
+            if (m_cursurSystem.GetUseKeyWidgetBindKey() != key) return false;
+
+            std::cout << "RRRRRRRRRRR!!" << std::endl;
+            usekeyWidget->SetButtonState(ButtonState::Released);
+            usekeyWidget->KeyReleasedEvent(key);
+            m_cursurSystem.SetUseKeyWidget(nullptr);
+            usekeyWidget = nullptr;
+            return true;
+            break;
+        }
+    }
     default:
         return false;
     }
-
 
     // 2단계 : 입력이 발생한 프레임이므로, 상태 갱신
     UpdateButtonStates();
@@ -342,15 +375,14 @@ bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)
         switch (state) {
         case ButtonState::Pressed:  Btn->KeyPressedEvent(key);  return true;
         case ButtonState::Down:     Btn->DownEvent();     return true;
-        case ButtonState::Released: Btn->KeyReleasedEvent(key); return true;
+            //case ButtonState::Released: Btn->KeyReleasedEvent(key); return true;
         default: return false;
         }
     }
-
     return false;
 }
 
-void UIManager::CheckDedicateWidgetName(std::wstring& name)
+void UIManager::CheckDedicateWidgetName(std::wstring & name)
 {
     int count = 0;
 

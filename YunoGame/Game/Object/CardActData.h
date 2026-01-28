@@ -1,7 +1,7 @@
 #pragma once
 
 enum class RangeType : uint8_t {
-    Front,
+    Front, // Default
     Cross,
 };
 
@@ -12,7 +12,7 @@ enum CardUtility : uint8_t {
     Grab,
     DamageBuff, // 이렇게만 설정 후, +-값으로 버프/너프 설정 예정
     // 데미지 감소량이나 이런거 +연산인가 곱연산인가??
-    Heal, // 얘도 dmg +-값으로 해야할까?
+    //Heal, // 얘도 dmg +-값으로 해야할까?
 };
 
 struct CardActData // 카드 행동 데이터

@@ -34,7 +34,7 @@ bool Slot::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
         m_constant.shadowBias = 0.005f;
     }
 
-    m_anchor = Anchor::LeftTop;
+    m_anchor = UIDirection::LeftTop;
 
     Backup();
 
@@ -58,4 +58,12 @@ bool Slot::Submit(float dTime)
     }
     Widget::Submit(dTime);
     return true;
+}
+
+void Slot::SetDefaultSnapPoint(float padding, WidgetClass target)
+{
+    m_snapPoint.m_snapPos = { m_vPos.x, m_vPos.y };
+    m_snapPoint.m_snapPadding = padding;
+    m_snapPoint.m_snapRange = m_rect;
+    m_snapPoint.m_snapTargetClass = target;
 }

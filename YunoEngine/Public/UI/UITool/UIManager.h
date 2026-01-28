@@ -44,6 +44,9 @@ public:
     void CreateDirLight();
     void SetOrthoFlag(bool flag) { m_isOrtho = flag; };
 
+    // 상위 캔버스의 사이즈를 반환하는 함수.
+    // 현재는 Canvas 개념이 없으므로 클라이언트 사이즈를 적용한다.
+    void GetSurface(); 
 public:
     explicit UIManager();
     virtual ~UIManager();
@@ -69,6 +72,8 @@ public:
 
     const size_t GetWidgetCount() { return m_widgetCount; }
     const std::unordered_map<UINT, Widget*>& GetWidgetlist() { return m_widgetMap; }
+
+    CursurSystem* GetCursurStstem() { return &m_cursurSystem; }
 
     void UpdateButtonStates(); // 모든 위젯 업데이트
     bool ProcessButtonMouse(ButtonState state, uint32_t mouseButton = 0); // 커서 <-> 위젯 Rect 위치 비교
