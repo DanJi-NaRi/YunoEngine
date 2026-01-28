@@ -4,7 +4,21 @@
 #include "Parser.h"
 #include "YunoLight.h"
 #include "YunoCamera.h"
+#include "ObjectTypeRegistry.h"
 
+
+void ObjectManager::CreateObjectFromDesc(const UnitDesc& desc)
+{
+    auto* fn = ObjectTypeRegistry::Instance().Find(desc.unitType);
+
+    if (!fn)
+    {
+        std::cerr << "Unknown type(ObjectManager.cpp, 16), Please Register Type" << std::endl;
+        return;
+    }
+
+    (*fn)(*this, desc);
+}
 
 void ObjectManager::CreateDirLight()
 {
@@ -170,6 +184,28 @@ void ObjectManager::DestroyObject(const std::wstring& name)
     }
 
     m_pendingDestoryQ.push_back(id);
+}
+
+SceneDesc ObjectManager::BuildSceneDesc()
+{
+    SceneDesc scene;
+    scene.version = 1;
+    scene.isOrtho = m_isOrtho;
+
+    // Objects
+    for (auto& [id, obj] : m_objMap)
+    {
+        scene.units.push_back(obj->GetDesc());
+    }
+
+    // Lights
+    if (m_directionLight)
+        scene.dirLight = m_directionLight->GetDesc();
+
+    for (auto& pl : m_pointLights)
+        scene.pointLights.push_back(pl->GetDesc());
+
+    return scene;
 }
 
 void ObjectManager::CheckDedicateObjectName(std::wstring& name)

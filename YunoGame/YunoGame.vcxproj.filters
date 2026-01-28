@@ -94,6 +94,9 @@
     <Filter Include="Game\UI\Slot">
       <UniqueIdentifier>{5dfe4c0c-0b5d-493b-8267-0e0bf6b67d3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes\999.RenderTest">
+      <UniqueIdentifier>{901ca8d6-4b9c-4f90-bdac-f4eacc332766}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -193,6 +196,12 @@
     <ClCompile Include="Game\UI\UserImage.cpp" />
     <ClCompile Include="Scenes\Title.cpp">
       <Filter>Scenes\0.Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\RenderTest.cpp">
+      <Filter>Scenes\999.RenderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp">
+      <Filter>Game\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -314,6 +323,9 @@
     <ClInclude Include="Game\UI\UserImage.h" />
     <ClInclude Include="Scenes\Title.h">
       <Filter>Scenes\0.Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\RenderTest.h">
+      <Filter>Scenes\999.RenderTest</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

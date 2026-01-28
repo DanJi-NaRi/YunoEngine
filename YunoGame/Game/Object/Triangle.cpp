@@ -4,6 +4,21 @@
 #include <IInput.h>
 #include "YunoEngine.h"
 
+#include "ObjectTypeRegistry.h"
+#include "ObjectManager.h"
+
+//오브젝트 타입.h
+
+namespace {
+    struct AutoReg_Triangle
+    {
+        AutoReg_Triangle()
+        {
+            ObjectTypeRegistry::Instance().Register(L"Triangle", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Triangle>(d); });
+        }
+    } s_reg_Triangle;
+}
+
 
 VERTEX_Pos g_Triangle_pos[] = {
     {  0.0f,  1.0f,  0.0f},

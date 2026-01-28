@@ -7,6 +7,9 @@ class AnimationUnit : public Unit
 protected:
     std::unique_ptr<Animator> m_animator;
 public:
+    AnimationUnit();
+    virtual ~AnimationUnit() = default;
+
     virtual void AnimationUpdate(float dTime);
     virtual bool Update(float dTime) override; 
     virtual bool  Submit(float dTime = 0) override;
