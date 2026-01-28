@@ -76,7 +76,7 @@ public:
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 
-    const RenderItem& GetRenderItem() { return m_renderItem; }
+    RenderItem& GetRenderItem() { return m_renderItem; }
 
 #ifdef _DEBUG
     virtual void Serialize(int num); //나중에 상속해서 새로운 오브젝트 만들 때 임구이에 띄우고 싶은거있으면 이 함수 오버라이드하면됌

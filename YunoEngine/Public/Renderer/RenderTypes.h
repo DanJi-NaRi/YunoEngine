@@ -67,7 +67,7 @@ struct Update_Data
     float roughRatio = 1.0f;
     float metalRatio = 1.0f;
     float shadowBias = 0.005f;
-    float padding = 0.0f;
+    float opacity = 1.0f;
 };
 
 struct Frame_Data_Dir
