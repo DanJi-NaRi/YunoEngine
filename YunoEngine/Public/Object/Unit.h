@@ -102,6 +102,8 @@ public:
 
     void SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepath);
 
+    void SetMaskColor(const XMFLOAT4& col);
+
     uint32_t GetID() { return m_id; }
     const std::wstring& GetName() const { return m_name; }
 

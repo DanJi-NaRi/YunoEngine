@@ -179,6 +179,14 @@ void Unit::SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepa
     m_Meshs[meshindex]->SetTexture(use, filepath);
 }
 
+void Unit::SetMaskColor(const XMFLOAT4& col)
+{
+    for (auto& m : m_Meshs)
+    {
+        m->SetMaskColor(col);
+    }
+}
+
 
 void Unit::Attach(Unit* obj) //this가 부모, 파라미터로 자식
 {

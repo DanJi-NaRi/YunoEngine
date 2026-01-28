@@ -53,7 +53,7 @@ bool RenderTest::OnCreateScene()
 
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/background.fbx");
     map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
-    map->SetScale(XMFLOAT3(1, 1, 1));
+    map->SetScale(XMFLOAT3(2, 2, 2));
 
     auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx");
     gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));

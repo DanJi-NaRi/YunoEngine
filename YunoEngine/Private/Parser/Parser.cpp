@@ -706,7 +706,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             md.opacity = opacity;
             if (opacity)
             {
-                //md.passKey.blend = BlendPreset::AlphaBlend;
+                md.passKey.blend = BlendPreset::AlphaBlend;
                 //md.passKey.raster = RasterPreset::CullNone;
             }
         }

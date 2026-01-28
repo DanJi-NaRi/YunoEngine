@@ -93,6 +93,11 @@ void Mesh::SetTexture(TextureUse use, const std::wstring& filepath)
     }
 }
 
+void Mesh::SetMaskColor(const XMFLOAT4& col)
+{
+    m_renderItem.Constant.baseColor = col;
+}
+
 void Mesh::UpdateRenderItem(XMFLOAT4X4 mWorld)
 {
     m_renderItem.Constant.world = mWorld;

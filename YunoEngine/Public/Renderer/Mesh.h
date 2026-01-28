@@ -66,6 +66,7 @@ public:
     void CheckOption();
 
     void SetTexture(TextureUse use, const std::wstring& filepath);
+    void SetMaskColor(const XMFLOAT4& col);
 
     void UpdateRenderItem(XMFLOAT4X4 mWorld);
 
