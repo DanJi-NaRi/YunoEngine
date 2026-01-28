@@ -28,9 +28,9 @@
 
 bool RenderTest::OnCreateScene()
 {
-    std::cout << "[SceneTemplate] OnCreate\n";
+    std::cout << "[RenderTest] OnCreate\n";
 
-    m_name = "TitleScene";
+    m_name = "RenderTest";
 
     m_objectManager->CreateDirLight();
 

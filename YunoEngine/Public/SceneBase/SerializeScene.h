@@ -115,5 +115,10 @@ struct SceneDesc
 
 class ObjectManager;
 
-void SceneSave();
-void SceneLoad(const ObjectManager& om);
+namespace nlohmann
+{
+    void SaveSceneToFile(const SceneDesc& scene, const std::wstring& path);
+
+    bool LoadSceneFromFile(std::unique_ptr<ObjectManager>& om, const std::wstring& path);
+}
+

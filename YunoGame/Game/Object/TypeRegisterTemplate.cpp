@@ -10,7 +10,8 @@ namespace {
     {
         AutoReg_Player()
         {
-            ObjectTypeRegistry::Instance().Register(L"Player", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Player>(d); });
+            //아래줄 주석 풀고 이름만 바꿔주고 등록하면됩니다
+            //ObjectTypeRegistry::Instance().Register(L"Player", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Player>(d); });
         }
     } s_reg_player;//<- 이름은 자유
 }

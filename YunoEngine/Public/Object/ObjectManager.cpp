@@ -22,7 +22,8 @@ void ObjectManager::CreateObjectFromDesc(const UnitDesc& desc)
 
 void ObjectManager::CreateDirLight()
 {
-    m_directionLight = std::make_unique<YunoDirectionalLight>();
+    if(!m_directionLight)
+        m_directionLight = std::make_unique<YunoDirectionalLight>();
 }
 
 void ObjectManager::CreatePointLight(const XMFLOAT3& pos, const XMFLOAT4& col, float intensity)
@@ -34,6 +35,20 @@ void ObjectManager::CreatePointLight(const XMFLOAT3& pos, const XMFLOAT4& col, f
     pd.lightCol = col;
     pd.intensity = intensity;
     
+    auto pl = std::make_unique<YunoPointLight>(pd);
+    m_pointLights.push_back(std::move(pl));
+}
+
+void ObjectManager::CreateDirLightFromDesc(const DirectionalLightDesc& dd)
+{
+    if (!m_directionLight)
+        m_directionLight = std::make_unique<YunoDirectionalLight>(dd);
+}
+
+void ObjectManager::CreatePointLightFromDesc(const PointLightDesc& pd)
+{
+    if (m_pointLights.size() >= 10) return;
+
     auto pl = std::make_unique<YunoPointLight>(pd);
     m_pointLights.push_back(std::move(pl));
 }

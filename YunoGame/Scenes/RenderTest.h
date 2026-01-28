@@ -12,7 +12,7 @@ public:
     void SubmitObj() override;
     void SubmitUI() override;
 
-    const char* GetDebugName() const override { return "SceneTemplate"; }
+    const char* GetDebugName() const override { return "RenderTest"; }
 
 protected:
     bool OnCreateScene() override;

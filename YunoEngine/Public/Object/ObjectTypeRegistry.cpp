@@ -5,10 +5,6 @@
 
 //using CreateFn = std::function<void(ObjectManager&, const UnitDesc&)>;
 
-void ObjectTypeRegistry::Register(const std::wstring& type, ObjectTypeRegistry::CreateFn fn)
-{
-    m_map.emplace(type, fn);
-}
 
 ObjectTypeRegistry::CreateFn* ObjectTypeRegistry::Find(const std::wstring& type)
 {

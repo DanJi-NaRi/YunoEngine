@@ -35,6 +35,8 @@ private:
 public:
     void CreateDirLight();
     void CreatePointLight(const XMFLOAT3& pos, const XMFLOAT4& col, float intensity);
+    void CreateDirLightFromDesc(const DirectionalLightDesc& dd);
+    void CreatePointLightFromDesc(const PointLightDesc& pd);
     void SetOrthoFlag(bool flag) { m_isOrtho = flag; };
 
     YunoDirectionalLight* GetDirLight() { return m_directionLight.get(); }
