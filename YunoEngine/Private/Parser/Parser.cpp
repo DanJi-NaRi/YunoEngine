@@ -705,7 +705,8 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             TextureHandle opacity = renderer->CreateDataTexture2DFromFile(wPath.c_str());
 
             md.opacity = opacity;
-            md.passKey.blend = BlendPreset::AlphaBlend;
+            if(opacity)
+                md.passKey.blend = BlendPreset::AlphaBlend;
         }
 
         //사용자 설정 패스 Set
