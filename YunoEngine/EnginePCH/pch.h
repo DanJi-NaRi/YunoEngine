@@ -26,6 +26,7 @@
 #include <unordered_set>
 #include <algorithm>
 #include <functional>
+#include <optional>
 #include <chrono>
 #include <stdexcept>
 #include <cstring>
@@ -33,6 +34,7 @@
 #include <deque>
 #include <string_view>
 #include <type_traits>
+#include <fstream>
 
 
 

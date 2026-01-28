@@ -79,6 +79,13 @@ struct Frame_Data_Dir
     float    intensity;
 };
 
+struct Frame_Data_Point
+{
+    XMFLOAT4 col;
+    XMFLOAT3 pos;
+    float intensity;
+};
+
 
 
 // 게임 >> 엔진 렌더 제출 단위

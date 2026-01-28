@@ -18,6 +18,7 @@ public:
 
     const char* GetDebugName() const override { return "WeaponSelectScene"; }
 
+
 protected:
     bool OnCreateScene() override;
     void OnDestroyScene() override;
@@ -25,9 +26,9 @@ protected:
 private:
 
     //std::array<Widget*, 4> m_pUserImages;
-    Widget* m_pUserImage0 = nullptr;
+    Widget* m_pUserImage0 = nullptr; // 왼쪽
     Widget* m_pUserImage1 = nullptr;
-    Widget* m_pUserImage2 = nullptr;
+    Widget* m_pUserImage2 = nullptr; // 오른쪽
     Widget* m_pUserImage3 = nullptr;
 
     //std::array<Widget*, 6> m_pWeaponBtns;

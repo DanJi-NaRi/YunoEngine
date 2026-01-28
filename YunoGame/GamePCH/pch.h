@@ -28,6 +28,7 @@
 #include <queue>
 #include <stack>
 #include <optional>
+#include <functional>
 
 
 
@@ -45,6 +46,8 @@
 #include <iostream>
 #include <sstream>
 #include <filesystem>
+#include <fstream>
+#include <stdexcept>
 
 
 // ===============================

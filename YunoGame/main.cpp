@@ -18,10 +18,8 @@ int main()
     YunoEngine engine;
 
     std::cout << "[CWD] " << std::filesystem::current_path().string() << "\n";
-    if (!engine.Initialize(&game, L"YunoGame", 1280, 720)) 
+    if (!engine.Initialize(&game, L"YunoGame", 1920, 1080)) 
     {
-        int n;
-        std::cin >> n;
         return -1;
     }
 

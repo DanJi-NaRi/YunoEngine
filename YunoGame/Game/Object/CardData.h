@@ -17,14 +17,15 @@ enum class CardRarity : uint8_t {
 };
 
 enum class PieceType : uint8_t { // 비트마스크로도 활용 가능
-    Blaster,
+    None,
+    Blaster, // 1 부터 시작
     Breacher,
     Impactor,
     Chakram,
     Scythe,
     Cleaver,
     Count,
-    None,
+
 };
 
 enum Dir : uint8_t {
@@ -79,4 +80,21 @@ public:
     inline bool CanUse(const CardData& card, PieceType type) {
         return CanUse(card.m_allowedUnits, type);
     }
+};
+
+struct CardMoveData
+{
+    int m_moveX;
+    int m_moveY;
+};
+
+struct CardEffectData
+{
+    int m_damage;
+
+    int m_giveDamageBonus;
+    int m_takeDamageReduce;
+    int m_takeDamageIncrease;
+
+    int m_staminaRecover;
 };

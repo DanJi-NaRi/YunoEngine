@@ -4,6 +4,7 @@
 #include "PieceQueue.h"
 
 #include "ObjectManager.h"
+#include "GridBox.h"
 #include "GridLine.h"
 
 #include "GridSystem.h"
@@ -36,14 +37,22 @@ void GridSystem::Init(int row, int column, float cellSizeX, float cellSizeZ)
 
 int GridSystem::GetID(int cx, int cz)
 {
-    int id = cz * m_column + cx;
+    int id = (cz * m_column + cx) + 1;
     return id;
+}
+
+void GridSystem::CreateGridBox(float x, float y, float z)
+{
+    m_gridBox = m_objectManager->CreateObject<GridBox>(L"Tile", XMFLOAT3(x, y, z));
 }
 
 void GridSystem::CreateGridLine(float x, float y, float z)
 {
+    if (m_gridBox == nullptr) return;
+
     auto pLine = m_objectManager->CreateObject<GridLine>(L"DebugGridLine", XMFLOAT3(x, y + 0.01f, z));
     pLine->SetScale({ m_cellSizeX, 1, m_cellSizeZ });
+    m_gridBox->Attach(pLine);
 }
 
 bool GridSystem::InBounds(int cx, int cz)

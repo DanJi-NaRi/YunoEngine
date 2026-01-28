@@ -28,20 +28,27 @@ bool TitleScene::OnCreateScene()
     m_name = "TitleScene";
    
     m_objectManager->CreateDirLight();
-    
+
+    int j = 0;
+    for (int i = -3; i < 3; i++)
+    {
+        m_objectManager->CreatePointLight(XMFLOAT3(i * 2, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
+        j++;
+    }
+    m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
 
-    m_gridSystem = std::make_unique<PlayGridSystem>(m_objectManager.get());
-    m_gridSystem->Init(5, 7, 2, 2);
-    m_gridSystem->CreateObject(0, 1, 0);
+    //m_gridSystem = std::make_unique<PlayGridSystem>(m_objectManager.get());
+    //m_gridSystem->Init(5, 7, 2, 2);
+    //m_gridSystem->CreateObject(0, 1, 0);
 
 
-    
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/background.fbx");
     map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
+    map->SetScale(XMFLOAT3(1, 1, 1));
 
     auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx");
     gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
@@ -102,19 +109,33 @@ void TitleScene::Update(float dt)
     // 테스트용 -> ally1으로 부여한 기물이 움직여용
     if (m_input->IsKeyPressed(0x31))
     {
-        PieceQ::Insert(PieceQ::Move_S(GamePiece::Ally1, 0, 3));
+
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 3));
     }
     if (m_input->IsKeyPressed(0x32))
     {
-        PieceQ::Insert(PieceQ::Move_S(GamePiece::Ally1, 1, 3));
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 3));
     }
     if (m_input->IsKeyPressed(0x33))
     {
-        PieceQ::Insert(PieceQ::Move_S(GamePiece::Ally1, 2, 3));
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 3));
+    }
+    if (m_input->IsKeyPressed(0x34))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 2));
+    }
+    if (m_input->IsKeyPressed(0x35))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 4));
+    }
+    if (m_input->IsKeyPressed(0x39))
+    {
+        PlayGridQ::Insert(PlayGridQ::Attack_S_TST(GamePiece::Ally1));
     }
 
     //m_input->Dispatch();
-    //m_gridSystem->Update(dt);
+    m_gridSystem->Update(dt);
+
 }
 
 void TitleScene::SubmitObj()

@@ -6,7 +6,9 @@
 #include "YunoEngine.h"
 // 다음 오브젝트 매니저 여기까지 고정
 #include "ObjectManager.h"
-
+// 게임 매니저
+#include "GameManager.h"
+#include "UIManager.h"
 // 여러 오브젝트들 ;; 
 
 
@@ -23,7 +25,7 @@ bool SceneTemplate::OnCreateScene()
     // 디렉션 라이트 생성
     //m_objectManager->CreateDirLight();
     // 직교투영 필요한 씬만 ㄱㄱ
-    //m_objectManager->SetOrthoFlag(true);
+    //m_uiManager->SetOrthoFlag(true);
 
     // Sample Object 생성 예시
     //m_objectManager->CreateObject<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0));

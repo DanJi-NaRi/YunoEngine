@@ -5,8 +5,24 @@
 #include <IInput.h>
 #include "YunoEngine.h"
 
+#include "ObjectTypeRegistry.h"
+#include "ObjectManager.h"
+
+//오브젝트 타입.h
+
+namespace {
+    struct AutoReg_Building
+    {
+        AutoReg_Building()
+        {
+            ObjectTypeRegistry::Instance().Register(L"Building", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Building>(d); });
+        }
+    } s_reg_Building;
+}
+
 Building::Building()
 {
+    unitType = L"Building";
 }
 
 Building::~Building()

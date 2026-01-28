@@ -47,6 +47,7 @@ enum class WidgetClass : int {
 
     // 첫 무기 선택 페이즈
     UserImage,
+    TitleImage,
     ReadyButton,
     ExitButton,
     WeaponButton,
@@ -189,6 +190,10 @@ public:
 
     virtual void  Backup();
 
+    virtual void  SetPos(XMFLOAT3 pos) { m_vPos = pos; };
+    virtual void  SetScale(XMFLOAT3 scale) { m_vScale = scale; };
+    virtual void  SetRot(XMFLOAT3 rot) { m_vRot = rot; };
+
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();
 
@@ -227,6 +232,9 @@ public:
     void DettachChild(uint32_t id);
     void ClearChild();
     void Clear();
+
+    Widget* GetParent() { return m_Parent; }
+    std::unordered_map<uint32_t, Widget*>& GetChilds() { return m_Childs; }
 
     virtual WidgetType GetWidgetType() { return WidgetType::Widget; }
     virtual WidgetClass GetWidgetClass() { return WidgetClass::Widget; }

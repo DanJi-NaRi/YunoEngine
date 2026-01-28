@@ -14,7 +14,7 @@ public:
     TextureHandle LoadTexture2D(const wchar_t* path) override;
     void Clear() override;
 
-    const std::pair<int,int> GetTextureWH(TextureHandle handle) const;
+    const std::pair<int,int> GetTextureWH(TextureHandle handle) override;
 
 private:
     YunoRenderer* m_renderer = nullptr;

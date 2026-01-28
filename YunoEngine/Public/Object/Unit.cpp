@@ -3,6 +3,21 @@
 #include "Unit.h"
 #include "Mesh.h"
 
+#include "ObjectTypeRegistry.h"
+#include "ObjectManager.h"
+
+//오브젝트 타입.h
+
+namespace {
+    struct AutoReg_Unit
+    {
+        AutoReg_Unit()
+        {
+            ObjectTypeRegistry::Instance().Register(L"Unit", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Unit>(d); });
+        }
+    } s_reg_unit;
+}
+
 
 Unit::Unit()
 {
@@ -28,6 +43,10 @@ Unit::Unit()
     m_Albedo = 0;
     m_Normal = 0;
     m_Orm = 0;
+
+    m_Parent = nullptr;
+    unitType = L"Unit";
+    m_meshpath.clear();
 }
 
 Unit::~Unit()
@@ -105,6 +124,7 @@ bool Unit::Update(float dTime)
 
 bool Unit::Submit(float dTime)
 {
+    if (!m_MeshNode) return true;
     m_MeshNode->Submit(m_mWorld);
 
     LastSubmit(dTime);
@@ -194,6 +214,27 @@ void Unit::ClearChild()
     }
 
     m_Childs.clear();
+}
+
+UnitDesc Unit::GetDesc()
+{
+    UnitDesc d;
+    d.ID = m_id;
+    if (m_Parent)
+        d.parentID = m_Parent->GetID();
+    else
+        d.parentID = 0;
+
+    d.name = m_name;
+    d.meshPath = m_meshpath;
+    d.unitType = unitType;
+
+    d.transform.position = FromXM(m_vPos);
+    Vec3Desc degRot = { XMConvertToDegrees(m_vRot.x),  XMConvertToDegrees(m_vRot.y),  XMConvertToDegrees(m_vRot.z) };
+    d.transform.rotation = degRot; // deg
+    d.transform.scale = FromXM(m_vScale);
+
+    return d;
 }
 
 #ifdef _DEBUG

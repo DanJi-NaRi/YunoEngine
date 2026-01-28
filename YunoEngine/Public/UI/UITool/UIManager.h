@@ -40,8 +40,6 @@ private:
 
     std::unique_ptr<YunoDirectionalLight> m_directionLight; // 필요할까?
 
-   
-
 public:
     void CreateDirLight();
     void SetOrthoFlag(bool flag) { m_isOrtho = flag; };

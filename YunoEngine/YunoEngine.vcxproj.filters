@@ -35,9 +35,6 @@
     <Filter Include="Private\Resource">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Private\Singleton">
-      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00D}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Private\Timer">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00E}</UniqueIdentifier>
     </Filter>
@@ -113,7 +110,6 @@
     <Filter Include="Shaders\postprocess">
       <UniqueIdentifier>{0adb9232-5754-4a49-9882-245db7380a41}</UniqueIdentifier>
     </Filter>
-
     <Filter Include="Shaders\shadowMap">
       <UniqueIdentifier>{98fa6131-e9a5-4191-80a5-dcf524f84082}</UniqueIdentifier>
     </Filter>
@@ -122,6 +118,9 @@
     </Filter>
     <Filter Include="Public\UI\BaseWidget">
       <UniqueIdentifier>{9481853e-d4a3-42de-83d0-92fed4b9a0fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Singleton">
+      <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00D}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
@@ -232,6 +231,12 @@
     <ClCompile Include="Private\Input\InputContextBase.cpp" />
     <ClCompile Include="Public\Object\Button.cpp" />
     <ClCompile Include="Private\UI\UITool\UIManager.cpp" />
+    <ClCompile Include="Public\SceneBase\SerializeScene.cpp">
+      <Filter>Public\SceneBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\ObjectTypeRegistry.cpp">
+      <Filter>Public\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -341,7 +346,7 @@
       <Filter>Private\Renderer\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Private\Singleton\Singleton.h">
-      <Filter>Private\Singleton</Filter>
+      <Filter>Public\Singleton</Filter>
     </ClInclude>
     <ClInclude Include="Public\SceneBase\SceneBase.h">
       <Filter>Public\SceneBase</Filter>
@@ -404,6 +409,12 @@
     <ClInclude Include="Public\Input\InputContextBase.h" />
     <ClInclude Include="Public\Object\Button.h" />
     <ClInclude Include="Public\UI\UITool\UIManager.h" />
+    <ClInclude Include="Public\SceneBase\SerializeScene.h">
+      <Filter>Public\SceneBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\ObjectTypeRegistry.h">
+      <Filter>Public\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>

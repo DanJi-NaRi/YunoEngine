@@ -4,6 +4,7 @@
 
 #include "IScene.h"
 #include "SceneBase.h"
+#include "SerializeScene.h"
 #include "IRenderer.h"
 
 #include "ImGuiManager.h"
@@ -20,6 +21,24 @@ YunoSceneManager::~YunoSceneManager()
     m_pendingNext.clear();
 
     ShutdownStack();
+}
+
+inline std::string WStringToUtf8(const std::wstring& w)
+{
+    if (w.empty()) return {};
+    int size = WideCharToMultiByte(CP_UTF8, 0, w.data(), (int)w.size(), nullptr, 0, nullptr, nullptr);
+    std::string s(size, 0);
+    WideCharToMultiByte(CP_UTF8, 0, w.data(), (int)w.size(), s.data(), size, nullptr, nullptr);
+    return s;
+}
+
+inline std::wstring Utf8ToWString(const std::string& s)
+{
+    if (s.empty()) return {};
+    int size = MultiByteToWideChar(CP_UTF8, 0, s.data(), (int)s.size(), nullptr, 0);
+    std::wstring w(size, 0);
+    MultiByteToWideChar(CP_UTF8, 0, s.data(), (int)s.size(), w.data(), size);
+    return w;
 }
 
 #ifdef _DEBUG
@@ -46,7 +65,35 @@ void YunoSceneManager::RegisterDrawSceneUI()
 
     ImGuiManager::RegisterDraw(
         [this]() {
-            UI::SetNextUIPos(800, 0);
+            using namespace nlohmann;
+
+            UI::SetNextUIPos(1, 50);
+            UI::SetNextUISize(120, 60);
+            UI::BeginPanel("Save/Load");
+
+            if (UI::Button("Save"))
+            {
+                if (m_selectView)
+                {
+                    std::string scenename = m_stack[m_selectView->stackIndex].scene->GetDebugName();
+                    std::wstring path = L"../Assets/Scenes/" + Utf8ToWString(scenename) + L".json";
+                    SaveSceneToFile(m_stack[m_selectView->stackIndex].scene->BuildSceneDesc(), path);
+                }
+            }
+
+            UI::SameLine(60);
+
+            if (UI::Button("Load"))
+            {
+                
+            }
+
+            UI::EndPanel();
+        }
+    );
+
+    ImGuiManager::RegisterDraw(
+        [this]() {
             UI::SetNextUISize(200, 500);
             UI::BeginPanel("ObjectHierarchy");
 
@@ -68,7 +115,6 @@ void YunoSceneManager::RegisterDrawSceneUI()
             {
                 dynamic_cast<SceneBase*>(m_stack[m_selectView->stackIndex].scene.get())->DrawInspector();
             }
-
 
             UI::EndPanel();
         }

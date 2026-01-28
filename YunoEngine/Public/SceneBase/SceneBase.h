@@ -7,6 +7,7 @@ class UIManager;
 class IInput;
 class Unit;
 class Widget;
+class Light;
 
 
 class SceneBase : public IScene
@@ -28,6 +29,8 @@ public:
 
 #ifdef _DEBUG
     void DrawObjectList();
+    void DrawObjectNode(Unit* obj);
+    void DrawWidgetNode(Widget* obj);
     void DrawInspector();
 #endif
 
@@ -37,14 +40,18 @@ public:
 protected:
 #ifdef _DEBUG
     Unit* GetSelectedObject() const { return m_selectedObject; }
-    void    SelectObject(Unit* obj) { m_selectedObject = obj; }
+    void    SelectObject(Unit* obj) { m_selectedLight = nullptr;  m_selectedWidget = nullptr;  m_selectedObject = obj; }
     Widget* GetSelectedWidget() const { return m_selectedWidget; }
-    void    SelectWidget(Widget* obj) { m_selectedWidget = obj; }
+    void    SelectWidget(Widget* obj) { m_selectedLight = nullptr; m_selectedObject = nullptr;  m_selectedWidget = obj; }
+    void    SelectLight(Light* obj) { m_selectedObject = nullptr; m_selectedWidget = nullptr; m_selectedLight = obj; }
 #endif
 
     // 파생 씬에서 구현 ㄱㄱ
+    bool LoadScene(const std::wstring& filepath);
     virtual bool OnCreateScene();
     virtual void OnDestroyScene();
+
+    virtual SceneDesc BuildSceneDesc() override;
 
 protected:
     std::unique_ptr<ObjectManager> m_objectManager;
@@ -54,6 +61,7 @@ protected:
 #ifdef _DEBUG
     Unit* m_selectedObject;
     Widget* m_selectedWidget;
+    Light* m_selectedLight;
 #endif
     float m_lastDt = 0.0f;
     std::string m_name;
