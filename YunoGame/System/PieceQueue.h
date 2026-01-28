@@ -27,14 +27,21 @@ struct PGridCmd
         struct
         {
             GamePiece whichPiece;
-            float damage;
+            int damage;
             uint8_t tileIDs[35];
-        } atk_s;
+        } atk_s;            // Attack
 
         struct
         {
             GamePiece whichPiece;
         } die_s, over_s;    // Dead, Turn_Over
+
+        struct
+        {
+            GamePiece whichPiece;
+            int damage1;
+            int damage2;
+        } hit;     // Hit
 
     };
 };
@@ -56,7 +63,9 @@ public:
     static PGridCmd Move_S(GamePiece pieceType, int cx, int cz);
     static PGridCmd Move_P(Direction dir, float wx, float wy, float wz, float speed = 1, bool isDone = false);
 
-    static PGridCmd Attack_S_TST(GamePiece pieceType);
+    static PGridCmd Attack_S_TST(GamePiece pieceType, int damagae = 10);
+    static PGridCmd Hit_S(GamePiece pieceType, int damagae);
+    static PGridCmd Hit_P(int damagae1, GamePiece pieceType = GamePiece::None, int damage2 = 0);
 
     static PGridCmd Cmd_S(CommandType cmdType, GamePiece pieceType);
 

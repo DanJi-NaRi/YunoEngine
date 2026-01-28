@@ -1,7 +1,8 @@
 #pragma once
 #include "Unit.h"
 
-class GridLine : public Unit
+template <typename T>
+class GridLine : public T
 {
 public:
     explicit GridLine();
@@ -19,3 +20,4 @@ private:
     std::vector<VERTEX_Pos> m_lineVtx;
 };
 
+#include "GridLine.tpp"

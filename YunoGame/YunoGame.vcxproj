@@ -266,6 +266,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\ReadyButton.h" />
     <ClInclude Include="Game\UI\TitleImage.h" />
     <ClInclude Include="Game\UI\UserImage.h" />
+    <ClInclude Include="MiniMap.h" />
     <ClInclude Include="ReadyButton.h" />
     <ClInclude Include="GameManager\GameManager.h" />
     <ClInclude Include="GridBox.h" />
@@ -317,6 +318,9 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Scenes\Title.h" />
     <ClInclude Include="UserImage.h" />
     <ClInclude Include="WeaponSelectScene_InputContext.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GridLine.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

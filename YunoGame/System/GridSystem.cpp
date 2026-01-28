@@ -41,6 +41,15 @@ int GridSystem::GetID(int cx, int cz)
     return id;
 }
 
+I2 GridSystem::GetCellByID(int tileID)
+{
+    int id = tileID - 1;
+    int cx = id % m_column;
+    int cz = id / m_column;
+\
+    return { cx, cz };
+}
+
 void GridSystem::CreateGridBox(float x, float y, float z)
 {
     m_gridBox = m_objectManager->CreateObject<GridBox>(L"Tile", XMFLOAT3(x, y, z));
@@ -50,7 +59,7 @@ void GridSystem::CreateGridLine(float x, float y, float z)
 {
     if (m_gridBox == nullptr) return;
 
-    auto pLine = m_objectManager->CreateObject<GridLine>(L"DebugGridLine", XMFLOAT3(x, y + 0.01f, z));
+    auto pLine = m_objectManager->CreateObject<GridLine<Unit>>(L"DebugGridLine", XMFLOAT3(x, y + 0.01f, z));
     pLine->SetScale({ m_cellSizeX, 1, m_cellSizeZ });
     m_gridBox->Attach(pLine);
 }

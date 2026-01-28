@@ -205,6 +205,7 @@ bool Piece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool Piece::Update(float dTime)
 {
+    // 죽은 상태인지 먼저 확인
     if (isDead && m_deadTime != -1)
     {
         m_deadTime += dTime;
@@ -216,6 +217,7 @@ bool Piece::Update(float dTime)
         return true;
     }
 
+    // 회전 중이면 회전 처리
     if (isRotating)
     {
         m_rotTime += dTime * m_rotSpeed;
@@ -231,13 +233,12 @@ bool Piece::Update(float dTime)
         }
     }
 
-
+    // 이동 중이면 이동 처리
     if (isMoving)
     {
         if (dTime >= 1.f) return true;
         m_AnimTime += dTime / m_Dist * m_speed * m_fixSpeed;
         
-
         if (m_AnimTime >= 1.f)
         {
             XMStoreFloat3(&m_vPos, m_Target);
@@ -255,7 +256,6 @@ bool Piece::Update(float dTime)
             XMVECTOR res = XMVectorLerp(m_Start, m_Target, m_AnimTime);
             XMStoreFloat3(&m_vPos, res);
         }
-
     }
 
     // 애니메이션이 끝나면 하나씩 빼가게 하기
@@ -266,18 +266,20 @@ bool Piece::Update(float dTime)
         switch (tp.cmdType)
         {
         case CommandType::Move:
-        {
-            auto [wx, wy, wz, dir, speed] = tp.mv_p;
-            SetTarget({ wx, wy, wz }, speed);
-            SetDir(dir);
-            m_AnimDone = tp.isDone;        // 슬롯 턴 종료 메세지 보내라
-            break;
-        }
-        case CommandType::Attack:
-            break;
-        case CommandType::Dead:
-            SetDead();
-            break;
+            {
+                auto [wx, wy, wz, dir, speed] = tp.mv_p;
+                SetTarget({ wx, wy, wz }, speed);
+                SetDir(dir);
+                m_AnimDone = tp.isDone;        // 슬롯 턴 종료 메세지 보내라
+                break;
+            }
+        case CommandType::Hit:
+            {
+                PlayGridQ::Insert(PlayGridQ::Hit_S(m_who, tp.hit.damage1));
+                if (tp.hit.whichPiece != GamePiece::None)
+                    PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece, tp.hit.damage2));
+                break;
+            }
         }  
     }
 

@@ -295,6 +295,7 @@ namespace yuno::server
 
                 m_server.Broadcast(std::move(bytes));
 
+
                 std::cout <<"0slot user Env id : " << m_match.Slots()[0].userId << "1slot user Env id : "<< m_match.Slots()[1].userId << std::endl;
 
                 // 무기 확정 후 준비 취소 못하니까  여기서 초기화 패킷도 같이 ㄱㄱ
@@ -314,7 +315,7 @@ namespace yuno::server
                     rs.units[1].WeaponID = static_cast<std::uint8_t>(s[0].unitId2);
                     rs.units[1].hp = 100;
                     rs.units[1].stamina = 100;
-                    rs.units[1].SpawnTileId = 21;
+                    rs.units[1].SpawnTileId = 23;
 
                     // slot1
                     rs.units[2].PID = 2;
@@ -322,7 +323,7 @@ namespace yuno::server
                     rs.units[2].WeaponID = static_cast<std::uint8_t>(s[1].unitId1);
                     rs.units[2].hp = 100;
                     rs.units[2].stamina = 100;
-                    rs.units[2].SpawnTileId = 15;
+                    rs.units[2].SpawnTileId = 13;
 
                     rs.units[3].PID = 2;
                     rs.units[3].slotID = 2;
@@ -340,6 +341,7 @@ namespace yuno::server
                     });
 
                 m_server.Broadcast(std::move(rsBytes));
+
             }
         );// Submit Weapon Packet End
 

@@ -168,7 +168,7 @@ namespace yuno::game
 
                 std::cout << "Slot Idx : " << static_cast<int>(pkt.slotIndex) << ", Player Count : " << static_cast<int>(pkt.playerCount) << std::endl;
 
-                GameManager::Get().SetSlotIdx(pkt.slotIndex-1);
+                GameManager::Get().SetSlotIdx(pkt.slotIndex);
                 GameManager::Get().SetSceneState(CurrentSceneState::GameStart);
             });// EnterOK Packet End
 
