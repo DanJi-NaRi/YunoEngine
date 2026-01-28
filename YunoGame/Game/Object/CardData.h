@@ -81,3 +81,20 @@ public:
         return CanUse(card.m_allowedUnits, type);
     }
 };
+
+struct CardMoveData
+{
+    int m_moveX;
+    int m_moveY;
+};
+
+struct CardEffectData
+{
+    int m_damage;
+
+    int m_giveDamageBonus;
+    int m_takeDamageReduce;
+    int m_takeDamageIncrease;
+
+    int m_staminaRecover;
+};

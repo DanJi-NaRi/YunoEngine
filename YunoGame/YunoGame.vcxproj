@@ -192,6 +192,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CardManager.cpp" />
     <ClCompile Include="ExitButton.cpp" />
     <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -252,6 +253,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="UserImage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CardManager.h" />
     <ClInclude Include="ExitButton.h" />
     <ClInclude Include="GameManager\SceneState.h" />
     <ClInclude Include="Game\UI\ButtonTemplate.h">
