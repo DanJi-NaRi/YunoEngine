@@ -80,8 +80,8 @@ bool SceneBase::OnCreate()
     if (LoadScene(filepath))
         return true;
 
-    //return OnCreateScene();
-    return true;
+    return OnCreateScene();
+    //return true;
 }
 
 

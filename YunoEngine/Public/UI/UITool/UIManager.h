@@ -76,8 +76,12 @@ public:
     CursurSystem* GetCursurStstem() { return &m_cursurSystem; }
 
     void UpdateButtonStates(); // 모든 위젯 업데이트
+
+    // 입력값 업데이트
     bool ProcessButtonMouse(ButtonState state, uint32_t mouseButton = 0); // 커서 <-> 위젯 Rect 위치 비교
     bool ProcessButtonKey(ButtonState state, uint32_t key);
+
+    Float2 GetCanvasSize();
 private:
     void CheckDedicateWidgetName(std::wstring& name);
 

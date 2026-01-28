@@ -190,9 +190,6 @@ public:
 
     virtual void  Backup();
 
-    virtual void  SetPos(XMFLOAT3 pos) { m_vPos = pos; };
-    virtual void  SetScale(XMFLOAT3 scale) { m_vScale = scale; };
-    virtual void  SetRot(XMFLOAT3 rot) { m_vRot = rot; };
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();
