@@ -91,9 +91,31 @@ namespace nlohmann
         j.at("transform").get_to(d.transform);
     }
 
+    inline void to_json(json& j, const WidgetDesc& d)
+    {
+        j = {
+            { "ID",        d.ID },
+            { "parentID",  d.parentID },
+            { "name",      WStringToUtf8(d.name) },
+
+            { "transform", d.transform }
+        };
+    }
+
+    inline void from_json(const json& j, WidgetDesc& d)
+    {
+        j.at("ID").get_to(d.ID);
+        j.at("parentID").get_to(d.parentID);
+
+        d.name = Utf8ToWString(j.at("name").get<std::string>());
+
+        j.at("transform").get_to(d.transform);
+    }
+
     inline void to_json(json& j, const PointLightDescSave& d)
     {
         j = {
+        { "ID",  d.id },
         { "lightpos",  d.lightpos },
         { "lightCol",  d.lightCol },
         { "intensity", d.intensity }
@@ -102,6 +124,7 @@ namespace nlohmann
 
     inline void from_json(const json& j, PointLightDescSave& d)
     {
+        j.at("ID").get_to(d.id);
         j.at("lightpos").get_to(d.lightpos);
         j.at("lightCol").get_to(d.lightCol);
         j.at("intensity").get_to(d.intensity);
@@ -118,6 +141,7 @@ namespace nlohmann
             pls.lightCol = FromXM(pl.lightCol);
             pls.lightpos = FromXM(pl.lightpos);
             pls.intensity = pl.intensity;
+            pls.id = pl.id;
             pds.push_back(pls);
         }
 
@@ -132,6 +156,7 @@ namespace nlohmann
         for (auto& pls : pds)
         {
             PointLightDesc pl;
+            pl.id = pls.id;
             pl.lightCol = ToXM(pls.lightCol);
             pl.lightpos = ToXM(pls.lightpos);
             pl.intensity = pls.intensity;
@@ -190,7 +215,9 @@ namespace nlohmann
     inline void to_json(json& j, const SceneDesc& s)
     {
         auto pls = ConvertToSave(s.pointLights);
-        auto dir = ConvertToSave(*s.dirLight);
+        DirectionalLightDescSave dir;
+        if(s.dirLight)
+            dir = ConvertToSave(*s.dirLight);
 
         std::string name = WStringToUtf8(s.sceneName);
 
@@ -199,6 +226,7 @@ namespace nlohmann
             { "scenename",     name },
             { "isOrtho",     s.isOrtho },
             { "units",       s.units },
+            { "widgets",       s.widgets },
             { "pointLights", pls }
         };
 
@@ -213,6 +241,7 @@ namespace nlohmann
         j.at("isOrtho").get_to(s.isOrtho);
 
         j.at("units").get_to(s.units);
+        j.at("widgets").get_to(s.widgets);
 
         // Directional light는 optional
         if (j.contains("dirLight"))
@@ -223,81 +252,67 @@ namespace nlohmann
         if (j.contains("pointLights"))
             s.pointLights = ConvertToLoad(j.at("pointLights").get<std::vector<PointLightDescSave>>());
     }
+}
 
-    void SaveSceneToFile(const SceneDesc& scene, const std::wstring& path)
+void SaveSceneToFile(const SceneDesc& scene, const std::wstring& path)
+{
+    using json = nlohmann::json;
+    json j = scene;
+
+    std::filesystem::path p(path);
+    std::filesystem::create_directories(p.parent_path());
+
+    std::ofstream ofs(p);
+    if (!ofs.is_open())
     {
-        json j = scene;
-
-        std::filesystem::path p(path);
-        std::filesystem::create_directories(p.parent_path());
-
-        std::ofstream ofs(p);
-        if (!ofs.is_open())
-        {
-            std::wcerr << L"Failed to open file: " << path << std::endl;
-            return;
-        }
-
-        ofs << j.dump(4);
+        std::wcerr << L"Failed to open file: " << path << std::endl;
+        return;
     }
 
-    bool LoadSceneFromFile(std::unique_ptr<ObjectManager>& om, const std::wstring& path)
+    ofs << j.dump(4);
+}
+
+bool LoadSceneFromFile(const std::wstring& path, SceneDesc& out)
+{
+    using json = nlohmann::json;
+    namespace fs = std::filesystem;
+
+    fs::path p(path);
+
+    if (!fs::exists(p))
     {
-        namespace fs = std::filesystem;
-
-        fs::path p(path);
-
-        if (!fs::exists(p))
-        {
-            std::wcerr << L"Scene file not found: " << path << std::endl;
-            return false;
-        }
-
-        std::ifstream ifs(p);
-        if (!ifs.is_open())
-        {
-            std::wcerr << L"Failed to open scene file: " << path << std::endl;
-            return false;
-        }
-
-        json j;
-        try
-        {
-            ifs >> j;
-        }
-        catch (const std::exception& e)
-        {
-            std::cerr << "JSON parse error: " << e.what() << std::endl;
-            return false;
-        }
-
-        SceneDesc scene;
-        try
-        {
-            scene = j.get<SceneDesc>();
-        }
-        catch (const std::exception& e)
-        {
-            std::cerr << "SceneDesc deserialize error: " << e.what() << std::endl;
-            return false;
-        }
-
-        om->Clear();
-
-        om->SetOrthoFlag(scene.isOrtho);
-
-        for (const UnitDesc& d : scene.units)
-        {
-            om->CreateObjectFromDesc(d);
-        }
-
-        if (scene.dirLight)
-            om->CreateDirLightFromDesc(*scene.dirLight);
-
-        for (const auto& pl : scene.pointLights)
-            om->CreatePointLightFromDesc(pl);
-
-        return true;
+        std::wcerr << L"Scene file not found: " << path << std::endl;
+        return false;
     }
+
+    std::ifstream ifs(p);
+    if (!ifs.is_open())
+    {
+        std::wcerr << L"Failed to open scene file: " << path << std::endl;
+        return false;
+    }
+
+    json j;
+    try
+    {
+        ifs >> j;
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "JSON parse error: " << e.what() << std::endl;
+        return false;
+    }
+
+    try
+    {
+        out = j.get<SceneDesc>();
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "SceneDesc deserialize error: " << e.what() << std::endl;
+        return false;
+    }
+
+    return true;
 }
 

@@ -11,6 +11,7 @@ enum class ButtonState;
 
 class Button;
 class YunoDirectionalLight;
+struct WidgetDesc;
 
 class UIManager
 {
@@ -63,8 +64,8 @@ public:
     T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);
 
     //씬 매니저에 있어도 될것같은 놈들
-    const Widget* FindWidget(UINT id); //id로 검색
-    const Widget* FindWidget(const std::wstring& name); //이름으로 검색
+    Widget* FindWidget(UINT id); //id로 검색
+    Widget* FindWidget(const std::wstring& name); //이름으로 검색
 
 
     void DestroyWidget(UINT id);
@@ -82,6 +83,9 @@ public:
     bool ProcessButtonKey(ButtonState state, uint32_t key);
 
     Float2 GetCanvasSize();
+
+    std::vector<WidgetDesc> BuildWidgetDesc();
+    void ApplyWidgetFromDesc(const std::vector<WidgetDesc>& wds);
 private:
     void CheckDedicateWidgetName(std::wstring& name);
 

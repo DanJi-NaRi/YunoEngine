@@ -77,17 +77,35 @@ bool SceneBase::OnCreate()
     
     std::wstring filepath = L"../Assets/Scenes/" + Utf8ToWString(GetDebugName()) + L".json";
 
-    if (LoadScene(filepath))
+    SceneDesc sd;
+
+    if (LoadScene(filepath, sd))
+    {
+        OnCreateScene();
+
+        m_objectManager->ProcessPending();
+        if(sd.dirLight)
+            m_objectManager->ApplyDirLightFromDesc(*sd.dirLight);
+        m_objectManager->ApplyUnitFromDesc(sd.units);
+        m_objectManager->ApplyPointLightsFromDesc(sd.pointLights);
+
+        if (!sd.widgets.empty())
+        {
+            m_uiManager->ProcessPending();
+            m_uiManager->ApplyWidgetFromDesc(sd.widgets);
+        }
+
         return true;
+    }
 
     return OnCreateScene();
     //return true;
 }
 
 
-bool SceneBase::LoadScene(const std::wstring& filepath)
+bool SceneBase::LoadScene(const std::wstring& filepath, SceneDesc& out)
 {
-    bool res = nlohmann::LoadSceneFromFile(m_objectManager, filepath);
+    bool res = LoadSceneFromFile(filepath, out);
 
     return res;
 }
@@ -96,6 +114,7 @@ SceneDesc SceneBase::BuildSceneDesc()
 {
     SceneDesc sd = m_objectManager->BuildSceneDesc();
     sd.sceneName = Utf8ToWString(GetDebugName());
+    sd.widgets = m_uiManager->BuildWidgetDesc();
 
     return sd;
 }
@@ -420,7 +439,44 @@ void SceneBase::DrawInspector()
     }
     else if(m_selectedWidget)
     {
-       
+        if (UI::CollapsingHeader("Transform"))
+        {
+            auto& pos = m_selectedWidget->GetPos();
+            auto& rot = m_selectedWidget->GetRot();
+            auto& scale = m_selectedWidget->GetScale();
+
+            XMFLOAT3 degRot = rot;
+            RadToDegree(degRot);
+
+            bool isChange = false;
+
+            if (UI::Button("Reset"))
+            {
+                m_selectedWidget->SetBackUpTransform();
+                isChange = true;
+            }
+
+            UI::Separator();
+
+            if (UI::DragFloat3Editable("Position", &pos.x, 1.0f))
+            {
+                isChange = true;
+            }
+            if (UI::DragFloat3Editable("Rotation", &degRot.x, 0.1f))
+            {
+                DegreeToRad(degRot);
+                rot = degRot;
+                isChange = true;
+            }
+            if (UI::DragFloat3Editable("Scale", &scale.x, 0.1f))
+            {
+                isChange = true;
+            }
+
+            m_selectedWidget->Serialize();
+
+            if (isChange) m_selectedWidget->Update();
+        }
     }
 }
 #endif

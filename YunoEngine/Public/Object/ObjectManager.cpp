@@ -31,6 +31,7 @@ void ObjectManager::CreatePointLight(const XMFLOAT3& pos, const XMFLOAT4& col, f
     if (m_pointLights.size() >= 10) return;
 
     PointLightDesc pd{};
+    pd.id = m_pointLightIDs++;
     pd.lightpos = pos;
     pd.lightCol = col;
     pd.intensity = intensity;
@@ -64,7 +65,8 @@ ObjectManager::~ObjectManager()
 bool ObjectManager::Init()
 {
     m_objectCount = 0;
-    m_objectIDs = 0;
+    m_objectIDs = 1;
+    m_pointLightIDs = 1;
     m_objMap.reserve(30); //30개 정도 메모리 잡고 시작
     m_pendingCreateQ.reserve(30);
 
@@ -78,7 +80,8 @@ void ObjectManager::Clear()
 {
 
     m_objectCount = 0;
-    m_objectIDs = 0;
+    m_objectIDs = 1;
+    m_pointLightIDs = 1;
     m_objs.clear(); //오브젝트 객체 완전 삭제
     m_pendingCreateQ.clear();
     m_pendingDestoryQ.clear();
@@ -221,6 +224,40 @@ SceneDesc ObjectManager::BuildSceneDesc()
         scene.pointLights.push_back(pl->GetDesc());
 
     return scene;
+}
+
+void ObjectManager::ApplyUnitFromDesc(const std::vector<UnitDesc>& uds)
+{
+    if (m_objs.empty()) return;
+ 
+    for (auto& d : uds)
+    {
+        Unit* o = FindObject(d.ID);
+        if (!o || o->GetName() != d.name) return;
+
+        XMFLOAT3 radRot = { XMConvertToRadians(d.transform.rotation.x), XMConvertToRadians(d.transform.rotation.y), XMConvertToRadians(d.transform.rotation.z) };
+
+        o->SetPos(ToXM(d.transform.position));
+        o->SetRot(radRot);
+        o->SetScale(ToXM(d.transform.scale));
+    }
+}
+
+void ObjectManager::ApplyDirLightFromDesc(const DirectionalLightDesc& dd)
+{
+    if (!m_directionLight) return;
+
+    m_directionLight->SetDesc(dd);
+}
+
+void ObjectManager::ApplyPointLightsFromDesc(const std::vector<PointLightDesc>& pds)
+{
+    if (m_pointLights.empty()) return;
+
+    for (auto& d : m_pointLights)
+    {
+        d->SetDesc(pds[d->GetDesc().id - 1]);
+    }
 }
 
 void ObjectManager::CheckDedicateObjectName(std::wstring& name)

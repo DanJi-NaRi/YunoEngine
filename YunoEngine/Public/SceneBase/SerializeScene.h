@@ -56,6 +56,15 @@ struct UnitDesc
     std::wstring unitType;
 };
 
+struct WidgetDesc
+{
+    ObjectID ID;
+    ObjectID parentID = 0;
+    std::wstring name;
+
+    TransformDesc transform;
+};
+
 struct DirectionalLightDesc
 {
     XMFLOAT4 direction = { 0.58f, -0.58f, 0.58f, 0.0f };
@@ -84,6 +93,8 @@ struct DirectionalLightDescSave
 
 struct PointLightDesc
 {
+    ObjectID id;
+
     XMFLOAT3 lightpos = { 0, 0, 0 };
 
     XMFLOAT4 lightCol = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -93,6 +104,8 @@ struct PointLightDesc
 
 struct PointLightDescSave
 {
+    ObjectID id;
+
     Vec3Desc lightpos = { 0, 0, 0 };
 
     Vec4Desc lightCol = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -111,14 +124,12 @@ struct SceneDesc
     std::vector<UnitDesc> units;
     std::optional<DirectionalLightDesc> dirLight;
     std::vector<PointLightDesc> pointLights;
+    std::vector<WidgetDesc> widgets;
 };
 
 class ObjectManager;
 
-namespace nlohmann
-{
-    void SaveSceneToFile(const SceneDesc& scene, const std::wstring& path);
+void SaveSceneToFile(const SceneDesc& scene, const std::wstring& path);
 
-    bool LoadSceneFromFile(std::unique_ptr<ObjectManager>& om, const std::wstring& path);
-}
+bool LoadSceneFromFile(const std::wstring& path, SceneDesc& out);
 

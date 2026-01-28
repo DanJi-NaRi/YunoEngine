@@ -65,8 +65,6 @@ void YunoSceneManager::RegisterDrawSceneUI()
 
     ImGuiManager::RegisterDraw(
         [this]() {
-            using namespace nlohmann;
-
             UI::SetNextUIPos(1, 50);
             UI::SetNextUISize(120, 60);
             UI::BeginPanel("Save/Load");
@@ -79,13 +77,6 @@ void YunoSceneManager::RegisterDrawSceneUI()
                     std::wstring path = L"../Assets/Scenes/" + Utf8ToWString(scenename) + L".json";
                     SaveSceneToFile(m_stack[m_selectView->stackIndex].scene->BuildSceneDesc(), path);
                 }
-            }
-
-            UI::SameLine(60);
-
-            if (UI::Button("Load"))
-            {
-                
             }
 
             UI::EndPanel();
