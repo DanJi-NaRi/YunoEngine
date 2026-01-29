@@ -182,7 +182,9 @@ public:
 #ifdef _DEBUG
     void DrawDebug();
     void RegisterDrawUI(); //imgui드로우 함수 등록
+
 #endif
+public:
 
     void BindConstantBuffers_Camera(const Frame_Data_Dir& dirData) override;
     void BindConstantBuffers_Light(const Frame_Data_Dir& dirData, const std::vector<Frame_Data_Point>& plData, UINT plCount) override;
@@ -510,15 +512,34 @@ private:
 
 private:
     // Debug Grid (Engine-owned)
+#ifdef _DEBUG
     bool m_enableDebugGrid = true;
 
     MeshHandle          m_debugGridMeshHandle = 0;
     MaterialHandle      m_debugGridMaterial = 0;
     RenderPassHandle    m_debugGridPass = 0;
 
+    //DebugMesh
+    MeshHandle      m_debugSphereMeshHandle = 0;
+    MaterialHandle m_debugMeshMaterial = 0;
+
+    //DebugPointLight
+    struct DebugLight {
+        XMFLOAT3 pos;
+        XMFLOAT4 col;
+    };
+
+    std::vector<DebugLight> debuglights;
+#endif
+
+
 private:
+#ifdef _DEBUG
     void CreateDebugGridResources();
+    void CreateDebugMeshResources();
     void SubmitDebugGrid();
+    void SubmitDebugPointLightMesh();
+#endif
     MeshHandle CreateLineMesh_PosOnly(const VERTEX_Pos* verts, uint32_t vtxCount);
 
     friend YunoEngine;

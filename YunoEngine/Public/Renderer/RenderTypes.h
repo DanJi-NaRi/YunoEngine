@@ -139,7 +139,6 @@ enum class ShaderId : uint8_t
     PBRBase,
     BasicAnimation,
     PBRAnimation,
-    DebugGrid,
     Unlit,
     Skybox,
     UIBase,
@@ -155,6 +154,10 @@ enum class ShaderId : uint8_t
     PP_BlurV, 
     PP_Combine, 
     PP_ToneMap, 
+
+    //Debug
+    DebugGrid,
+    DebugMesh,
 
     None,
 

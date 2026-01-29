@@ -92,8 +92,11 @@ bool YunoRenderer::Initialize(IWindow* window)
     if (!CreateShadowMap(4096, 4096)) return false;
     InitShadowPass();
 
+#ifdef _DEBUG
     // 디버그 리소스 생성
     CreateDebugGridResources();
+    CreateDebugMeshResources();
+#endif
 
 
     return true;
@@ -103,13 +106,16 @@ bool YunoRenderer::CreateShaders()
 {
     // 여기서 쉐이더들 초기화 쭉 하면 됨
     if (!LoadShader(ShaderId::Basic, "../Assets/Shaders/BasicColor.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::DebugGrid, "../Assets/Shaders/DebugGrid.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PBRBase, "../Assets/Shaders/PBR_Base.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
 
     if (!CreatePPShader()) return false;
+
+    //Debug
+    if (!LoadShader(ShaderId::DebugGrid, "../Assets/Shaders/DebugGrid.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::DebugMesh, "../Assets/Shaders/DebugMesh.hlsl", "VSMain", "PSMain")) return false;
 
     //ps 안씀
     if (!LoadShader(ShaderId::ShadowPass, "../Assets/Shaders/ShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
@@ -2186,6 +2192,10 @@ void YunoRenderer::Flush()
             return r.sortkey > l.sortkey;
         });
 
+#ifdef _DEBUG
+    SubmitDebugPointLightMesh();
+#endif
+
     // 샘플러 바인드
     BindSamplers();
 
@@ -2408,6 +2418,12 @@ void YunoRenderer::BindConstantBuffers_Light(const Frame_Data_Dir& dirData, cons
             m_LightInfo.pointLit[i].pos_intensity.y = data.pos.y;
             m_LightInfo.pointLit[i].pos_intensity.z = data.pos.z;
             m_LightInfo.pointLit[i].pos_intensity.w = data.intensity;
+            
+            #ifdef _DEBUG
+            if(i < plCount)
+                debuglights.push_back({ data.pos, data.col });
+            #endif
+
             i++;
         }
         m_LightInfo.plCount.x = plCount;
@@ -2474,6 +2490,94 @@ void YunoRenderer::BindTextures(const YunoMaterial& material)
 // ------------------------------------------------------------
 // Debug 함수들
 // ------------------------------------------------------------
+#ifdef _DEBUG
+void YunoRenderer::CreateDebugMeshResources()
+{
+    if (m_debugSphereMeshHandle != 0 && m_debugMeshMaterial != 0)
+        return;
+
+    float radius = 1.0f;
+    int sliceCount = 8;
+    int stackCount = 8;
+
+    std::vector<VERTEX_Pos> v;
+    std::vector<INDEX> idx;
+    //vertex
+    v.push_back({ 0, radius, 0 });
+
+    for (int stack = 1; stack <= stackCount - 1; ++stack)
+    {
+        float phi = XM_PI * stack / stackCount;
+
+        for (int slice = 0; slice <= sliceCount; ++slice)
+        {
+            float theta = XM_2PI * slice / sliceCount;
+
+            float x = radius * sinf(phi) * cosf(theta);
+            float y = radius * cosf(phi);
+            float z = radius * sinf(phi) * sinf(theta);
+
+            v.push_back({ x, y, z});
+        }
+    }
+    v.push_back({ 0, -radius, 0 });
+
+    //index
+    for (uint32_t i = 1; i <= sliceCount; ++i)
+    {
+        idx.push_back({0, i, i + 1});
+    }
+
+    int baseIndex = 1;
+    int ringVertexCount = sliceCount + 1;
+
+    for (int stack = 0; stack < stackCount - 2; ++stack)
+    {
+        for (int slice = 0; slice < sliceCount; ++slice)
+        {
+            uint32_t i0 = baseIndex + stack * ringVertexCount + slice;
+            uint32_t i1 = i0 + 1;
+            uint32_t i2 = i0 + ringVertexCount;
+            uint32_t i3 = i2 + 1;
+
+            // Triangle 1
+            idx.push_back({ i0, i2, i2 });
+
+            // Triangle 2
+            idx.push_back({ i1, i2, i3 });
+        }
+    }
+
+    uint32_t southPoleIndex = (uint32_t)v.size() - 1;
+    uint32_t lastRingStart = southPoleIndex - ringVertexCount;
+
+    for (int i = 0; i < sliceCount; ++i)
+    {
+        idx.push_back({ southPoleIndex, lastRingStart + i + 1, lastRingStart + i });
+    }
+
+    VertexStreams vs;
+    vs.flags = VSF_Pos;
+    vs.vtx_count = v.size() * 3;
+    vs.pos = v.data();
+
+    m_debugSphereMeshHandle = CreateMesh(vs, idx.data(), idx.size());
+    if (!m_debugSphereMeshHandle) return;
+
+
+    MaterialDesc md{};
+    md.passKey.vs = ShaderId::DebugMesh;
+    md.passKey.ps = ShaderId::DebugMesh;
+    md.passKey.vertexFlags = VSF_Pos;
+    md.passKey.blend = BlendPreset::Opaque;
+    md.passKey.raster = RasterPreset::CullNone;
+    md.passKey.depth = DepthPreset::ReadOnly;
+
+    const MaterialHandle h = CreateMaterial(md);
+    if (h == 0) return;
+
+    m_debugMeshMaterial = h;
+}
 
 void YunoRenderer::CreateDebugGridResources()
 {
@@ -2539,7 +2643,28 @@ void YunoRenderer::SubmitDebugGrid()
     Submit(item);
 }
 
-#ifdef _DEBUG
+void YunoRenderer::SubmitDebugPointLightMesh()
+{
+    if (m_debugSphereMeshHandle == 0)
+        return;
+
+    float scale = 0.05f;
+
+    for (auto& pl : debuglights)
+    {
+        RenderItem item{};
+        item.meshHandle = m_debugSphereMeshHandle;
+        item.materialHandle = m_debugMeshMaterial;
+        DirectX::XMStoreFloat4x4(&item.Constant.world, XMMatrixScaling(scale, scale, scale) * XMMatrixTranslation(pl.pos.x, pl.pos.y, pl.pos.z));
+        item.Constant.baseColor = pl.col;
+
+        Submit(item);
+    }
+
+    debuglights.clear();
+}
+
+
 void YunoRenderer::DrawDebug()
 {
     m_renderQueue.clear();
@@ -2597,6 +2722,8 @@ void YunoRenderer::DrawDebug()
         else
             m_context->Draw(mesh.vertexCount, 0);
     }
+
+    m_renderQueue.clear();
 }
 
 void YunoRenderer::RegisterDrawUI()

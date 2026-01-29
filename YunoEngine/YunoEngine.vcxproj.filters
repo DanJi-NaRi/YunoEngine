@@ -122,6 +122,9 @@
     <Filter Include="Public\Singleton">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Debug">
+      <UniqueIdentifier>{0b07cb2b-aef6-4026-a135-fb112a7f0728}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -459,6 +462,9 @@
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\ShadowMapWrite.hlsl">
       <Filter>Shaders\shadowMap</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\DebugMesh.hlsl">
+      <Filter>Shaders\Debug</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
