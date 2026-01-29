@@ -14,6 +14,7 @@ enum class EffectID
     Default,
     Hit,
     Lightning,
+    Lazer,
 
     Count
 };

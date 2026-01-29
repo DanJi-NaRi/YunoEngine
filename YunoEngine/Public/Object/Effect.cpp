@@ -3,6 +3,11 @@
 #include "Effect.h"
 #include "YunoCamera.h"
 
+Effect::Effect()
+{
+    m_pRenderer = YunoEngine::GetRenderer();
+}
+
 void Effect::SetTemplate(const EffectTemplate& temp)
 {
     // 템플릿 리소스 적용
@@ -87,17 +92,22 @@ XMMATRIX Effect::UpdateDefault()
 
 XMMATRIX Effect::UpdateScreenAlign()
 {
-    // 카메라 위치 가져오기
-    const XMFLOAT3& camPos = m_pRenderer->GetCamera().Position();
+    XMMATRIX V = m_pRenderer->GetCamera().View();
 
-    XMVECTOR P = XMLoadFloat3(&m_vPos);
-    XMVECTOR C = XMLoadFloat3(&camPos);
+    // View 행렬의 역행렬 = Camera World Transform
+    XMMATRIX invView = XMMatrixInverse(nullptr, V);
 
-    // 카메라 방향 = 카메라 → 이펙트
-    XMVECTOR look = XMVector3Normalize(P - C);
+    // Camera 기준 축
+    XMVECTOR right = invView.r[0]; // 카메라 X축
+    XMVECTOR up = invView.r[1]; // 카메라 Y축
+    XMVECTOR look = invView.r[2]; // 카메라 Z축
 
-    // billboard 회전 행렬 생성
-    XMMATRIX R = XMMatrixLookToLH(P, look, XMVectorSet(0, 1, 0, 0));
+    // Billboard 회전행렬 생성
+    XMMATRIX R;
+    R.r[0] = right;
+    R.r[1] = up;
+    R.r[2] = look;
+    R.r[3] = XMVectorSet(0, 0, 0, 1);
 
     return R;
 }

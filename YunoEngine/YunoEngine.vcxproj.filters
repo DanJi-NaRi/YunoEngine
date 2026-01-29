@@ -249,9 +249,6 @@
     <ClCompile Include="Public\Object\Effect.cpp">
       <Filter>Public\Object\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Object\EffectPool.cpp">
-      <Filter>Public\Object\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="Public\Object\EffectManager.cpp">
       <Filter>Public\Object\Effect</Filter>
     </ClCompile>
@@ -437,9 +434,6 @@
       <Filter>Public\Object\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Public\Object\EffectTemplate.h">
-      <Filter>Public\Object\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Object\EffectPool.h">
       <Filter>Public\Object\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Public\Object\EffectManager.h">

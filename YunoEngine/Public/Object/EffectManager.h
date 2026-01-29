@@ -1,9 +1,20 @@
 #pragma once
 #include "EffectTemplate.h"
-#include "EffectPool.h"
 #include "Effect.h"
 
 class IRenderer;
+
+struct EffectDesc
+{
+    EffectID id = EffectID::Default;
+    ShaderId shaderid = ShaderId::EffectBase;
+    BillboardMode billboard = BillboardMode::ScreenAligned;
+    float lifetime = 1.0f;
+    int framecount = 0;
+    int cols = 0;
+    int rows = 0;
+    std::wstring texPath = L"";
+};
 
 class EffectManager
 {
@@ -22,7 +33,7 @@ public:
 
     void Init(int count);
 
-    bool RegisterEffect(EffectID id, ShaderId shaderid, BillboardMode mode, float lifetime, int framecount, int cols, int rows, const std::wstring& texturePath);
+    bool RegisterEffect(const EffectDesc& desc);
     
     Effect* Spawn(EffectID id, const XMFLOAT3& pos, const XMFLOAT3& scale = {1, 1, 1}, const XMFLOAT3& dir = {1, 0, 0});
 

@@ -2,9 +2,9 @@
 #include <cstdint>
 #include "RenderTypes.h"
 #include "MaterialDesc.h"
-#include "YunoMaterial.h"
 
 class IWindow;
+class YunoMaterial;
 struct YunoCamera;
 
 class IRenderer

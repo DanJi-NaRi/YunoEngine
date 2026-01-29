@@ -9,6 +9,8 @@
 // 게임 매니저
 #include "GameManager.h"
 #include "UIManager.h"
+#include "EffectManager.h"
+#include "IInput.h"
 // 여러 오브젝트들 ;; 
 #include "Quad.h"
 #include "Building.h"
@@ -34,13 +36,13 @@ bool RenderTest::OnCreateScene()
 
     m_objectManager->CreateDirLight();
 
-    int j = 0;
+    /*int j = 0;
     for (int i = -3; i < 3; i++)
     {
         m_objectManager->CreatePointLight(XMFLOAT3(i * 2, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
         j++;
     }
-    m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
+    m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);*/
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
 
@@ -54,14 +56,39 @@ bool RenderTest::OnCreateScene()
     map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
     map->SetScale(XMFLOAT3(2, 2, 2));
 
-    PassOption po;
+    /*PassOption po;
     po.blend = BlendPreset::AlphaBlend;
 
     auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
     gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
 
     auto gun2 = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun2", XMFLOAT3(0, 2, 2), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
-    gun2->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
+    gun2->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));*/
+
+    EffectDesc ed{};
+    ed.id = EffectID::Lazer;
+    ed.shaderid = ShaderId::EffectBase;
+    ed.billboard = BillboardMode::ScreenAligned;
+    ed.lifetime = 3.0f;
+    ed.framecount = 100;
+    ed.cols = 10;
+    ed.rows = 10;
+    ed.texPath = L"../Assets/Effects/Coin/EF_Coin1P.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::Hit;
+    ed.framecount = 30;
+    ed.cols = 6;
+    ed.rows = 5;
+    ed.texPath = L"../Assets/Effects/hit/EF_Target.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::Default;
+    ed.framecount = 30;
+    ed.cols = 6;
+    ed.rows = 5;
+    ed.texPath = L"../Assets/Effects/Lazer/EF_Rager.png";
+    m_effectManager->RegisterEffect(ed);
 
     return true;
 }
@@ -84,6 +111,18 @@ void RenderTest::OnExit()
 
 void RenderTest::Update(float dt)
 {
+    if (YunoEngine::GetInput()->IsKeyPressed('F'))
+    {
+        m_effectManager->Spawn(EffectID::Default, { 0, 1, 0 }, { 1, 1, 1 });
+    }
+    if (YunoEngine::GetInput()->IsKeyPressed('D'))
+    {
+        m_effectManager->Spawn(EffectID::Hit, { -2, 1, 0 }, { 1, 1, 1 });
+    }
+    if (YunoEngine::GetInput()->IsKeyPressed('G'))
+    {
+        m_effectManager->Spawn(EffectID::Lazer, { 2, 1, 0 }, { 1, 1, 1 });
+    }
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);
 }

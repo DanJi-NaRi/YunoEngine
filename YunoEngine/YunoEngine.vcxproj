@@ -171,7 +171,6 @@
     <ClInclude Include="Public\Object\Effect.h" />
     <ClInclude Include="Public\Object\EffectManager.h" />
     <ClInclude Include="Public\Object\EffectTemplate.h" />
-    <ClInclude Include="Public\Object\EffectPool.h" />
     <ClInclude Include="Public\Object\ObjectTypeRegistry.h" />
     <ClInclude Include="Public\SceneBase\SerializeScene.h" />
     <ClInclude Include="Public\UI\UITool\CursurSystem.h" />
@@ -272,7 +271,6 @@
     <ClCompile Include="Public\Object\AnimationUnit.cpp" />
     <ClCompile Include="Public\Object\Effect.cpp" />
     <ClCompile Include="Public\Object\EffectManager.cpp" />
-    <ClCompile Include="Public\Object\EffectPool.cpp" />
     <ClCompile Include="Public\Object\ObjectManager.cpp" />
     <ClCompile Include="Public\Object\ObjectTypeRegistry.cpp" />
     <ClCompile Include="Public\Object\Unit.cpp" />

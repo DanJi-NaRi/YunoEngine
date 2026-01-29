@@ -23,27 +23,28 @@ void EffectManager::Init(int count)
     }
 }
 
-bool EffectManager::RegisterEffect(EffectID id, ShaderId shaderid, BillboardMode mode, float lifetime, int framecount, int cols, int rows, const std::wstring& texturePath)
+bool EffectManager::RegisterEffect(const EffectDesc& desc)
 {
-    auto it = m_templates.find(id);
+    auto it = m_templates.find(desc.id);
 
-    if (it == m_templates.end())
+    if (it != m_templates.end())
         return true;
 
     EffectTemplate temp{};
 
     temp.mesh = m_pRenderer->GetQuadMesh();
 
-    TextureHandle h = m_pRenderer->CreateColorTexture2DFromFile(texturePath.c_str());
+    TextureHandle h = m_pRenderer->CreateColorTexture2DFromFile(desc.texPath.c_str());
 
     if (!h) return false;
     temp.texture = h;
 
     MaterialDesc md{};
 
-    md.passKey.vs = shaderid;
-    md.passKey.ps = shaderid;
-    md.passKey.blend = BlendPreset::ColorBlendOne;
+    md.passKey.vs = desc.shaderid;
+    md.passKey.ps = desc.shaderid;
+    md.passKey.blend = BlendPreset::AlphaBlend;
+    //md.passKey.blend = BlendPreset::ColorBlendOne;
     md.passKey.depth = DepthPreset::ReadOnly;
     md.passKey.raster = RasterPreset::CullNone;
     md.passKey.vertexFlags = VSF_Pos | VSF_UV;
@@ -54,13 +55,13 @@ bool EffectManager::RegisterEffect(EffectID id, ShaderId shaderid, BillboardMode
     if (!mh) return false;
 
     temp.material = mh;
-    temp.lifetime = lifetime;
-    temp.frameCount = framecount;
-    temp.cols = cols;
-    temp.rows = rows;
-    temp.billboard = mode;
+    temp.lifetime = desc.lifetime;
+    temp.frameCount = desc.framecount;
+    temp.cols = desc.cols;
+    temp.rows = desc.rows;
+    temp.billboard = desc.billboard;
 
-    m_templates[id] = temp;
+    m_templates[desc.id] = temp;
     return true;
 }
 

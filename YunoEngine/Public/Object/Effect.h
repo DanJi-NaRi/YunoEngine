@@ -20,6 +20,8 @@ public:
     bool m_loop = false;
     BillboardMode billboard;
 public:
+    Effect();
+    virtual ~Effect() = default;
 
     virtual void SetTemplate(const EffectTemplate& temp);
     virtual void Play(const XMFLOAT3& pos, const XMFLOAT3& scale, const XMFLOAT3& dir);
