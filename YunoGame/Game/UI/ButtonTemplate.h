@@ -7,8 +7,8 @@
 class ButtonTemplate : public Button
 {
 public:
-    // 생성자는 (UIManager* uiManager) 인자를 기본으로
-    ButtonTemplate(UIManager* uiManager);
+    // 생성자는 (UIFactory& uiFactory) 인자를 기본으로
+    ButtonTemplate(UIFactory& uiFactory);
     virtual ~ButtonTemplate();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;
@@ -57,7 +57,7 @@ protected:
 class ButtonTemplate : public Button
 {
 public:
-    ButtonTemplate(UIManager* uiManager);
+    ButtonTemplate(UIFactory& uiFactory);
     virtual ~ButtonTemplate();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;

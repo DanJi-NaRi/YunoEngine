@@ -3,10 +3,9 @@
 
 #include "YunoEngine.h"
 #include "DragProvider.h"
-#include "UIManager.h"
 #include "IInput.h"
 
-Card::Card(UIManager* uiManager) : Button(uiManager)
+Card::Card(UIFactory& uiFactory) : Button(uiFactory)
 {
     Clear();
 }

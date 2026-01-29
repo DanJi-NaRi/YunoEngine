@@ -6,7 +6,7 @@
 class Card : public Button
 {
 public:
-    Card(UIManager* uiManager);
+    Card(UIFactory& uiFactory);
     virtual ~Card();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;

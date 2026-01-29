@@ -11,7 +11,6 @@ struct YunoTransform
 
     XMMATRIX ToMatrix() const
     {
-
         const XMMATRIX S = XMMatrixScaling(scale.x, scale.y, scale.z);
         const XMMATRIX R = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
         const XMMATRIX T = XMMatrixTranslation(position.x, position.y, position.z);
@@ -33,6 +32,13 @@ struct Float2
     // XMFLOAT2 -> Float2
     explicit Float2(const XMFLOAT2& v) : x(v.x), y(v.y) {}
 
+    // ===== 추가: cross-dim ctor / assign =====
+    // Float3/Float4 -> Float2 (z,w는 버림)
+    Float2(const Float3& v);
+    Float2(const Float4& v);
+    Float2& operator=(const Float3& v);
+    Float2& operator=(const Float4& v);
+
     // Float2 -> XMFLOAT2 (명시 함수 권장)
     XMFLOAT2 ToXM() const { return XMFLOAT2{ x, y }; }
 
@@ -50,7 +56,6 @@ struct Float2
     // modulus
     Float2& operator%=(float m) { x = std::fmod(x, m); y = std::fmod(y, m); return *this; }
     Float2& operator%=(int   m) { x = float(int(x) % m); y = float(int(y) % m); return *this; }
-
 };
 
 struct Float3
@@ -61,6 +66,13 @@ struct Float3
     constexpr Float3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
 
     explicit Float3(const XMFLOAT3& v) : x(v.x), y(v.y), z(v.z) {}
+
+    // ===== 추가: cross-dim ctor / assign =====
+    // Float2 -> Float3 (z=0), Float4 -> Float3 (w는 버림)
+    Float3(const Float2& v, float _z = 0.0f) : x(v.x), y(v.y), z(_z) {}
+    Float3(const Float4& v);
+    Float3& operator=(const Float2& v) { x = v.x; y = v.y; z = 0.0f; return *this; }
+    Float3& operator=(const Float4& v);
 
     XMFLOAT3 ToXM() const { return XMFLOAT3{ x, y, z }; }
 
@@ -94,6 +106,13 @@ struct Float4
     constexpr Float4(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
 
     explicit Float4(const XMFLOAT4& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
+
+    // ===== 추가: cross-dim ctor / assign =====
+    // Float2 -> Float4 (z=0,w=0), Float3 -> Float4 (w=0)
+    Float4(const Float2& v, float _z = 0.0f, float _w = 0.0f) : x(v.x), y(v.y), z(_z), w(_w) {}
+    Float4(const Float3& v, float _w = 0.0f) : x(v.x), y(v.y), z(v.z), w(_w) {}
+    Float4& operator=(const Float2& v) { x = v.x; y = v.y; z = 0.0f; w = 0.0f; return *this; }
+    Float4& operator=(const Float3& v) { x = v.x; y = v.y; z = v.z; w = 0.0f; return *this; }
 
     XMFLOAT4 ToXM() const { return XMFLOAT4{ x, y, z, w }; }
 
@@ -148,6 +167,9 @@ inline Float4 operator+(Float4 a, const Float4& b) { return a += b; }
 inline Float4 operator-(Float4 a, const Float4& b) { return a -= b; }
 inline Float4 operator*(Float4 a, const Float4& b) { return a *= b; }
 inline Float4 operator/(Float4 a, const Float4& b) { return a /= b; }
+
+
+// promote : 차원 승격 함수. Float2에 Float3을 대입하면, Float2는 Float3가 된다.
 
 ////////////////////
 // Cross-dimension ops (PROMOTE result)
@@ -211,3 +233,18 @@ inline Float4 operator%(const Float4& a, const Float2& b) { return a % Promote4(
 
 inline Float4 operator%(const Float3& a, const Float4& b) { return Promote4(a) % b; }
 inline Float4 operator%(const Float4& a, const Float3& b) { return a % Promote4(b); }
+
+////////////////////
+// Cross-dimension ctor/assign definitions
+// (Float3/Float4가 완전히 정의된 뒤에 구현)
+////////////////////
+
+// Float2 <- Float3/Float4
+inline Float2::Float2(const Float3& v) : x(v.x), y(v.y) {}
+inline Float2::Float2(const Float4& v) : x(v.x), y(v.y) {}
+inline Float2& Float2::operator=(const Float3& v) { x = v.x; y = v.y; return *this; }
+inline Float2& Float2::operator=(const Float4& v) { x = v.x; y = v.y; return *this; }
+
+// Float3 <- Float4
+inline Float3::Float3(const Float4& v) : x(v.x), y(v.y), z(v.z) {}
+inline Float3& Float3::operator=(const Float4& v) { x = v.x; y = v.y; z = v.z; return *this; }

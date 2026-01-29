@@ -17,7 +17,7 @@ enum class ButtonState : int { Idle, Hovered, Pressed, Down, Released, Count };
 
 class Button : public Widget {
 public:
-    explicit Button(UIManager* uiManager);
+    explicit Button(UIFactory& uiFactory);
     virtual ~Button();
 
     //bool Create(XMFLOAT3 vPos) override;

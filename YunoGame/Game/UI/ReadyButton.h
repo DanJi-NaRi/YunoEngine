@@ -4,7 +4,7 @@
 class ReadyButton : public Button
 {
 public:
-    ReadyButton(UIManager* uiManager);
+    ReadyButton(UIFactory& uiFactory);
     virtual ~ReadyButton();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;

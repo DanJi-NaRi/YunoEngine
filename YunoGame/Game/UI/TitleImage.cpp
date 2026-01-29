@@ -4,7 +4,7 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 
-TitleImage::TitleImage(UIManager* uiManager) : Image(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+TitleImage::TitleImage(UIFactory& uiFactory) : Image(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }

@@ -5,9 +5,8 @@
 #include "CardSlot.h"
 
 #include "IInput.h"
-#include "UIManager.h"
 
-CardTable::CardTable(UIManager* uiManager) : Image(uiManager)
+CardTable::CardTable(UIFactory& uiFactory) : Image(uiFactory)
 {
     Clear();
 }

@@ -235,6 +235,7 @@
     <ClInclude Include="Public\UI\Slot.h" />
     <ClInclude Include="Public\UI\Widget.h" />
     <ClInclude Include="Public\UI\UITool\UIManager.h" />
+    <ClInclude Include="Public\UI\UITool\UIFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EnginePCH\pch.cpp">
@@ -287,6 +288,7 @@
     <ClCompile Include="Private\UI\Text.cpp" />
     <ClCompile Include="Private\UI\Slot.cpp" />
     <ClCompile Include="Private\UI\UITool\UIManager.cpp" />
+    <ClCompile Include="Private\UI\UITool\UIFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">

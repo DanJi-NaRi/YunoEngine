@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CardSlot.h"
 
-CardSlot::CardSlot(UIManager* uiManager) : Slot(uiManager)
+CardSlot::CardSlot(UIFactory& uiFactory) : Slot(uiFactory)
 {
     Clear();
 }

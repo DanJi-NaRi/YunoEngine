@@ -6,7 +6,7 @@ class IScene;
 class ExitButton : public Button
 {
 public:
-    ExitButton(UIManager* uiManager);
+    ExitButton(UIFactory& uiFactory);
     virtual ~ExitButton();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;

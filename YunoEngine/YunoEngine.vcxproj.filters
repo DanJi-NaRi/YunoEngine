@@ -238,6 +238,7 @@
       <Filter>Public\Object</Filter>
     </ClCompile>
     <ClCompile Include="Private\UI\Letterbox.cpp" />
+    <ClCompile Include="Private\UI\UITool\UIFactory.cpp" />
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -417,6 +418,7 @@
       <Filter>Public\Object</Filter>
     </ClInclude>
     <ClInclude Include="Public\UI\Letterbox.h" />
+    <ClInclude Include="Public\UI\UITool\UIFactory.h" />
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>

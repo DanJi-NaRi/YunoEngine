@@ -3,11 +3,10 @@
 
 #include "Widget.h"
 #include "IInput.h"
-#include "UIManager.h"
 #include "YunoEngine.h"
 #include "IWindow.h"
 
-Letterbox::Letterbox(UIManager* uiManager) : Image(uiManager) {}
+Letterbox::Letterbox(UIFactory& uiFactory) : Image(uiFactory) {}
 Letterbox::~Letterbox() {}
 
 bool Letterbox::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
@@ -122,7 +121,7 @@ bool Letterbox::UpdateLetterBox(float dTime)
     //Image::Update(dTime);
 
     // 1) 캔버스 크기
-    XMFLOAT2 C = { m_pUIManager->GetCanvasSize().x, m_pUIManager->GetCanvasSize().y };
+    XMFLOAT2 C = { m_uiFactory.GetCanvasSize().x, m_uiFactory.GetCanvasSize().y };
     float Cw = C.x;
     float Ch = C.y;
 

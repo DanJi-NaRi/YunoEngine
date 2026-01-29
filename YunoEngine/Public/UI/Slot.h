@@ -7,7 +7,7 @@
 class Slot : public Widget
 {
 public:
-    Slot(UIManager* uiManager);
+    Slot(UIFactory& uiFactory);
     virtual ~Slot();
 
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;

@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "Image.h"
 
-
-Image::Image(UIManager* uiManager) : Widget(uiManager)
+Image::Image(UIFactory& uiFactory) : Widget(uiFactory)
 {
 }
 

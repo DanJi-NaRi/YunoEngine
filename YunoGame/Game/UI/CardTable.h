@@ -8,7 +8,7 @@ class CardSlot;
 class CardTable : public Image
 {
 public:
-    CardTable(UIManager* uiManager);
+    CardTable(UIFactory& uiFactory);
     virtual ~CardTable();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;

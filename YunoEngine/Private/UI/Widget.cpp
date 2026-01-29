@@ -6,7 +6,6 @@
 #include "IWindow.h"
 
 #include "IInput.h"
-#include "UIManager.h"
 
 VERTEX_Pos g_Widget_pos[] = {
     { 0,0,0 },    // 좌상
@@ -55,11 +54,11 @@ INDEX g_Widget_idx[] =
 };
 
 
-Widget::Widget(UIManager* uiManager) : m_pUIManager(uiManager)
+Widget::Widget(UIFactory& uiFactory) : m_uiFactory(uiFactory)
 {
     Clear();
 
-    m_zOrder = 0;
+    //m_zOrder = 0;
 
     m_defaultMesh = 0;
     m_defaultMaterial = 0;
@@ -266,7 +265,7 @@ bool Widget::Update(float dTime)
     
    
     Float2 origin = Float2(1920.0f, 1080.0f); // 기준(디자인) 해상도
-    Float2 canvas = m_pUIManager->GetCanvasSize(); // 현재 클라이언트/캔버스
+    Float2 canvas = m_uiFactory.GetCanvasSize(); // 현재 클라이언트/캔버스
 
     float sx = canvas.x / origin.x;
     float sy = canvas.y / origin.y;
@@ -285,26 +284,21 @@ bool Widget::Update(float dTime)
     m_canvasOffset = Float2(s, s);
     Float2 m_canvasLetterboxOffset = letterboxOffset; // 이동
 
-    XMFLOAT3 finalSize;
-    finalSize.x = m_size.x * m_vScale.x * m_canvasOffset.x;
-    finalSize.y = m_size.y * m_vScale.y * m_canvasOffset.y;
-    finalSize.z = 1.0f;
+    m_finalSize.x = m_size.x * m_vScale.x * m_canvasOffset.x;
+    m_finalSize.y = m_size.y * m_vScale.y * m_canvasOffset.y;
+    m_finalSize.z = 1.0f;
 
-    XMFLOAT3 finalPos;
-    finalPos.x = m_vPos.x * m_canvasOffset.x + m_canvasLetterboxOffset.x;
-    finalPos.y = m_vPos.y * m_canvasOffset.y + m_canvasLetterboxOffset.y;
-    finalPos.z = m_vPos.z;
+    m_finalPos.x = m_vPos.x * m_canvasOffset.x + m_canvasLetterboxOffset.x;
+    m_finalPos.y = m_vPos.y * m_canvasOffset.y + m_canvasLetterboxOffset.y;
+    m_finalPos.z = m_vPos.z;
 
-
-    m_finalSize = Float2(m_size.x * m_vScale.x, m_size.y * m_vScale.y);
 
     //m_vScale.z = 1.0f; // UI는 z scale 의미 없음(일단 1로 고정)
 
-    //XMMATRIX mScale = XMMatrixScaling(m_finalSize.x, m_finalSize.y, 1.0f);
-    XMMATRIX mScale = XMMatrixScaling(finalSize.x, finalSize.y, 1.0f);
+    XMMATRIX mScale = XMMatrixScaling(m_finalSize.x, m_finalSize.y, 1.0f);
     XMMATRIX mRot =   XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
     //XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
-    XMMATRIX mTrans = XMMatrixTranslation(finalPos.x, finalPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
+    XMMATRIX mTrans = XMMatrixTranslation(m_finalPos.x, m_finalPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
     XMMATRIX mPivot = XMMatrixTranslation(-m_pivot.x, -m_pivot.y, 0.0f); // 피벗
 
     XMMATRIX mTM;

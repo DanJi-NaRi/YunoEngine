@@ -5,7 +5,7 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 
-ButtonTemplate::ButtonTemplate(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+ButtonTemplate::ButtonTemplate(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
@@ -137,7 +137,7 @@ bool ButtonTemplate::KeyReleasedEvent(uint32_t key)
 #include "YunoEngine.h"
 #include "IInput.h"
 
-ButtonTemplate::ButtonTemplate(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+ButtonTemplate::ButtonTemplate(UIFactory& uiFactory) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
@@ -255,7 +255,7 @@ bool ButtonTemplate::KeyReleasedEvent(uint32_t key)
 #include "YunoEngine.h"
 #include "IInput.h"
 
-ButtonTemplate::ButtonTemplate(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+ButtonTemplate::ButtonTemplate(UIFactory& uiFactory) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }

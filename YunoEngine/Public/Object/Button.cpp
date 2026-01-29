@@ -4,7 +4,7 @@
 #include "IInput.h"
 #include "DragProvider.h"
 
-Button::Button(UIManager* uiManager) : Widget(uiManager)
+Button::Button(UIFactory& uiFactory) : Widget(uiFactory)
 {
     Clear();
 }

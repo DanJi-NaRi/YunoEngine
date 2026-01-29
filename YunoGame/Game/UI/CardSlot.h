@@ -7,7 +7,7 @@ class Card;
 class CardSlot : public Slot
 {
 public:
-    CardSlot(UIManager* uiManager);
+    CardSlot(UIFactory& uiFactory);
     virtual ~CardSlot();
 
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;

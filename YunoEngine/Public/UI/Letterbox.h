@@ -10,7 +10,7 @@ public:
         BarB  // 좌/우일 때 Right, 상/하일 때 Bottom
     };
 
-    explicit Letterbox(UIManager* uiManager);
+    explicit Letterbox(UIFactory& uiFactory);
     virtual ~Letterbox();
 
     //bool Create(XMFLOAT3 vPos) override;

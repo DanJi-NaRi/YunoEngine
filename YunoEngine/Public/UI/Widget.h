@@ -5,6 +5,7 @@
 #include "IRenderer.h"
 #include "ITextureManager.h"
 #include "YunoTransform.h"
+#include "UIFactory.h"
 #include "Mesh.h"
 
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
@@ -51,7 +52,17 @@ enum class WidgetClass : int {
     ReadyButton,
     ExitButton,
     WeaponButton,
+};
 
+enum class WidgetLayer : int {
+    Default,
+    Background,
+    HUD,
+    Panels,
+    Popups,
+    Modal,    // 입력 차단
+    Tooltip,  
+    DebugTop, // 디버그용 최상단 고정 레이어
 };
 
 struct Float2;
@@ -95,6 +106,7 @@ protected:
 
     uint32_t m_id;
     WidgetType m_type;
+    WidgetLayer m_layer;
 
     std::wstring m_name;
 
@@ -119,34 +131,23 @@ protected:
 
     // 사이즈 데이터
 
-    //float m_width;              // 위젯 자체의 가로 사이즈
-    //float m_height;             // 위젯 자체의 세로 사이즈
-    Float3  m_size;               // 위젯 자체의 사이즈
+    Float3 m_size;               // 위젯 자체의 사이즈 (width, height)
 
-    //float m_spriteSizeX;        // 적용된 Albedo(스프라이트) 원본 사이즈 X
-    //float m_spriteSizeY;        // 적용된 Albedo(스프라이트) 원본 사이즈 Y
-    Float2  m_spriteSize;
+    Float3 m_spriteSize;
 
-    //float m_sizeX;              // 최종 위젯 사이즈 X // m_width * m_scale.x * m_canvasOffsetX
-    //float m_sizeY;              // 최종 위젯 사이즈 Y // m_height * m_scale.y * m_canvasOffsetY
-    Float2 m_finalSize;           // 최종 위젯 사이즈 XY // m_height * m_scale.y * m_canvasOffset
+    Float3 m_finalPos;
 
-
-
+    Float3 m_finalSize;           // 최종 위젯 사이즈 XY // m_height * m_scale.y * m_canvasOffset
 
     // 캔버스 관련 데이터
 
-    Float2 m_canvasSize;        // 캔버스 사이즈 XY (아무런 캔버스도 없을 땐 클라이언트 사이즈 = 클라가 캔버스 역할)
-    //float m_canvasSizeX;        // 캔버스 사이즈 X (아무런 캔버스도 없을 땐 클라이언트 사이즈 = 클라가 캔버스 역할)
-    //float m_canvasSizeY;        // 캔버스 사이즈 Y (아무런 캔버스도 없을 땐 클라이언트 사이즈 = 클라가 캔버스 역할)
+    Float3 m_canvasSize;        // 캔버스 사이즈 XY (아무런 캔버스도 없을 땐 클라이언트 사이즈 = 클라가 캔버스 역할)
           
-    Float2 m_clientSize;        // 클라이언트 사이즈 XY
+    Float3 m_clientSize;        // 클라이언트 사이즈 XY
 
-    Float2 m_canvasOffset;       // 캔버스 결과 적용 오프셋 (canvasSizeXY/clientSizeXY)
+    Float3 m_canvasOffset;       // 캔버스 결과 적용 오프셋 (canvasSizeXY/clientSizeXY)
 
     //Canvas* m_canvas;
-
-
 
 
     // 기타 데이터
@@ -184,6 +185,7 @@ protected:
     std::unordered_map<uint32_t, Widget*> m_Childs;
 
 protected:
+
     IRenderer* m_pRenderer = nullptr;
 
     ITextureManager* m_pTextures = nullptr;
@@ -192,11 +194,12 @@ protected:
 
     UIDirection m_anchor; // 아직 안씀
 
-    UIManager* m_pUIManager = nullptr; // UIManager
+   //UIManager* m_pUIManager = nullptr; // UIManager
+    UIFactory& m_uiFactory;
 public:
 
     Widget() = delete; // 기본 생성 금지
-    explicit Widget(UIManager* uiManager);
+    explicit Widget(UIFactory& uiFactory);
     virtual ~Widget();
 
     //Create는 오브젝트 매니저만 쓰기
@@ -219,7 +222,7 @@ public:
     void          SetPivot(Float2 pivot)        { m_pivot = pivot; }
     void          SetPivot(UIDirection dir)     { m_pivot = PivotFromUIDirection(dir); }
     virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
-    Float2        SetCanvasSizeX(Float2 sizeXY)   { m_canvasSize = sizeXY; }
+    Float3        SetCanvasSizeX(Float3 sizeXY)   { m_canvasSize = sizeXY; }
 
     virtual void  Backup();
 

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Slot.h"
 
-Slot::Slot(UIManager* uiManager) : Widget(uiManager) 
+Slot::Slot(UIFactory& uiFactory) : Widget(uiFactory)
 {}
 
 Slot::~Slot()

@@ -6,7 +6,7 @@
 class TitleImage : public Image
 {
 public:
-    TitleImage(UIManager* uiManager);
+    TitleImage(UIFactory& uiFactory);
     virtual ~TitleImage();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Update(float dTime = 0) override;
