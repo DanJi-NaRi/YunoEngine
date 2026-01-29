@@ -312,6 +312,7 @@ private:
     float m_Threshold = 1.05f; //추출할 최소 밝기값
     float m_BloomIntensity = 0.6f; //Bloom 빛 번짐정도
     float m_Exposure = 1.3f; //전체 화면 밝기조절 값
+    float m_blurRadius[4] = { 2.0f, 1.0f, 0.5f, 0.2f };
 
     //PP Default
     uint32_t m_PPFlag;

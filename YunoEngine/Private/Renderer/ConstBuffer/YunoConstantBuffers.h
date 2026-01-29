@@ -59,7 +59,7 @@ struct CBPostProcess
     float threshold = 1.0f;
 
     float exposure = 1.0f;
-    float padding[3];
+    float padding[3]{ 0, 0, 0 };
 };
 
 struct CBBloom

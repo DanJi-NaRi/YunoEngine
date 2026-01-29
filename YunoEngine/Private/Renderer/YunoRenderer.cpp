@@ -946,7 +946,7 @@ ID3D11ShaderResourceView* YunoRenderer::PostProcessBloom(ID3D11ShaderResourceVie
         BindRT(m_blurTemp[i].rtv.Get());
         SetViewPort(m_blurTemp[i].w, m_blurTemp[i].h);
         //Blur
-        m_ppCB.Update(m_context.Get(), { {(float)1 / m_bloomRT[i].w, (float)1 / m_bloomRT[i].h}, 2.0f, 0 });
+        m_ppCB.Update(m_context.Get(), { {(float)1 / m_bloomRT[i].w, (float)1 / m_bloomRT[i].h}, m_blurRadius[i]});
         // 텍스쳐 바인드
         //BlurH(rt = blurtemp, srv = bloomRT)
         BindBloomBlurH(m_bloomRT[i].srv.Get());
@@ -1077,7 +1077,10 @@ void YunoRenderer::BindBloomCombine(ID3D11ShaderResourceView* input)
     // 렌더 패스 바인드
     m_passes[passHandle - 1]->Bind(m_context.Get());
 
-    m_ppCBloom.Update(m_context.Get(), { XMFLOAT4(0.4, 0.3f, 0.2f, 0.1f) , m_BloomIntensity });
+    XMFLOAT4 weight = XMFLOAT4(0.4, 0.3f, 0.2f, 0.1f);
+    //XMFLOAT4 weight = XMFLOAT4(0.25, 0.15, 0.10, 0.02);
+
+    m_ppCBloom.Update(m_context.Get(), { weight, m_BloomIntensity });
     // 텍스쳐 바인드
     ID3D11Buffer* cb = m_ppCBloom.Get();
     m_context->PSSetConstantBuffers(1, 1, &cb);
