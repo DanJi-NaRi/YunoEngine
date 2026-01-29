@@ -257,15 +257,6 @@ static bool tst = false;
 
 bool Widget::Update(float dTime)
 {
-    if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vRot.z -= 1 * dTime; } // 회전 디버깅 [
-    if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vRot.z += 1 * dTime; } // 회전 디버깅 ]
-    if (m_pInput->IsKeyPressed(VK_OEM_7)) {                       // 피벗 디버깅 '
-        tst = !tst;
-        std::cout << "pressed!" << std::endl;
-
-        (tst) ? SetPivot(UIDirection::LeftTop) : SetPivot(UIDirection::Center);
-    }
-
     // DX 의 레스터라이즈 규칙에 따른 2D 픽셀좌표 보정.
     //m_vPos.x -= 0.5f;	m_vPos.y -= 0.5f;
 
@@ -274,35 +265,35 @@ bool Widget::Update(float dTime)
 
     
    
-        Float2 origin = Float2(1920.0f, 1080.0f); // 기준(디자인) 해상도
-        Float2 canvas = m_pUIManager->GetCanvasSize(); // 현재 클라이언트/캔버스
+    Float2 origin = Float2(1920.0f, 1080.0f); // 기준(디자인) 해상도
+    Float2 canvas = m_pUIManager->GetCanvasSize(); // 현재 클라이언트/캔버스
 
-        float sx = canvas.x / origin.x;
-        float sy = canvas.y / origin.y;
+    float sx = canvas.x / origin.x;
+    float sy = canvas.y / origin.y;
 
-        // 레터박스(전체가 보이도록) => 더 작은 스케일 채택
-        float s = (sx < sy) ? sx : sy;
+    // 레터박스(전체가 보이도록) => 더 작은 스케일 채택
+    float s = (sx < sy) ? sx : sy;
 
-        // 16:9 유효영역(스케일 적용 후 origin 크기)
-        Float2 fitted = Float2(origin.x * s, origin.y * s);
+    // 16:9 유효영역(스케일 적용 후 origin 크기)
+    Float2 fitted = Float2(origin.x * s, origin.y * s);
 
-        // 남는 공간(레터박스) 분배: 중앙 정렬
-        Float2 letterboxOffset = Float2(
-            (canvas.x - fitted.x) * 0.5f,
-            (canvas.y - fitted.y) * 0.5f);
+    // 남는 공간(레터박스) 분배: 중앙 정렬
+    Float2 letterboxOffset = Float2(
+        (canvas.x - fitted.x) * 0.5f,
+        (canvas.y - fitted.y) * 0.5f);
 
-        m_canvasOffset = Float2(s, s);
-        Float2 m_canvasLetterboxOffset = letterboxOffset; // 이동
+    m_canvasOffset = Float2(s, s);
+    Float2 m_canvasLetterboxOffset = letterboxOffset; // 이동
 
-        XMFLOAT3 finalSize;
-        finalSize.x = m_size.x * m_vScale.x * m_canvasOffset.x;
-        finalSize.y = m_size.y * m_vScale.y * m_canvasOffset.y;
-        finalSize.z = 1.0f;
+    XMFLOAT3 finalSize;
+    finalSize.x = m_size.x * m_vScale.x * m_canvasOffset.x;
+    finalSize.y = m_size.y * m_vScale.y * m_canvasOffset.y;
+    finalSize.z = 1.0f;
 
-        XMFLOAT3 finalPos;
-        finalPos.x = m_vPos.x * m_canvasOffset.x + m_canvasLetterboxOffset.x;
-        finalPos.y = m_vPos.y * m_canvasOffset.y + m_canvasLetterboxOffset.y;
-        finalPos.z = m_vPos.z;
+    XMFLOAT3 finalPos;
+    finalPos.x = m_vPos.x * m_canvasOffset.x + m_canvasLetterboxOffset.x;
+    finalPos.y = m_vPos.y * m_canvasOffset.y + m_canvasLetterboxOffset.y;
+    finalPos.z = m_vPos.z;
 
 
     m_finalSize = Float2(m_size.x * m_vScale.x, m_size.y * m_vScale.y);

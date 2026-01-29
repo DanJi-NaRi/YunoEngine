@@ -39,7 +39,7 @@ public:
 
 protected:
 #ifdef _DEBUG
-    Unit* GetSelectedObject() const { return m_selectedObject; }
+    Unit*   GetSelectedObject() const { return m_selectedObject; }
     void    SelectObject(Unit* obj) { m_selectedLight = nullptr;  m_selectedWidget = nullptr;  m_selectedObject = obj; }
     Widget* GetSelectedWidget() const { return m_selectedWidget; }
     void    SelectWidget(Widget* obj) { m_selectedLight = nullptr; m_selectedObject = nullptr;  m_selectedWidget = obj; }
