@@ -57,7 +57,7 @@ struct VertexStreams
     const VERTEX_BoneIndex* boneIdx = nullptr;
 };
 
-#define MAX_BONE 64
+#define MAX_BONE 16
 struct Update_Data
 {
     DirectX::XMFLOAT4X4 world{};
@@ -69,6 +69,11 @@ struct Update_Data
     float metalRatio = 1.0f;
     float shadowBias = 0.005f;
     float opacity = 1.0f;
+};
+
+struct Effect_Data
+{
+    XMFLOAT4 effectData; // x = frameIndex, y = time, // z = cols, // w = rows
 };
 
 struct Frame_Data_Dir
@@ -96,7 +101,9 @@ struct RenderItem
     MaterialHandle materialHandle = 0;
 
     Update_Data Constant;
+    Effect_Data effectConst;
     float sortkey;
+    bool isEffect;
     bool isEmissive = false;
     bool haveAnim = false;
     bool castShadow = true; //그림자맵에 그릴 오브젝트
@@ -142,6 +149,7 @@ enum class ShaderId : uint8_t
     Unlit,
     Skybox,
     UIBase,
+    EffectBase,
 
     //Shadow
     ShadowPass,

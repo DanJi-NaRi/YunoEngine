@@ -29,7 +29,6 @@ enum class TextureUse
     ORM = 5,    // AO, Metallic, Roughness
     Mask = 6,
 
-
     MAX
 };
 

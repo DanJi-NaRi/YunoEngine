@@ -175,7 +175,6 @@ public:
     TextureHandle CreateColorTexture2DFromFile(const wchar_t* path) override;
     TextureHandle CreateDataTexture2DFromFile(const wchar_t* path) override;
 
-
     void Submit(const RenderItem& item) override;
     void Flush() override;  
 
@@ -229,6 +228,7 @@ private:
     YunoConstantBuffer<CBPerObject_Matrix> m_cbObject_Matrix;
     YunoConstantBuffer<CBPerObject_Material> m_cbObject_Material;
     YunoConstantBuffer<CBLight_All> m_cbLight;
+    YunoConstantBuffer<CBEffect> m_cbEffect;
 
     CBLight_All m_LightInfo;
 
@@ -384,6 +384,9 @@ private:
         }
     };
 
+    bool CreateDefaultQuadMesh();
+    MeshHandle GetQuadMesh() override;
+
     std::vector<MeshResource> m_meshes;        // handle -> m_meshes[handle-1]
     std::vector<RenderItem>   m_renderQueue;   // 이번 프레임 제출된 드로우 요청
     std::vector<RenderItem>   m_renderBlendQueue;   // 반투명 메쉬 별도 관리 큐
@@ -398,6 +401,7 @@ private:
     std::vector<YunoMaterial> m_materials;
     MaterialHandle m_defaultMaterial = 0;
     RenderPassHandle m_defaultPass = 0;
+    MeshHandle m_defaultQuadMesh = 0;
 
 public:
     YunoMaterial& GetMaterial(MaterialHandle handle) { 

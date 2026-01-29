@@ -77,6 +77,11 @@ struct CBShadow
     float padding[2];
 };
 
+struct CBEffect
+{
+    XMFLOAT4 effectData; //x : index, y : time, z : cols, w : rows
+};
+
 
 template<typename T>
 class YunoConstantBuffer

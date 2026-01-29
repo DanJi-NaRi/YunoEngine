@@ -64,6 +64,7 @@ bool YunoRenderer::Initialize(IWindow* window)
     if (!m_cbObject_Matrix.Create(m_device.Get())) return false;
     if (!m_cbObject_Material.Create(m_device.Get())) return false; 
     if (!m_cbLight.Create(m_device.Get())) return false;
+    if (!m_cbEffect.Create(m_device.Get())) return false;
     if (!CreatePPCB()) return false;
 
 
@@ -84,6 +85,8 @@ bool YunoRenderer::Initialize(IWindow* window)
         m_defaultMaterial = CreateMaterial_Default();
     if (m_defaultMaterial == 0)     // 생성 실패하면 리턴
         return false;
+
+    if (!CreateDefaultQuadMesh()) return false;
 
     if (!CreatePPRenderTarget(m_width, m_height)) return false;
     if (!CreatePPMaterial()) return false;
@@ -2002,6 +2005,45 @@ void YunoRenderer::ResetPostProcessOption()
     SetPP_Pass();
 }
 
+bool YunoRenderer::CreateDefaultQuadMesh()
+{
+    VERTEX_Pos vpos[] = {
+    { -0.5f, 0.5f, 0 },    // 좌상
+    { 0.5f, 0.5f ,0 },    // 우상
+    { -0.5f, -0.5f ,0 },    // 좌하
+    { 0.5f, -0.5f, 0 }     // 우하
+    };
+
+    VERTEX_UV vuv[] =
+    {
+        {  0.0f,  0.0f},
+        {  1.0f,  0.0f},
+        {  0.0f,  1.0f},
+        {  1.0f,  1.0f}
+    };
+
+    INDEX idx[] =
+    {
+        { 0, 1, 2},
+        { 2, 1, 3 }
+    };
+
+    VertexStreams vs;
+    vs.flags = VSF_Pos | VSF_UV;
+    vs.vtx_count = 4;
+    vs.topology = Yuno_TRIANGLESTRIP;
+    vs.pos = vpos;
+    vs.uv = vuv;
+
+    m_defaultQuadMesh = CreateMesh(vs, idx, 2);
+    if (!m_defaultQuadMesh) return false;
+}
+
+MeshHandle YunoRenderer::GetQuadMesh()
+{
+    return m_defaultQuadMesh;
+}
+
 RenderPassHandle YunoRenderer::GetOrCreatePass(const PassKey& key)
 {
     auto it = m_passCache.find(key);
@@ -2367,6 +2409,21 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
     ID3D11Buffer* cbPerObj_Material_Buffers[] = { m_cbObject_Material.Get() };
     m_context->VSSetConstantBuffers(1, 1, cbPerObj_Material_Buffers);
     m_context->PSSetConstantBuffers(1, 1, cbPerObj_Material_Buffers);
+
+    // -----------------------------
+    // CBEffect (b5)
+    // -----------------------------
+    if (item.isEffect)
+    {
+        CBEffect cbEffect{};
+        cbEffect.effectData = item.effectConst.effectData;
+
+        m_cbEffect.Update(m_context.Get(), cbEffect);
+
+        ID3D11Buffer* cbEffectBuffers[] = { m_cbEffect.Get() };
+        m_context->VSSetConstantBuffers(5, 1, cbEffectBuffers);
+        m_context->PSSetConstantBuffers(5, 1, cbEffectBuffers);
+    }
 }
 
 

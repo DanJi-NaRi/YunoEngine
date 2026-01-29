@@ -61,6 +61,8 @@ public:
     template<typename T>
     T* CreateObject(const std::wstring& name, XMFLOAT3 pos, UINT id = 0);
     template<typename T>
+    T* CreateObject(const std::wstring& name, XMFLOAT3 pos, PassOption opt, UINT id = 0);
+    template<typename T>
     T* CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, const std::wstring& filepath, PassOption opt = {}, UINT id = 0);
 
     //씬 매니저에 있어도 될것같은 놈들
@@ -112,7 +114,28 @@ void ObjectManager::CreateObjectInternal(const UnitDesc& desc)
 }
 
 template<typename T>
-T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, UINT id) {
+T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, UINT id)
+{
+    static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
+
+    UINT newID = m_objectIDs++;
+
+    std::wstring newname = name;
+
+    auto obj = std::make_unique<T>();
+    CheckDedicateObjectName(newname);
+
+    obj->Create(newname, newID, pos);
+
+    auto* pObj = obj.get();
+
+    m_pendingCreateQ.emplace_back(std::move(obj));
+
+    return pObj;
+}
+
+template<typename T>//파싱없이 메쉬 생성해서 렌더할 오브젝트, 렌더패스 옵션 설정가능
+T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, PassOption opt, UINT id) {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
     UINT newID = m_objectIDs++;
@@ -122,7 +145,7 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, UINT id) 
     auto obj = std::make_unique<T>();
     CheckDedicateObjectName(newname);
 
-    obj->Create(newname, newID, pos);
+    obj->Create(newname, newID, pos, opt);
 
     auto* pObj = obj.get();
 

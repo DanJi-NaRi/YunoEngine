@@ -42,7 +42,6 @@ protected:
 
     float       m_time;
 
-
     RenderItem      m_renderItem;
     MeshHandle      m_defaultMesh;
     MaterialHandle  m_defaultMaterial;
@@ -71,6 +70,7 @@ public:
     //Create는 오브젝트 매니저만 쓰기
     virtual bool  Create(XMFLOAT3 vPos);//일단 호환용으로 냅두고 나중에 무조건 이름 필요한걸로 바꾸는게 나을듯
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
+    virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, PassOption opt) { return false; };//상속해서 쓰십시오
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
 
     virtual bool  Update(float dTime = 0);
