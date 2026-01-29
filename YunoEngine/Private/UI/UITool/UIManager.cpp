@@ -6,6 +6,7 @@
 #include "YunoCamera.h"
 #include "YunoTransform.h"
 #include "IInput.h"
+#include "UIFactory.h"
 #include "Button.h"
 
 
@@ -19,6 +20,7 @@ UIManager::~UIManager()
 
 bool UIManager::Init()
 {
+    m_uiFactory = std::make_unique<UIFactory>(*this);
     m_widgetCount = 0;
     m_widgetIDs = 0;
     m_widgetMap.reserve(30); //30개 정도 메모리 잡고 시작

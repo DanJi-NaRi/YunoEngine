@@ -4,7 +4,7 @@
 #include "Widget.h"
 #include "IInput.h"
 #include "YunoEngine.h"
-#include "IWindow.h"
+#include "UIFactory.h"
 
 Letterbox::Letterbox(UIFactory& uiFactory) : Image(uiFactory) {}
 Letterbox::~Letterbox() {}
@@ -43,8 +43,7 @@ bool Letterbox::Update(float dTime)
     // DX 의 레스터라이즈 규칙에 따른 2D 픽셀좌표 보정.
     //m_vPos.x -= 0.5f;	m_vPos.y -= 0.5f;
 
-    m_clientSize = Float2((float)YunoEngine::GetWindow()->GetClientWidth(),
-                        (float)YunoEngine::GetWindow()->GetClientHeight());
+    m_clientSize = m_uiFactory.GetCanvasSize();
 
     /*
     {

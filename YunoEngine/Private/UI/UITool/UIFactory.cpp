@@ -1,16 +1,19 @@
 #include "pch.h"
 #include "UIFactory.h"
 
-#include "UIManager.h"
+#include "IWindow.h"
 #include "YunoTransform.h"
+//#include "YunoEngine.h"
 
-
-UIFactory::UIFactory(UIManager& uiManager) : m_uiManager(uiManager) {}
-
-template<typename T>
-T* UIFactory::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
-{
-    return m_uiManager.CreateWidget<T>(name, pos); // UIManager 멤버 접근은 내부에서
-}
+UIFactory::~UIFactory() {}
 
 Float2 UIFactory::GetCanvasSize() { return m_uiManager.GetCanvasSize(); }
+
+float UIFactory::GetClientWidth() { return (float)YunoEngine::GetWindow()->GetClientWidth(); }
+float UIFactory::GetClientHeight() { return (float)YunoEngine::GetWindow()->GetClientHeight(); }
+Float2 UIFactory::GetClientSize() {
+    return {
+        (float)YunoEngine::GetWindow()->GetClientHeight(),
+        (float)YunoEngine::GetWindow()->GetClientHeight()
+    };
+}

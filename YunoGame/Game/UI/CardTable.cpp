@@ -5,6 +5,7 @@
 #include "CardSlot.h"
 
 #include "IInput.h"
+#include "UIFactory.h"
 
 CardTable::CardTable(UIFactory& uiFactory) : Image(uiFactory)
 {
@@ -49,25 +50,29 @@ bool CardTable::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     m_vScale.y = 5;
     m_vScale.x = 7;
 
-    // 하위 위젯 생성
 
-    //m_SetCardSlots.push_back(m_uiManager->CreateWidget<CardSlot>(L"tstCardTable", XMFLOAT3(500, 500, 0))->Attach(this));
-    //auto* slot = m_uiManager->CreateWidget<CardSlot>(name + L"S0", XMFLOAT3(0, 0, 0));
-    //this->Attach(slot);
-    //m_SetCardSlots.push_back(std::move(slot));
-
-
-    /*auto* slot1 = m_uiManager->CreateWidget<CardSlot>(name + L"S1", XMFLOAT3(300, 0, 0));
-    this->Attach(slot1);
-    m_SetCardSlots.push_back(slot);
-    slot1 = nullptr;*/
-
-    /*auto* slot2 = m_uiManager->CreateWidget<CardSlot>(name + L"S2", XMFLOAT3(600, 0, 0));
-    this->Attach(slot2);
-    m_SetCardSlots.push_back(slot);
-    slot2 = nullptr;*/
 
     Backup();
+
+    return true;
+}
+
+bool CardTable::CreateChild() {
+        // 하위 위젯 생성
+
+    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S0", XMFLOAT3(0, 0, 0)));
+    this->Attach(m_SetCardSlots.back());
+
+
+    //auto* slot1 = m_uiFactory.CreateWidget<CardSlot>(name + L"S1", XMFLOAT3(300, 0, 0));
+    //this->Attach(slot1);
+    //m_SetCardSlots.push_back(slot);
+    //slot1 = nullptr;
+
+    //auto* slot2 = m_uiFactory->CreateWidget<CardSlot>(name + L"S2", XMFLOAT3(600, 0, 0));
+    //this->Attach(slot2);
+    //m_SetCardSlots.push_back(slot);
+    //slot2 = nullptr;
 
     return true;
 }

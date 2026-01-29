@@ -5,12 +5,12 @@
 #include "IRenderer.h"
 #include "ITextureManager.h"
 #include "YunoTransform.h"
-#include "UIFactory.h"
 #include "Mesh.h"
 
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
 
-class UIManager;
+//class UIManager;
+class UIFactory;
 
 enum class UIDirection : int {
     LeftTop,
@@ -196,6 +196,7 @@ protected:
 
    //UIManager* m_pUIManager = nullptr; // UIManager
     UIFactory& m_uiFactory;
+
 public:
 
     Widget() = delete; // 기본 생성 금지

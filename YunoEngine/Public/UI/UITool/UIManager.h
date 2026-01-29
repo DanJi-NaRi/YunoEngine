@@ -5,13 +5,13 @@
 #include "AnimationUnit.h"
 #include "CursurSystem.h"
 #include "Widget.h"
-#include "UIFactory.h"
 
 enum class ButtonState;
 
 class Button;
 class YunoDirectionalLight;
 class UIFactory;
+
 struct Float2;
 struct Float3;
 struct Float4;
@@ -24,7 +24,7 @@ private:
 
     IInput* m_pInput;
     CursurSystem m_cursurSystem;
-    UIFactory m_uiFactory{ *this };
+    std::unique_ptr<UIFactory> m_uiFactory;
 
 
     // Widgets
@@ -112,7 +112,7 @@ T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
 
     std::wstring newname = name;
 
-    auto widget = std::make_unique<T>(m_uiFactory);
+    auto widget = std::make_unique<T>(*m_uiFactory);
     CheckDedicateWidgetName(newname);
 
     widget->Create(name, m_widgetIDs, pos);

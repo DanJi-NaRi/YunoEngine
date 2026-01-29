@@ -5,6 +5,7 @@
 #include "Widget.h"
 #include "IWindow.h"
 
+#include "UIFactory.h"
 #include "IInput.h"
 
 VERTEX_Pos g_Widget_pos[] = {

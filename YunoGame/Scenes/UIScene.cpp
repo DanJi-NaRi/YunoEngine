@@ -35,16 +35,18 @@ bool UIScene::OnCreateScene()
 
     //input->AddContext(&s_gameCtx);
 
-    m_uiManager->CreateWidget<Image>(L"tstImg", XMFLOAT3(0, 0, 0));
+    //m_uiManager->CreateWidget<Image>(L"tstImg", XMFLOAT3(0, 0, 0));
 
 
     m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0));
-    auto* slot0 = m_uiManager->CreateWidget<CardSlot>( L"S0", XMFLOAT3(300, 100, 0));
-    auto* slot1 = m_uiManager->CreateWidget<CardSlot>( L"S1", XMFLOAT3(400, 100, 0));
-    auto* slot2 = m_uiManager->CreateWidget<CardSlot>( L"S2", XMFLOAT3(500, 100, 0));
-    auto* slot3 = m_uiManager->CreateWidget<CardSlot>( L"S3", XMFLOAT3(600, 100, 0));
-    m_uiManager->CreateWidget<Card>(L"tstCard", XMFLOAT3(600, 0, 0));
-    m_uiManager->CreateWidget<Button>(L"tstBtn", XMFLOAT3(400, 0, 0));
+    {
+        //auto* slot0 = m_uiManager->CreateWidget<CardSlot>(L"S0", XMFLOAT3(300, 100, 0));
+        //auto* slot1 = m_uiManager->CreateWidget<CardSlot>(L"S1", XMFLOAT3(400, 100, 0));
+        //auto* slot2 = m_uiManager->CreateWidget<CardSlot>(L"S2", XMFLOAT3(500, 100, 0));
+        //auto* slot3 = m_uiManager->CreateWidget<CardSlot>(L"S3", XMFLOAT3(600, 100, 0));
+        //m_uiManager->CreateWidget<Card>(L"tstCard", XMFLOAT3(600, 0, 0));
+        //m_uiManager->CreateWidget<Button>(L"tstBtn", XMFLOAT3(400, 0, 0));
+    }
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
     
