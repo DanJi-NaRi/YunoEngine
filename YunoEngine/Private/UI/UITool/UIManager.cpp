@@ -49,8 +49,8 @@ void UIManager::Update(float dTime)
     UpdateButtonStates(); // 모든 버튼 상태 업데이트
     for (auto& widget : m_widgets)
     {
-
-        widget->UpdateLogic(dTime); // 로직 업데이트
+        if(widget->GetIsRoot()) widget->UpdateTransform(dTime); // 체이닝
+        widget->UpdateLogic(dTime); // 로직 업데이트 // 체이닝 금지
     }
 }
 //나중에 이벤트 큐 만들어서 바꿔야함
@@ -62,7 +62,8 @@ void UIManager::Submit(float dTime)
 
     for (auto& widget : m_widgets)
     {
-         widget->Submit(dTime);
+        if (widget->GetIsRoot()) // 체이닝
+            widget->Submit(dTime);
     }
 }
 
@@ -78,6 +79,9 @@ void UIManager::GetSurface()
 
 void UIManager::ProcessPending()
 {
+    std::vector<Widget*> newWidgets;
+    newWidgets.reserve(m_pendingCreateQ.size());
+
     if (!m_pendingCreateQ.empty())
     {
         for (auto& widget : m_pendingCreateQ)
@@ -85,14 +89,22 @@ void UIManager::ProcessPending()
             UINT id = widget->GetID();
             auto name = widget->GetName();
             auto* pWidget = widget.get();
+            // 시작 벡터
+            newWidgets.push_back(pWidget); // StartPtr 백업
+
             m_widgets.push_back(std::move(widget));
             m_widgetMap.emplace(id, pWidget);
             m_nameToID.emplace(name, id);
             m_widgetCount++;
         }
-
         m_pendingCreateQ.clear();
     }
+
+    for (Widget* widget : newWidgets)
+    {
+        if (widget) widget->Start(); // Start 실행
+    }
+
 
     if (!m_pendingDestoryQ.empty())
     {
@@ -348,8 +360,6 @@ bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)
         if (usekeyWidget)
         {
             if (m_cursurSystem.GetUseKeyWidgetBindKey() != key) return false;
-
-            std::cout << "RRRRRRRRRRR!!" << std::endl;
             usekeyWidget->SetButtonState(ButtonState::Released);
             usekeyWidget->KeyReleasedEvent(key);
             m_cursurSystem.SetUseKeyWidget(nullptr);

@@ -68,6 +68,8 @@ public:
 
     template<typename T>
     T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);
+    template<typename T>
+    T* CreateWidget_Internal(const std::wstring& name, XMFLOAT3 pos);
 
     //씬 매니저에 있어도 될것같은 놈들
     const Widget* FindWidget(UINT id); //id로 검색
@@ -102,9 +104,6 @@ private:
 };
 
 
-// 김장후 - 
-// 현재 Object와 같은 ID 체계를 사용하고 있음. 분리할지 고민중..
-// 매니저 분리까지는 굳이 필요 없을 것 같아서 일단은 큐만 추가해서 사용 중.
 template<typename T>
 T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
 {
@@ -115,7 +114,7 @@ T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
     auto widget = std::make_unique<T>(*m_uiFactory);
     CheckDedicateWidgetName(newname);
 
-    widget->Create(name, m_widgetIDs, pos);
+    widget->Create(newname, m_widgetIDs, pos); // 생성 (유니티로 치면 Awake)
 
     auto* pWidget = widget.get();
 

@@ -21,13 +21,18 @@ bool CardSlot::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool CardSlot::UpdateTransform(float dTime) {
-    Slot::UpdateTransform(dTime);
+bool CardSlot::Start()
+{
+    Slot::Start();
 
     return true;
 }
-bool CardSlot::UpdateLogic(float dTime) {
 
+bool CardSlot::UpdateTransform(float dTime) {
+    Slot::UpdateTransform(dTime);
+    return true;
+}
+bool CardSlot::UpdateLogic(float dTime) {
     return true;
 }
 

@@ -49,6 +49,11 @@ bool Button::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
+bool Button::Start()
+{
+    return true;
+}
+
 bool Button::UpdateTransform(float dTime) {
     Widget::UpdateTransform(dTime);
 

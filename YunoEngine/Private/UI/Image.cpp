@@ -48,6 +48,11 @@ bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 }
 
+bool Image::Start()
+{
+    return true;
+}
+
 bool Image::UpdateTransform(float dTime)
 {
     Widget::UpdateTransform(dTime);

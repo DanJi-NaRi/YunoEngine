@@ -252,7 +252,13 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOA
     return true;
 }
 
-bool Widget::UpdateAll(float dTime) {
+bool Widget::Start() {
+    return true;
+}
+
+Widget* Widget::CreateChild() { return this; }
+
+bool Widget::UpdateAll(float dTime) {  // 일괄 업데이트. 웬만하면 쓸 일이 없다.
     UpdateTransform(dTime);
     UpdateLogic(dTime);
     return true;
@@ -265,11 +271,11 @@ bool Widget::UpdateTransform(float dTime)
     // DX 의 레스터라이즈 규칙에 따른 2D 픽셀좌표 보정.
     //m_vPos.x -= 0.5f;	m_vPos.y -= 0.5f;
 
-    m_clientSize = Float2((float)YunoEngine::GetWindow()->GetClientWidth(),
-                         (float)YunoEngine::GetWindow()->GetClientHeight());
+    /*m_clientSize = Float2((float)YunoEngine::GetWindow()->GetClientWidth(),
+                         (float)YunoEngine::GetWindow()->GetClientHeight());*/
 
    
-    Float2 origin = Float2(1920.0f, 1080.0f); // 기준(디자인) 해상도
+    Float2 origin = g_DefaultClientXY; // 기준(디자인) 해상도
     Float2 canvas = m_uiFactory.GetCanvasSize(); // 현재 클라이언트/캔버스
 
     float sx = canvas.x / origin.x;
@@ -320,8 +326,30 @@ bool Widget::UpdateTransform(float dTime)
 
     UpdateRect(); // m_rect 갱신
 
+    if (m_isRoot) UpdateTransformChild(dTime); // 자식 업데이트, Root만 허용
+
     return true;
 }
+
+bool Widget::UpdateTransformChild(float dTime) // 루트 진입용
+{
+    assert(m_isRoot && "UpdateTransformChild must be called only from root");
+    if (!m_isRoot) return false;
+    UpdateTransformChild_Internal(dTime);
+    return true;
+}
+
+void Widget::UpdateTransformChild_Internal(float dTime) // 실제 재귀
+{
+    for (auto& [id, child] : m_Childs)
+    {
+        if (!child) continue;
+
+        child->UpdateTransform(dTime);
+        child->UpdateTransformChild_Internal(dTime);
+    }
+}
+
 
 bool Widget::UpdateLogic(float dTime)
 {
@@ -338,12 +366,13 @@ void Widget::Backup()
 
 bool Widget::Submit(float dTime)
 {
-
+    // 메쉬 Submit
     m_MeshNode->Submit(m_mWorld);
-
     LastSubmit(dTime);
 
-    
+    // 자식 Submit
+    if (m_isRoot) SubmitChild(dTime); // 자식 업데이트, Root만 허용
+
     return true;
 }
 
@@ -353,6 +382,28 @@ bool Widget::LastSubmit(float dTime /*= 0*/)
 
     return true;
 }
+
+
+bool Widget::SubmitChild(float dTime) // 루트 진입용
+{
+    assert(m_isRoot && "SubmitChild must be called only from root");
+    if (!m_isRoot) return false;
+    SubmitChild_Internal(dTime);
+    return true;
+}
+
+void Widget::SubmitChild_Internal(float dTime) // 실제 재귀
+{
+    for (auto& [id, child] : m_Childs)
+    {
+        if (!child) continue;
+
+        if (child->HasMeshNode())
+            child->Submit(dTime);
+        child->SubmitChild_Internal(dTime);
+    }
+}
+
 
 void Widget::UpdateRect()
 {

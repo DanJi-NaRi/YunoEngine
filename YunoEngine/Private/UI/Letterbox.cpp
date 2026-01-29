@@ -46,7 +46,7 @@ bool Letterbox::UpdateTransform(float dTime)
     // DX 의 레스터라이즈 규칙에 따른 2D 픽셀좌표 보정.
     //m_vPos.x -= 0.5f;	m_vPos.y -= 0.5f;
 
-    m_clientSize = m_uiFactory.GetCanvasSize();
+    //m_clientSize = m_uiFactory.GetCanvasSize();
 
     /*
     {

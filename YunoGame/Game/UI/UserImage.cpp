@@ -62,12 +62,12 @@ bool UserImage::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool UserImage::UpdateTransform(float dTime = 0) {
+bool UserImage::UpdateTransform(float dTime) {
     Image::UpdateTransform(dTime);
 
     return true;
 }
-bool UserImage::UpdateLogic(float dTime = 0) {
+bool UserImage::UpdateLogic(float dTime) {
 
     return true;
 }
