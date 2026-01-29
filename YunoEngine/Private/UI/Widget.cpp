@@ -212,7 +212,7 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     //m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
 
     // Rect 갱신은 Update()에서
-    Widget::Update();
+    Widget::UpdateTransform();
 
     return true;
 }
@@ -247,15 +247,20 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOA
     //m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
 
     // Rect 갱신은 Update()에서
-    Widget::Update();
+    Widget::UpdateTransform();
 
     return true;
 }
 
+bool Widget::UpdateAll(float dTime) {
+    UpdateTransform(dTime);
+    UpdateLogic(dTime);
+    return true;
+}
 
-static bool tst = false;
 
-bool Widget::Update(float dTime)
+
+bool Widget::UpdateTransform(float dTime)
 {
     // DX 의 레스터라이즈 규칙에 따른 2D 픽셀좌표 보정.
     //m_vPos.x -= 0.5f;	m_vPos.y -= 0.5f;
@@ -263,7 +268,6 @@ bool Widget::Update(float dTime)
     m_clientSize = Float2((float)YunoEngine::GetWindow()->GetClientWidth(),
                          (float)YunoEngine::GetWindow()->GetClientHeight());
 
-    
    
     Float2 origin = Float2(1920.0f, 1080.0f); // 기준(디자인) 해상도
     Float2 canvas = m_uiFactory.GetCanvasSize(); // 현재 클라이언트/캔버스
@@ -316,6 +320,11 @@ bool Widget::Update(float dTime)
 
     UpdateRect(); // m_rect 갱신
 
+    return true;
+}
+
+bool Widget::UpdateLogic(float dTime)
+{
     return true;
 }
 
@@ -378,38 +387,60 @@ void Widget::SetMesh(std::unique_ptr<MeshNode>&& mesh)
     m_MeshNode = std::move(mesh);
 }
 
-void Widget::Attach(Widget* widget) //this가 부모, 파라미터로 자식
+void Widget::Attach(Widget* widget) // this가 부모, 파라미터로 자식
 {
-    if (widget->m_Parent)//기존 부모있으면 떨어진 후 결합
+    if (!widget || widget == this) return;
+    if (widget->m_Parent)       // 기존 부모있으면 떨어진 후 결합
         widget->DettachParent();
 
-    widget->m_Parent = this;
+    // unorderd_map에 넣어서 먼저 중복 체크(상태 변경 전)
+    auto [it, inserted] = m_Childs.insert({ widget->GetID(), widget });
+    assert(inserted && "Widget::Attach - duplicate child ID in m_Childs");
+    if (!inserted) return; // 릴리즈 대비 안전장치
 
-    m_Childs.insert(std::make_pair(widget->GetID(), widget));
+    widget->m_Parent = this;
+    widget->SetIsRoot(false);   // 부모 아님을 인증
 }
 
 void Widget::DettachParent()
 {
-    m_Parent->DettachChild(m_id);
+    if (!m_Parent)
+    {
+        SetIsRoot(true);
+        return;
+    }
+
+    Widget* old = m_Parent;
+    old->DettachChild(m_id);
+
+    m_Parent = nullptr;
+    SetIsRoot(true);
 }
 
 void Widget::DettachChild(uint32_t id)
 {
-    if (m_Childs.find(id) == m_Childs.end())
-        return;
-
-    m_Childs.erase(id);
+    auto it = m_Childs.find(id);
+    if (it == m_Childs.end()) return;
+        
+    Widget* child = it->second;
+    if (child && child->m_Parent == this)
+    {
+        child->m_Parent = nullptr;
+        child->SetIsRoot(true);
+    }
+    //m_Childs.erase(id);
+    m_Childs.erase(it);
 }
 
 void Widget::ClearChild()
 {
-    if (m_Childs.empty())
-        return;
+    if (m_Childs.empty()) return;
 
-    for (auto& [id, child] : m_Childs)
-    {
-        child->DettachParent();
-    }
+    std::vector<uint32_t> ids;
+    ids.reserve(m_Childs.size());
+    for (auto& [id, child] : m_Childs) ids.push_back(id);
+
+    for (uint32_t id : ids) DettachChild(id);
 
     m_Childs.clear();
 }

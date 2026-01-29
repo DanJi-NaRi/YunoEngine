@@ -184,6 +184,8 @@ protected:
     Widget* m_Parent;
     std::unordered_map<uint32_t, Widget*> m_Childs;
 
+    bool m_isRoot = true; // 캔버스를 제외한 가장 최상위 부모인지. // 나중에 캔버스 위젯이 생기면 캔버스만 예외처리 해야 함.
+
 protected:
 
     IRenderer* m_pRenderer = nullptr;
@@ -197,6 +199,7 @@ protected:
    //UIManager* m_pUIManager = nullptr; // UIManager
     UIFactory& m_uiFactory;
 
+
 public:
 
     Widget() = delete; // 기본 생성 금지
@@ -207,7 +210,9 @@ public:
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
 
-    virtual bool  Update(float dTime = 0);
+    virtual bool  UpdateAll(float dTime = 0);
+    virtual bool  UpdateTransform(float dTime = 0);
+    virtual bool  UpdateLogic(float dTime = 0);
     virtual bool  Submit(float dTime = 0);
     bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 X
 
@@ -224,7 +229,10 @@ public:
     void          SetPivot(UIDirection dir)     { m_pivot = PivotFromUIDirection(dir); }
     virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
     Float3        SetCanvasSizeX(Float3 sizeXY)   { m_canvasSize = sizeXY; }
+    void          SetIsRoot(bool isRoot) { m_isRoot = isRoot; }
 
+
+        bool GetIsRoot(bool isRoot) { m_isRoot = isRoot; }
     virtual void  Backup();
 
 
@@ -260,6 +268,11 @@ public:
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
     const RECT GetRect() const { return m_rect; }
     const Float2 GetPivot() { return m_pivot; }
+    bool GetIsRoot() { return m_isRoot; }
+
+    void UpdateTransformChilds();
+    //void UpdateLogicChilds(); // 안씀.
+    void SubmitChild();
 
     void Attach(Widget* obj);
     void DettachParent();
@@ -272,6 +285,7 @@ public:
 
     virtual WidgetType GetWidgetType() { return WidgetType::Widget; }
     virtual WidgetClass GetWidgetClass() { return WidgetClass::Widget; }
+    
 
     //bool IsIntersect(const RECT& other)
     //{

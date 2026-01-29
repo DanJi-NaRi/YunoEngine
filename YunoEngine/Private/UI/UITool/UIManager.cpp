@@ -49,7 +49,8 @@ void UIManager::Update(float dTime)
     UpdateButtonStates(); // 모든 버튼 상태 업데이트
     for (auto& widget : m_widgets)
     {
-        widget->Update(dTime);
+
+        widget->UpdateLogic(dTime); // 로직 업데이트
     }
 }
 //나중에 이벤트 큐 만들어서 바꿔야함

@@ -48,9 +48,16 @@ bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 }
 
-bool Image::Update(float dTime)
+bool Image::UpdateTransform(float dTime)
 {
-    Widget::Update(dTime);
+    Widget::UpdateTransform(dTime);
+
+    return true;
+}
+
+bool Image::UpdateLogic(float dTime)
+{
+    //Widget::UpdateLogic(dTime);
 
     return true;
 }

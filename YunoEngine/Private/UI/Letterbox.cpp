@@ -38,8 +38,11 @@ bool Letterbox::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool Letterbox::Update(float dTime)
+
+bool Letterbox::UpdateTransform(float dTime)
 {
+    //Widget::UpdateTransform(dTime);
+
     // DX 의 레스터라이즈 규칙에 따른 2D 픽셀좌표 보정.
     //m_vPos.x -= 0.5f;	m_vPos.y -= 0.5f;
 
@@ -102,6 +105,11 @@ bool Letterbox::Update(float dTime)
     XMStoreFloat4x4(&m_mWorld, mTM);
 
     UpdateRect(); // m_rect 갱신
+    return true;
+}
+
+bool Letterbox::UpdateLogic(float dTime)
+{
     UpdateLetterBox(dTime);
     return true;
 }

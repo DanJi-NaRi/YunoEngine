@@ -41,10 +41,15 @@ bool Slot::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool Slot::Update(float dTime)
+bool Slot::UpdateTransform(float dTime)
 {
-    Widget::Update(dTime);
+    Widget::UpdateTransform(dTime);
 
+    return true;
+}
+
+bool Slot::UpdateLogic(float dTime)
+{
     return true;
 }
 

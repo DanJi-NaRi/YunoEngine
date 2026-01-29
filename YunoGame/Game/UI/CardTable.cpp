@@ -77,13 +77,17 @@ bool CardTable::CreateChild() {
     return true;
 }
 
-bool CardTable::Update(float dTime)
-{
 
-    /*if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50.0f * dTime; }
-    if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50.0f * dTime; }*/
-    Image::Update(dTime);
-    return false;
+bool CardTable::UpdateTransform(float dTime)
+{
+    Image::UpdateTransform(dTime);
+
+    return true;
+}
+
+bool CardTable::UpdateLogic(float dTime)
+{
+    return true;
 }
 
 bool CardTable::Submit(float dTime)
