@@ -5,6 +5,7 @@
 #include "YunoEngine.h"
 #include "YunoRenderer.h"
 #include "UImgui.h"
+#include "SerializeScene.h"
 
 Mesh::Mesh()
 {
@@ -93,6 +94,16 @@ void Mesh::SetTexture(TextureUse use, const std::wstring& filepath)
     }
 }
 
+void Mesh::SetMaskColor(const XMFLOAT4& col)
+{
+    m_renderItem.Constant.baseColor = col;
+}
+
+void Mesh::SetOpacity(const float opacity)
+{
+    m_renderItem.Constant.opacity = opacity;
+}
+
 void Mesh::UpdateRenderItem(XMFLOAT4X4 mWorld)
 {
     m_renderItem.Constant.world = mWorld;
@@ -103,9 +114,10 @@ void Mesh::SetObjectConstants(const Update_Data& constants)
     m_renderItem.Constant = constants;
 }
 
-void Mesh::Submit(XMFLOAT4X4& mWorld)
+void Mesh::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
 {
     XMStoreFloat4x4(&m_renderItem.Constant.world, XMLoadFloat4x4(&mWorld));
+    m_renderItem.Constant.worldPos = pos;
 }
 
 void Mesh::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
@@ -125,17 +137,17 @@ void Mesh::LastSubmit()
     // 
 }
 
-void MeshNode::Submit(XMFLOAT4X4& mWorld)
+void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
 {
     XMMATRIX world = mUserTM * XMLoadFloat4x4(&mWorld);
     XMFLOAT4X4 worldF;
     XMStoreFloat4x4(&worldF, world);
 
     for (auto& mesh : m_Meshs)
-        mesh->Submit(worldF);
+        mesh->Submit(worldF, pos);
 
     for (auto& child : m_Childs)
-        child->Submit(worldF);
+        child->Submit(worldF, pos);
 }
 
 void MeshNode::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
@@ -156,6 +168,15 @@ void MeshNode::LastSubmit()
         child->LastSubmit();
 }
 
+MeshDesc Mesh::BuildDesc()
+{
+    MeshDesc md;
+
+
+
+    return MeshDesc();
+}
+
 #ifdef _DEBUG
 void Mesh::Serialize(int num)
 {
@@ -170,6 +191,10 @@ void Mesh::Serialize(int num)
             {
                 emissiveCol = "EmissiveColor##" + numstr;
                 if (UI::DragFloat3Editable(emissiveCol.c_str(), (float*)&m_renderItem.Constant.emissiveColor, 0.001f, 0.0f, 1.0f))
+                {
+
+                }
+                if (UI::DragFloatEditable(("Power##" + numstr).c_str(), &m_renderItem.Constant.emissive, 0.01f, 0.0f, 50.0f))
                 {
 
                 }

@@ -57,17 +57,24 @@ struct VertexStreams
     const VERTEX_BoneIndex* boneIdx = nullptr;
 };
 
-#define MAX_BONE 64
+#define MAX_BONE 16
 struct Update_Data
 {
     DirectX::XMFLOAT4X4 world{};
     DirectX::XMFLOAT4X4 boneAnim[MAX_BONE] = {};
     DirectX::XMFLOAT4 baseColor = { 1, 1, 1, 1 };
     DirectX::XMFLOAT4 emissiveColor = { 1, 1, 1, 1 };
+    XMFLOAT3 worldPos = { 0, 0, 0 }; //반투명 오브젝트 정렬용
     float roughRatio = 1.0f;
     float metalRatio = 1.0f;
     float shadowBias = 0.005f;
     float opacity = 1.0f;
+    float emissive = 1.0f;
+};
+
+struct Effect_Data
+{
+    XMFLOAT4 effectData; // x = frameIndex, y = time, // z = cols, // w = rows
 };
 
 struct Frame_Data_Dir
@@ -95,6 +102,9 @@ struct RenderItem
     MaterialHandle materialHandle = 0;
 
     Update_Data Constant;
+    Effect_Data effectConst;
+    float sortkey;
+    bool isEffect;
     bool isEmissive = false;
     bool haveAnim = false;
     bool castShadow = true; //그림자맵에 그릴 오브젝트
@@ -137,10 +147,10 @@ enum class ShaderId : uint8_t
     PBRBase,
     BasicAnimation,
     PBRAnimation,
-    DebugGrid,
     Unlit,
     Skybox,
     UIBase,
+    EffectBase,
 
     //Shadow
     ShadowPass,
@@ -154,6 +164,10 @@ enum class ShaderId : uint8_t
     PP_Combine, 
     PP_ToneMap, 
 
+    //Debug
+    DebugGrid,
+    DebugMesh,
+
     None,
 
     Count
@@ -163,6 +177,14 @@ enum class MaterialDomain
 {
     Surface,
     PostProcess
+};
+
+struct PassOption
+{
+    ShaderId shader = ShaderId::None;
+    BlendPreset blend = BlendPreset::Opaque;
+    RasterPreset raster = RasterPreset::CullBack;
+    DepthPreset depth = DepthPreset::ReadWrite;
 };
 
 struct PassKey

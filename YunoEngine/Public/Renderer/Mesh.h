@@ -1,8 +1,8 @@
 #pragma once
 #include "RenderTypes.h"
 
-
 class Mesh;
+class MeshDesc;
 
 struct MeshNode {
     MeshNode() { mUserTM = XMMatrixIdentity(); }
@@ -14,7 +14,7 @@ struct MeshNode {
 
     std::vector<std::unique_ptr<Mesh>> m_Meshs;
 
-    void Submit(XMFLOAT4X4& mWorld);
+    void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 };
@@ -28,7 +28,6 @@ enum class TextureUse
     AO = 4,
     ORM = 5,    // AO, Metallic, Roughness
     Mask = 6,
-
 
     MAX
 };
@@ -66,17 +65,21 @@ public:
     void CheckOption();
 
     void SetTexture(TextureUse use, const std::wstring& filepath);
+    void SetMaskColor(const XMFLOAT4& col);
+    void SetOpacity(const float opacity);
 
     void UpdateRenderItem(XMFLOAT4X4 mWorld);
 
     void SetObjectConstants(const Update_Data& constants);
 
 
-    void Submit(XMFLOAT4X4& mWorld);
+    void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 
     RenderItem& GetRenderItem() { return m_renderItem; }
+
+    MeshDesc BuildDesc();
 
 #ifdef _DEBUG
     virtual void Serialize(int num); //나중에 상속해서 새로운 오브젝트 만들 때 임구이에 띄우고 싶은거있으면 이 함수 오버라이드하면됌

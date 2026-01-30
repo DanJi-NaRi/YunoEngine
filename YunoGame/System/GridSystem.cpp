@@ -1,91 +1,90 @@
 #include "pch.h"
-
-#include "GridFactory.h"
-#include "PieceQueue.h"
+#include "GridSystem.h"
 
 #include "ObjectManager.h"
+#include "UIManager.h"
+
+#include "GridFactory.h"
+#include "PlayQueue.h"
+
+#include "Grid.h"
 #include "GridBox.h"
 #include "GridLine.h"
 
-#include "GridSystem.h"
+template class GridSystem<ObjectManager, Unit>;
+template class GridSystem<UIManager, Widget>;
 
 
-GridSystem::GridSystem(ObjectManager* objmng) : m_objectManager(objmng)
+template<typename T, typename R>
+GridSystem<T, R>::GridSystem(T* manager) : m_manager(manager)
 {
     m_gridFactory = std::make_unique<GridFactory>();
-    assert(objmng != nullptr); // 여기서 바로 잡힘
+    assert(m_manager != nullptr); // 여기서 바로 잡힘
 }
 
-GridSystem::~GridSystem()
+template<typename T, typename R>
+GridSystem<T, R>::~GridSystem()
 {
+
 }
 
 
-void GridSystem::Init(int row, int column, float cellSizeX, float cellSizeZ)
+template<typename T, typename R>
+void GridSystem<T, R>::SetNG_P(Grid<R>* NG_P)
 {
-    m_gridFactory->Init(row, column);
-
-    m_row = row;
-    m_column = column;
-    m_halfCellsX = std::floorf(m_column / 2.f);
-    m_halfCellsZ = std::floorf(m_row / 2.f);
-    m_cellSizeX = cellSizeX;
-    m_cellSizeZ = cellSizeZ;
-    m_invX = 1.f / cellSizeX;
-    m_invZ = 1.f / cellSizeZ;
+    const Grid<R>& grid = *NG_P;
+    m_row = grid.m_row;
+    m_column = grid.m_column;
+    m_halfCellsX = std::floorf(grid.m_column / 2.f);
+    m_halfCellsZ = std::floorf(grid.m_row / 2.f);
+    m_cellSizeX = grid.m_cellSizeX;
+    m_cellSizeZ = grid.m_cellSizeZ;
+    m_invX = 1.f / grid.m_cellSizeX;
+    m_invZ = 1.f / grid.m_cellSizeZ;
 }
 
-int GridSystem::GetID(int cx, int cz)
+template<typename T, typename R>
+int GridSystem<T, R>::GetID(int cx, int cz)
 {
     int id = (cz * m_column + cx) + 1;
     return id;
 }
 
-I2 GridSystem::GetCellByID(int tileID)
+template<typename T, typename R>
+I2 GridSystem<T, R>::GetCellByID(int tileID)
 {
     int id = tileID - 1;
     int cx = id % m_column;
     int cz = id / m_column;
-\
     return { cx, cz };
 }
 
-void GridSystem::CreateGridBox(float x, float y, float z)
+template<typename T, typename R>
+void GridSystem<T, R>::CreateGrid(int row, int column, float cellSizeX, float cellSizeZ)
 {
-    m_gridBox = m_objectManager->CreateObject<GridBox>(L"Tile", XMFLOAT3(x, y, z));
+    m_grids.push_back(std::make_unique<Grid<R>>(row, column, cellSizeX, cellSizeZ));
 }
 
-void GridSystem::CreateGridLine(float x, float y, float z)
+template<typename T, typename R>
+void GridSystem<T, R>::CreateGridBox(float x, float y, float z)
+{
+    m_gridBox = m_manager->CreateObject<GridBox<R>>(L"GridBox", XMFLOAT3(x, y, z));
+}
+
+template<typename T, typename R>
+void GridSystem<T, R>::CreateGridLine(float x, float y, float z)
 {
     if (m_gridBox == nullptr) return;
 
-    auto pLine = m_objectManager->CreateObject<GridLine<Unit>>(L"DebugGridLine", XMFLOAT3(x, y + 0.01f, z));
+    auto pLine = m_manager->CreateObject<GridLine<R>>(L"DebugGridLine", XMFLOAT3(x, y + 0.01f, z));
     pLine->SetScale({ m_cellSizeX, 1, m_cellSizeZ });
     m_gridBox->Attach(pLine);
 }
 
-bool GridSystem::InBounds(int cx, int cz)
+
+template<>
+void GridSystem<UIManager, Widget>::CreateGridLine(float x, float y, float z)
 {
-    return (0 <= cx && cx < m_column) && (0 <= cz && cz < m_row);
+    auto pLine = m_manager->CreateObject<GridLine<Widget>>(L"DebugGridLine", XMFLOAT3(x, y, z));
+    pLine->SetScale({ m_cellSizeX, m_cellSizeZ, 1 });
 }
-
-I2 GridSystem::WorldToCell(float x, float z)
-{
-    float halfx = m_halfCellsX * m_cellSizeX;
-    float halfz = m_halfCellsZ * m_cellSizeZ;
-
-    int cx = (int)std::floor((x + halfx) * m_invX);
-    int cz = (int)std::floor((halfz - z) * m_invZ);
-
-    return { cx, cz };
-}
-
-F2 GridSystem::CellToWorld(int cx, int cz)
-{
-    float halfx = m_halfCellsX * m_cellSizeX;
-    float halfz = m_halfCellsZ * m_cellSizeZ;
-    float wx = -halfx + cx * m_cellSizeX;
-    float wz = -halfz + cz * m_cellSizeZ;
-    return { wx, -wz };
-}
-

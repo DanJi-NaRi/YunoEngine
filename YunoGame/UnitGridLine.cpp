@@ -1,24 +1,20 @@
-#pragma once
-#include "GridFactory.h"
-#include "GridLine.h"
+#include "pch.h"
+#include "UnitGridLine.h"
 
+UnitGridLine::UnitGridLine()
+{
 
-template<typename T>
-GridLine<T>::GridLine()
+}
+
+UnitGridLine::~UnitGridLine()
 {
 }
 
-template<typename T>
-GridLine<T>::~GridLine()
-{
-}
-
-template<typename T>
-bool GridLine<T>::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool UnitGridLine::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Unit::Create(name, id, vPos);
 
-    if (!T::m_pInput || !T::m_pRenderer || !T::m_pTextures)
+    if (!m_pInput || !m_pRenderer || !m_pTextures)
         return false;
     if (!CreateMesh())
         return false;
@@ -29,34 +25,30 @@ bool GridLine<T>::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 
     XMMATRIX i = XMMatrixIdentity();
-    mesh->Create(T::m_defaultMesh, T::m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
 
-    T::m_MeshNode = std::make_unique<MeshNode>();
+    m_MeshNode = std::make_unique<MeshNode>();
 
-    T::m_MeshNode->m_Meshs.push_back(std::move(mesh));
+    m_MeshNode->m_Meshs.push_back(std::move(mesh));
 
-    T::Backup();
-
+    Backup();
 
     return true;
 }
 
-template<typename T>
-bool GridLine<T>::Update(float dTime)
+bool UnitGridLine::Update(float dTime)
 {
     Unit::Update(dTime);
     return true;
 }
 
-template<typename T>
-bool GridLine<T>::Submit(float dTime)
+bool UnitGridLine::Submit(float dTime)
 {
     Unit::Submit(dTime);
     return true;
 }
 
-template<typename T>
-bool GridLine<T>::CreateMesh()
+bool UnitGridLine::CreateMesh()
 {
     int m_row, m_column;
     GridFactory::GetGridInfo(m_row, m_column);
@@ -89,15 +81,15 @@ bool GridLine<T>::CreateMesh()
     streams.pos = m_lineVtx.data();
     streams.topology = Yuno_LINELIST;
 
-    T::m_defaultMesh = T::m_pRenderer->CreateMesh(streams, nullptr, 0);
-    if (T::m_defaultMesh == 0)
+    m_defaultMesh = m_pRenderer->CreateMesh(streams, nullptr, 0);
+    if (m_defaultMesh == 0)
         return false;
 
     return true;
 }
 
-template<typename T>
-bool GridLine<T>::CreateMaterial()
+
+bool UnitGridLine::CreateMaterial()
 {
     MaterialDesc md{};
     md.passKey.vs = ShaderId::DebugGrid;
@@ -108,7 +100,7 @@ bool GridLine<T>::CreateMaterial()
     md.passKey.raster = RasterPreset::CullNone;
     md.passKey.depth = DepthPreset::ReadWrite;
 
-    T::m_defaultMaterial = T::m_pRenderer->CreateMaterial(md);
+    m_defaultMaterial = m_pRenderer->CreateMaterial(md);
 
     return true;
 }

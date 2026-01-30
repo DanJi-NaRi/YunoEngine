@@ -6,9 +6,10 @@
 class UserImage : public Image
 {
 public:
-    UserImage(UIManager* uiManager);
+    UserImage(UIFactory& uiFactory);
     virtual ~UserImage();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    bool UpdateTransform(float dTime = 0) override;
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();

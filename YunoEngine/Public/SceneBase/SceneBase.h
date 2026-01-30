@@ -4,6 +4,7 @@
 
 class ObjectManager;
 class UIManager;
+class EffectManager;
 class IInput;
 class Unit;
 class Widget;
@@ -39,7 +40,7 @@ public:
 
 protected:
 #ifdef _DEBUG
-    Unit* GetSelectedObject() const { return m_selectedObject; }
+    Unit*   GetSelectedObject() const { return m_selectedObject; }
     void    SelectObject(Unit* obj) { m_selectedLight = nullptr;  m_selectedWidget = nullptr;  m_selectedObject = obj; }
     Widget* GetSelectedWidget() const { return m_selectedWidget; }
     void    SelectWidget(Widget* obj) { m_selectedLight = nullptr; m_selectedObject = nullptr;  m_selectedWidget = obj; }
@@ -56,6 +57,7 @@ protected:
 protected:
     std::unique_ptr<ObjectManager> m_objectManager;
     std::unique_ptr<UIManager> m_uiManager;
+    std::unique_ptr<EffectManager> m_effectManager;
     IInput* m_input = nullptr;
 
 #ifdef _DEBUG

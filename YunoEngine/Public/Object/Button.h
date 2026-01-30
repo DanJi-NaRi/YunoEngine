@@ -17,11 +17,13 @@ enum class ButtonState : int { Idle, Hovered, Pressed, Down, Released, Count };
 
 class Button : public Widget {
 public:
-    explicit Button(UIManager* uiManager);
+    explicit Button(UIFactory& uiFactory);
     virtual ~Button();
 
     //bool Create(XMFLOAT3 vPos) override;
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    bool Start() override;
+    bool UpdateTransform(float dTime = 0) override;
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     
@@ -52,7 +54,7 @@ public:
 protected:
     // 버튼 상태 : 대기/커서입력/눌림 (standby/CursorOn/Push)
     ButtonState m_btnState;							//UI버튼별 상태 저장.
-    uint32_t m_bindkey = 'A';
+    uint32_t m_bindkey = 0;
     std::unique_ptr<DragProvider> m_pDrag = nullptr; // 드래그 기능 공급자. 기본은 null이니 파생해서 초기화 때 채워줄 것.
 private:
     //bool CreateMesh() override;      // 메시 생성 (한 번만)

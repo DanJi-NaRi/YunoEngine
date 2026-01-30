@@ -44,6 +44,14 @@ inline Vec4Desc FromXM(const XMFLOAT4& xm)
 
 using ObjectID = uint64_t;
 
+struct MeshDesc
+{
+    UINT meshNum;
+
+    Vec4Desc emissiveCol;
+    float emissive;
+};
+
 struct UnitDesc
 {
     ObjectID ID;
@@ -52,6 +60,7 @@ struct UnitDesc
     std::wstring meshPath = L"None";
     
     TransformDesc transform;
+    std::vector<MeshDesc> MatDesc;
 
     std::wstring unitType;
 };

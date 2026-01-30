@@ -5,7 +5,9 @@
 #include "Parser.h"
 #include "YunoLight.h"
 #include "YunoCamera.h"
+#include "YunoTransform.h"
 #include "IInput.h"
+#include "UIFactory.h"
 #include "Button.h"
 
 
@@ -19,6 +21,7 @@ UIManager::~UIManager()
 
 bool UIManager::Init()
 {
+    m_uiFactory = std::make_unique<UIFactory>(*this);
     m_widgetCount = 0;
     m_widgetIDs = 0;
     m_widgetMap.reserve(30); //30개 정도 메모리 잡고 시작
@@ -47,7 +50,8 @@ void UIManager::Update(float dTime)
     UpdateButtonStates(); // 모든 버튼 상태 업데이트
     for (auto& widget : m_widgets)
     {
-        widget->Update(dTime);
+        //if(widget->GetIsRoot()) widget->UpdateTransform(dTime); // 체이닝
+        widget->Update(dTime); // 로직 업데이트 // 체이닝 금지
     }
 }
 //나중에 이벤트 큐 만들어서 바꿔야함
@@ -59,13 +63,9 @@ void UIManager::Submit(float dTime)
 
     for (auto& widget : m_widgets)
     {
-         widget->Submit(dTime);
+        if (widget->GetIsRoot()) // 체이닝
+            widget->Submit(dTime);
     }
-}
-
-void UIManager::CreateDirLight()
-{
-    m_directionLight = std::make_unique<YunoDirectionalLight>();
 }
 
 void UIManager::GetSurface()
@@ -75,6 +75,9 @@ void UIManager::GetSurface()
 
 void UIManager::ProcessPending()
 {
+    std::vector<Widget*> newWidgets;
+    newWidgets.reserve(m_pendingCreateQ.size());
+
     if (!m_pendingCreateQ.empty())
     {
         for (auto& widget : m_pendingCreateQ)
@@ -82,14 +85,22 @@ void UIManager::ProcessPending()
             UINT id = widget->GetID();
             auto name = widget->GetName();
             auto* pWidget = widget.get();
+            // 시작 벡터
+            newWidgets.push_back(pWidget); // StartPtr 백업
+
             m_widgets.push_back(std::move(widget));
             m_widgetMap.emplace(id, pWidget);
             m_nameToID.emplace(name, id);
             m_widgetCount++;
         }
-
         m_pendingCreateQ.clear();
     }
+
+    for (Widget* widget : newWidgets)
+    {
+        if (widget) widget->Start(); // Start 실행
+    }
+
 
     if (!m_pendingDestoryQ.empty())
     {
@@ -345,8 +356,6 @@ bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)
         if (usekeyWidget)
         {
             if (m_cursurSystem.GetUseKeyWidgetBindKey() != key) return false;
-
-            std::cout << "RRRRRRRRRRR!!" << std::endl;
             usekeyWidget->SetButtonState(ButtonState::Released);
             usekeyWidget->KeyReleasedEvent(key);
             m_cursurSystem.SetUseKeyWidget(nullptr);
@@ -384,21 +393,16 @@ bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)
 }
 
 // 아직 캔버스 개념이 없으므로 클라이언트가 곧 캔버스임. (단일 캔버스 느낌..)
+
 Float2 UIManager::GetCanvasSize() // 개선사항 : 멤버에 this라던가 위젯 식별자를 넣고
 {
-    Float2 canvas{ 0,0 };
-
     // 부모를 따라가다가 부모가 가진 Canvas 정보가 있다면 최상위 부모의 Canvas가 있다면, if로 해당 sizeXY 반환
     
     //최상위 부모가 캔버스 타입이 아니면
-    {
-        canvas.x = YunoEngine::GetWindow()->GetClientWidth();
-        canvas.y = YunoEngine::GetWindow()->GetClientHeight();
-    }
-
-
-    return canvas;
+    return Float2(YunoEngine::GetWindow()->GetClientWidth(), YunoEngine::GetWindow()->GetClientHeight());
 }
+// 아직 캔버스 개념이 없으므로 클라이언트가 곧 캔버스임. (단일 캔버스 느낌..)
+
 
 std::vector<WidgetDesc> UIManager::BuildWidgetDesc()
 {
@@ -451,17 +455,7 @@ void UIManager::CheckDedicateWidgetName(std::wstring & name)
 
 void UIManager::FrameDataUpdate()
 {
-    // 오브젝트 매니저가 라이트를 가지고 있는데
-    // 이 라이트는 씬에서 만들어서 넘겨주는?
-    // 디렉션 1개만 포인트 스팟 >> 벡터
-    if (m_directionLight) // 라이트가 있으면 업데이트
-    {
-        dirData.Lightdir = m_directionLight->GetDirFloat4Reverse();
-        dirData.Lightdiff = m_directionLight->GetDiffFloat4();
-        dirData.Lightamb = m_directionLight->GetAmbFloat4();
-        dirData.Lightspec = m_directionLight->GetSpecFloat4();
-        dirData.intensity = m_directionLight->GetIntensity();
-    }
+
 }
 
 void UIManager::FrameDataSubmit()
@@ -471,9 +465,4 @@ void UIManager::FrameDataSubmit()
     renderer->GetCamera().SetOrthoFlag(m_isOrtho);
 
     renderer->BindConstantBuffers_Camera(dirData);
-}
-
-std::unique_ptr<MeshNode> UIManager::CreateMeshNode(const std::wstring& filepath)
-{
-    return Parser::Instance().LoadFile(filepath);
 }

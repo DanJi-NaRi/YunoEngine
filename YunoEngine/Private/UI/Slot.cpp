@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Slot.h"
 
-Slot::Slot(UIManager* uiManager) : Widget(uiManager) 
+Slot::Slot(UIFactory& uiFactory) : Widget(uiFactory)
 {}
 
 Slot::~Slot()
@@ -41,10 +41,22 @@ bool Slot::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
+bool Slot::Start()
+{
+    return true;
+}
+
+bool Slot::UpdateTransform(float dTime)
+{
+    Widget::UpdateTransform(dTime);
+
+    return true;
+}
+
 bool Slot::Update(float dTime)
 {
-    Widget::Update(dTime);
 
+    Widget::Update(dTime);
     return true;
 }
 

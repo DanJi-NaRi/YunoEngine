@@ -4,7 +4,7 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 
-TitleImage::TitleImage(UIManager* uiManager) : Image(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+TitleImage::TitleImage(UIFactory& uiFactory) : Image(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
@@ -36,11 +36,17 @@ bool TitleImage::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool TitleImage::Update(float dTime)
-{
+bool TitleImage::UpdateTransform(float dTime) {
+    Image::UpdateTransform(dTime);
+
+    return true;
+}
+bool TitleImage::Update(float dTime) {
+
     Image::Update(dTime);
     return true;
 }
+
 
 bool TitleImage::Submit(float dTime)
 {

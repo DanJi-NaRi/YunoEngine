@@ -1,11 +1,17 @@
 #pragma once
 #include "Unit.h"
+#include "Widget.h"
 #include "PieceHelper.h"
 
-class Piece : public Unit
+
+template<typename T>
+class Piece : public T
 {
 public:
     explicit Piece();
+    template<typename... Args>
+    Piece(Args&& ...args) : T(std::forward<Args>(args)...) {}
+    
     virtual ~Piece();
 
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
@@ -15,6 +21,8 @@ public:
 private:
     bool CreateMesh() override;      // 메시 생성 (한 번만)
     bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
+
+    bool UpdateMatrix();
 
 public:
     void InsertQ(PGridCmd targetPos);
@@ -58,3 +66,18 @@ private:
     std::queue<PGridCmd> m_Q;
 };
 
+extern template class Piece<Unit>;
+extern template class Piece<Widget>;
+
+VERTEX_Pos g_tMesh[];
+VERTEX_UV g_tUV[];
+INDEX g_tIndex[];
+
+template<>
+bool Piece<Widget>::CreateMesh();
+
+template<>
+bool Piece<Widget>::CreateMaterial();
+
+template<>
+bool Piece<Widget>::UpdateMatrix();

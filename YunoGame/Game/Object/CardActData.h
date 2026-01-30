@@ -5,7 +5,7 @@ enum class RangeType : uint8_t {
     Cross,
 };
 
-enum CardUtility : uint8_t {
+enum class CardUtility : uint8_t {
     None,
     Stun,
     Push,

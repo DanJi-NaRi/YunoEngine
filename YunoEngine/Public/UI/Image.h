@@ -4,11 +4,13 @@
 // 각 오브젝트 헤더 파일 최상단에는 Widget 헤더가 있어야됨
 class Image : public Widget {
     public:
-    explicit Image(UIManager* uiManager);
+    explicit Image(UIFactory& uiFactory);
     virtual ~Image();
 
     //bool Create(XMFLOAT3 vPos) override;
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    bool Start() override;
+    bool UpdateTransform(float dTime = 0) override;
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
 

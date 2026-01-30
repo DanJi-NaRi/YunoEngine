@@ -3,10 +3,9 @@
 
 #include "YunoEngine.h"
 #include "DragProvider.h"
-#include "UIManager.h"
 #include "IInput.h"
 
-Card::Card(UIManager* uiManager) : Button(uiManager)
+Card::Card(UIFactory& uiFactory) : Button(uiFactory)
 {
     Clear();
 }
@@ -30,12 +29,18 @@ bool Card::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool Card::Update(float dTime)
-{
+bool Card::UpdateTransform(float dTime) {
+    Button::UpdateTransform(dTime);
+    return true;
+}
+
+bool Card::Update(float dTime) {
     m_pDrag->UpdateDrag(dTime);
+
     Button::Update(dTime);
     return true;
 }
+
 
 bool Card::Submit(float dTime)
 {

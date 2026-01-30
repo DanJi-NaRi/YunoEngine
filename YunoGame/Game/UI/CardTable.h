@@ -8,9 +8,12 @@ class CardSlot;
 class CardTable : public Image
 {
 public:
-    CardTable(UIManager* uiManager);
+    CardTable(UIFactory& uiFactory);
     virtual ~CardTable();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    bool Start() override;
+    CardTable* CreateChild() override;
+    bool UpdateTransform(float dTime = 0) override;
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();

@@ -1,9 +1,8 @@
 #include "pch.h"
 
-#include "PieceQueue.h"
+#include "PlayQueue.h"
 
 #include "Piece.h"
-
 #include "ObjectTypeRegistry.h"
 #include "ObjectManager.h"
 
@@ -152,36 +151,60 @@ INDEX g_cubeIndex_2[] =
     {21, 22, 23},
     {24, 25, 26},
     {27, 28, 29}
-    
+
 };
 
+VERTEX_Pos g_tMesh[] =
+{
+    { 0.0f, 0.5f, 0.0f },    // 아래쪽 꼭짓점
+    { 0.5f, -0.4f, 0.0f },   // 오른쪽 위 꼭짓점
+    {-0.5f, -0.4f, 0.0f }    // 왼쪽 위 꼭짓점
+};
+
+VERTEX_UV g_tUV[] =
+{
+    {0.0, 0.0},
+    {1.0, 0.0},
+    {0.5, 1.0}
+};
+
+INDEX g_tIndex[] =
+{
+    {0, 1, 2}
+};
 
 //오브젝트 타입.h
 
-namespace {
-    struct AutoReg_Piece
-    {
-        AutoReg_Piece()
-        {
-            ObjectTypeRegistry::Instance().Register(L"Piece", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Piece>(d); });
-        }
-    } s_reg_Piece;
+//namespace {
+//    struct AutoReg_Piece
+//    {
+//        AutoReg_Piece()
+//        {
+//            ObjectTypeRegistry::Instance().Register(L"Piece", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Piece<Unit>>(d); });
+//        }
+//    } s_reg_Piece;
+//}
+
+template class Piece<Unit>;
+template class Piece<Widget>;
+
+template<typename T>
+Piece<T>::Piece()
+{
+    this->m_name = L"Piece";
 }
 
-Piece::Piece()
-{
-    unitType = L"Piece";
-}
-
-Piece::~Piece()
+template<typename T>
+Piece<T>::~Piece()
 {
 }
 
-bool Piece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+template<typename T>
+bool Piece<T>::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
-    Unit::Create(name, id, vPos);
+    T::Create(name, id, vPos);
 
-    if (!m_pInput || !m_pRenderer || !m_pTextures)
+    if (!this->m_pInput || !this->m_pRenderer || !this->m_pTextures)
         return false;
     if (!CreateMesh())
         return false;
@@ -192,18 +215,19 @@ bool Piece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 
     XMMATRIX i = XMMatrixIdentity();
-    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+    mesh->Create(this->m_defaultMesh, this->m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
 
-    m_MeshNode = std::make_unique<MeshNode>();
+    this->m_MeshNode = std::make_unique<MeshNode>();
 
-    m_MeshNode->m_Meshs.push_back(std::move(mesh));
+    this->m_MeshNode->m_Meshs.push_back(std::move(mesh));
 
-    Backup();
+    T::Backup();
 
     return true;
 }
 
-bool Piece::Update(float dTime)
+template<typename T>
+bool Piece<T>::Update(float dTime)
 {
     // 죽은 상태인지 먼저 확인
     if (isDead && m_deadTime != -1)
@@ -241,7 +265,7 @@ bool Piece::Update(float dTime)
         
         if (m_AnimTime >= 1.f)
         {
-            XMStoreFloat3(&m_vPos, m_Target);
+            XMStoreFloat3(&this->m_vPos, m_Target);
             isMoving = false;
             m_AnimTime = 0.f;
             if (m_AnimDone)
@@ -254,7 +278,7 @@ bool Piece::Update(float dTime)
         else
         {
             XMVECTOR res = XMVectorLerp(m_Start, m_Target, m_AnimTime);
-            XMStoreFloat3(&m_vPos, res);
+            XMStoreFloat3(&this->m_vPos, res);
         }
     }
 
@@ -283,33 +307,20 @@ bool Piece::Update(float dTime)
         }  
     }
 
-
-    XMMATRIX mScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
-    XMMATRIX mRot = XMMatrixRotationY(m_yaw);
-    XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z);
-
-    XMMATRIX mTM;
-
-    if (m_Parent)
-        mTM = mScale * mRot * mTrans * m_Parent->GetWorldMatrix();
-    else
-        mTM = mScale * mRot * mTrans;
-
-    XMStoreFloat4x4(&m_mScale, mScale);
-    XMStoreFloat4x4(&m_mRot, mRot);
-    XMStoreFloat4x4(&m_mTrans, mTrans);
-    XMStoreFloat4x4(&m_mWorld, mTM);
+    UpdateMatrix();
 
     return true;
 }
 
-bool Piece::Submit(float dTime)
+template<typename T>
+bool Piece<T>::Submit(float dTime)
 {
-    Unit::Submit(dTime);
+    T::Submit(dTime);
     return true;
 }
 
-bool Piece::CreateMesh()
+template<typename T>
+bool Piece<T>::CreateMesh()
 {
     VertexStreams streams{};
     streams.flags = VSF_Pos | VSF_Nrm | VSF_UV;
@@ -318,16 +329,17 @@ bool Piece::CreateMesh()
     streams.nrm = g_cubeNrm_2;
     streams.uv = g_cubeUV_2;
 
-    m_defaultMesh = m_pRenderer->CreateMesh(streams, g_cubeIndex_2, _countof(g_cubeIndex_2));
-    if (m_defaultMesh == 0)
+    T::m_defaultMesh = T::m_pRenderer->CreateMesh(streams, g_cubeIndex_2, _countof(g_cubeIndex_2));
+    if (T::m_defaultMesh == 0)
         return false;
 
     return true;
 }
 
-bool Piece::CreateMaterial()
+template<typename T>
+bool Piece<T>::CreateMaterial()
 {
-    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/foxUV.png");
+    this->m_Albedo = this->m_pTextures->LoadTexture2D(L"../Assets/Textures/foxUV.png");
 
     MaterialDesc md{};
     md.passKey.vs = ShaderId::Basic;
@@ -338,7 +350,7 @@ bool Piece::CreateMaterial()
     md.passKey.raster = RasterPreset::CullNone;
     md.passKey.depth = DepthPreset::ReadWrite;
 
-    md.albedo = m_Albedo;
+    md.albedo = this->m_Albedo;
     md.normal = 0;
     md.orm = 0;
 
@@ -347,24 +359,49 @@ bool Piece::CreateMaterial()
     md.ao = 0;
 
     // 첫번째 머테리얼 생성
-    m_defaultMaterial = m_pRenderer->CreateMaterial(md);
-    if (m_defaultMaterial == 0)
+    this->m_defaultMaterial = this->m_pRenderer->CreateMaterial(md);
+    if (this->m_defaultMaterial == 0)
         return false;
 
     return true;
 }
 
-void Piece::InsertQ(PGridCmd cmd)
+template<typename T>
+bool Piece<T>::UpdateMatrix()
+{
+    XMMATRIX mScale = XMMatrixScaling(this->m_vScale.x, this->m_vScale.y, this->m_vScale.z);
+    XMMATRIX mRot = XMMatrixRotationY(m_yaw);
+    XMMATRIX mTrans = XMMatrixTranslation(this->m_vPos.x, this->m_vPos.y, this->m_vPos.z);
+
+    XMMATRIX mTM;
+
+    if (this->m_Parent)
+        mTM = mScale * mRot * mTrans * this->m_Parent->GetWorldMatrix();
+    else
+        mTM = mScale * mRot * mTrans;
+
+    XMStoreFloat4x4(&this->m_mScale, mScale);
+    XMStoreFloat4x4(&this->m_mRot, mRot);
+    XMStoreFloat4x4(&this->m_mTrans, mTrans);
+    XMStoreFloat4x4(&this->m_mWorld, mTM);
+
+    return true;
+}
+
+template<typename T>
+void Piece<T>::InsertQ(PGridCmd cmd)
 {
     m_Q.push(cmd);
 }
 
-void Piece::SetWho(GamePiece type)
+template<typename T>
+void Piece<T>::SetWho(GamePiece type)
 {
     m_who = type;
 }
 
-void Piece::SetDir(Direction dir, bool isAnim)
+template<typename T>
+void Piece<T>::SetDir(Direction dir, bool isAnim)
 {
     switch (dir)
     {
@@ -384,13 +421,14 @@ void Piece::SetDir(Direction dir, bool isAnim)
     m_yaw = (isAnim) ? m_yaw : m_targetYaw;
 }
 
-void Piece::SetTarget(XMFLOAT3 targetPos, float speed)
+template<typename T>
+void Piece<T>::SetTarget(XMFLOAT3 targetPos, float speed)
 {
     if (isMoving) return;
 
     m_fixSpeed = speed;
     m_Target = XMLoadFloat3(&targetPos);
-    m_Start = XMLoadFloat3(&m_vPos);
+    m_Start = XMLoadFloat3(&this->m_vPos);
     XMVECTOR Dist = XMVectorAbs(XMVector3Length(m_Target - m_Start));
     m_Dist = XMVectorGetX(XMVector3Length(Dist));
 
@@ -400,20 +438,92 @@ void Piece::SetTarget(XMFLOAT3 targetPos, float speed)
     isMoving = true;
 }
 
-void Piece::SetDead()
+template<typename T>
+void Piece<T>::SetDead()
 {
     isDead = true;
 }
 
-void Piece::SendDone()
+template<typename T>
+void Piece<T>::SendDone()
 {
     
 }
 
-void Piece::ClearQ()
+template<typename T>
+void Piece<T>::ClearQ()
 {
     while (!m_Q.empty())
     {
         m_Q.pop();
     }
+}
+
+template<>
+bool Piece<Widget>::CreateMesh()
+{
+    VertexStreams streams{};
+    streams.flags = VSF_Pos | VSF_UV;
+    streams.vtx_count = sizeof(g_tMesh) / sizeof(VERTEX_Pos);
+    streams.pos = g_tMesh;
+    streams.uv = g_tUV;
+
+    this->m_defaultMesh = this->m_pRenderer->CreateMesh(streams, g_tIndex, _countof(g_tIndex));
+    if (this->m_defaultMesh == 0)
+        return false;
+
+    return true;
+}
+
+template<>
+bool Piece<Widget>::CreateMaterial()
+{
+    this->m_Albedo = this->m_pTextures->LoadTexture2D(L"../Assets/Textures/black.png");
+
+    MaterialDesc md{};
+    md.passKey.vs = ShaderId::UIBase;
+    md.passKey.ps = ShaderId::UIBase;
+    md.passKey.vertexFlags = VSF_Pos | VSF_UV;
+
+    md.passKey.blend = BlendPreset::AlphaBlend;
+    md.passKey.raster = RasterPreset::CullNone;
+    md.passKey.depth = DepthPreset::ReadWrite;
+
+    md.albedo = this->m_Albedo;
+    md.normal = 0;
+    md.orm = 0;
+
+    md.metal = 0;
+    md.rough = 0;
+    md.ao = 0;
+
+    // 첫번째 머테리얼 생성
+    this->m_defaultMaterial = this->m_pRenderer->CreateMaterial(md);
+    if (this->m_defaultMaterial == 0)
+        return false;
+
+    return true;
+}
+
+
+template<>
+bool Piece<Widget>::UpdateMatrix()
+{
+    XMMATRIX mScale = XMMatrixScaling(this->m_vScale.x, this->m_vScale.y, this->m_vScale.z);
+    XMMATRIX mRot = XMMatrixRotationZ(m_yaw);
+    XMMATRIX mTrans = XMMatrixTranslation(this->m_vPos.x, this->m_vPos.y, this->m_vPos.z);
+
+    XMMATRIX mTM;
+
+    if (this->m_Parent)
+        mTM = mScale * mRot * mTrans * this->m_Parent->GetWorldMatrix();
+    else
+        mTM = mScale * mRot * mTrans;
+
+    XMStoreFloat4x4(&this->m_mScale, mScale);
+    XMStoreFloat4x4(&this->m_mRot, mRot);
+    XMStoreFloat4x4(&this->m_mTrans, mTrans);
+    XMStoreFloat4x4(&this->m_mWorld, mTM);
+
+    return true;
 }

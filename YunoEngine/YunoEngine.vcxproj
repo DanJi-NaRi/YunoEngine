@@ -168,6 +168,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h" />
+    <ClInclude Include="Public\UI\Letterbox.h" />
+    <ClInclude Include="Public\Object\Effect.h" />
+    <ClInclude Include="Public\Object\EffectManager.h" />
+    <ClInclude Include="Public\Object\EffectTemplate.h" />
     <ClInclude Include="Public\Object\ObjectTypeRegistry.h" />
     <ClInclude Include="Public\SceneBase\SerializeScene.h" />
     <ClInclude Include="Public\UI\UITool\CursurSystem.h" />
@@ -234,12 +238,14 @@
     <ClInclude Include="Public\UI\Slot.h" />
     <ClInclude Include="Public\UI\Widget.h" />
     <ClInclude Include="Public\UI\UITool\UIManager.h" />
+    <ClInclude Include="Public\UI\UITool\UIFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EnginePCH\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Private\UI\Letterbox.cpp" />
     <ClCompile Include="Private\UI\UITool\CursurSystem.cpp" />
     <ClCompile Include="Private\UI\UITool\DragProvider.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -266,6 +272,8 @@
     <ClCompile Include="Public\Object\Button.cpp" />
     <ClCompile Include="Public\Light\YunoLight.cpp" />
     <ClCompile Include="Public\Object\AnimationUnit.cpp" />
+    <ClCompile Include="Public\Object\Effect.cpp" />
+    <ClCompile Include="Public\Object\EffectManager.cpp" />
     <ClCompile Include="Public\Object\ObjectManager.cpp" />
     <ClCompile Include="Public\Object\ObjectTypeRegistry.cpp" />
     <ClCompile Include="Public\Object\Unit.cpp" />
@@ -285,6 +293,7 @@
     <ClCompile Include="Private\UI\Text.cpp" />
     <ClCompile Include="Private\UI\Slot.cpp" />
     <ClCompile Include="Private\UI\UITool\UIManager.cpp" />
+    <ClCompile Include="Private\UI\UITool\UIFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">
@@ -296,6 +305,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\DebugGrid.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\DebugMesh.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\EffectBase.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "Image.h"
 
-
-Image::Image(UIManager* uiManager) : Widget(uiManager)
+Image::Image(UIFactory& uiFactory) : Widget(uiFactory)
 {
 }
 
@@ -49,6 +48,18 @@ bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 }
 
+bool Image::Start()
+{
+    return true;
+}
+
+bool Image::UpdateTransform(float dTime)
+{
+    Widget::UpdateTransform(dTime);
+
+    return true;
+}
+
 bool Image::Update(float dTime)
 {
     Widget::Update(dTime);
@@ -81,7 +92,7 @@ bool Image::CreateMesh()
 
 bool Image::CreateMaterial()
 {
-    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/woodbox.bmp");
+    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/black.png");
 
     MaterialDesc md{};
 

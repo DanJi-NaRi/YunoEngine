@@ -27,6 +27,8 @@ struct CBPerObject_Material
     float metalRatio;
     float shadowBias;
     float opacity;
+    float emissive;
+    float padding[3] = { 0, 0, 0 };
 };
 
 struct CBDirLight
@@ -59,7 +61,7 @@ struct CBPostProcess
     float threshold = 1.0f;
 
     float exposure = 1.0f;
-    float padding[3];
+    float padding[3]{ 0, 0, 0 };
 };
 
 struct CBBloom
@@ -75,6 +77,11 @@ struct CBShadow
     float shadowMapSize;
     float shadowBias;
     float padding[2];
+};
+
+struct CBEffect
+{
+    XMFLOAT4 effectData; //x : index, y : time, z : cols, w : rows
 };
 
 

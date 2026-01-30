@@ -194,6 +194,10 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
   <ItemGroup>
     <ClCompile Include="CardManager.cpp" />
     <ClCompile Include="ExitButton.cpp" />
+    <ClCompile Include="Game\Object\GridLine.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -208,9 +212,14 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\UI\ReadyButton.cpp" />
     <ClCompile Include="Game\UI\TitleImage.cpp" />
     <ClCompile Include="Game\UI\UserImage.cpp" />
+    <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="GridBox.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="MinimapQueue.cpp" />
     <ClCompile Include="ReadyButton.cpp" />
     <ClCompile Include="GameManager\GameManager.cpp" />
-    <ClCompile Include="GridBox.cpp" />
     <ClCompile Include="Game\UI\Card.cpp" />
     <ClCompile Include="Game\UI\CardTable.cpp" />
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
@@ -225,17 +234,26 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\Object\AnimTest.cpp" />
     <ClCompile Include="Game\Object\Building.cpp" />
     <ClCompile Include="Game\Object\Dwarf.cpp" />
-    <ClCompile Include="Game\Object\GridLine.cpp" />
-    <ClCompile Include="Game\Object\Piece.cpp" />
-    <ClCompile Include="Game\Object\Tile.cpp" />
+    <ClCompile Include="Game\Object\Piece.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Tile.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Scenes\RenderTest.cpp" />
     <ClCompile Include="System\GridFactory.cpp" />
-    <ClCompile Include="System\GridSystem.cpp" />
+    <ClCompile Include="System\GridSystem.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="System\MinimapGridSystem.cpp" />
     <ClCompile Include="System\PlayGridSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Object\Triangle.cpp" />
     <ClCompile Include="Game\Object\Quad.cpp" />
-    <ClCompile Include="System\PieceQueue.cpp" />
+    <ClCompile Include="System\PlayQueue.cpp" />
     <ClCompile Include="Scenes\PlayScene.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -250,7 +268,17 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Scenes\WeaponSelectScene.cpp" />
     <ClCompile Include="Game\UI\WeaponButton.cpp" />
     <ClCompile Include="Scenes\Title.cpp" />
+    <ClCompile Include="UnitGridBox.cpp" />
+    <ClCompile Include="UnitGridLine.cpp" />
+    <ClCompile Include="UnitGridSystem.cpp" />
+    <ClCompile Include="UnitPiece.cpp" />
+    <ClCompile Include="UnitTile.cpp" />
     <ClCompile Include="UserImage.cpp" />
+    <ClCompile Include="WidgetGridBox.cpp" />
+    <ClCompile Include="WidgetGridLine.cpp" />
+    <ClCompile Include="WidgetGridSystem.cpp" />
+    <ClCompile Include="WidgetPiece.cpp" />
+    <ClCompile Include="WidgetTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CardManager.h" />
@@ -269,10 +297,14 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\ReadyButton.h" />
     <ClInclude Include="Game\UI\TitleImage.h" />
     <ClInclude Include="Game\UI\UserImage.h" />
-    <ClInclude Include="MiniMap.h" />
+    <ClInclude Include="Grid.h" />
+    <ClInclude Include="MinimapQueue.h" />
     <ClInclude Include="ReadyButton.h" />
     <ClInclude Include="GameManager\GameManager.h" />
-    <ClInclude Include="GridBox.h" />
+    <ClInclude Include="GridBox.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Game\UI\Card.h" />
     <ClInclude Include="Game\UI\CardTable.h" />
     <ClInclude Include="ClientNetwork\YunoClientNetwork.h">
@@ -284,19 +316,35 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\Object\AnimTest.h" />
     <ClInclude Include="Game\Object\Building.h" />
     <ClInclude Include="Game\Object\Dwarf.h" />
-    <ClInclude Include="Game\Object\GridLine.h" />
-    <ClInclude Include="Game\Object\Piece.h" />
-    <ClInclude Include="Game\Object\Tile.h" />
+    <ClInclude Include="Game\Object\GridLine.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Piece.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Tile.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Game\Object\Triangle.h" />
     <ClInclude Include="Game\Object\Quad.h" />
     <ClInclude Include="Game\UI\Image.h" />
+    <ClInclude Include="Game\Object\CardActData.h" />
+    <ClInclude Include="Game\Object\CardData.h" />
     <ClInclude Include="Scenes\RenderTest.h" />
+    <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="System\GridFactory.h" />
-    <ClInclude Include="System\GridSystem.h" />
+    <ClInclude Include="System\GridSystem.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="System\MinimapGridSystem.h" />
     <ClInclude Include="System\PieceHelper.h" />
     <ClInclude Include="System\PlayGridSystem.h" />
     <ClInclude Include="System\IGridSystem.h" />
-    <ClInclude Include="System\PieceQueue.h" />
+    <ClInclude Include="System\PlayQueue.h" />
     <ClInclude Include="Scenes\PlayScene.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
@@ -317,11 +365,18 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Scenes\WeaponSelectScene.h" />
     <ClInclude Include="Game\UI\WeaponButton.h" />
     <ClInclude Include="Scenes\Title.h" />
+    <ClInclude Include="UnitGridBox.h" />
+    <ClInclude Include="UnitGridLine.h" />
+    <ClInclude Include="UnitGridSystem.h" />
+    <ClInclude Include="UnitPiece.h" />
+    <ClInclude Include="UnitTile.h" />
     <ClInclude Include="UserImage.h" />
     <ClInclude Include="WeaponSelectScene_InputContext.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="GridLine.tpp" />
+    <ClInclude Include="WidgetGridBox.h" />
+    <ClInclude Include="WidgetGridLine.h" />
+    <ClInclude Include="WidgetGridSystem.h" />
+    <ClInclude Include="WidgetPiece.h" />
+    <ClInclude Include="WidgetTile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
