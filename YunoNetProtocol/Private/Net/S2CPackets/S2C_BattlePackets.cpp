@@ -10,10 +10,10 @@ namespace yuno::net::packets
         w.WriteU8(ownerSlot);
         w.WriteU8(unitLocalIndex);
 
-        w.WriteU32LE(static_cast<uint32_t>(hpDelta));
-        w.WriteU32LE(static_cast<uint32_t>(staminaDelta));
-        w.WriteU32LE(static_cast<uint32_t>(xDelta));
-        w.WriteU32LE(static_cast<uint32_t>(yDelta));
+        w.WriteU8(static_cast<uint32_t>(hp));
+        w.WriteU8(static_cast<uint32_t>(stamina));
+        w.WriteU8(static_cast<uint32_t>(targetTileID));
+        w.WriteU8(static_cast<uint32_t>(dir));
     }
 
     UnitStateDelta UnitStateDelta::Deserialize(ByteReader& r)
@@ -22,10 +22,10 @@ namespace yuno::net::packets
         d.ownerSlot = r.ReadU8();
         d.unitLocalIndex = r.ReadU8();
 
-        d.hpDelta = static_cast<int32_t>(r.ReadU32LE());
-        d.staminaDelta = static_cast<int32_t>(r.ReadU32LE());
-        d.xDelta = static_cast<int32_t>(r.ReadU32LE());
-        d.yDelta = static_cast<int32_t>(r.ReadU32LE());
+        d.hp = static_cast<int32_t>(r.ReadU8());
+        d.stamina = static_cast<int32_t>(r.ReadU8());
+        d.targetTileID = static_cast<int32_t>(r.ReadU8());
+        d.dir = static_cast<int32_t>(r.ReadU8());
         return d;
     }
 
