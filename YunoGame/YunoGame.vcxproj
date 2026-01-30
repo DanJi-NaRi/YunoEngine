@@ -219,7 +219,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="MinimapQueue.cpp" />
-    <ClCompile Include="ReadyButton.cpp" />
     <ClCompile Include="GameManager\GameManager.cpp" />
     <ClCompile Include="Game\UI\Card.cpp" />
     <ClCompile Include="Game\UI\CardTable.cpp" />
@@ -274,7 +273,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="UnitGridSystem.cpp" />
     <ClCompile Include="UnitPiece.cpp" />
     <ClCompile Include="UnitTile.cpp" />
-    <ClCompile Include="UserImage.cpp" />
     <ClCompile Include="WidgetGridBox.cpp" />
     <ClCompile Include="WidgetGridLine.cpp" />
     <ClCompile Include="WidgetGridSystem.cpp" />
@@ -288,7 +286,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="ExitButton.h" />
     <ClInclude Include="GameManager\SceneState.h" />
     <ClInclude Include="Game\Object\CardActData.h" />
-    <ClInclude Include="Game\Object\CardData.h" />
     <ClInclude Include="Game\UI\ButtonTemplate.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -301,7 +298,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\UserImage.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="MinimapQueue.h" />
-    <ClInclude Include="ReadyButton.h" />
     <ClInclude Include="GameManager\GameManager.h" />
     <ClInclude Include="GridBox.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -332,8 +328,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ClInclude>
     <ClInclude Include="Game\Object\Triangle.h" />
     <ClInclude Include="Game\Object\Quad.h" />
-    <ClInclude Include="Game\UI\Image.h" />
-    <ClInclude Include="Game\Object\CardActData.h" />
     <ClInclude Include="Game\Object\CardData.h" />
     <ClInclude Include="Scenes\RenderTest.h" />
     <ClInclude Include="SimpleMath.h" />
@@ -372,7 +366,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="UnitGridSystem.h" />
     <ClInclude Include="UnitPiece.h" />
     <ClInclude Include="UnitTile.h" />
-    <ClInclude Include="UserImage.h" />
     <ClInclude Include="WeaponSelectScene_InputContext.h" />
     <ClInclude Include="WidgetGridBox.h" />
     <ClInclude Include="WidgetGridLine.h" />

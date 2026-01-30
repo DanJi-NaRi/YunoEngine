@@ -159,9 +159,6 @@
     <ClCompile Include="Scenes\PlayScene.cpp">
       <Filter>Scenes\2.Play</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\UIScene.cpp">
-      <Filter>Scenes\99.Test</Filter>
-    </ClCompile>
     <ClCompile Include="Game\UI\WeaponButton.cpp">
       <Filter>Game\UI\Button</Filter>
     </ClCompile>
@@ -174,15 +171,6 @@
     </ClCompile>
     <ClCompile Include="Game\UI\CardTable.cpp">
       <Filter>Game\UI\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="ReadyButton.cpp">
-      <Filter>Game\UI\Button</Filter>
-    </ClCompile>
-    <ClCompile Include="UserImage.cpp">
-      <Filter>Game\UI\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="ExitButton.cpp">
-      <Filter>Game\UI\Button</Filter>
     </ClCompile>
     <ClCompile Include="GameManager\GameManager.cpp" />
     <ClCompile Include="Game\UI\ExitButton.cpp" />
@@ -319,15 +307,6 @@
     <ClInclude Include="Game\UI\CardTable.h">
       <Filter>Game\UI\Image</Filter>
     </ClInclude>
-    <ClInclude Include="ReadyButton.h">
-      <Filter>Game\UI\Button</Filter>
-    </ClInclude>
-    <ClInclude Include="UserImage.h">
-      <Filter>Game\UI\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="ExitButton.h">
-      <Filter>Game\UI\Button</Filter>
-    </ClInclude>
     <ClInclude Include="WeaponSelectScene_InputContext.h">
       <Filter>System\UIContext</Filter>
     </ClInclude>
@@ -340,7 +319,6 @@
     <ClInclude Include="Scenes\Title.h">
       <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
     </ClInclude>
-    <ClInclude Include="MiniMap.h" />
     <ClInclude Include="CardQueue.h">
       <Filter>Card</Filter>
     </ClInclude>
@@ -359,6 +337,7 @@
     <ClInclude Include="UnitGridSystem.h" />
     <ClInclude Include="WidgetGridSystem.h" />
     <ClInclude Include="CardRangeManager.h">
+    <ClInclude Include="Game\Object\CardActData.h">
       <Filter>Card</Filter>
     </ClInclude>
   </ItemGroup>
@@ -368,9 +347,6 @@
     </ClInclude>
     <ClInclude Include="Scenes\RenderTest.h">
       <Filter>Scenes\999.RenderTest</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Object\CardActData.h">
-      <Filter>Card</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\CardData.h">
       <Filter>Card</Filter>
