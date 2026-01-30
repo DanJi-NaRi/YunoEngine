@@ -214,6 +214,9 @@
     <ClCompile Include="Game\UI\TitleImage.cpp">
       <Filter>Game\UI\Image</Filter>
     </ClCompile>
+    <ClCompile Include="CardRangeManager.cpp">
+      <Filter>Card</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -335,6 +338,7 @@
     <ClInclude Include="UnitGridBox.h" />
     <ClInclude Include="UnitGridSystem.h" />
     <ClInclude Include="WidgetGridSystem.h" />
+    <ClInclude Include="CardRangeManager.h"/>
     <ClInclude Include="Game\Object\CardActData.h">
       <Filter>Card</Filter>
     </ClInclude>

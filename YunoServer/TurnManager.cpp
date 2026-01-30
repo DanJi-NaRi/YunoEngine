@@ -63,10 +63,10 @@ namespace yuno::server
         pkt.deltas.push_back({
             0,      // slot
             0,       //unit   
-            -10,    // hpDelta
-            0,      // staminaDelta
-            1,      // xDelta
-            0       // yDelta
+            10,    // hp
+            0,      // stamina
+            1,      // TagettileID
+            0,
             });
 
 
@@ -131,6 +131,7 @@ namespace yuno::server
         size_t maxCount =
             std::max(slotCards[0].size(), slotCards[1].size());
 
+        //카드속도, 무기속도 에 따른 정렬
         for (size_t i = 0; i < maxCount; ++i)
         {
             bool hasA = i < slotCards[0].size();
