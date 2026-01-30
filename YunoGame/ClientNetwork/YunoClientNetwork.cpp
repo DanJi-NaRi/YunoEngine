@@ -355,9 +355,10 @@ namespace yuno::game
                     std::cout
                         << "[Client] Apply Delta | slot=" << slot
                         << " unit=" << unit
-                        << " hpDelta=" << d.hpDelta
-                        << " staminaDelta=" << d.staminaDelta
-                        << " move=(" << d.xDelta << "," << d.yDelta << ")\n";
+                        << " hpDelta=" << d.hp
+                        << " staminaDelta=" << d.stamina
+                        << " move=" << d.targetTileID
+                        << " dir=(" << d.targetTileID << ")\n";
 
                     //  여기서 실제 유닛 상태 반영
                     /*gm.ApplyUnitDelta(
