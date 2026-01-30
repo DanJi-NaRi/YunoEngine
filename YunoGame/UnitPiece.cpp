@@ -164,7 +164,7 @@ UnitPiece::~UnitPiece()
 
 bool UnitPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
-    Create(name, id, vPos);
+    Unit::Create(name, id, vPos);
 
     if (!m_pInput || !m_pRenderer || !m_pTextures)
         return false;
@@ -277,7 +277,7 @@ bool UnitPiece::Update(float dTime)
 
 bool UnitPiece::Submit(float dTime)
 {
-    Submit(dTime);
+    Unit::Submit(dTime);
     return true;
 }
 

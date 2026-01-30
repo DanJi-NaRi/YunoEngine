@@ -64,9 +64,6 @@
     <Filter Include="Game\Object\Piece">
       <UniqueIdentifier>{da3c17c2-968c-48e2-88f0-27e98aee6ca6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PlayQueue">
-      <UniqueIdentifier>{deaeb8de-8471-4f23-a138-eb612efde854}</UniqueIdentifier>
-    </Filter>
     <Filter Include="System\GameContext">
       <UniqueIdentifier>{5e610e02-9910-4288-8003-55dcb20743a5}</UniqueIdentifier>
     </Filter>
@@ -99,6 +96,15 @@
     </Filter>
     <Filter Include="Scenes\1.WeaponSelect\0.Title">
       <UniqueIdentifier>{27fecdf2-c2ce-454b-8699-682c736c1721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Grid">
+      <UniqueIdentifier>{dc752127-1245-4da2-baf2-ab459ec897db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\GridSystem">
+      <UniqueIdentifier>{4a7b20b3-1044-47dd-a8da-963386a1c2ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\GridSystem\Queue_test">
+      <UniqueIdentifier>{a112416b-9bd3-4b1e-b689-f66c726ce9b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -143,9 +149,6 @@
     </ClCompile>
     <ClCompile Include="Game\Object\Piece.cpp">
       <Filter>Game\Object\Piece</Filter>
-    </ClCompile>
-    <ClCompile Include="System\PlayQueue.cpp">
-      <Filter>PlayQueue</Filter>
     </ClCompile>
     <ClCompile Include="Game\UI\CardSlot.cpp">
       <Filter>Game\UI\Slot</Filter>
@@ -217,6 +220,49 @@
     <ClCompile Include="CardRangeManager.cpp">
       <Filter>Card</Filter>
     </ClCompile>
+    <ClCompile Include="ExitButton.cpp" />
+    <ClCompile Include="WidgetPiece.cpp">
+      <Filter>Game\Object\Piece</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitPiece.cpp">
+      <Filter>Game\Object\Piece</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTile.cpp">
+      <Filter>Game\Object\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="WidgetTile.cpp">
+      <Filter>Game\Object\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitGridLine.cpp">
+      <Filter>Game\Object\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="WidgetGridBox.cpp">
+      <Filter>Game\Object\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="WidgetGridLine.cpp">
+      <Filter>Game\Object\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitGridBox.cpp">
+      <Filter>Game\Object\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>System\GridSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="System\MinimapGridSystem.cpp">
+      <Filter>System\GridSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitGridSystem.cpp">
+      <Filter>System\GridSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="WidgetGridSystem.cpp">
+      <Filter>System\GridSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="MinimapQueue.cpp">
+      <Filter>System\GridSystem\Queue_test</Filter>
+    </ClCompile>
+    <ClCompile Include="System\PlayQueue.cpp">
+      <Filter>System\GridSystem\Queue_test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -282,9 +328,6 @@
     <ClInclude Include="Game\Object\Piece.h">
       <Filter>Game\Object\Piece</Filter>
     </ClInclude>
-    <ClInclude Include="System\PlayQueue.h">
-      <Filter>PlayQueue</Filter>
-    </ClInclude>
     <ClInclude Include="Game\UI\CardSlot.h">
       <Filter>Game\UI\Slot</Filter>
     </ClInclude>
@@ -308,7 +351,6 @@
     <ClInclude Include="Game\UI\ButtonTemplate.h">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClInclude>
-    <ClInclude Include="GridBox.h" />
     <ClInclude Include="Game\UI\CardTable.h">
       <Filter>Game\UI\Image</Filter>
     </ClInclude>
@@ -324,23 +366,53 @@
     <ClInclude Include="CardQueue.h">
       <Filter>Card</Filter>
     </ClInclude>
-    <ClInclude Include="System\MinimapGridSystem.h" />
-    <ClInclude Include="Grid.h" />
     <ClInclude Include="SimpleMath.h" />
-    <ClInclude Include="MinimapQueue.h" />
-    <ClInclude Include="WidgetGridLine.h" />
-    <ClInclude Include="UnitGridLine.h" />
-    <ClInclude Include="WidgetPiece.h" />
-    <ClInclude Include="UnitPiece.h" />
-    <ClInclude Include="WidgetTile.h" />
-    <ClInclude Include="UnitTile.h" />
-    <ClInclude Include="WidgetGridBox.h" />
-    <ClInclude Include="UnitGridBox.h" />
-    <ClInclude Include="UnitGridSystem.h" />
-    <ClInclude Include="WidgetGridSystem.h" />
-    <ClInclude Include="CardRangeManager.h"/>
+    <ClInclude Include="CardRangeManager.h" />
     <ClInclude Include="Game\Object\CardActData.h">
       <Filter>Card</Filter>
+    </ClInclude>
+    <ClInclude Include="ExitButton.h" />
+    <ClInclude Include="WidgetPiece.h">
+      <Filter>Game\Object\Piece</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitPiece.h">
+      <Filter>Game\Object\Piece</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitTile.h">
+      <Filter>Game\Object\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="WidgetTile.h">
+      <Filter>Game\Object\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitGridLine.h">
+      <Filter>Game\Object\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="WidgetGridBox.h">
+      <Filter>Game\Object\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="WidgetGridLine.h">
+      <Filter>Game\Object\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitGridBox.h">
+      <Filter>Game\Object\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>System\GridSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="System\MinimapGridSystem.h">
+      <Filter>System\GridSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitGridSystem.h">
+      <Filter>System\GridSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="WidgetGridSystem.h">
+      <Filter>System\GridSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="MinimapQueue.h">
+      <Filter>System\GridSystem\Queue_test</Filter>
+    </ClInclude>
+    <ClInclude Include="System\PlayQueue.h">
+      <Filter>System\GridSystem\Queue_test</Filter>
     </ClInclude>
     <ClInclude Include="Game\UI\ReadyButton.h">
       <Filter>Game\UI\Button</Filter>
