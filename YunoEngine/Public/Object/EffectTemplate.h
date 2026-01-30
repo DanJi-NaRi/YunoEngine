@@ -28,6 +28,7 @@ struct EffectTemplate
     TextureHandle texture;
 
     float lifetime;
+    float emissive;
     int frameCount;
     int cols;
     int rows;

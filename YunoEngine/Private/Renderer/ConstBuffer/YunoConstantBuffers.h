@@ -27,6 +27,8 @@ struct CBPerObject_Material
     float metalRatio;
     float shadowBias;
     float opacity;
+    float emissive;
+    float padding[3] = { 0, 0, 0 };
 };
 
 struct CBDirLight

@@ -9,6 +9,7 @@ public:
     bool m_active = false;
 
     float m_lifetime = 1.0f;
+    float m_emissive = 0.0f;
     float m_age = 0.0f;
 
     int m_frameCount = 16;

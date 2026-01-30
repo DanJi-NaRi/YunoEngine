@@ -2404,6 +2404,7 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
     cbPerObject_material.metalRatio = item.Constant.metalRatio;
     cbPerObject_material.shadowBias = item.Constant.shadowBias;
     cbPerObject_material.opacity = item.Constant.opacity;
+    cbPerObject_material.emissive = item.Constant.emissive;
 
     m_cbObject_Material.Update(m_context.Get(), cbPerObject_material);
 

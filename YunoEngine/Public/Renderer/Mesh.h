@@ -1,8 +1,8 @@
 #pragma once
 #include "RenderTypes.h"
 
-
 class Mesh;
+class MeshDesc;
 
 struct MeshNode {
     MeshNode() { mUserTM = XMMatrixIdentity(); }
@@ -78,6 +78,8 @@ public:
     void LastSubmit();
 
     RenderItem& GetRenderItem() { return m_renderItem; }
+
+    MeshDesc BuildDesc();
 
 #ifdef _DEBUG
     virtual void Serialize(int num); //나중에 상속해서 새로운 오브젝트 만들 때 임구이에 띄우고 싶은거있으면 이 함수 오버라이드하면됌

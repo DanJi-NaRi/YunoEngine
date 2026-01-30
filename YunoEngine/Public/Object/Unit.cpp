@@ -250,6 +250,12 @@ UnitDesc Unit::GetDesc()
     d.transform.rotation = degRot; // deg
     d.transform.scale = FromXM(m_vScale);
 
+    std::vector<MaterialDesc> mds;
+    for (auto& m : m_Meshs)
+    {
+        MeshDesc md = m->BuildDesc();
+    }
+
     return d;
 }
 

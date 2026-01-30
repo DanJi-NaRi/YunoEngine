@@ -354,7 +354,7 @@ void SceneBase::DrawInspector()
 
             if (!editPos)
             {
-                if (UI::DragFloat3("Position##Drag", &pos.x, 0.1f))
+                if (UI::DragFloat3("Position##Drag", &pos.x, 0.01f, 0.0f, 0.0f, "%.2f"))
                 {
                     isChange = true;
                 }

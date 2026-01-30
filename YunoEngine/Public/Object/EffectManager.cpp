@@ -56,6 +56,7 @@ bool EffectManager::RegisterEffect(const EffectDesc& desc)
 
     temp.material = mh;
     temp.lifetime = desc.lifetime;
+    temp.emissive = desc.emissive;
     temp.frameCount = desc.framecount;
     temp.cols = desc.cols;
     temp.rows = desc.rows;

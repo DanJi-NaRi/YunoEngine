@@ -37,11 +37,11 @@ bool RenderTest::OnCreateScene()
     m_objectManager->CreateDirLight();
 
     int j = 0;
-    for (int i = -3; i < 3; i++)
+   /* for (int i = -3; i < 3; i++)
     {
         m_objectManager->CreatePointLight(XMFLOAT3(i * 2, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
         j++;
-    }
+    }*/
     m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
@@ -52,18 +52,25 @@ bool RenderTest::OnCreateScene()
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
-    auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/background.fbx");
-    map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
-    map->SetScale(XMFLOAT3(2, 2, 2));
+    PassOption po;
 
-    /*PassOption po;
-    po.blend = BlendPreset::AlphaBlend;
+    auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
+    map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
+    //map->SetScale(XMFLOAT3(1, 1, 1));
+
+    //Building* tile;
+    //for (int i = 0; i < 30; i++)
+    //{
+    //    tile = m_objectManager->CreateObjectFromFile<Building>(L"Tile" + std::to_wstring(i + 1), XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor" + std::to_wstring(i + 1) + L".fbx");
+    //    tile->SetScale(XMFLOAT3(0.9f, 1, 1.1f));
+    //    //tile->SetPos(XMFLOAT3(0, 0.02, 0));
+    //}
 
     auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
-    gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
+    //gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
 
-    auto gun2 = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun2", XMFLOAT3(0, 2, 2), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
-    gun2->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));*/
+    //auto gun2 = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun2", XMFLOAT3(0, 2, 2), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
+    //gun2->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
 
     EffectDesc ed{};
     ed.id = EffectID::Lazer;

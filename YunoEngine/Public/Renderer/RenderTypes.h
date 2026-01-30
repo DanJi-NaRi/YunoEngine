@@ -69,6 +69,7 @@ struct Update_Data
     float metalRatio = 1.0f;
     float shadowBias = 0.005f;
     float opacity = 1.0f;
+    float emissive = 1.0f;
 };
 
 struct Effect_Data

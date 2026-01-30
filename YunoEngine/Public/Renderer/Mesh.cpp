@@ -5,6 +5,7 @@
 #include "YunoEngine.h"
 #include "YunoRenderer.h"
 #include "UImgui.h"
+#include "SerializeScene.h"
 
 Mesh::Mesh()
 {
@@ -167,6 +168,15 @@ void MeshNode::LastSubmit()
         child->LastSubmit();
 }
 
+MeshDesc Mesh::BuildDesc()
+{
+    MeshDesc md;
+
+
+
+    return MeshDesc();
+}
+
 #ifdef _DEBUG
 void Mesh::Serialize(int num)
 {
@@ -181,6 +191,10 @@ void Mesh::Serialize(int num)
             {
                 emissiveCol = "EmissiveColor##" + numstr;
                 if (UI::DragFloat3Editable(emissiveCol.c_str(), (float*)&m_renderItem.Constant.emissiveColor, 0.001f, 0.0f, 1.0f))
+                {
+
+                }
+                if (UI::DragFloatEditable(("Power##" + numstr).c_str(), &m_renderItem.Constant.emissive, 0.01f, 0.0f, 50.0f))
                 {
 
                 }

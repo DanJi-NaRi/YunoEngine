@@ -10,6 +10,7 @@ struct EffectDesc
     ShaderId shaderid = ShaderId::EffectBase;
     BillboardMode billboard = BillboardMode::ScreenAligned;
     float lifetime = 1.0f;
+    float emissive = 0.5f;
     int framecount = 0;
     int cols = 0;
     int rows = 0;

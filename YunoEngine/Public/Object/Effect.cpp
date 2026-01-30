@@ -15,6 +15,7 @@ void Effect::SetTemplate(const EffectTemplate& temp)
     m_renderItem.materialHandle = temp.material;
 
     m_lifetime = temp.lifetime;
+    m_emissive = temp.emissive;
     m_frameCount = temp.frameCount;
     m_cols = temp.cols;
     m_rows = temp.rows;
