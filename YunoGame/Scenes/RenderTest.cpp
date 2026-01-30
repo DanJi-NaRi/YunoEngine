@@ -36,13 +36,13 @@ bool RenderTest::OnCreateScene()
 
     m_objectManager->CreateDirLight();
 
-    /*int j = 0;
+    int j = 0;
     for (int i = -3; i < 3; i++)
     {
         m_objectManager->CreatePointLight(XMFLOAT3(i * 2, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
         j++;
     }
-    m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);*/
+    m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
 
@@ -69,7 +69,7 @@ bool RenderTest::OnCreateScene()
     ed.id = EffectID::Lazer;
     ed.shaderid = ShaderId::EffectBase;
     ed.billboard = BillboardMode::ScreenAligned;
-    ed.lifetime = 3.0f;
+    ed.lifetime = 1.0f;
     ed.framecount = 100;
     ed.cols = 10;
     ed.rows = 10;
@@ -80,6 +80,7 @@ bool RenderTest::OnCreateScene()
     ed.framecount = 30;
     ed.cols = 6;
     ed.rows = 5;
+    ed.billboard = BillboardMode::None;
     ed.texPath = L"../Assets/Effects/hit/EF_Target.png";
     m_effectManager->RegisterEffect(ed);
 
@@ -87,6 +88,7 @@ bool RenderTest::OnCreateScene()
     ed.framecount = 30;
     ed.cols = 6;
     ed.rows = 5;
+    ed.billboard = BillboardMode::ScreenAligned;
     ed.texPath = L"../Assets/Effects/Lazer/EF_Rager.png";
     m_effectManager->RegisterEffect(ed);
 
@@ -115,9 +117,9 @@ void RenderTest::Update(float dt)
     {
         m_effectManager->Spawn(EffectID::Default, { 0, 1, 0 }, { 1, 1, 1 });
     }
-    if (YunoEngine::GetInput()->IsKeyPressed('D'))
+    if (YunoEngine::GetInput()->IsKeyPressed('H'))
     {
-        m_effectManager->Spawn(EffectID::Hit, { -2, 1, 0 }, { 1, 1, 1 });
+        m_effectManager->Spawn(EffectID::Hit, { 0, 0.1f, 0 }, { 1.5f, 1.5f, 1.5f });
     }
     if (YunoEngine::GetInput()->IsKeyPressed('G'))
     {

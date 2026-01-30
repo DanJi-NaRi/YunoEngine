@@ -2632,7 +2632,7 @@ void YunoRenderer::CreateDebugMeshResources()
     md.passKey.vertexFlags = VSF_Pos;
     md.passKey.blend = BlendPreset::Opaque;
     md.passKey.raster = RasterPreset::CullNone;
-    md.passKey.depth = DepthPreset::ReadOnly;
+    md.passKey.depth = DepthPreset::ReadWrite;
 
     const MaterialHandle h = CreateMaterial(md);
     if (h == 0) return;

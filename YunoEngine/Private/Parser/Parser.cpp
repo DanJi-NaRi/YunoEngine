@@ -607,6 +607,11 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
             texPath += L"_Albedo_" + texNum + L".png";
             TextureHandle diff = renderer->CreateColorTexture2DFromFile(texPath.c_str());
 
+            if (texNum == L"7")
+            {
+                int a = 0;
+            }
+
             md.albedo = diff;
         }
         else

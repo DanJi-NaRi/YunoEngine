@@ -87,6 +87,7 @@ XMMATRIX Effect::UpdateBillBoard()
 
 XMMATRIX Effect::UpdateDefault()
 {
+    m_vRot.x = XMConvertToRadians(90);
     return XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
 }
 
