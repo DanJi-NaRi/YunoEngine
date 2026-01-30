@@ -8,6 +8,8 @@
 #include "YunoShaderCompiler.h"
 #include "YunoShader.h"
 
+//dxtk
+#include <directxtk/SpriteFont.h>
 
 //imgui
 #include "ImGuiManager.h"
@@ -2038,6 +2040,8 @@ bool YunoRenderer::CreateDefaultQuadMesh()
 
     m_defaultQuadMesh = CreateMesh(vs, idx, 2);
     if (!m_defaultQuadMesh) return false;
+
+    return true;
 }
 
 MeshHandle YunoRenderer::GetQuadMesh()

@@ -341,7 +341,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="System\TileHelper.h" />
     <ClInclude Include="System\UIScene_InputContext.h" />
     <ClInclude Include="Game\UI\UIWidgets.h" />
-    <ClInclude Include="Game\UI\Text.h" />
     <ClInclude Include="Scenes\WeaponSelectScene.h" />
     <ClInclude Include="Game\UI\WeaponButton.h" />
     <ClInclude Include="Scenes\Title.h" />
