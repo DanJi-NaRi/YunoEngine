@@ -42,6 +42,8 @@ struct YunoCamera
     XMMATRIX ProjOrtho(float width, float height) const
     {
         using namespace DirectX;
+        
+        //return XMMatrixOrthographicOffCenterLH(0.0f, width, height, 0.0f, -10, 100);// 테스트
         return XMMatrixOrthographicOffCenterLH(0.0f, width, height, 0.0f, 0, 1);
         //return XMMatrixOrthographicOffCenterLH(0, width, height, 0.0f, 1.0f, 100.0f);
     }

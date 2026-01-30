@@ -1,31 +1,31 @@
 #include "pch.h"
 
-#include "PieceQueue.h"
+#include "MinimapQueue.h"
 
 
-PlayGridQ::PlayGridQ() = default;
-PlayGridQ::~PlayGridQ() = default;
+MinimapQ::MinimapQ() = default;
+MinimapQ::~MinimapQ() = default;
 
-void PlayGridQ::Insert(PGridCmd cmd)
+void MinimapQ::Insert(PGridCmd cmd)
 {
-    pieceQue.push(cmd);
+    minimapQue.push(cmd);
 }
 
-bool PlayGridQ::Empty()
+bool MinimapQ::Empty()
 {
-    bool res = pieceQue.empty();
+    bool res = minimapQue.empty();
     return res;
 }
 
-const PGridCmd PlayGridQ::Pop()
+const PGridCmd MinimapQ::Pop()
 {
-    PGridCmd res = pieceQue.front();
-    pieceQue.pop();
+    PGridCmd res = minimapQue.front();
+    minimapQue.pop();
     return res;
 }
 
 
-PGridCmd PlayGridQ::Move_S(GamePiece pieceType, int cx, int cz)
+PGridCmd MinimapQ::Move_S(GamePiece pieceType, int cx, int cz)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Move;
@@ -33,7 +33,7 @@ PGridCmd PlayGridQ::Move_S(GamePiece pieceType, int cx, int cz)
     return cmd;
 }
 
-PGridCmd PlayGridQ::Move_P(Direction dir, float wx, float wy, float wz, float speed, bool isDone)
+PGridCmd MinimapQ::Move_P(Direction dir, float wx, float wy, float wz, float speed, bool isDone)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Move;
@@ -42,7 +42,7 @@ PGridCmd PlayGridQ::Move_P(Direction dir, float wx, float wy, float wz, float sp
     return cmd;
 }
 
-PGridCmd PlayGridQ::Attack_S_TST(GamePiece pieceType, int damagae)
+PGridCmd MinimapQ::Attack_S_TST(GamePiece pieceType, int damagae)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Attack;
@@ -50,13 +50,13 @@ PGridCmd PlayGridQ::Attack_S_TST(GamePiece pieceType, int damagae)
     cmd.atk_s.whichPiece = pieceType;
     for (int i = 1; i < 36; i++)
     {
-        cmd.atk_s.tileIDs[i-1] = i;
+        cmd.atk_s.tileIDs[i - 1] = i;
     }
     return cmd;
-    
+
 }
 
-PGridCmd PlayGridQ::Hit_S(GamePiece pieceType, int damage)
+PGridCmd MinimapQ::Hit_S(GamePiece pieceType, int damage)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Hit;
@@ -65,7 +65,7 @@ PGridCmd PlayGridQ::Hit_S(GamePiece pieceType, int damage)
     return cmd;
 }
 
-PGridCmd PlayGridQ::Hit_P(int damage1, GamePiece pieceType, int damage2)
+PGridCmd MinimapQ::Hit_P(int damage1, GamePiece pieceType, int damage2)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Hit;
@@ -75,7 +75,7 @@ PGridCmd PlayGridQ::Hit_P(int damage1, GamePiece pieceType, int damage2)
     return cmd;
 }
 
-PGridCmd PlayGridQ::Cmd_S(CommandType cmdType, GamePiece pieceType)
+PGridCmd MinimapQ::Cmd_S(CommandType cmdType, GamePiece pieceType)
 {
     PGridCmd cmd;
     cmd.cmdType = cmdType;
@@ -83,4 +83,4 @@ PGridCmd PlayGridQ::Cmd_S(CommandType cmdType, GamePiece pieceType)
     return cmd;
 }
 
-std::queue<PGridCmd> PlayGridQ::pieceQue;
+std::queue<PGridCmd> MinimapQ::minimapQue;

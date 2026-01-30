@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "PieceQueue.h"
+#include "PlayQueue.h"
 #include "Tile.h"
 
 #include "ObjectTypeRegistry.h"
@@ -12,7 +12,7 @@ namespace {
     {
         AutoReg_Tile()
         {
-            ObjectTypeRegistry::Instance().Register(L"Tile", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Tile>(d); });
+            ObjectTypeRegistry::Instance().Register(L"Tile", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Tile<Unit>>(d); });
         }
     } s_reg_Tile;
 }
@@ -20,50 +20,50 @@ namespace {
 VERTEX_Pos g_cubeMesh[] =
 {
     //정면. ( Face#0) :   
-    { -1.0, 0.0,-1.0} ,		//v0 : Position + Normal.★
-    {  1.0, 0.0,-1.0} ,		//v1
-    { -1.0,-2.0,-1.0} ,		//v2
+    { -0.5, 0.0,-0.5} ,		//v0 : Position + Normal.★
+    {  0.5, 0.0,-0.5} ,		//v1
+    { -0.5,-1.0,-0.5} ,		//v2
     //       ( Face#1)
-    {  1.0,-2.0,-1.0} ,		//v3
+    {  0.5,-1.0,-0.5} ,		//v3
 
     //뒷면.  (Face#2) :  
-    {  1.0, 0.0, 1.0} ,		//v4
-    { -1.0, 0.0, 1.0} ,		//v5
-    { -1.0,-2.0, 1.0} ,		//v6
+    {  0.5, 0.0, 0.5} ,		//v4
+    { -0.5, 0.0, 0.5} ,		//v5
+    { -0.5,-1.0, 0.5} ,		//v6
     //		  (Face#3)
-    {  1.0,-2.0, 1.0} ,		//v7
+    {  0.5,-1.0, 0.5} ,		//v7
 
 
     // 우측면. (Face#4)
-    {  1.0, 0.0,-1.0} ,		//v8
-    {  1.0, 0.0, 1.0} ,		//v9
-    {  1.0,-2.0,-1.0} ,		//v10
+    {  0.5, 0.0,-0.5} ,		//v8
+    {  0.5, 0.0, 0.5} ,		//v9
+    {  0.5,-1.0,-0.5} ,		//v10
     //			(Face#5)
-    {  1.0,-2.0, 1.0} ,		//v11
+    {  0.5,-1.0, 0.5} ,		//v11
 
 
     // 좌측면. (Face#6)
-    { -1.0, 0.0, 1.0} ,		//v12
-    { -1.0, 0.0,-1.0} ,		//v13
-    { -1.0,-2.0,-1.0} ,		//v14
+    { -0.5, 0.0, 0.5} ,		//v12
+    { -0.5, 0.0,-0.5} ,		//v13
+    { -0.5,-1.0,-0.5} ,		//v14
     //			(Face#7)
-    { -1.0,-2.0, 1.0} ,		//v15
+    { -0.5,-1.0, 0.5} ,		//v15
 
 
     //상부.  ( Face#8)
-    { -1.0, 0.0, 1.00} ,		//v16
-    {  1.0, 0.0, 1.0} ,		//v17
-    { -1.0, 0.0,-1.0} ,		//v18
+    { -0.5, 0.0, 0.5} ,		//v16
+    {  0.5, 0.0, 0.5} ,		//v17
+    { -0.5, 0.0,-0.5} ,		//v18
     //		 ( Face#9)
-    {  1.0, 0.0,-1.0} ,		//v19
+    {  0.5, 0.0,-0.5} ,		//v19
 
 
     //하부.  ( Face#10)
-    {  1.0,-2.0, 1.0} ,		//v20
-    { -1.0,-2.0, 1.0} ,		//v21
-    { -1.0,-2.0,-1.0} ,		//v22
+    {  0.5,-1.0, 0.5} ,		//v20
+    { -0.5,-1.0, 0.5} ,		//v21
+    { -0.5,-1.0,-0.5} ,		//v22
     //		 ( Face#11)
-    {  1.0,-2.0,-1.0}		//v23
+    {  0.5,-1.0,-0.5}		//v23
 };
 
 VERTEX_Nrm g_cubeNrm[] =
@@ -154,20 +154,46 @@ INDEX g_cubeIndex[] =
     {22, 23, 21}, {21, 23, 20},	//	하부
 };
 
-Tile::Tile()
+VERTEX_Pos g_qMesh[] =
 {
-    unitType = L"Tile";
+    {-0.5, -0.5, 0.0},
+    { 0.5, -0.5, 0.0},
+    { 0.5,  0.5, 0.0},
+    {-0.5,  0.5, 0.0}
+};
+VERTEX_UV g_qUV[] =
+{
+    {0.0, 0.0},
+    {1.0, 0.0},
+    {1.0, 1.0},
+    {0.0, 1.0}
+};
+INDEX g_qIndex[]
+{
+    {0, 1, 2},
+    {0, 2, 3}
+};
+
+template class Tile<Unit>;
+template class Tile<Widget>;
+
+template<typename T>
+Tile<T>::Tile()
+{
+    this->m_name = L"Tile";
 }
 
-Tile::~Tile()
+template<typename T>
+Tile<T>::~Tile()
 {
 }
 
-bool Tile::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+template<typename T>
+bool Tile<T>::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
-    Unit::Create(name, id, vPos);
+    T::Create(name, id, vPos);
 
-    if (!m_pInput || !m_pRenderer || !m_pTextures)
+    if (!this->m_pInput || !this->m_pRenderer || !this->m_pTextures)
         return false;
     if (!CreateMesh())
         return false;
@@ -178,30 +204,33 @@ bool Tile::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 
     XMMATRIX i = XMMatrixIdentity();
-    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+    mesh->Create(this->m_defaultMesh, this->m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
 
-    m_MeshNode = std::make_unique<MeshNode>();
+    this->m_MeshNode = std::make_unique<MeshNode>();
 
-    m_MeshNode->m_Meshs.push_back(std::move(mesh));
+    this->m_MeshNode->m_Meshs.push_back(std::move(mesh));
 
-    Backup();
+    T::Backup();
 
     return true;
 }
 
-bool Tile::Update(float dTime)
+template<typename T>
+bool Tile<T>::Update(float dTime)
 {
-    Unit::Update(dTime);
+    T::Update(dTime);
     return true;
 }
 
-bool Tile::Submit(float dTime)
+template<typename T>
+bool Tile<T>::Submit(float dTime)
 {
-    Unit::Submit(dTime);
+    T::Submit(dTime);
     return true;
 }
 
-bool Tile::CreateMesh()
+template<typename T>
+bool Tile<T>::CreateMesh()
 {
     VertexStreams streams{};
     streams.flags = VSF_Pos | VSF_Nrm | VSF_UV;
@@ -210,16 +239,17 @@ bool Tile::CreateMesh()
     streams.nrm = g_cubeNrm;
     streams.uv = g_cubeUV;
 
-    m_defaultMesh = m_pRenderer->CreateMesh(streams, g_cubeIndex, _countof(g_cubeIndex));
-    if (m_defaultMesh == 0)
+    this->m_defaultMesh = this->m_pRenderer->CreateMesh(streams, g_cubeIndex, _countof(g_cubeIndex));
+    if (this->m_defaultMesh == 0)
         return false;
 
     return true;
 }
 
-bool Tile::CreateMaterial()
+template<typename T>
+bool Tile<T>::CreateMaterial()
 {
-    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/white.png");
+    this->m_Albedo = this->m_pTextures->LoadTexture2D(L"../Assets/Textures/white.png");
 
     MaterialDesc md{};
     md.passKey.vs = ShaderId::Basic;
@@ -230,7 +260,7 @@ bool Tile::CreateMaterial()
     md.passKey.raster = RasterPreset::CullNone;
     md.passKey.depth = DepthPreset::ReadWrite;
 
-    md.albedo = m_Albedo;
+    md.albedo = this->m_Albedo;
     md.normal = 0;
     md.orm = 0;
 
@@ -239,14 +269,15 @@ bool Tile::CreateMaterial()
     md.ao = 0;
 
     // 첫번째 머테리얼 생성
-    m_defaultMaterial = m_pRenderer->CreateMaterial(md);
-    if (m_defaultMaterial == 0)
+    this->m_defaultMaterial = this->m_pRenderer->CreateMaterial(md);
+    if (this->m_defaultMaterial == 0)
         return false;
 
     return true;
 }
 
-void Tile::FlashColor(C3 color, int count, float diff, float speed)
+template<typename T>
+void Tile<T>::FlashColor(C3 color, int count, float diff, float speed)
 {
     m_maskColor = color;
     m_count = count;
@@ -254,3 +285,49 @@ void Tile::FlashColor(C3 color, int count, float diff, float speed)
     m_FxSpeed = speed;
 }
 
+
+template<>
+bool Tile<Widget>::CreateMesh()
+{
+    VertexStreams streams{};
+    streams.flags = VSF_Pos | VSF_UV;
+    streams.vtx_count = sizeof(g_qMesh) / sizeof(VERTEX_Pos);
+    streams.pos = g_qMesh;
+    streams.uv = g_qUV;
+
+    this->m_defaultMesh = this->m_pRenderer->CreateMesh(streams, g_qIndex, _countof(g_qIndex));
+    if (this->m_defaultMesh == 0)
+        return false;
+
+    return true;
+}
+
+template<>
+bool Tile<Widget>::CreateMaterial()
+{
+    this->m_Albedo = this->m_pTextures->LoadTexture2D(L"../Assets/Textures/white.png");
+
+    MaterialDesc md{};
+    md.passKey.vs = ShaderId::UIBase;
+    md.passKey.ps = ShaderId::UIBase;
+    md.passKey.vertexFlags = VSF_Pos | VSF_UV;
+
+    md.passKey.blend = BlendPreset::AlphaBlend;
+    md.passKey.raster = RasterPreset::CullNone;
+    md.passKey.depth = DepthPreset::ReadWrite;
+
+    md.albedo = this->m_Albedo;
+    md.normal = 0;
+    md.orm = 0;
+
+    md.metal = 0;
+    md.rough = 0;
+    md.ao = 0;
+
+    // 첫번째 머테리얼 생성
+    this->m_defaultMaterial = this->m_pRenderer->CreateMaterial(md);
+    if (this->m_defaultMaterial == 0)
+        return false;
+
+    return true;
+}

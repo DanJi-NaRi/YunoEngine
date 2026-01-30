@@ -1,15 +1,19 @@
 #pragma once
 #include "Unit.h"
+#include "Widget.h"
 
 struct C3
 {
     float r, g, b;
 };
 
-class Tile : public Unit
+template<typename T>
+class Tile : public T
 {
 public:
     explicit Tile();
+    template<typename... Args>
+    Tile(Args&& ...args) : T(std::forward<Args>(args)...) {}
     virtual ~Tile();
 
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
@@ -31,3 +35,15 @@ private:
     bool isDone = false;
 };
 
+extern template class Tile<Unit>;
+extern template class Tile<Widget>;
+
+VERTEX_Pos g_qMesh[];
+VERTEX_UV g_qUV[];
+INDEX g_qIndex[];
+
+template<>
+bool Tile<Widget>::CreateMesh();
+
+template<>
+bool Tile<Widget>::CreateMaterial();

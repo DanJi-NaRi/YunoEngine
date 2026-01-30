@@ -46,14 +46,17 @@ struct PGridCmd
     };
 };
 
-class PlayGridQ
+// 패킷 구현이 안되어 테스트용으로 static Q를 만들어 쓰는중
+// 패킷이 만들어지면 없어질 예정
+// 패킷이 완성되면 게임매니저에 따로 큐를 두고 거기서 받아올 예정
+class MinimapQ
 {
 private:
-    static std::queue<PGridCmd> pieceQue;
+    static std::queue<PGridCmd> minimapQue;
 
 public:
-    PlayGridQ();
-    ~PlayGridQ();
+    MinimapQ();
+    ~MinimapQ();
     static void Insert(PGridCmd cmd);
     bool Empty();
     const PGridCmd Pop();
