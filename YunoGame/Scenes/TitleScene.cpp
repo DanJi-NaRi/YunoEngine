@@ -17,7 +17,7 @@
 #include "AnimTest.h"
 #include "YunoLight.h"
 #include "AudioQueue.h"
-#include "PieceQueue.h"
+#include "PlayQueue.h"
 
 bool TitleScene::OnCreateScene()
 {
@@ -109,28 +109,43 @@ void TitleScene::Update(float dt)
     // 테스트용 -> ally1으로 부여한 기물이 움직여용
     if (m_input->IsKeyPressed(0x31))
     {
-
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 3));
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 3));   // 왼쪽
     }
     if (m_input->IsKeyPressed(0x32))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 3));
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 2));   // 아래
     }
     if (m_input->IsKeyPressed(0x33))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 3));
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 3));   // 위
     }
     if (m_input->IsKeyPressed(0x34))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 2));
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 4));   // 오른쪽
     }
     if (m_input->IsKeyPressed(0x35))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 4));
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 2));   // 왼쪽 위
+    }
+    if (m_input->IsKeyPressed(0x36))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 2));   // 오른쪽 위
+    }
+    if (m_input->IsKeyPressed(0x37))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 4));   // 왼쪽 아래
+    }
+    if (m_input->IsKeyPressed(0x38))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 4));   // 오른쪽 아래
     }
     if (m_input->IsKeyPressed(0x39))
     {
-        PlayGridQ::Insert(PlayGridQ::Attack_S_TST(GamePiece::Ally1));
+        PlayGridQ::Insert(PlayGridQ::Attack_S_TST(GamePiece::Ally1));   // 공격
+    }
+    if (m_input->IsKeyPressed(0x30))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 3));   // 충돌
     }
 
     //m_input->Dispatch();

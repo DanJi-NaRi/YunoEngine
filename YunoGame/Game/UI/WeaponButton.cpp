@@ -72,13 +72,14 @@ bool WeaponButton::HoveredEvent()
 bool WeaponButton::LMBPressedEvent()
 {
     const int myIdx = GameManager::Get().GetSlotiIdx();
-    if (myIdx != 0 && myIdx != 1)
+    if (myIdx != 1 && myIdx != 2)
         return true;
+
 
     UserImage* slotImage0 = nullptr;
     UserImage* slotImage1 = nullptr;
 
-    if (myIdx == 0)
+    if (myIdx == 1)
     {
         slotImage0 = dynamic_cast<UserImage*>(m_pUserImage0);
         slotImage1 = dynamic_cast<UserImage*>(m_pUserImage1);

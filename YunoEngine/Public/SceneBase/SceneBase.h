@@ -4,6 +4,7 @@
 
 class ObjectManager;
 class UIManager;
+class EffectManager;
 class IInput;
 class Unit;
 class Widget;
@@ -47,7 +48,7 @@ protected:
 #endif
 
     // 파생 씬에서 구현 ㄱㄱ
-    bool LoadScene(const std::wstring& filepath);
+    bool LoadScene(const std::wstring& filepath, SceneDesc& out);
     virtual bool OnCreateScene();
     virtual void OnDestroyScene();
 
@@ -56,6 +57,7 @@ protected:
 protected:
     std::unique_ptr<ObjectManager> m_objectManager;
     std::unique_ptr<UIManager> m_uiManager;
+    std::unique_ptr<EffectManager> m_effectManager;
     IInput* m_input = nullptr;
 
 #ifdef _DEBUG

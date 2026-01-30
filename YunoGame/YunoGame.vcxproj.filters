@@ -64,7 +64,7 @@
     <Filter Include="Game\Object\Piece">
       <UniqueIdentifier>{da3c17c2-968c-48e2-88f0-27e98aee6ca6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PieceQueue">
+    <Filter Include="PlayQueue">
       <UniqueIdentifier>{deaeb8de-8471-4f23-a138-eb612efde854}</UniqueIdentifier>
     </Filter>
     <Filter Include="System\GameContext">
@@ -135,12 +135,6 @@
     <ClCompile Include="System\GridFactory.cpp">
       <Filter>Grid</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Object\GridLine.cpp">
-      <Filter>Grid</Filter>
-    </ClCompile>
-    <ClCompile Include="System\GridSystem.cpp">
-      <Filter>Grid</Filter>
-    </ClCompile>
     <ClCompile Include="System\PlayGridSystem.cpp">
       <Filter>Grid</Filter>
     </ClCompile>
@@ -150,8 +144,8 @@
     <ClCompile Include="Game\Object\Piece.cpp">
       <Filter>Game\Object\Piece</Filter>
     </ClCompile>
-    <ClCompile Include="System\PieceQueue.cpp">
-      <Filter>PieceQueue</Filter>
+    <ClCompile Include="System\PlayQueue.cpp">
+      <Filter>PlayQueue</Filter>
     </ClCompile>
     <ClCompile Include="Game\UI\CardSlot.cpp">
       <Filter>Game\UI\Slot</Filter>
@@ -178,7 +172,6 @@
     <ClCompile Include="Game\UI\ButtonTemplate.cpp">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClCompile>
-    <ClCompile Include="GridBox.cpp" />
     <ClCompile Include="Game\UI\CardTable.cpp">
       <Filter>Game\UI\Image</Filter>
     </ClCompile>
@@ -211,6 +204,12 @@
     <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp">
       <Filter>Game\Object</Filter>
     </ClCompile>
+    <ClCompile Include="System\MinimapGridSystem.cpp" />
+    <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="System\GridSystem.cpp" />
+    <ClCompile Include="GridBox.cpp" />
+    <ClCompile Include="Game\Object\GridLine.cpp" />
+    <ClCompile Include="MinimapQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -276,8 +275,8 @@
     <ClInclude Include="Game\Object\Piece.h">
       <Filter>Game\Object\Piece</Filter>
     </ClInclude>
-    <ClInclude Include="System\PieceQueue.h">
-      <Filter>PieceQueue</Filter>
+    <ClInclude Include="System\PlayQueue.h">
+      <Filter>PlayQueue</Filter>
     </ClInclude>
     <ClInclude Include="Game\UI\CardSlot.h">
       <Filter>Game\UI\Slot</Filter>
@@ -328,6 +327,12 @@
     <ClInclude Include="Scenes\Title.h">
       <Filter>Scenes\0.Title</Filter>
     </ClInclude>
+    <ClInclude Include="System\MinimapGridSystem.h" />
+    <ClInclude Include="Grid.h" />
+    <ClInclude Include="SimpleMath.h" />
+    <ClInclude Include="MinimapQueue.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">
       <Filter>Card</Filter>
     </ClInclude>

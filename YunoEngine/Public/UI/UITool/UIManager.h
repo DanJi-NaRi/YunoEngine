@@ -38,16 +38,7 @@ private:
 
     //Camera 투영
     bool m_isOrtho = false;
-
-    template<typename T>
-    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 위젯 생성용
-
-    std::unique_ptr<MeshNode>CreateMeshNode(const std::wstring& filepath);
-
-    std::unique_ptr<YunoDirectionalLight> m_directionLight; // 필요할까?
-
 public:
-    void CreateDirLight();
     void SetOrthoFlag(bool flag) { m_isOrtho = flag; };
 
     // 상위 캔버스의 사이즈를 반환하는 함수.
@@ -71,9 +62,13 @@ public:
     template<typename T>
     T* CreateWidget_Internal(const std::wstring& name, XMFLOAT3 pos);
 
+    // 테스트용으로 추가
+    template<typename T>
+    T* CreateObject(const std::wstring& name, XMFLOAT3 pos);
+
     //씬 매니저에 있어도 될것같은 놈들
-    const Widget* FindWidget(UINT id); //id로 검색
-    const Widget* FindWidget(const std::wstring& name); //이름으로 검색
+    Widget* FindWidget(UINT id); //id로 검색
+    Widget* FindWidget(const std::wstring& name); //이름으로 검색
 
 
     void DestroyWidget(UINT id);
@@ -92,6 +87,8 @@ public:
 
     Float2 GetCanvasSize();
 
+    std::vector<WidgetDesc> BuildWidgetDesc();
+    void ApplyWidgetFromDesc(const std::vector<WidgetDesc>& wds);
 private:
     void CheckDedicateWidgetName(std::wstring& name);
 
@@ -124,23 +121,24 @@ T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
     return pWidget;
 }
 
-// 계층구조 오브젝트 재귀 생성용 (현재 안씀)
+
+// 테스트용
 template<typename T>
-T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node)
+T* UIManager::CreateObject(const std::wstring& name, XMFLOAT3 pos)
 {
     static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
 
-    std::wstring newname = name + L'_' + node->m_name;
+    std::wstring newname = name;
 
-    auto widget = std::make_unique<T>();
-    widget->Create(newname, m_widgetIDs++, pos);
+    auto widget = std::make_unique<T>(this);
+    CheckDedicateWidgetName(newname);
 
-    widget->SetMesh(std::move(node));
+    widget->Create(name, m_widgetIDs, pos);
 
     auto* pWidget = widget.get();
+
     m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
 
     return pWidget;
 }
-
-

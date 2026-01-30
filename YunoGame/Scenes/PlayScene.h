@@ -2,6 +2,7 @@
 
 #include "SceneBase.h"
 #include "Game_InputContext.h"
+#include "IGridSystem.h"
 //class Game_InputContext;
 class Triangle;
 
@@ -23,6 +24,9 @@ protected:
     void OnDestroyScene() override;
 
 private:
+    void TestInput();
 
+private:
+    std::unique_ptr<IGridSystem> m_playGrid;
     Game_InputContext m_gameCtx;
 };

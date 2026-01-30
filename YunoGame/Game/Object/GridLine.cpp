@@ -1,20 +1,26 @@
 #include "pch.h"
-#include "GridFactory.h"
 #include "GridLine.h"
 
-GridLine::GridLine()
+
+template class GridLine<Unit>;
+template class GridLine<Widget>;
+
+template<typename T>
+GridLine<T>::GridLine()
 {
 }
 
-GridLine::~GridLine()
+template<typename T>
+GridLine<T>::~GridLine()
 {
 }
 
-bool GridLine::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+template<typename T>
+bool GridLine<T>::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
-    Unit::Create(name, id, vPos);
+    T::Create(name, id, vPos);
 
-    if (!m_pInput || !m_pRenderer || !m_pTextures)
+    if (!T::m_pInput || !T::m_pRenderer || !T::m_pTextures)
         return false;
     if (!CreateMesh())
         return false;
@@ -25,31 +31,34 @@ bool GridLine::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 
     XMMATRIX i = XMMatrixIdentity();
-    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+    mesh->Create(T::m_defaultMesh, T::m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
 
-    m_MeshNode = std::make_unique<MeshNode>();
+    T::m_MeshNode = std::make_unique<MeshNode>();
 
-    m_MeshNode->m_Meshs.push_back(std::move(mesh));
+    T::m_MeshNode->m_Meshs.push_back(std::move(mesh));
 
-    Backup();
+    T::Backup();
 
-
+    
     return true;
 }
 
-bool GridLine::Update(float dTime)
+template<typename T>
+bool GridLine<T>::Update(float dTime)
 {
-    Unit::Update(dTime);
+    T::Update(dTime);
     return true;
 }
 
-bool GridLine::Submit(float dTime)
+template<typename T>
+bool GridLine<T>::Submit(float dTime)
 {
-    Unit::Submit(dTime);
+    T::Submit(dTime);
     return true;
 }
 
-bool GridLine::CreateMesh()
+template<typename T>
+bool GridLine<T>::CreateMesh()
 {
     int m_row, m_column;
     GridFactory::GetGridInfo(m_row, m_column);
@@ -82,14 +91,16 @@ bool GridLine::CreateMesh()
     streams.pos = m_lineVtx.data();
     streams.topology = Yuno_LINELIST;
 
-    m_defaultMesh = m_pRenderer->CreateMesh(streams, nullptr, 0);
-    if (m_defaultMesh == 0)
+    T::m_defaultMesh = T::m_pRenderer->CreateMesh(streams, nullptr, 0);
+    if (T::m_defaultMesh == 0)
         return false;
 
     return true;
 }
 
-bool GridLine::CreateMaterial()
+
+template<typename T>
+bool GridLine<T>::CreateMaterial()
 {
     MaterialDesc md{};
     md.passKey.vs = ShaderId::DebugGrid;
@@ -100,7 +111,50 @@ bool GridLine::CreateMaterial()
     md.passKey.raster = RasterPreset::CullNone;
     md.passKey.depth = DepthPreset::ReadWrite;
 
-    m_defaultMaterial = m_pRenderer->CreateMaterial(md);
+    T::m_defaultMaterial = T::m_pRenderer->CreateMaterial(md);
+
+    return true;
+}
+
+
+// Widget일 경우
+template<>
+bool GridLine<Widget>::CreateMesh()
+{
+    int m_row, m_column;
+    GridFactory::GetGridInfo(m_row, m_column);
+    m_lineVtx.clear();
+    m_lineVtx.reserve((m_row + 1) * 2 + (m_column + 1) * 2);
+
+    float y = 0.0f;
+
+    // 전체 그리드의 반 길이 (셀 개수 기준!)
+    float halfX = m_column * 0.5f;
+    float halfZ = m_row * 0.5f;
+
+    // 세로선(= Z방향으로 뻗는 선): x가 변하고 z는 [-halfZ, +halfZ]
+    for (int i = 0; i <= m_column; ++i) {             // column+1개 라인
+        float x = -halfX + i;          // 일정 간격으로
+        m_lineVtx.push_back({ x, -halfZ, y });
+        m_lineVtx.push_back({ x, halfZ, y });
+    }
+
+    // 가로선(= X방향으로 뻗는 선): z가 변하고 x는 [-halfX, +halfX]
+    for (int i = 0; i <= m_row; ++i) {               // row+1개 라인
+        float z = -halfZ + i;
+        m_lineVtx.push_back({ -halfX, z, y });
+        m_lineVtx.push_back({ halfX, z, y });
+    }
+
+    VertexStreams streams{};
+    streams.flags = VSF_Pos;
+    streams.vtx_count = m_lineVtx.size();
+    streams.pos = m_lineVtx.data();
+    streams.topology = Yuno_LINELIST;
+
+    Widget::m_defaultMesh = Widget::m_pRenderer->CreateMesh(streams, nullptr, 0);
+    if (Widget::m_defaultMesh == 0)
+        return false;
 
     return true;
 }

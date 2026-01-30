@@ -175,14 +175,15 @@ public:
     TextureHandle CreateColorTexture2DFromFile(const wchar_t* path) override;
     TextureHandle CreateDataTexture2DFromFile(const wchar_t* path) override;
 
-
     void Submit(const RenderItem& item) override;
     void Flush() override;  
 
 #ifdef _DEBUG
     void DrawDebug();
     void RegisterDrawUI(); //imgui드로우 함수 등록
+
 #endif
+public:
 
     void BindConstantBuffers_Camera(const Frame_Data_Dir& dirData) override;
     void BindConstantBuffers_Light(const Frame_Data_Dir& dirData, const std::vector<Frame_Data_Point>& plData, UINT plCount) override;
@@ -227,6 +228,7 @@ private:
     YunoConstantBuffer<CBPerObject_Matrix> m_cbObject_Matrix;
     YunoConstantBuffer<CBPerObject_Material> m_cbObject_Material;
     YunoConstantBuffer<CBLight_All> m_cbLight;
+    YunoConstantBuffer<CBEffect> m_cbEffect;
 
     CBLight_All m_LightInfo;
 
@@ -308,8 +310,9 @@ private:
     MaterialHandle m_ppToneMapMat = 0;
 
     float m_Threshold = 1.05f; //추출할 최소 밝기값
-    float m_BloomIntensity = 0.6f; //Bloom 빛 번짐정도
+    float m_BloomIntensity = 0.1f; //Bloom 빛 번짐정도
     float m_Exposure = 1.3f; //전체 화면 밝기조절 값
+    float m_blurRadius[4] = { 2.0f, 1.0f, 0.5f, 0.2f };
 
     //PP Default
     uint32_t m_PPFlag;
@@ -381,8 +384,12 @@ private:
         }
     };
 
+    bool CreateDefaultQuadMesh();
+    MeshHandle GetQuadMesh() override;
+
     std::vector<MeshResource> m_meshes;        // handle -> m_meshes[handle-1]
     std::vector<RenderItem>   m_renderQueue;   // 이번 프레임 제출된 드로우 요청
+    std::vector<RenderItem>   m_renderBlendQueue;   // 반투명 메쉬 별도 관리 큐
     std::vector<RenderItem>   m_widgetRenderQueue;
 
     struct MaterialResource
@@ -394,6 +401,7 @@ private:
     std::vector<YunoMaterial> m_materials;
     MaterialHandle m_defaultMaterial = 0;
     RenderPassHandle m_defaultPass = 0;
+    MeshHandle m_defaultQuadMesh = 0;
 
 public:
     YunoMaterial& GetMaterial(MaterialHandle handle) { 
@@ -509,15 +517,34 @@ private:
 
 private:
     // Debug Grid (Engine-owned)
+#ifdef _DEBUG
     bool m_enableDebugGrid = true;
 
     MeshHandle          m_debugGridMeshHandle = 0;
     MaterialHandle      m_debugGridMaterial = 0;
     RenderPassHandle    m_debugGridPass = 0;
 
+    //DebugMesh
+    MeshHandle      m_debugSphereMeshHandle = 0;
+    MaterialHandle m_debugMeshMaterial = 0;
+
+    //DebugPointLight
+    struct DebugLight {
+        XMFLOAT3 pos;
+        XMFLOAT4 col;
+    };
+
+    std::vector<DebugLight> debuglights;
+#endif
+
+
 private:
+#ifdef _DEBUG
     void CreateDebugGridResources();
+    void CreateDebugMeshResources();
     void SubmitDebugGrid();
+    void SubmitDebugPointLightMesh();
+#endif
     MeshHandle CreateLineMesh_PosOnly(const VERTEX_Pos* verts, uint32_t vtxCount);
 
     friend YunoEngine;

@@ -4,6 +4,7 @@
 #include "MaterialDesc.h"
 
 class IWindow;
+class YunoMaterial;
 struct YunoCamera;
 
 class IRenderer
@@ -32,6 +33,11 @@ public:
         const VertexStreams& streams,
         const INDEX* triangles,
         uint32_t triCount) = 0;
+
+    //기본 쿼드 메쉬핸들 받기
+    virtual MeshHandle GetQuadMesh() = 0;
+
+    virtual YunoMaterial& GetMaterial(MaterialHandle handle) = 0; //마테리얼 본체 못쓰면 텍스쳐 변경이 너무 까다로움
 
     // 기본 머티리얼(추후 키/파일 기반으로 확장)
     virtual MaterialHandle CreateMaterial_Default() = 0;

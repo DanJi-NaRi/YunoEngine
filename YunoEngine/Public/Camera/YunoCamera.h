@@ -16,6 +16,14 @@ struct YunoCamera
 
     bool useOrtho = false;
 
+    XMVECTOR GetForward()
+    {
+        XMVECTOR pos = XMLoadFloat3(&position);
+        XMVECTOR lookat = XMLoadFloat3(&target);
+
+        return XMVector3Normalize(lookat - pos);
+    }
+
     XMMATRIX View() const
     {
         using namespace DirectX;
@@ -42,6 +50,8 @@ struct YunoCamera
     XMMATRIX ProjOrtho(float width, float height) const
     {
         using namespace DirectX;
+        
+        //return XMMatrixOrthographicOffCenterLH(0.0f, width, height, 0.0f, -10, 100);// 테스트
         return XMMatrixOrthographicOffCenterLH(0.0f, width, height, 0.0f, 0, 1);
         //return XMMatrixOrthographicOffCenterLH(0, width, height, 0.0f, 1.0f, 100.0f);
     }
@@ -55,5 +65,5 @@ struct YunoCamera
 
     void SetOrthoFlag(bool useOrtho) { this->useOrtho = useOrtho; } // 투영 활용 플래그 Set 함수.
 
-    XMFLOAT3 Position() const { return position; }
+    const XMFLOAT3& const Position() { return position; }
 };

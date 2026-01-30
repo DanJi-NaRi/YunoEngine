@@ -21,5 +21,5 @@ void GridFactory::GetGridInfo(int& row, int& column)
     column = m_column;
 }
 
-int GridFactory::m_row;
-int GridFactory::m_column;
+int GridFactory::m_row = 5;
+int GridFactory::m_column = 7;

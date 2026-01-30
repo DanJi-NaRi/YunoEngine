@@ -2,6 +2,7 @@
 #include "Mesh.h"
 #include "YunoEngine.h"
 
+#include "SerializeScene.h"
 #include "Widget.h"
 #include "IWindow.h"
 
@@ -366,8 +367,10 @@ void Widget::Backup()
 
 bool Widget::Submit(float dTime)
 {
-    // 메쉬 Submit
-    m_MeshNode->Submit(m_mWorld);
+    if (!m_MeshNode) return true;
+
+    m_MeshNode->Submit(m_mWorld, m_vPos);
+
     LastSubmit(dTime);
 
     // 자식 Submit
@@ -494,6 +497,22 @@ void Widget::ClearChild()
     for (uint32_t id : ids) DettachChild(id);
 
     m_Childs.clear();
+}
+
+WidgetDesc Widget::BuildWidgetDesc()
+{
+    WidgetDesc wd;
+    wd.ID = m_id;
+    wd.name = m_name;
+    wd.parentID = m_Parent ? m_Parent->GetID() : 0;
+
+    Vec3Desc degRot = { XMConvertToDegrees(m_vRot.x), XMConvertToDegrees(m_vRot.y), XMConvertToDegrees(m_vRot.z) };
+
+    wd.transform.position = FromXM(m_vPos);
+    wd.transform.rotation = degRot;
+    wd.transform.scale = FromXM(m_vScale);
+
+    return wd;
 }
 
 void Widget::Clear() {

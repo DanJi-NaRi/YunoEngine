@@ -2,6 +2,7 @@
 
 #include "SceneBase.h"
 #include "UIScene_InputContext.h"
+#include "IGridSystem.h"
 //class UI_InputContext;
 
 class UIScene final : public SceneBase
@@ -22,5 +23,9 @@ protected:
     void OnDestroyScene() override;
 
 private:
+    void TestInput();
+
+private:
     UIScene_InputContext m_uiCtx;
+    std::unique_ptr<IGridSystem> m_minimap;
 };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RenderTypes.h"
-#include "YunoConstantBuffers.h"
+//#include "YunoConstantBuffers.h"
 
 class YunoMaterial
 {
@@ -17,4 +17,6 @@ public:
     TextureHandle ao = 0;
     TextureHandle emissive = 0;
     TextureHandle opacity = 0;
+
+    bool isAlphaBlend = false;
 };

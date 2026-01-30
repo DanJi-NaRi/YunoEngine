@@ -11,6 +11,7 @@ enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
 
 //class UIManager;
 class UIFactory;
+struct WidgetDesc;
 
 enum class UIDirection : int {
     LeftTop,
@@ -46,6 +47,8 @@ enum class WidgetClass : int {
     Card,
     CardSlot,
     LetterBox,
+    GridLine,
+
     // 첫 무기 선택 페이즈
     UserImage,
     TitleImage,
@@ -211,6 +214,9 @@ protected:
 
 
 public:
+    // 테스트
+    //Widget() = delete; // 기본 생성 금지
+    Widget();
 
     Widget() = delete; // 기본 생성 금지
     explicit Widget(UIFactory& uiFactory);
@@ -262,6 +268,11 @@ public:
     bool HasMeshNode() const { return m_MeshNode.get() != nullptr; }
 
     virtual void  Backup();
+    void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
+
+    XMFLOAT3& GetPos() { return m_vPos; }
+    XMFLOAT3& GetRot() { return m_vRot; }
+    XMFLOAT3& GetScale() { return m_vScale; }
 
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
@@ -310,6 +321,12 @@ public:
     virtual WidgetType GetWidgetType() { return WidgetType::Widget; }
     virtual WidgetClass GetWidgetClass() { return WidgetClass::Widget; }
     
+
+    WidgetDesc BuildWidgetDesc();
+
+#ifdef _DEBUG
+    virtual void Serialize() {}
+#endif
 
     //bool IsIntersect(const RECT& other)
     //{

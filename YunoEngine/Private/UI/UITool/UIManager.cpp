@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "SerializeScene.h"
 #include "UIManager.h"
 #include "Parser.h"
 #include "YunoLight.h"
@@ -67,11 +68,6 @@ void UIManager::Submit(float dTime)
     }
 }
 
-void UIManager::CreateDirLight()
-{
-    m_directionLight = std::make_unique<YunoDirectionalLight>();
-}
-
 void UIManager::GetSurface()
 {
 
@@ -132,7 +128,7 @@ void UIManager::ProcessPending()
 }
 
 //유니크 포인터의 생포인터 반환 외부에서 삭제 절대 금지
-const Widget* UIManager::FindWidget(UINT id)//GetID랑 연동해서쓰기
+Widget* UIManager::FindWidget(UINT id)//GetID랑 연동해서쓰기
 {
     if (m_widgetMap.find(id) == m_widgetMap.end())
         return nullptr;
@@ -140,7 +136,7 @@ const Widget* UIManager::FindWidget(UINT id)//GetID랑 연동해서쓰기
     return m_widgetMap[id];
 }
 
-const Widget* UIManager::FindWidget(const std::wstring& name)
+Widget* UIManager::FindWidget(const std::wstring& name)
 {
     if (m_nameToID.find(name) == m_nameToID.end())
         return nullptr;
@@ -408,6 +404,35 @@ Float2 UIManager::GetCanvasSize() // 개선사항 : 멤버에 this라던가 위�
 // 아직 캔버스 개념이 없으므로 클라이언트가 곧 캔버스임. (단일 캔버스 느낌..)
 
 
+std::vector<WidgetDesc> UIManager::BuildWidgetDesc()
+{
+    std::vector<WidgetDesc> wds;
+    for (auto& w : m_widgets)
+    {
+        WidgetDesc wd;
+        wd = w->BuildWidgetDesc();
+
+        wds.push_back(wd);
+    }
+    return wds;
+}
+
+void UIManager::ApplyWidgetFromDesc(const std::vector<WidgetDesc>& wds)
+{
+    for (auto& d : wds)
+    {
+        Widget* w = FindWidget(d.name);
+
+        if (!w) continue;
+
+        XMFLOAT3 radRot = { XMConvertToRadians(d.transform.rotation.x), XMConvertToRadians(d.transform.rotation.y), XMConvertToRadians(d.transform.rotation.z) };
+
+        w->SetPos(ToXM(d.transform.position));
+        w->SetRot(radRot);
+        w->SetScale(ToXM(d.transform.scale));
+    }
+}
+
 void UIManager::CheckDedicateWidgetName(std::wstring & name)
 {
     int count = 0;
@@ -430,17 +455,6 @@ void UIManager::CheckDedicateWidgetName(std::wstring & name)
 
 void UIManager::FrameDataUpdate()
 {
-    // 오브젝트 매니저가 라이트를 가지고 있는데
-    // 이 라이트는 씬에서 만들어서 넘겨주는?
-    // 디렉션 1개만 포인트 스팟 >> 벡터
-    if (m_directionLight) // 라이트가 있으면 업데이트
-    {
-        dirData.Lightdir = m_directionLight->GetDirFloat4Reverse();
-        dirData.Lightdiff = m_directionLight->GetDiffFloat4();
-        dirData.Lightamb = m_directionLight->GetAmbFloat4();
-        dirData.Lightspec = m_directionLight->GetSpecFloat4();
-        dirData.intensity = m_directionLight->GetIntensity();
-    }
 
 }
 
@@ -451,9 +465,4 @@ void UIManager::FrameDataSubmit()
     renderer->GetCamera().SetOrthoFlag(m_isOrtho);
 
     renderer->BindConstantBuffers_Camera(dirData);
-}
-
-std::unique_ptr<MeshNode> UIManager::CreateMeshNode(const std::wstring& filepath)
-{
-    return Parser::Instance().LoadFile(filepath);
 }
