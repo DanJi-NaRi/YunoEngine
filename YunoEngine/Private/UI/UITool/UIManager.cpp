@@ -63,11 +63,6 @@ void UIManager::Submit(float dTime)
     }
 }
 
-void UIManager::CreateDirLight()
-{
-    m_directionLight = std::make_unique<YunoDirectionalLight>();
-}
-
 void UIManager::GetSurface()
 {
 
@@ -451,17 +446,7 @@ void UIManager::CheckDedicateWidgetName(std::wstring & name)
 
 void UIManager::FrameDataUpdate()
 {
-    // 오브젝트 매니저가 라이트를 가지고 있는데
-    // 이 라이트는 씬에서 만들어서 넘겨주는?
-    // 디렉션 1개만 포인트 스팟 >> 벡터
-    if (m_directionLight) // 라이트가 있으면 업데이트
-    {
-        dirData.Lightdir = m_directionLight->GetDirFloat4Reverse();
-        dirData.Lightdiff = m_directionLight->GetDiffFloat4();
-        dirData.Lightamb = m_directionLight->GetAmbFloat4();
-        dirData.Lightspec = m_directionLight->GetSpecFloat4();
-        dirData.intensity = m_directionLight->GetIntensity();
-    }
+
 }
 
 void UIManager::FrameDataSubmit()
@@ -471,9 +456,4 @@ void UIManager::FrameDataSubmit()
     renderer->GetCamera().SetOrthoFlag(m_isOrtho);
 
     renderer->BindConstantBuffers_Camera(dirData);
-}
-
-std::unique_ptr<MeshNode> UIManager::CreateMeshNode(const std::wstring& filepath)
-{
-    return Parser::Instance().LoadFile(filepath);
 }

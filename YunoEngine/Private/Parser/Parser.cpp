@@ -17,11 +17,11 @@
 #include <assimp/postprocess.h>
 
 
-std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, XMMATRIX& parentTM, const std::wstring& filepath);
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, XMMATRIX& parentTM, const std::wstring& filepath, PassOption opt);
 std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std::unordered_map<std::string, UINT>& boneNameSet, std::unordered_map<std::string, XMMATRIX>& nameToOffset, const std::string& name);
 void CreateAnimationClip(aiAnimation* anim, const aiScene* scene, std::unordered_map<std::string, UINT>& nameToIndex, AnimationClip* out);
 void CreateBoneNameSet(const aiScene* scene, std::unordered_map<std::string, UINT>& indexOut, std::unordered_map<std::string, XMMATRIX>& matrixOut);
-std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, const std::wstring& filepath);
+std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, const std::wstring& filepath, PassOption opt);
 bool CheckSkeletalModel(const aiScene* scene);
 void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* parent, XMMATRIX parentNodeGlobal, XMMATRIX parentBoneGlobal,
     std::unordered_map<std::string, UINT>& nameToIndex, std::unordered_map<std::string, XMMATRIX>& nameTomOffset);
@@ -41,7 +41,7 @@ std::wstring Utf8ToWString(const char* s)
     return w;
 }
 
-std::unique_ptr<MeshNode> Parser::LoadFile(const std::wstring& filepath)
+std::unique_ptr<MeshNode> Parser::LoadFile(const std::wstring& filepath, PassOption opt)
 {
     Assimp::Importer importer;
 
@@ -78,7 +78,7 @@ std::unique_ptr<MeshNode> Parser::LoadFile(const std::wstring& filepath)
 
     XMMATRIX root = XMMatrixIdentity();
 
-    auto MeshNode = CreateNode(scene->mRootNode, scene, 0, BoneNameToIndex, root, filepath);
+    auto MeshNode = CreateNode(scene->mRootNode, scene, 0, BoneNameToIndex, root, filepath, opt);
 
     return MeshNode;
 }
@@ -359,7 +359,8 @@ void CreateBoneNode(aiNode* node, size_t& curIndex, BoneNode* root, BoneNode* pa
     }
 }
 
-std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, XMMATRIX& parentTM, const std::wstring& filepath)
+std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nodeNum, std::unordered_map<std::string, UINT>& nameToIndex, 
+                                                                            XMMATRIX& parentTM, const std::wstring& filepath, PassOption opt)
 {
     std::wstring name(Utf8ToWString(node->mName.C_Str()));
 
@@ -382,7 +383,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
     for (size_t i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
-        auto [meshkey, matkey] = CreateMesh(aiMesh, scene, nodeNum, nameToIndex, filepath);
+        auto [meshkey, matkey] = CreateMesh(aiMesh, scene, nodeNum, nameToIndex, filepath, opt);
 
         std::string meshname = node->mName.C_Str();
 
@@ -397,7 +398,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
-        auto child = CreateNode(node->mChildren[i], scene, num, nameToIndex, current, filepath); //자식 노드 탐색
+        auto child = CreateNode(node->mChildren[i], scene, num, nameToIndex, current, filepath, opt); //자식 노드 탐색
         if(!child)
             continue;
         meshnode->m_Childs.push_back(std::move(child));
@@ -408,7 +409,7 @@ std::unique_ptr<MeshNode> CreateNode(aiNode* node, const aiScene* scene, int nod
 }
 
 std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* scene, int nodeNum, 
-                                            std::unordered_map<std::string, UINT>& nameToIndex, const std::wstring& filepath)
+                                            std::unordered_map<std::string, UINT>& nameToIndex, const std::wstring& filepath, PassOption opt)
 {
     std::vector<VERTEX_Pos> vtxPos;
     std::vector<VERTEX_Nrm> vtxNrm;
@@ -588,23 +589,38 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
 
     if (aiMaterial)
     {
-        aiString texPath;
+        aiString aitexPath;
         aiReturn ret;
 
         std::wstring texNum;
+        std::wstring texPath;
         
         //AlbedoMap
-        if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == AI_SUCCESS)
+        if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &aitexPath) == AI_SUCCESS)
         {
-            auto wPath = Utf8ToWString(texPath.C_Str());
+            auto wPath = Utf8ToWString(aitexPath.C_Str());
 
-            //assert(wPath.find(L"Albedo") != std::wstring::npos, "Can't Find \"Albedo\" In Texture");
+            int i = (int)wPath.size() - 1;
 
-            texNum = wPath.substr(wPath.find(L".png") - 1, 1);
+            size_t dot = wPath.find_last_of(L'.');
+            if (dot != std::wstring::npos)
+                i = (int)dot - 1;
 
-            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_Albedo_" + texNum + L".png";
-            TextureHandle diff = renderer->CreateColorTexture2DFromFile(texPath.c_str());
+            while (i >= 0 && iswdigit(wPath[i]))
+                i--;
+
+            texNum = wPath.substr(i + 1, dot - (i + 1));
+
+            texPath = filepath.substr(0, filepath.find(L".fbx"));
+            
+            i = (int)texPath.size() - 1;
+            while (i >= 0 && iswdigit(texPath[i]))
+                i--;
+
+            texPath = texPath.substr(0, i + 1);
+
+            auto albedoPath = texPath + L"_Albedo_" + texNum + L".png";
+            TextureHandle diff = renderer->CreateColorTexture2DFromFile(albedoPath.c_str());
 
             md.albedo = diff;
         }
@@ -612,105 +628,120 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
         {
             //assert(false, "Not Include Albedo in File");
             //texNum = wPath.substr(wPath.find(L".png") - 1, 1);
-            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
+            texPath = filepath.substr(0, filepath.find(L".fbx"));
             texNum = std::to_wstring(nodeNum + 1);
-            texPath += L"_Albedo_" + texNum + L".png";
-            TextureHandle diff = renderer->CreateColorTexture2DFromFile(texPath.c_str());
+            int i = (int)texPath.size() - 1;
+            while (i >= 0 && iswdigit(texPath[i]))
+                i--;
+
+            texPath = texPath.substr(0, i + 1);
+
+            auto albedoPath = texPath + L"_Albedo_" + texNum + L".png";
+            TextureHandle diff = renderer->CreateColorTexture2DFromFile(albedoPath.c_str());
 
             md.albedo = diff;
         }
         //NormalMap
-        if (aiMaterial->GetTexture(aiTextureType_NORMALS, 0, &texPath) == AI_SUCCESS)
+        if (aiMaterial->GetTexture(aiTextureType_NORMALS, 0, &aitexPath) == AI_SUCCESS)
         {
-            auto wPath = Utf8ToWString(texPath.C_Str());
+            auto wPath = Utf8ToWString(aitexPath.C_Str());
             TextureHandle nrm = renderer->CreateDataTexture2DFromFile(wPath.c_str());
 
             md.normal = nrm; 
         }
         else 
         {
-            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_Normal_" + texNum + L".png";
+            auto nrmPath = texPath + L"_Normal_" + texNum + L".png";
 
-            TextureHandle nrm = renderer->CreateDataTexture2DFromFile(texPath.c_str());
+            TextureHandle nrm = renderer->CreateDataTexture2DFromFile(nrmPath.c_str());
 
             md.normal = nrm;
         }
         //Metallic
-        if (aiMaterial->GetTexture(aiTextureType_METALNESS, 0, &texPath) == AI_SUCCESS)
+        if (aiMaterial->GetTexture(aiTextureType_METALNESS, 0, &aitexPath) == AI_SUCCESS)
         {
-            auto wPath = Utf8ToWString(texPath.C_Str());
+            auto wPath = Utf8ToWString(aitexPath.C_Str());
             TextureHandle metal = renderer->CreateDataTexture2DFromFile(wPath.c_str());
 
             md.metal = metal; //pbr셰이더용 쓰레기값 추가 텍스쳐 안넣어주면 터짐
         }
         else
         {
-            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_ORM_" + texNum + L".png";
+            auto ormpath = texPath + L"_ORM_" + texNum + L".png";
 
-            TextureHandle orm = renderer->CreateDataTexture2DFromFile(texPath.c_str());
+            TextureHandle orm = renderer->CreateDataTexture2DFromFile(ormpath.c_str());
 
             md.orm = orm;
         }
         //Roughness
-        if (aiMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &texPath) == AI_SUCCESS)
+        if (aiMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &aitexPath) == AI_SUCCESS)
         {
-            auto wPath = Utf8ToWString(texPath.C_Str());
+            auto wPath = Utf8ToWString(aitexPath.C_Str());
             TextureHandle rough = renderer->CreateDataTexture2DFromFile(wPath.c_str());
 
             md.rough = rough;
         }
         else
         {
-            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_ORM_" + texNum + L".png";
+            if (!md.orm)
+            {
+                auto ormpath = texPath + L"_ORM_" + texNum + L".png";
 
-            TextureHandle orm = renderer->CreateDataTexture2DFromFile(texPath.c_str());
+                TextureHandle orm = renderer->CreateDataTexture2DFromFile(ormpath.c_str());
 
-            md.orm = orm;
+                md.orm = orm;
+            }
         }
         //AO
-        if (aiMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &texPath) == AI_SUCCESS)
+        if (aiMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &aitexPath) == AI_SUCCESS)
         {
-            auto wPath = Utf8ToWString(texPath.C_Str());
+            auto wPath = Utf8ToWString(aitexPath.C_Str());
             TextureHandle ao = renderer->CreateDataTexture2DFromFile(wPath.c_str());
 
             md.ao = ao;
         }
         else 
         {
-            auto texPath = filepath.substr(0, filepath.find(L".fbx"));
-            texPath += L"_ORM_" + texNum + L".png";
+            if (!md.orm)
+            {
+                auto ormpath = texPath + L"_ORM_" + texNum + L".png";
 
-            TextureHandle orm = renderer->CreateDataTexture2DFromFile(texPath.c_str());
+                TextureHandle orm = renderer->CreateDataTexture2DFromFile(ormpath.c_str());
 
-            md.orm = orm;
+                md.orm = orm;
+            }
         }
         //Emissive
         {
-            auto wPath = filepath.substr(0, filepath.find(L".fbx"));
-            wPath += L"_Emissive_" + texNum + L".png";
+            auto emPath = texPath + L"_Emissive_" + texNum + L".png";
 
-            TextureHandle emissive = renderer->CreateDataTexture2DFromFile(wPath.c_str());
+            TextureHandle emissive = renderer->CreateDataTexture2DFromFile(emPath.c_str());
 
             md.emissive = emissive;
         }
         //Opacity
         {
-            auto wPath = filepath.substr(0, filepath.find(L".fbx"));
-            wPath += L"_Opacity_" + texNum + L".png";
+            auto opaPath = texPath + L"_Opacity_" + texNum + L".png";
 
-            TextureHandle opacity = renderer->CreateDataTexture2DFromFile(wPath.c_str());
+            TextureHandle opacity = renderer->CreateDataTexture2DFromFile(opaPath.c_str());
 
             md.opacity = opacity;
-            if (opacity)
-            {
-                //md.passKey.blend = BlendPreset::AlphaBlend;
-                //md.passKey.raster = RasterPreset::CullNone;
-            }
+            if(opacity)
+                md.passKey.blend = BlendPreset::AlphaBlend;
         }
 
+        //사용자 설정 패스 Set
+        {
+            if (md.passKey.blend == BlendPreset::Opaque)//다른곳에서 변경됐으면 옵션 무시
+                md.passKey.blend = opt.blend;
+            md.passKey.depth = opt.depth;
+            if (opt.shader != ShaderId::None) //None이면 사용자가 설정 안함->기본 패스 따라감
+            {
+                md.passKey.vs = opt.shader;
+                md.passKey.ps = opt.shader;
+            }
+            md.passKey.raster = opt.raster;
+        }
     }
 
     auto materialHandle = renderer->CreateMaterial(md);

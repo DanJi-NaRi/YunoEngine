@@ -122,6 +122,15 @@
     <Filter Include="Public\Singleton">
       <UniqueIdentifier>{A1C7EAA0-4F7A-4E6C-9F47-7AA0F3B8E00D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Debug">
+      <UniqueIdentifier>{0b07cb2b-aef6-4026-a135-fb112a7f0728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Object\Effect">
+      <UniqueIdentifier>{bd7f24ed-0a06-4029-a303-3345b1e9929b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\effect">
+      <UniqueIdentifier>{c7201cee-dca9-4513-af31-88666aad6757}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -236,6 +245,12 @@
     </ClCompile>
     <ClCompile Include="Public\Object\ObjectTypeRegistry.cpp">
       <Filter>Public\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\Effect.cpp">
+      <Filter>Public\Object\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\EffectManager.cpp">
+      <Filter>Public\Object\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -415,6 +430,15 @@
     <ClInclude Include="Public\Object\ObjectTypeRegistry.h">
       <Filter>Public\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Object\Effect.h">
+      <Filter>Public\Object\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\EffectTemplate.h">
+      <Filter>Public\Object\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\EffectManager.h">
+      <Filter>Public\Object\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>
@@ -459,6 +483,12 @@
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\ShadowMapWrite.hlsl">
       <Filter>Shaders\shadowMap</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\DebugMesh.hlsl">
+      <Filter>Shaders\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\EffectBase.hlsl">
+      <Filter>Shaders\effect</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

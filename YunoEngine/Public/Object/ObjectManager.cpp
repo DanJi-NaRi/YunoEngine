@@ -322,7 +322,7 @@ void ObjectManager::FrameDataSubmit()
     
 }
 
-std::unique_ptr<MeshNode> ObjectManager::CreateMeshNode(const std::wstring& filepath)
+std::unique_ptr<MeshNode> ObjectManager::CreateMeshNode(const std::wstring& filepath, PassOption opt)
 {
-    return Parser::Instance().LoadFile(filepath);
+    return Parser::Instance().LoadFile(filepath, opt);
 }

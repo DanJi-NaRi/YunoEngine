@@ -125,7 +125,7 @@ bool Unit::Update(float dTime)
 bool Unit::Submit(float dTime)
 {
     if (!m_MeshNode) return true;
-    m_MeshNode->Submit(m_mWorld);
+    m_MeshNode->Submit(m_mWorld, m_vPos);
 
     LastSubmit(dTime);
 
@@ -177,6 +177,22 @@ void Unit::SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepa
         return;
 
     m_Meshs[meshindex]->SetTexture(use, filepath);
+}
+
+void Unit::SetMaskColor(const XMFLOAT4& col)
+{
+    for (auto& m : m_Meshs)
+    {
+        m->SetMaskColor(col);
+    }
+}
+
+void Unit::SetOpacity(const float opacity)
+{
+    for (auto& m : m_Meshs)
+    {
+        m->SetOpacity(opacity);
+    }
 }
 
 
@@ -233,6 +249,12 @@ UnitDesc Unit::GetDesc()
     Vec3Desc degRot = { XMConvertToDegrees(m_vRot.x),  XMConvertToDegrees(m_vRot.y),  XMConvertToDegrees(m_vRot.z) };
     d.transform.rotation = degRot; // deg
     d.transform.scale = FromXM(m_vScale);
+
+    std::vector<MaterialDesc> mds;
+    for (auto& m : m_Meshs)
+    {
+        MeshDesc md = m->BuildDesc();
+    }
 
     return d;
 }

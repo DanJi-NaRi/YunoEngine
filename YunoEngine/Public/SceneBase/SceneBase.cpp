@@ -9,6 +9,7 @@
 #include "ObjectManager.h"
 #include "SerializeScene.h"
 #include "UIManager.h"
+#include "EffectManager.h"
 #include "UImgui.h"
 
 std::string WStringToString(const std::wstring& wstr)
@@ -62,19 +63,19 @@ bool SceneBase::OnCreate()
 
 
     m_objectManager = std::make_unique<ObjectManager>();
-    if (!m_objectManager)
+    if (!m_objectManager->Init())
         return false;
 
     m_uiManager = std::make_unique<UIManager>();
-    if (!m_objectManager->Init())
+    if (!m_uiManager->Init())
         return false;
+
+    m_effectManager = std::make_unique<EffectManager>();
+    m_effectManager->Init(30);
 
     if (m_input = YunoEngine::GetInput(); !m_input)
         return false;
 
-    if (!m_uiManager->Init())
-        return false;
-    
     std::wstring filepath = L"../Assets/Scenes/" + Utf8ToWString(GetDebugName()) + L".json";
 
     SceneDesc sd;
@@ -160,7 +161,7 @@ void SceneBase::Update(float dt)
 
     if (m_objectManager) m_objectManager->Update(dt);
     if (m_uiManager)     m_uiManager->Update(dt);
-
+    if (m_effectManager) m_effectManager->Update(dt);
 }
 
 void SceneBase::SubmitObj()
@@ -170,8 +171,10 @@ void SceneBase::SubmitObj()
         m_objectManager->ProcessPending();
         m_objectManager->Submit(m_lastDt);
     }
-
-
+    if (m_effectManager)
+    {
+        m_effectManager->Submit(m_lastDt);
+    }
 }
 
 void SceneBase::SubmitUI()
@@ -351,7 +354,7 @@ void SceneBase::DrawInspector()
 
             if (!editPos)
             {
-                if (UI::DragFloat3("Position##Drag", &pos.x, 0.1f))
+                if (UI::DragFloat3("Position##Drag", &pos.x, 0.01f, 0.0f, 0.0f, "%.2f"))
                 {
                     isChange = true;
                 }

@@ -2,6 +2,7 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <Windowsx.h>
+#include <string>
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -165,7 +166,7 @@ namespace UI
     bool DragFloat3(const char* label, float* v, float speed,
         float v_min, float v_max, const char* format)
     {
-        return ImGui::DragFloat3(label, v, 0.1f, v_min, v_max, format);
+        return ImGui::DragFloat3(label, v, speed, v_min, v_max, format);
     }
 
     bool DragFloat3Editable(
@@ -178,9 +179,17 @@ namespace UI
         bool changed = false;
         static bool edit = false;
 
+        std::string displayLabel = label;
+
+        // ## 뒤 제거
+        size_t pos = displayLabel.find("##");
+        if (pos != std::string::npos)
+            displayLabel = displayLabel.substr(0, pos);
+
         ImGui::PushID(label);
 
-        ImGui::TextUnformatted(label);
+        // 화면에는 displayLabel만 출력
+        ImGui::TextUnformatted(displayLabel.c_str());
         ImGui::SameLine();
 
         const float width = ImGui::CalcItemWidth();

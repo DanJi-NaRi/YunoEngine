@@ -33,16 +33,7 @@ private:
 
     //Camera 투영
     bool m_isOrtho = false;
-
-    template<typename T>
-    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node); //재귀 위젯 생성용
-
-    std::unique_ptr<MeshNode>CreateMeshNode(const std::wstring& filepath);
-
-    std::unique_ptr<YunoDirectionalLight> m_directionLight; // 필요할까?
-
 public:
-    void CreateDirLight();
     void SetOrthoFlag(bool flag) { m_isOrtho = flag; };
 
     // 상위 캔버스의 사이즈를 반환하는 함수.
@@ -117,25 +108,6 @@ T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
 
     m_pendingCreateQ.emplace_back(std::move(widget));
     m_widgetIDs++;
-
-    return pWidget;
-}
-
-// 계층구조 오브젝트 재귀 생성용 (현재 안씀)
-template<typename T>
-T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos, std::unique_ptr<MeshNode>&& node)
-{
-    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
-
-    std::wstring newname = name + L'_' + node->m_name;
-
-    auto widget = std::make_unique<T>();
-    widget->Create(newname, m_widgetIDs++, pos);
-
-    widget->SetMesh(std::move(node));
-
-    auto* pWidget = widget.get();
-    m_pendingCreateQ.emplace_back(std::move(widget));
 
     return pWidget;
 }

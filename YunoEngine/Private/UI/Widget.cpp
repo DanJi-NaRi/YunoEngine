@@ -315,7 +315,7 @@ void Widget::Backup()
 bool Widget::Submit(float dTime)
 {
 
-    m_MeshNode->Submit(m_mWorld);
+    m_MeshNode->Submit(m_mWorld, m_vPos);
 
     LastSubmit(dTime);
 
