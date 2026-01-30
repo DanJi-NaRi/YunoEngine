@@ -9,7 +9,7 @@ class Float2;
 class UIFactory
 {
 public:
-    UIFactory() = delete;
+    UIFactory();
     explicit UIFactory(UIManager& uiManager) : m_uiManager(uiManager) {}
     ~UIFactory();
 

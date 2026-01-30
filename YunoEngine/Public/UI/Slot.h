@@ -13,7 +13,7 @@ public:
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Start() override;
     bool UpdateTransform(float dTime = 0) override;
-    bool UpdateLogic(float dTime = 0) override;
+    bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Slot; }

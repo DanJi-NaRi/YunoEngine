@@ -32,7 +32,9 @@ bool CardSlot::UpdateTransform(float dTime) {
     Slot::UpdateTransform(dTime);
     return true;
 }
-bool CardSlot::UpdateLogic(float dTime) {
+bool CardSlot::Update(float dTime) {
+
+    Slot::Update(dTime);
     return true;
 }
 

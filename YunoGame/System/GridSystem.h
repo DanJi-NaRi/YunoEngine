@@ -44,7 +44,7 @@ protected:
     
 protected:
     GridBox<R>* m_gridBox = nullptr;
-    std::vector<std::unique_ptr<Grid<R>>> m_grids;
+    Grid<R>* m_grids;
 
     std::unique_ptr<GridFactory> m_gridFactory;
 };

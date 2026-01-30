@@ -41,8 +41,9 @@ bool TitleImage::UpdateTransform(float dTime) {
 
     return true;
 }
-bool TitleImage::UpdateLogic(float dTime) {
+bool TitleImage::Update(float dTime) {
 
+    Image::Update(dTime);
     return true;
 }
 

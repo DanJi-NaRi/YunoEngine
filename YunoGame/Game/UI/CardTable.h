@@ -14,7 +14,7 @@ public:
     bool Start() override;
     CardTable* CreateChild() override;
     bool UpdateTransform(float dTime = 0) override;
-    bool UpdateLogic(float dTime = 0) override;
+    bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();
     //void LoadDeck(); void DataSend(); // 외부 서비스로 분리

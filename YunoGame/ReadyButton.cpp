@@ -43,8 +43,9 @@ bool ReadyButton::UpdateTransform(float dTime) {
 
     return true;
 }
-bool ReadyButton::UpdateLogic(float dTime) {
-
+bool ReadyButton::Update(float dTime) {
+    
+    Button::Update(dTime);
     return true;
 }
 

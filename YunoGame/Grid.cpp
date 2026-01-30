@@ -2,12 +2,7 @@
 #include "Grid.h"
 
 
-template class Grid<Unit>;
-template class Grid<Widget>;
-
-
-template<typename T>
-Grid<T>::Grid(int row, int column, float cellSizeX, float cellSizeZ)
+Grid::Grid(int row, int column, float cellSizeX, float cellSizeZ)
 {
     m_row = row;
     m_column = column;
@@ -19,8 +14,8 @@ Grid<T>::Grid(int row, int column, float cellSizeX, float cellSizeZ)
     m_invZ = 1.f / cellSizeZ;
 }
 
-template<typename T>
-I2 Grid<T>::WorldToCell(float x, float z)
+
+I2 Grid::WorldToCell(float x, float z)
 {
     float halfx = m_halfCellsX * m_cellSizeX;
     float halfz = m_halfCellsZ * m_cellSizeZ;
@@ -31,8 +26,8 @@ I2 Grid<T>::WorldToCell(float x, float z)
     return { cx, cz };
 }
 
-template<typename T>
-F2 Grid<T>::CellToWorld(int cx, int cz)
+
+F2 Grid::CellToWorld(int cx, int cz)
 {
     float halfx = m_halfCellsX * m_cellSizeX;
     float halfz = m_halfCellsZ * m_cellSizeZ;
@@ -40,17 +35,10 @@ F2 Grid<T>::CellToWorld(int cx, int cz)
     float wz = -halfz + cz * m_cellSizeZ;
 
     return { wx, -wz };
-    //return { wx, wz };
 }
 
-template<typename T>
-bool Grid<T>::InBounds(int cx, int cz)
-{
-    return (0 <= cx && cx < m_column) && (0 <= cz && cz < m_row);
-}
 
-template<>
-F2 Grid<Widget>::CellToWorld(int cx, int cz)
+F2 Grid::CellToUIWorld(int cx, int cz)
 {
     float halfx = m_halfCellsX * m_cellSizeX;
     float halfz = m_halfCellsZ * m_cellSizeZ;
@@ -58,4 +46,9 @@ F2 Grid<Widget>::CellToWorld(int cx, int cz)
     float wz = -halfz + cz * m_cellSizeZ;
 
     return { wx, wz };
+}
+
+bool Grid::InBounds(int cx, int cz)
+{
+    return (0 <= cx && cx < m_column) && (0 <= cz && cz < m_row);
 }

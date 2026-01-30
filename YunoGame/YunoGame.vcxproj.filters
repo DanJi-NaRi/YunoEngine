@@ -210,6 +210,16 @@
     <ClCompile Include="GridBox.cpp" />
     <ClCompile Include="Game\Object\GridLine.cpp" />
     <ClCompile Include="MinimapQueue.cpp" />
+    <ClCompile Include="WidgetGridLine.cpp" />
+    <ClCompile Include="UnitGridLine.cpp" />
+    <ClCompile Include="WidgetPiece.cpp" />
+    <ClCompile Include="UnitPiece.cpp" />
+    <ClCompile Include="WidgetTile.cpp" />
+    <ClCompile Include="UnitTile.cpp" />
+    <ClCompile Include="WidgetGridBox.cpp" />
+    <ClCompile Include="UnitGridBox.cpp" />
+    <ClCompile Include="UnitGridSystem.cpp" />
+    <ClCompile Include="WidgetGridSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -331,6 +341,16 @@
     <ClInclude Include="Grid.h" />
     <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="MinimapQueue.h" />
+    <ClInclude Include="WidgetGridLine.h" />
+    <ClInclude Include="UnitGridLine.h" />
+    <ClInclude Include="WidgetPiece.h" />
+    <ClInclude Include="UnitPiece.h" />
+    <ClInclude Include="WidgetTile.h" />
+    <ClInclude Include="UnitTile.h" />
+    <ClInclude Include="WidgetGridBox.h" />
+    <ClInclude Include="UnitGridBox.h" />
+    <ClInclude Include="UnitGridSystem.h" />
+    <ClInclude Include="WidgetGridSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

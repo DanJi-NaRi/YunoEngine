@@ -95,6 +95,7 @@ private:
 template<typename T>
 void ObjectManager::CreateObjectInternal(const UnitDesc& desc)
 {
+    static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
     Unit* obj;
     if (desc.meshPath.empty()) //메쉬파일 없는 오브젝트
     {

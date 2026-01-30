@@ -34,8 +34,10 @@ bool Card::UpdateTransform(float dTime) {
     return true;
 }
 
-bool Card::UpdateLogic(float dTime) {
+bool Card::Update(float dTime) {
     m_pDrag->UpdateDrag(dTime);
+
+    Button::Update(dTime);
     return true;
 }
 

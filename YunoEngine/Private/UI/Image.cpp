@@ -60,9 +60,9 @@ bool Image::UpdateTransform(float dTime)
     return true;
 }
 
-bool Image::UpdateLogic(float dTime)
+bool Image::Update(float dTime)
 {
-    //Widget::UpdateLogic(dTime);
+    Widget::Update(dTime);
 
     return true;
 }
