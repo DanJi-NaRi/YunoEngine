@@ -156,32 +156,29 @@ bool Widget::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
     return true;
 }
 
-bool Widget::AddMaterial(std::wstring path)
+bool Widget::AddMaterial(const std::wstring& path, MaterialDesc& desc)
 {
-    int beforeSize = m_addMaterial.size();
+    MaterialDesc d = desc;
 
-    MaterialDesc md{};
-    md.passKey.vs = ShaderId::UIBase;
-    md.passKey.ps = ShaderId::UIBase;
-    md.passKey.vertexFlags = VSF_Pos | VSF_UV;
+    auto albedo = m_pTextures->LoadTexture2D(path.c_str());
+    if (!albedo) return false;          // LoadTexture2D 실패 규약에 맞게 수정
 
-    md.passKey.blend = BlendPreset::AlphaBlend;
-    md.passKey.raster = RasterPreset::CullNone;
-    md.passKey.depth = DepthPreset::Off;
+    d.albedo = albedo;
 
-    md.albedo = m_Albedo;
-    //md.albedo = 0;
-    md.normal = 0;
-    md.orm = 0;
+    MaterialHandle mtrl = m_pRenderer->CreateMaterial(d);
+    if (mtrl == 0) return false;        // invalid 규약에 맞게 수정
 
-    md.metal = 0;
-    md.rough = 0;
-    md.ao = 0;
+    m_materials.push_back(mtrl);
+    return true;
+}
 
-    m_addMaterial.push_back(m_pRenderer->CreateMaterial(md));
-    if (beforeSize == m_addMaterial.size()) return false;
-    
-    return false;
+bool Widget::AddMaterial(MaterialDesc& desc)
+{
+    MaterialHandle mtrl = m_pRenderer->CreateMaterial(desc);
+    if (mtrl == 0) return false;
+
+    m_materials.push_back(mtrl);
+    return true;
 }
 
 
@@ -213,6 +210,35 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     //m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
 
     // Rect 갱신은 Update()에서
+
+    if (!m_pInput || !m_pRenderer || !m_pTextures)
+        return false;
+
+
+    //if (!CreateMesh())
+    //    return false;
+    m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
+    if (m_defaultMesh == 0)return false;
+    //if (!CreateMaterial()) // 생성 안되면 기본 생성
+    //    return false;
+
+    if (!CreateMaterial()) return false;
+
+    m_MeshNode = std::make_unique<MeshNode>();
+
+    auto mesh = std::make_unique<Mesh>();
+    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+    m_MeshNode->m_Meshs.push_back(std::move(mesh));
+
+    {
+        m_constant.baseColor = XMFLOAT4(1, 1, 1, 1);
+        m_constant.roughRatio = 1.0f;
+        m_constant.metalRatio = 1.0f;
+        m_constant.shadowBias = 0.005f;
+    }
+
+    Backup();
+
     Widget::UpdateTransform();
 
     return true;
@@ -440,6 +466,14 @@ void Widget::SetMesh(std::unique_ptr<MeshNode>&& mesh)
     m_MeshNode = std::move(mesh);
 }
 
+bool Widget::SwapMaterial(int num)
+{
+    if(num < 0 && m_materials.size() <= num) return false;
+
+    m_renderItem.materialHandle = m_materials[num];
+    return true;
+}
+
 void Widget::Attach(Widget* widget) // this가 부모, 파라미터로 자식
 {
     if (!widget || widget == this) return;
@@ -450,7 +484,8 @@ void Widget::Attach(Widget* widget) // this가 부모, 파라미터로 자식
     auto [it, inserted] = m_Childs.insert({ widget->GetID(), widget });
     assert(inserted && "Widget::Attach - duplicate child ID in m_Childs");
     if (!inserted) return; // 릴리즈 대비 안전장치
-
+    
+    widget->SetLayer(this->m_layer); // 초회차 1번 부모 레이어 따라감
     widget->m_Parent = this;
     widget->SetIsRoot(false);   // 부모 아님을 인증
 }

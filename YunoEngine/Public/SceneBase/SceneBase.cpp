@@ -176,12 +176,19 @@ void SceneBase::SubmitObj()
 
 void SceneBase::SubmitUI()
 {
-    if (m_uiManager)
+    /*if (m_uiManager)
     {
         m_uiManager->ProcessPending();
         m_uiManager->Submit(m_lastDt);
-    }
+    }*/
+    assert(m_uiManager);
+    if (!m_uiManager) return;
+    m_uiManager->ProcessPending();
+
+    //m_uiManager->Submit(m_lastDt);    // 레이어 비적용 Submit
+    m_uiManager->LayerSubmit(m_lastDt); // 레이어 적용 Submit
 }
+
 
 #ifdef _DEBUG
 void SceneBase::DrawObjectList()
