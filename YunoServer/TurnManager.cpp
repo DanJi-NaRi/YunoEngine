@@ -61,12 +61,12 @@ namespace yuno::server
 
         //  테스트용 하드코딩 결과
         pkt.deltas.push_back({
-            0,      // slot
-            0,       //unit   
-            10,    // hp
+            1,      // slot
+            1,      // unit   
+            90,     // hp
             0,      // stamina
             1,      // TagettileID
-            0,
+            0,      // dir
             });
 
 
