@@ -2040,6 +2040,8 @@ bool YunoRenderer::CreateDefaultQuadMesh()
 
     m_defaultQuadMesh = CreateMesh(vs, idx, 2);
     if (!m_defaultQuadMesh) return false;
+
+    return true;
 }
 
 MeshHandle YunoRenderer::GetQuadMesh()
