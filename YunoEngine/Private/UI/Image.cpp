@@ -12,37 +12,6 @@ Image::~Image()
 bool Image::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Widget::Create(name, id, vPos);
-    if (!m_pInput || !m_pRenderer || !m_pTextures)
-        return false;
-
-
-    if (!CreateMesh())
-    {
-        return false;
-    }
-
-
-    if (!CreateMaterial())
-    {
-        return false;
-    }
-
-
-
-    m_MeshNode = std::make_unique<MeshNode>();
-
-    auto mesh = std::make_unique<Mesh>();
-    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
-    m_MeshNode->m_Meshs.push_back(std::move(mesh));
-     
-    {
-        m_constant.baseColor = XMFLOAT4(1, 1, 1, 1);
-        m_constant.roughRatio = 1.0f;
-
-        m_constant.metalRatio = 1.0f;
-        m_constant.shadowBias = 0.005f;
-    }
-    Backup();
 
     return true;
 
@@ -120,15 +89,16 @@ bool Image::CreateMaterial()
         return false;
 
 
-    //m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
+    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
 
-    // 추가 머테리얼 생성
-    //md.passKey.raster = RasterPreset::CullNone;
-    //md.albedo = m_Albedo;
+     //추가 머테리얼 생성
+    md.passKey.raster = RasterPreset::CullNone;
+    md.albedo = m_Albedo;
 
-    //m_addMaterial = m_pRenderer->CreateMaterial(md);
-    //if (m_addMaterial == 0)
-    //    return false;
+    MaterialHandle mtrl = m_pRenderer->CreateMaterial(md);
+    m_materials.push_back(mtrl);
+    if (mtrl != m_materials.back())
+        return false;
 
     return true;
 }

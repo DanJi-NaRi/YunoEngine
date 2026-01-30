@@ -68,6 +68,27 @@ void UIManager::Submit(float dTime)
     }
 }
 
+void UIManager::LayerSubmit(float dTime)
+{
+    // Submit중 변경되지 않는다는 보장이 필요함.
+
+    FrameDataSubmit();
+
+    std::array<std::vector<Widget*>, (int)WidgetLayer::Count> layerWidgets;
+
+    for (auto& pushWidget : m_widgets) {
+        layerWidgets[(int)pushWidget->GetLayer()].push_back(pushWidget.get()); // 레이어 받아넣기
+    }
+
+    for (auto& widgetVec : layerWidgets)
+    {
+        for (auto& widget : widgetVec) {
+            if (widget->GetIsRoot()) // 체이닝
+                widget->Submit(dTime);
+        }
+    }
+}
+
 void UIManager::GetSurface()
 {
 

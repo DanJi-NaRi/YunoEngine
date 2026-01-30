@@ -66,6 +66,7 @@ enum class WidgetLayer : int {
     Modal,    // 입력 차단
     Tooltip,  
     DebugTop, // 디버그용 최상단 고정 레이어
+    Count,
 };
 
 struct Float2;
@@ -119,7 +120,7 @@ protected:
 
     uint32_t m_id;
     WidgetType m_type;
-    WidgetLayer m_sortLayer; // 자식은 부모의 레이어를 따라감
+    WidgetLayer m_layer; // 자식은 부모의 레이어를 따라감
 
     std::wstring m_name;
 
@@ -182,9 +183,10 @@ protected:
     float       m_time;
 
     RenderItem      m_renderItem;
-    MeshHandle      m_defaultMesh;
-    MaterialHandle  m_defaultMaterial;
-    std::vector<MaterialHandle>  m_addMaterial;
+    MeshHandle      m_defaultMesh;          // 현재 사용 메쉬
+    MaterialHandle  m_defaultMaterial;      // 현재 사용 머테리얼
+    std::vector<MaterialHandle> m_materials; // 스왑용 현재(0) + 추가 머테리얼
+
     TextureHandle   m_Albedo;
     TextureHandle   m_Normal;
     TextureHandle   m_Orm;
@@ -258,10 +260,9 @@ public:
     virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
     Float3        SetCanvasSizeX(Float3 sizeXY)   { m_canvasSize = sizeXY; }
     void          SetIsRoot(bool isRoot) { m_isRoot = isRoot; }
+    void          SetLayer(WidgetLayer layer) { m_layer = layer; }
 
 
-    bool GetIsRoot(bool isRoot) { return m_isRoot; }
-    bool HasMeshNode() const { return m_MeshNode.get() != nullptr; }
 
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
@@ -269,7 +270,14 @@ public:
     XMFLOAT3& GetPos() { return m_vPos; }
     XMFLOAT3& GetRot() { return m_vRot; }
     XMFLOAT3& GetScale() { return m_vScale; }
-
+    uint32_t GetID() { return m_id; }
+    const std::wstring& GetName() const { return m_name; }
+    XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
+    const RECT GetRect() const { return m_rect; }
+    const Float2 GetPivot() { return m_pivot; }
+    bool GetIsRoot() { return m_isRoot; }
+    WidgetLayer GetLayer() { return m_layer; }
+    bool HasMeshNode() const { return m_MeshNode.get() != nullptr; }
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();
@@ -293,17 +301,13 @@ public:
 
     virtual bool CreateMaterial() { return CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };
 
-    virtual bool AddMaterial(std::wstring path);
+    virtual bool AddMaterial(const std::wstring& path, MaterialDesc& desc);
+
+    virtual bool AddMaterial(MaterialDesc& desc);
 
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 
-    uint32_t GetID() { return m_id; }
-    const std::wstring& GetName() const { return m_name; }
-
-    XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
-    const RECT GetRect() const { return m_rect; }
-    const Float2 GetPivot() { return m_pivot; }
-    bool GetIsRoot() { return m_isRoot; }
+    bool SwapMaterial(int num);
 
     void Attach(Widget* obj);
     void DettachParent();
