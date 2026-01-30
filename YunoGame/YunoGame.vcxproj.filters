@@ -336,7 +336,7 @@
     <ClInclude Include="UnitGridBox.h" />
     <ClInclude Include="UnitGridSystem.h" />
     <ClInclude Include="WidgetGridSystem.h" />
-    <ClInclude Include="CardRangeManager.h">
+    <ClInclude Include="CardRangeManager.h"/>
     <ClInclude Include="Game\Object\CardActData.h">
       <Filter>Card</Filter>
     </ClInclude>
