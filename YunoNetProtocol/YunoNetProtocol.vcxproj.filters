@@ -81,6 +81,15 @@
     <ClInclude Include="Public\Net\S2CPackets\S2C_RoundStart.h">
       <Filter>Public</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_StartCardList.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_BattlePackets.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_BattlePackets.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Net\ByteIO.cpp">
@@ -127,6 +136,15 @@
     </ClCompile>
     <ClCompile Include="Private\Net\S2CPackets\S2C_RoundStart.cpp">
       <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_StartCardList.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_BattlePackets.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_BattlePackets.cpp">
+      <Filter>Private\Network\Packets</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

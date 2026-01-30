@@ -19,14 +19,15 @@ namespace yuno::net
         C2S_SubmitWeapon = 4,   // 무기 선택 제출 (weaponId)
         C2S_SubmitCard = 5,   // 카드 제출 (cardId)
         C2S_Ping = 6,
-
+        C2S_ReadyTurn = 7,
         // S2C
         S2C_EnterOK = 128,  // 매치 진입 승인
         S2C_ReadyState = 129,  // 양측 준비 상태 동기화
         S2C_CountDown = 130,  // 카운트다운 시작/동기화
         S2C_RoundStart = 131,  // 게임 시작
         S2C_BattleResult = 133,  // 전투 결과/상태 갱신
-        S2C_Pong = 134,
+        S2C_TestCardList = 134, //카드id 배정
+        S2C_Pong = 135,
 
         // System / Error
         S2C_Error = 240, // 에러 코드/메시지

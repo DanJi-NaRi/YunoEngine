@@ -16,11 +16,25 @@
       <Filter>ServerNetwork</Filter>
     </ClCompile>
     <ClCompile Include="MatchManager\MatchManager.cpp" />
+    <ClCompile Include="RoundController.cpp" />
+    <ClCompile Include="ServerCardDealer.cpp" />
+    <ClCompile Include="ServerCardRuntime.cpp" />
+    <ClCompile Include="ServerCardManager.cpp" />
+    <ClCompile Include="TurnManager.cpp" />
+    <ClCompile Include="ServerCardRangeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ServerNetwork\YunoServerNetwork.h">
       <Filter>ServerNetwork</Filter>
     </ClInclude>
     <ClInclude Include="MatchManager\MatchManager.h" />
+    <ClInclude Include="RoundController.h" />
+    <ClInclude Include="ServerCardDealer.h" />
+    <ClInclude Include="ServerCardRuntime.h" />
+    <ClInclude Include="ServerCardManager.h" />
+    <ClInclude Include="ServerCardData.h" />
+    <ClInclude Include="ServerCardActData.h" />
+    <ClInclude Include="TurnManager.h" />
+    <ClInclude Include="ServerCardRangeManager.h" />
   </ItemGroup>
 </Project>

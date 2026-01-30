@@ -79,9 +79,6 @@
     <Filter Include="Scenes\1.WeaponSelect">
       <UniqueIdentifier>{1c2f987f-6b77-44ce-a3a6-b92c2ad7a991}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scenes\0.Title">
-      <UniqueIdentifier>{27fecdf2-c2ce-454b-8699-682c736c1721}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scenes\2.Play">
       <UniqueIdentifier>{189cae2d-f9fe-415c-9418-9da38eb5e240}</UniqueIdentifier>
     </Filter>
@@ -99,6 +96,9 @@
     </Filter>
     <Filter Include="Scenes\999.RenderTest">
       <UniqueIdentifier>{901ca8d6-4b9c-4f90-bdac-f4eacc332766}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\1.WeaponSelect\0.Title">
+      <UniqueIdentifier>{27fecdf2-c2ce-454b-8699-682c736c1721}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -157,7 +157,7 @@
       <Filter>Game\UI\Slot</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\TitleScene.cpp">
-      <Filter>Scenes\0.Title</Filter>
+      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\WeaponSelectScene.cpp">
       <Filter>Scenes\1.WeaponSelect</Filter>
@@ -197,12 +197,9 @@
     <ClCompile Include="Game\UI\TitleImage.cpp" />
     <ClCompile Include="Game\UI\UserImage.cpp" />
     <ClCompile Include="Scenes\Title.cpp">
-      <Filter>Scenes\0.Title</Filter>
+      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
     </ClCompile>
     <ClCompile Include="Game\UI\Card.cpp">
-      <Filter>Card</Filter>
-    </ClCompile>
-    <ClCompile Include="CardManager.cpp">
       <Filter>Card</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\RenderTest.cpp">
@@ -210,6 +207,9 @@
     </ClCompile>
     <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp">
       <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="CardManager.cpp">
+      <Filter>Card</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -284,7 +284,7 @@
     </ClInclude>
     <ClInclude Include="Game\UI\UIWidgets.h" />
     <ClInclude Include="Scenes\TitleScene.h">
-      <Filter>Scenes\0.Title</Filter>
+      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\WeaponSelectScene.h">
       <Filter>Scenes\1.WeaponSelect</Filter>
@@ -327,9 +327,12 @@
     <ClInclude Include="Game\UI\TitleImage.h" />
     <ClInclude Include="Game\UI\UserImage.h" />
     <ClInclude Include="Scenes\Title.h">
-      <Filter>Scenes\0.Title</Filter>
+      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
     </ClInclude>
     <ClInclude Include="MiniMap.h" />
+    <ClInclude Include="CardQueue.h">
+      <Filter>Card</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GridLine.tpp">
@@ -337,6 +340,9 @@
     </None>
     <ClInclude Include="Game\UI\Card.h">
       <Filter>Card</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\RenderTest.h">
+      <Filter>Scenes\999.RenderTest</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\CardActData.h">
       <Filter>Card</Filter>
@@ -346,9 +352,6 @@
     </ClInclude>
     <ClInclude Include="CardManager.h">
       <Filter>Card</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenes\RenderTest.h">
-      <Filter>Scenes\999.RenderTest</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

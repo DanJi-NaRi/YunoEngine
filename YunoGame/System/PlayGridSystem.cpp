@@ -126,8 +126,8 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     for (int i = 0; i < m_tiles.size() - 1; i++)
     {
         auto [wx, wz] = CellToWorld(i % m_column, i / m_column);
-        //auto pTile = m_objectManager->CreateObject<Tile>(L"Tile", XMFLOAT3(wx, y, wz));
-        auto pTile = m_objectManager->CreateObjectFromFile<Piece>(L"Tile", XMFLOAT3(wx, y, wz), L"../Assets/fbx/Tile.fbx");
+        auto pTile = m_objectManager->CreateObject<Tile>(L"Tile", XMFLOAT3(wx, y, wz));
+        //auto pTile = m_objectManager->CreateObjectFromFile<Piece>(L"Tile", XMFLOAT3(wx, y, wz), L"../Assets/fbx/Tile.fbx");
         pTile->SetScale({ m_cellSizeX * 0.8f, 1, m_cellSizeZ * 0.8f });
         m_tilesIDs.push_back(pTile->GetID());
 

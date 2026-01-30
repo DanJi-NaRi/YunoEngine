@@ -26,12 +26,9 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::Card; }
 
-    PieceMask GetUnitMask() const { return m_data.m_allowedUnits; }
-    CardData GetCardData() const { return m_data; }
-
+    void SetCardID(int id) { m_cardID = id; }
 protected:
-    CardData m_data;                // 카드 데이터
-    CardActData m_atkData;          // 공격 데이터
+    int m_cardID = -1;
 };
 
 

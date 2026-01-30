@@ -4,7 +4,7 @@
 
 // 이거로 게임 관리할거임
 #include "GameManager.h"
-
+#include "Card.h"
 
 #include "PacketBuilder.h"
 
@@ -15,8 +15,11 @@
 #include "S2C_ReadyState.h"
 #include "S2C_CountDown.h"
 #include "S2C_RoundStart.h"
+#include "S2C_BattlePackets.h"
 
 #include "C2S_SubmitWeapon.h"
+
+#include "S2C_StartCardList.h"
 
 
 
@@ -301,9 +304,74 @@ namespace yuno::game
 
             } );// Error Packet End
     
+        // TestCardList Packet Start
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_TestCardList,
+            [this](const NetPeer& peer,
+                const PacketHeader& header,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                ByteReader r(body, bodyLen);
+                const auto pkt =
+                    yuno::net::packets::S2C_TestCardList::Deserialize(r);
 
+                GameManager::Get().SetTestCardRuntimeIDs(pkt.runtimeIDs);
 
-}
+                std::cout << "[Client] TestCardList stored. count="
+                    << pkt.runtimeIDs.size() << "\n";
+            }
+        );// TestCardList Packet End
+
+        // BattleResult Packet Start
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_BattleResult,
+            [this](const NetPeer& peer,
+                const PacketHeader& header,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                if (body == nullptr || bodyLen == 0)
+                    return;
+
+                ByteReader r(body, bodyLen);
+                const auto pkt =
+                    yuno::net::packets::S2C_BattleResult::Deserialize(r);
+
+                GameManager& gm = GameManager::Get();
+
+                // 어떤 카드 결과인지 (지금은 로그용)
+                std::cout << "[Client] BattleResult runtimeCardId="
+                    << pkt.runtimeCardId
+                    << " ownerSlot=" << static_cast<int>(pkt.ownerSlot)
+                    << "\n";
+
+                // delta 처리
+                for (const auto& d : pkt.deltas)
+                {
+                    const int slot = static_cast<int>(d.ownerSlot);
+                    const int unit = static_cast<int>(d.unitLocalIndex);
+
+                    std::cout
+                        << "[Client] Apply Delta | slot=" << slot
+                        << " unit=" << unit
+                        << " hpDelta=" << d.hpDelta
+                        << " staminaDelta=" << d.staminaDelta
+                        << " move=(" << d.xDelta << "," << d.yDelta << ")\n";
+
+                    //  여기서 실제 유닛 상태 반영
+                    /*gm.ApplyUnitDelta(
+                        slot,
+                        unit,
+                        d.hpDelta,
+                        d.staminaDelta,
+                        d.xDelta,
+                        d.yDelta
+                    );*/
+                }
+            }
+        );// BattleResult Packet End
+    }
 
 
 }

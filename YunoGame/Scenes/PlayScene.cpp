@@ -5,6 +5,7 @@
 #include "YunoEngine.h"
 
 #include "ObjectManager.h"
+#include "GameManager.h"
 #include "YunoLight.h"
 #include "YunoCamera.h"
 #include "IInput.h"
@@ -59,6 +60,43 @@ void PlayScene::OnDestroyScene()
 
 }
 
+//TODO:  UIScene에 OnCardButtonClicked함수로 옮겨야 함
+void PlayScene::HandleCardSelect(int key, int index)
+{
+    if (!m_input->IsKeyPressed(key))
+        return;
+    
+    uint32_t runtimeID =
+        GameManager::Get().GetTestCardRuntimeIDByIndex(index);
+
+    if (runtimeID == 0)
+        return;
+
+    if (m_cardQueue.Push(runtimeID))
+    {
+        std::cout << "[Card Select] runtimeID = "
+            << runtimeID << "\n";
+    }
+    else
+    {
+        std::cout << "[Card Select] Queue Full\n";
+    }
+}
+
+//TODO: 디버깅용 나중에는 UI씬에 OnEndTurnClicked함수 만들어서 옮겨야함
+void PlayScene::EndTurn()
+{
+    if (m_cardQueue.IsEmpty())
+        return;
+
+    GameManager::Get().SubmitTurn(m_cardQueue.Get());
+    // TODO:
+    // - 입력 잠금
+    // - 서버에서 턴 결과 올 때까지 대기
+    // - 결과 수신 시 큐 Clear
+}
+
+
 void PlayScene::TestInput()
 {
     // 테스트용 -> ally1으로 부여한 기물이 움직여용
@@ -101,6 +139,24 @@ void PlayScene::TestInput()
     if (m_input->IsKeyPressed(0x30))
     {
         PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 3));   // 충돌
+    }
+
+    // 디버깅용
+    // 카드 선택 (넘버패드 = UI 버튼 대용)
+    HandleCardSelect(VK_NUMPAD1, 0);
+    HandleCardSelect(VK_NUMPAD2, 1);
+    HandleCardSelect(VK_NUMPAD3, 2);
+    HandleCardSelect(VK_NUMPAD4, 3);
+    HandleCardSelect(VK_NUMPAD5, 4);
+    HandleCardSelect(VK_NUMPAD6, 5);
+    HandleCardSelect(VK_NUMPAD7, 6);
+    HandleCardSelect(VK_NUMPAD8, 7);
+    HandleCardSelect(VK_NUMPAD9, 8);
+
+    // 엔드 턴
+    if (m_input->IsKeyPressed(VK_RETURN))
+    {
+        EndTurn();
     }
 }
 

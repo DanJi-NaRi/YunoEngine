@@ -7,6 +7,17 @@
 #include "PacketDispatcher.h"   // YunoNetProtocol
 #include "NetPeer.h"            // YunoNetProtocol
 #include "MatchManager.h"
+#include "ServerCardRuntime.h"
+#include "ServerCardManager.h"
+#include "ServerCardRangeManager.h"
+#include "RoundController.h"
+#include "ServerCardDealer.h"
+#include "TurnManager.h"
+
+namespace yuno::net
+{
+    class TcpSession;
+}
 
 namespace yuno::server
 {
@@ -25,6 +36,11 @@ namespace yuno::server
 
         yuno::net::PacketDispatcher& Dispatcher() { return m_dispatcher; }
 
+        // 래퍼
+    public:
+        void Broadcast(std::vector<std::uint8_t>&& bytes);
+
+        std::shared_ptr<yuno::net::TcpSession> FindSession(std::uint64_t sessionId);
         // 핸들러 등록
     public:
         void RegisterMatchPacketHandler();
@@ -38,5 +54,13 @@ namespace yuno::server
     private:
         MatchManager m_match;
         bool m_countdownSent = false;
+        
+        ServerCardDealer  m_cardDealer;
+        ServerCardManager m_cardDB;
+        ServerCardRangeManager m_cardRangeDB;
+        ServerCardRuntime m_cardRuntime;
+        RoundController m_roundController;
+        TurnManager m_turnManager;
+
     };
 }

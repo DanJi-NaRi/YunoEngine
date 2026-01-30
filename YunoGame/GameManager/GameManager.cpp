@@ -11,6 +11,10 @@
 #include "PlayScene.h"
 #include "YunoClientNetwork.h"
 
+//패킷
+#include "PacketBuilder.h"
+#include "C2S_BattlePackets.h"
+#include "C2S_ReadySet.h"
 GameManager* GameManager::s_instance = nullptr;
 
 
@@ -166,6 +170,23 @@ bool GameManager::ToggleReady()
 {
     m_isReady = !m_isReady;
     return m_isReady;
+}
+
+void GameManager::SubmitTurn(const std::vector<uint32_t>& runtimeIDs)
+{
+    using namespace yuno::net;
+
+    packets::C2S_ReadyTurn pkt;
+    pkt.runtimeIDs = runtimeIDs;
+
+    auto bytes = PacketBuilder::Build(
+        PacketType::C2S_ReadyTurn,
+        [&](ByteWriter& w)
+        {
+            pkt.Serialize(w);
+        });
+
+    m_clientNet->SendPacket(std::move(bytes));
 }
 
 //void GameManager::RoundInit(yuno::net::packets::S2C_Error data)
