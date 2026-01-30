@@ -8,6 +8,8 @@
 #include "YunoShaderCompiler.h"
 #include "YunoShader.h"
 
+//dxtk
+#include <directxtk/SpriteFont.h>
 
 //imgui
 #include "ImGuiManager.h"
