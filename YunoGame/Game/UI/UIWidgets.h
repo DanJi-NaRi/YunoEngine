@@ -16,6 +16,7 @@ Slot,
 #include "Image.h"
 
 // Image 파생 클래스
+#include "Letterbox.h"
 #include "CardTable.h"
 #include "UserImage.h"
 //////////////////////////////

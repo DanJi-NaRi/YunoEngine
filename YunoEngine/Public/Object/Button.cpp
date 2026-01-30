@@ -4,7 +4,7 @@
 #include "IInput.h"
 #include "DragProvider.h"
 
-Button::Button(UIManager* uiManager) : Widget(uiManager)
+Button::Button(UIFactory& uiFactory) : Widget(uiFactory)
 {
     Clear();
 }
@@ -49,15 +49,23 @@ bool Button::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool Button::Update(float dTime)
+bool Button::Start()
 {
-    ButtonUpdate(dTime);
-    Widget::Update(dTime);
+    return true;
+}
 
-    //std::cout << m_BtnState << std::endl;
+bool Button::UpdateTransform(float dTime) {
+    Widget::UpdateTransform(dTime);
 
     return true;
 }
+bool Button::UpdateLogic(float dTime) {
+    ButtonUpdate(dTime);
+
+    //std::cout << m_BtnState << std::endl;
+    return true;
+}
+
 
 bool Button::Submit(float dTime)
 {

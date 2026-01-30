@@ -7,7 +7,7 @@
 #include "GameManager.h"
 #include "UserImage.h"
 
-WeaponButton::WeaponButton(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+WeaponButton::WeaponButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
@@ -30,9 +30,13 @@ bool WeaponButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool WeaponButton::Update(float dTime)
-{
-    Button::Update(dTime);
+bool WeaponButton::UpdateTransform(float dTime) {
+    Button::UpdateTransform(dTime);
+
+    return true;
+}
+bool WeaponButton::UpdateLogic(float dTime) {
+
     return true;
 }
 

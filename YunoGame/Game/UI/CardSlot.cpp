@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CardSlot.h"
 
-CardSlot::CardSlot(UIManager* uiManager) : Slot(uiManager)
+CardSlot::CardSlot(UIFactory& uiFactory) : Slot(uiFactory)
 {
     Clear();
 }
@@ -21,9 +21,18 @@ bool CardSlot::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool CardSlot::Update(float dTime)
+bool CardSlot::Start()
 {
-    Slot::Update(dTime);
+    Slot::Start();
+
+    return true;
+}
+
+bool CardSlot::UpdateTransform(float dTime) {
+    Slot::UpdateTransform(dTime);
+    return true;
+}
+bool CardSlot::UpdateLogic(float dTime) {
     return true;
 }
 

@@ -168,6 +168,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h" />
+    <ClInclude Include="Public\UI\Letterbox.h" />
     <ClInclude Include="Public\Object\Effect.h" />
     <ClInclude Include="Public\Object\EffectManager.h" />
     <ClInclude Include="Public\Object\EffectTemplate.h" />
@@ -237,12 +238,14 @@
     <ClInclude Include="Public\UI\Slot.h" />
     <ClInclude Include="Public\UI\Widget.h" />
     <ClInclude Include="Public\UI\UITool\UIManager.h" />
+    <ClInclude Include="Public\UI\UITool\UIFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EnginePCH\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Private\UI\Letterbox.cpp" />
     <ClCompile Include="Private\UI\UITool\CursurSystem.cpp" />
     <ClCompile Include="Private\UI\UITool\DragProvider.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -290,6 +293,7 @@
     <ClCompile Include="Private\UI\Text.cpp" />
     <ClCompile Include="Private\UI\Slot.cpp" />
     <ClCompile Include="Private\UI\UITool\UIManager.cpp" />
+    <ClCompile Include="Private\UI\UITool\UIFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">

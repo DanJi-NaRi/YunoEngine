@@ -13,7 +13,7 @@
 
 
 
-ReadyButton::ReadyButton(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+ReadyButton::ReadyButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
@@ -37,9 +37,14 @@ bool ReadyButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool ReadyButton::Update(float dTime)
-{
-    Button::Update(dTime);
+
+bool ReadyButton::UpdateTransform(float dTime) {
+    Button::UpdateTransform(dTime);
+
+    return true;
+}
+bool ReadyButton::UpdateLogic(float dTime) {
+
     return true;
 }
 

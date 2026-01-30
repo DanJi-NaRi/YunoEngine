@@ -5,10 +5,11 @@
 class WeaponButton : public Button
 {
 public:
-    WeaponButton(UIManager* uiManager);
+    WeaponButton(UIFactory& uiFactory);
     virtual ~WeaponButton();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
-    bool Update(float dTime = 0) override;
+    bool UpdateTransform(float dTime = 0) override;
+    bool UpdateLogic(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();
 

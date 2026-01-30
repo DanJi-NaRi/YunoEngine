@@ -5,7 +5,7 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 
-ButtonTemplate::ButtonTemplate(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+ButtonTemplate::ButtonTemplate(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
@@ -22,6 +22,7 @@ void ButtonTemplate::Clear()
     // 특정한 곳에서만 사용한다면, 그 곳에 따로 로직을 작성하도록 하자.
 
     // m_pData = nullptr;
+    m_SetCardSlots = nullptr;
 }
 
 bool ButtonTemplate::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
@@ -47,10 +48,30 @@ bool ButtonTemplate::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos
     return true;
 }
 
-bool ButtonTemplate::Update(float dTime)
+ButtonTemplate* ButtonTemplate::CreateChild()
 {
+    // 자식 생성 공간, 고정 하위 위젯 생성
+
+    //m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S0", XMFLOAT3(0, 0, 0)));
+    //this->Attach(m_SetCardSlots.back());
+
+    return this; // 자기 자신을 보내서 체이닝을 해도 본체가 반환되게 한다.
+}
+
+bool ButtonTemplate::Start()
+{
+    Button::Start();
+    return true;
+}
+
+bool ButtonTemplate::UpdateTransform(float dTime) {
+    Button::UpdateTransform(dTime);
+    // 체이닝이 되는 업데이트. 부모 -> 자식 순서대로 실행되는 공간.
+    return true;
+}
+bool ButtonTemplate::UpdateLogic(float dTime) {
+    // 체이닝이 되지 않는 업데이트. UIManager가 전체 순회하며 실행하는 공간.
     //m_pDrag->UpdateDrag(dTime);                   // 드래그 기능 사용 시 추가
-    Button::Update(dTime);
     return true;
 }
 
@@ -137,7 +158,7 @@ bool ButtonTemplate::KeyReleasedEvent(uint32_t key)
 #include "YunoEngine.h"
 #include "IInput.h"
 
-ButtonTemplate::ButtonTemplate(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+ButtonTemplate::ButtonTemplate(UIFactory& uiFactory) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
@@ -255,7 +276,7 @@ bool ButtonTemplate::KeyReleasedEvent(uint32_t key)
 #include "YunoEngine.h"
 #include "IInput.h"
 
-ButtonTemplate::ButtonTemplate(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+ButtonTemplate::ButtonTemplate(UIFactory& uiFactory) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }

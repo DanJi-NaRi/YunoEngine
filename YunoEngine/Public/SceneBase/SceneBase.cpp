@@ -152,9 +152,6 @@ void SceneBase::OnExit()
     //std::cout << "[SceneBase] OnExit\n";
 }
 
-
-
-
 void SceneBase::Update(float dt)
 {
     m_lastDt = dt;

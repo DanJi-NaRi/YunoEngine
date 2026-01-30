@@ -292,7 +292,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\Object\Quad.h" />
     <ClInclude Include="Game\Object\CardActData.h" />
     <ClInclude Include="Game\Object\CardData.h" />
-    <ClInclude Include="Game\UI\Image.h" />
     <ClInclude Include="Scenes\RenderTest.h" />
     <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="System\GridFactory.h" />

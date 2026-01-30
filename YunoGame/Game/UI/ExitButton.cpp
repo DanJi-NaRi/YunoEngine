@@ -13,7 +13,7 @@
 #include "GameManager.h"
 
 
-ExitButton::ExitButton(UIManager* uiManager) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+ExitButton::ExitButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
@@ -37,10 +37,13 @@ bool ExitButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool ExitButton::Update(float dTime)
-{
+bool ExitButton::UpdateTransform(float dTime) {
+    Button::UpdateTransform(dTime);
 
-    Button::Update(dTime);
+    return true;
+}
+bool ExitButton::UpdateLogic(float dTime) {
+
     return true;
 }
 

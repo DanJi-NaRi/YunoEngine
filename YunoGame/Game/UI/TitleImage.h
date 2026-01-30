@@ -6,10 +6,11 @@
 class TitleImage : public Image
 {
 public:
-    TitleImage(UIManager* uiManager);
+    TitleImage(UIFactory& uiFactory);
     virtual ~TitleImage();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
-    bool Update(float dTime = 0) override;
+    bool UpdateTransform(float dTime = 0) override;
+    bool UpdateLogic(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();
 
@@ -20,8 +21,8 @@ public:
     { 
        Widget::CreateMaterial(L"../Assets/UI/TITLE/Background.png"); 
 
-       m_width = m_pTextures->GetTextureWH(m_Albedo).first;
-       m_height = m_pTextures->GetTextureWH(m_Albedo).second;
+       m_size.x = m_pTextures->GetTextureWH(m_Albedo).first;
+       m_size.y = m_pTextures->GetTextureWH(m_Albedo).second;
        return true;
     };    // 머테리얼 생성 (한 번만)
 

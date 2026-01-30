@@ -9,7 +9,8 @@
 
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
 
-class UIManager;
+//class UIManager;
+class UIFactory;
 struct WidgetDesc;
 
 enum class UIDirection : int {
@@ -45,6 +46,7 @@ enum class WidgetClass : int {
     CardTable,
     Card,
     CardSlot,
+    LetterBox,
     GridLine,
 
     // 첫 무기 선택 페이즈
@@ -55,12 +57,23 @@ enum class WidgetClass : int {
     WeaponButton,
 };
 
+enum class WidgetLayer : int {
+    Default,
+    Background,
+    HUD,
+    Panels,
+    Popups,
+    Modal,    // 입력 차단
+    Tooltip,  
+    DebugTop, // 디버그용 최상단 고정 레이어
+};
+
 struct Float2;
 struct Float3;
 struct Float4;
 
-constexpr float pivotMin = 0.0f;
-constexpr float pivotMax = 1.0f;
+constexpr float g_PivotMin = 0.0f;
+constexpr float g_PivotMax = 1.0f;
 
 inline constexpr Float2 kPivot[(int)UIDirection::Count] = {
     {0.0f, 0.0f}, // LeftTop
@@ -80,6 +93,14 @@ constexpr Float2 PivotFromUIDirection(UIDirection pivot) { // 피벗 전용 할�
     return kPivot[(int)pivot];
 }
 
+constexpr bool PivotMinMax(Float2 pivot) { // 피벗 최소 최대치 비교
+    return (pivot.x >= g_PivotMin &&
+            pivot.y >= g_PivotMin &&
+            pivot.x <= g_PivotMax &&
+            pivot.y <= g_PivotMax);
+}
+    
+
 struct SnapPoint {
     XMFLOAT2 m_snapPos; // 스냅 위치 : 기본적으로 slot과 1:1이겠지만, 슬롯이 여러 스냅포인트를 가진 경우 달라질 수 있다.
     RECT m_snapRange;   // 스냅 검사 Rect : 위젯이 해당 Rect와 AABB가 통과되면, snapPos로 스냅한다.
@@ -88,14 +109,21 @@ struct SnapPoint {
     // 추가 조건 있으면 추가...
 };
 
+constexpr Float2 g_DefaultClientXY{ 1920,1080 };
+
 class Widget
 {
 protected:
 
+    // 정보 데이터
+
     uint32_t m_id;
     WidgetType m_type;
+    WidgetLayer m_sortLayer; // 자식은 부모의 레이어를 따라감
 
     std::wstring m_name;
+
+    // 트랜스폼 데이터
 
     XMFLOAT3	m_vPos;     // 스크린상의 위치 (z는 사용 안 함(camera-near 문제))
     XMFLOAT3	m_vRot;     // 스크린상의 위젯 Rot
@@ -111,24 +139,40 @@ protected:
     XMFLOAT3	m_vScaleBk;
     XMFLOAT3 	m_vDirBk;
 
-    float m_width;              // 위젯 자체의 가로 사이즈
-    float m_height;             // 위젯 자체의 세로 사이즈
+    Float2 m_pivot;             // 위젯 피벗 (보정위치)
 
-    float m_spriteSizeX;        // 적용된 Albedo(스프라이트) 원본 사이즈 X
-    float m_spriteSizeY;        // 적용된 Albedo(스프라이트) 원본 사이즈 Y
 
-    float m_sizeX;              // 최종 위젯 사이즈 X // m_width * m_scale.x
-    float m_sizeY;              // 최종 위젯 사이즈 Y // m_height * m_scale.y
+    // 사이즈 데이터
+
+    Float3 m_size;               // 위젯 자체의 사이즈 (width, height)
+
+    Float3 m_spriteSize;
+
+    Float3 m_finalPos;
+
+    Float3 m_finalSize;           // 최종 위젯 사이즈 XY // m_height * m_scale.y * m_canvasOffset
+
+    // 캔버스 관련 데이터
+
+    Float3 m_canvasSize;        // 캔버스 사이즈 XY (아무런 캔버스도 없을 땐 클라이언트 사이즈 = 클라가 캔버스 역할)
+          
+    //Float3 m_clientSize;        // 클라이언트 사이즈 XY
+
+    Float3 m_canvasOffset;       // 캔버스 결과 적용 오프셋 (canvasSizeXY/clientSizeXY)
+
+    //Canvas* m_canvas;
+
+
+    // 기타 데이터
 
     RECT m_rect;                // 현재 위젯을 RECT로 치환한 값
 
     int m_zOrder;               // 아직 미사용
 
-    Float2 m_pivot;             // 위젯 피벗 (보정위치)
+    Visibility m_visible;       // 보이기 여부 // 아직 미사용
 
-    Visibility m_visible;       // 보이기 여부
+    std::wstring m_inputString; // 텍스트 입력 내용 // 아직 미사용
 
-    std::wstring m_inputString; // 텍스트 입력 내용
 
     // 자주 변하지 않는 UI 최적화를 위한 더티 플래그.
     // 자식이 있을 경우 자식들의 더티 플래그도 조절해야 함.
@@ -153,7 +197,10 @@ protected:
     Widget* m_Parent;
     std::unordered_map<uint32_t, Widget*> m_Childs;
 
+    bool m_isRoot = true; // 캔버스를 제외한 가장 최상위 부모인지. // 나중에 캔버스 위젯이 생기면 캔버스만 예외처리 해야 함.
+
 protected:
+
     IRenderer* m_pRenderer = nullptr;
 
     ITextureManager* m_pTextures = nullptr;
@@ -162,35 +209,63 @@ protected:
 
     UIDirection m_anchor; // 아직 안씀
 
-    UIManager* m_pUIManager = nullptr; // UIManager
+   //UIManager* m_pUIManager = nullptr; // UIManager
+    UIFactory& m_uiFactory;
+
+
 public:
     // 테스트
     //Widget() = delete; // 기본 생성 금지
     Widget();
 
-    explicit Widget(UIManager* uiManager);
+    Widget() = delete; // 기본 생성 금지
+    explicit Widget(UIFactory& uiFactory);
     virtual ~Widget();
 
     //Create는 오브젝트 매니저만 쓰기
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
+    virtual bool  Start(); // Create 다 끝나고 호출. 
+    virtual Widget* CreateChild();
 
-    virtual bool  Update(float dTime = 0);
+    virtual bool  UpdateAll(float dTime = 0);       // 일괄 업데이트. 웬만하면 쓸 일이 없다.
+    virtual bool  UpdateTransform(float dTime = 0);
+    virtual bool  UpdateLogic(float dTime = 0);
     virtual bool  Submit(float dTime = 0);
     bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 X
+
+    //////////////////////////////////////////////////
+    // 자식 체이닝(Private)
+    private: 
+    bool          UpdateTransformChild(float dTime = 0);     // 자식 체이닝 진입조건
+    void          UpdateTransformChild_Internal(float dTime = 0);     // 자식 체이닝 루프
+
+    bool          SubmitChild(float dTime = 0);              // 자식 체이닝 진입조건
+    void          SubmitChild_Internal(float dTime = 0);     // 자식 체이닝 루프
+
+    //////////////////////////////////////////////////
+    public:
+
 
     void          UpdateRect();
 
     // 위치 세팅
+    void          SetSize(Float2 size)          { m_size = size; }
     void          SetPos(XMFLOAT3 vPos)         { m_vPos = vPos; }
     void          SetPosBK(XMFLOAT3 vPosBk)     { m_vPosBk = vPosBk; }
     void          SetRot(XMFLOAT3 vRot)         { m_vRot = vRot; }
     void          SetRotBK(XMFLOAT3 vRotBk)     { m_vRotBk = vRotBk; }
     void          SetScale(XMFLOAT3 vScale)     { m_vScale = vScale; }
     void          SetScaleBK(XMFLOAT3 vScaleBk) { m_vScaleBk = vScaleBk; }
-    void          SetPivot(Float2 pivot)        { m_pivot = pivot; }
+    void          SetPivot(Float2 pivot)        { assert(PivotMinMax(pivot)); m_pivot = pivot; }
     void          SetPivot(UIDirection dir)     { m_pivot = PivotFromUIDirection(dir); }
     virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
+    Float3        SetCanvasSizeX(Float3 sizeXY)   { m_canvasSize = sizeXY; }
+    void          SetIsRoot(bool isRoot) { m_isRoot = isRoot; }
+
+
+    bool GetIsRoot(bool isRoot) { return m_isRoot; }
+    bool HasMeshNode() const { return m_MeshNode.get() != nullptr; }
 
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
@@ -232,6 +307,7 @@ public:
     XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
     const RECT GetRect() const { return m_rect; }
     const Float2 GetPivot() { return m_pivot; }
+    bool GetIsRoot() { return m_isRoot; }
 
     void Attach(Widget* obj);
     void DettachParent();
@@ -244,6 +320,7 @@ public:
 
     virtual WidgetType GetWidgetType() { return WidgetType::Widget; }
     virtual WidgetClass GetWidgetClass() { return WidgetClass::Widget; }
+    
 
     WidgetDesc BuildWidgetDesc();
 

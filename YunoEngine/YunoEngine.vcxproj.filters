@@ -246,6 +246,8 @@
     <ClCompile Include="Public\Object\ObjectTypeRegistry.cpp">
       <Filter>Public\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Private\UI\Letterbox.cpp" />
+    <ClCompile Include="Private\UI\UITool\UIFactory.cpp" />
     <ClCompile Include="Public\Object\Effect.cpp">
       <Filter>Public\Object\Effect</Filter>
     </ClCompile>
@@ -430,6 +432,8 @@
     <ClInclude Include="Public\Object\ObjectTypeRegistry.h">
       <Filter>Public\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Public\UI\Letterbox.h" />
+    <ClInclude Include="Public\UI\UITool\UIFactory.h" />
     <ClInclude Include="Public\Object\Effect.h">
       <Filter>Public\Object\Effect</Filter>
     </ClInclude>

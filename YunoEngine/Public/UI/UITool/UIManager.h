@@ -2,7 +2,6 @@
 
 #pragma once
 #include "RenderTypes.h"
-
 #include "AnimationUnit.h"
 #include "CursurSystem.h"
 #include "Widget.h"
@@ -11,7 +10,11 @@ enum class ButtonState;
 
 class Button;
 class YunoDirectionalLight;
-struct WidgetDesc;
+class UIFactory;
+
+struct Float2;
+struct Float3;
+struct Float4;
 
 class UIManager
 {
@@ -21,6 +24,8 @@ private:
 
     IInput* m_pInput;
     CursurSystem m_cursurSystem;
+    std::unique_ptr<UIFactory> m_uiFactory;
+
 
     // Widgets
     std::deque<std::unique_ptr<Widget>> m_widgets;
@@ -39,6 +44,7 @@ public:
     // 상위 캔버스의 사이즈를 반환하는 함수.
     // 현재는 Canvas 개념이 없으므로 클라이언트 사이즈를 적용한다.
     void GetSurface(); 
+
 public:
     explicit UIManager();
     virtual ~UIManager();
@@ -53,6 +59,8 @@ public:
 
     template<typename T>
     T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);
+    template<typename T>
+    T* CreateWidget_Internal(const std::wstring& name, XMFLOAT3 pos);
 
     // 테스트용으로 추가
     template<typename T>
@@ -93,9 +101,6 @@ private:
 };
 
 
-// 김장후 - 
-// 현재 Object와 같은 ID 체계를 사용하고 있음. 분리할지 고민중..
-// 매니저 분리까지는 굳이 필요 없을 것 같아서 일단은 큐만 추가해서 사용 중.
 template<typename T>
 T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
 {
@@ -103,10 +108,10 @@ T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
 
     std::wstring newname = name;
 
-    auto widget = std::make_unique<T>(this);
+    auto widget = std::make_unique<T>(*m_uiFactory);
     CheckDedicateWidgetName(newname);
 
-    widget->Create(name, m_widgetIDs, pos);
+    widget->Create(newname, m_widgetIDs, pos); // 생성 (유니티로 치면 Awake)
 
     auto* pWidget = widget.get();
 

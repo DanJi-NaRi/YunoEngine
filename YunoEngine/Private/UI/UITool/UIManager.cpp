@@ -5,7 +5,9 @@
 #include "Parser.h"
 #include "YunoLight.h"
 #include "YunoCamera.h"
+#include "YunoTransform.h"
 #include "IInput.h"
+#include "UIFactory.h"
 #include "Button.h"
 
 
@@ -19,6 +21,7 @@ UIManager::~UIManager()
 
 bool UIManager::Init()
 {
+    m_uiFactory = std::make_unique<UIFactory>(*this);
     m_widgetCount = 0;
     m_widgetIDs = 0;
     m_widgetMap.reserve(30); //30개 정도 메모리 잡고 시작
@@ -47,7 +50,8 @@ void UIManager::Update(float dTime)
     UpdateButtonStates(); // 모든 버튼 상태 업데이트
     for (auto& widget : m_widgets)
     {
-        widget->Update(dTime);
+        if(widget->GetIsRoot()) widget->UpdateTransform(dTime); // 체이닝
+        widget->UpdateLogic(dTime); // 로직 업데이트 // 체이닝 금지
     }
 }
 //나중에 이벤트 큐 만들어서 바꿔야함
@@ -59,7 +63,8 @@ void UIManager::Submit(float dTime)
 
     for (auto& widget : m_widgets)
     {
-         widget->Submit(dTime);
+        if (widget->GetIsRoot()) // 체이닝
+            widget->Submit(dTime);
     }
 }
 
@@ -70,6 +75,9 @@ void UIManager::GetSurface()
 
 void UIManager::ProcessPending()
 {
+    std::vector<Widget*> newWidgets;
+    newWidgets.reserve(m_pendingCreateQ.size());
+
     if (!m_pendingCreateQ.empty())
     {
         for (auto& widget : m_pendingCreateQ)
@@ -77,14 +85,22 @@ void UIManager::ProcessPending()
             UINT id = widget->GetID();
             auto name = widget->GetName();
             auto* pWidget = widget.get();
+            // 시작 벡터
+            newWidgets.push_back(pWidget); // StartPtr 백업
+
             m_widgets.push_back(std::move(widget));
             m_widgetMap.emplace(id, pWidget);
             m_nameToID.emplace(name, id);
             m_widgetCount++;
         }
-
         m_pendingCreateQ.clear();
     }
+
+    for (Widget* widget : newWidgets)
+    {
+        if (widget) widget->Start(); // Start 실행
+    }
+
 
     if (!m_pendingDestoryQ.empty())
     {
@@ -340,8 +356,6 @@ bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)
         if (usekeyWidget)
         {
             if (m_cursurSystem.GetUseKeyWidgetBindKey() != key) return false;
-
-            std::cout << "RRRRRRRRRRR!!" << std::endl;
             usekeyWidget->SetButtonState(ButtonState::Released);
             usekeyWidget->KeyReleasedEvent(key);
             m_cursurSystem.SetUseKeyWidget(nullptr);
@@ -379,21 +393,16 @@ bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)
 }
 
 // 아직 캔버스 개념이 없으므로 클라이언트가 곧 캔버스임. (단일 캔버스 느낌..)
+
 Float2 UIManager::GetCanvasSize() // 개선사항 : 멤버에 this라던가 위젯 식별자를 넣고
 {
-    Float2 canvas{ 0,0 };
-
     // 부모를 따라가다가 부모가 가진 Canvas 정보가 있다면 최상위 부모의 Canvas가 있다면, if로 해당 sizeXY 반환
     
     //최상위 부모가 캔버스 타입이 아니면
-    {
-        canvas.x = YunoEngine::GetWindow()->GetClientWidth();
-        canvas.y = YunoEngine::GetWindow()->GetClientHeight();
-    }
-
-
-    return canvas;
+    return Float2(YunoEngine::GetWindow()->GetClientWidth(), YunoEngine::GetWindow()->GetClientHeight());
 }
+// 아직 캔버스 개념이 없으므로 클라이언트가 곧 캔버스임. (단일 캔버스 느낌..)
+
 
 std::vector<WidgetDesc> UIManager::BuildWidgetDesc()
 {

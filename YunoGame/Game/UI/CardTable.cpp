@@ -5,9 +5,9 @@
 #include "CardSlot.h"
 
 #include "IInput.h"
-#include "UIManager.h"
+#include "UIFactory.h"
 
-CardTable::CardTable(UIManager* uiManager) : Image(uiManager)
+CardTable::CardTable(UIFactory& uiFactory) : Image(uiFactory)
 {
     Clear();
 }
@@ -47,39 +47,61 @@ bool CardTable::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
     m_anchor = UIDirection::LeftTop;
     
-    m_vScale.y = 5;
-    m_vScale.x = 7;
-
-    // 하위 위젯 생성
-
-    //m_SetCardSlots.push_back(m_uiManager->CreateWidget<CardSlot>(L"tstCardTable", XMFLOAT3(500, 500, 0))->Attach(this));
-    //auto* slot = m_uiManager->CreateWidget<CardSlot>(name + L"S0", XMFLOAT3(0, 0, 0));
-    //this->Attach(slot);
-    //m_SetCardSlots.push_back(std::move(slot));
-
-
-    /*auto* slot1 = m_uiManager->CreateWidget<CardSlot>(name + L"S1", XMFLOAT3(300, 0, 0));
-    this->Attach(slot1);
-    m_SetCardSlots.push_back(slot);
-    slot1 = nullptr;*/
-
-    /*auto* slot2 = m_uiManager->CreateWidget<CardSlot>(name + L"S2", XMFLOAT3(600, 0, 0));
-    this->Attach(slot2);
-    m_SetCardSlots.push_back(slot);
-    slot2 = nullptr;*/
+    m_vScale.y = 1;
+    m_vScale.x = 1;
 
     Backup();
 
     return true;
 }
 
-bool CardTable::Update(float dTime)
+bool CardTable::Start()
 {
+    Image::Start();
 
-    /*if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50.0f * dTime; }
-    if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50.0f * dTime; }*/
-    Image::Update(dTime);
-    return false;
+    return true;
+}
+
+CardTable* CardTable::CreateChild() {
+    // 고정 하위 위젯 생성
+
+    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S0", XMFLOAT3(0, 0, 0)));
+    this->Attach(m_SetCardSlots.back());
+
+    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S1", XMFLOAT3(10, 0, 0)));
+    this->Attach(m_SetCardSlots.back());
+
+    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S2", XMFLOAT3(20, 0, 0)));
+    this->Attach(m_SetCardSlots.back());
+
+    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S3", XMFLOAT3(30, 0, 0)));
+    this->Attach(m_SetCardSlots.back());
+
+    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S4", XMFLOAT3(400, 0, 0)));
+    this->Attach(m_SetCardSlots.back());
+
+    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S5", XMFLOAT3(500, 0, 0)));
+    this->Attach(m_SetCardSlots.back());
+    m_SetCardSlots.back()->SetScale({ 100,100,100 });
+
+    return this;
+}
+
+
+bool CardTable::UpdateTransform(float dTime)
+{
+    Image::UpdateTransform(dTime);
+
+    return true;
+}
+
+bool CardTable::UpdateLogic(float dTime)
+{
+    if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50 * dTime; }
+    if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50 * dTime; }
+    
+
+    return true;
 }
 
 bool CardTable::Submit(float dTime)

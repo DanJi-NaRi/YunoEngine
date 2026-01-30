@@ -1,17 +1,22 @@
 #pragma once
 #include "Button.h"
 
+
 //#include "CardData.h"       // 멤버로 들어야 하면 여기서 Include
 //class CardData;
+class Slot;                   // 포인터 멤버면 전방선언
 
 class ButtonTemplate : public Button
 {
 public:
-    // 생성자는 (UIManager* uiManager) 인자를 기본으로
-    ButtonTemplate(UIManager* uiManager);
+    // 생성자는 (UIFactory& uiFactory) 인자를 기본으로
+    ButtonTemplate(UIFactory& uiFactory);
     virtual ~ButtonTemplate();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
-    bool Update(float dTime = 0) override;
+    ButtonTemplate* CreateChild() override;         // 위젯 생성 동시에 바로 다음 차례에 자식 위젯을 생성해야 한다면 (자식 생성 공간)
+    bool Start() override;                          // 생성 이후, 시작 지점 (자식 객체를 생성한다면 여기에)
+    bool UpdateTransform(float dTime = 0) override; // 부모 -> 자식 순서로 체이닝 업데이트 (Transform)
+    bool UpdateLogic(float dTime = 0) override;     // UIManager가 전체 순회 업데이트 (Logic)
     bool Submit(float dTime = 0) override;
     void Clear();
 
@@ -45,6 +50,8 @@ protected:
     // CardData m_data;                      // 헤더 인클루드
     // CardData* m_pData;                    // 전방선언 + CPP 인클루드, 포인터 타입이라면 m_뒤에 p 붙이기
     // std::unique_ptr<CardData> m_pData;    // 전방선언 + CPP 인클루드
+
+    Slot* m_SetCardSlots = nullptr;
 };
 
 
@@ -57,9 +64,10 @@ protected:
 class ButtonTemplate : public Button
 {
 public:
-    ButtonTemplate(UIManager* uiManager);
+    ButtonTemplate(UIFactory& uiFactory);
     virtual ~ButtonTemplate();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    ButtonTemplate* CreateChild() override;                     // 위젯 생성 동시에 바로 다음 차례에 자식 위젯을 생성해야 한다면 (자식 생성 공간)
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();

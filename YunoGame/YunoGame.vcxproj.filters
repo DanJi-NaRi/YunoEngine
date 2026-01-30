@@ -298,7 +298,6 @@
       <Filter>Game\UI\Button</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\Test_Unit.h" />
-    <ClInclude Include="Game\UI\Image.h" />
     <ClInclude Include="Game\UI\Text.h" />
     <ClInclude Include="Game\UI\ButtonTemplate.h">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>

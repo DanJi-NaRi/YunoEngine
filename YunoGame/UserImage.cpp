@@ -4,7 +4,7 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 
-UserImage::UserImage(UIManager* uiManager) : Image(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+UserImage::UserImage(UIFactory& uiFactory) : Image(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
@@ -61,9 +61,16 @@ bool UserImage::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool UserImage::Update(float dTime)
+
+bool UserImage::UpdateTransform(float dTime)
 {
-    Image::Update(dTime);
+    Image::UpdateTransform(dTime);
+
+    return true;
+}
+
+bool UserImage::UpdateLogic(float dTime)
+{
     return true;
 }
 
