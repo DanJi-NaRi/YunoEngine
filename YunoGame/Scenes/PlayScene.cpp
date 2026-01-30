@@ -16,7 +16,7 @@
 #include "Quad.h"
 #include "Dwarf.h"
 
-#include "PieceQueue.h"
+#include "PlayQueue.h"
 
 
 
@@ -31,7 +31,6 @@ bool PlayScene::OnCreateScene()
 
     // 플레이 그리드 시스템 생성
     m_playGrid = std::make_unique<PlayGridSystem>(m_objectManager.get());
-    m_playGrid->Init(5, 7, 3, 3);
     m_playGrid->CreateObject(0, 1, 0);
     
     // 디렉션 라이트 생성

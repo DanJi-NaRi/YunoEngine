@@ -56,6 +56,35 @@ INDEX g_Widget_idx[] =
 };
 
 
+Widget::Widget()
+{
+    m_zOrder = 0;
+
+    m_defaultMesh = 0;
+    m_defaultMaterial = 0;
+
+    m_Albedo = 0;
+    m_Normal = 0;
+    m_Orm = 0;
+
+    // 단순 출력 우선 기본값
+    m_width = 100.0f;
+    m_height = 100.0f;
+
+    m_vScale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+    m_vRot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+    m_vPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+    m_spriteSizeX = 0;
+    m_spriteSizeY = 0;
+
+    m_sizeX = m_width * m_vScale.x;
+    m_sizeY = m_height * m_vScale.y;
+
+    m_anchor = UIDirection::LeftTop;
+    m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
+}
+
 Widget::Widget(UIManager* uiManager) : m_pUIManager(uiManager)
 {
     m_zOrder = 0;
@@ -314,6 +343,7 @@ void Widget::Backup()
 
 bool Widget::Submit(float dTime)
 {
+    if (!m_MeshNode) return true;
 
     m_MeshNode->Submit(m_mWorld, m_vPos);
 

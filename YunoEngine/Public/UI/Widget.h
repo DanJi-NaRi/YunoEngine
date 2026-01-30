@@ -45,6 +45,7 @@ enum class WidgetClass : int {
     CardTable,
     Card,
     CardSlot,
+    GridLine,
 
     // 첫 무기 선택 페이즈
     UserImage,
@@ -163,8 +164,10 @@ protected:
 
     UIManager* m_pUIManager = nullptr; // UIManager
 public:
+    // 테스트
+    //Widget() = delete; // 기본 생성 금지
+    Widget();
 
-    Widget() = delete; // 기본 생성 금지
     explicit Widget(UIManager* uiManager);
     virtual ~Widget();
 

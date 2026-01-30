@@ -18,15 +18,22 @@
 #include "Quad.h"
 #include "Dwarf.h"
 
+// 테스트 중
+#include "GridLine.h"
+//#include "PlayQueue.h"
+#include "MinimapQueue.h"
+#include "Piece.h"
 
+#include "MinimapGridSystem.h"
 
 
 
 bool UIScene::OnCreateScene()
 {
 
-
-    //std::cout << "[UIScene] OnCreate\n";
+    //auto pLine = m_uiManager->CreateWidget<GridLine<Widget>>(L"gridline", XMFLOAT3(7*25, 5*25, 0));
+    //pLine->SetScale({ 1, 1, 1 });
+    //std::cout << "[UIScene] OnCreate\n";   
     
     // 디렉션 라이트 생성
     //m_objectManager->CreateDirLight();
@@ -36,7 +43,7 @@ bool UIScene::OnCreateScene()
     //input->AddContext(&s_gameCtx);
 
     m_uiManager->CreateWidget<Image>(L"tstImg", XMFLOAT3(0, 0, 0));
-
+    
 
     m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0));
     auto* slot0 = m_uiManager->CreateWidget<CardSlot>( L"S0", XMFLOAT3(300, 100, 0));
@@ -50,7 +57,8 @@ bool UIScene::OnCreateScene()
     
 
     //m_objectManager->CreateWidget<Image>(L"tst", XMFLOAT3(0, 0, 0));
-
+    m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
+    m_minimap->CreateObject(1000, 900, 0);
 
     return true;
 }
@@ -59,6 +67,51 @@ void UIScene::OnDestroyScene()
 {
     //std::cout << "[UIScene] OnDestroy\n";
 
+}
+
+void UIScene::TestInput()
+{
+    // 테스트용 -> ally1으로 부여한 기물이 움직여용
+    if (m_input->IsKeyPressed(0x31))
+    {
+        MinimapQ::Insert(MinimapQ::Move_S(GamePiece::Ally1, 0, 3));   // 왼쪽
+    }
+    if (m_input->IsKeyPressed(0x32))
+    {
+        MinimapQ::Insert(MinimapQ::Move_S(GamePiece::Ally1, 1, 2));   // 아래
+    }
+    if (m_input->IsKeyPressed(0x33))
+    {
+        MinimapQ::Insert(MinimapQ::Move_S(GamePiece::Ally1, 2, 3));   // 위
+    }
+    if (m_input->IsKeyPressed(0x34))
+    {
+        MinimapQ::Insert(MinimapQ::Move_S(GamePiece::Ally1, 1, 4));   // 오른쪽
+    }
+    if (m_input->IsKeyPressed(0x35))
+    {
+        MinimapQ::Insert(MinimapQ::Move_S(GamePiece::Ally1, 0, 2));   // 왼쪽 위
+    }
+    if (m_input->IsKeyPressed(0x36))
+    {
+        MinimapQ::Insert(MinimapQ::Move_S(GamePiece::Ally1, 2, 2));   // 오른쪽 위
+    }
+    if (m_input->IsKeyPressed(0x37))
+    {
+        MinimapQ::Insert(MinimapQ::Move_S(GamePiece::Ally1, 0, 4));   // 왼쪽 아래
+    }
+    if (m_input->IsKeyPressed(0x38))
+    {
+        MinimapQ::Insert(MinimapQ::Move_S(GamePiece::Ally1, 2, 4));   // 오른쪽 아래
+    }
+    if (m_input->IsKeyPressed(0x39))
+    {
+        MinimapQ::Insert(MinimapQ::Attack_S_TST(GamePiece::Ally1));   // 공격
+    }
+    if (m_input->IsKeyPressed(0x30))
+    {
+        MinimapQ::Insert(MinimapQ::Move_S(GamePiece::Ally1, 1, 3));   // 충돌
+    }
 }
 
 
@@ -81,7 +134,9 @@ void UIScene::Update(float dt)
 {
     //m_uiManager->GetCursurStstem()->UpdateCheckSnap();
     SceneBase::Update(dt); // 여기만 UI 출력하게끔 빼둘까?
+    TestInput();
     //m_input->Dispatch();
+    m_minimap->Update(dt);
 }
 
 void UIScene::SubmitObj()

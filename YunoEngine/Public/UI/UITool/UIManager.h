@@ -54,6 +54,10 @@ public:
     template<typename T>
     T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);
 
+    // 테스트용으로 추가
+    template<typename T>
+    T* CreateObject(const std::wstring& name, XMFLOAT3 pos);
+
     //씬 매니저에 있어도 될것같은 놈들
     Widget* FindWidget(UINT id); //id로 검색
     Widget* FindWidget(const std::wstring& name); //이름으로 검색
@@ -113,3 +117,23 @@ T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
 }
 
 
+// 테스트용
+template<typename T>
+T* UIManager::CreateObject(const std::wstring& name, XMFLOAT3 pos)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name;
+
+    auto widget = std::make_unique<T>(this);
+    CheckDedicateWidgetName(newname);
+
+    widget->Create(name, m_widgetIDs, pos);
+
+    auto* pWidget = widget.get();
+
+    m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
+
+    return pWidget;
+}
