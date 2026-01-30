@@ -59,8 +59,10 @@ bool Button::UpdateTransform(float dTime) {
 
     return true;
 }
-bool Button::UpdateLogic(float dTime) {
+bool Button::Update(float dTime) {
     ButtonUpdate(dTime);
+
+    Widget::Update(dTime);
 
     //std::cout << m_BtnState << std::endl;
     return true;

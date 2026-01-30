@@ -69,9 +69,10 @@ bool ButtonTemplate::UpdateTransform(float dTime) {
     // 체이닝이 되는 업데이트. 부모 -> 자식 순서대로 실행되는 공간.
     return true;
 }
-bool ButtonTemplate::UpdateLogic(float dTime) {
+bool ButtonTemplate::Update(float dTime) {
     // 체이닝이 되지 않는 업데이트. UIManager가 전체 순회하며 실행하는 공간.
     //m_pDrag->UpdateDrag(dTime);                   // 드래그 기능 사용 시 추가
+    Widget::Update(dTime); //<-필수
     return true;
 }
 

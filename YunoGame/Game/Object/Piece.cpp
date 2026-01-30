@@ -175,15 +175,15 @@ INDEX g_tIndex[] =
 
 //오브젝트 타입.h
 
-namespace {
-    struct AutoReg_Piece
-    {
-        AutoReg_Piece()
-        {
-            ObjectTypeRegistry::Instance().Register(L"Piece", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Piece<Unit>>(d); });
-        }
-    } s_reg_Piece;
-}
+//namespace {
+//    struct AutoReg_Piece
+//    {
+//        AutoReg_Piece()
+//        {
+//            ObjectTypeRegistry::Instance().Register(L"Piece", [](ObjectManager& om, const UnitDesc& d) { om.CreateObjectInternal<Piece<Unit>>(d); });
+//        }
+//    } s_reg_Piece;
+//}
 
 template class Piece<Unit>;
 template class Piece<Widget>;

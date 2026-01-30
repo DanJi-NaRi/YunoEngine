@@ -35,8 +35,9 @@ bool WeaponButton::UpdateTransform(float dTime) {
 
     return true;
 }
-bool WeaponButton::UpdateLogic(float dTime) {
+bool WeaponButton::Update(float dTime) {
 
+    Button::Update(dTime);
     return true;
 }
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "GridSystem.h"
+#include "UnitGridSystem.h"
 #include "PieceHelper.h"
 #include "TileHelper.h"
 
@@ -12,7 +12,7 @@ enum class NG_P : int   // NowGrid_PlayGrid
     Max
 };
 
-class PlayGridSystem : public GridSystem<ObjectManager, Unit>
+class PlayGridSystem : public UnitGridSystem
 {
 public:
     PlayGridSystem(ObjectManager* objmng);                   // 씬에서 objmanager 받기

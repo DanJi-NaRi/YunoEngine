@@ -53,8 +53,10 @@ bool Slot::UpdateTransform(float dTime)
     return true;
 }
 
-bool Slot::UpdateLogic(float dTime)
+bool Slot::Update(float dTime)
 {
+
+    Widget::Update(dTime);
     return true;
 }
 

@@ -7,15 +7,15 @@
 #include "GameManager.h"
 
 #include "Grid.h"
-#include "GridBox.h"
-#include "GridLine.h"
-#include "Tile.h"
-#include "Piece.h"
+#include "UnitGridBox.h"
+#include "UnitGridLine.h"
+#include "UnitTile.h"
+#include "UnitPiece.h"
 
 #include "PlayGridSystem.h"
 
 
-PlayGridSystem::PlayGridSystem(ObjectManager* objmng) : GridSystem<ObjectManager, Unit>(objmng) 
+PlayGridSystem::PlayGridSystem(ObjectManager* objmng) : UnitGridSystem(objmng)
 {
     m_playQ = std::make_unique<PlayGridQ>();
 
@@ -79,7 +79,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     {
         auto [wx, wz] = m_grids[(int)m_nowG]->CellToWorld(i % m_column, i / m_column);
         //auto pTile = m_manager->CreateObject<Tile<Unit>>(L"Tile", XMFLOAT3(wx, y, wz));
-        auto pTile = m_manager->CreateObjectFromFile<Tile<Unit>>(L"Tile", XMFLOAT3(wx, y, wz), L"../Assets/fbx/Tile/floor1.fbx");
+        auto pTile = m_manager->CreateObjectFromFile<UnitTile>(L"Tile", XMFLOAT3(wx, y, wz), L"../Assets/fbx/Tile/floor1.fbx");
         pTile->SetScale({ m_cellSizeX * 0.8f, 1, m_cellSizeZ * 0.9f });
         m_tilesIDs.push_back(pTile->GetID());
 
@@ -112,7 +112,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
 
         std::wstring fileName = GetWeaponFileName(w.weaponId);
-        auto pPiece = m_manager->CreateObject<Piece<Unit>>(L"Piece", XMFLOAT3(px, m_wy, pz));
+        auto pPiece = m_manager->CreateObject<UnitPiece>(L"Piece", XMFLOAT3(px, m_wy, pz));
         //auto pPiece = m_objectManager->CreateObjectFromFile<Piece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
         pPiece->SetWho(gp);
         pPiece->SetScale({ 0.8f, 0.8f, 0.8f });
@@ -166,7 +166,7 @@ void PlayGridSystem::CheckMyQ()
                 bool condition2 = attackTeam == Team::Enemy && targetTeam == TileOccuType::Ally_Occupied;
 
                 // 타격 타일 표시
-                auto* pTile = dynamic_cast<Tile<Unit>*>(m_manager->FindObject(m_tilesIDs[tileID]));
+                auto* pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
 
 
                 if (condition1 || condition2)
@@ -214,7 +214,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
 
     // 아이디로 오브젝트 포인터 받아오기
     Unit* pUnit = m_manager->FindObject(pieceInfo.id);
-    Piece<Unit>* pPiece = dynamic_cast<Piece<Unit>*>(pUnit);
+    UnitPiece* pPiece = dynamic_cast<UnitPiece*>(pUnit);
 
     // 기물의 기존 좌표
     int oldcx = pieceInfo.cx;
@@ -311,7 +311,7 @@ void PlayGridSystem::CheckHealth(PieceInfo& pieceInfo)
     if (pieceInfo.health <= 0)
     {
         // 해당 기물 렌더X
-        auto pPiece = dynamic_cast<Piece<Unit>*>(m_manager->FindObject(pieceInfo.id));
+        auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
 
         pPiece->SetDead();
 

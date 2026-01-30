@@ -108,7 +108,7 @@ bool Letterbox::UpdateTransform(float dTime)
     return true;
 }
 
-bool Letterbox::UpdateLogic(float dTime)
+bool Letterbox::Update(float dTime)
 {
     UpdateLetterBox(dTime);
     return true;

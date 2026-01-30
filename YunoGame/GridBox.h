@@ -18,7 +18,3 @@ public:
     bool Update(float dTime = 0);
     bool Submit(float dTime = 0);
 };
-
-extern template class GridBox<Unit>;
-extern template class GridBox<Widget>;
-

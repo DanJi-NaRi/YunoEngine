@@ -259,12 +259,6 @@ bool Widget::Start() {
 
 Widget* Widget::CreateChild() { return this; }
 
-bool Widget::UpdateAll(float dTime) {  // 일괄 업데이트. 웬만하면 쓸 일이 없다.
-    UpdateTransform(dTime);
-    UpdateLogic(dTime);
-    return true;
-}
-
 
 
 bool Widget::UpdateTransform(float dTime)
@@ -297,7 +291,9 @@ bool Widget::UpdateTransform(float dTime)
     Float2 m_canvasLetterboxOffset = letterboxOffset; // 이동
 
     m_finalSize.x = m_size.x * m_vScale.x * m_canvasOffset.x;
+    //m_finalSize.x = m_size.x * m_vScale.x;
     m_finalSize.y = m_size.y * m_vScale.y * m_canvasOffset.y;
+    //m_finalSize.y = m_size.y * m_vScale.y;
     m_finalSize.z = 1.0f;
 
     m_finalPos.x = m_vPos.x * m_canvasOffset.x + m_canvasLetterboxOffset.x;
@@ -351,9 +347,12 @@ void Widget::UpdateTransformChild_Internal(float dTime) // 실제 재귀
     }
 }
 
-
-bool Widget::UpdateLogic(float dTime)
+//상속받은 업데이트 마지막에 무조건 호출
+bool Widget::Update(float dTime)
 {
+
+
+    UpdateTransform(dTime);
     return true;
 }
 

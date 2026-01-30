@@ -42,8 +42,9 @@ bool ExitButton::UpdateTransform(float dTime) {
 
     return true;
 }
-bool ExitButton::UpdateLogic(float dTime) {
+bool ExitButton::Update(float dTime) {
 
+    Button::Update(dTime);
     return true;
 }
 

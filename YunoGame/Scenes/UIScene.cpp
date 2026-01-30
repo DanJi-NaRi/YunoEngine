@@ -63,8 +63,8 @@ bool UIScene::OnCreateScene()
     a->SetRole(Letterbox::Role::BarA);
     auto* b = m_uiManager->CreateWidget<Letterbox>(L"LetterBoxB", XMFLOAT3(0, 0, 0));
     b->SetRole(Letterbox::Role::BarB);
-    m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
-    m_minimap->CreateObject(1000, 900, 0);
+    //m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
+    //m_minimap->CreateObject(1000, 900, 0);
 
     return true;
 }
@@ -142,7 +142,7 @@ void UIScene::Update(float dt)
     SceneBase::Update(dt); // 여기만 UI 출력하게끔 빼둘까?
     TestInput();
     //m_input->Dispatch();
-    m_minimap->Update(dt);
+    //m_minimap->Update(dt);
 }
 
 void UIScene::SubmitObj()

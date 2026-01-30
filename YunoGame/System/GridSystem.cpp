@@ -25,6 +25,7 @@ GridSystem<T, R>::GridSystem(T* manager) : m_manager(manager)
 template<typename T, typename R>
 GridSystem<T, R>::~GridSystem()
 {
+
 }
 
 

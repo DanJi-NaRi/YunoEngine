@@ -1,6 +1,6 @@
 #pragma once
 #pragma once
-#include "GridSystem.h"
+#include "WidgetGridSystem.h"
 #include "PieceHelper.h"
 #include "TileHelper.h"
 
@@ -13,7 +13,7 @@ enum class NG_M : int   // NowGrid_Minimap
     Max
 };
 
-class MinimapGridSystem : public GridSystem<UIManager, Widget>
+class MinimapGridSystem : public WidgetGridSystem
 {
 private:
     IInput* m_input = nullptr;

@@ -9,7 +9,7 @@ public:
     virtual ~WeaponButton();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool UpdateTransform(float dTime = 0) override;
-    bool UpdateLogic(float dTime = 0) override;
+    bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();
 

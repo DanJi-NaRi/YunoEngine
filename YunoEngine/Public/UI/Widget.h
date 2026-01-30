@@ -215,9 +215,6 @@ protected:
 
 public:
     // 테스트
-    //Widget() = delete; // 기본 생성 금지
-    Widget();
-
     Widget() = delete; // 기본 생성 금지
     explicit Widget(UIFactory& uiFactory);
     virtual ~Widget();
@@ -228,9 +225,8 @@ public:
     virtual bool  Start(); // Create 다 끝나고 호출. 
     virtual Widget* CreateChild();
 
-    virtual bool  UpdateAll(float dTime = 0);       // 일괄 업데이트. 웬만하면 쓸 일이 없다.
     virtual bool  UpdateTransform(float dTime = 0);
-    virtual bool  UpdateLogic(float dTime = 0);
+    virtual bool  Update(float dTime = 0);
     virtual bool  Submit(float dTime = 0);
     bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 X
 

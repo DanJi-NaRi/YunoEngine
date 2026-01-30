@@ -130,7 +130,7 @@ T* UIManager::CreateObject(const std::wstring& name, XMFLOAT3 pos)
 
     std::wstring newname = name;
 
-    auto widget = std::make_unique<T>(this);
+    auto widget = std::make_unique<T>(*m_uiFactory);
     CheckDedicateWidgetName(newname);
 
     widget->Create(name, m_widgetIDs, pos);

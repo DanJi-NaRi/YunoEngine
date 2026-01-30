@@ -8,21 +8,21 @@
 #include "IInput.h"
 
 #include "Grid.h"
-#include "GridBox.h"
-#include "GridLine.h"
-#include "Tile.h"
-#include "Piece.h"
+#include "WidgetGridBox.h"
+#include "WidgetGridLine.h"
+#include "WidgetTile.h"
+#include "WidgetPiece.h"
 
 #include "MinimapGridSystem.h"
 
-MinimapGridSystem::MinimapGridSystem(UIManager* manager) : GridSystem<UIManager, Widget>(manager)
+MinimapGridSystem::MinimapGridSystem(UIManager* manager) : WidgetGridSystem(manager)
 {
     m_minimapQ = std::make_unique<MinimapQ>();
 
     Init();
 }
 
-MinimapGridSystem::MinimapGridSystem(UIManager* uimng, IInput* input) : GridSystem<UIManager, Widget>(uimng), m_input(input)
+MinimapGridSystem::MinimapGridSystem(UIManager* uimng, IInput* input) : WidgetGridSystem(uimng), m_input(input)
 {
     assert(m_input != nullptr);
 
@@ -33,6 +33,7 @@ MinimapGridSystem::MinimapGridSystem(UIManager* uimng, IInput* input) : GridSyst
 
 MinimapGridSystem::~MinimapGridSystem()
 {
+
 }
 
 void MinimapGridSystem::Init()
@@ -74,7 +75,7 @@ void MinimapGridSystem::CreateTileAndPiece(float x, float y, float z)
         float tx = wx * m_uiScale + x;
         float ty = wy * m_uiScale + y;
         //auto pTile = m_objectManager->CreateObject<Tile>(L"Tile", XMFLOAT3(wx, y, wz));
-        auto pTile = m_manager->CreateWidget<Tile<Widget>>(L"Tile", XMFLOAT3(tx, ty, z));
+        auto pTile = m_manager->CreateWidget<WidgetTile>(L"Tile", XMFLOAT3(tx, ty, z));
         pTile->SetScale({ m_cellSizeX * 0.9f, m_cellSizeZ * 0.9f, 1 });
         m_tilesIDs.push_back(pTile->GetID());
         
@@ -123,7 +124,7 @@ void MinimapGridSystem::CreateTileAndPiece(float x, float y, float z)
         GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
 
         //std::wstring fileName = GetWeaponFileName(w.weaponId);
-        auto pPiece = m_manager->CreateObject<Piece<Widget>>(L"Piece", XMFLOAT3(tx, ty, m_wz));
+        auto pPiece = m_manager->CreateObject<WidgetPiece>(L"Piece", XMFLOAT3(tx, ty, m_wz));
         //auto pPiece = m_objectManager->CreateObjectFromFile<Piece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
         pPiece->SetWho(gp);
         pPiece->SetScale({ m_uiScale, m_uiScale, 1 });
@@ -178,7 +179,7 @@ void MinimapGridSystem::CheckMyQ()
                 bool condition2 = attackTeam == Team::Enemy && targetTeam == TileOccuType::Ally_Occupied;
 
                 // 타격 타일 표시
-                auto* pTile = dynamic_cast<Tile<Widget>*>(m_manager->FindWidget(m_tilesIDs[tileID]));
+                auto* pTile = dynamic_cast<WidgetTile*>(m_manager->FindWidget(m_tilesIDs[tileID]));
 
 
                 if (condition1 || condition2)
@@ -250,7 +251,7 @@ void MinimapGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cy)
 
     // 아이디로 오브젝트 포인터 받아오기
     Widget* pUnit = m_manager->FindWidget(pieceInfo.id);
-    Piece<Widget>* pPiece = dynamic_cast<Piece<Widget>*>(pUnit);
+    auto* pPiece = dynamic_cast<WidgetPiece*>(pUnit);
 
     // 기물의 기존 좌표
     int oldcx = pieceInfo.cx;

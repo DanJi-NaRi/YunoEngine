@@ -82,7 +82,6 @@ CardTable* CardTable::CreateChild() {
 
     m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S5", XMFLOAT3(500, 0, 0)));
     this->Attach(m_SetCardSlots.back());
-    m_SetCardSlots.back()->SetScale({ 100,100,100 });
 
     return this;
 }
@@ -95,12 +94,12 @@ bool CardTable::UpdateTransform(float dTime)
     return true;
 }
 
-bool CardTable::UpdateLogic(float dTime)
+bool CardTable::Update(float dTime)
 {
     if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50 * dTime; }
     if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50 * dTime; }
     
-
+    Image::Update(dTime);
     return true;
 }
 

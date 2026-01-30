@@ -69,8 +69,9 @@ bool UserImage::UpdateTransform(float dTime)
     return true;
 }
 
-bool UserImage::UpdateLogic(float dTime)
+bool UserImage::Update(float dTime)
 {
+    Image::Update(dTime);
     return true;
 }
 

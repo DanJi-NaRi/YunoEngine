@@ -50,8 +50,8 @@ void UIManager::Update(float dTime)
     UpdateButtonStates(); // 모든 버튼 상태 업데이트
     for (auto& widget : m_widgets)
     {
-        if(widget->GetIsRoot()) widget->UpdateTransform(dTime); // 체이닝
-        widget->UpdateLogic(dTime); // 로직 업데이트 // 체이닝 금지
+        //if(widget->GetIsRoot()) widget->UpdateTransform(dTime); // 체이닝
+        widget->Update(dTime); // 로직 업데이트 // 체이닝 금지
     }
 }
 //나중에 이벤트 큐 만들어서 바꿔야함
