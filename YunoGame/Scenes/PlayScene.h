@@ -3,6 +3,7 @@
 #include "SceneBase.h"
 #include "Game_InputContext.h"
 #include "IGridSystem.h"
+#include "CardQueue.h"
 //class Game_InputContext;
 class Triangle;
 
@@ -25,8 +26,11 @@ protected:
 
 private:
     void TestInput();
+    void HandleCardSelect(int key, int index);
+    void EndTurn();
 
 private:
     std::unique_ptr<IGridSystem> m_playGrid;
     Game_InputContext m_gameCtx;
+    CardQueue m_cardQueue;
 };

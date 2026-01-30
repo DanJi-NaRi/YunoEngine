@@ -7,6 +7,7 @@
 #include "C2S_MatchLeave.h"
 #include "C2S_SubmitWeapon.h"
 #include "C2S_ReadySet.h"
+#include "C2S_BattlePackets.h"
 
 #include "S2C_Pong.h"
 #include "S2C_EnterOK.h"
@@ -14,14 +15,33 @@
 #include "S2C_CountDown.h"
 #include "S2C_ReadyState.h"
 #include "S2C_RoundStart.h"
+#include "S2C_StartCardList.h"
 
 
 #include <iostream>
 namespace yuno::server
 {
+    void YunoServerNetwork::Broadcast(std::vector<std::uint8_t>&& bytes)
+    {
+        m_server.Broadcast(std::move(bytes));
+    }
+
+    std::shared_ptr<yuno::net::TcpSession>
+        YunoServerNetwork::FindSession(std::uint64_t sessionId)
+    {
+        return m_server.FindSession(sessionId);
+    }
+
     YunoServerNetwork::YunoServerNetwork()
         : m_io()
-        , m_server(m_io)  
+        , m_server(m_io)
+        , m_match()
+        , m_cardDB()
+        , m_cardRangeDB()
+        , m_cardRuntime()
+        , m_cardDealer(m_cardDB, m_cardRuntime)
+        , m_roundController(m_match, m_cardDealer, *this)
+        , m_turnManager(m_match, *this, m_cardRuntime, m_cardDB)
     {
 
 
@@ -59,6 +79,22 @@ namespace yuno::server
     bool YunoServerNetwork::Start(std::uint16_t port)
     {
         std::cout << "[Server] Start called. port=" << port << "\n";
+
+        if (!m_cardDB.LoadFromCSV("../Assets/CardData/CardData.csv"))
+        {
+            std::cerr << "[Server] Card CSV load failed\n";
+            return false;
+        }
+        if (!m_cardRangeDB.LoadFromCSV("../Assets/CardData/CardRange.csv"))
+        {
+            std::cerr << "[Server] cardRange CSV load failed\n";
+            return false;
+        }
+
+        std::cout << "[Server] Init OK: "
+            << "Cards=" << m_cardDB.GetAllCards().size()
+            << ", Ranges=" << m_cardRangeDB.GetRangeCount()
+            << "\n";
 
         const bool ok = m_server.Start(port);
         std::cout << "[Server] TcpServer::Start result=" << (ok ? "true" : "false") << "\n";
@@ -175,6 +211,7 @@ namespace yuno::server
                         });
 
                     session->Send(std::move(bytes));
+                    
                 }
             }
         ); // Enter Packet End
@@ -238,7 +275,7 @@ namespace yuno::server
                     });
 
                 m_server.Broadcast(std::move(bytes));
-
+                m_roundController.TryStartRound();
             }
         ); // ReadySet Packet End
 
@@ -246,105 +283,50 @@ namespace yuno::server
         m_dispatcher.RegisterRaw(
             PacketType::C2S_SubmitWeapon,
             [this](const NetPeer& peer,
-                const PacketHeader& /*header*/,
+                const PacketHeader&,
                 const std::uint8_t* body,
                 std::uint32_t bodyLen)
             {
-                yuno::net::ByteReader r(body, bodyLen);
-                const auto pkt = yuno::net::packets::C2S_SubmitWeapon::Deserialize(r);
+                ByteReader r(body, bodyLen);
+                const auto pkt = packets::C2S_SubmitWeapon::Deserialize(r);
 
-                const int slotIdx = m_match.FindSlotBySessionId(peer.sId);
+                const int slotIdx =
+                    m_match.FindSlotBySessionId(peer.sId);
                 if (slotIdx < 0)
                     return;
 
-                const auto& slots = m_match.Slots();
-                const std::uint32_t uid = slots[slotIdx].userId;
-                if (uid == 0)
+                const auto& slot =
+                    m_match.Slots()[slotIdx];
+
+                // 1️ 무기 선택 상태 저장
+                if (!m_match.SetUnitsByUserId(
+                    slot.userId,
+                    pkt.WeaponId1,
+                    pkt.WeaponId2))
                     return;
 
-                if (!m_match.SetUnitsByUserId(uid, pkt.WeaponId1, pkt.WeaponId2))
-                    return;
-
-                const auto& s = m_match.Slots();
-
-                const bool bothOccupied = (s[0].occupied && s[1].occupied);
-                const bool bothReady = (s[0].ready && s[1].ready);
-                const bool bothUnitsFilled = (s[0].IsUnitsFilled() && s[1].IsUnitsFilled());
-
-                if (!(bothOccupied && bothReady && bothUnitsFilled))
-                    return;
-
-                if (m_countdownSent)
-                    return;
-
-                m_countdownSent = true;
-
-                yuno::net::packets::S2C_CountDown cd{};
-                cd.countTime = 3;
-                cd.slot1_UnitId1 = s[0].unitId1;
-                cd.slot1_UnitId2 = s[0].unitId2;
-                cd.slot2_UnitId1 = s[1].unitId1;
-                cd.slot2_UnitId2 = s[1].unitId2;
-
-                auto bytes = yuno::net::PacketBuilder::Build(
-                    yuno::net::PacketType::S2C_CountDown,
-                    [&](yuno::net::ByteWriter& w)
-                    {
-                        cd.Serialize(w);
-                    });
-
-                m_server.Broadcast(std::move(bytes));
-
-
-                std::cout <<"0slot user Env id : " << m_match.Slots()[0].userId << "1slot user Env id : "<< m_match.Slots()[1].userId << std::endl;
-
-                // 무기 확정 후 준비 취소 못하니까  여기서 초기화 패킷도 같이 ㄱㄱ
-                // 일단 체력, 스테미너는 기본값인데 추후 무기의 hp,스태미너 받아와서 넣기 ㄱㄱ
-                yuno::net::packets::S2C_RoundStart rs{};
-                {
-                    // slot0
-                    rs.units[0].PID = 1;
-                    rs.units[0].slotID = 1;
-                    rs.units[0].WeaponID = static_cast<std::uint8_t>(s[0].unitId1);
-                    rs.units[0].hp = 100;          
-                    rs.units[0].stamina = 100;     
-                    rs.units[0].SpawnTileId = 9;  
-
-                    rs.units[1].PID = 1;
-                    rs.units[1].slotID = 2;
-                    rs.units[1].WeaponID = static_cast<std::uint8_t>(s[0].unitId2);
-                    rs.units[1].hp = 100;
-                    rs.units[1].stamina = 100;
-                    rs.units[1].SpawnTileId = 23;
-
-                    // slot1
-                    rs.units[2].PID = 2;
-                    rs.units[2].slotID = 1;
-                    rs.units[2].WeaponID = static_cast<std::uint8_t>(s[1].unitId1);
-                    rs.units[2].hp = 100;
-                    rs.units[2].stamina = 100;
-                    rs.units[2].SpawnTileId = 13;
-
-                    rs.units[3].PID = 2;
-                    rs.units[3].slotID = 2;
-                    rs.units[3].WeaponID = static_cast<std::uint8_t>(s[1].unitId2);
-                    rs.units[3].hp = 100;
-                    rs.units[3].stamina = 100;
-                    rs.units[3].SpawnTileId = 27;
-                }
-
-                auto rsBytes = yuno::net::PacketBuilder::Build(
-                    yuno::net::PacketType::S2C_RoundStart,
-                    [&](yuno::net::ByteWriter& w)
-                    {
-                        rs.Serialize(w);
-                    });
-
-                m_server.Broadcast(std::move(rsBytes));
-
+                // 2️ 라운드 시작 조건 검사 (중앙 집중)
+                m_roundController.TryStartRound();
             }
         );// Submit Weapon Packet End
 
+        //Submit ReadyTurn Packet Start
+        m_dispatcher.RegisterRaw(
+            PacketType::C2S_ReadyTurn,
+            [this](const NetPeer& peer,
+                const PacketHeader&,
+                const uint8_t* body,
+                uint32_t bodyLen)
+            {
+                ByteReader r(body, bodyLen);
+                const auto pkt =
+                    packets::C2S_ReadyTurn::Deserialize(r);
+
+                m_turnManager.SubmitTurn(
+                    peer.sId,
+                    pkt.runtimeIDs);
+            }
+        );//Submit ReadyTurn Packet End
     }
 }
 

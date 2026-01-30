@@ -140,17 +140,31 @@
   <ItemGroup>
     <ClCompile Include="main\main.cpp" />
     <ClCompile Include="MatchManager\MatchManager.cpp" />
+    <ClCompile Include="RoundController.cpp" />
+    <ClCompile Include="ServerCardDealer.cpp" />
+    <ClCompile Include="ServerCardManager.cpp" />
+    <ClCompile Include="ServerCardRangeManager.cpp" />
+    <ClCompile Include="ServerCardRuntime.cpp" />
     <ClCompile Include="ServerNetwork\YunoServerNetwork.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="TurnManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MatchManager\MatchManager.h" />
+    <ClInclude Include="RoundController.h" />
+    <ClInclude Include="ServerCardActData.h" />
+    <ClInclude Include="ServerCardData.h" />
+    <ClInclude Include="ServerCardDealer.h" />
+    <ClInclude Include="ServerCardManager.h" />
+    <ClInclude Include="ServerCardRangeManager.h" />
+    <ClInclude Include="ServerCardRuntime.h" />
     <ClInclude Include="ServerNetwork\YunoServerNetwork.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="TurnManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\YunoNetProtocol\YunoNetProtocol.vcxproj">

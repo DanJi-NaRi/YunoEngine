@@ -1,0 +1,32 @@
+#pragma once
+#include <unordered_map>
+#include <vector>
+#include <cstdint>
+#include <string>
+
+struct RangeOffset
+{
+    int dx;
+    int dy;
+};
+
+struct RangeData
+{
+    uint32_t rangeId;
+    std::vector<RangeOffset> offsets;
+};
+
+namespace yuno::server
+{
+    class ServerCardRangeManager
+    {
+    public:
+        bool LoadFromCSV(const std::string& path);
+
+        const RangeData* GetRange(uint32_t rangeId) const;
+        size_t GetRangeCount() const { return m_ranges.size(); }
+
+    private:
+        std::unordered_map<uint32_t, RangeData> m_ranges;
+    };
+}

@@ -19,6 +19,7 @@ public:
     static GameManager& Get();
 
     void BindSceneManager(ISceneManager* sm) { m_sceneManager = sm; }
+    yuno::game::YunoClientNetwork* GetClientNetwork() const {return m_clientNet;}
     void BindClientNetwork(yuno::game::YunoClientNetwork* net) { m_clientNet = net; }
 
     void SetSceneState(CurrentSceneState state);
@@ -32,7 +33,6 @@ public:
     void SetSlotIdx(int idx) { m_PID = idx; };
     int GetSlotiIdx() { return m_PID; };
 
-
     void SetMyPick(int index, PieceType type);
     bool HasTwoPicks() const;
     PieceType GetMyPiece(int idx) { return m_myPick[idx]; };
@@ -40,8 +40,25 @@ public:
     bool ToggleReady();
     bool IsReady() const { return m_isReady; }
 
-    //void RoundInit(yuno::net::packets::S2C_Error data);
+    void SubmitTurn(const std::vector<uint32_t>& runtimeIDs);
 
+    //void RoundInit(yuno::net::packets::S2C_Error data);
+    void SetTestCardRuntimeIDs(const std::vector<uint32_t>& ids)
+    {
+        m_testCardRuntimeIDs = ids;
+    }
+    //전체리스트
+    const std::vector<uint32_t>& GetTestCardRuntimeIDs() const
+    {
+        return m_testCardRuntimeIDs;
+    }
+    //ID 슬롯 접근용
+    uint32_t GetTestCardRuntimeIDByIndex(int index) const
+    {
+        if (index < 0 || index >= (int)m_testCardRuntimeIDs.size())
+            return 0;
+        return m_testCardRuntimeIDs[index];
+    }
 private:
     static GameManager* s_instance;
 
@@ -55,6 +72,8 @@ private:
     int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽
 
     bool m_isReady = false;
+
+    std::vector<uint32_t> m_testCardRuntimeIDs;
 
     bool m_countdownActive = false;
     float m_countdownRemaining = 0.0f;
