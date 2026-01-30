@@ -55,7 +55,8 @@ public:
     void ProcessPending(); //프레임 맨 마지막에 호출
 
     void Update(float dTime);
-    void Submit(float dTime);
+    void Submit(float dTime);       // 레이어 비적용 Submit
+    void LayerSubmit(float dTime);  // 레이어 적용 Submit
 
     template<typename T>
     T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);

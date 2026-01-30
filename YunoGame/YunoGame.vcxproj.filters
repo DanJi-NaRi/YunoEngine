@@ -173,9 +173,6 @@
       <Filter>Game\UI\Image</Filter>
     </ClCompile>
     <ClCompile Include="GameManager\GameManager.cpp" />
-    <ClCompile Include="Game\UI\ExitButton.cpp" />
-    <ClCompile Include="Game\UI\ReadyButton.cpp" />
-    <ClCompile Include="Game\UI\TitleImage.cpp" />
     <ClCompile Include="Game\UI\UserImage.cpp" />
     <ClCompile Include="Scenes\Title.cpp">
       <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
@@ -208,6 +205,15 @@
     <ClCompile Include="UnitGridBox.cpp" />
     <ClCompile Include="UnitGridSystem.cpp" />
     <ClCompile Include="WidgetGridSystem.cpp" />
+    <ClCompile Include="Game\UI\ReadyButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\ExitButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\TitleImage.cpp">
+      <Filter>Game\UI\Image</Filter>
+    </ClCompile>
     <ClCompile Include="CardRangeManager.cpp">
       <Filter>Card</Filter>
     </ClCompile>
@@ -299,7 +305,6 @@
       <Filter>Game\UI\Button</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\Test_Unit.h" />
-    <ClInclude Include="Game\UI\Text.h" />
     <ClInclude Include="Game\UI\ButtonTemplate.h">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClInclude>
@@ -312,9 +317,6 @@
     </ClInclude>
     <ClInclude Include="GameManager\GameManager.h" />
     <ClInclude Include="GameManager\SceneState.h" />
-    <ClInclude Include="Game\UI\ExitButton.h" />
-    <ClInclude Include="Game\UI\ReadyButton.h" />
-    <ClInclude Include="Game\UI\TitleImage.h" />
     <ClInclude Include="Game\UI\UserImage.h" />
     <ClInclude Include="Scenes\Title.h">
       <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
@@ -339,6 +341,15 @@
     <ClInclude Include="CardRangeManager.h"/>
     <ClInclude Include="Game\Object\CardActData.h">
       <Filter>Card</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\ReadyButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\ExitButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\TitleImage.h">
+      <Filter>Game\UI\Image</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
