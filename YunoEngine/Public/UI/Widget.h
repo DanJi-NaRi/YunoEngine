@@ -227,7 +227,7 @@ public:
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
     virtual bool  Start(); // Create 다 끝나고 호출. 
-    virtual Widget* CreateChild();
+    virtual void CreateChild() {};
 
     bool  UpdateTransform(float dTime = 0); // 트랜스폼 업데이트. 자식에서 호출하면 꼬이니 주의
     virtual bool  Update(float dTime = 0);  

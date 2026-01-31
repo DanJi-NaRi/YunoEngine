@@ -62,7 +62,7 @@ bool CardTable::Start()
     return true;
 }
 
-CardTable* CardTable::CreateChild() {
+void CardTable::CreateChild() {
     // 고정 하위 위젯 생성
 
     m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S0", XMFLOAT3(0, 0, 0)));
@@ -83,7 +83,6 @@ CardTable* CardTable::CreateChild() {
     //m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S5", XMFLOAT3(500, 0, 0)));
     //this->Attach(m_SetCardSlots.back());
 
-    return this;
 }
 
 

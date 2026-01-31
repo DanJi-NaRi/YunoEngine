@@ -281,8 +281,6 @@ bool Widget::Start() {
     return true;
 }
 
-Widget* Widget::CreateChild() { return this; }
-
 
 
 bool Widget::UpdateTransform(float dTime)
