@@ -47,8 +47,8 @@ bool CardTable::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
     m_anchor = UIDirection::LeftTop;
     
-    m_vScale.y = 1;
-    m_vScale.x = 1;
+    m_vScale.y = 5;
+    m_vScale.x = 5;
 
     Backup();
 

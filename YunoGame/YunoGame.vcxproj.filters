@@ -106,6 +106,9 @@
     <Filter Include="System\GridSystem\Queue_test">
       <UniqueIdentifier>{a112416b-9bd3-4b1e-b689-f66c726ce9b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes\3.Phase">
+      <UniqueIdentifier>{6b093a5a-706d-4922-8eba-d0cc15908609}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -258,6 +261,9 @@
     </ClCompile>
     <ClCompile Include="System\PlayQueue.cpp">
       <Filter>System\GridSystem\Queue_test</Filter>
+    </ClCompile>
+    <ClCompile Include="PhaseScene.cpp">
+      <Filter>Scenes\3.Phase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -417,6 +423,12 @@
     </ClInclude>
     <ClInclude Include="Game\UI\TitleImage.h">
       <Filter>Game\UI\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseScene.h">
+      <Filter>Scenes\3.Phase</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

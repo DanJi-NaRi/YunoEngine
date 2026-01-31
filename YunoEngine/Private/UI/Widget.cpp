@@ -337,7 +337,7 @@ bool Widget::UpdateTransform(float dTime)
     else { // 화면비 스케일 사용 X
         m_finalPos = Float3(m_vPos.x, m_vPos.y, m_vPos.z);
         m_finalSize = Float3(m_size.x * m_vScale.x, m_size.y * m_vScale.y, m_size.z * m_vScale.z);
-
+        
         // 보정 (의도에 따라..)
         //m_finalPos.z = 0.0f;
         m_finalSize.z = 1.0f;
@@ -350,17 +350,32 @@ bool Widget::UpdateTransform(float dTime)
     XMMATRIX mTrans = XMMatrixTranslation(m_finalPos.x, m_finalPos.y, m_finalPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
     XMMATRIX mPivot = XMMatrixTranslation(-m_pivot.x, -m_pivot.y, 0.0f); // 피벗
 
-    XMMATRIX mTM;
 
-    if (m_Parent)
-        mTM = mPivot * mScale * mRot * mTrans * m_Parent->GetWorldMatrix();
+    XMMATRIX mLocalTM = mPivot * mScale * mRot * mTrans; // 로컬(스케일 포함)
+    XMMATRIX mLocalNoScaleTM = mPivot * mRot * mTrans;         // 로컬(스케일 제외)
+
+    XMMATRIX mWorldTM;
+    XMMATRIX mNoScaleWorldTM;
+
+    if (m_Parent) {
+        // 부모 TM 적용 버전
+        //mTM = mPivot * mScale * mRot * mTrans *  m_Parent->GetWorldMatrix();
+        // 부모 Scale제외 TM 버전
+        mWorldTM = mLocalTM * m_Parent->GetNoScaleWorldMatrix();
+        mNoScaleWorldTM = mLocalNoScaleTM * m_Parent->GetNoScaleWorldMatrix();
+    }
     else
-        mTM = mPivot * mScale * mRot * mTrans;
+    {
+        mWorldTM = mLocalTM;
+        mNoScaleWorldTM = mLocalNoScaleTM;
+    }
+        
 
     XMStoreFloat4x4(&m_mScale, mScale);
     XMStoreFloat4x4(&m_mRot, mRot);
     XMStoreFloat4x4(&m_mTrans, mTrans);
-    XMStoreFloat4x4(&m_mWorld, mTM);
+    XMStoreFloat4x4(&m_mWorld, mWorldTM);
+    XMStoreFloat4x4(&m_mNoScaleWorld, mNoScaleWorldTM);
 
     UpdateRect(); // m_rect 갱신
 
@@ -389,10 +404,10 @@ void Widget::UpdateTransformChild_Internal(float dTime) // 실제 재귀
     }
 }
 
-//상속받은 업데이트 마지막에 무조건 호출
+//상속받은 업데이트 처음에 무조건 호출
 bool Widget::Update(float dTime)
 {
-    UpdateTransform(dTime);
+    //로직 작성 공간..
     return true;
 }
 

@@ -131,6 +131,8 @@ protected:
     XMFLOAT3	m_vScale;   // 스크린상의 위젯 크기 배율 (z는 의미 없음, 사용 안함)
     
     XMFLOAT4X4	m_mWorld;
+    XMFLOAT4X4	m_mNoScaleWorld; // 스케일 곱만 빠진 버전
+
     XMFLOAT4X4	m_mScale;
     XMFLOAT4X4  m_mRot;
     XMFLOAT4X4  m_mTrans;
@@ -174,11 +176,9 @@ protected:
 
     std::wstring m_inputString; // 텍스트 입력 내용 // 아직 미사용
 
-
     // 자주 변하지 않는 UI 최적화를 위한 더티 플래그.
     // 자식이 있을 경우 자식들의 더티 플래그도 조절해야 함.
-    bool m_layoutDirty    = true; // pos,rot,scale 변경 시
-    bool m_transformDirty = true; // width,height 변경 시
+    bool m_transformDirty = true; // pos,rot,scale 변경 시
 
     float       m_time;
 
@@ -242,25 +242,26 @@ public:
 
     bool          SubmitChild(float dTime = 0);              // 자식 체이닝 진입조건
     void          SubmitChild_Internal(float dTime = 0);     // 자식 체이닝 루프
-
+    //void          UpdateTransformTree(bool parentDirty);     // 트랜스폼 갱신 더티 체크 (업데이트 로직에서 Tarnsform 갱신 대비)
+    //void          UpdateTransformSelf();                     // Tarnsform 더티면 갱신
     //////////////////////////////////////////////////
     public:
 
 
     void          UpdateRect();
 
-    // 위치 세팅
-    void          SetSize(Float2 size)          { m_size = size; }
-    void          SetPos(XMFLOAT3 vPos)         { m_vPos = vPos; }
+    // 위치 세팅 // 더티 플래그는 아직 미사용
+    void          SetSize(Float2 size)          { m_size = size; m_transformDirty = true; }
+    void          SetPos(XMFLOAT3 vPos)         { m_vPos = vPos; m_transformDirty = true; }
     void          SetPosBK(XMFLOAT3 vPosBk)     { m_vPosBk = vPosBk; }
-    void          SetRot(XMFLOAT3 vRot)         { m_vRot = vRot; }
+    void          SetRot(XMFLOAT3 vRot)         { m_vRot = vRot; m_transformDirty = true; }
     void          SetRotBK(XMFLOAT3 vRotBk)     { m_vRotBk = vRotBk; }
-    void          SetScale(XMFLOAT3 vScale)     { m_vScale = vScale; }
+    void          SetScale(XMFLOAT3 vScale)     { m_vScale = vScale; m_transformDirty = true;}
     void          SetScaleBK(XMFLOAT3 vScaleBk) { m_vScaleBk = vScaleBk; }
-    void          SetPivot(Float2 pivot)        { assert(PivotMinMax(pivot)); m_pivot = pivot; }
-    void          SetPivot(UIDirection dir)     { m_pivot = PivotFromUIDirection(dir); }
+    void          SetPivot(Float2 pivot)        { assert(PivotMinMax(pivot)); m_pivot = pivot; m_transformDirty = true; }
+    void          SetPivot(UIDirection dir)     { m_pivot = PivotFromUIDirection(dir); m_transformDirty = true;}
     virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
-    Float3        SetCanvasSizeX(Float3 sizeXY)   { m_canvasSize = sizeXY; }
+    void          SetCanvasSize(Float3 sizeXY)   { m_canvasSize = sizeXY; m_transformDirty = true;}
     void          SetIsRoot(bool isRoot) { m_isRoot = isRoot; }
     void          SetLayer(WidgetLayer layer) { m_layer = layer; }
     void          SetTextureSize(int num, TextureHandle& handle);
@@ -277,7 +278,12 @@ public:
     XMFLOAT3&                    GetScale() { return m_vScale; }
     uint32_t                     GetID() { return m_id; }
     const std::wstring&          GetName() const { return m_name; }
+    
+    XMMATRIX                     GetTransMatrix() { return XMLoadFloat4x4(&m_mTrans); }
+    XMMATRIX                     GetRotMatrix() { return XMLoadFloat4x4(&m_mRot); }
+    XMMATRIX                     GetScaleMatrix() { return XMLoadFloat4x4(&m_mScale); }
     XMMATRIX                     GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
+    XMMATRIX                     GetNoScaleWorldMatrix() { return XMLoadFloat4x4(&m_mNoScaleWorld); }
     const RECT                   GetRect() const { return m_rect; }
     const Float2                 GetPivot() { return m_pivot; }
     bool                         GetIsRoot() { return m_isRoot; }
