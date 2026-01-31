@@ -1,13 +1,14 @@
 #include "pch.h"
 #include "Mesh.h"
 #include "YunoEngine.h"
-
 #include "SerializeScene.h"
+
 #include "Widget.h"
 #include "IWindow.h"
-
+//#include "YunoTextureManager.h"
 #include "UIFactory.h"
 #include "IInput.h"
+
 
 VERTEX_Pos g_Widget_pos[] = {
     { 0,0,0 },    // 좌상
@@ -77,9 +78,6 @@ Widget::Widget(UIFactory& uiFactory) : m_uiFactory(uiFactory)
     m_vRot = XMFLOAT3(0.0f, 0.0f, 0.0f);
     m_vPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-    m_spriteSize.x = 0;
-    m_spriteSize.y = 0;
-
     m_canvasSize.x = 0;
     m_canvasSize.y = 0;
 
@@ -126,6 +124,7 @@ bool Widget::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
 {
     m_Albedo = m_pTextures->LoadTexture2D(path.c_str());
 
+    
     MaterialDesc md{};
     if (pDesc) {
         md =  *pDesc;
@@ -149,6 +148,8 @@ bool Widget::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
         md.ao = 0;
     }
     
+    AddTextureSize(md.albedo);
+
     // 첫번째 머테리얼 생성
     m_defaultMaterial = m_pRenderer->CreateMaterial(md);
     if (m_defaultMaterial == 0) return false;
@@ -168,6 +169,8 @@ bool Widget::AddMaterial(const std::wstring& path, MaterialDesc& desc)
     MaterialHandle mtrl = m_pRenderer->CreateMaterial(d);
     if (mtrl == 0) return false;        // invalid 규약에 맞게 수정
 
+    AddTextureSize(d.albedo);
+
     m_materials.push_back(mtrl);
     return true;
 }
@@ -177,6 +180,7 @@ bool Widget::AddMaterial(MaterialDesc& desc)
     MaterialHandle mtrl = m_pRenderer->CreateMaterial(desc);
     if (mtrl == 0) return false;
 
+    
     m_materials.push_back(mtrl);
     return true;
 }
@@ -195,14 +199,14 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     //m_vRot = vRot;
     //m_vScale = vScale;
 
-    m_spriteSize.x = (float)50;
-    m_spriteSize.y = (float)50;
+    m_textureSize.x = (float)50;
+    m_textureSize.y = (float)50;
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
 
-    m_size.x = m_spriteSize.x;
-    m_size.y = m_spriteSize.y;
+    m_size.x = m_textureSize.x;
+    m_size.y = m_textureSize.y;
     
     //m_finalSize.x = m_vScale.x * m_width;
     //m_finalSize.y = m_vScale.y * m_height;
@@ -257,13 +261,13 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOA
     m_vRot = vRot;
     m_vScale = vScale;
 
-    m_spriteSize.x = (float)50;
-    m_spriteSize.y = (float)50;
+    m_textureSize.x = (float)50; // CreateMaterial()에서 할당
+    m_textureSize.y = (float)50;
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
-    m_size.x = m_spriteSize.x;
-    m_size.y = m_spriteSize.y;
+    m_size.x = (float)50;
+    m_size.y = (float)50;
 
     m_canvasSize.x = 0;
     m_canvasSize.y = 0;
@@ -376,10 +380,24 @@ void Widget::UpdateTransformChild_Internal(float dTime) // 실제 재귀
 //상속받은 업데이트 마지막에 무조건 호출
 bool Widget::Update(float dTime)
 {
-
-
     UpdateTransform(dTime);
     return true;
+}
+
+void Widget::SetTextureSize(int num, TextureHandle& handle)
+{
+    const int size = m_textureSizes.size();
+    assert(num >= 0 && num < size);
+    if (num < 0 || num >= size) return;
+    auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(m_Albedo);
+    m_textureSizes[num].x = (float)textureSize.first;
+    m_textureSizes[num].y = (float)textureSize.second;
+}
+
+Float2 Widget::AddTextureSize(TextureHandle& handle)
+{
+    auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(m_Albedo);
+    m_textureSizes.push_back(Float3{ (float)textureSize.first, (float)textureSize.second, 0.0f });
 }
 
 void Widget::Backup()

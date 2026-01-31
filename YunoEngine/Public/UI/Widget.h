@@ -147,7 +147,7 @@ protected:
 
     Float3 m_size;               // 위젯 자체의 사이즈 (width, height)
 
-    Float3 m_spriteSize;
+    std::vector<Float3> m_textureSizes;
 
     Float3 m_finalPos;
 
@@ -261,23 +261,29 @@ public:
     Float3        SetCanvasSizeX(Float3 sizeXY)   { m_canvasSize = sizeXY; }
     void          SetIsRoot(bool isRoot) { m_isRoot = isRoot; }
     void          SetLayer(WidgetLayer layer) { m_layer = layer; }
+    void          SetTextureSize(int num, TextureHandle& handle);
 
+
+    Float2        AddTextureSize(TextureHandle& handle);
 
 
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
 
-    XMFLOAT3& GetPos() { return m_vPos; }
-    XMFLOAT3& GetRot() { return m_vRot; }
-    XMFLOAT3& GetScale() { return m_vScale; }
-    uint32_t GetID() { return m_id; }
-    const std::wstring& GetName() const { return m_name; }
-    XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
-    const RECT GetRect() const { return m_rect; }
-    const Float2 GetPivot() { return m_pivot; }
-    bool GetIsRoot() { return m_isRoot; }
-    WidgetLayer GetLayer() { return m_layer; }
-    bool HasMeshNode() const { return m_MeshNode.get() != nullptr; }
+    XMFLOAT3&                    GetPos() { return m_vPos; }
+    XMFLOAT3&                    GetRot() { return m_vRot; }
+    XMFLOAT3&                    GetScale() { return m_vScale; }
+    uint32_t                     GetID() { return m_id; }
+    const std::wstring&          GetName() const { return m_name; }
+    XMMATRIX                     GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
+    const RECT                   GetRect() const { return m_rect; }
+    const Float2                 GetPivot() { return m_pivot; }
+    bool                         GetIsRoot() { return m_isRoot; }
+    WidgetLayer                  GetLayer() { return m_layer; }
+    bool                         HasMeshNode() const { return m_MeshNode.get() != nullptr; }
+    const Float3&                GetTextureSize(int num) const { assert(num >= 0 && num < m_textureSizes.size()); return m_textureSizes[num]; }
+    const std::vector<Float3>&   GetTextureSizes() const { return m_textureSizes; }
+   
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();
