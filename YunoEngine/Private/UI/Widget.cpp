@@ -124,7 +124,8 @@ bool Widget::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
 {
     m_Albedo = m_pTextures->LoadTexture2D(path.c_str());
 
-    
+    AddTextureSize(m_Albedo);
+
     MaterialDesc md{};
     if (pDesc) {
         md =  *pDesc;
@@ -148,8 +149,6 @@ bool Widget::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
         md.ao = 0;
     }
     
-    AddTextureSize(md.albedo);
-
     // 첫번째 머테리얼 생성
     m_defaultMaterial = m_pRenderer->CreateMaterial(md);
     if (m_defaultMaterial == 0) return false;
@@ -199,14 +198,14 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     //m_vRot = vRot;
     //m_vScale = vScale;
 
-    m_textureSize.x = (float)50;
-    m_textureSize.y = (float)50;
+    //m_textureSizes.x = (float)50;
+    //m_textureSizes.y = (float)50;
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
 
-    m_size.x = m_textureSize.x;
-    m_size.y = m_textureSize.y;
+    //m_size.x = m_textureSizes.x;
+    //m_size.y = m_textureSizes.y;
     
     //m_finalSize.x = m_vScale.x * m_width;
     //m_finalSize.y = m_vScale.y * m_height;
@@ -260,9 +259,6 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOA
     m_vPos = vPos;
     m_vRot = vRot;
     m_vScale = vScale;
-
-    m_textureSize.x = (float)50; // CreateMaterial()에서 할당
-    m_textureSize.y = (float)50;
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
@@ -397,7 +393,9 @@ void Widget::SetTextureSize(int num, TextureHandle& handle)
 Float2 Widget::AddTextureSize(TextureHandle& handle)
 {
     auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(m_Albedo);
-    m_textureSizes.push_back(Float3{ (float)textureSize.first, (float)textureSize.second, 0.0f });
+    m_textureSizes.emplace_back(Float2{ (float)textureSize.first, (float)textureSize.second});
+
+    return m_textureSizes.back();
 }
 
 void Widget::Backup()

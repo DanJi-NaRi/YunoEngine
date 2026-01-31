@@ -145,9 +145,9 @@ protected:
 
     // 사이즈 데이터
 
-    Float3 m_size;               // 위젯 자체의 사이즈 (width, height)
+    Float3 m_size;               // 위젯 자체의 사이즈 (width, height)s
 
-    std::vector<Float3> m_textureSizes;
+    std::vector<Float2> m_textureSizes;
 
     Float3 m_finalPos;
 
@@ -281,8 +281,8 @@ public:
     bool                         GetIsRoot() { return m_isRoot; }
     WidgetLayer                  GetLayer() { return m_layer; }
     bool                         HasMeshNode() const { return m_MeshNode.get() != nullptr; }
-    const Float3&                GetTextureSize(int num) const { assert(num >= 0 && num < m_textureSizes.size()); return m_textureSizes[num]; }
-    const std::vector<Float3>&   GetTextureSizes() const { return m_textureSizes; }
+    const Float3&                GetTextureSize(int num) const { assert(num >= 0 && num < m_textureSizess.size()); return m_textureSizes[num]; }
+    const std::vector<Float2>&   GetTextureSizes() const { return m_textureSizes; }
    
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
