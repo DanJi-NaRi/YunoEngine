@@ -22,6 +22,23 @@ public:
     {
         return m_uiManager.CreateWidget<T>(name, pos); // UIManager 멤버 접근은 내부에서
     }
+     
+
+    // 자식 생성
+    template<typename T>
+    T* CreateChild(const std::wstring& name, DirectX::XMFLOAT3 pos, Widget* pParent) // 위젯 생성 // 템플릿 함수
+    {
+        assert(pParent);
+        if (!pParent) return nullptr;
+
+         T* pChild = m_uiManager.CreateWidget<T>(name, pos); // UIManager 멤버 접근은 내부에서
+         pParent->Attach(pChild);
+         pChild->SetLayer(pParent->GetLayer());
+
+         if (!pChild) return nullptr;
+
+         return pChild;
+    }
     //===================================//
 
 

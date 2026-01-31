@@ -4,6 +4,7 @@
 
 #include "YunoEngine.h"
 #include "IInput.h"
+#include "UIFactory.h"
 
 ButtonTemplate::ButtonTemplate(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
@@ -52,14 +53,11 @@ bool ButtonTemplate::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos
     return true;
 }
 
-ButtonTemplate* ButtonTemplate::CreateChild()
+void ButtonTemplate::CreateChild()
 {
     // 자식 생성 공간, 고정 하위 위젯 생성
 
-    //m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S0", XMFLOAT3(0, 0, 0)));
-    //this->Attach(m_SetCardSlots.back());
-
-    return this; // 자기 자신을 보내서 체이닝을 해도 본체가 반환되게 한다.
+    //m_uiFactory.CreateChild<CardSlot>(m_name + L"_추가이름", XMFLOAT3(0, 0, 0), this);
 }
 
 bool ButtonTemplate::Start()
