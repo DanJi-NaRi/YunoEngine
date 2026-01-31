@@ -150,7 +150,6 @@ void TitleScene::Update(float dt)
 
     //m_input->Dispatch();
     m_gridSystem->Update(dt);
-
 }
 
 void TitleScene::SubmitObj()

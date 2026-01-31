@@ -159,8 +159,8 @@ protected:
           
     //Float3 m_clientSize;        // 클라이언트 사이즈 XY
 
-    Float3 m_canvasOffset;       // 캔버스 결과 적용 오프셋 (canvasSizeXY/clientSizeXY)
-
+    Float3 m_canvasScale;       // 캔버스 결과 적용 스케일 (canvasSizeXY/clientSizeXY)
+    Float3 m_canvasLetterboxOffset; // 레터박스 보정 오프셋
     //Canvas* m_canvas;
 
 
@@ -201,6 +201,8 @@ protected:
 
     bool m_isRoot = true; // 캔버스를 제외한 가장 최상위 부모인지. // 나중에 캔버스 위젯이 생기면 캔버스만 예외처리 해야 함.
 
+    bool m_useAspectComp = true; // 업데이트 시 캔버스/클라이언트 스케일링을 사용할건지 아닌지 // 기본값 : 사용
+
 protected:
 
     IRenderer* m_pRenderer = nullptr;
@@ -227,8 +229,8 @@ public:
     virtual bool  Start(); // Create 다 끝나고 호출. 
     virtual Widget* CreateChild();
 
-    virtual bool  UpdateTransform(float dTime = 0);
-    virtual bool  Update(float dTime = 0);
+    bool  UpdateTransform(float dTime = 0); // 트랜스폼 업데이트. 자식에서 호출하면 꼬이니 주의
+    virtual bool  Update(float dTime = 0);  
     virtual bool  Submit(float dTime = 0);
     bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 X
 
@@ -281,7 +283,7 @@ public:
     bool                         GetIsRoot() { return m_isRoot; }
     WidgetLayer                  GetLayer() { return m_layer; }
     bool                         HasMeshNode() const { return m_MeshNode.get() != nullptr; }
-    const Float3&                GetTextureSize(int num) const { assert(num >= 0 && num < m_textureSizess.size()); return m_textureSizes[num]; }
+    const Float3&                GetTextureSize(int num) const { assert(num >= 0 && num < m_textureSizes.size()); return m_textureSizes[num]; }
     const std::vector<Float2>&   GetTextureSizes() const { return m_textureSizes; }
    
 

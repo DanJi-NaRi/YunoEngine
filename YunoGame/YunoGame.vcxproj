@@ -194,7 +194,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
   <ItemGroup>
     <ClCompile Include="CardManager.cpp" />
     <ClCompile Include="CardRangeManager.cpp" />
-    <ClCompile Include="ExitButton.cpp" />
     <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -271,7 +270,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="CardManager.h" />
     <ClInclude Include="CardQueue.h" />
     <ClInclude Include="CardRangeManager.h" />
-    <ClInclude Include="ExitButton.h" />
     <ClInclude Include="GameManager\SceneState.h" />
     <ClInclude Include="Game\Object\CardActData.h" />
     <ClInclude Include="Game\UI\ButtonTemplate.h">

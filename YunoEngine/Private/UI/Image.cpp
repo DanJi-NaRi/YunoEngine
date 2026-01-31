@@ -22,16 +22,10 @@ bool Image::Start()
     return true;
 }
 
-bool Image::UpdateTransform(float dTime)
-{
-    Widget::UpdateTransform(dTime);
-
-    return true;
-}
-
 bool Image::Update(float dTime)
 {
     Widget::Update(dTime);
+    // 내용 작성..
 
     return true;
 }

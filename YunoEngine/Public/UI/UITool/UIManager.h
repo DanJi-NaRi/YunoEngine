@@ -113,6 +113,7 @@ T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
     CheckDedicateWidgetName(newname);
 
     widget->Create(newname, m_widgetIDs, pos); // 생성 (유니티로 치면 Awake)
+    widget->UpdateTransform();
 
     auto* pWidget = widget.get();
 

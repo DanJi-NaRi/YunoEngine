@@ -242,8 +242,6 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
     Backup();
 
-    Widget::UpdateTransform();
-
     return true;
 }
 
@@ -294,45 +292,62 @@ bool Widget::UpdateTransform(float dTime)
 
     /*m_clientSize = Float2((float)YunoEngine::GetWindow()->GetClientWidth(),
                          (float)YunoEngine::GetWindow()->GetClientHeight());*/
+    
+    if (m_useAspectComp && !m_Parent) { // 화면비 스케일 사용 (기본값)
+        Float2 origin = g_DefaultClientXY;          // 기준(디자인) 해상도
+        Float2 canvas = m_uiFactory.GetCanvasSize();// 현재 클라이언트/캔버스
 
-   
-    Float2 origin = g_DefaultClientXY; // 기준(디자인) 해상도
-    Float2 canvas = m_uiFactory.GetCanvasSize(); // 현재 클라이언트/캔버스
+        // origin/canvas 0 방어 (초기화/리사이즈 순간 등)
+        if (origin.x <= 0.0f || origin.y <= 0.0f || canvas.x <= 0.0f || canvas.y <= 0.0f)
+        {
+            m_canvasScale = Float2(1.0f, 1.0f);
+            m_canvasLetterboxOffset = Float2(0.0f, 0.0f);
 
-    float sx = canvas.x / origin.x;
-    float sy = canvas.y / origin.y;
+            m_finalPos = Float3(m_vPos.x, m_vPos.y, m_vPos.z);
+            m_finalSize = Float3(m_size.x * m_vScale.x, m_size.y * m_vScale.y, 1.0f);
+        }
+        else
+        {
+            float sx = canvas.x / origin.x;
+            float sy = canvas.y / origin.y;
 
-    // 레터박스(전체가 보이도록) => 더 작은 스케일 채택
-    float s = (sx < sy) ? sx : sy;
+            // 레터박스(전체가 보이도록) => 더 작은 스케일 채택
+            float s = (sx < sy) ? sx : sy;
 
-    // 16:9 유효영역(스케일 적용 후 origin 크기)
-    Float2 fitted = Float2(origin.x * s, origin.y * s);
+            // 16:9 유효영역(스케일 적용 후 origin 크기)
+            Float2 fitted = Float2(origin.x * s, origin.y * s);
 
-    // 남는 공간(레터박스) 분배: 중앙 정렬
-    Float2 letterboxOffset = Float2(
-        (canvas.x - fitted.x) * 0.5f,
-        (canvas.y - fitted.y) * 0.5f);
+            // 남는 공간(레터박스) 분배: 중앙 정렬
+            Float2 letterboxOffset = Float2(
+                (canvas.x - fitted.x) * 0.5f,
+                (canvas.y - fitted.y) * 0.5f);
 
-    m_canvasOffset = Float2(s, s);
-    Float2 m_canvasLetterboxOffset = letterboxOffset; // 이동
+            m_canvasScale = Float2(s, s);
+            m_canvasLetterboxOffset = letterboxOffset; // 이동
 
-    m_finalSize.x = m_size.x * m_vScale.x * m_canvasOffset.x;
-    //m_finalSize.x = m_size.x * m_vScale.x;
-    m_finalSize.y = m_size.y * m_vScale.y * m_canvasOffset.y;
-    //m_finalSize.y = m_size.y * m_vScale.y;
-    m_finalSize.z = 1.0f;
+            m_finalSize.x = m_size.x * m_vScale.x * m_canvasScale.x;
+            m_finalSize.y = m_size.y * m_vScale.y * m_canvasScale.y;
+            m_finalSize.z = 1.0f;
 
-    m_finalPos.x = m_vPos.x * m_canvasOffset.x + m_canvasLetterboxOffset.x;
-    m_finalPos.y = m_vPos.y * m_canvasOffset.y + m_canvasLetterboxOffset.y;
-    m_finalPos.z = m_vPos.z;
+            m_finalPos.x = m_vPos.x * m_canvasScale.x + m_canvasLetterboxOffset.x;
+            m_finalPos.y = m_vPos.y * m_canvasScale.y + m_canvasLetterboxOffset.y;
+            m_finalPos.z = m_vPos.z;
+        }
+    }
+    else { // 화면비 스케일 사용 X
+        m_finalPos = Float3(m_vPos.x, m_vPos.y, m_vPos.z);
+        m_finalSize = Float3(m_size.x * m_vScale.x, m_size.y * m_vScale.y, m_size.z * m_vScale.z);
 
+        // 보정 (의도에 따라..)
+        //m_finalPos.z = 0.0f;
+        m_finalSize.z = 1.0f;
+    }
 
     //m_vScale.z = 1.0f; // UI는 z scale 의미 없음(일단 1로 고정)
 
     XMMATRIX mScale = XMMatrixScaling(m_finalSize.x, m_finalSize.y, 1.0f);
-    XMMATRIX mRot =   XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
-    //XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
-    XMMATRIX mTrans = XMMatrixTranslation(m_finalPos.x, m_finalPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
+    XMMATRIX mRot = XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
+    XMMATRIX mTrans = XMMatrixTranslation(m_finalPos.x, m_finalPos.y, m_finalPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
     XMMATRIX mPivot = XMMatrixTranslation(-m_pivot.x, -m_pivot.y, 0.0f); // 피벗
 
     XMMATRIX mTM;
@@ -353,6 +368,7 @@ bool Widget::UpdateTransform(float dTime)
 
     return true;
 }
+
 
 bool Widget::UpdateTransformChild(float dTime) // 루트 진입용
 {

@@ -38,17 +38,18 @@ bool UIScene::OnCreateScene()
     // 디렉션 라이트 생성
     //m_objectManager->CreateDirLight();
     m_uiManager->SetOrthoFlag(true);
-    
 
-    m_uiManager->CreateWidget<Image>(L"tstImg1", XMFLOAT3(0, 0, 0));
+   // m_uiManager->CreateWidget<Image>(L"tstImg1", XMFLOAT3(500, 500, 0));
     
-    m_uiManager->CreateWidget<Image>(L"tstImg2", XMFLOAT3(0, 0, 0));
+    //m_uiManager->CreateWidget<Image>(L"tstImg2", XMFLOAT3(510, 510, 0));
 
     // 자식이 있는 경우 체이닝으로 생성 
     // this반환해서 그냥 써도 똑같은 효과
     //m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0))->CreateChild(); 
+    //m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0)); 
 
-    //auto* slot0 = m_uiManager->CreateWidget<CardSlot>(L"S0", XMFLOAT3(300, 100, 0));
+
+    auto* slot0 = m_uiManager->CreateWidget<CardSlot>(L"S0", XMFLOAT3(300, 100, 0));
     //auto* slot1 = m_uiManager->CreateWidget<CardSlot>(L"S1", XMFLOAT3(400, 100, 0));
     //auto* slot2 = m_uiManager->CreateWidget<CardSlot>(L"S2", XMFLOAT3(500, 100, 0));
     //auto* slot3 = m_uiManager->CreateWidget<CardSlot>(L"S3", XMFLOAT3(600, 100, 0));

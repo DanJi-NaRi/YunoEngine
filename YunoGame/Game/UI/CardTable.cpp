@@ -68,38 +68,32 @@ CardTable* CardTable::CreateChild() {
     m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S0", XMFLOAT3(0, 0, 0)));
     this->Attach(m_SetCardSlots.back());
 
-    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S1", XMFLOAT3(10, 0, 0)));
-    this->Attach(m_SetCardSlots.back());
+    //m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S1", XMFLOAT3(10, 0, 0)));
+    //this->Attach(m_SetCardSlots.back());
 
-    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S2", XMFLOAT3(20, 0, 0)));
-    this->Attach(m_SetCardSlots.back());
+    //m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S2", XMFLOAT3(20, 0, 0)));
+    //this->Attach(m_SetCardSlots.back());
 
-    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S3", XMFLOAT3(30, 0, 0)));
-    this->Attach(m_SetCardSlots.back());
+    //m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S3", XMFLOAT3(30, 0, 0)));
+    //this->Attach(m_SetCardSlots.back());
 
-    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S4", XMFLOAT3(400, 0, 0)));
-    this->Attach(m_SetCardSlots.back());
+    //m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S4", XMFLOAT3(400, 0, 0)));
+    //this->Attach(m_SetCardSlots.back());
 
-    m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S5", XMFLOAT3(500, 0, 0)));
-    this->Attach(m_SetCardSlots.back());
+    //m_SetCardSlots.push_back(m_uiFactory.CreateWidget<CardSlot>(m_name + L"_S5", XMFLOAT3(500, 0, 0)));
+    //this->Attach(m_SetCardSlots.back());
 
     return this;
 }
 
 
-bool CardTable::UpdateTransform(float dTime)
-{
-    Image::UpdateTransform(dTime);
-
-    return true;
-}
-
 bool CardTable::Update(float dTime)
 {
+    Image::Update(dTime);
+
     if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50 * dTime; }
     if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50 * dTime; }
     
-    Image::Update(dTime);
     return true;
 }
 

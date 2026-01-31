@@ -37,14 +37,10 @@ bool ReadyButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool ReadyButton::UpdateTransform(float dTime) {
-    Button::UpdateTransform(dTime);
-
-    return true;
-}
 bool ReadyButton::Update(float dTime) {
-
     Button::Update(dTime);
+
+
     return true;
 }
 

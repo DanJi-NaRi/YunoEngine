@@ -194,9 +194,6 @@
     </ClCompile>
     <ClCompile Include="System\MinimapGridSystem.cpp" />
     <ClCompile Include="Grid.cpp" />
-    <ClCompile Include="System\GridSystem.cpp" />
-    <ClCompile Include="GridBox.cpp" />
-    <ClCompile Include="Game\Object\GridLine.cpp" />
     <ClCompile Include="MinimapQueue.cpp" />
     <ClCompile Include="WidgetGridLine.cpp" />
     <ClCompile Include="UnitGridLine.cpp" />
@@ -220,7 +217,6 @@
     <ClCompile Include="CardRangeManager.cpp">
       <Filter>Card</Filter>
     </ClCompile>
-    <ClCompile Include="ExitButton.cpp" />
     <ClCompile Include="WidgetPiece.cpp">
       <Filter>Game\Object\Piece</Filter>
     </ClCompile>
@@ -371,7 +367,6 @@
     <ClInclude Include="Game\Object\CardActData.h">
       <Filter>Card</Filter>
     </ClInclude>
-    <ClInclude Include="ExitButton.h" />
     <ClInclude Include="WidgetPiece.h">
       <Filter>Game\Object\Piece</Filter>
     </ClInclude>

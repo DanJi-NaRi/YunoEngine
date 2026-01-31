@@ -44,6 +44,10 @@ bool ButtonTemplate::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos
     //m_pDrag = std::make_unique<DragProvider>();  // 드래그 기능 사용 시 추가
     //if (!m_pDrag) return false;                  // 드래그 기능 사용 시 추가
 
+    // 캔버스/클라이언트 크기에 스케일/Pos 영향을 받고 싶지 않다면 false 해주기. (UpdateTransform에 영향)
+    // 기본값은 True. // 만약 부모가 있다면, false로 취급.
+    //m_useAspectComp = false;
+
     m_pDrag->Init(m_pInput, &m_vPos, true);
     return true;
 }
@@ -64,15 +68,9 @@ bool ButtonTemplate::Start()
     return true;
 }
 
-bool ButtonTemplate::UpdateTransform(float dTime) {
-    Button::UpdateTransform(dTime);
-    // 체이닝이 되는 업데이트. 부모 -> 자식 순서대로 실행되는 공간.
-    return true;
-}
 bool ButtonTemplate::Update(float dTime) {
-    // 체이닝이 되지 않는 업데이트. UIManager가 전체 순회하며 실행하는 공간.
+    Button::Update(dTime);
     //m_pDrag->UpdateDrag(dTime);                   // 드래그 기능 사용 시 추가
-    Widget::Update(dTime); //<-필수
     return true;
 }
 

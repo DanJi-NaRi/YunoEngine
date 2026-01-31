@@ -37,14 +37,9 @@ bool ExitButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool ExitButton::UpdateTransform(float dTime) {
-    Button::UpdateTransform(dTime);
-
-    return true;
-}
 bool ExitButton::Update(float dTime) {
-
     Button::Update(dTime);
+
     return true;
 }
 

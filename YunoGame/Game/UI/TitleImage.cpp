@@ -36,14 +36,10 @@ bool TitleImage::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool TitleImage::UpdateTransform(float dTime) {
-    Image::UpdateTransform(dTime);
-
-    return true;
-}
 bool TitleImage::Update(float dTime) {
-
     Image::Update(dTime);
+
+
     return true;
 }
 
