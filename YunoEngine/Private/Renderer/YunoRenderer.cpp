@@ -8,9 +8,6 @@
 #include "YunoShaderCompiler.h"
 #include "YunoShader.h"
 
-//dxtk
-#include <directxtk/SpriteFont.h>
-
 //imgui
 #include "ImGuiManager.h"
 #include "UImgui.h"
@@ -37,6 +34,7 @@ bool YunoRenderer::Initialize(IWindow* window)
     HWND hwnd = static_cast<HWND>(window->GetNativeHandle());
     if (!hwnd)
         return false;
+
 
     m_width = window->GetClientWidth();
     m_height = window->GetClientHeight();
@@ -96,6 +94,8 @@ bool YunoRenderer::Initialize(IWindow* window)
 
     if (!CreateShadowMap(4096, 4096)) return false;
     InitShadowPass();
+
+    if (!RegisterFont()) return false;
 
 #ifdef _DEBUG
     // 디버그 리소스 생성
@@ -2520,6 +2520,20 @@ void YunoRenderer::BindSamplers()
     };
 
     m_context->PSSetSamplers(0, (uint8_t)SampleMode::Count, samps);
+}
+
+bool YunoRenderer::RegisterFont()
+{
+    m_SpriteBatch = std::make_unique<SpriteBatch>(m_context.Get());
+
+    try {
+        auto* font = new DirectX::DX11::SpriteFont(m_device.Get(), L"../Assets/Font/test1.spritefont");
+    }
+    catch (...) {
+        return false;
+    }
+
+    return true;
 }
 
 

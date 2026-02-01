@@ -2,6 +2,7 @@
 
 #include <wincodec.h>
 #pragma comment(lib, "windowscodecs.lib")
+#include <SpriteFont.h>
 
 #include "YunoEngine.h"
 #include "IRenderer.h"
@@ -9,6 +10,7 @@
 #include "YunoConstantBuffers.h"
 #include "YunoMaterial.h"
 #include "MaterialDesc.h"
+
 
 
 
@@ -58,7 +60,6 @@ class IWindow;
 class YunoRenderPass;
 class YunoMeshBuffer;
 class YunoShader;
-
 
 namespace
 {
@@ -146,7 +147,7 @@ namespace
 
         return SUCCEEDED(hr);
     }
-}
+}//namespace
 
 
 class YunoRenderer final : public IRenderer
@@ -513,7 +514,12 @@ private:
     void BindTextures(const YunoMaterial& material);
     void BindSamplers();
 
+    //Font
+private:
+    bool RegisterFont(); //모든 폰트 등록은 여기서
 
+    std::unordered_map<FontID, std::unique_ptr<SpriteFont>> m_Fonts;
+    std::unique_ptr<SpriteBatch> m_SpriteBatch;
 
 private:
     // Debug Grid (Engine-owned)

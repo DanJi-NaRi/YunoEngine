@@ -54,10 +54,10 @@ bool RenderTest::OnCreateScene()
 
     PassOption po;
 
-    auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
-    map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
+    //auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
+    //map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
     //map->SetScale(XMFLOAT3(1, 1, 1));
-
+    
     //Building* tile;
     //for (int i = 0; i < 30; i++)
     //{

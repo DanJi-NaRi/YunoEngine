@@ -140,6 +140,14 @@ enum class DepthPreset : uint8_t
     Count
 };
 
+enum class FontID : uint8_t
+{
+    Default = 0,
+
+
+    Count
+};
+
 
 enum class ShaderId : uint8_t
 {
