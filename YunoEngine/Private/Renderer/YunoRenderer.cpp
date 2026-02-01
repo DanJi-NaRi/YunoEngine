@@ -2219,6 +2219,14 @@ void YunoRenderer::Submit(const RenderItem& item)
         m_renderQueue.push_back(copy);
 }
 
+void YunoRenderer::SubmitText(const TextDrawDesc& desc)
+{
+    if (desc.text.empty())
+        return;
+
+    m_textQueue.push_back(desc);
+}
+
 void YunoRenderer::Flush()
 {
     if (!m_context || !m_cbFrame.IsValid() || !m_cbObject_Matrix.IsValid() || !m_cbObject_Material.IsValid() || !m_cbLight.IsValid())
@@ -2341,6 +2349,53 @@ void YunoRenderer::Flush()
     }
 
     m_renderBlendQueue.clear();
+    
+    if(!m_textQueue.empty())
+        DrawTextBatch();
+}
+
+void YunoRenderer::DrawTextBatch()
+{
+    if (!m_SpriteBatch || m_textQueue.empty())
+    {
+        m_textQueue.clear();
+        return;
+    }
+
+    m_SpriteBatch->Begin(SpriteSortMode_BackToFront,
+                                                nullptr, //BlendState
+                                                nullptr, //SamplerState
+                                                nullptr, //DepthStencilState
+                                                nullptr, //RasterizerState
+                                                nullptr // CustomShader
+                                                );
+
+    for (const auto& cmd : m_textQueue)
+    {
+        auto it = m_Fonts.find(cmd.fontId);
+        if (it == m_Fonts.end() || !it->second)
+            continue;
+
+        const auto& font = it->second;
+        const XMFLOAT2 pos = cmd.position;
+        const XMFLOAT2 origin = cmd.origin;
+        const XMVECTOR color = XMLoadFloat4(&cmd.color);
+
+        font->DrawString(
+            m_SpriteBatch.get(),
+            cmd.text.c_str(),
+            pos,
+            color,
+            cmd.rotation,
+            origin,
+            cmd.scale,
+            DirectX::SpriteEffects::SpriteEffects_None,
+            cmd.layerDepth
+        );
+    }
+
+    m_SpriteBatch->End();
+    m_textQueue.clear();
 }
 
 // ------------------------------------------------------------
@@ -2527,7 +2582,8 @@ bool YunoRenderer::RegisterFont()
     m_SpriteBatch = std::make_unique<SpriteBatch>(m_context.Get());
 
     try {
-        auto* font = new DirectX::DX11::SpriteFont(m_device.Get(), L"../Assets/Font/test1.spritefont");
+        auto font = std::make_unique<SpriteFont>(m_device.Get(), L"../Assets/Font/test1.spritefont");
+        m_Fonts.emplace(FontID::Default, std::move(font));
     }
     catch (...) {
         return false;

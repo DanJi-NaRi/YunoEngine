@@ -20,6 +20,7 @@
 #include "YunoLight.h"
 #include "AudioQueue.h"
 #include "PlayQueue.h"
+#include "Text.h"
 
 
 // 사용법
@@ -67,6 +68,9 @@ bool RenderTest::OnCreateScene()
     //}
 
     auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
+
+    auto text = m_uiManager->CreateWidget<Text>(L"TestText", XMFLOAT3(1, 1, 0));
+    text->SetText(L"Hello World!");
     //gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
 
     //auto gun2 = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun2", XMFLOAT3(0, 2, 2), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
