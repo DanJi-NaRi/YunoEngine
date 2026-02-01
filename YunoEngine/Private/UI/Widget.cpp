@@ -291,7 +291,7 @@ bool Widget::UpdateTransform(float dTime)
     /*m_clientSize = Float2((float)YunoEngine::GetWindow()->GetClientWidth(),
                          (float)YunoEngine::GetWindow()->GetClientHeight());*/
     
-    if (m_useAspectComp && !m_Parent) { // 화면비 스케일 사용 (기본값)
+    if (m_useAspectComp) { // 화면비 스케일 사용 (기본값)
         Float2 origin = g_DefaultClientXY;          // 기준(디자인) 해상도
         Float2 canvas = m_uiFactory.GetCanvasSize();// 현재 클라이언트/캔버스
 
@@ -367,8 +367,7 @@ bool Widget::UpdateTransform(float dTime)
         mWorldTM = mLocalTM;
         mNoScaleWorldTM = mLocalNoScaleTM;
     }
-        
-
+    
     XMStoreFloat4x4(&m_mScale, mScale);
     XMStoreFloat4x4(&m_mRot, mRot);
     XMStoreFloat4x4(&m_mTrans, mTrans);
@@ -443,8 +442,12 @@ bool Widget::Submit(float dTime)
 
     LastSubmit(dTime);
 
+    // 사실상 이제 생성 순서만으로 이미 정렬이 되어있어, 
+    // 부모->자식 사이에 이물 Widget이 낄 수 없는 상태->체이닝 필요없음
+    // 체이닝을 다시 살리게 되면, 레이어가 2순위가 됨
+
     // 자식 Submit
-    if (m_isRoot) SubmitChild(dTime); // 자식 업데이트, Root만 허용
+    //if (m_isRoot) SubmitChild(dTime); // 자식 업데이트, Root만 허용 // 체이닝 사용
 
     return true;
 }

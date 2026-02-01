@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "CardTable.h"
+#include "CardSelectionPanel.h"
 
 #include "Card.h"
 #include "CardSlot.h"
@@ -7,21 +7,21 @@
 #include "IInput.h"
 #include "UIFactory.h"
 
-CardTable::CardTable(UIFactory& uiFactory) : Image(uiFactory)
+CardSelectionPanel::CardSelectionPanel(UIFactory& uiFactory) : Image(uiFactory)
 {
     Clear();
 }
 
-CardTable::~CardTable()
+CardSelectionPanel::~CardSelectionPanel()
 {
     Clear();
 }
 
-void CardTable::Clear()
+void CardSelectionPanel::Clear()
 {
 }
 
-bool CardTable::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Image::Create(name, id, vPos);
 
@@ -46,7 +46,7 @@ bool CardTable::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     }
 
     m_anchor = UIDirection::LeftTop;
-    
+
     m_vScale.y = 5;
     m_vScale.x = 5;
 
@@ -55,14 +55,14 @@ bool CardTable::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool CardTable::Start()
+bool CardSelectionPanel::Start()
 {
     Image::Start();
 
     return true;
 }
 
-void CardTable::CreateChild() {
+void CardSelectionPanel::CreateChild() {
     // 고정 하위 위젯 생성
     this->SetLayer(WidgetLayer::Panels);
 
@@ -70,17 +70,17 @@ void CardTable::CreateChild() {
 }
 
 
-bool CardTable::Update(float dTime)
+bool CardSelectionPanel::Update(float dTime)
 {
     Image::Update(dTime);
 
     if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50 * dTime; }
     if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50 * dTime; }
-    
+
     return true;
 }
 
-bool CardTable::Submit(float dTime)
+bool CardSelectionPanel::Submit(float dTime)
 {
     Image::Submit(dTime);
     return false;

@@ -109,6 +109,9 @@
     <Filter Include="Scenes\3.Phase">
       <UniqueIdentifier>{6b093a5a-706d-4922-8eba-d0cc15908609}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\UI\Image\CardTable">
+      <UniqueIdentifier>{8dae683b-fb3e-4c62-9d9c-597c2549a80b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -174,9 +177,6 @@
     </ClCompile>
     <ClCompile Include="Game\UI\ButtonTemplate.cpp">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\UI\CardTable.cpp">
-      <Filter>Game\UI\Image</Filter>
     </ClCompile>
     <ClCompile Include="GameManager\GameManager.cpp" />
     <ClCompile Include="Game\UI\UserImage.cpp" />
@@ -264,6 +264,21 @@
     </ClCompile>
     <ClCompile Include="PhaseScene.cpp">
       <Filter>Scenes\3.Phase</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\CardTable.cpp">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClCompile>
+    <ClCompile Include="CardConfirmPanel.cpp">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClCompile>
+    <ClCompile Include="CardSelectionPanel.cpp">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClCompile>
+    <ClCompile Include="CardCancelButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="CardConfirmButton.cpp">
+      <Filter>Game\UI\Button</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -353,9 +368,6 @@
     <ClInclude Include="Game\UI\ButtonTemplate.h">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClInclude>
-    <ClInclude Include="Game\UI\CardTable.h">
-      <Filter>Game\UI\Image</Filter>
-    </ClInclude>
     <ClInclude Include="WeaponSelectScene_InputContext.h">
       <Filter>System\UIContext</Filter>
     </ClInclude>
@@ -429,6 +441,21 @@
     </ClInclude>
     <ClInclude Include="PhaseScene_InputContext.h">
       <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\CardTable.h">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClInclude>
+    <ClInclude Include="CardConfirmPanel.h">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClInclude>
+    <ClInclude Include="CardSelectionPanel.h">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClInclude>
+    <ClInclude Include="CardCancelButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="CardConfirmButton.h">
+      <Filter>Game\UI\Button</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

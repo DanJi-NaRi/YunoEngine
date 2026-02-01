@@ -58,8 +58,18 @@ public:
     void Submit(float dTime);       // 레이어 비적용 Submit
     void LayerSubmit(float dTime);  // 레이어 적용 Submit
 
+
     template<typename T>
     T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size);
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, Float2 pivot);
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, UIDirection pivot);
+
+ 
+
     template<typename T>
     T* CreateWidget_Internal(const std::wstring& name, XMFLOAT3 pos);
 
@@ -101,7 +111,6 @@ private:
     void FrameDataSubmit();
 };
 
-
 template<typename T>
 T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
 {
@@ -114,6 +123,7 @@ T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
 
     widget->Create(newname, m_widgetIDs, pos); // 생성 (유니티로 치면 Awake)
     widget->UpdateTransform();
+    // 사이즈 크기 안했으면 스프라이트 크기로?
 
     auto* pWidget = widget.get();
 
@@ -123,6 +133,74 @@ T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
     return pWidget;
 }
 
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name;
+
+    auto widget = std::make_unique<T>(*m_uiFactory);
+    CheckDedicateWidgetName(newname);
+
+    widget->Create(newname, m_widgetIDs, pos); // 생성 (유니티로 치면 Awake)
+    widget->SetSize(size);
+    widget->UpdateTransform();
+
+    auto* pWidget = widget.get();
+
+    m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
+
+    return pWidget;
+}
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, Float2 pivot)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name;
+
+    auto widget = std::make_unique<T>(*m_uiFactory);
+    CheckDedicateWidgetName(newname);
+
+    widget->Create(newname, m_widgetIDs, pos); // 생성 (유니티로 치면 Awake)
+    widget->SetSize(size);
+    widget->SetPivot(pivot);
+    widget->UpdateTransform();
+
+    auto* pWidget = widget.get();
+
+    m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
+
+    return pWidget;
+}
+
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, UIDirection pivot)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name;
+
+    auto widget = std::make_unique<T>(*m_uiFactory);
+    CheckDedicateWidgetName(newname);
+
+    widget->Create(newname, m_widgetIDs, pos); // 생성 (유니티로 치면 Awake)
+    widget->SetSize(size);
+    widget->SetPivot(pivot);
+    widget->UpdateTransform();
+
+    auto* pWidget = widget.get();
+
+    m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
+
+    return pWidget;
+}
 
 // 테스트용
 template<typename T>

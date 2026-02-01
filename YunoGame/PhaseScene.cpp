@@ -42,10 +42,14 @@ bool PhaseScene::OnCreateScene()
     // m_uiManager->CreateWidget<Image>(L"tstImg1", XMFLOAT3(500, 500, 0));
 
      //m_uiManager->CreateWidget<Image>(L"tstImg2", XMFLOAT3(510, 510, 0));
+    auto clientX = YunoEngine::GetWindow()->GetClientWidth();
+    auto clientY = YunoEngine::GetWindow()->GetClientHeight();
 
-     // 자식이 있는 경우 체이닝으로 생성 
-     // this반환해서 그냥 써도 똑같은 효과
-    m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0))->CreateChild();
+    CreateWidget<CardConfirmPanel>(L"CardConformPanel", XMFLOAT3(0, clientY, 0), Float2(140, 55), UIDirection::LeftBottom);
+    CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", XMFLOAT3(clientX, clientY, 0), Float2(140, 55), UIDirection::RightBottom);
+
+
+    //CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0));
     //m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0)); 
 
 
@@ -95,8 +99,6 @@ void PhaseScene::OnExit()
     //std::cout << "[UIScene] OnExit\n"; 
     YunoEngine::GetInput()->RemoveContext(&m_uiCtx);
 }
-
-
 
 void PhaseScene::Update(float dt)
 {

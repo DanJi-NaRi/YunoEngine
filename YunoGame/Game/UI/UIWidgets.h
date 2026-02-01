@@ -18,6 +18,8 @@ Slot,
 // Image 파생 클래스
 #include "Letterbox.h"
 #include "CardTable.h"
+#include "CardSelectionPanel.h"
+#include "CardConfirmPanel.h"
 #include "UserImage.h"
 //////////////////////////////
 

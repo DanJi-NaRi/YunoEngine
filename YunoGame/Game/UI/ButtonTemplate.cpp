@@ -269,25 +269,25 @@ bool ButtonTemplate::KeyReleasedEvent(uint32_t key)
 
 
 /*
- 
+
 #include "YunoEngine.h"
 #include "IInput.h"
 
-ButtonTemplate::ButtonTemplate(UIFactory& uiFactory) : Button(uiManager) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+CardCancelButton::CardCancelButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
 
-ButtonTemplate::~ButtonTemplate()
+CardCancelButton::~CardCancelButton()
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
 
-void ButtonTemplate::Clear()
+void CardCancelButton::Clear()
 {
 }
 
-bool ButtonTemplate::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool CardCancelButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Button::Create(name, id, vPos);
 
@@ -296,20 +296,24 @@ bool ButtonTemplate::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos
     return true;
 }
 
-bool ButtonTemplate::Update(float dTime)
+void CardCancelButton::CreateChild()
+{
+}
+
+bool CardCancelButton::Update(float dTime)
 {
     Button::Update(dTime);
     return true;
 }
 
-bool ButtonTemplate::Submit(float dTime)
+bool CardCancelButton::Submit(float dTime)
 {
     Button::Submit();
     return true;
 }
 
 // 가만히 있을 때
-bool ButtonTemplate::IdleEvent()
+bool CardCancelButton::IdleEvent()
 {
     //std::cout << "IdleEvent" << std::endl;
     // 내용 작성
@@ -317,7 +321,7 @@ bool ButtonTemplate::IdleEvent()
 }
 
 // 커서가 위에 올라있을 때
-bool ButtonTemplate::HoveredEvent()
+bool CardCancelButton::HoveredEvent()
 {
     std::cout << "HoveredEvent" << std::endl;
     return true;
@@ -331,21 +335,21 @@ bool ButtonTemplate::HoveredEvent()
 //}
 
 // 왼클릭 눌렀을 때
-bool ButtonTemplate::LMBPressedEvent()
+bool CardCancelButton::LMBPressedEvent()
 {
     std::cout << "(LMB)PressedEvent" << std::endl;
     return true;
 }
 
 // 우클릭 눌렀을 때
-bool ButtonTemplate::RMBPressedEvent()
+bool CardCancelButton::RMBPressedEvent()
 {
     std::cout << "(RMB)PressedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 눌렀을 때
-bool ButtonTemplate::KeyPressedEvent(uint32_t key)
+bool CardCancelButton::KeyPressedEvent(uint32_t key)
 {
     if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
     else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;
@@ -353,25 +357,26 @@ bool ButtonTemplate::KeyPressedEvent(uint32_t key)
 }
 
 // 왼클릭 뗐을 때
-bool ButtonTemplate::LMBReleasedEvent()
+bool CardCancelButton::LMBReleasedEvent()
 {
     std::cout << "(LMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 우클릭 뗐을 때
-bool ButtonTemplate::RMBReleasedEvent()
+bool CardCancelButton::RMBReleasedEvent()
 {
     std::cout << "(RMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 뗐을 때
-bool ButtonTemplate::KeyReleasedEvent(uint32_t key)
+bool CardCancelButton::KeyReleasedEvent(uint32_t key)
 {
     if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
     else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
     return true;
 }
+
 
 */

@@ -192,6 +192,10 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CardCancelButton.cpp" />
+    <ClCompile Include="CardConfirmButton.cpp" />
+    <ClCompile Include="CardConfirmPanel.cpp" />
+    <ClCompile Include="CardSelectionPanel.cpp" />
     <ClCompile Include="CardManager.cpp" />
     <ClCompile Include="CardRangeManager.cpp" />
     <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp">
@@ -268,6 +272,10 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="WidgetTile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CardCancelButton.h" />
+    <ClInclude Include="CardConfirmButton.h" />
+    <ClInclude Include="CardConfirmPanel.h" />
+    <ClInclude Include="CardSelectionPanel.h" />
     <ClInclude Include="CardManager.h" />
     <ClInclude Include="CardQueue.h" />
     <ClInclude Include="CardRangeManager.h" />
