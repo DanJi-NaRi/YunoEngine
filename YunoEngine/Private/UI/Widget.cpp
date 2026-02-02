@@ -299,6 +299,8 @@ bool Widget::UpdateTransform(float dTime)
         Float2 origin = g_DefaultClientXY;          // 기준(디자인) 해상도
         Float2 canvas = m_uiFactory.GetCanvasSize();// 현재 클라이언트/캔버스
 
+        const bool applyLetterboxOffset = (m_Parent == nullptr);
+
         // origin/canvas 0 방어 (초기화/리사이즈 순간 등)
         if (origin.x <= 0.0f || origin.y <= 0.0f || canvas.x <= 0.0f || canvas.y <= 0.0f)
         {
@@ -325,7 +327,9 @@ bool Widget::UpdateTransform(float dTime)
                 (canvas.y - fitted.y) * 0.5f);
 
             m_canvasScale = Float2(s, s);
-            m_canvasLetterboxOffset = letterboxOffset; // 이동
+
+            //m_canvasLetterboxOffset = letterboxOffset; // 이동
+            m_canvasLetterboxOffset = applyLetterboxOffset ? letterboxOffset : Float2(0.0f, 0.0f); 
 
             m_finalSize.x = m_size.x * m_vScale.x * m_canvasScale.x;
             m_finalSize.y = m_size.y * m_vScale.y * m_canvasScale.y;
