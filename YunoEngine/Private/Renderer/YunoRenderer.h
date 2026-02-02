@@ -2,6 +2,8 @@
 
 #include <wincodec.h>
 #pragma comment(lib, "windowscodecs.lib")
+#include <SpriteBatch.h>
+#include <SpriteFont.h>
 
 #include "YunoEngine.h"
 #include "IRenderer.h"
@@ -9,6 +11,7 @@
 #include "YunoConstantBuffers.h"
 #include "YunoMaterial.h"
 #include "MaterialDesc.h"
+
 
 
 
@@ -58,7 +61,6 @@ class IWindow;
 class YunoRenderPass;
 class YunoMeshBuffer;
 class YunoShader;
-
 
 namespace
 {
@@ -146,7 +148,7 @@ namespace
 
         return SUCCEEDED(hr);
     }
-}
+}//namespace
 
 
 class YunoRenderer final : public IRenderer
@@ -176,6 +178,7 @@ public:
     TextureHandle CreateDataTexture2DFromFile(const wchar_t* path) override;
 
     void Submit(const RenderItem& item) override;
+    void SubmitText(const TextDrawDesc& desc) override;
     void Flush() override;  
 
 #ifdef _DEBUG
@@ -195,7 +198,7 @@ public:
     void ResetPostProcessOption(); //Reset PostProcessOption
 private:
     void BindConstantBuffers(const RenderItem& item);
-
+    void DrawTextBatch();
 
 private:
     bool CreateDeviceAndSwapChain(HWND hwnd, uint32_t width, uint32_t height);
@@ -513,7 +516,13 @@ private:
     void BindTextures(const YunoMaterial& material);
     void BindSamplers();
 
+    //Font
+private:
+    bool RegisterFont(); //모든 폰트 등록은 여기서
 
+    std::unordered_map<FontID, std::unique_ptr<SpriteFont>> m_Fonts;
+    std::unique_ptr<SpriteBatch> m_SpriteBatch;
+    std::vector<TextDrawDesc> m_textQueue;
 
 private:
     // Debug Grid (Engine-owned)
