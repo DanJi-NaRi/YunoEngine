@@ -56,16 +56,20 @@ namespace yuno::server
         using namespace yuno::net::packets;
 
         S2C_BattleResult pkt;
-        pkt.runtimeCardId = c.runtimeId;
-        pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
-
+        // 쓰레기 값 들어가고 있어서 테스트를 위해 하드코딩
+        //pkt.runtimeCardId = c.runtimeId;
+        //pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
+        pkt.runtimeCardId = 1;
+        pkt.ownerSlot = 1;
+        pkt.unitLocalIndex = 1;
+        pkt.dir = 0;
 
         //  테스트용 하드코딩 결과
         std::array<UnitStateDelta, 4> us;
-        us[0] = { 1, 1, 100, 100, 5, 1 };
-        us[1] = { 1, 2, 100, 100, 10, 2 };
-        us[2] = { 2, 1, 100, 100, 15, 3 };
-        us[3] = { 2, 2, 100, 100, 20, 4 };
+        us[0] = { 1, 1, 90, 100, 16, 1 };
+        us[1] = { 1, 2, 95, 100, 12, 0 };
+        us[2] = { 2, 1, 100, 100, 23, 0 };
+        us[3] = { 2, 2, 100, 100, 27, 0 };
         pkt.order.push_back(us);
 
 
