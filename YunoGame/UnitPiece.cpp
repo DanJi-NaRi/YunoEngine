@@ -377,6 +377,8 @@ void UnitPiece::SetDir(Direction dir, bool isAnim)
         m_targetYaw = atan2(1, 0);
         break;
     }
+    if (m_targetYaw == m_yaw) return;
+
     m_startYaw = m_yaw;
     isRotating = isAnim;
 

@@ -157,6 +157,7 @@
     <ClInclude Include="ServerCardActData.h" />
     <ClInclude Include="ServerCardData.h" />
     <ClInclude Include="ServerCardDealer.h" />
+    <ClInclude Include="ServerCardInstance.h" />
     <ClInclude Include="ServerCardManager.h" />
     <ClInclude Include="ServerCardRangeManager.h" />
     <ClInclude Include="ServerCardRuntime.h" />

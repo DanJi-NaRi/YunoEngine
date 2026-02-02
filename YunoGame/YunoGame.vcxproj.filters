@@ -194,9 +194,6 @@
     </ClCompile>
     <ClCompile Include="System\MinimapGridSystem.cpp" />
     <ClCompile Include="Grid.cpp" />
-    <ClCompile Include="System\GridSystem.cpp" />
-    <ClCompile Include="GridBox.cpp" />
-    <ClCompile Include="Game\Object\GridLine.cpp" />
     <ClCompile Include="MinimapQueue.cpp" />
     <ClCompile Include="WidgetGridLine.cpp" />
     <ClCompile Include="UnitGridLine.cpp" />
@@ -263,6 +260,7 @@
     <ClCompile Include="System\PlayQueue.cpp">
       <Filter>System\GridSystem\Queue_test</Filter>
     </ClCompile>
+    <ClCompile Include="BattlePackets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -423,6 +421,7 @@
     <ClInclude Include="Game\UI\TitleImage.h">
       <Filter>Game\UI\Image</Filter>
     </ClInclude>
+    <ClInclude Include="BattlePackets.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

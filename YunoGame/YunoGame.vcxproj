@@ -192,6 +192,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BattlePackets.cpp" />
     <ClCompile Include="CardManager.cpp" />
     <ClCompile Include="CardRangeManager.cpp" />
     <ClCompile Include="ExitButton.cpp" />
@@ -268,6 +269,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="WidgetTile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BattlePackets.h" />
     <ClInclude Include="CardManager.h" />
     <ClInclude Include="CardQueue.h" />
     <ClInclude Include="CardRangeManager.h" />

@@ -31,6 +31,26 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
     m_weapons.push_back(data);
 }
 
+void GameManager::PushBattlePacket(const BattleResult& _BattleResult)
+{
+    m_turnPkts.push(_BattleResult);
+    std::cout << "Battle Packet is inserted into Queue.\n";
+}
+
+BattleResult GameManager::PopBattlePacket()
+{
+    BattleResult pckt = m_turnPkts.front();
+    m_turnPkts.pop();
+    std::cout << "Battle Packet is popped out of Queue.\n";
+    return pckt;
+}
+
+bool GameManager::IsEmptyBattlePacket()
+{
+    return m_turnPkts.empty();
+}
+
+
 void GameManager::Initialize(GameManager* inst)
 {
     assert(inst);
