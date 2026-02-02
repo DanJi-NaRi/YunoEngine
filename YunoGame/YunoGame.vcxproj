@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -70,12 +70,28 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\Game\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\Game\</IntDir>
+    <LibraryPath>$(SolutionDir)ThirdParty\FMOD\core\lib\x64;$(SolutionDir)ThirdParty\FMOD\studio\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)ThirdParty\FMOD\studio\inc;$(SolutionDir)ThirdParty\FMOD\core\inc;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\Game\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\Game\</IntDir>
+    <LibraryPath>$(SolutionDir)ThirdParty\FMOD\core\lib\x64;$(SolutionDir)ThirdParty\FMOD\studio\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)ThirdParty\FMOD\studio\inc;$(SolutionDir)ThirdParty\FMOD\core\inc;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\Game\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -105,11 +121,24 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(SolutionDir)YunoEngine\Public\UI;$(SolutionDir)YunoEngine\Public\UI\UITool;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System;$(ProjectDir)GameManager;$(ProjectDir)ClientNetwork;$(SolutionDir)vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
+      <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
+      <AdditionalOptions>/utf-8 /Bt+ /showIncludes %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)External\DirectXTK\Bin\Desktop_2022\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)..\Assets"
+xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -120,24 +149,213 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)YunoEngine\Public;$(SolutionDir)YunoEngine\Public\Sound;$(SolutionDir)YunoEngine\Public\Camera;$(SolutionDir)YunoEngine\Public\Input;$(SolutionDir)YunoEngine\Public\Interface;$(SolutionDir)YunoEngine\Public\Math;$(SolutionDir)YunoEngine\Public\Object;$(SolutionDir)YunoEngine\Public\Renderer;$(SolutionDir)YunoEngine\Public\Renderer\3DAnimation;$(SolutionDir)YunoEngine\Public\Light;$(SolutionDir)YunoEngine\Public\Parser;$(SolutionDir)YunoEngine\Public\SceneBase;$(SolutionDir)YunoEngine\Public\Singleton;$(SolutionDir)YunoEngine\Public\UI;$(SolutionDir)YunoEngine\Public\UI\UITool;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(ProjectDir);$(ProjectDir)Game;$(ProjectDir)Game\Object;$(ProjectDir)Game\UI;$(ProjectDir)GamePCH;$(ProjectDir)Scenes;$(ProjectDir)Scenes\SceneTemplate;$(ProjectDir)System;$(ProjectDir)GameManager;$(ProjectDir)ClientNetwork;$(SolutionDir)vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
+      <PrecompiledHeaderOutputFile>$(IntDir)Game.pch</PrecompiledHeaderOutputFile>
+      <AdditionalOptions>/utf-8 /Bt+ /showIncludes %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)External\DirectXTK\Bin\Desktop_2022\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/VERBOSE:LIB %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PostBuildEvent>
+      <Command>
+xcopy /E /I /Y "$(SolutionDir)Assets" "$(OutDir)..\Assets"
+xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ProjectReference Include="..\YunoEngine\YunoEngine.vcxproj">
       <Project>{ceb210f1-5107-40e0-a0cc-207c920418b6}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\YunoImGui\YunoImGui.vcxproj">
+      <Project>{ce3886a1-acc6-4b3e-b173-4ffdeb44e0fb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\YunoNetProtocol\YunoNetProtocol.vcxproj">
+      <Project>{69684c5f-323b-4bbf-8e8f-ee62bf0eca13}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\YunoNetTransport\YunoNetTransport.vcxproj">
+      <Project>{3c413f28-750c-49a2-ae7c-cc0cabd4650e}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="CardCancelButton.cpp" />
+    <ClCompile Include="CardConfirmButton.cpp" />
+    <ClCompile Include="CardConfirmPanel.cpp" />
+    <ClCompile Include="CardSelectionPanel.cpp" />
+    <ClCompile Include="BattlePackets.cpp" />
+    <ClCompile Include="CardManager.cpp" />
+    <ClCompile Include="CardRangeManager.cpp" />
+    <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Game\UI\ButtonTemplate.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Game\UI\CardSlot.cpp" />
+    <ClCompile Include="Game\Object\Test_Unit.cpp" />
+    <ClCompile Include="Game\UI\ExitButton.cpp" />
+    <ClCompile Include="Game\UI\ReadyButton.cpp" />
+    <ClCompile Include="Game\UI\TitleImage.cpp" />
+    <ClCompile Include="Game\UI\UserImage.cpp" />
+    <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="MinimapQueue.cpp" />
+    <ClCompile Include="GameManager\GameManager.cpp" />
+    <ClCompile Include="Game\UI\Card.cpp" />
+    <ClCompile Include="Game\UI\CardTable.cpp" />
+    <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GamePCH\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Game\GameApp.cpp" />
+    <ClCompile Include="Game\Object\AnimTest.cpp" />
+    <ClCompile Include="Game\Object\Building.cpp" />
+    <ClCompile Include="Game\Object\Dwarf.cpp" />
+    <ClCompile Include="Game\Object\Piece.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Tile.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="PhaseScene.cpp" />
+    <ClCompile Include="Scenes\RenderTest.cpp" />
+    <ClCompile Include="System\GridFactory.cpp" />
+    <ClCompile Include="System\MinimapGridSystem.cpp" />
+    <ClCompile Include="System\PlayGridSystem.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Game\Object\Triangle.cpp" />
+    <ClCompile Include="Game\Object\Quad.cpp" />
+    <ClCompile Include="System\PlayQueue.cpp" />
+    <ClCompile Include="Scenes\PlayScene.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Scenes\TitleScene.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Scenes\UIScene.cpp" />
+    <ClCompile Include="Scenes\WeaponSelectScene.cpp" />
+    <ClCompile Include="Game\UI\WeaponButton.cpp" />
+    <ClCompile Include="Scenes\Title.cpp" />
+    <ClCompile Include="UnitGridBox.cpp" />
+    <ClCompile Include="UnitGridLine.cpp" />
+    <ClCompile Include="UnitGridSystem.cpp" />
+    <ClCompile Include="UnitPiece.cpp" />
+    <ClCompile Include="UnitTile.cpp" />
+    <ClCompile Include="WidgetGridBox.cpp" />
+    <ClCompile Include="WidgetGridLine.cpp" />
+    <ClCompile Include="WidgetGridSystem.cpp" />
+    <ClCompile Include="WidgetPiece.cpp" />
+    <ClCompile Include="WidgetTile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h" />
+    <ClInclude Include="CardCancelButton.h" />
+    <ClInclude Include="CardConfirmButton.h" />
+    <ClInclude Include="CardConfirmPanel.h" />
+    <ClInclude Include="CardSelectionPanel.h" />
+    <ClInclude Include="BattlePackets.h" />
+    <ClInclude Include="CardManager.h" />
+    <ClInclude Include="CardQueue.h" />
+    <ClInclude Include="CardRangeManager.h" />
+    <ClInclude Include="GameManager\SceneState.h" />
+    <ClInclude Include="Game\Object\CardActData.h" />
+    <ClInclude Include="Game\UI\ButtonTemplate.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Game\UI\CardSlot.h" />
+    <ClInclude Include="Game\Object\Test_Unit.h" />
+    <ClInclude Include="Game\UI\ExitButton.h" />
+    <ClInclude Include="Game\UI\ReadyButton.h" />
+    <ClInclude Include="Game\UI\TitleImage.h" />
+    <ClInclude Include="Game\UI\UserImage.h" />
+    <ClInclude Include="Grid.h" />
+    <ClInclude Include="MinimapQueue.h" />
+    <ClInclude Include="GameManager\GameManager.h" />
+    <ClInclude Include="Game\UI\Card.h" />
+    <ClInclude Include="Game\UI\CardTable.h" />
+    <ClInclude Include="ClientNetwork\YunoClientNetwork.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="GamePCH\pch.h" />
+    <ClInclude Include="Game\GameApp.h" />
+    <ClInclude Include="Game\Object\AnimTest.h" />
+    <ClInclude Include="Game\Object\Building.h" />
+    <ClInclude Include="Game\Object\Dwarf.h" />
+    <ClInclude Include="Game\Object\Piece.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Tile.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Triangle.h" />
+    <ClInclude Include="Game\Object\Quad.h" />
+    <ClInclude Include="Game\Object\CardData.h" />
+    <ClInclude Include="PhaseScene.h" />
+    <ClInclude Include="PhaseScene_InputContext.h" />
+    <ClInclude Include="Scenes\RenderTest.h" />
+    <ClInclude Include="SimpleMath.h" />
+    <ClInclude Include="System\GridFactory.h" />
+    <ClInclude Include="System\MinimapGridSystem.h" />
+    <ClInclude Include="System\PieceHelper.h" />
+    <ClInclude Include="System\PlayGridSystem.h" />
+    <ClInclude Include="System\IGridSystem.h" />
+    <ClInclude Include="System\PlayQueue.h" />
+    <ClInclude Include="Scenes\PlayScene.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Scenes\TitleScene.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Scenes\UIScene.h" />
+    <ClInclude Include="System\Game_InputContext.h" />
+    <ClInclude Include="System\SettingScene_InputContext.h" />
+    <ClInclude Include="System\TileHelper.h" />
+    <ClInclude Include="System\UIScene_InputContext.h" />
+    <ClInclude Include="Game\UI\UIWidgets.h" />
+    <ClInclude Include="Scenes\WeaponSelectScene.h" />
+    <ClInclude Include="Game\UI\WeaponButton.h" />
+    <ClInclude Include="Scenes\Title.h" />
+    <ClInclude Include="UnitGridBox.h" />
+    <ClInclude Include="UnitGridLine.h" />
+    <ClInclude Include="UnitGridSystem.h" />
+    <ClInclude Include="UnitPiece.h" />
+    <ClInclude Include="UnitTile.h" />
+    <ClInclude Include="WeaponSelectScene_InputContext.h" />
+    <ClInclude Include="WidgetGridBox.h" />
+    <ClInclude Include="WidgetGridLine.h" />
+    <ClInclude Include="WidgetGridSystem.h" />
+    <ClInclude Include="WidgetPiece.h" />
+    <ClInclude Include="WidgetTile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

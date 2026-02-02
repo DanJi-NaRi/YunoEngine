@@ -1,0 +1,28 @@
+root = true
+
+# ===== Default: UTF-8 (no BOM) =====
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+indent_style = space
+
+# ===== C / C++ / HLSL =====
+[*.{h,hpp,cpp,inl,hlsl,hlsli}]
+charset = utf-8
+indent_size = 4
+
+# ===== Visual Studio project / meta files =====
+[*.{sln,vcxproj,filters,props,targets}]
+charset = utf-8-bom
+indent_size = 2
+
+# ===== Markdown / YAML =====
+[*.{md,yml,yaml}]
+end_of_line = lf
+
+# ===== FMOD Studio =====
+[ThirdParty/FMOD/**]
+end_of_line = lf
+charset = utf-8
+indent_size = 2

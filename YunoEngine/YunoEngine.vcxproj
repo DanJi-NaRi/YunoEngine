@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -70,6 +70,18 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\Engine\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\Engine\</IntDir>
+    <LibraryPath>$(SolutionDir)ThirdParty\FMOD\core\lib\x64;$(SolutionDir)ThirdParty\FMOD\studio\lib\x64;$(SolutionDir)ThirdParty\Assimp\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)ThirdParty\FMOD\studio\inc;$(SolutionDir)ThirdParty\FMOD\core\inc;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\Engine\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\Engine\</IntDir>
+    <LibraryPath>$(SolutionDir)ThirdParty\FMOD\core\lib\x64;$(SolutionDir)ThirdParty\FMOD\studio\lib\x64;$(SolutionDir)ThirdParty\Assimp\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)ThirdParty\FMOD\studio\inc;$(SolutionDir)ThirdParty\FMOD\core\inc;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -113,12 +125,19 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)External\DirectXTK\Inc;$(ProjectDir)EnginePCH;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Parser;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Light;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Sound;$(ProjectDir)Public\UI;$(ProjectDir)Public\UI\UITool;$(ProjectDir)Public\Singleton;$(SolutionDir)ThirdParty\Assimp\include</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 /Bt+ /showIncludes %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\Assimp\lib\Debug;$(SolutionDir)External\DirectXTK\Bin\Desktop_2022\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;zlibstaticd.lib;DirectXTK.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -131,6 +150,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeaderOutputFile>$(IntDir)Engine.pch</PrecompiledHeaderOutputFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)YunoImGui;$(SolutionDir)External\DirectXTK\Inc;$(ProjectDir)EnginePCH;$(ProjectDir)Private;$(ProjectDir)Private\Input;$(ProjectDir)Private\Parser;$(ProjectDir)Private\Renderer;$(ProjectDir)Private\Renderer\BoneAnimation;$(ProjectDir)Private\Renderer\BoneNode;$(ProjectDir)Private\Renderer\ConstBuffer;$(ProjectDir)Private\Renderer\Material;$(ProjectDir)Private\Renderer\Mesh;$(ProjectDir)Private\Renderer\RenderPass;$(ProjectDir)Private\Renderer\Shader;$(ProjectDir)Private\Resource;$(ProjectDir)Private\Scene;$(ProjectDir)Private\Timer;$(ProjectDir)Private\Window;$(ProjectDir)Public;$(ProjectDir)Public\Camera;$(ProjectDir)Public\Input;$(ProjectDir)Public\Interface;$(ProjectDir)Public\Light;$(ProjectDir)Public\Math;$(ProjectDir)Public\Object;$(ProjectDir)Public\Renderer;$(ProjectDir)Public\Renderer\3DAnimation;$(ProjectDir)Public\SceneBase;$(ProjectDir)Public\Sound;$(ProjectDir)Public\UI;$(ProjectDir)Public\UI\UITool;$(ProjectDir)Public\Singleton;$(SolutionDir)ThirdParty\Assimp\include</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 /Bt+ /showIncludes %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -139,19 +161,232 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)ThirdParty\Assimp\lib\Release;$(SolutionDir)External\DirectXTK\Bin\Desktop_2022\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;zlibstatic.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="YunoEngine.h" />
+    <ClInclude Include="EnginePCH\pch.h" />
+    <ClInclude Include="Public\UI\Letterbox.h" />
+    <ClInclude Include="Public\Object\Effect.h" />
+    <ClInclude Include="Public\Object\EffectManager.h" />
+    <ClInclude Include="Public\Object\EffectTemplate.h" />
+    <ClInclude Include="Public\Object\ObjectTypeRegistry.h" />
+    <ClInclude Include="Public\SceneBase\SerializeScene.h" />
+    <ClInclude Include="Public\UI\UITool\CursurSystem.h" />
+    <ClInclude Include="Public\UI\UITool\DragProvider.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Public\UI\Image.h" />
+    <ClInclude Include="Public\Input\InputContextBase.h" />
+    <ClInclude Include="Private\Input\InputState.h" />
+    <ClInclude Include="Private\Input\YunoInputSystem.h" />
+    <ClInclude Include="Private\Scene\YunoSceneManager.h" />
+    <ClInclude Include="Public\Object\Button.h" />
+    <ClInclude Include="Public\Interface\IInputContext.h" />
+    <ClInclude Include="Public\Input\InputEvent.h" />
+    <ClInclude Include="Private\Renderer\Material\YunoMaterial.h" />
+    <ClInclude Include="Private\Resource\YunoTextureManager.h" />
+    <ClInclude Include="Public\Interface\IScene.h" />
+    <ClInclude Include="Public\Light\YunoLight.h" />
+    <ClInclude Include="Public\Object\AnimationUnit.h" />
+    <ClInclude Include="Public\Object\ObjectManager.h" />
+    <ClInclude Include="Private\Parser\Parser.h" />
+    <ClInclude Include="Public\Renderer\3DAnimation\Animator.h" />
+    <ClInclude Include="Public\Renderer\3DAnimation\BoneAnimation.h" />
+    <ClInclude Include="Public\Renderer\3DAnimation\BoneNode.h" />
+    <ClInclude Include="Public\Renderer\MaterialDesc.h" />
+    <ClInclude Include="Private\Renderer\ConstBuffer\YunoConstantBuffers.h" />
+    <ClInclude Include="Private\Renderer\Mesh\YunoMeshBuffer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Private\Renderer\RenderPass\YunoRenderPass.h" />
+    <ClInclude Include="Private\Renderer\Shader\YunoShader.h" />
+    <ClInclude Include="Private\Renderer\Shader\YunoShaderCompiler.h" />
+    <ClInclude Include="Private\Renderer\YunoRenderer.h" />
+    <ClInclude Include="Private\Timer\YunoTimer.h" />
+    <ClInclude Include="Private\Window\YunoWindow.h" />
+    <ClInclude Include="Public\Camera\YunoCamera.h" />
+    <ClInclude Include="Public\Interface\IGameApp.h" />
+    <ClInclude Include="Public\Interface\IInput.h" />
+    <ClInclude Include="Public\Interface\IMesh.h" />
+    <ClInclude Include="Public\Interface\IRenderer.h" />
+    <ClInclude Include="Public\Interface\ISceneManager.h" />
+    <ClInclude Include="Public\Interface\ISound.h" />
+    <ClInclude Include="Public\Interface\ITextureManager.h" />
+    <ClInclude Include="Public\Interface\ITime.h" />
+    <ClInclude Include="Public\Interface\IWindow.h" />
+    <ClInclude Include="Public\Math\YunoTransform.h" />
+    <ClInclude Include="Public\Object\Unit.h" />
+    <ClInclude Include="Public\Renderer\Mesh.h" />
+    <ClInclude Include="Public\Renderer\RenderTypes.h" />
+    <ClInclude Include="Public\SceneBase\SceneBase.h" />
+    <ClInclude Include="Private\Singleton\Singleton.h" />
+    <ClInclude Include="Public\Sound\AudioQueue.h" />
+    <ClInclude Include="Public\Sound\AudioManager.h" />
+    <ClInclude Include="Public\Sound\AudioManagerPCH.h" />
+    <ClInclude Include="Public\Sound\AudioCore.h" />
+    <ClInclude Include="Public\Sound\Bank.h" />
+    <ClInclude Include="Public\Sound\EventHandle.h" />
+    <ClInclude Include="Public\Sound\fmodPCH.h" />
+    <ClInclude Include="Public\Sound\IAudioManager.h" />
+    <ClInclude Include="Public\YunoEngine.h" />
+    <ClInclude Include="Public\UI\Text.h" />
+    <ClInclude Include="Public\UI\Slot.h" />
+    <ClInclude Include="Public\UI\Widget.h" />
+    <ClInclude Include="Public\UI\UITool\UIManager.h" />
+    <ClInclude Include="Public\UI\UITool\UIFactory.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="EnginePCH\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="YunoEngine.cpp" />
+    <ClCompile Include="Private\UI\Letterbox.cpp" />
+    <ClCompile Include="Private\UI\UITool\CursurSystem.cpp" />
+    <ClCompile Include="Private\UI\UITool\DragProvider.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Private\UI\Image.cpp" />
+    <ClCompile Include="Private\Input\InputContextBase.cpp" />
+    <ClCompile Include="Private\Input\YunoInputSystem.cpp" />
+    <ClCompile Include="Private\Renderer\BoneAnimation\BoneAnimation.cpp" />
+    <ClCompile Include="Private\Renderer\BoneNode\BoneNode.cpp" />
+    <ClCompile Include="Private\Renderer\Mesh\YunoMeshBuffer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\RenderPass\YunoRenderPass.cpp" />
+    <ClCompile Include="Private\Renderer\Shader\YunoShader.cpp" />
+    <ClCompile Include="Private\Renderer\Shader\YunoShaderCompiler.cpp" />
+    <ClCompile Include="Private\Renderer\YunoRenderer.cpp" />
+    <ClCompile Include="Private\Resource\YunoTextureManager.cpp" />
+    <ClCompile Include="Private\Scene\YunoSceneManager.cpp" />
+    <ClCompile Include="Private\Timer\YunoTimer.cpp" />
+    <ClCompile Include="Private\Window\YunoWindow.cpp" />
+    <ClCompile Include="Private\YunoEngine.cpp" />
+    <ClCompile Include="Public\Object\Button.cpp" />
+    <ClCompile Include="Public\Light\YunoLight.cpp" />
+    <ClCompile Include="Public\Object\AnimationUnit.cpp" />
+    <ClCompile Include="Public\Object\Effect.cpp" />
+    <ClCompile Include="Public\Object\EffectManager.cpp" />
+    <ClCompile Include="Public\Object\ObjectManager.cpp" />
+    <ClCompile Include="Public\Object\ObjectTypeRegistry.cpp" />
+    <ClCompile Include="Public\Object\Unit.cpp" />
+    <ClCompile Include="Private\Parser\Parser.cpp" />
+    <ClCompile Include="Public\Renderer\3DAnimation\Animator.cpp" />
+    <ClCompile Include="Public\Renderer\Mesh.cpp" />
+    <ClCompile Include="Public\SceneBase\SceneBase.cpp" />
+    <ClCompile Include="Private\UI\Widget.cpp" />
+    <ClCompile Include="Public\SceneBase\SerializeScene.cpp" />
+    <ClCompile Include="Public\Sound\AudioQueue.cpp" />
+    <ClCompile Include="Public\Sound\AudioManager.cpp" />
+    <ClCompile Include="Public\Sound\AudioManagerPCH.cpp" />
+    <ClCompile Include="Public\Sound\AudioCore.cpp" />
+    <ClCompile Include="Public\Sound\Bank.cpp" />
+    <ClCompile Include="Public\Sound\EventHandle.cpp" />
+    <ClCompile Include="Public\Sound\fmodPCH.cpp" />
+    <ClCompile Include="Private\UI\Text.cpp" />
+    <ClCompile Include="Private\UI\Slot.cpp" />
+    <ClCompile Include="Private\UI\UITool\UIManager.cpp" />
+    <ClCompile Include="Private\UI\UITool\UIFactory.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\BasicColor.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\DebugGrid.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\DebugMesh.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\EffectBase.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PBR_Animation.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PBR_Base.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_BlurHorizon.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_BlurVertical.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_Combine.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_Default.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_DownSample.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_Threshold.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_ToneMap.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\ShadowMapWrite.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_Base.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\Shaders\ConstantBuffers.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\Assets\Shaders\ConstantBuffers_Widget.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\Assets\Shaders\Light.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\Assets\Shaders\PP_TexturesSampler.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\Assets\Shaders\TexturesSampler.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YunoImGui\YunoImGui.vcxproj">
+      <Project>{ce3886a1-acc6-4b3e-b173-4ffdeb44e0fb}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

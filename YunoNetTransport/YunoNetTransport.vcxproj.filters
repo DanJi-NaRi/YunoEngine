@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Private">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Public">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Private\Net">
+      <UniqueIdentifier>{6b8d4288-e006-4611-aad8-5cf13431d0f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Net">
+      <UniqueIdentifier>{076c5f8d-caa7-42e2-afd5-2340ba189eb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TransportPCH">
+      <UniqueIdentifier>{30fe350d-68d8-42ba-89fe-68dc5b0efed6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TransportPCH\pch.h">
+      <Filter>TransportPCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\TcpClient.h">
+      <Filter>Public\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\TcpServer.h">
+      <Filter>Public\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\TcpSession.h">
+      <Filter>Public\Net</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TransportPCH\pch.cpp">
+      <Filter>TransportPCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\TcpClient.cpp">
+      <Filter>Private\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\TcpSession.cpp">
+      <Filter>Private\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\TcpServer.cpp">
+      <Filter>Private\Net</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

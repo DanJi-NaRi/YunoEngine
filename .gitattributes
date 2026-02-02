@@ -1,0 +1,47 @@
+# Default
+* text=auto
+
+# C / C++ / HLSL
+*.h       text eol=crlf
+*.hpp     text eol=crlf
+*.cpp     text eol=crlf
+*.inl     text eol=crlf
+*.hlsl    text eol=crlf
+*.hlsli   text eol=crlf
+
+# Visual Studio meta files
+*.sln      text eol=crlf
+*.vcxproj  text eol=crlf
+*.filters  text eol=crlf
+*.props    text eol=crlf
+*.targets  text eol=crlf
+
+# Docs / config
+*.md     text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+
+# -------------------------
+# Binary files (never normalize EOL)
+# -------------------------
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+
+*.mp3  binary
+*.wav  binary
+*.ogg  binary
+*.flac binary
+
+*.bank binary
+*.strings.bank binary
+
+# -------------------------
+# FMOD Studio text files (keep LF)
+# -------------------------
+ThirdParty/FMOD/**/*.fspro text eol=lf
+ThirdParty/FMOD/**/*.xml   text eol=lf
+ThirdParty/FMOD/**/*.txt   text eol=lf
+ThirdParty/FMOD/**/*.json  text eol=lf

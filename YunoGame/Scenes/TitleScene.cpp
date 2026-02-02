@@ -1,0 +1,163 @@
+#include "pch.h"
+
+#include "TitleScene.h"
+
+#include "YunoEngine.h"
+#include "YunoCamera.h"
+
+#include "ObjectManager.h"
+//#include "Game_InputContext.h"
+#include "IInput.h"
+
+#include "PlayGridSystem.h"
+#include "Quad.h"
+#include "Building.h"
+#include "Triangle.h"
+#include "Image.h"
+#include "AnimTest.h"
+#include "YunoLight.h"
+#include "AudioQueue.h"
+#include "PlayQueue.h"
+
+bool TitleScene::OnCreateScene()
+{
+    //std::cout << "[TitleScene] OnCreate\n";
+    // 그리드 오브젝트 안에서 그리드 시스템을 만들어
+    // 행렬, 사이즈.
+
+    m_name = "TitleScene";
+   
+    m_objectManager->CreateDirLight();
+
+    int j = 0;
+    for (int i = -3; i < 3; i++)
+    {
+        m_objectManager->CreatePointLight(XMFLOAT3(i * 2, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
+        j++;
+    }
+    m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
+    //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
+
+
+    //m_gridSystem = std::make_unique<PlayGridSystem>(m_objectManager.get());
+    //m_gridSystem->Init(5, 7, 2, 2);
+    //m_gridSystem->CreateObject(0, 1, 0);
+
+
+    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+
+    auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/background.fbx");
+    map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
+    map->SetScale(XMFLOAT3(1, 1, 1));
+
+    auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx");
+    gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
+    //gun->SetEmissiveColor(0, XMFLOAT4(1, 0, 0, 1));
+    //m_objectManager->CreateObjectFromFile<Building>(L"Drill", XMFLOAT3(4, 2, 0), L"../Assets/fbx/Drill/Drill.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Axe", XMFLOAT3(-2, 2, 0), L"../Assets/fbx/Ax/Ax.fbx");
+    //auto capo = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Human/Capoeira2.fbx");
+    //capo->AddAnimationClip("capoeira", L"../Assets/fbx/Human/Capoeira2.fbx");
+   // capo->AddAnimationClip("dying", L"../Assets/fbx/Human/Dying2.fbx");
+
+    return true;
+}
+
+void TitleScene::OnDestroyScene()
+{   
+   
+}
+
+
+TitleScene::TitleScene() = default;
+
+TitleScene::~TitleScene() = default;
+
+void TitleScene::OnEnter()
+{
+    //std::cout << "[TitleScene] OnEnter\n";
+
+    AudioQ::Insert(AudioQ::LoadBank(BankName::Title));
+    //AudioQ::Insert(AudioQ::PlayEvent(EventName::BGM_Playlist));
+
+    YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
+
+    
+}
+
+void TitleScene::OnExit()
+{
+    //std::cout << "[TitleScene] OnExit\n";
+
+    AudioQ::Insert(AudioQ::UnLoadBank(BankName::Title));
+    //m_audioScene->Unload();
+    YunoEngine::GetInput()->RemoveContext(&m_gameCtx);
+
+}
+
+
+
+void TitleScene::Update(float dt)
+{
+    SceneBase::Update(dt);
+
+    if (m_input->IsKeyPressed(VK_OEM_PERIOD))
+    {
+        AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, true));
+        AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, false));
+    }
+
+    // 테스트용 -> ally1으로 부여한 기물이 움직여용
+    if (m_input->IsKeyPressed(0x31))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 3));   // 왼쪽
+    }
+    if (m_input->IsKeyPressed(0x32))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 2));   // 아래
+    }
+    if (m_input->IsKeyPressed(0x33))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 3));   // 위
+    }
+    if (m_input->IsKeyPressed(0x34))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 4));   // 오른쪽
+    }
+    if (m_input->IsKeyPressed(0x35))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 2));   // 왼쪽 위
+    }
+    if (m_input->IsKeyPressed(0x36))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 2));   // 오른쪽 위
+    }
+    if (m_input->IsKeyPressed(0x37))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 4));   // 왼쪽 아래
+    }
+    if (m_input->IsKeyPressed(0x38))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 4));   // 오른쪽 아래
+    }
+    if (m_input->IsKeyPressed(0x39))
+    {
+        PlayGridQ::Insert(PlayGridQ::Attack_S_TST(GamePiece::Ally1));   // 공격
+    }
+    if (m_input->IsKeyPressed(0x30))
+    {
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 3));   // 충돌
+    }
+
+    //m_input->Dispatch();
+    m_gridSystem->Update(dt);
+}
+
+void TitleScene::SubmitObj()
+{
+    SceneBase::SubmitObj();
+}
+
+void TitleScene::SubmitUI()
+{
+    SceneBase::SubmitUI();
+}

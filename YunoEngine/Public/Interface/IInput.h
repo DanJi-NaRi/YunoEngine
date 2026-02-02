@@ -1,0 +1,39 @@
+#pragma once
+#include <cstdint>
+
+struct InputEvent;
+class IInputContext;
+class IScene;
+class IInput
+{
+public:
+    virtual ~IInput() = default;
+
+    // 입력 이벤트 큐에 삽입
+    virtual void PushEvent(const InputEvent& evt) = 0;
+    virtual void Dispatch() = 0;
+
+    // 게임에서 사용할 API함수들
+    virtual bool IsKeyDown(uint32_t key) const = 0;
+    virtual bool IsKeyPressed(uint32_t key) const = 0;
+    virtual bool IsKeyReleased(uint32_t key) const = 0;
+
+    virtual bool IsMouseHovered() const = 0;
+    virtual bool IsMouseButtonDown(uint32_t button) const = 0;
+    virtual bool IsMouseButtonPressed(uint32_t button) const = 0;
+    virtual bool IsMouseButtonReleased(uint32_t button) const = 0;
+
+    virtual float GetMouseX() const = 0;
+    virtual float GetMouseY() const = 0;
+    virtual float GetMouseDeltaX() const = 0;
+    virtual float GetMouseDeltaY() const = 0;
+    virtual float GetPressedMouseX() const = 0;
+    virtual float GetPressedMouseY() const = 0;
+
+    // 호버링(HOVERING) 메세지 발생 함수
+    virtual void MouseTrack(HWND hWnd, BOOL bOn = TRUE) = 0;
+
+    // 인풋을 사용할 컨텍스트
+    virtual void AddContext(IInputContext* context, IScene* scene) = 0;
+    virtual void RemoveContext(IInputContext* context) = 0;
+};

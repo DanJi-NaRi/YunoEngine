@@ -1,0 +1,53 @@
+#include "pch.h"
+#include "Slot.h"
+
+Slot::Slot(UIFactory& uiFactory) : Widget(uiFactory)
+{}
+
+Slot::~Slot()
+{
+}
+
+bool Slot::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+{
+    Widget::Create(name, id, vPos);
+
+    m_anchor = UIDirection::LeftTop;
+
+    Backup();
+
+    return true;
+}
+
+bool Slot::Start()
+{
+    return true;
+}
+
+bool Slot::Update(float dTime)
+{
+    Widget::Update(dTime);
+    
+
+    return true;
+}
+
+bool Slot::Submit(float dTime)
+{
+    static bool test = true;
+    if (m_time >= 1.0f)
+    {
+        test = !test;
+        m_time -= 1.0f;
+    }
+    Widget::Submit(dTime);
+    return true;
+}
+
+void Slot::SetDefaultSnapPoint(float padding, WidgetClass target)
+{
+    m_snapPoint.m_snapPos = { m_vPos.x, m_vPos.y };
+    m_snapPoint.m_snapPadding = padding;
+    m_snapPoint.m_snapRange = m_rect;
+    m_snapPoint.m_snapTargetClass = target;
+}

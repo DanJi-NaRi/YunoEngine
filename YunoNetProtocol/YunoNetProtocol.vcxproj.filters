@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Private">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Public">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Public\Network">
+      <UniqueIdentifier>{b6a98825-691f-40f5-8804-348634081e5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Network">
+      <UniqueIdentifier>{e7eeafbc-aaea-48ed-8273-ca1757acba2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Network\Packets">
+      <UniqueIdentifier>{1422e296-fc58-4111-9e45-308de581c511}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Network\Packets">
+      <UniqueIdentifier>{3b75e956-c9b2-41fb-8e7b-2e43283a5996}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ProtocolPCH">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_Ping.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_Pong.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\ByteIO.h">
+      <Filter>Public\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\NetPeer.h">
+      <Filter>Public\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\PacketBuilder.h">
+      <Filter>Public\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\PacketDispatcher.h">
+      <Filter>Public\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\PacketHeader.h">
+      <Filter>Public\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\PacketType.h">
+      <Filter>Public\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolPCH\pch.h">
+      <Filter>ProtocolPCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_EnterOK.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_MatchLeave.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_MatchEnter.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\ErrorPackets\S2C_Error.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_CountDown.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_ReadySet.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_SubmitWeapon.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_ReadyState.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_RoundStart.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_StartCardList.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_BattlePackets.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_BattlePackets.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Private\Net\ByteIO.cpp">
+      <Filter>Private\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_Ping.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_Pong.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\PacketBuilder.cpp">
+      <Filter>Private\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\PacketDispatcher.cpp">
+      <Filter>Private\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtocolPCH\pch.cpp">
+      <Filter>ProtocolPCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_MatchEnter.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_MatchLeave.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_EnterOK.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\ErrorPackets\S2C_Error.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_CountDown.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_ReadySet.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_SubmitWeapon.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_ReadyState.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_RoundStart.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_StartCardList.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_BattlePackets.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_BattlePackets.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
