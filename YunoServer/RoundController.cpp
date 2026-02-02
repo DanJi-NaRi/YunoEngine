@@ -40,6 +40,16 @@ namespace yuno::server
 
     // ------------------------------------------------------
 
+    PlayerUnits& RoundController::GetPlayerUnitState(uint8_t PID)
+    {
+        auto it = allPlayerUnits.find(PID);
+        if (it == allPlayerUnits.end())
+        {
+            assert(false);
+        }
+        return it->second;
+    }
+
     void RoundController::SendCountDown()
     {
         yuno::net::packets::S2C_CountDown cd{};
@@ -103,36 +113,46 @@ namespace yuno::server
         const auto& s = m_match.Slots();
 
         yuno::net::packets::S2C_RoundStart rs{};
+        
+        // MK 추가
+        PlayerUnits player;
+        UnitState unit1, unit2;
 
         // slot0 (P1)
-        rs.units[0].PID = 1;
-        rs.units[0].slotID = 1;
-        rs.units[0].WeaponID = static_cast<std::uint8_t>(s[0].unitId1);
-        rs.units[0].hp = 100;
-        rs.units[0].stamina = 100;
-        rs.units[0].SpawnTileId = 9;
+        player.PID = rs.units[0].PID = 1;
+        player.unit1.slotID = rs.units[0].slotID = 1;
+        player.unit1.WeaponID = rs.units[0].WeaponID = static_cast<std::uint8_t>(s[0].unitId1);
+        player.unit1.hp = rs.units[0].hp = 100;
+        player.stamina = rs.units[0].stamina = 100;
+        player.unit1.tileID = rs.units[0].SpawnTileId = 9;
 
         rs.units[1].PID = 1;
-        rs.units[1].slotID = 2;
-        rs.units[1].WeaponID = static_cast<std::uint8_t>(s[0].unitId2);
-        rs.units[1].hp = 100;
+        player.unit2.slotID = rs.units[1].slotID = 2;
+        player.unit2.WeaponID = rs.units[1].WeaponID = static_cast<std::uint8_t>(s[0].unitId2);
+        player.unit2.hp = rs.units[1].hp = 100;
         rs.units[1].stamina = 100;
-        rs.units[1].SpawnTileId = 23;
+        player.unit2.tileID = rs.units[1].SpawnTileId = 23;
+
+        // MK 추가
+        allPlayerUnits.emplace(player.PID, player);
 
         // slot1 (P2)
-        rs.units[2].PID = 2;
-        rs.units[2].slotID = 1;
-        rs.units[2].WeaponID = static_cast<std::uint8_t>(s[1].unitId1);
-        rs.units[2].hp = 100;
-        rs.units[2].stamina = 100;
-        rs.units[2].SpawnTileId = 13;
+        player.PID = rs.units[2].PID = 2;
+        player.unit1.slotID = rs.units[2].slotID = 1;
+        player.unit1.WeaponID = rs.units[2].WeaponID = static_cast<std::uint8_t>(s[1].unitId1);
+        player.unit1.hp = rs.units[2].hp = 100;
+        player.stamina = rs.units[2].stamina = 100;
+        player.unit1.tileID = rs.units[2].SpawnTileId = 13;
 
         rs.units[3].PID = 2;
-        rs.units[3].slotID = 2;
-        rs.units[3].WeaponID = static_cast<std::uint8_t>(s[1].unitId2);
-        rs.units[3].hp = 100;
+        unit2.slotID = rs.units[3].slotID = 2;
+        unit2.WeaponID = rs.units[3].WeaponID = static_cast<std::uint8_t>(s[1].unitId2);
+        unit2.hp = rs.units[3].hp = 100;
         rs.units[3].stamina = 100;
-        rs.units[3].SpawnTileId = 27;
+        unit2.tileID = rs.units[3].SpawnTileId = 27;
+
+        // MK 추가
+        allPlayerUnits.emplace(player.PID, player);
 
         auto bytes = yuno::net::PacketBuilder::Build(
             yuno::net::PacketType::S2C_RoundStart,

@@ -59,15 +59,14 @@ namespace yuno::server
         pkt.runtimeCardId = c.runtimeId;
         pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
 
+
         //  테스트용 하드코딩 결과
-        pkt.deltas.push_back({
-            1,      // slot
-            1,      // unit   
-            90,     // hp
-            0,      // stamina
-            1,      // TagettileID
-            0,      // dir
-            });
+        std::array<UnitStateDelta, 4> us;
+        us[0] = { 1, 1, 100, 100, 5, 1 };
+        us[1] = { 1, 2, 100, 100, 10, 2 };
+        us[2] = { 2, 1, 100, 100, 15, 3 };
+        us[3] = { 2, 2, 100, 100, 20, 4 };
+        pkt.order.push_back(us);
 
 
         auto bytes = yuno::net::PacketBuilder::Build(
@@ -171,8 +170,9 @@ namespace yuno::server
         }
         //for (const auto& c : finalOrder)
         //{
-        //    //ExecuteCard(c); //  여기서 행동 계산 호출
+        //    ExecuteCard(c); //  여기서 행동 계산 호출
         //}
+        
 
         //디버깅용
         for (const auto& c : finalOrder)

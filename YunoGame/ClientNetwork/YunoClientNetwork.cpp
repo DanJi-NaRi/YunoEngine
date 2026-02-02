@@ -346,32 +346,75 @@ namespace yuno::game
                     << " ownerSlot=" << static_cast<int>(pkt.ownerSlot)
                     << "\n";
 
-                // delta 처리
-                for (const auto& d : pkt.deltas)
+                // MK 추가
+                // 게임 매니저 큐에 push.
+                std::vector<std::array<UnitState, 4>> order;
+                for (int i = 0; i < order.size(); i++)
                 {
-                    const int slot = static_cast<int>(d.ownerSlot);
-                    const int unit = static_cast<int>(d.unitLocalIndex);
+                    const auto& u = pkt.order[i];
+                    std::array<UnitState, 4> us;
+                    for (int j = 0; j < us.size(); j++)
+                    {
+                        us[0] = { u[j].ownerSlot, u[j].unitLocalIndex, u[j].hp,
+                                  u[j].stamina, u[j].targetTileID, u[j].dir };
+                    }
+                    order.push_back(us);
+                }
 
-                    std::cout
-                        << "[Client] Apply Delta | slot=" << slot
-                        << " unit=" << unit
-                        << " hpDelta=" << d.hp
-                        << " staminaDelta=" << d.stamina
-                        << " move=" << d.targetTileID
-                        << " dir=(" << d.targetTileID << ")\n";
+                BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, order};
+                gm.PushBattlePacket(br);
 
-                    //  여기서 실제 유닛 상태 반영
-                    /*gm.ApplyUnitDelta(
-                        slot,
-                        unit,
-                        d.hpDelta,
-                        d.staminaDelta,
-                        d.xDelta,
-                        d.yDelta
-                    );*/
+                // 디버깅용
+                for (const auto& d : pkt.order)
+                {
+                    for (int i = 0; i < d.size(); i++)
+                    {
+                        const int slot = static_cast<int>(d[i].ownerSlot);
+                        const int unit = static_cast<int>(d[i].unitLocalIndex);
+
+                        std::cout
+                            << "[Client] Apply Delta |\n" 
+                            << " Player = " << slot
+                            << "\n unit =" << unit
+                            << "\n hp =" << d[i].hp
+                            << "\n stamina =" << d[i].stamina
+                            << "\n move =" << d[i].targetTileID
+                            << "\n dir =(" << d[i].dir << ")\n";
+                    }
                 }
             }
         );// BattleResult Packet End
+
+        //// TestCardList Packet Start
+        //Dispatcher().RegisterRaw(
+        //    PacketType::S2C_TestCardList,
+        //    [this](const NetPeer& peer,
+        //        const PacketHeader& header,
+        //        const std::uint8_t* body,
+        //        std::uint32_t bodyLen)
+        //    {
+        //        ByteReader r(body, bodyLen);
+        //        const auto pkt =
+        //            yuno::net::packets::S2C_TestCardList::Deserialize(r);
+
+        //        std::cout << "[Client] TestCardList received. count="
+        //            << pkt.cards.size() << "\n";
+
+        //        for (const auto& card : pkt.cards)
+        //        {
+        //            std::cout
+        //                << "  runtimeID=" << card.runtimeID
+        //                << " dataID=" << card.dataID
+        //                << std::endl;
+
+        //            GameManager::Get().RegisterCard(
+        //                card.runtimeID,
+        //                card.dataID
+        //            );
+        //        }
+        //    }
+        //);
+        //// TestCardList Packet End
     }
 
 

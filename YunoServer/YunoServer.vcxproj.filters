@@ -36,5 +36,6 @@
     <ClInclude Include="ServerCardActData.h" />
     <ClInclude Include="TurnManager.h" />
     <ClInclude Include="ServerCardRangeManager.h" />
+    <ClInclude Include="ServerCardInstance.h" />
   </ItemGroup>
 </Project>
