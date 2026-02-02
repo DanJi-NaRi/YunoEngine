@@ -14,6 +14,7 @@ struct ResolvedCard
 
     int ownerSlot; // 0 or 1 (누가 냈는지)
     int localIndex; // 0~3까지에 카드 순서
+    int dir;        
 
     Direction dir;
 };

@@ -48,7 +48,7 @@ namespace yuno::server
         m_server.SetOnPacket(
             [this](std::shared_ptr<yuno::net::TcpSession> session, std::vector<std::uint8_t>&& packetBytes)
             {
-                std::cout << "---------------------------[Server] OnPacket: sid=" << session->GetSessionId()
+                std::cout << "-----------[Server] OnPacket: sid=" << session->GetSessionId()
                     << ", bytes=" << packetBytes.size() << "\n";
 
                 yuno::net::NetPeer peer{};
@@ -80,12 +80,12 @@ namespace yuno::server
     {
         std::cout << "[Server] Start called. port=" << port << "\n";
 
-        if (!m_cardDB.LoadFromCSV("../Assets/CardData/CardData.csv"))
+        if (!m_cardDB.LoadFromCSV("../Assets/CardData/CardData.csv"))       // 카드 데이터 로드
         {
             std::cerr << "[Server] Card CSV load failed\n";
             return false;
         }
-        if (!m_cardRangeDB.LoadFromCSV("../Assets/CardData/CardRange.csv"))
+        if (!m_cardRangeDB.LoadFromCSV("../Assets/CardData/CardRange.csv")) // 카드 범위 데이터 로드
         {
             std::cerr << "[Server] cardRange CSV load failed\n";
             return false;
@@ -310,7 +310,8 @@ namespace yuno::server
             }
         );// Submit Weapon Packet End
 
-        //Submit ReadyTurn Packet Start
+
+        //Submit ReadyTurn Packet Start         // 클라가 카드 4장 선택하고 준비완료 누르면 이 패킷 보내는거지?
         m_dispatcher.RegisterRaw(
             PacketType::C2S_ReadyTurn,
             [this](const NetPeer& peer,
