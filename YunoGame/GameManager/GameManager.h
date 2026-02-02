@@ -126,7 +126,7 @@ private:
     std::queue<BattleResult> m_turnPkts;
 
 public:
-    void PushBattlePacket(const BattleResult& _BattleResult);
+    void PushBattlePacket(const BattleResult _BattleResult);
     BattleResult PopBattlePacket();
     bool IsEmptyBattlePacket();
 };

@@ -29,26 +29,29 @@ private:
     void CheckPacket();
 
 private:
-    void MoveEvent(const GamePiece& pieceType, int cx, int cz);
+    void MoveEvent(const GamePiece& pieceType, int cx, int cz, 
+        bool isCollided = false, bool isEnemy = false, int damage1 = 0, int damage2 = 0);
     
     bool CheckExisting(const GamePiece pieceType);
     void CheckHealth(PieceInfo& pieceInfo);
     
-    void ApplyPacketChanges(Dirty_US dirty, const UnitState& prevUS, const UnitState& newUS);
+    void ApplyPacketChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit);
 
 
 private:
     void ChangeTileTO(int cx, int cz, const TileOccupy to);
     const TileOccupy GetTileTO(int cx, int cz);
 
-    Direction GetDir(float oldcx, float oldcz, float cx, float cz);
-
-    Direction GetCollisionDir(float oldcx, float oldcz, float cx, float cz);
-    Float2 GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cz);
+    Direction Get2Dir(float oldcx, float oldcz, float cx, float cz);            // 좌-우 2방향 체크
+    Direction Get8Dir(float oldcx, float oldcz, float cx, float cz);            // 상하좌우 대각선 8방향 체크
+    std::pair<Float2, Int2> GetCollisionPos(Direction dir, int cx, int cz);     // 충돌 월드좌표와 셀좌표
 
     GamePiece GetGamePiece(int pId, int unitId);
+    int GetUnitID(int pId, int slotID);
+    int GetOtherUnitDamage(const std::array<UnitState, 4>& newUnitStates, int mainUnit);
 
     std::wstring GetWeaponFileName(int weaponID);           // 테스트용
+    std::wstring GetTileFileName(int tile);
 
 private:
     void ClearTileState();

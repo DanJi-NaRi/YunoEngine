@@ -15,6 +15,10 @@ struct PGridCmd
         {
             GamePiece whichPiece;
             int cx, cz;
+            bool isCollided;
+            bool isEnemy;
+            int damageMe;
+            int damageU;
         } mv_s;  // Move
 
         struct
@@ -64,7 +68,7 @@ public:
 
 public:
 
-    static PGridCmd Move_S(GamePiece pieceType, int cx, int cz);
+    static PGridCmd Move_S(GamePiece pieceType, int cx, int cz, bool isCollided = false, bool isEnemy = false, int damageMe = 0, int damageU = 0);
     static PGridCmd Move_P(Direction dir, float wx, float wy, float wz, float speed = 1, bool isDone = false);
 
     static PGridCmd Attack_S_TST(GamePiece pieceType, int damagae = 10);
