@@ -1,12 +1,7 @@
 #pragma once
-#include "Unit.h"
+#include "AnimationUnit.h"
 
-struct C3
-{
-    float r, g, b;
-};
-
-class UnitTile : public Unit
+class UnitTile : public AnimationUnit
 {
 public:
     explicit UnitTile();
@@ -20,10 +15,10 @@ private:
     bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
 
 private:
-    void FlashColor(C3 color, int count, float diff, float speed);
+    //void FlashColor(C3 color, int count, float diff, float speed);
 
 private:
-    C3 m_maskColor{ 1, 1, 1 };
+    //C3 m_maskColor{ 1, 1, 1 };
     float m_diff = 0;
     float m_FxSpeed = 0.f;
     int m_count = 0;

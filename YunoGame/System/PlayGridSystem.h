@@ -29,7 +29,7 @@ private:
     void CheckPacket();
 
 private:
-    void MoveEvent(const GamePiece& pieceType, int cx, int cz);
+    void MoveEvent(const GamePiece& pieceType, int cx, int cz, bool isCollided = false, int damage1 = 0, int damage2 = 0);
     
     bool CheckExisting(const GamePiece pieceType);
     void CheckHealth(PieceInfo& pieceInfo);
@@ -49,6 +49,7 @@ private:
     GamePiece GetGamePiece(int pId, int unitId);
 
     std::wstring GetWeaponFileName(int weaponID);           // 테스트용
+    std::wstring GetTileFileName(int tile);
 
 private:
     void ClearTileState();
