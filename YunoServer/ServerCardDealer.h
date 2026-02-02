@@ -2,6 +2,8 @@
 #include <vector>
 #include <cstdint>
 
+#include "S2C_StartCardList.h"
+
 // CSV 파싱한 카드 데이터들 존재하는 곳
 
 namespace yuno::server
@@ -16,7 +18,7 @@ namespace yuno::server
             ServerCardManager& cardDB,
             ServerCardRuntime& runtime);
 
-        std::vector<uint32_t> MakeInitialDeck(
+        std::vector<yuno::net::packets::CardSpawnInfo> MakeInitialDeck(
             uint32_t weapon1,
             uint32_t weapon2);
 

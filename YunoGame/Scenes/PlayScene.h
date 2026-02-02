@@ -27,10 +27,13 @@ protected:
 private:
     void TestInput();
     void HandleCardSelect(int key, int index);
+    void HandleDirectionInput();
     void EndTurn();
 
 private:
     std::unique_ptr<IGridSystem> m_playGrid;
     Game_InputContext m_gameCtx;
     CardQueue m_cardQueue;
+
+    uint32_t m_pendingCardRuntimeID = 0; //방향 선택 확인
 };

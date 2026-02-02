@@ -21,9 +21,6 @@ namespace yuno::server
             std::uint32_t unitId1 = 0;
             std::uint32_t unitId2 = 0;
 
-            std::uint32_t hp = 0;
-            std::uint32_t stamina = 0;
-
             bool ready = false;
 
 
