@@ -4,6 +4,5 @@
   "dependencies": [
     "boost-asio",
     "boost-system"
-    //"directxtk"
   ]
 }

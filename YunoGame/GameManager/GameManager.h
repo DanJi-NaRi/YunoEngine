@@ -2,6 +2,7 @@
 
 #include "SceneState.h"
 #include "CardData.h"
+#include "BattlePackets.h"
 
 class ISceneManager;
 class ObjectManager;
@@ -106,4 +107,14 @@ public:
     std::vector<Wdata> GetWeaponData() {
         return m_weapons;
     }
+
+    // 매 턴 매 슬롯 카드 하나 진행할 때마다 받아옴
+private:
+
+    std::queue<BattleResult> m_turnPkts;
+
+public:
+    void PushBattlePacket(const BattleResult& _BattleResult);
+    BattleResult PopBattlePacket();
+    bool IsEmptyBattlePacket();
 };

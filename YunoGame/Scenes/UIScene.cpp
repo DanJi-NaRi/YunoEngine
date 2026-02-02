@@ -19,7 +19,7 @@
 #include "Dwarf.h"
 
 // 테스트 중
-#include "GridLine.h"
+//#include "GridLine.h"
 //#include "PlayQueue.h"
 #include "MinimapQueue.h"
 #include "Piece.h"

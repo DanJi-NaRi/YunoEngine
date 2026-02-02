@@ -15,7 +15,7 @@ namespace yuno::server
         }
 
     private:
-        uint32_t m_nextRuntimeID = 0;
+        uint32_t m_nextRuntimeID = 0; // 일단은 냅두고 나중에 문제 생기면 여기부터 체크
         std::unordered_map<uint32_t, uint32_t> m_runtimeToData;
     };
 }

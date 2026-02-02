@@ -10,10 +10,11 @@ namespace yuno::net::packets
         w.WriteU8(ownerSlot);
         w.WriteU8(unitLocalIndex);
 
-        w.WriteU8(static_cast<uint32_t>(hp));
-        w.WriteU8(static_cast<uint32_t>(stamina));
-        w.WriteU8(static_cast<uint32_t>(targetTileID));
-        w.WriteU8(static_cast<uint32_t>(dir));
+        w.WriteU8(hp);
+        w.WriteU8(stamina);
+        w.WriteU8(targetTileID);
+        w.WriteU8(isEvent);
+
     }
 
     UnitStateDelta UnitStateDelta::Deserialize(ByteReader& r)
@@ -22,10 +23,10 @@ namespace yuno::net::packets
         d.ownerSlot = r.ReadU8();
         d.unitLocalIndex = r.ReadU8();
 
-        d.hp = static_cast<int32_t>(r.ReadU8());
-        d.stamina = static_cast<int32_t>(r.ReadU8());
-        d.targetTileID = static_cast<int32_t>(r.ReadU8());
-        d.dir = static_cast<int32_t>(r.ReadU8());
+        d.hp = r.ReadU8();
+        d.stamina = r.ReadU8();
+        d.targetTileID = r.ReadU8();
+        d.isEvent = r.ReadU8();
         return d;
     }
 
@@ -35,13 +36,18 @@ namespace yuno::net::packets
     {
         w.WriteU32LE(runtimeCardId);
         w.WriteU8(ownerSlot);
+        w.WriteU8(unitLocalIndex);
+        w.WriteU8(dir);
 
-        // deltas count
-        w.WriteU8(static_cast<uint8_t>(deltas.size()));
+        // order count
+        w.WriteU8(order.size());
 
-        for (const auto& d : deltas)
+        for (const auto& d : order)
         {
-            d.Serialize(w);
+            d[0].Serialize(w);
+            d[1].Serialize(w);
+            d[2].Serialize(w);
+            d[3].Serialize(w);
         }
     }
 
@@ -50,13 +56,23 @@ namespace yuno::net::packets
         S2C_BattleResult pkt;
         pkt.runtimeCardId = r.ReadU32LE();
         pkt.ownerSlot = r.ReadU8();
+        pkt.unitLocalIndex = r.ReadU8();
+        pkt.dir = r.ReadU8();
 
-        uint8_t count = r.ReadU8();
-        pkt.deltas.reserve(count);
 
-        for (uint8_t i = 0; i < count; ++i)
+        uint8_t orderSize = r.ReadU8();
+
+        //uint8_t count = r.ReadU8();
+        pkt.order.reserve(orderSize);
+
+        for (uint8_t i = 0; i < orderSize; ++i)
         {
-            pkt.deltas.push_back(UnitStateDelta::Deserialize(r));
+            std::array<UnitStateDelta, 4> us;
+            us[0] = UnitStateDelta::Deserialize(r);
+            us[1] = UnitStateDelta::Deserialize(r);
+            us[2] = UnitStateDelta::Deserialize(r);
+            us[3] = UnitStateDelta::Deserialize(r);
+            pkt.order.push_back(us);
         }
 
         return pkt;

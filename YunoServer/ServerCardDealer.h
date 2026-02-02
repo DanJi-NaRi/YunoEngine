@@ -2,6 +2,8 @@
 #include <vector>
 #include <cstdint>
 
+// CSV 파싱한 카드 데이터들 존재하는 곳
+
 namespace yuno::server
 {
     class ServerCardManager;

@@ -2,6 +2,7 @@
 #include "UnitGridSystem.h"
 #include "PieceHelper.h"
 #include "TileHelper.h"
+#include "BattlePackets.h"
 
 class PlayGridQ;
 
@@ -25,12 +26,15 @@ private:
     void Init();
     void CreateTileAndPiece(float x, float y, float z);
     void CheckMyQ();
+    void CheckPacket();
 
 private:
     void MoveEvent(const GamePiece& pieceType, int cx, int cz);
     
     bool CheckExisting(const GamePiece pieceType);
     void CheckHealth(PieceInfo& pieceInfo);
+    
+    void ApplyPacketChanges(Dirty_US dirty, const UnitState& prevUS, const UnitState& newUS);
 
 
 private:
@@ -41,6 +45,8 @@ private:
 
     Direction GetCollisionDir(float oldcx, float oldcz, float cx, float cz);
     F2 GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cz);
+
+    GamePiece GetGamePiece(int pId, int unitId);
 
     std::wstring GetWeaponFileName(int weaponID);           // 테스트용
 
@@ -57,6 +63,9 @@ private:
     std::unordered_map<GamePiece, PieceInfo> m_pieces;      // 기물 정보
 
     std::unique_ptr<PlayGridQ> m_playQ;
+
+    int m_pID = 0;
+    std::array<UnitState, 4> m_UnitStates;
 
     // grid를 여러 개 운용한다면
     //std::unordered_map<NG_P, std::vector<TileState>> m_tiles;    // 타일 상태

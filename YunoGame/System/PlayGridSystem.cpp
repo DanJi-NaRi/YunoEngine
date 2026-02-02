@@ -93,10 +93,10 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     int cx = 0; int cz = 0;
     Team team = Team::Undefined;
     Direction dir;
-
+    m_pID = GameManager::Get().GetSlotiIdx();   // 나 몇번째 플레이어니?
     for (const auto& w : wData)
     {
-        team = (w.pId == GameManager::Get().GetSlotiIdx()) ? Team::Ally : Team::Enemy;
+        team = (w.pId == m_pID) ? Team::Ally : Team::Enemy;
 
         dir = (w.pId == 1) ? Direction::Right : Direction::Left;
         auto cellPos = GetCellByID(w.currentTile);
@@ -204,6 +204,67 @@ void PlayGridSystem::CheckMyQ()
     }
 }
 
+void PlayGridSystem::CheckPacket()
+{
+    auto& mng = GameManager::Get();
+    if (!mng.IsEmptyBattlePacket())
+    {
+        const auto pckt = mng.PopBattlePacket();
+        const auto runTimeCardID = pckt.runTimeCardID;
+        const auto whichPlayerTurn = pckt.pId;
+        const auto whichUnit = pckt.slotId;
+        const std::vector<std::array<UnitState, 4>>& order = pckt.order;
+
+        GamePiece whichPiece = GetGamePiece(whichPlayerTurn, whichUnit);
+
+        // 행동 순서
+        for (int i = 0; i < order.size(); i++)
+        {
+            const std::array<UnitState, 4>& unitStates_Now = order[i];
+
+            for (int j = 0; j < unitStates_Now.size(); j++)
+            {
+                Dirty_US dirty = Diff_US(m_UnitStates[i], unitStates_Now[i]);
+                ApplyPacketChanges(dirty, m_UnitStates[i], unitStates_Now[i]);
+
+            }
+            
+        }
+    }
+}
+
+void PlayGridSystem::ApplyPacketChanges(Dirty_US dirty, const UnitState& prevUS, const UnitState& newUS)
+{
+    GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
+    if (!CheckExisting(whichPiece))
+    {
+        // 부활 규칙이 없으므로 return 합니다.
+        return;
+    }
+    auto& pieceInfo = m_pieces[whichPiece];
+
+    // 이동하다가 충돌했을 때
+    if (HasThis_US(dirty, Dirty_US::targetTileID | Dirty_US::hp))
+    {
+        auto [cx, cz] = GetCellByID(newUS.targetTileID);
+        m_playQ->Insert(m_playQ->Move_S(whichPiece, cx, cz));
+    }
+    // 이동만 할 때
+    else if (HasThis_US(dirty, Dirty_US::targetTileID))
+    {
+        auto [cx, cz] = GetCellByID(newUS.targetTileID);
+        m_playQ->Insert(m_playQ->Move_S(whichPiece, cx, cz));
+    }
+    // 체력의 변화가 생겼을 때
+    else if (HasThis_US(dirty, Dirty_US::hp))
+    {
+    }
+
+    // 스테미나에 변화가 생겼을 때
+    if (HasThis_US(dirty, Dirty_US::stamina))
+    {}
+}
+
 void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
 {
     // 죽어서 없어진 기물인지 확인
@@ -226,11 +287,11 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
 
     // 기물의 회전 방향 체크 및 변경
     auto dir = GetDir(oldcx, oldcz, cx, cz);
-    pieceInfo.dir = (dir == Direction::Same) ? pieceInfo.dir : dir;
+    auto fdir = pieceInfo.dir = (dir == Direction::Same) ? pieceInfo.dir : dir;
 
     // 타 기물과 충돌했을 경우 충돌지점
     auto collDir = GetCollisionDir(oldcx, oldcz, cx, cz);
-    auto [colX, colZ] = GetCollisionPos(collDir, pieceInfo.dir, cx, cz);
+    auto [colX, colZ] = GetCollisionPos(collDir, fdir, cx, cz);
 
     // 
     auto [wx, wz] = m_grids[(int)m_nowG]->CellToWorld(cx, cz);
@@ -254,9 +315,9 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
         std::cout << "[PlayGridSystem]::Ally_Occupied\n";
 
         // 충돌지점까지 이동 후 원래 자리로 되돌아감
-        pPiece->InsertQ(PlayGridQ::Move_P(dir, colX, m_wy, colZ));
+        pPiece->InsertQ(PlayGridQ::Move_P(fdir, colX, m_wy, colZ));
         auto [oldwx, oldwz] = m_grids[(int)m_nowG]->CellToWorld(oldcx, oldcz);
-        pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, oldwx, m_wy, oldwz, 1));
+        pPiece->InsertQ(PlayGridQ::Move_P(fdir, oldwx, m_wy, oldwz, 1));
 
     }
     else if (to.occuType == TileOccuType::Enemy_Occupied)
@@ -268,7 +329,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
 
         // 충돌지점까지 이동 후 원래 자리로 되돌아감
         auto [oldwx, oldwz] = m_grids[(int)m_nowG]->CellToWorld(oldcx, oldcz);
-        pPiece->InsertQ(PlayGridQ::Move_P(dir, colX, m_wy, colZ));                  // 충돌 위치까지 이동 후
+        pPiece->InsertQ(PlayGridQ::Move_P(fdir, colX, m_wy, colZ));                  // 충돌 위치까지 이동 후
         pPiece->InsertQ(PlayGridQ::Hit_P(10, existWho, 5));                                      // 피 감소
         pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, oldwx, m_wy, oldwz, 1)); // 제자리로 돌아감
         
@@ -279,7 +340,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
         std::cout << "[PlayGridSystem]::Unoccupied\n";
         
         // 기물 이동
-        pPiece->InsertQ(PlayGridQ::Move_P(dir, wx, m_wy, wz, 1));
+        pPiece->InsertQ(PlayGridQ::Move_P(fdir, wx, m_wy, wz, 1));
 
         // 타일 상태 변경
         ChangeTileTO(oldcx, oldcz, TileOccupy{ TileOccuType::Unoccupied, TileWho::None });
@@ -403,6 +464,15 @@ F2 PlayGridSystem::GetCollisionPos(Direction dir, Direction pieceDir, int cx, in
         break;
     }
     return { newX, newZ };
+}
+
+GamePiece PlayGridSystem::GetGamePiece(int pId, int unitId)
+{
+    bool isMyTurn = (pId == m_pID) ? true : false;
+    GamePiece whichPiece = (isMyTurn) ?
+        (unitId == 1) ? GamePiece::Ally1 : GamePiece::Ally2 :
+        (unitId == 1) ? GamePiece::Enemy1 : GamePiece::Enemy2;
+    return whichPiece;
 }
 
 std::wstring PlayGridSystem::GetWeaponFileName(int weaponID)

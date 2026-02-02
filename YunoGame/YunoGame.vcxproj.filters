@@ -280,6 +280,7 @@
     <ClCompile Include="CardConfirmButton.cpp">
       <Filter>Game\UI\Button</Filter>
     </ClCompile>
+    <ClCompile Include="BattlePackets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -319,12 +320,6 @@
       <Filter>ClientNetwork</Filter>
     </ClInclude>
     <ClInclude Include="System\GridFactory.h">
-      <Filter>Grid</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Object\GridLine.h">
-      <Filter>Grid</Filter>
-    </ClInclude>
-    <ClInclude Include="System\GridSystem.h">
       <Filter>Grid</Filter>
     </ClInclude>
     <ClInclude Include="System\IGridSystem.h">
@@ -381,7 +376,6 @@
       <Filter>Card</Filter>
     </ClInclude>
     <ClInclude Include="SimpleMath.h" />
-    <ClInclude Include="CardRangeManager.h" />
     <ClInclude Include="Game\Object\CardActData.h">
       <Filter>Card</Filter>
     </ClInclude>
@@ -456,6 +450,10 @@
     </ClInclude>
     <ClInclude Include="CardConfirmButton.h">
       <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="BattlePackets.h" />
+    <ClInclude Include="CardRangeManager.h">
+      <Filter>Card</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

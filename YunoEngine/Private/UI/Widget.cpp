@@ -220,19 +220,23 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
     //if (!CreateMesh())
     //    return false;
-    m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
-    if (m_defaultMesh == 0)return false;
-    //if (!CreateMaterial()) // 생성 안되면 기본 생성
-    //    return false;
+    if (GetWidgetType() != WidgetType::Text)
+    {
+        m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
+        if (m_defaultMesh == 0)return false;
+        //if (!CreateMaterial()) // 생성 안되면 기본 생성
+        //    return false;
 
-    if (!CreateMaterial()) return false;
+        if (!CreateMaterial()) return false;
 
-    m_MeshNode = std::make_unique<MeshNode>();
+        m_MeshNode = std::make_unique<MeshNode>();
 
-    auto mesh = std::make_unique<Mesh>();
-    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
-    m_MeshNode->m_Meshs.push_back(std::move(mesh));
 
+        auto mesh = std::make_unique<Mesh>();
+        mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+        m_MeshNode->m_Meshs.push_back(std::move(mesh));
+    }
+    
     {
         m_constant.baseColor = XMFLOAT4(1, 1, 1, 1);
         m_constant.roughRatio = 1.0f;
