@@ -13,13 +13,15 @@ namespace yuno::server
         uint8_t slotID = 0;      // 몇번째 유닛인지
         uint8_t WeaponID = 0;    // 무기 아이디
         uint8_t hp = 0;          // 체력
+        uint8_t stamina = 0;     // 스태미나
         uint8_t tileID = 0;      // 현재 좌표
+
     };
     
     struct PlayerUnits
     {
         uint8_t PID = 0;         // 플레이어 아이디
-        uint8_t stamina = 0;     // 스태미나
+
         UnitState unit1;
         UnitState unit2;
     };
