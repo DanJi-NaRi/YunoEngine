@@ -229,7 +229,7 @@ public:
     virtual bool  Start(); // Create 다 끝나고 호출. 
     virtual void  CreateChild() {};
 
-    bool          UpdateTransform(float dTime = 0); // 트랜스폼 업데이트. 자식에서 호출하면 꼬이니 주의
+    virtual bool  UpdateTransform(float dTime = 0); // 트랜스폼 업데이트. 자식에서 호출하면 꼬이니 주의
     virtual bool  Update(float dTime = 0);  
     virtual bool  Submit(float dTime = 0);
     bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 X
