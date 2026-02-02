@@ -298,10 +298,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\Object\AnimTest.h" />
     <ClInclude Include="Game\Object\Building.h" />
     <ClInclude Include="Game\Object\Dwarf.h" />
-    <ClInclude Include="Game\Object\GridLine.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Game\Object\Piece.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -316,10 +312,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Scenes\RenderTest.h" />
     <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="System\GridFactory.h" />
-    <ClInclude Include="System\GridSystem.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="System\MinimapGridSystem.h" />
     <ClInclude Include="System\PieceHelper.h" />
     <ClInclude Include="System\PlayGridSystem.h" />

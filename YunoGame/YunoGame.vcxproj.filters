@@ -302,12 +302,6 @@
     <ClInclude Include="System\GridFactory.h">
       <Filter>Grid</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Object\GridLine.h">
-      <Filter>Grid</Filter>
-    </ClInclude>
-    <ClInclude Include="System\GridSystem.h">
-      <Filter>Grid</Filter>
-    </ClInclude>
     <ClInclude Include="System\IGridSystem.h">
       <Filter>Grid</Filter>
     </ClInclude>
