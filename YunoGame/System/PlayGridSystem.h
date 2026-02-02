@@ -44,7 +44,7 @@ private:
     Direction GetDir(float oldcx, float oldcz, float cx, float cz);
 
     Direction GetCollisionDir(float oldcx, float oldcz, float cx, float cz);
-    F2 GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cz);
+    Float2 GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cz);
 
     GamePiece GetGamePiece(int pId, int unitId);
 

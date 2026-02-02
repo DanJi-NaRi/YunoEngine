@@ -22,6 +22,10 @@ struct Float2;
 struct Float3;
 struct Float4;
 
+struct Int2;
+struct Int3;
+struct Int4;
+
 struct Float2
 {
     float x{}, y{};
@@ -248,3 +252,19 @@ inline Float2& Float2::operator=(const Float4& v) { x = v.x; y = v.y; return *th
 // Float3 <- Float4
 inline Float3::Float3(const Float4& v) : x(v.x), y(v.y), z(v.z) {}
 inline Float3& Float3::operator=(const Float4& v) { x = v.x; y = v.y; z = v.z; return *this; }
+
+
+struct Int2 
+{
+    int x, y;
+};
+
+struct Int3
+{
+    int x, y, z;
+};
+
+struct Int4
+{
+    int x, y, z, w;
+};

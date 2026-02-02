@@ -40,16 +40,16 @@ private:
     void ChangeTileTO(int cx, int cy, const TileOccupy to);
     const TileOccupy GetTileTO(int cx, int cy);
 
-    F2 GetUIwPos(int cx, int cy);
-    F2 GetwPos(float uwx, float uwy);
+    Float2 GetUIwPos(int cx, int cy);
+    Float2 GetwPos(float uwx, float uwy);
 
     Direction GetDir(float oldcx, float oldcy, float cx, float cy);
 
     Direction GetCollisionDir(float oldcx, float oldcy, float cx, float cy);
-    F2 GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cy);
+    Float2 GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cy);
 
 private:
-    F3 m_vPos{};
+    Float3 m_vPos{};
     float m_wz;                                             // 기물의 world y
     float m_uiScale;
 

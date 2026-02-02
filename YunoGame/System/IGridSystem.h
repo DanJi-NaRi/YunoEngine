@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SimpleMath.h"
+#include "YunoTransform.h"
 
 class IGridSystem
 {
@@ -15,5 +15,5 @@ protected:
     virtual void CreateGrid(int row, int column, float cellSizeX, float cellSizeZ) = 0;
 
     virtual int GetID(int cx, int cz) = 0;                                          // 셀 좌표 -> 셀 아이디
-    virtual I2 GetCellByID(int tileID) = 0;                                         // 셀 아이디 -> 셀 좌표
+    virtual Int2 GetCellByID(int tileID) = 0;                                         // 셀 아이디 -> 셀 좌표
 };

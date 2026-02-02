@@ -15,7 +15,7 @@ Grid::Grid(int row, int column, float cellSizeX, float cellSizeZ)
 }
 
 
-I2 Grid::WorldToCell(float x, float z)
+Int2 Grid::WorldToCell(float x, float z)
 {
     float halfx = m_halfCellsX * m_cellSizeX;
     float halfz = m_halfCellsZ * m_cellSizeZ;
@@ -27,7 +27,7 @@ I2 Grid::WorldToCell(float x, float z)
 }
 
 
-F2 Grid::CellToWorld(int cx, int cz)
+Float2 Grid::CellToWorld(int cx, int cz)
 {
     float halfx = m_halfCellsX * m_cellSizeX;
     float halfz = m_halfCellsZ * m_cellSizeZ;
@@ -38,7 +38,7 @@ F2 Grid::CellToWorld(int cx, int cz)
 }
 
 
-F2 Grid::CellToUIWorld(int cx, int cz)
+Float2 Grid::CellToUIWorld(int cx, int cz)
 {
     float halfx = m_halfCellsX * m_cellSizeX;
     float halfz = m_halfCellsZ * m_cellSizeZ;

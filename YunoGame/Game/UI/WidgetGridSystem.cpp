@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "UnitGridSystem.h"
+#include "WidgetGridSystem.h"
 
 #include "ObjectManager.h"
 #include "UIManager.h"
@@ -8,26 +8,26 @@
 #include "PlayQueue.h"
 
 #include "Grid.h"
-#include "UnitGridBox.h"
-#include "UnitGridLine.h"
+#include "WidgetGridBox.h"
+#include "WidgetGridLine.h"
 
 
 
-UnitGridSystem::UnitGridSystem(ObjectManager* manager) : m_manager(manager)
+WidgetGridSystem::WidgetGridSystem(UIManager* manager) : m_manager(manager)
 {
     m_gridFactory = std::make_unique<GridFactory>();
     assert(m_manager != nullptr); // 여기서 바로 잡힘
 }
 
 
-UnitGridSystem::~UnitGridSystem()
+WidgetGridSystem::~WidgetGridSystem()
 {
 
 }
 
 
 
-void UnitGridSystem::SetNG_P(Grid* NG_P)
+void WidgetGridSystem::SetNG_P(Grid* NG_P)
 {
     const Grid& grid = *NG_P;
     m_row = grid.m_row;
@@ -41,14 +41,14 @@ void UnitGridSystem::SetNG_P(Grid* NG_P)
 }
 
 
-int UnitGridSystem::GetID(int cx, int cz)
+int WidgetGridSystem::GetID(int cx, int cz)
 {
     int id = (cz * m_column + cx) + 1;
     return id;
 }
 
 
-I2 UnitGridSystem::GetCellByID(int tileID)
+Int2 WidgetGridSystem::GetCellByID(int tileID)
 {
     int id = tileID - 1;
     int cx = id % m_column;
@@ -57,23 +57,20 @@ I2 UnitGridSystem::GetCellByID(int tileID)
 }
 
 
-void UnitGridSystem::CreateGrid(int row, int column, float cellSizeX, float cellSizeZ)
+void WidgetGridSystem::CreateGrid(int row, int column, float cellSizeX, float cellSizeZ)
 {
     m_grids.push_back(std::make_unique<Grid>(row, column, cellSizeX, cellSizeZ));
 }
 
 
-void UnitGridSystem::CreateGridBox(float x, float y, float z)
+void WidgetGridSystem::CreateGridBox(float x, float y, float z)
 {
-    m_gridBox = m_manager->CreateObject<UnitGridBox>(L"GridBox", XMFLOAT3(x, y, z));
+    m_gridBox = m_manager->CreateObject<WidgetGridBox>(L"GridBox", XMFLOAT3(x, y, z));
 }
 
 
-void UnitGridSystem::CreateGridLine(float x, float y, float z)
+void WidgetGridSystem::CreateGridLine(float x, float y, float z)
 {
-    if (m_gridBox == nullptr) return;
-
-    auto pLine = m_manager->CreateObject<UnitGridLine>(L"DebugGridLine", XMFLOAT3(x, y + 0.01f, z));
-    pLine->SetScale({ m_cellSizeX, 1, m_cellSizeZ });
-    m_gridBox->Attach(pLine);
+    auto pLine = m_manager->CreateObject<WidgetGridLine>(L"DebugGridLine", XMFLOAT3(x, y, z));
+    pLine->SetScale({ m_cellSizeX, m_cellSizeZ, 1 });
 }
