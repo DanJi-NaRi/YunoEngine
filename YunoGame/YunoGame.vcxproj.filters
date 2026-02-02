@@ -204,44 +204,8 @@
     <ClCompile Include="System\CardRangeManager.cpp">
       <Filter>Card</Filter>
     </ClCompile>
-    <ClCompile Include="WidgetPiece.cpp">
-      <Filter>Game\Object\Piece</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitPiece.cpp">
-      <Filter>Game\Object\Piece</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitTile.cpp">
-      <Filter>Game\Object\Tile</Filter>
-    </ClCompile>
-    <ClCompile Include="WidgetTile.cpp">
-      <Filter>Game\Object\Tile</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitGridLine.cpp">
-      <Filter>Game\Object\Grid</Filter>
-    </ClCompile>
-    <ClCompile Include="WidgetGridBox.cpp">
-      <Filter>Game\Object\Grid</Filter>
-    </ClCompile>
-    <ClCompile Include="WidgetGridLine.cpp">
-      <Filter>Game\Object\Grid</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitGridBox.cpp">
-      <Filter>Game\Object\Grid</Filter>
-    </ClCompile>
-    <ClCompile Include="Grid.cpp">
-      <Filter>System\GridSystem</Filter>
-    </ClCompile>
     <ClCompile Include="System\MinimapGridSystem.cpp">
       <Filter>System\GridSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitGridSystem.cpp">
-      <Filter>System\GridSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="WidgetGridSystem.cpp">
-      <Filter>System\GridSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="MinimapQueue.cpp">
-      <Filter>System\GridSystem\Queue_test</Filter>
     </ClCompile>
     <ClCompile Include="System\PlayQueue.cpp">
       <Filter>System\GridSystem\Queue_test</Filter>
@@ -398,17 +362,6 @@
     <ClInclude Include="Game\Object\CardQueue.h">
       <Filter>Card</Filter>
     </ClInclude>
-<<<<<<< Updated upstream
-    <ClInclude Include="Game\Object\CardActData.h">
-      <Filter>Card</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\UI\WidgetPiece.h">
-=======
-    <ClInclude Include="SimpleMath.h" />
-    <ClInclude Include="WidgetPiece.h">
->>>>>>> Stashed changes
-      <Filter>Game\Object\Piece</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Object\UnitPiece.h">
       <Filter>Game\Object\Piece</Filter>
     </ClInclude>
@@ -498,6 +451,9 @@
     </ClInclude>
     <ClInclude Include="System\BattlePackets.h">
       <Filter>System\Battle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\WidgetPiece.h">
+      <Filter>Game\Object\Piece</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
