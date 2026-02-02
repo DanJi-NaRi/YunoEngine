@@ -359,7 +359,6 @@
       <Filter>Card</Filter>
     </ClInclude>
     <ClInclude Include="SimpleMath.h" />
-    <ClInclude Include="CardRangeManager.h" />
     <ClInclude Include="Game\Object\CardActData.h">
       <Filter>Card</Filter>
     </ClInclude>
@@ -416,6 +415,9 @@
       <Filter>Game\UI\Image</Filter>
     </ClInclude>
     <ClInclude Include="BattlePackets.h" />
+    <ClInclude Include="CardRangeManager.h">
+      <Filter>Card</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

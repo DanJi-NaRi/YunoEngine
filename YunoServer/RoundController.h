@@ -15,6 +15,7 @@ namespace yuno::server
         uint8_t hp = 0;          // 체력
         uint8_t tileID = 0;      // 현재 좌표
     };
+    
     struct PlayerUnits
     {
         uint8_t PID = 0;         // 플레이어 아이디

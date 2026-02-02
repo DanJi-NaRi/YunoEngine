@@ -9,6 +9,6 @@ Dirty_US Diff_US(const UnitState& prev, const UnitState& cur)
     if (prev.hp != cur.hp)                          d = d | Dirty_US::hp;
     if (prev.stamina != cur.stamina)                d = d | Dirty_US::stamina;
     if (prev.targetTileID != cur.targetTileID)      d = d | Dirty_US::targetTileID;
-    if (prev.dir != cur.dir)                        d = d | Dirty_US::dir;
+    if (prev.isEvent != cur.isEvent)                d = d | Dirty_US::isEvent;
     return d;
 }

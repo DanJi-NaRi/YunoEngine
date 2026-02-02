@@ -6,17 +6,19 @@ struct UnitState
     uint8_t pId = 0;
     uint8_t slotId = 0;
 
-    int8_t hp = 0;
-    int8_t stamina = 0;
+    uint8_t hp = 0;
+    uint8_t stamina = 0;
     uint8_t targetTileID = 0;
-    uint8_t dir = 0;
+    uint8_t isEvent = 0;         // 0이면 충돌x, 1이면 충돌o
 };
 
 struct BattleResult
 {
     uint32_t runTimeCardID = 0;
-    uint8_t pId = 0;
-    uint8_t slotId = 0;
+    uint8_t pId = 0;    // 0 에러
+    uint8_t slotId = 0; // 0 에러
+    uint8_t dir = 0;    // 0 에러 , 1234 상하좌우
+
     std::vector<std::array<UnitState, 4>> order;
 };
 
@@ -28,7 +30,7 @@ enum class Dirty_US : uint8_t
     hp              = 1 << 2,
     stamina         = 1 << 3,
     targetTileID    = 1 << 4,
-    dir             = 1 << 5
+    isEvent         = 1 << 5
 };
 
 inline Dirty_US operator|(Dirty_US a, Dirty_US b) {

@@ -10,10 +10,11 @@ namespace yuno::net::packets
         w.WriteU8(ownerSlot);
         w.WriteU8(unitLocalIndex);
 
-        w.WriteU8(static_cast<uint32_t>(hp));
-        w.WriteU8(static_cast<uint32_t>(stamina));
-        w.WriteU8(static_cast<uint32_t>(targetTileID));
-        w.WriteU8(static_cast<uint32_t>(dir));
+        w.WriteU8(hp);
+        w.WriteU8(stamina);
+        w.WriteU8(targetTileID);
+        w.WriteU8(isEvent);
+
     }
 
     UnitStateDelta UnitStateDelta::Deserialize(ByteReader& r)
@@ -22,10 +23,10 @@ namespace yuno::net::packets
         d.ownerSlot = r.ReadU8();
         d.unitLocalIndex = r.ReadU8();
 
-        d.hp = static_cast<int32_t>(r.ReadU8());
-        d.stamina = static_cast<int32_t>(r.ReadU8());
-        d.targetTileID = static_cast<int32_t>(r.ReadU8());
-        d.dir = static_cast<int32_t>(r.ReadU8());
+        d.hp = r.ReadU8();
+        d.stamina = r.ReadU8();
+        d.targetTileID = r.ReadU8();
+        d.isEvent = r.ReadU8();
         return d;
     }
 
@@ -36,8 +37,10 @@ namespace yuno::net::packets
         w.WriteU32LE(runtimeCardId);
         w.WriteU8(ownerSlot);
         w.WriteU8(unitLocalIndex);
+        w.WriteU8(dir);
+
         // order count
-        w.WriteU8(static_cast<uint8_t>(order.size()));
+        w.WriteU8(order.size());
 
         for (const auto& d : order)
         {
@@ -54,6 +57,9 @@ namespace yuno::net::packets
         pkt.runtimeCardId = r.ReadU32LE();
         pkt.ownerSlot = r.ReadU8();
         pkt.unitLocalIndex = r.ReadU8();
+        pkt.dir = r.ReadU8();
+
+
         uint8_t orderSize = r.ReadU8();
 
         //uint8_t count = r.ReadU8();

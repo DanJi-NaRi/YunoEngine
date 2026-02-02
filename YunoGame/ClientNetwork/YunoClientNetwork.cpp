@@ -356,12 +356,12 @@ namespace yuno::game
                     for (int j = 0; j < us.size(); j++)
                     {
                         us[0] = { u[j].ownerSlot, u[j].unitLocalIndex, u[j].hp,
-                                  u[j].stamina, u[j].targetTileID, u[j].dir };
+                                  u[j].stamina, u[j].targetTileID, u[j].isEvent };
                     }
                     order.push_back(us);
                 }
 
-                BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, order};
+                BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, pkt.dir, order };
                 gm.PushBattlePacket(br);
 
                 // 디버깅용
@@ -379,7 +379,7 @@ namespace yuno::game
                             << "\n hp =" << d[i].hp
                             << "\n stamina =" << d[i].stamina
                             << "\n move =" << d[i].targetTileID
-                            << "\n dir =(" << d[i].dir << ")\n";
+                            << "\n isEvent =(" << d[i].isEvent << ")\n";
                     }
                 }
             }
