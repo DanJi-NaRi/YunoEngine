@@ -1,5 +1,7 @@
 #include <iostream>
-#include <random>
+#include <array>
+#include <algorithm>
+#include <cstdlib>
 
 #include "TurnManager.h"
 #include "MatchManager.h"
@@ -8,6 +10,7 @@
 
 #include "PacketBuilder.h"
 #include "S2C_BattlePackets.h"
+#include "ServerCardManager.h"
 
 static bool IsALess(const ResolvedCard& a, const ResolvedCard& b, bool& coinTossUsed)
 {
@@ -21,31 +24,84 @@ static bool IsALess(const ResolvedCard& a, const ResolvedCard& b, bool& coinToss
 
 namespace yuno::server
 {
+    namespace
+    {
+        constexpr int kGridRows = 5;
+        constexpr int kGridColumns = 7;
+        constexpr int kGridSize = kGridRows * kGridColumns;
+
+        struct TilePos
+        {
+            int x = 0;
+            int y = 0;
+        };
+
+        bool IsInBounds(const TilePos& pos)
+        {
+            return pos.x >= 0 && pos.x < kGridColumns
+                && pos.y >= 0 && pos.y < kGridRows;
+        }
+
+        TilePos TileIdToPos(uint8_t tileId)
+        {
+            int id = static_cast<int>(tileId) - 1;
+            return { id % kGridColumns, id / kGridColumns };
+        }
+
+        uint8_t PosToTileId(const TilePos& pos)
+        {
+            return static_cast<uint8_t>((pos.y * kGridColumns + pos.x) + 1);
+        }
+
+        TilePos DirectionToDelta(int moveX, int moveY, Direction dir)
+        {
+            int dx = std::abs(moveX);
+            int dy = std::abs(moveY);
+            switch (dir)
+            {
+            case Direction::Up: return { 0, -dy };
+            case Direction::Down: return { 0, dy };
+            case Direction::Left: return { -dx, 0 };
+            case Direction::Right: return { dx, 0 };
+            case Direction::UpLeft: return { -dx, -dy };
+            case Direction::UpRight: return { dx, -dy };
+            case Direction::DownLeft: return { -dx, dy };
+            case Direction::DownRight: return { dx, dy };
+            case Direction::Same:
+            case Direction::None:
+            default:
+                return { 0, 0 };
+            }
+        }
+    }
+
     TurnManager::TurnManager(
         MatchManager& match,
         YunoServerNetwork& network,
         ServerCardRuntime& runtime,
-        ServerCardManager& cardDB)
+        ServerCardManager& cardDB,
+        RoundController& roundController)
         : m_match(match)
         , m_network(network)
         , m_runtime(runtime)
         , m_cardDB(cardDB)
+        , m_roundController(roundController)
     {
     }
 
     void TurnManager::SubmitTurn(
         uint64_t sessionId,
-        const std::vector<uint32_t>& runtimeIDs)
+        const std::vector<CardPlayCommand>& commands)
     {
         int idx = m_match.FindSlotBySessionId(sessionId);
         if (idx < 0) return;
 
-        m_turnCards[idx] = runtimeIDs;
+        m_turnCards[idx] = commands;
         m_submitted[idx] = true;
 
         std::cout << "[Server] Player " << idx
-            << " submitted " << runtimeIDs.size()
-            << " cards\n";
+            << " submitted " << commands.size()
+            << " commands\n";
 
         TryResolveTurn();
     }
@@ -58,7 +114,8 @@ namespace yuno::server
         S2C_BattleResult pkt;
         pkt.runtimeCardId = c.runtimeId;
         pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
-
+        pkt.unitLocalIndex = static_cast<uint8_t>(c.localIndex);
+        pkt.dir = static_cast<uint8_t>(c.dir);
 
         //  테스트용 하드코딩 결과
         std::array<UnitStateDelta, 4> us;
@@ -93,16 +150,15 @@ namespace yuno::server
         std::cout << "[Server] Both players submitted turn\n";
 
         std::vector<ResolvedCard> slotCards[2];
-        std::vector<ResolvedCard> finalOrder;
-        std::random_device rd;
-        std::mt19937 rng(rd());
+
 
         for (int slot = 0; slot < 2; ++slot)
         {
             int localIndex = 0;
 
-            for (uint32_t runtimeId : m_turnCards[slot])
+            for (const CardPlayCommand& cmd : m_turnCards[slot])
             {
+                uint32_t runtimeId = cmd.runtimeID;
                 uint32_t dataId = m_runtime.GetDataID(runtimeId);
                 const CardData& card = m_cardDB.GetCardData(dataId);
 
@@ -112,7 +168,8 @@ namespace yuno::server
                     card.m_allowedUnits,
                     card.m_speed,
                     slot,
-                    localIndex++
+                    localIndex++,
+                    cmd.dir 
                     });
 
                 std::cout
@@ -123,14 +180,142 @@ namespace yuno::server
                     << " name=" << card.m_name
                     << " speed=" << card.m_speed
                     << " weapon=" << card.m_allowedUnits
+                    << " Direction=" << static_cast<int>(cmd.dir)
                     << "\n";
             }
         }
 
+        auto& p1 = m_roundController.GetPlayerUnitState(1);
+        auto& p2 = m_roundController.GetPlayerUnitState(2);
+
+        std::array<UnitState*, 4> units = {
+            &p1.unit1,
+            &p1.unit2,
+            &p2.unit1,
+            &p2.unit2
+        };
+
+        std::vector<int> grid(kGridSize + 1, -1);
+        for (int i = 0; i < static_cast<int>(units.size()); ++i)
+        {
+            uint8_t tileId = units[i]->tileID;
+            if (tileId != 0 && tileId <= kGridSize)
+            {
+                grid[tileId] = i;
+            }
+        }
+
+        auto buildDeltaSnapshot = [&](int eventUnitIndex, bool hasEvent)
+            {
+                std::array<yuno::net::packets::UnitStateDelta, 4> deltas{};
+                for (int i = 0; i < static_cast<int>(units.size()); ++i)
+                {
+                    uint8_t ownerSlot = (i < 2) ? 1 : 2;
+                    uint8_t unitLocalIndex = (i % 2) + 1;
+                    deltas[i] = {
+                        ownerSlot,
+                        unitLocalIndex,
+                        units[i]->hp,
+                        units[i]->stamina,
+                        units[i]->tileID,
+                        static_cast<uint8_t>((hasEvent && i == eventUnitIndex) ? 1 : 0)
+                    };
+                }
+                return deltas;
+            };
+
+        auto getUnitIndexForCard = [&](int ownerSlot, const CardData& card) -> int
+            {
+                auto& player = (ownerSlot == 0) ? p1 : p2;
+                if (player.unit1.WeaponID == card.m_allowedUnits)
+                    return (ownerSlot == 0) ? 0 : 2;
+                if (player.unit2.WeaponID == card.m_allowedUnits)
+                    return (ownerSlot == 0) ? 1 : 3;
+                return (ownerSlot == 0) ? 0 : 2;
+            };
+
+        auto applyMove = [&](int unitIndex, const CardMoveData& moveData, Direction dir) -> bool
+            {
+                UnitState& unit = *units[unitIndex];
+                if (unit.tileID == 0)
+                    return false;
+
+                TilePos current = TileIdToPos(unit.tileID);
+                TilePos delta = DirectionToDelta(moveData.m_moveX, moveData.m_moveY, dir);
+                TilePos target = { current.x + delta.x, current.y + delta.y };
+
+                if (!IsInBounds(target))
+                    return true;
+
+                int steps = std::max(std::abs(delta.x), std::abs(delta.y));
+                int stepX = (delta.x == 0) ? 0 : (delta.x > 0 ? 1 : -1);
+                int stepY = (delta.y == 0) ? 0 : (delta.y > 0 ? 1 : -1);
+
+                TilePos probe = current;
+                for (int step = 0; step < steps; ++step)
+                {
+                    probe.x += stepX;
+                    probe.y += stepY;
+                    if (!IsInBounds(probe))
+                        return true;
+
+                    uint8_t probeId = PosToTileId(probe);
+                    if (grid[probeId] != -1)
+                    {
+                        return true;
+                    }
+                }
+
+                uint8_t oldTile = unit.tileID;
+                uint8_t newTile = PosToTileId(target);
+                grid[oldTile] = -1;
+                grid[newTile] = unitIndex;
+                unit.tileID = newTile;
+                return false;
+            };
+
+        auto applyCard = [&](const ResolvedCard& card)
+            {
+                const CardData& cardData = m_cardDB.GetCardData(card.dataId);
+                int unitIndex = getUnitIndexForCard(card.ownerSlot, cardData);
+                bool eventOccurred = false;
+
+                if (cardData.m_cost > 0)
+                {
+                    UnitState& unit = *units[unitIndex];
+                    unit.stamina = static_cast<uint8_t>(
+                        std::max(0, static_cast<int>(unit.stamina) - cardData.m_cost));
+                }
+
+                if (cardData.m_type == CardType::Move)
+                {
+                    if (const auto* moveData = m_cardDB.GetMoveData(card.dataId))
+                    {
+                        eventOccurred = applyMove(unitIndex, *moveData, card.dir);
+                    }
+                }
+
+                using namespace yuno::net::packets;
+                S2C_BattleResult pkt;
+                pkt.runtimeCardId = card.runtimeId;
+                pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
+                pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
+                pkt.dir = static_cast<uint8_t>(card.dir);
+                pkt.order.push_back(buildDeltaSnapshot(unitIndex, eventOccurred));
+
+                auto bytes = yuno::net::PacketBuilder::Build(
+                    yuno::net::PacketType::S2C_BattleResult,
+                    [&](yuno::net::ByteWriter& w)
+                    {
+                        pkt.Serialize(w);
+                    });
+
+                m_network.Broadcast(std::move(bytes));
+            };
+
         size_t maxCount =
             std::max(slotCards[0].size(), slotCards[1].size());
 
-        //카드속도, 무기속도 에 따른 정렬
         for (size_t i = 0; i < maxCount; ++i)
         {
             bool hasA = i < slotCards[0].size();
@@ -150,54 +335,34 @@ namespace yuno::server
 
                 if (aFirst)
                 {
-                    finalOrder.push_back(slotCards[0][i]);
-                    finalOrder.push_back(slotCards[1][i]);
+                    applyCard(slotCards[0][i]);
+                    applyCard(slotCards[1][i]);
                 }
                 else
                 {
-                    finalOrder.push_back(slotCards[1][i]);
-                    finalOrder.push_back(slotCards[0][i]);
+                    applyCard(slotCards[1][i]);
+                    applyCard(slotCards[0][i]);
                 }
             }
             else if (hasA)
             {
-                finalOrder.push_back(slotCards[0][i]);
+                applyCard(slotCards[0][i]);
             }
             else if (hasB)
             {
-                finalOrder.push_back(slotCards[1][i]);
+                applyCard(slotCards[1][i]);
             }
         }
         //for (const auto& c : finalOrder)
         //{
         //    ExecuteCard(c); //  여기서 행동 계산 호출
         //}
-        
+       
 
-        //디버깅용
-        for (const auto& c : finalOrder)
-        {
-            const CardData& card = m_cardDB.GetCardData(c.dataId);
-
-            std::cout
-                << "[EXEC] slot=" << c.ownerSlot
-                << " local=" << c.localIndex
-                << " runtime=" << c.runtimeId
-                << " data=" << c.dataId
-                << " name=" << card.m_name
-                << " speed=" << card.m_speed
-                << " weapon=" << card.m_allowedUnits
-                << "\n";
-        }
-        // 테스트용 결과 보내기
-        if (!finalOrder.empty())
-        {
-            BroadcastTestBattleResult(finalOrder[0]);
-        }
         // TODO:
         // - 카드 속도 기준 정렬 V 완료
-        // - 행동 실행
-        // - 결과 패킷 생성
+        // - 행동 실행 V 진행
+        // - 결과 패킷 생성 V 진행
 
         ClearTurn();
     }

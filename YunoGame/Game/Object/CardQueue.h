@@ -1,18 +1,19 @@
 #pragma once
 #include <vector>
 
-using CardRuntimeId = uint32_t;
+#include "C2S_BattlePackets.h"
 
 class CardQueue
 {
 public:
     static constexpr int MAX_CARD = 4;
 
-    bool Push(CardRuntimeId id)
+    bool Push(const CardPlayCommand& cmd)
     {
         if (m_cards.size() >= MAX_CARD)
             return false;
-        m_cards.push_back(id);
+
+        m_cards.push_back(cmd);
         return true;
     }
 
@@ -21,7 +22,7 @@ public:
         m_cards.clear();
     }
 
-    const std::vector<CardRuntimeId>& Get() const
+    const std::vector<CardPlayCommand>& Get() const
     {
         return m_cards;
     }
@@ -30,5 +31,5 @@ public:
     bool IsEmpty() const { return m_cards.empty(); }
 
 private:
-    std::vector<CardRuntimeId> m_cards;
+    std::vector<CardPlayCommand> m_cards;
 };
