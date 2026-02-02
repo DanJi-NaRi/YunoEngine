@@ -160,9 +160,3 @@ const CardEffectData* CardManager::GetEffectData(int cardID) const
     return (it != m_effectData.end()) ? &it->second : nullptr;
 }
 
-const CardActData* CardManager::GetActData(int cardID) const
-{
-    auto it = m_actData.find(cardID);
-    return (it != m_actData.end()) ? &it->second : nullptr;
-}
-

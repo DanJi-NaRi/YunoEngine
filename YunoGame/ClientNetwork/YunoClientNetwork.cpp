@@ -316,10 +316,20 @@ namespace yuno::game
                 const auto pkt =
                     yuno::net::packets::S2C_TestCardList::Deserialize(r);
 
-                GameManager::Get().SetTestCardRuntimeIDs(pkt.runtimeIDs);
+                GameManager::Get().SetCards(pkt.cards);
 
                 std::cout << "[Client] TestCardList stored. count="
-                    << pkt.runtimeIDs.size() << "\n";
+                    << pkt.cards.size() << "\n";
+
+                for (size_t i = 0; i < pkt.cards.size(); ++i)
+                {
+                    const auto& card = pkt.cards[i];
+                    std::cout << "  [" << i << "] runtimeID="
+                        << card.runtimeID
+                        << ", dataID="
+                        << card.dataID
+                        << "\n";
+                }
             }
         );// TestCardList Packet End
 
@@ -384,38 +394,5 @@ namespace yuno::game
                 }
             }
         );// BattleResult Packet End
-
-        //// TestCardList Packet Start
-        //Dispatcher().RegisterRaw(
-        //    PacketType::S2C_TestCardList,
-        //    [this](const NetPeer& peer,
-        //        const PacketHeader& header,
-        //        const std::uint8_t* body,
-        //        std::uint32_t bodyLen)
-        //    {
-        //        ByteReader r(body, bodyLen);
-        //        const auto pkt =
-        //            yuno::net::packets::S2C_TestCardList::Deserialize(r);
-
-        //        std::cout << "[Client] TestCardList received. count="
-        //            << pkt.cards.size() << "\n";
-
-        //        for (const auto& card : pkt.cards)
-        //        {
-        //            std::cout
-        //                << "  runtimeID=" << card.runtimeID
-        //                << " dataID=" << card.dataID
-        //                << std::endl;
-
-        //            GameManager::Get().RegisterCard(
-        //                card.runtimeID,
-        //                card.dataID
-        //            );
-        //        }
-        //    }
-        //);
-        //// TestCardList Packet End
     }
-
-
 }

@@ -138,6 +138,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BattleManager.cpp" />
     <ClCompile Include="main\main.cpp" />
     <ClCompile Include="MatchManager\MatchManager.cpp" />
     <ClCompile Include="RoundController.cpp" />
@@ -152,12 +153,14 @@
     <ClCompile Include="TurnManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BattleManager.h" />
+    <ClInclude Include="BattleState.h" />
+    <ClInclude Include="CardActionContext.h" />
+    <ClInclude Include="CardActionTypes.h" />
     <ClInclude Include="MatchManager\MatchManager.h" />
     <ClInclude Include="RoundController.h" />
-    <ClInclude Include="ServerCardActData.h" />
     <ClInclude Include="ServerCardData.h" />
     <ClInclude Include="ServerCardDealer.h" />
-    <ClInclude Include="ServerCardInstance.h" />
     <ClInclude Include="ServerCardManager.h" />
     <ClInclude Include="ServerCardRangeManager.h" />
     <ClInclude Include="ServerCardRuntime.h" />
