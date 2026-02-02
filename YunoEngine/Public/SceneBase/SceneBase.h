@@ -40,6 +40,7 @@ public:
     T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, Float2 pivot);
     template<typename T> // 모든 씬 공용 Widget 생성 함수
     T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, UIDirection pivot);
+    UIManager* GetUIManager() { return m_uiManager.get(); }
 
 #ifdef _DEBUG
     void DrawObjectList();

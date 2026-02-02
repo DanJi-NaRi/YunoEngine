@@ -72,7 +72,7 @@ bool CursurSystem::FindSnapWidget()
 
         if (!IsIntersect(m_focusedWidget->GetRect(), ExpandRect(point.m_snapRange, point.m_snapPadding))) continue; // 범위 안에 있지 않으면 continue
 
-        std::cout << "Intersect!!" << std::endl;
+        std::cout << "Intersect Success!!" << std::endl;
 
         XMFLOAT3 snapPos = { point.m_snapPos.x, point.m_snapPos.y, 0 };
         drag->SetBkPos(snapPos);
@@ -81,6 +81,7 @@ bool CursurSystem::FindSnapWidget()
         
         return true;
     }
+    std::cout << "Intersect Faild!!" << std::endl;
     return false;
 }
 
