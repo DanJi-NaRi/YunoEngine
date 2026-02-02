@@ -570,7 +570,7 @@ int PlayGridSystem::GetOtherUnitDamage(const std::array<UnitState, 4>& newUnitSt
     {
         if (i == mainUnit) continue;
         Dirty_US dirty = Diff_US(m_UnitStates[i], newUnitStates[i]);
-        if (dirty == Dirty_US::hp)
+        if (HasThis_US(dirty, Dirty_US::hp))
         {
             damageU = m_UnitStates[i].hp - newUnitStates[i].hp;
             break;
