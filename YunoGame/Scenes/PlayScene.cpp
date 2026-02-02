@@ -101,35 +101,35 @@ void PlayScene::TestInput()
     // 테스트용 -> ally1으로 부여한 기물이 움직여용
     if (m_input->IsKeyPressed(0x31))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 3));   // 왼쪽
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 3, true, true, 5, 1));   // 왼쪽
     }
     if (m_input->IsKeyPressed(0x32))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 2));   // 아래
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 2, true, true, 5, 1));   // 아래
     }
     if (m_input->IsKeyPressed(0x33))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 3));   // 위
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 3, true, true, 5, 1));   // 위
     }
     if (m_input->IsKeyPressed(0x34))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 4));   // 오른쪽
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 4, true, true, 5, 1));   // 오른쪽
     }
     if (m_input->IsKeyPressed(0x35))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 2));   // 왼쪽 위
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 2, true, true, 5, 1));   // 왼쪽 위
     }
     if (m_input->IsKeyPressed(0x36))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 2));   // 오른쪽 위
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 2, true, true, 5, 1));   // 오른쪽 위
     }
     if (m_input->IsKeyPressed(0x37))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 4));   // 왼쪽 아래
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 4, true, true, 5, 1));   // 왼쪽 아래
     }
     if (m_input->IsKeyPressed(0x38))
     {
-        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 4));   // 오른쪽 아래
+        PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 4, true, true, 5, 1));   // 오른쪽 아래
     }
     if (m_input->IsKeyPressed(0x39))
     {
@@ -176,7 +176,7 @@ void PlayScene::Update(float dt)
 {
     SceneBase::Update(dt);
     //m_input->Dispatch();
-    TestInput();
+    //TestInput();
 
     m_playGrid->Update(dt);
 

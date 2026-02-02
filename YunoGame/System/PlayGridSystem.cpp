@@ -51,6 +51,7 @@ void PlayGridSystem::Init()
 
 void PlayGridSystem::Update(float dt)
 {
+    CheckPacket();
     CheckMyQ();
 }
 
@@ -119,22 +120,22 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         switch (w.weaponId)
         {
         case 1:
-            pPiece->SetMaskColor({ 1, 0, 0, 1 });       // 빨
+            pPiece->SetEmissiveColor(2, { 1, 0, 0, 1 });       // 빨
             break;
         case 2:
-            pPiece->SetMaskColor({ 1, 0.5f, 0, 1 });    // 주
+            pPiece->SetEmissiveColor(2, { 1, 0.5f, 0, 1 });    // 주
             break;
         case 3:
-            pPiece->SetMaskColor({ 1, 1, 0, 1 });       // 노
+            pPiece->SetEmissiveColor(2, { 1, 1, 0, 1 });       // 노
             break;
         case 4:
-            pPiece->SetMaskColor({ 0, 1, 0, 1 });       // 초
+            pPiece->SetEmissiveColor(2, { 0, 1, 0, 1 });       // 초
             break;
         case 5:
-            pPiece->SetMaskColor({ 0, 0, 1, 1 });       // 파
+            pPiece->SetEmissiveColor(2, { 0, 0, 1, 1 });       // 파
             break;
         case 6:
-            pPiece->SetMaskColor({ 0.5f, 0, 0.5f, 1 }); // 보
+            pPiece->SetEmissiveColor(2, { 0.5f, 0, 0.5f, 1 }); // 보
             break;
         }
         pPiece->SetWho(gp);
@@ -146,6 +147,12 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
 
         // 빈 박스에 자식 객체로 등록. (for 정리)
         m_gridBox->Attach(pPiece);
+
+        int usID = GetUnitID(w.pId, w.slotId);
+        m_UnitStates[usID] = {
+            (uint8_t)w.pId, (uint8_t)w.slotId, (uint8_t)w.hp,
+            (uint8_t)w.stamina, (uint8_t)w.currentTile, 0
+        };
     }
 }
 
@@ -162,8 +169,12 @@ void PlayGridSystem::CheckMyQ()
             const GamePiece& pieceType = cmd.mv_s.whichPiece;
             int cx = cmd.mv_s.cx;
             int cz = cmd.mv_s.cz;
+            bool isCollided = cmd.mv_s.isCollided;
+            bool isEnemy = cmd.mv_s.isEnemy;
+            int damageMe = cmd.mv_s.damageMe;
+            int damageU = cmd.mv_s.damageU;
 
-            MoveEvent(pieceType, cx, cz);
+            MoveEvent(pieceType, cx, cz, isCollided, isEnemy, damageMe, damageU);
             break;
         }
 
@@ -239,41 +250,49 @@ void PlayGridSystem::CheckPacket()
         const std::vector<std::array<UnitState, 4>>& order = pckt.order;
 
         GamePiece whichPiece = GetGamePiece(pckt.pId, pckt.slotId);
+        int mainUnit = GetUnitID(pckt.pId, pckt.slotId);
 
-        // runtimeCardID로 CardManager에서 해당 카드가 어택 카드인지를 알아오기
+        // runtimeCardID로 CardManager에서 카드 정보 얻어올 수 있게 되면
+        // 해당 카드가 어떤 카드인지 알아오자
 
         // 행동 순서
         for (int i = 0; i < order.size(); i++)
         {
             const std::array<UnitState, 4>& unitStates_Now = order[i];
 
-            for (int j = 0; j < unitStates_Now.size(); j++)
-            {
-                Dirty_US dirty = Diff_US(m_UnitStates[i], unitStates_Now[i]);
-                ApplyPacketChanges(dirty, m_UnitStates[i], unitStates_Now[i]);
-
-            }
+            Dirty_US dirty = Diff_US(m_UnitStates[mainUnit], unitStates_Now[mainUnit]);
+            ApplyPacketChanges(dirty, unitStates_Now, mainUnit);
             
         }
     }
 }
 
-void PlayGridSystem::ApplyPacketChanges(Dirty_US dirty, const UnitState& prevUS, const UnitState& newUS)
+void PlayGridSystem::ApplyPacketChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit)
 {
+    const UnitState prevUS = m_UnitStates[mainUnit];
+    const UnitState newUS = newUnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
     if (!CheckExisting(whichPiece))
     {
         // 부활 규칙이 없으므로 return 합니다.
         return;
     }
-    auto& pieceInfo = m_pieces[whichPiece];
 
     // 이동하다가 충돌했을 때
     bool isCollided = newUS.isEvent;
     if (HasThis_US(dirty, Dirty_US::targetTileID) && isCollided)
     {
         auto [cx, cz] = GetCellByID(newUS.targetTileID);
-        m_playQ->Insert(m_playQ->Move_S(whichPiece, cx, cz));
+        if (HasThis_US(dirty, Dirty_US::hp))
+        {
+            int damageMe = prevUS.hp - newUS.hp;
+            int damageU = GetOtherUnitDamage(newUnitStates, mainUnit);
+            m_playQ->Insert(m_playQ->Move_S(whichPiece, cx, cz, true, true, damageMe, damageU));
+        }
+        else
+        {
+            m_playQ->Insert(m_playQ->Move_S(whichPiece, cx, cz));
+        }
     }
     // 이동만 할 때
     else if (HasThis_US(dirty, Dirty_US::targetTileID))
@@ -288,10 +307,11 @@ void PlayGridSystem::ApplyPacketChanges(Dirty_US dirty, const UnitState& prevUS,
 
     // 스테미나에 변화가 생겼을 때
     if (HasThis_US(dirty, Dirty_US::stamina))
-    {}
+    {
+    }
 }
 
-void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz, bool isCollided, int damageMe, int damageU)
+void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz, bool isCollided, bool isEnemy, int damageMe, int damageU)
 {
     // 죽어서 없어진 기물인지 확인
     if (!CheckExisting(pieceType)) return;
@@ -310,13 +330,13 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz, bool 
     const TileOccupy oldTo = GetTileTO(oldcx, oldcz);
     const TileOccupy to = GetTileTO(cx, cz);
 
-    // 기물의 회전 방향 체크 및 변경
-    auto dir = GetDir(oldcx, oldcz, cx, cz);
+    // 기물의 상태 회전 방향 체크 및 변경
+    auto dir = Get2Dir(oldcx, oldcz, cx, cz);
     auto fdir = pieceInfo.dir = (dir == Direction::Same) ? pieceInfo.dir : dir;
 
     // 타 기물과 충돌했을 경우 충돌지점
-    auto collDir = GetCollisionDir(oldcx, oldcz, cx, cz);
-    auto [colX, colZ] = GetCollisionPos(collDir, fdir, cx, cz);
+    auto moveDir = Get8Dir(oldcx, oldcz, cx, cz);             // 진입 방향
+    auto [colW, colC] = GetCollisionPos(moveDir, cx, cz);
 
     // 
     auto [wx, wz] = m_grids[(int)m_nowG]->CellToWorld(cx, cz);
@@ -328,56 +348,64 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz, bool 
         std::cout << "[PlayGridSystem]::It's Already there\n";
         return;
     }
-
     else if (to.occuType == TileOccuType::Collapesed)       // 없어진 자리
     {
         std::cout << "[PlayGridSystem]::Collapesed\n";
 
         return;
     }
-    else if(to.occuType == TileOccuType::Ally_Occupied)     // 아군 존재
+    else if (to.occuType == TileOccuType::Ally_Occupied || to.occuType == TileOccuType::Enemy_Occupied)
     {
-        std::cout << "[PlayGridSystem]::Ally_Occupied\n";
+        std::cout << "[PlayGridSystem]::It's not empty\n";
 
-        // 충돌지점까지 이동 후 원래 자리로 되돌아감
-        pPiece->InsertQ(PlayGridQ::Move_P(fdir, colX, m_wy, colZ));
-        auto [oldwx, oldwz] = m_grids[(int)m_nowG]->CellToWorld(oldcx, oldcz);
-        pPiece->InsertQ(PlayGridQ::Move_P(fdir, cx, m_wy, cz, 1));
-
-    }
-    else if (to.occuType == TileOccuType::Enemy_Occupied)
-    {                                                       // 적군 존재
-        std::cout << "[PlayGridSystem]::Enemy_Occupied\n";
-
-        // 부딪힌 기물 타입 확인
-        GamePiece existWho = (GamePiece)m_tiles[GetID(cx, cz)].to.who;
-
-        // 충돌지점까지 이동 후 원래 자리로 되돌아감
-        pPiece->InsertQ(PlayGridQ::Move_P(fdir, colX, m_wy, colZ));                  // 충돌 위치까지 이동 후
-        pPiece->InsertQ(PlayGridQ::Hit_P(damageMe, existWho, damageU));              // 피 감소
-        pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, cx, m_wy, cz, 1));        // 제자리로 돌아감
-        
         return;
     }
-    else                                                    // 비어있는 자리
+    else if (isCollided)                                    // 충돌 시
+    {
+        if (isEnemy)                                        // 적군과 충돌
+        {
+            std::cout << "[PlayGridSystem]::Enemy_Collison\n";
+
+            // 부딪힌 기물 타입 확인
+            GamePiece existWho = GamePiece::None;
+            bool isIn = m_grids[(int)m_nowG]->InBounds(colC.x, colC.y);
+            if (isIn)
+            {
+                int tileID = GetID(colC.x, colC.y);
+                existWho = (GamePiece)m_tiles[tileID].to.who;
+            }
+
+            // 충돌지점까지 이동 후 원래 자리로 되돌아감
+            pPiece->InsertQ(PlayGridQ::Move_P(fdir, colW.x, m_wy, colW.y));                  // 충돌 위치까지 이동 후
+            pPiece->InsertQ(PlayGridQ::Hit_P(damageMe, existWho, damageU));              // 피 감소
+            pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, wx, m_wy, wz, 1));        // 제자리로 돌아감
+        }
+        else                                                // 아군과 충돌
+        {
+            std::cout << "[PlayGridSystem]::Ally_Collison\n";
+
+            // 충돌지점까지 이동 후 원래 자리로 되돌아감
+            pPiece->InsertQ(PlayGridQ::Move_P(fdir, colW.x, m_wy, colW.y));
+            pPiece->InsertQ(PlayGridQ::Move_P(fdir, wx, m_wy, wz, 1));
+        }
+    }
+    else                                                                                // 비어있는 자리
     {
         std::cout << "[PlayGridSystem]::Unoccupied\n";
         
         // 기물 이동
         pPiece->InsertQ(PlayGridQ::Move_P(fdir, wx, m_wy, wz, 1));
-
-        // 타일 상태 변경
-        ChangeTileTO(oldcx, oldcz, TileOccupy{ TileOccuType::Unoccupied, TileWho::None });
-        ChangeTileTO(cx, cz,
-            (pieceInfo.team == Team::Ally) ?
-            TileOccupy{ TileOccuType::Ally_Occupied, who } :
-            TileOccupy{ TileOccuType::Enemy_Occupied, who });
-
-        // 기물 정보 변경
-        pieceInfo.cx = cx;   pieceInfo.cz = cz;
-        return;
     }
     
+    // 타일 상태 변경
+    ChangeTileTO(oldcx, oldcz, TileOccupy{ TileOccuType::Unoccupied, TileWho::None });
+    ChangeTileTO(cx, cz,
+        (pieceInfo.team == Team::Ally) ?
+        TileOccupy{ TileOccuType::Ally_Occupied, who } :
+        TileOccupy{ TileOccuType::Enemy_Occupied, who });
+
+    // 기물 정보 변경
+    pieceInfo.cx = cx;   pieceInfo.cz = cz;
 }
 
 bool PlayGridSystem::CheckExisting(const GamePiece pieceType)
@@ -419,7 +447,7 @@ const TileOccupy PlayGridSystem::GetTileTO(int cx, int cz)
     return m_tiles[GetID(cx, cz)].to;
 }
 
-Direction PlayGridSystem::GetDir(float oldcx, float oldcz, float cx, float cz)
+Direction PlayGridSystem::Get2Dir(float oldcx, float oldcz, float cx, float cz)
 {
     int dx = cx - oldcx;
 
@@ -428,7 +456,7 @@ Direction PlayGridSystem::GetDir(float oldcx, float oldcz, float cx, float cz)
     return Direction::Same;
 }
 
-Direction PlayGridSystem::GetCollisionDir(float oldcx, float oldcz, float cx, float cz)
+Direction PlayGridSystem::Get8Dir(float oldcx, float oldcz, float cx, float cz)
 {
     int dx = (cx > oldcx) - (cx < oldcx);   // -1, 0, 1
     int dz = (cz > oldcz) - (cz < oldcz);   // -1, 0, 1
@@ -442,52 +470,80 @@ Direction PlayGridSystem::GetCollisionDir(float oldcx, float oldcz, float cx, fl
 
 }
 
-Float2 PlayGridSystem::GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cz)
+std::pair<Float2, Int2> PlayGridSystem::GetCollisionPos(Direction dir, int cx, int cz)
 {
     auto [wx, wz] = m_grids[(int)m_nowG]->CellToWorld(cx, cz);
-    float width = (m_cellSizeX / 2.f);
-    float hight = (m_cellSizeZ / 2.f);
+    float halfwidth = (m_cellSizeX) / 2.f;
+    float halfheight = (m_cellSizeZ) / 2.f;
+    float width = (m_cellSizeX);
+    float height = (m_cellSizeZ);
 
-    float newX, newZ;   newX = newZ = 0;
+    Float2 newW;
+    Int2 newC;
 
-    int inverse = (pieceDir == Direction::Right) ? 1 : -1;
+    //int inverse = (pieceDir == Direction::Right) ? 1 : -1;
 
     switch (dir)
     {
     case Direction::Up:
-        newX = wx;
-        newZ = wz - hight;
+        newW.x = wx;
+        newW.y = wz + height;
+        newC = m_grids[(int)m_nowG]->WorldToCell(newW.x, newW.y);
+        newW.x = wx;
+        newW.y = wz + halfheight;
         break;
     case Direction::Down:
-        newX = wx;
-        newZ = wz + hight;
+        newW.x = wx;
+        newW.y = wz - height;
+        newC = m_grids[(int)m_nowG]->WorldToCell(newW.x, newW.y);
+        newW.x = wx;
+        newW.y = wz - halfheight;
         break;
     case Direction::Right:
-        newX = wx - (width * inverse);
-        newZ = wz;
+        newW.x = wx + (width);
+        newW.y = wz;
+        newC = m_grids[(int)m_nowG]->WorldToCell(newW.x, newW.y);
+        newW.x = wx + (halfwidth);
+        newW.y = wz;
         break;
     case Direction::Left:
-        newX = wx - (width * inverse);
-        newZ = wz;
+        newW.x = wx - (width);
+        newW.y = wz;
+        newC = m_grids[(int)m_nowG]->WorldToCell(newW.x, newW.y);
+        newW.x = wx - (halfwidth);
+        newW.y = wz;
         break;
     case Direction::UpLeft:
-        newX = wx - (width * inverse);
-        newZ = wz - hight;
+        newW.x = wx - (width);
+        newW.y = wz + height;
+        newC = m_grids[(int)m_nowG]->WorldToCell(newW.x, newW.y);
+        newW.x = wx - (halfwidth);
+        newW.y = wz + halfheight;
         break;
     case Direction::UpRight:
-        newX = wx - (width * inverse);
-        newZ = wz - hight;
+        newW.x = wx + (width);
+        newW.y = wz + height;
+        newC = m_grids[(int)m_nowG]->WorldToCell(newW.x, newW.y);
+        newW.x = wx + (halfwidth);
+        newW.y = wz + halfheight;
         break;
     case Direction::DownLeft:
-        newX = wx - (width * inverse);
-        newZ = wz + hight;
+        newW.x = wx - (width);
+        newW.y = wz - height;
+        newC = m_grids[(int)m_nowG]->WorldToCell(newW.x, newW.y);
+        newW.x = wx - (halfwidth);
+        newW.y = wz - halfheight;
         break;
     case Direction::DownRight:
-        newX = wx - (width * inverse);
-        newZ = wz + hight;
+        newW.x = wx + (width);
+        newW.y = wz - height;
+        newC = m_grids[(int)m_nowG]->WorldToCell(newW.x, newW.y);
+        newW.x = wx + (halfwidth);
+        newW.y = wz - halfheight;
         break;
     }
-    return { newX, newZ };
+
+    return { newW, newC };
 }
 
 GamePiece PlayGridSystem::GetGamePiece(int pId, int unitId)
@@ -497,6 +553,30 @@ GamePiece PlayGridSystem::GetGamePiece(int pId, int unitId)
         (unitId == 1) ? GamePiece::Ally1 : GamePiece::Ally2 :
         (unitId == 1) ? GamePiece::Enemy1 : GamePiece::Enemy2;
     return whichPiece;
+}
+
+int PlayGridSystem::GetUnitID(int pId, int slotID)
+{
+    int unitID = (pId == 1) ?
+        (slotID == 1) ? 0 : 1 :
+        (slotID == 1) ? 2 : 3;
+    return unitID;
+}
+
+int PlayGridSystem::GetOtherUnitDamage(const std::array<UnitState, 4>& newUnitStates, int mainUnit)
+{
+    int damageU = 0;
+    for (int i = 0; i < newUnitStates.size(); i++)
+    {
+        if (i == mainUnit) continue;
+        Dirty_US dirty = Diff_US(m_UnitStates[i], newUnitStates[i]);
+        if (dirty == Dirty_US::hp)
+        {
+            damageU = m_UnitStates[i].hp - newUnitStates[i].hp;
+            break;
+        }  
+    }
+    return damageU;
 }
 
 std::wstring PlayGridSystem::GetWeaponFileName(int weaponID)
