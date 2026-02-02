@@ -2,6 +2,8 @@
 
 #include "SceneState.h"
 #include "CardData.h"
+#include "C2S_BattlePackets.h"
+#include "S2C_StartCardList.h"
 #include "BattlePackets.h"
 
 class ISceneManager;
@@ -11,6 +13,11 @@ namespace yuno::game
     class YunoClientNetwork;
 }
 
+struct ClientCardInfo //UI에 적용하기 위한 데이터 저장
+{
+    uint32_t runtimeID;
+    uint32_t dataID;
+};
 // 얘가 뭘 가지고있어야 될까?
 class GameManager
 {
@@ -41,24 +48,28 @@ public:
     bool ToggleReady();
     bool IsReady() const { return m_isReady; }
 
-    void SubmitTurn(const std::vector<uint32_t>& runtimeIDs);
+    void SubmitTurn(const std::vector<CardPlayCommand>& runtimeIDs);
 
     //void RoundInit(yuno::net::packets::S2C_Error data);
-    void SetTestCardRuntimeIDs(const std::vector<uint32_t>& ids)
+
+    //카드 생성 저장
+    void SetCards(const std::vector<yuno::net::packets::CardSpawnInfo>& cards);
+    //카드 선택용 인덱스 -> runtimeID
+    uint32_t GetCardRuntimeIDByIndex(int index) const
     {
-        m_testCardRuntimeIDs = ids;
-    }
-    //전체리스트
-    const std::vector<uint32_t>& GetTestCardRuntimeIDs() const
-    {
-        return m_testCardRuntimeIDs;
-    }
-    //ID 슬롯 접근용
-    uint32_t GetTestCardRuntimeIDByIndex(int index) const
-    {
-        if (index < 0 || index >= (int)m_testCardRuntimeIDs.size())
+        if (index < 0 || index >= (int)m_Cards.size())
             return 0;
-        return m_testCardRuntimeIDs[index];
+
+        return m_Cards[index].runtimeID;
+    }
+    //UI 표시용 runtimeID -> dataID
+    uint32_t GetCardDataID(uint32_t runtimeID) const
+    {
+        auto it = m_CardRuntimeIDs.find(runtimeID);
+        if (it == m_CardRuntimeIDs.end())
+            return 0;
+
+        return it->second;
     }
 private:
     static GameManager* s_instance;
@@ -74,7 +85,8 @@ private:
 
     bool m_isReady = false;
 
-    std::vector<uint32_t> m_testCardRuntimeIDs;
+    std::vector<ClientCardInfo> m_Cards;                                        //UI용 순서 있음
+    std::unordered_map<uint32_t, uint32_t> m_CardRuntimeIDs;   //엑셀로드용
 
     bool m_countdownActive = false;
     float m_countdownRemaining = 0.0f;

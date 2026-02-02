@@ -195,24 +195,7 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     m_name = name;
 
     m_vPos = vPos;
-    //m_vRot = vRot;
-    //m_vScale = vScale;
 
-    //m_textureSizes.x = (float)50;
-    //m_textureSizes.y = (float)50;
-
-    // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
-    // (추후 에디터 기능으로 flag 추가 가능)
-
-    //m_size.x = m_textureSizes.x;
-    //m_size.y = m_textureSizes.y;
-    
-    //m_finalSize.x = m_vScale.x * m_width;
-    //m_finalSize.y = m_vScale.y * m_height;
-
-    //m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
-
-    // Rect 갱신은 Update()에서
 
     if (!m_pInput || !m_pRenderer || !m_pTextures)
         return false;
@@ -244,6 +227,10 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
         m_constant.shadowBias = 0.005f;
     }
 
+    // Rect 갱신은 Update()에서
+    Widget::UpdateTransform();
+
+
     Backup();
 
     return true;
@@ -251,32 +238,11 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale)
 {
-    m_pRenderer = YunoEngine::GetRenderer();
-    m_pTextures = YunoEngine::GetTextureManager();
-    m_pInput = YunoEngine::GetInput();
 
-    m_id = id;
-    m_name = name;
-
-    m_vPos = vPos;
     m_vRot = vRot;
     m_vScale = vScale;
 
-    // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
-    // (추후 에디터 기능으로 flag 추가 가능)
-    m_size.x = (float)50;
-    m_size.y = (float)50;
-
-    m_canvasSize.x = 0;
-    m_canvasSize.y = 0;
-
-    m_finalSize.x = m_vScale.x * m_size.x;
-    m_finalSize.y = m_vScale.y * m_size.y;
-
-    //m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
-
-    // Rect 갱신은 Update()에서
-    Widget::UpdateTransform();
+    Create(name, id, vPos);
 
     return true;
 }
@@ -298,6 +264,8 @@ bool Widget::UpdateTransform(float dTime)
     if (m_useAspectComp) { // 화면비 스케일 사용 (기본값)
         Float2 origin = g_DefaultClientXY;          // 기준(디자인) 해상도
         Float2 canvas = m_uiFactory.GetCanvasSize();// 현재 클라이언트/캔버스
+
+        const bool applyLetterboxOffset = (m_Parent == nullptr);
 
         // origin/canvas 0 방어 (초기화/리사이즈 순간 등)
         if (origin.x <= 0.0f || origin.y <= 0.0f || canvas.x <= 0.0f || canvas.y <= 0.0f)
@@ -325,7 +293,9 @@ bool Widget::UpdateTransform(float dTime)
                 (canvas.y - fitted.y) * 0.5f);
 
             m_canvasScale = Float2(s, s);
-            m_canvasLetterboxOffset = letterboxOffset; // 이동
+
+            //m_canvasLetterboxOffset = letterboxOffset; // 이동
+            m_canvasLetterboxOffset = applyLetterboxOffset ? letterboxOffset : Float2(0.0f, 0.0f); 
 
             m_finalSize.x = m_size.x * m_vScale.x * m_canvasScale.x;
             m_finalSize.y = m_size.y * m_vScale.y * m_canvasScale.y;
@@ -488,8 +458,8 @@ void Widget::SubmitChild_Internal(float dTime) // 실제 재귀
 void Widget::UpdateRect()
 {
     // 회전 무시된 Rect 크기
-    float left = m_vPos.x - (m_pivot.x * m_finalSize.x);
-    float top = m_vPos.y - (m_pivot.y * m_finalSize.y);
+    float left = m_finalPos.x - (m_pivot.x * m_finalSize.x);
+    float top = m_finalPos.y - (m_pivot.y * m_finalSize.y);
     float right = left + m_finalSize.x;
     float bottom = top + m_finalSize.y;
 

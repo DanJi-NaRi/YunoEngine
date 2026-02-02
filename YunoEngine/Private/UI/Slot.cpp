@@ -2,7 +2,8 @@
 #include "Slot.h"
 
 Slot::Slot(UIFactory& uiFactory) : Widget(uiFactory)
-{}
+{
+}
 
 Slot::~Slot()
 {
@@ -13,6 +14,8 @@ bool Slot::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     Widget::Create(name, id, vPos);
 
     m_anchor = UIDirection::LeftTop;
+
+    SetSnapPoint(0.0f, WidgetClass::Widget);
 
     Backup();
 
@@ -28,7 +31,6 @@ bool Slot::Update(float dTime)
 {
     Widget::Update(dTime);
     
-
     return true;
 }
 
@@ -44,10 +46,14 @@ bool Slot::Submit(float dTime)
     return true;
 }
 
-void Slot::SetDefaultSnapPoint(float padding, WidgetClass target)
+void Slot::SetSnapPoint(float padding, WidgetClass target)
 {
     m_snapPoint.m_snapPos = { m_vPos.x, m_vPos.y };
     m_snapPoint.m_snapPadding = padding;
-    m_snapPoint.m_snapRange = m_rect;
+    m_snapPoint.m_snapRange = ExpandRect(m_rect, padding);
     m_snapPoint.m_snapTargetClass = target;
 }
+
+
+
+

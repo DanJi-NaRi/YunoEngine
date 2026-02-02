@@ -272,7 +272,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\Object\CardQueue.h" />
     <ClInclude Include="System\CardRangeManager.h" />
     <ClInclude Include="GameManager\SceneState.h" />
-    <ClInclude Include="Game\Object\CardActData.h" />
     <ClInclude Include="Game\UI\ButtonTemplate.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

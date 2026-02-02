@@ -6,10 +6,12 @@ namespace yuno::net::packets
 {
     void C2S_ReadyTurn::Serialize(ByteWriter& w) const
     {
-        w.WriteU16LE(static_cast<std::uint16_t>(runtimeIDs.size()));
-        for (auto id : runtimeIDs)
+        w.WriteU8(static_cast<uint8_t>(commands.size()));
+
+        for (const auto& cmd : commands)
         {
-            w.WriteU32LE(id);
+            w.WriteU32LE(cmd.runtimeID);
+            w.WriteU8(static_cast<uint8_t>(cmd.dir));
         }
     }
 
@@ -17,12 +19,16 @@ namespace yuno::net::packets
     {
         C2S_ReadyTurn pkt;
 
-        const std::uint16_t count = r.ReadU16LE();
-        pkt.runtimeIDs.reserve(count);
+        const uint8_t count = r.ReadU8();
+        pkt.commands.reserve(count);
 
-        for (std::uint16_t i = 0; i < count; ++i)
+        for (uint8_t i = 0; i < count; ++i)
         {
-            pkt.runtimeIDs.push_back(r.ReadU32LE());
+            CardPlayCommand cmd;
+            cmd.runtimeID = r.ReadU32LE();
+            cmd.dir = static_cast<Direction>(r.ReadU8());
+
+            pkt.commands.push_back(cmd);
         }
 
         return pkt;
