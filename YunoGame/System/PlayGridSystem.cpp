@@ -78,8 +78,9 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     for (int i = 0; i < m_tiles.size() - 1; i++)
     {
         auto [wx, wz] = m_grids[(int)m_nowG]->CellToWorld(i % m_column, i / m_column);
-        auto pTile = m_manager->CreateObject<UnitTile>(L"Tile", XMFLOAT3(wx, y, wz));
-        //auto pTile = m_objectManager->CreateObjectFromFile<Piece>(L"Tile", XMFLOAT3(wx, y, wz), L"../Assets/fbx/Tile.fbx");
+        //auto pTile = m_manager->CreateObject<UnitTile>(L"Tile", XMFLOAT3(wx, y, wz));
+        auto fileName = GetTileFileName(i);
+        auto pTile = m_manager->CreateObjectFromFile<UnitTile>(L"Tile", XMFLOAT3(wx, y, wz), fileName);
         pTile->SetScale({ m_cellSizeX * 0.8f, 1, m_cellSizeZ * 0.8f });
         m_tilesIDs.push_back(pTile->GetID());
 
@@ -112,8 +113,30 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
 
         std::wstring fileName = GetWeaponFileName(w.weaponId);
-        auto pPiece = m_manager->CreateObject<UnitPiece>(L"Piece", XMFLOAT3(px, m_wy, pz));
-        //auto pPiece = m_objectManager->CreateObjectFromFile<Piece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
+        //auto pPiece = m_manager->CreateObject<UnitPiece>(L"Piece", XMFLOAT3(px, m_wy, pz));
+        auto pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), L"../Assets/fbx/Ax/Ax.fbx");
+        // weapon 구별을 위한 임시
+        switch (w.weaponId)
+        {
+        case 1:
+            pPiece->SetMaskColor({ 1, 0, 0, 1 });       // 빨
+            break;
+        case 2:
+            pPiece->SetMaskColor({ 1, 0.5f, 0, 1 });    // 주
+            break;
+        case 3:
+            pPiece->SetMaskColor({ 1, 1, 0, 1 });       // 노
+            break;
+        case 4:
+            pPiece->SetMaskColor({ 0, 1, 0, 1 });       // 초
+            break;
+        case 5:
+            pPiece->SetMaskColor({ 0, 0, 1, 1 });       // 파
+            break;
+        case 6:
+            pPiece->SetMaskColor({ 0.5f, 0, 0.5f, 1 }); // 보
+            break;
+        }
         pPiece->SetWho(gp);
         pPiece->SetScale({ 0.8f, 0.8f, 0.8f });
         pPiece->SetDir(dir, false);
@@ -210,12 +233,14 @@ void PlayGridSystem::CheckPacket()
     if (!mng.IsEmptyBattlePacket())
     {
         const auto pckt = mng.PopBattlePacket();
+
         const auto runTimeCardID = pckt.runTimeCardID;
-        const auto whichPlayerTurn = pckt.pId;
-        const auto whichUnit = pckt.slotId;
+        const auto dir = pckt.dir;
         const std::vector<std::array<UnitState, 4>>& order = pckt.order;
 
-        GamePiece whichPiece = GetGamePiece(whichPlayerTurn, whichUnit);
+        GamePiece whichPiece = GetGamePiece(pckt.pId, pckt.slotId);
+
+        // runtimeCardID로 CardManager에서 해당 카드가 어택 카드인지를 알아오기
 
         // 행동 순서
         for (int i = 0; i < order.size(); i++)
@@ -244,7 +269,8 @@ void PlayGridSystem::ApplyPacketChanges(Dirty_US dirty, const UnitState& prevUS,
     auto& pieceInfo = m_pieces[whichPiece];
 
     // 이동하다가 충돌했을 때
-    if (HasThis_US(dirty, Dirty_US::targetTileID | Dirty_US::hp))
+    bool isCollided = newUS.isEvent;
+    if (HasThis_US(dirty, Dirty_US::targetTileID) && isCollided)
     {
         auto [cx, cz] = GetCellByID(newUS.targetTileID);
         m_playQ->Insert(m_playQ->Move_S(whichPiece, cx, cz));
@@ -265,7 +291,7 @@ void PlayGridSystem::ApplyPacketChanges(Dirty_US dirty, const UnitState& prevUS,
     {}
 }
 
-void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
+void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz, bool isCollided, int damageMe, int damageU)
 {
     // 죽어서 없어진 기물인지 확인
     if (!CheckExisting(pieceType)) return;
@@ -274,8 +300,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
     PieceInfo& pieceInfo = m_pieces[pieceType];
 
     // 아이디로 오브젝트 포인터 받아오기
-    Unit* pUnit = m_manager->FindObject(pieceInfo.id);
-    UnitPiece* pPiece = dynamic_cast<UnitPiece*>(pUnit);
+    UnitPiece* pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
 
     // 기물의 기존 좌표
     int oldcx = pieceInfo.cx;
@@ -317,7 +342,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
         // 충돌지점까지 이동 후 원래 자리로 되돌아감
         pPiece->InsertQ(PlayGridQ::Move_P(fdir, colX, m_wy, colZ));
         auto [oldwx, oldwz] = m_grids[(int)m_nowG]->CellToWorld(oldcx, oldcz);
-        pPiece->InsertQ(PlayGridQ::Move_P(fdir, oldwx, m_wy, oldwz, 1));
+        pPiece->InsertQ(PlayGridQ::Move_P(fdir, cx, m_wy, cz, 1));
 
     }
     else if (to.occuType == TileOccuType::Enemy_Occupied)
@@ -328,10 +353,9 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz)
         GamePiece existWho = (GamePiece)m_tiles[GetID(cx, cz)].to.who;
 
         // 충돌지점까지 이동 후 원래 자리로 되돌아감
-        auto [oldwx, oldwz] = m_grids[(int)m_nowG]->CellToWorld(oldcx, oldcz);
         pPiece->InsertQ(PlayGridQ::Move_P(fdir, colX, m_wy, colZ));                  // 충돌 위치까지 이동 후
-        pPiece->InsertQ(PlayGridQ::Hit_P(10, existWho, 5));                                      // 피 감소
-        pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, oldwx, m_wy, oldwz, 1)); // 제자리로 돌아감
+        pPiece->InsertQ(PlayGridQ::Hit_P(damageMe, existWho, damageU));              // 피 감소
+        pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, cx, m_wy, cz, 1));        // 제자리로 돌아감
         
         return;
     }
@@ -500,6 +524,22 @@ std::wstring PlayGridSystem::GetWeaponFileName(int weaponID)
         break;
     }
     return filaName;
+}
+
+std::wstring PlayGridSystem::GetTileFileName(int tile)
+{
+    static const int floorOfTile[35] = {
+        5,10,15,20,25,30,1,
+        4,9,14,19,24,29,2,
+        3,8,13,18,23,28,3,
+        2,7,12,17,22,27,4,
+        1,6,11,16,21,26,5
+    };
+
+    const int floorNum = floorOfTile[tile];
+    wchar_t buf[256];
+    swprintf_s(buf, L"../Assets/fbx/Tile/floor%d.fbx", floorNum);
+    return buf;
 }
 
 

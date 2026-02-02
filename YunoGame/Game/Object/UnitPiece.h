@@ -1,8 +1,8 @@
 #pragma once
-#include "Unit.h"
+#include "AnimationUnit.h"
 #include "PieceHelper.h"
 
-class UnitPiece : public Unit
+class UnitPiece : public AnimationUnit
 {
 public:
     explicit UnitPiece();
