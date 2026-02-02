@@ -45,6 +45,8 @@ bool PhaseScene::OnCreateScene()
     auto clientX = YunoEngine::GetWindow()->GetClientWidth();
     auto clientY = YunoEngine::GetWindow()->GetClientHeight();
 
+    CreateWidget<CardConfirmButton>(L"tstButton", XMFLOAT3(0, 0, 0), Float2(140, 55), UIDirection::LeftTop);
+
     CreateWidget<CardConfirmPanel>(L"CardConformPanel", XMFLOAT3(0, clientY, 0), Float2(140, 55), UIDirection::LeftBottom);
     CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", XMFLOAT3(clientX, clientY, 0), Float2(140, 55), UIDirection::RightBottom);
 

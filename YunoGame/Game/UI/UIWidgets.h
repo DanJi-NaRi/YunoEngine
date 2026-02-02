@@ -33,6 +33,8 @@ Slot,
 #include "ReadyButton.h"
 #include "ExitButton.h"
 #include "WeaponButton.h"
+#include "CardConfirmButton.h"
+#include "CardCancelButton.h"
 //////////////////////////////
 
 
