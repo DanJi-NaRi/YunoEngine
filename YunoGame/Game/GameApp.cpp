@@ -16,6 +16,7 @@
 #include "TitleScene.h"
 #include "PlayScene.h"
 #include "UIScene.h"
+#include "PhaseScene.h"
 #include "WeaponSelectScene.h"
 #include "RenderTest.h"
 
@@ -92,6 +93,7 @@ bool GameApp::OnInit()
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
+
 
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);

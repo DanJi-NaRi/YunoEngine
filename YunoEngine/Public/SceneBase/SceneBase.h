@@ -2,12 +2,16 @@
 
 #include "IScene.h"
 
+#include <type_traits>
+#include "Widget.h"
+#include "UIManager.h"
+
 class ObjectManager;
-class UIManager;
+//class UIManager;
 class EffectManager;
 class IInput;
 class Unit;
-class Widget;
+//class Widget;
 class Light;
 
 
@@ -27,6 +31,15 @@ public:
     virtual void SubmitUI() override;
 
     const char* GetDebugName() const override { return m_name.c_str(); }
+
+    template<typename T> // 모든 씬 공용 Widget 생성 함수
+    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);
+    template<typename T> // 모든 씬 공용 Widget 생성 함수
+    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size);
+    template<typename T> // 모든 씬 공용 Widget 생성 함수
+    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, Float2 pivot);
+    template<typename T> // 모든 씬 공용 Widget 생성 함수
+    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, UIDirection pivot);
 
 #ifdef _DEBUG
     void DrawObjectList();
@@ -68,3 +81,49 @@ protected:
     float m_lastDt = 0.0f;
     std::string m_name;
 };
+
+
+
+
+
+/////
+template<typename T> // 모든 씬 공용 Widget 생성 함수
+T* SceneBase::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+    assert(m_uiManager);
+
+    T* pWidget = m_uiManager->CreateWidget<T>(name, pos);
+    pWidget->CreateChild(); // 자식 생성
+    return pWidget;
+}
+template<typename T> // 모든 씬 공용 Widget 생성 함수
+T* SceneBase::CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+    assert(m_uiManager);
+
+    T* pWidget = m_uiManager->CreateWidget<T>(name, pos, size);
+    pWidget->CreateChild(); // 자식 생성
+    return pWidget;
+}
+template<typename T> // 모든 씬 공용 Widget 생성 함수
+T* SceneBase::CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, Float2 pivot)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+    assert(m_uiManager);
+
+    T* pWidget = m_uiManager->CreateWidget<T>(name, pos, size, pivot);
+    pWidget->CreateChild(); // 자식 생성
+    return pWidget;
+}
+template<typename T> // 모든 씬 공용 Widget 생성 함수
+T* SceneBase::CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, UIDirection pivot)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+    assert(m_uiManager);
+
+    T* pWidget = m_uiManager->CreateWidget<T>(name, pos, size, pivot);
+    pWidget->CreateChild(); // 자식 생성
+    return pWidget;
+}

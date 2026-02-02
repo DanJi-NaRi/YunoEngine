@@ -1,13 +1,14 @@
 #include "pch.h"
 #include "Mesh.h"
 #include "YunoEngine.h"
-
 #include "SerializeScene.h"
+
 #include "Widget.h"
 #include "IWindow.h"
-
+//#include "YunoTextureManager.h"
 #include "UIFactory.h"
 #include "IInput.h"
+
 
 VERTEX_Pos g_Widget_pos[] = {
     { 0,0,0 },    // 좌상
@@ -77,9 +78,6 @@ Widget::Widget(UIFactory& uiFactory) : m_uiFactory(uiFactory)
     m_vRot = XMFLOAT3(0.0f, 0.0f, 0.0f);
     m_vPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-    m_spriteSize.x = 0;
-    m_spriteSize.y = 0;
-
     m_canvasSize.x = 0;
     m_canvasSize.y = 0;
 
@@ -126,6 +124,8 @@ bool Widget::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
 {
     m_Albedo = m_pTextures->LoadTexture2D(path.c_str());
 
+    AddTextureSize(m_Albedo);
+
     MaterialDesc md{};
     if (pDesc) {
         md =  *pDesc;
@@ -168,6 +168,8 @@ bool Widget::AddMaterial(const std::wstring& path, MaterialDesc& desc)
     MaterialHandle mtrl = m_pRenderer->CreateMaterial(d);
     if (mtrl == 0) return false;        // invalid 규약에 맞게 수정
 
+    AddTextureSize(d.albedo);
+
     m_materials.push_back(mtrl);
     return true;
 }
@@ -177,6 +179,7 @@ bool Widget::AddMaterial(MaterialDesc& desc)
     MaterialHandle mtrl = m_pRenderer->CreateMaterial(desc);
     if (mtrl == 0) return false;
 
+    
     m_materials.push_back(mtrl);
     return true;
 }
@@ -195,14 +198,14 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     //m_vRot = vRot;
     //m_vScale = vScale;
 
-    m_spriteSize.x = (float)50;
-    m_spriteSize.y = (float)50;
+    //m_textureSizes.x = (float)50;
+    //m_textureSizes.y = (float)50;
 
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
 
-    m_size.x = m_spriteSize.x;
-    m_size.y = m_spriteSize.y;
+    //m_size.x = m_textureSizes.x;
+    //m_size.y = m_textureSizes.y;
     
     //m_finalSize.x = m_vScale.x * m_width;
     //m_finalSize.y = m_vScale.y * m_height;
@@ -243,8 +246,6 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
     Backup();
 
-    Widget::UpdateTransform();
-
     return true;
 }
 
@@ -261,13 +262,10 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOA
     m_vRot = vRot;
     m_vScale = vScale;
 
-    m_spriteSize.x = (float)50;
-    m_spriteSize.y = (float)50;
-
     // 테스트용 - 초기 생성 시 스프라이트 사이즈와 동일하게 
     // (추후 에디터 기능으로 flag 추가 가능)
-    m_size.x = m_spriteSize.x;
-    m_size.y = m_spriteSize.y;
+    m_size.x = (float)50;
+    m_size.y = (float)50;
 
     m_canvasSize.x = 0;
     m_canvasSize.y = 0;
@@ -287,8 +285,6 @@ bool Widget::Start() {
     return true;
 }
 
-Widget* Widget::CreateChild() { return this; }
-
 
 
 bool Widget::UpdateTransform(float dTime)
@@ -298,58 +294,89 @@ bool Widget::UpdateTransform(float dTime)
 
     /*m_clientSize = Float2((float)YunoEngine::GetWindow()->GetClientWidth(),
                          (float)YunoEngine::GetWindow()->GetClientHeight());*/
+    
+    if (m_useAspectComp) { // 화면비 스케일 사용 (기본값)
+        Float2 origin = g_DefaultClientXY;          // 기준(디자인) 해상도
+        Float2 canvas = m_uiFactory.GetCanvasSize();// 현재 클라이언트/캔버스
 
-   
-    Float2 origin = g_DefaultClientXY; // 기준(디자인) 해상도
-    Float2 canvas = m_uiFactory.GetCanvasSize(); // 현재 클라이언트/캔버스
+        // origin/canvas 0 방어 (초기화/리사이즈 순간 등)
+        if (origin.x <= 0.0f || origin.y <= 0.0f || canvas.x <= 0.0f || canvas.y <= 0.0f)
+        {
+            m_canvasScale = Float2(1.0f, 1.0f);
+            m_canvasLetterboxOffset = Float2(0.0f, 0.0f);
 
-    float sx = canvas.x / origin.x;
-    float sy = canvas.y / origin.y;
+            m_finalPos = Float3(m_vPos.x, m_vPos.y, m_vPos.z);
+            m_finalSize = Float3(m_size.x * m_vScale.x, m_size.y * m_vScale.y, 1.0f);
+        }
+        else
+        {
+            float sx = canvas.x / origin.x;
+            float sy = canvas.y / origin.y;
 
-    // 레터박스(전체가 보이도록) => 더 작은 스케일 채택
-    float s = (sx < sy) ? sx : sy;
+            // 레터박스(전체가 보이도록) => 더 작은 스케일 채택
+            float s = (sx < sy) ? sx : sy;
 
-    // 16:9 유효영역(스케일 적용 후 origin 크기)
-    Float2 fitted = Float2(origin.x * s, origin.y * s);
+            // 16:9 유효영역(스케일 적용 후 origin 크기)
+            Float2 fitted = Float2(origin.x * s, origin.y * s);
 
-    // 남는 공간(레터박스) 분배: 중앙 정렬
-    Float2 letterboxOffset = Float2(
-        (canvas.x - fitted.x) * 0.5f,
-        (canvas.y - fitted.y) * 0.5f);
+            // 남는 공간(레터박스) 분배: 중앙 정렬
+            Float2 letterboxOffset = Float2(
+                (canvas.x - fitted.x) * 0.5f,
+                (canvas.y - fitted.y) * 0.5f);
 
-    m_canvasOffset = Float2(s, s);
-    Float2 m_canvasLetterboxOffset = letterboxOffset; // 이동
+            m_canvasScale = Float2(s, s);
+            m_canvasLetterboxOffset = letterboxOffset; // 이동
 
-    m_finalSize.x = m_size.x * m_vScale.x * m_canvasOffset.x;
-    //m_finalSize.x = m_size.x * m_vScale.x;
-    m_finalSize.y = m_size.y * m_vScale.y * m_canvasOffset.y;
-    //m_finalSize.y = m_size.y * m_vScale.y;
-    m_finalSize.z = 1.0f;
+            m_finalSize.x = m_size.x * m_vScale.x * m_canvasScale.x;
+            m_finalSize.y = m_size.y * m_vScale.y * m_canvasScale.y;
+            m_finalSize.z = 1.0f;
 
-    m_finalPos.x = m_vPos.x * m_canvasOffset.x + m_canvasLetterboxOffset.x;
-    m_finalPos.y = m_vPos.y * m_canvasOffset.y + m_canvasLetterboxOffset.y;
-    m_finalPos.z = m_vPos.z;
-
+            m_finalPos.x = m_vPos.x * m_canvasScale.x + m_canvasLetterboxOffset.x;
+            m_finalPos.y = m_vPos.y * m_canvasScale.y + m_canvasLetterboxOffset.y;
+            m_finalPos.z = m_vPos.z;
+        }
+    }
+    else { // 화면비 스케일 사용 X
+        m_finalPos = Float3(m_vPos.x, m_vPos.y, m_vPos.z);
+        m_finalSize = Float3(m_size.x * m_vScale.x, m_size.y * m_vScale.y, m_size.z * m_vScale.z);
+        
+        // 보정 (의도에 따라..)
+        //m_finalPos.z = 0.0f;
+        m_finalSize.z = 1.0f;
+    }
 
     //m_vScale.z = 1.0f; // UI는 z scale 의미 없음(일단 1로 고정)
 
     XMMATRIX mScale = XMMatrixScaling(m_finalSize.x, m_finalSize.y, 1.0f);
-    XMMATRIX mRot =   XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
-    //XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
-    XMMATRIX mTrans = XMMatrixTranslation(m_finalPos.x, m_finalPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
+    XMMATRIX mRot = XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
+    XMMATRIX mTrans = XMMatrixTranslation(m_finalPos.x, m_finalPos.y, m_finalPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
     XMMATRIX mPivot = XMMatrixTranslation(-m_pivot.x, -m_pivot.y, 0.0f); // 피벗
 
-    XMMATRIX mTM;
 
-    if (m_Parent)
-        mTM = mPivot * mScale * mRot * mTrans * m_Parent->GetWorldMatrix();
+    XMMATRIX mLocalTM = mPivot * mScale * mRot * mTrans; // 로컬(스케일 포함)
+    XMMATRIX mLocalNoScaleTM = mPivot * mRot * mTrans;         // 로컬(스케일 제외)
+
+    XMMATRIX mWorldTM;
+    XMMATRIX mNoScaleWorldTM;
+
+    if (m_Parent) {
+        // 부모 TM 적용 버전
+        //mTM = mPivot * mScale * mRot * mTrans *  m_Parent->GetWorldMatrix();
+        // 부모 Scale제외 TM 버전
+        mWorldTM = mLocalTM * m_Parent->GetNoScaleWorldMatrix();
+        mNoScaleWorldTM = mLocalNoScaleTM * m_Parent->GetNoScaleWorldMatrix();
+    }
     else
-        mTM = mPivot * mScale * mRot * mTrans;
-
+    {
+        mWorldTM = mLocalTM;
+        mNoScaleWorldTM = mLocalNoScaleTM;
+    }
+    
     XMStoreFloat4x4(&m_mScale, mScale);
     XMStoreFloat4x4(&m_mRot, mRot);
     XMStoreFloat4x4(&m_mTrans, mTrans);
-    XMStoreFloat4x4(&m_mWorld, mTM);
+    XMStoreFloat4x4(&m_mWorld, mWorldTM);
+    XMStoreFloat4x4(&m_mNoScaleWorld, mNoScaleWorldTM);
 
     UpdateRect(); // m_rect 갱신
 
@@ -357,6 +384,7 @@ bool Widget::UpdateTransform(float dTime)
 
     return true;
 }
+
 
 bool Widget::UpdateTransformChild(float dTime) // 루트 진입용
 {
@@ -377,13 +405,29 @@ void Widget::UpdateTransformChild_Internal(float dTime) // 실제 재귀
     }
 }
 
-//상속받은 업데이트 마지막에 무조건 호출
+//상속받은 업데이트 처음에 무조건 호출
 bool Widget::Update(float dTime)
 {
-
-
-    UpdateTransform(dTime);
+    //로직 작성 공간..
     return true;
+}
+
+void Widget::SetTextureSize(int num, TextureHandle& handle)
+{
+    const int size = m_textureSizes.size();
+    assert(num >= 0 && num < size);
+    if (num < 0 || num >= size) return;
+    auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(m_Albedo);
+    m_textureSizes[num].x = (float)textureSize.first;
+    m_textureSizes[num].y = (float)textureSize.second;
+}
+
+Float2 Widget::AddTextureSize(TextureHandle& handle)
+{
+    auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(m_Albedo);
+    m_textureSizes.emplace_back(Float2{ (float)textureSize.first, (float)textureSize.second});
+
+    return m_textureSizes.back();
 }
 
 void Widget::Backup()
@@ -402,8 +446,12 @@ bool Widget::Submit(float dTime)
 
     LastSubmit(dTime);
 
+    // 사실상 이제 생성 순서만으로 이미 정렬이 되어있어, 
+    // 부모->자식 사이에 이물 Widget이 낄 수 없는 상태->체이닝 필요없음
+    // 체이닝을 다시 살리게 되면, 레이어가 2순위가 됨
+
     // 자식 Submit
-    if (m_isRoot) SubmitChild(dTime); // 자식 업데이트, Root만 허용
+    //if (m_isRoot) SubmitChild(dTime); // 자식 업데이트, Root만 허용 // 체이닝 사용
 
     return true;
 }

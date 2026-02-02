@@ -1,34 +1,24 @@
 #include "pch.h"
-#include "ExitButton.h"
+#include "CardConfirmButton.h"
 
 #include "YunoEngine.h"
 #include "IInput.h"
 
-#include "ISceneManager.h"
-#include "IScene.h"
-#include "PacketBuilder.h"
-
-#include "C2S_MatchLeave.h"
-
-#include "GameManager.h"
-
-
-ExitButton::ExitButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
+CardConfirmButton::CardConfirmButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
 
-ExitButton::~ExitButton()
+CardConfirmButton::~CardConfirmButton()
 {
     Clear(); // Clear 추가는 기본적으로!!
 }
 
-void ExitButton::Clear()
+void CardConfirmButton::Clear()
 {
-    m_pExitScene = nullptr;
 }
 
-bool ExitButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool CardConfirmButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Button::Create(name, id, vPos);
 
@@ -37,25 +27,24 @@ bool ExitButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool ExitButton::UpdateTransform(float dTime) {
-    Button::UpdateTransform(dTime);
-
-    return true;
+void CardConfirmButton::CreateChild()
+{
 }
-bool ExitButton::Update(float dTime) {
 
+bool CardConfirmButton::Update(float dTime)
+{
     Button::Update(dTime);
     return true;
 }
 
-bool ExitButton::Submit(float dTime)
+bool CardConfirmButton::Submit(float dTime)
 {
     Button::Submit();
     return true;
 }
 
 // 가만히 있을 때
-bool ExitButton::IdleEvent()
+bool CardConfirmButton::IdleEvent()
 {
     //std::cout << "IdleEvent" << std::endl;
     // 내용 작성
@@ -63,7 +52,7 @@ bool ExitButton::IdleEvent()
 }
 
 // 커서가 위에 올라있을 때
-bool ExitButton::HoveredEvent()
+bool CardConfirmButton::HoveredEvent()
 {
     std::cout << "HoveredEvent" << std::endl;
     return true;
@@ -77,32 +66,21 @@ bool ExitButton::HoveredEvent()
 //}
 
 // 왼클릭 눌렀을 때
-bool ExitButton::LMBPressedEvent()
+bool CardConfirmButton::LMBPressedEvent()
 {
-    auto bytes = yuno::net::PacketBuilder::Build(
-        yuno::net::PacketType::C2S_MatchLeave,
-        [&](yuno::net::ByteWriter& w)
-        {
-            yuno::net::packets::C2S_MatchLeave req{};
-            req.Serialize(w);
-        });
-
-    GameManager::Get().SendPacket(std::move(bytes));
-
-    GameManager::Get().SetSceneState(CurrentSceneState::Title);
-
+    std::cout << "(LMB)CardConfirmButton Pressed" << std::endl;
     return true;
 }
 
 // 우클릭 눌렀을 때
-bool ExitButton::RMBPressedEvent()
+bool CardConfirmButton::RMBPressedEvent()
 {
     std::cout << "(RMB)PressedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 눌렀을 때
-bool ExitButton::KeyPressedEvent(uint32_t key)
+bool CardConfirmButton::KeyPressedEvent(uint32_t key)
 {
     if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
     else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;
@@ -110,28 +88,23 @@ bool ExitButton::KeyPressedEvent(uint32_t key)
 }
 
 // 왼클릭 뗐을 때
-bool ExitButton::LMBReleasedEvent()
+bool CardConfirmButton::LMBReleasedEvent()
 {
     std::cout << "(LMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 우클릭 뗐을 때
-bool ExitButton::RMBReleasedEvent()
+bool CardConfirmButton::RMBReleasedEvent()
 {
     std::cout << "(RMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 뗐을 때
-bool ExitButton::KeyReleasedEvent(uint32_t key)
+bool CardConfirmButton::KeyReleasedEvent(uint32_t key)
 {
     if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
     else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
     return true;
 }
-
-void ExitButton::Exit()
-{
-}
-

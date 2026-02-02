@@ -131,6 +131,8 @@ protected:
     XMFLOAT3	m_vScale;   // 스크린상의 위젯 크기 배율 (z는 의미 없음, 사용 안함)
     
     XMFLOAT4X4	m_mWorld;
+    XMFLOAT4X4	m_mNoScaleWorld; // 스케일 곱만 빠진 버전
+
     XMFLOAT4X4	m_mScale;
     XMFLOAT4X4  m_mRot;
     XMFLOAT4X4  m_mTrans;
@@ -145,9 +147,9 @@ protected:
 
     // 사이즈 데이터
 
-    Float3 m_size;               // 위젯 자체의 사이즈 (width, height)
+    Float3 m_size;               // 위젯 자체의 사이즈 (width, height)s
 
-    Float3 m_spriteSize;
+    std::vector<Float2> m_textureSizes;
 
     Float3 m_finalPos;
 
@@ -159,8 +161,8 @@ protected:
           
     //Float3 m_clientSize;        // 클라이언트 사이즈 XY
 
-    Float3 m_canvasOffset;       // 캔버스 결과 적용 오프셋 (canvasSizeXY/clientSizeXY)
-
+    Float3 m_canvasScale;       // 캔버스 결과 적용 스케일 (canvasSizeXY/clientSizeXY)
+    Float3 m_canvasLetterboxOffset; // 레터박스 보정 오프셋
     //Canvas* m_canvas;
 
 
@@ -174,11 +176,9 @@ protected:
 
     std::wstring m_inputString; // 텍스트 입력 내용 // 아직 미사용
 
-
     // 자주 변하지 않는 UI 최적화를 위한 더티 플래그.
     // 자식이 있을 경우 자식들의 더티 플래그도 조절해야 함.
-    bool m_layoutDirty    = true; // pos,rot,scale 변경 시
-    bool m_transformDirty = true; // width,height 변경 시
+    bool m_transformDirty = true; // pos,rot,scale 변경 시
 
     float       m_time;
 
@@ -200,6 +200,8 @@ protected:
     std::unordered_map<uint32_t, Widget*> m_Childs;
 
     bool m_isRoot = true; // 캔버스를 제외한 가장 최상위 부모인지. // 나중에 캔버스 위젯이 생기면 캔버스만 예외처리 해야 함.
+
+    bool m_useAspectComp = true; // 업데이트 시 캔버스/클라이언트 스케일링을 사용할건지 아닌지 // 기본값 : 사용
 
 protected:
 
@@ -225,10 +227,10 @@ public:
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
     virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
     virtual bool  Start(); // Create 다 끝나고 호출. 
-    virtual Widget* CreateChild();
+    virtual void  CreateChild() {};
 
-    virtual bool  UpdateTransform(float dTime = 0);
-    virtual bool  Update(float dTime = 0);
+    bool          UpdateTransform(float dTime = 0); // 트랜스폼 업데이트. 자식에서 호출하면 꼬이니 주의
+    virtual bool  Update(float dTime = 0);  
     virtual bool  Submit(float dTime = 0);
     bool          LastSubmit(float dTime = 0);      // 이거는 오버라이드 X
 
@@ -240,44 +242,56 @@ public:
 
     bool          SubmitChild(float dTime = 0);              // 자식 체이닝 진입조건
     void          SubmitChild_Internal(float dTime = 0);     // 자식 체이닝 루프
-
+    //void          UpdateTransformTree(bool parentDirty);     // 트랜스폼 갱신 더티 체크 (업데이트 로직에서 Tarnsform 갱신 대비)
+    //void          UpdateTransformSelf();                     // Tarnsform 더티면 갱신
     //////////////////////////////////////////////////
     public:
 
 
     void          UpdateRect();
 
-    // 위치 세팅
-    void          SetSize(Float2 size)          { m_size = size; }
-    void          SetPos(XMFLOAT3 vPos)         { m_vPos = vPos; }
+    // 위치 세팅 // 더티 플래그는 아직 미사용
+    void          SetSize(Float2 size)          { m_size = size; m_transformDirty = true; }
+    void          SetPos(XMFLOAT3 vPos)         { m_vPos = vPos; m_transformDirty = true; }
     void          SetPosBK(XMFLOAT3 vPosBk)     { m_vPosBk = vPosBk; }
-    void          SetRot(XMFLOAT3 vRot)         { m_vRot = vRot; }
+    void          SetRot(XMFLOAT3 vRot)         { m_vRot = vRot; m_transformDirty = true; }
     void          SetRotBK(XMFLOAT3 vRotBk)     { m_vRotBk = vRotBk; }
-    void          SetScale(XMFLOAT3 vScale)     { m_vScale = vScale; }
+    void          SetScale(XMFLOAT3 vScale)     { m_vScale = vScale; m_transformDirty = true;}
     void          SetScaleBK(XMFLOAT3 vScaleBk) { m_vScaleBk = vScaleBk; }
-    void          SetPivot(Float2 pivot)        { assert(PivotMinMax(pivot)); m_pivot = pivot; }
-    void          SetPivot(UIDirection dir)     { m_pivot = PivotFromUIDirection(dir); }
+    void          SetPivot(Float2 pivot)        { assert(PivotMinMax(pivot)); m_pivot = pivot; m_transformDirty = true; }
+    void          SetPivot(UIDirection dir)     { m_pivot = PivotFromUIDirection(dir); m_transformDirty = true;}
     virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
-    Float3        SetCanvasSizeX(Float3 sizeXY)   { m_canvasSize = sizeXY; }
+    void          SetCanvasSize(Float3 sizeXY)   { m_canvasSize = sizeXY; m_transformDirty = true;}
     void          SetIsRoot(bool isRoot) { m_isRoot = isRoot; }
     void          SetLayer(WidgetLayer layer) { m_layer = layer; }
+    void          SetTextureSize(int num, TextureHandle& handle);
 
+
+    Float2        AddTextureSize(TextureHandle& handle);
 
 
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
 
-    XMFLOAT3& GetPos() { return m_vPos; }
-    XMFLOAT3& GetRot() { return m_vRot; }
-    XMFLOAT3& GetScale() { return m_vScale; }
-    uint32_t GetID() { return m_id; }
-    const std::wstring& GetName() const { return m_name; }
-    XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
-    const RECT GetRect() const { return m_rect; }
-    const Float2 GetPivot() { return m_pivot; }
-    bool GetIsRoot() { return m_isRoot; }
-    WidgetLayer GetLayer() { return m_layer; }
-    bool HasMeshNode() const { return m_MeshNode.get() != nullptr; }
+    XMFLOAT3&                    GetPos() { return m_vPos; }
+    XMFLOAT3&                    GetRot() { return m_vRot; }
+    XMFLOAT3&                    GetScale() { return m_vScale; }
+    uint32_t                     GetID() { return m_id; }
+    const std::wstring&          GetName() const { return m_name; }
+    
+    XMMATRIX                     GetTransMatrix() { return XMLoadFloat4x4(&m_mTrans); }
+    XMMATRIX                     GetRotMatrix() { return XMLoadFloat4x4(&m_mRot); }
+    XMMATRIX                     GetScaleMatrix() { return XMLoadFloat4x4(&m_mScale); }
+    XMMATRIX                     GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
+    XMMATRIX                     GetNoScaleWorldMatrix() { return XMLoadFloat4x4(&m_mNoScaleWorld); }
+    const RECT                   GetRect() const { return m_rect; }
+    const Float2                 GetPivot() { return m_pivot; }
+    bool                         GetIsRoot() { return m_isRoot; }
+    WidgetLayer                  GetLayer() { return m_layer; }
+    bool                         HasMeshNode() const { return m_MeshNode.get() != nullptr; }
+    const Float3&                GetTextureSize(int num) const { assert(num >= 0 && num < m_textureSizes.size()); return m_textureSizes[num]; }
+    const std::vector<Float2>&   GetTextureSizes() const { return m_textureSizes; }
+   
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();

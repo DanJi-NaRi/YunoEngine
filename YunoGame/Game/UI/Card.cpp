@@ -29,11 +29,6 @@ bool Card::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool Card::UpdateTransform(float dTime) {
-    Button::UpdateTransform(dTime);
-    return true;
-}
-
 bool Card::Update(float dTime) {
     m_pDrag->UpdateDrag(dTime);
 

@@ -32,16 +32,10 @@ bool Button::Start()
     return true;
 }
 
-bool Button::UpdateTransform(float dTime) {
-    Widget::UpdateTransform(dTime);
-
-    return true;
-}
 bool Button::Update(float dTime) {
-    ButtonUpdate(dTime);
-
     Widget::Update(dTime);
-
+    
+    ButtonUpdate(dTime);
     //std::cout << m_BtnState << std::endl;
     return true;
 }

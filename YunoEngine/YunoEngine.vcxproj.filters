@@ -239,7 +239,6 @@
     </ClCompile>
     <ClCompile Include="Private\Input\InputContextBase.cpp" />
     <ClCompile Include="Public\Object\Button.cpp" />
-    <ClCompile Include="Private\UI\UITool\UIManager.cpp" />
     <ClCompile Include="Public\SceneBase\SerializeScene.cpp">
       <Filter>Public\SceneBase</Filter>
     </ClCompile>
@@ -247,12 +246,17 @@
       <Filter>Public\Object</Filter>
     </ClCompile>
     <ClCompile Include="Private\UI\Letterbox.cpp" />
-    <ClCompile Include="Private\UI\UITool\UIFactory.cpp" />
     <ClCompile Include="Public\Object\Effect.cpp">
       <Filter>Public\Object\Effect</Filter>
     </ClCompile>
     <ClCompile Include="Public\Object\EffectManager.cpp">
       <Filter>Public\Object\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\UITool\UIManager.cpp">
+      <Filter>Public\UI\UISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\UITool\UIFactory.cpp">
+      <Filter>Public\UI\UISystem</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -425,7 +429,6 @@
     </ClInclude>
     <ClInclude Include="Public\Input\InputContextBase.h" />
     <ClInclude Include="Public\Object\Button.h" />
-    <ClInclude Include="Public\UI\UITool\UIManager.h" />
     <ClInclude Include="Public\SceneBase\SerializeScene.h">
       <Filter>Public\SceneBase</Filter>
     </ClInclude>
@@ -433,7 +436,6 @@
       <Filter>Public\Object</Filter>
     </ClInclude>
     <ClInclude Include="Public\UI\Letterbox.h" />
-    <ClInclude Include="Public\UI\UITool\UIFactory.h" />
     <ClInclude Include="Public\Object\Effect.h">
       <Filter>Public\Object\Effect</Filter>
     </ClInclude>
@@ -442,6 +444,12 @@
     </ClInclude>
     <ClInclude Include="Public\Object\EffectManager.h">
       <Filter>Public\Object\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\UITool\UIManager.h">
+      <Filter>Public\UI\UISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\UITool\UIFactory.h">
+      <Filter>Public\UI\UISystem</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
@@ -506,6 +514,9 @@
       <Filter>Shaders\Include</Filter>
     </None>
     <None Include="..\Assets\Shaders\PP_TexturesSampler.hlsli">
+      <Filter>Shaders\Include</Filter>
+    </None>
+    <None Include="..\Assets\Shaders\ConstantBuffers_Widget.hlsli">
       <Filter>Shaders\Include</Filter>
     </None>
   </ItemGroup>

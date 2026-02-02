@@ -28,13 +28,9 @@ bool CardSlot::Start()
     return true;
 }
 
-bool CardSlot::UpdateTransform(float dTime) {
-    Slot::UpdateTransform(dTime);
-    return true;
-}
 bool CardSlot::Update(float dTime) {
-
     Slot::Update(dTime);
+
     return true;
 }
 

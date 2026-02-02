@@ -24,17 +24,11 @@ bool Slot::Start()
     return true;
 }
 
-bool Slot::UpdateTransform(float dTime)
-{
-    Widget::UpdateTransform(dTime);
-
-    return true;
-}
-
 bool Slot::Update(float dTime)
 {
-
     Widget::Update(dTime);
+    
+
     return true;
 }
 

@@ -106,6 +106,12 @@
     <Filter Include="System\GridSystem\Queue_test">
       <UniqueIdentifier>{a112416b-9bd3-4b1e-b689-f66c726ce9b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes\3.Phase">
+      <UniqueIdentifier>{6b093a5a-706d-4922-8eba-d0cc15908609}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Image\CardTable">
+      <UniqueIdentifier>{8dae683b-fb3e-4c62-9d9c-597c2549a80b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -172,9 +178,6 @@
     <ClCompile Include="Game\UI\ButtonTemplate.cpp">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClCompile>
-    <ClCompile Include="Game\UI\CardTable.cpp">
-      <Filter>Game\UI\Image</Filter>
-    </ClCompile>
     <ClCompile Include="GameManager\GameManager.cpp" />
     <ClCompile Include="Game\UI\UserImage.cpp" />
     <ClCompile Include="Scenes\Title.cpp">
@@ -217,7 +220,6 @@
     <ClCompile Include="CardRangeManager.cpp">
       <Filter>Card</Filter>
     </ClCompile>
-    <ClCompile Include="ExitButton.cpp" />
     <ClCompile Include="WidgetPiece.cpp">
       <Filter>Game\Object\Piece</Filter>
     </ClCompile>
@@ -259,6 +261,24 @@
     </ClCompile>
     <ClCompile Include="System\PlayQueue.cpp">
       <Filter>System\GridSystem\Queue_test</Filter>
+    </ClCompile>
+    <ClCompile Include="PhaseScene.cpp">
+      <Filter>Scenes\3.Phase</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\CardTable.cpp">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClCompile>
+    <ClCompile Include="CardConfirmPanel.cpp">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClCompile>
+    <ClCompile Include="CardSelectionPanel.cpp">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClCompile>
+    <ClCompile Include="CardCancelButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="CardConfirmButton.cpp">
+      <Filter>Game\UI\Button</Filter>
     </ClCompile>
     <ClCompile Include="BattlePackets.cpp" />
   </ItemGroup>
@@ -343,9 +363,6 @@
     <ClInclude Include="Game\UI\ButtonTemplate.h">
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClInclude>
-    <ClInclude Include="Game\UI\CardTable.h">
-      <Filter>Game\UI\Image</Filter>
-    </ClInclude>
     <ClInclude Include="WeaponSelectScene_InputContext.h">
       <Filter>System\UIContext</Filter>
     </ClInclude>
@@ -362,7 +379,6 @@
     <ClInclude Include="Game\Object\CardActData.h">
       <Filter>Card</Filter>
     </ClInclude>
-    <ClInclude Include="ExitButton.h" />
     <ClInclude Include="WidgetPiece.h">
       <Filter>Game\Object\Piece</Filter>
     </ClInclude>
@@ -413,6 +429,27 @@
     </ClInclude>
     <ClInclude Include="Game\UI\TitleImage.h">
       <Filter>Game\UI\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseScene.h">
+      <Filter>Scenes\3.Phase</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\CardTable.h">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClInclude>
+    <ClInclude Include="CardConfirmPanel.h">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClInclude>
+    <ClInclude Include="CardSelectionPanel.h">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClInclude>
+    <ClInclude Include="CardCancelButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="CardConfirmButton.h">
+      <Filter>Game\UI\Button</Filter>
     </ClInclude>
     <ClInclude Include="BattlePackets.h" />
     <ClInclude Include="CardRangeManager.h">

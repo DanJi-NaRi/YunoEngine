@@ -5,11 +5,11 @@ class Card;
 class CardSlot;
 
 
-class CardTable : public Image
+class CardSelectionPanel : public Image
 {
 public:
-    CardTable(UIFactory& uiFactory);
-    virtual ~CardTable();
+    CardSelectionPanel(UIFactory& uiFactory);
+    virtual ~CardSelectionPanel();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
     bool Start() override;
     void CreateChild() override;
@@ -26,7 +26,7 @@ public:
 protected:
     // 덱 정보
     std::vector<std::unique_ptr<Card>> m_deck;      // 카드 덱 // 그리드 시스템 이용할수도??
-    
+
     // 세팅된 카드 / 스냅 위치 정보
     std::queue<Card*> m_SetCards;                   // 세팅한 카드 // 슬롯 4개로 할 것
     std::vector<CardSlot*> m_SetCardSlots;          // 카드 세팅할 슬롯 위젯

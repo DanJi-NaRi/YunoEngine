@@ -48,11 +48,15 @@ void UIManager::Update(float dTime)
 {
     FrameDataUpdate();
     UpdateButtonStates(); // 모든 버튼 상태 업데이트
+
+    // 로직 업데이트
     for (auto& widget : m_widgets)
-    {
-        //if(widget->GetIsRoot()) widget->UpdateTransform(dTime); // 체이닝
-        widget->Update(dTime); // 로직 업데이트 // 체이닝 금지
-    }
+        widget->Update(dTime);
+
+    // Transform 업데이트 - 루트만
+    for (auto& widget : m_widgets)
+        if (widget->GetIsRoot()) widget->UpdateTransform(dTime);
+           
 }
 //나중에 이벤트 큐 만들어서 바꿔야함
 void UIManager::Submit(float dTime)
@@ -63,27 +67,36 @@ void UIManager::Submit(float dTime)
 
     for (auto& widget : m_widgets)
     {
-        if (widget->GetIsRoot()) // 체이닝
-            widget->Submit(dTime);
+        // 사실상 이제 생성 순서만으로 이미 정렬이 되어있어, 
+        // 부모->자식 사이에 이물 Widget이 낄 수 없는 상태->체이닝 필요없음
+        // 체이닝을 다시 살리게 되면, 레이어가 2순위가 됨
+        
+        //if (widget->GetIsRoot()) // 체이닝
+        widget->Submit(dTime);
     }
 }
 
 void UIManager::LayerSubmit(float dTime)
 {
-    // Submit중 변경되지 않는다는 보장이 필요함.
-
     FrameDataSubmit();
 
     std::array<std::vector<Widget*>, (int)WidgetLayer::Count> layerWidgets;
 
     for (auto& pushWidget : m_widgets) {
-        layerWidgets[(int)pushWidget->GetLayer()].push_back(pushWidget.get()); // 레이어 받아넣기
+        layerWidgets[(int)pushWidget->GetLayer()].push_back(pushWidget.get());
     }
 
-    for (auto& widgetVec : layerWidgets)
+    // 역순회 -> Default(0)가 가장 뒤에 그려짐
+    for (int i = (int)WidgetLayer::Count - 1; i >= 0; --i)
     {
-        for (auto& widget : widgetVec) {
-            if (widget->GetIsRoot()) // 체이닝
+        auto& widgetVec = layerWidgets[i];
+
+        for (auto* widget : widgetVec) {
+            // 사실상 이제 생성 순서만으로 이미 정렬이 되어있어, 
+            // 부모->자식 사이에 이물 Widget이 낄 수 없는 상태->체이닝 필요없음
+            // 체이닝을 다시 살리게 되면, 레이어가 2순위가 됨
+
+            //if (widget->GetIsRoot()) 
                 widget->Submit(dTime);
         }
     }

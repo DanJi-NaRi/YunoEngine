@@ -1,15 +1,13 @@
 #pragma once
 #include "Button.h"
 
-class IScene;
-
-class ExitButton : public Button
+class CardCancelButton : public Button
 {
 public:
-    ExitButton(UIFactory& uiFactory);
-    virtual ~ExitButton();
+    CardCancelButton(UIFactory& uiFactory);
+    virtual ~CardCancelButton();
     bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
-    bool UpdateTransform(float dTime = 0) override;
+    void CreateChild() override;                     // 위젯 생성 동시에 바로 다음 차례에 자식 위젯을 생성해야 한다면 (자식 생성 공간)
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();
@@ -24,16 +22,10 @@ public:
     virtual bool RMBReleasedEvent() override;                   // 우클릭 뗐을 때
     virtual bool KeyReleasedEvent(uint32_t key = 0) override;   // 바인딩한 키 뗐을 때
 
-    virtual void Exit(); // 나가기 버튼은 많으니 파생해서 쓸수도?
-
-    void SetExitScene(IScene* scene) { m_pExitScene = scene; }
-    IScene* GetExitScene() { return m_pExitScene; }
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
-    virtual WidgetClass GetWidgetClass() override { return WidgetClass::ExitButton; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::Card; } // 바꾸기
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Test/BtnOn.png"); }    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)
 protected:
-    IScene* m_pExitScene = nullptr;
-    // SceneEnum m_ExitScene = SceneEnum::Default;
 };

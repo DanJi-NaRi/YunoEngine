@@ -30,14 +30,10 @@ bool WeaponButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool WeaponButton::UpdateTransform(float dTime) {
-    Button::UpdateTransform(dTime);
-
-    return true;
-}
 bool WeaponButton::Update(float dTime) {
-
     Button::Update(dTime);
+
+
     return true;
 }
 

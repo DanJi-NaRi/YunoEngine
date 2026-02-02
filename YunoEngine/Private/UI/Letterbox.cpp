@@ -13,82 +13,16 @@ bool Letterbox::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Image::Create(name, id, vPos);
 
+    m_useAspectComp = false; // 화면비 스케일 끄기
+
     return true;
 }
 
-
-bool Letterbox::UpdateTransform(float dTime)
-{
-    //Widget::UpdateTransform(dTime);
-
-    // DX 의 레스터라이즈 규칙에 따른 2D 픽셀좌표 보정.
-    //m_vPos.x -= 0.5f;	m_vPos.y -= 0.5f;
-
-    //m_clientSize = m_uiFactory.GetCanvasSize();
-
-    /*
-    {
-        Float2 origin = Float2(1920.0f, 1080.0f); // 기준(디자인) 해상도
-        Float2 canvas = m_pUIManager->GetCanvasSize(); // 현재 클라이언트/캔버스
-
-        float sx = canvas.x / origin.x;
-        float sy = canvas.y / origin.y;
-
-        // 레터박스(전체가 보이도록) => 더 작은 스케일 채택
-        float s = (sx < sy) ? sx : sy;
-
-        // 16:9 유효영역(스케일 적용 후 origin 크기)
-        Float2 fitted = Float2(origin.x * s, origin.y * s);
-
-        // 남는 공간(레터박스) 분배: 중앙 정렬
-        Float2 letterboxOffset = Float2(
-            (canvas.x - fitted.x) * 0.5f,
-            (canvas.y - fitted.y) * 0.5f);
-
-        m_canvasOffset = Float2(s, s);
-        Float2 m_canvasLetterboxOffset = letterboxOffset; // 이동
-
-        XMFLOAT3 finalSize;
-        finalSize.x = m_size.x * m_vScale.x * m_canvasOffset.x;
-        finalSize.y = m_size.y * m_vScale.y * m_canvasOffset.y;
-        finalSize.z = 1.0f;
-
-        XMFLOAT3 finalPos;
-        finalPos.x = m_vPos.x * m_canvasOffset.x + m_canvasLetterboxOffset.x;
-        finalPos.y = m_vPos.y * m_canvasOffset.y + m_canvasLetterboxOffset.y;
-        finalPos.z = m_vPos.z;
-    }
-     */
-
-    m_finalSize = Float2(m_size.x * m_vScale.x, m_size.y * m_vScale.y);
-
-    //m_vScale.z = 1.0f; // UI는 z scale 의미 없음(일단 1로 고정)
-
-    XMMATRIX mScale = XMMatrixScaling(m_finalSize.x, m_finalSize.y, 1.0f);
-    XMMATRIX mRot = XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
-    XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
-    //XMMATRIX mTrans = XMMatrixTranslation(finalPos.x, finalPos.y, m_vPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
-    XMMATRIX mPivot = XMMatrixTranslation(-m_pivot.x, -m_pivot.y, 0.0f); // 피벗
-
-    XMMATRIX mTM;
-
-    if (m_Parent)
-        mTM = mPivot * mScale * mRot * mTrans * m_Parent->GetWorldMatrix();
-    else
-        mTM = mPivot * mScale * mRot * mTrans;
-
-    XMStoreFloat4x4(&m_mScale, mScale);
-    XMStoreFloat4x4(&m_mRot, mRot);
-    XMStoreFloat4x4(&m_mTrans, mTrans);
-    XMStoreFloat4x4(&m_mWorld, mTM);
-
-    UpdateRect(); // m_rect 갱신
-    return true;
-}
 
 bool Letterbox::Update(float dTime)
 {
     UpdateLetterBox(dTime);
+
     return true;
 }
 
