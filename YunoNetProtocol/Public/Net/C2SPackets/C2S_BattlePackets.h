@@ -32,6 +32,7 @@ namespace yuno::net::packets
 {
     struct C2S_ReadyTurn final
     {
+
         std::vector<CardPlayCommand> commands;
 
         void Serialize(ByteWriter& w) const;

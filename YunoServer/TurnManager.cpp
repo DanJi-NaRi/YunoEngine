@@ -58,7 +58,8 @@ namespace yuno::server
         S2C_BattleResult pkt;
         pkt.runtimeCardId = c.runtimeId;
         pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
-
+        pkt.unitLocalIndex = static_cast<uint8_t>(c.localIndex);
+        pkt.dir = static_cast<uint8_t>(c.dir);
 
         //  테스트용 하드코딩 결과
         std::array<UnitStateDelta, 4> us;

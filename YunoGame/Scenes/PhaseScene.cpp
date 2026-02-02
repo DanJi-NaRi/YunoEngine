@@ -45,10 +45,10 @@ bool PhaseScene::OnCreateScene()
     auto clientX = YunoEngine::GetWindow()->GetClientWidth();
     auto clientY = YunoEngine::GetWindow()->GetClientHeight();
 
-    CreateWidget<CardConfirmButton>(L"tstButton", XMFLOAT3(0, 0, 0), Float2(140, 55), UIDirection::LeftTop);
+    //CreateWidget<CardConfirmButton>(L"tstButton", XMFLOAT3(0, 0, 0), Float2(140, 55), UIDirection::LeftTop);
 
     CreateWidget<CardConfirmPanel>(L"CardConformPanel", XMFLOAT3(0, clientY, 0), Float2(140, 55), UIDirection::LeftBottom);
-    CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", XMFLOAT3(clientX, clientY, 0), Float2(140, 55), UIDirection::RightBottom);
+    //CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", XMFLOAT3(clientX, clientY, 0), Float2(140, 55), UIDirection::RightBottom);
 
 
     //CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0));
@@ -68,10 +68,10 @@ bool PhaseScene::OnCreateScene()
 
     //m_objectManager->CreateWidget<Image>(L"tst", XMFLOAT3(0, 0, 0));
 
-    auto* a = m_uiManager->CreateWidget<Letterbox>(L"LetterBoxA", XMFLOAT3(0, 0, 0));
-    a->SetRole(Letterbox::Role::BarA);
-    auto* b = m_uiManager->CreateWidget<Letterbox>(L"LetterBoxB", XMFLOAT3(0, 0, 0));
-    b->SetRole(Letterbox::Role::BarB);
+    //auto* a = m_uiManager->CreateWidget<Letterbox>(L"LetterBoxA", XMFLOAT3(0, 0, 0));
+    //a->SetRole(Letterbox::Role::BarA);
+    //auto* b = m_uiManager->CreateWidget<Letterbox>(L"LetterBoxB", XMFLOAT3(0, 0, 0));
+    //b->SetRole(Letterbox::Role::BarB);
     //m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
     //m_minimap->CreateObject(1000, 900, 0);
 

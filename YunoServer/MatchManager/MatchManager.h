@@ -16,10 +16,10 @@ namespace yuno::server
         {
             bool occupied = false;
             std::uint32_t userId = 0;        // 고정 ID (OS한테 받아올 예정)
-            std::uint32_t sessionId = 0; 
+            std::uint32_t sessionId = 0;    
 
-            std::uint32_t unitId1 = 0;
-            std::uint32_t unitId2 = 0;
+            std::uint32_t unitId1 = 0;      // 선택 무기 1번 id
+            std::uint32_t unitId2 = 0;      // 선택 무기 2번 id
 
             bool ready = false;
 
