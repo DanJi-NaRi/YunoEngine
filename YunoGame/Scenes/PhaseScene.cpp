@@ -50,8 +50,6 @@ bool PhaseScene::OnCreateScene()
     CreateWidget<Card>(L"tstCard", XMFLOAT3(300, 100, 0), Float2(100, 135), UIDirection::LeftTop);
     
 
-    //CreateWidget<CardConfirmButton>(L"tstButton", XMFLOAT3(0, 0, 0), Float2(140, 55), UIDirection::LeftTop);
-
     CreateWidget<CardConfirmPanel>(L"CardConformPanel", XMFLOAT3(0, clientY, 0), Float2(140, 55), UIDirection::LeftBottom);
     CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", XMFLOAT3(clientX, clientY, 0), Float2(140, 55), UIDirection::RightBottom);
 

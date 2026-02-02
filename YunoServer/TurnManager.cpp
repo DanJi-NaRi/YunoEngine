@@ -112,6 +112,15 @@ namespace yuno::server
         using namespace yuno::net::packets;
 
         S2C_BattleResult pkt;
+
+        // 쓰레기 값 들어가고 있어서 테스트를 위해 하드코딩
+        //pkt.runtimeCardId = c.runtimeId;
+        //pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
+        //pkt.runtimeCardId = 1;
+        //pkt.ownerSlot = 1;
+        //pkt.unitLocalIndex = 1;
+        //pkt.dir = 0;
+
         pkt.runtimeCardId = c.runtimeId;
         pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
         pkt.unitLocalIndex = static_cast<uint8_t>(c.localIndex);
