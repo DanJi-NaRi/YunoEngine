@@ -362,17 +362,6 @@
     <ClInclude Include="Game\Object\CardQueue.h">
       <Filter>Card</Filter>
     </ClInclude>
-<<<<<<< Updated upstream
-    <ClInclude Include="Game\Object\CardActData.h">
-      <Filter>Card</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\UI\WidgetPiece.h">
-=======
-    <ClInclude Include="SimpleMath.h" />
-    <ClInclude Include="WidgetPiece.h">
->>>>>>> Stashed changes
-      <Filter>Game\Object\Piece</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Object\UnitPiece.h">
       <Filter>Game\Object\Piece</Filter>
     </ClInclude>
@@ -462,6 +451,9 @@
     </ClInclude>
     <ClInclude Include="System\BattlePackets.h">
       <Filter>System\Battle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\WidgetPiece.h">
+      <Filter>Game\Object\Piece</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
