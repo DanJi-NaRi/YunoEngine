@@ -73,13 +73,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\Game\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\Game\</IntDir>
-    <LibraryPath>$(SolutionDir)ThirdParty\FMOD\core\lib\x64;$(SolutionDir)ThirdParty\FMOD\studio\lib\x64;$(SolutionDir)ThirdParty;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)ThirdParty\FMOD\core\lib\x64;$(SolutionDir)ThirdParty\FMOD\studio\lib\x64;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)ThirdParty\FMOD\studio\inc;$(SolutionDir)ThirdParty\FMOD\core\inc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\Game\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(Platform)\$(Configuration)\Game\</IntDir>
-    <LibraryPath>$(SolutionDir)ThirdParty\FMOD\core\lib\x64;$(SolutionDir)ThirdParty\FMOD\studio\lib\x64;$(SolutionDir)ThirdParty;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)ThirdParty\FMOD\core\lib\x64;$(SolutionDir)ThirdParty\FMOD\studio\lib\x64;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)ThirdParty\FMOD\studio\inc;$(SolutionDir)ThirdParty\FMOD\core\inc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -130,10 +130,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)External\DirectXTK\Bin\Desktop_2022\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -161,10 +160,9 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)External\DirectXTK\Bin\Desktop_2022\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/VERBOSE:LIB %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>

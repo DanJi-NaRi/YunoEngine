@@ -88,10 +88,10 @@ bool GameApp::OnInit()
 
    SceneTransitionOptions opt{};
    opt.immediate = true;
-   //sm->RequestReplaceRoot(std::make_unique<RenderTest>(), opt);  // 본인이 작업중인 씬으로 넣으면 됨
+   sm->RequestReplaceRoot(std::make_unique<RenderTest>(), opt);  // 본인이 작업중인 씬으로 넣으면 됨
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
-   sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
+   //sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
 
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
