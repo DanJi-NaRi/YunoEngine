@@ -33,7 +33,8 @@ namespace yuno::server
             MatchManager& match,
             YunoServerNetwork& network,
             ServerCardRuntime& runtime,
-            ServerCardManager& cardDB);
+            ServerCardManager& cardDB,
+            RoundController& roundController);
 
         void SubmitTurn(
             uint64_t sessionId,
@@ -48,6 +49,7 @@ namespace yuno::server
         YunoServerNetwork& m_network;
         ServerCardRuntime& m_runtime;
         ServerCardManager& m_cardDB;
+        RoundController& m_roundController;
 
         std::vector<CardPlayCommand> m_turnCards[2];
         bool m_submitted[2] = { false, false };
