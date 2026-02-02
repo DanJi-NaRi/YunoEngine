@@ -157,10 +157,4 @@ namespace yuno::server
         return (it != m_effectData.end()) ? &it->second : nullptr;
     }
 
-    const CardActData* ServerCardManager::GetActData(int cardID) const
-    {
-        auto it = m_actData.find(cardID);
-        return (it != m_actData.end()) ? &it->second : nullptr;
-    }
-
 } // namespace yuno::server

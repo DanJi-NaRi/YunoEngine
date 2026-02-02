@@ -35,17 +35,17 @@ namespace yuno::server
 
     void TurnManager::SubmitTurn(
         uint64_t sessionId,
-        const std::vector<uint32_t>& runtimeIDs)
+        const std::vector<CardPlayCommand>& commands)
     {
         int idx = m_match.FindSlotBySessionId(sessionId);
         if (idx < 0) return;
 
-        m_turnCards[idx] = runtimeIDs;
+        m_turnCards[idx] = commands;
         m_submitted[idx] = true;
 
         std::cout << "[Server] Player " << idx
-            << " submitted " << runtimeIDs.size()
-            << " cards\n";
+            << " submitted " << commands.size()
+            << " commands\n";
 
         TryResolveTurn();
     }
@@ -105,8 +105,9 @@ namespace yuno::server
         {
             int localIndex = 0;
 
-            for (uint32_t runtimeId : m_turnCards[slot])
+            for (const CardPlayCommand& cmd : m_turnCards[slot])
             {
+                uint32_t runtimeId = cmd.runtimeID;
                 uint32_t dataId = m_runtime.GetDataID(runtimeId);
                 const CardData& card = m_cardDB.GetCardData(dataId);
 
@@ -116,7 +117,8 @@ namespace yuno::server
                     card.m_allowedUnits,
                     card.m_speed,
                     slot,
-                    localIndex++
+                    localIndex++,
+                    cmd.dir 
                     });
 
                 std::cout
@@ -127,6 +129,7 @@ namespace yuno::server
                     << " name=" << card.m_name
                     << " speed=" << card.m_speed
                     << " weapon=" << card.m_allowedUnits
+                    << " Direction=" << static_cast<int>(cmd.dir)
                     << "\n";
             }
         }

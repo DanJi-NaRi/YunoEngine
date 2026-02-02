@@ -324,7 +324,7 @@ namespace yuno::server
 
                 m_turnManager.SubmitTurn(
                     peer.sId,
-                    pkt.runtimeIDs);
+                    pkt.commands);
             }
         );//Submit ReadyTurn Packet End
     }

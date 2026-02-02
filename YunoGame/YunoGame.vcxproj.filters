@@ -362,10 +362,15 @@
     <ClInclude Include="Game\Object\CardQueue.h">
       <Filter>Card</Filter>
     </ClInclude>
+<<<<<<< Updated upstream
     <ClInclude Include="Game\Object\CardActData.h">
       <Filter>Card</Filter>
     </ClInclude>
     <ClInclude Include="Game\UI\WidgetPiece.h">
+=======
+    <ClInclude Include="SimpleMath.h" />
+    <ClInclude Include="WidgetPiece.h">
+>>>>>>> Stashed changes
       <Filter>Game\Object\Piece</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\UnitPiece.h">

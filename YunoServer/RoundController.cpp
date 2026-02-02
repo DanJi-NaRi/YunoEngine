@@ -3,6 +3,7 @@
 #include "MatchManager.h"
 #include "ServerCardDealer.h"
 #include "YunoServerNetwork.h"
+#include "ServerCardInstance.h"
 
 #include "PacketBuilder.h"
 #include "S2C_CountDown.h"
@@ -87,13 +88,13 @@ namespace yuno::server
                 continue;
 
             // 무기 기반 카드 풀 생성 (서버 전용 정보)
-            auto runtimeIDs =
+            auto cards =
                 m_cardDealer.MakeInitialDeck(
                     slot.unitId1,
                     slot.unitId2);
 
             yuno::net::packets::S2C_TestCardList pkt;
-            pkt.runtimeIDs = std::move(runtimeIDs);
+            pkt.cards = std::move(cards);
 
             auto bytes = yuno::net::PacketBuilder::Build(
                 yuno::net::PacketType::S2C_TestCardList,

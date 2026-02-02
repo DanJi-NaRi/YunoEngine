@@ -131,6 +131,23 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
 }
 
+void GameManager::SetCards(
+    const std::vector<yuno::net::packets::CardSpawnInfo>& cards)
+{
+    m_Cards.clear();
+    m_CardRuntimeIDs.clear();
+
+    for (const auto& c : cards)
+    {
+        m_Cards.push_back({
+            c.runtimeID,
+            c.dataID
+            });
+
+        m_CardRuntimeIDs[c.runtimeID] = c.dataID;
+    }
+}
+
 void GameManager::StartCountDown(int countTime, int S1U1, int S1U2, int S2U1, int S2U2)
 {
     // 상대방 슬롯에 전달받은 유닛ID에 맞는 텍스쳐로 변경하기 넣으면 됨
@@ -192,12 +209,13 @@ bool GameManager::ToggleReady()
     return m_isReady;
 }
 
-void GameManager::SubmitTurn(const std::vector<uint32_t>& runtimeIDs)
+void GameManager::SubmitTurn(
+    const std::vector<CardPlayCommand>& commands)
 {
     using namespace yuno::net;
 
     packets::C2S_ReadyTurn pkt;
-    pkt.runtimeIDs = runtimeIDs;
+    pkt.commands = commands;
 
     auto bytes = PacketBuilder::Build(
         PacketType::C2S_ReadyTurn,
@@ -208,6 +226,7 @@ void GameManager::SubmitTurn(const std::vector<uint32_t>& runtimeIDs)
 
     m_clientNet->SendPacket(std::move(bytes));
 }
+
 
 //void GameManager::RoundInit(yuno::net::packets::S2C_Error data)
 //{

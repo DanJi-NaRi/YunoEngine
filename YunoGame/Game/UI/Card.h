@@ -1,7 +1,6 @@
 #pragma once
 #include "Button.h"
 #include "CardData.h"       // 멤버로 들어야 해서 필요함
-#include "CardActData.h"    // 멤버로 들어야 해서 필요함
 
 class Card : public Button
 {

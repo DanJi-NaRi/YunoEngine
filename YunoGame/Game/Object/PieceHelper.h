@@ -1,4 +1,7 @@
 #pragma once
+
+#include "C2S_BattlePackets.h"
+
 enum class GamePiece : uint8_t
 {
     Ally1,
@@ -28,22 +31,6 @@ enum class CommandType : uint8_t
 
     Turn_Over
 };
-
-enum class Direction : uint8_t
-{
-    Up,
-    Down,
-    Right,
-    Left,
-
-    UpLeft,
-    UpRight,
-    DownLeft,
-    DownRight,
-
-    Same
-};
-
 
 struct PieceInfo
 { 

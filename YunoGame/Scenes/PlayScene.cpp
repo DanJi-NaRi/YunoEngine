@@ -64,24 +64,56 @@ void PlayScene::HandleCardSelect(int key, int index)
 {
     if (!m_input->IsKeyPressed(key))
         return;
-    
+
+    if (m_pendingCardRuntimeID != 0)
+        return; // 이미 카드 하나 대기 중이면 무시
+
     uint32_t runtimeID =
-        GameManager::Get().GetTestCardRuntimeIDByIndex(index);
+        GameManager::Get().GetCardRuntimeIDByIndex(index);
 
     if (runtimeID == 0)
         return;
 
-    if (m_cardQueue.Push(runtimeID))
+    m_pendingCardRuntimeID = runtimeID;
+
+    std::cout << "[Card Selected] runtimeID = "
+        << runtimeID
+        << " (waiting for direction)\n";
+}
+
+void PlayScene::HandleDirectionInput()
+{
+    if (m_pendingCardRuntimeID == 0)
+        return;
+
+    Direction dir = Direction::None;
+
+    if (m_input->IsKeyPressed(VK_UP))    dir = Direction::Up;
+    if (m_input->IsKeyPressed(VK_DOWN))  dir = Direction::Down;
+    if (m_input->IsKeyPressed(VK_LEFT))  dir = Direction::Left;
+    if (m_input->IsKeyPressed(VK_RIGHT)) dir = Direction::Right;
+
+    if (dir == Direction::None)
+        return;
+
+    CardPlayCommand cmd;
+    cmd.runtimeID = m_pendingCardRuntimeID;
+    cmd.dir = dir;
+
+    if (m_cardQueue.Push(cmd))
     {
-        std::cout << "[Card Select] runtimeID = "
-            << runtimeID << "\n";
+        std::cout << "[Card Queued] runtimeID="
+            << cmd.runtimeID
+            << " dir=" << static_cast<int>(cmd.dir)
+            << "\n";
+
+        m_pendingCardRuntimeID = 0; // 대기 해제
     }
     else
     {
-        std::cout << "[Card Select] Queue Full\n";
+        std::cout << "[Card Queue] Full\n";
     }
 }
-
 //TODO: 디버깅용 나중에는 UI씬에 OnEndTurnClicked함수 만들어서 옮겨야함
 void PlayScene::EndTurn()
 {
@@ -152,6 +184,8 @@ void PlayScene::TestInput()
     HandleCardSelect(VK_NUMPAD8, 7);
     HandleCardSelect(VK_NUMPAD9, 8);
 
+    //방향 선택
+    HandleDirectionInput();
     // 엔드 턴
     if (m_input->IsKeyPressed(VK_RETURN))
     {
