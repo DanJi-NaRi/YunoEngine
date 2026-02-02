@@ -46,6 +46,7 @@ bool Text::Submit(float dTime)
     {
         m_desc.position = XMFLOAT2(m_finalPos.x + m_textOffset.x, m_finalPos.y + m_textOffset.y);
         m_desc.rotation = m_vRot.z;
+        m_desc.scale = { m_vScale.x, m_vScale.y };
         m_desc.origin = XMFLOAT2(m_pivot.x * m_finalSize.x, m_pivot.y * m_finalSize.y); //텍스트 사각형 내부에서 텍스트 위치
         m_desc.layerDepth = 0.0f;
         m_pRenderer->SubmitText(m_desc);

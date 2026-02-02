@@ -154,7 +154,7 @@ struct TextDrawDesc
     std::wstring text;
     XMFLOAT2 position = { 0.0f, 0.0f };
     XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-    float scale = 1.0f;
+    XMFLOAT2 scale = { 1.0f, 1.0f };
     float rotation = 0.0f;
     XMFLOAT2 origin = { 0.0f, 0.0f };
     float layerDepth = 0.0f;

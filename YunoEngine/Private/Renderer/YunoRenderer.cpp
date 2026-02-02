@@ -2582,7 +2582,8 @@ bool YunoRenderer::RegisterFont()
     m_SpriteBatch = std::make_unique<SpriteBatch>(m_context.Get());
 
     try {
-        auto font = std::make_unique<SpriteFont>(m_device.Get(), L"../Assets/Font/test1.spritefont");
+        //여기다 폰트 등록
+        auto font = std::make_unique<SpriteFont>(m_device.Get(), L"../Assets/Font/Danjo-bold.spritefont");
         m_Fonts.emplace(FontID::Default, std::move(font));
     }
     catch (...) {

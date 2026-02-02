@@ -15,13 +15,13 @@ public:
     void SetText(const std::wstring& text) { m_desc.text = text; }
     void SetFont(FontID fontId) { m_desc.fontId = fontId; }
     void SetColor(const XMFLOAT4& color) { m_desc.color = color; }
-    void SetTextScale(float scale) { m_desc.scale = scale; }
+    void SetTextScale(const XMFLOAT3& scale) { m_vScale = scale; }
     void SetTextOffset(const XMFLOAT2& offset) { m_textOffset = offset; }
 
     const std::wstring& GetText() const { return m_desc.text; }
     FontID GetFont() const { return m_desc.fontId; }
     XMFLOAT4 GetColor() const { return m_desc.color; }
-    float GetTextScale() const { return m_desc.scale; }
+    XMFLOAT2 GetTextScale() const { return m_desc.scale; }
     XMFLOAT2 GetTextOffset() const { return m_textOffset; }
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Text; }
