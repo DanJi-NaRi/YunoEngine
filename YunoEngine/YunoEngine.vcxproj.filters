@@ -233,19 +233,15 @@
     <ClCompile Include="Private\UI\UITool\DragProvider.cpp">
       <Filter>Public\UI\UISystem</Filter>
     </ClCompile>
-    <ClCompile Include="Private\UI\Slot.cpp" />
     <ClCompile Include="Private\UI\UITool\CursurSystem.cpp">
       <Filter>Public\UI\UISystem</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Input\InputContextBase.cpp" />
-    <ClCompile Include="Public\Object\Button.cpp" />
     <ClCompile Include="Public\SceneBase\SerializeScene.cpp">
       <Filter>Public\SceneBase</Filter>
     </ClCompile>
     <ClCompile Include="Public\Object\ObjectTypeRegistry.cpp">
       <Filter>Public\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Private\UI\Letterbox.cpp" />
     <ClCompile Include="Public\Object\Effect.cpp">
       <Filter>Public\Object\Effect</Filter>
     </ClCompile>
@@ -257,6 +253,18 @@
     </ClCompile>
     <ClCompile Include="Private\UI\UITool\UIFactory.cpp">
       <Filter>Public\UI\UISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\Button.cpp">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Input\InputContextBase.cpp">
+      <Filter>Public\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\Slot.cpp">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\Letterbox.cpp">
+      <Filter>Public\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -423,19 +431,15 @@
     <ClInclude Include="Public\UI\UITool\DragProvider.h">
       <Filter>Public\UI\UISystem</Filter>
     </ClInclude>
-    <ClInclude Include="Public\UI\Slot.h" />
     <ClInclude Include="Public\UI\UITool\CursurSystem.h">
       <Filter>Public\UI\UISystem</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Input\InputContextBase.h" />
-    <ClInclude Include="Public\Object\Button.h" />
     <ClInclude Include="Public\SceneBase\SerializeScene.h">
       <Filter>Public\SceneBase</Filter>
     </ClInclude>
     <ClInclude Include="Public\Object\ObjectTypeRegistry.h">
       <Filter>Public\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Public\UI\Letterbox.h" />
     <ClInclude Include="Public\Object\Effect.h">
       <Filter>Public\Object\Effect</Filter>
     </ClInclude>
@@ -450,6 +454,18 @@
     </ClInclude>
     <ClInclude Include="Public\UI\UITool\UIFactory.h">
       <Filter>Public\UI\UISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\Button.h">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Input\InputContextBase.h">
+      <Filter>Public\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\Slot.h">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\Letterbox.h">
+      <Filter>Public\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
@@ -514,9 +530,6 @@
       <Filter>Shaders\Include</Filter>
     </None>
     <None Include="..\Assets\Shaders\PP_TexturesSampler.hlsli">
-      <Filter>Shaders\Include</Filter>
-    </None>
-    <None Include="..\Assets\Shaders\ConstantBuffers_Widget.hlsli">
       <Filter>Shaders\Include</Filter>
     </None>
   </ItemGroup>

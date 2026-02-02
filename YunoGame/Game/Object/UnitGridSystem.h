@@ -27,7 +27,7 @@ protected:
 
     void SetNG_P(Grid* NG_P);
     int GetID(int cx, int cz) override;
-    I2 GetCellByID(int tileID) override;
+    Int2 GetCellByID(int tileID) override;
 
 protected:
     int m_row, m_column;

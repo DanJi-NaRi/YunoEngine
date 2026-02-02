@@ -109,7 +109,7 @@ void MinimapGridSystem::CreateTileAndPiece(float x, float y, float z)
 
         dir = (w.pId == 1) ? Direction::Right : Direction::Left;
         auto cellPos = GetCellByID(w.currentTile);
-        cx = cellPos.x;     cy = cellPos.z;
+        cx = cellPos.x;     cy = cellPos.y;
 
         auto [px, py] = m_grids[(int)m_nowG]->CellToWorld(cx, cy);
 
@@ -352,7 +352,7 @@ const TileOccupy MinimapGridSystem::GetTileTO(int cx, int cy)
     return m_tiles[GetID(cx, cy)].to;
 }
 
-F2 MinimapGridSystem::GetUIwPos(int cx, int cy)
+Float2 MinimapGridSystem::GetUIwPos(int cx, int cy)
 {
     auto [x, y] = m_grids[(int)m_nowG]->CellToWorld(cx, cy);
     float uwx = x * m_uiScale + m_vPos.x;
@@ -360,7 +360,7 @@ F2 MinimapGridSystem::GetUIwPos(int cx, int cy)
     return {uwx, uwy};
 }
 
-F2 MinimapGridSystem::GetwPos(float uwx, float uwy)
+Float2 MinimapGridSystem::GetwPos(float uwx, float uwy)
 {
     float wx = (uwx - m_vPos.x) / m_uiScale;
     float wy = (uwy - m_vPos.y) / m_uiScale;
@@ -389,7 +389,7 @@ Direction MinimapGridSystem::GetCollisionDir(float oldcx, float oldcy, float cx,
     else        return (dy < 0) ? Direction::UpLeft : Direction::DownLeft;
 }
 
-F2 MinimapGridSystem::GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cy)
+Float2 MinimapGridSystem::GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cy)
 {
     auto [wx, wy] = m_grids[(int)m_nowG]->CellToWorld(cx, cy);
     float width = (m_cellSizeX / 2.f);

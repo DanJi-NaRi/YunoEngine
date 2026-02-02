@@ -90,7 +90,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     // 기물 생성
     const auto& wData = GameManager::Get().GetWeaponData();
     m_wy = y;
-    int cx = 0; int cz = 0;
+    int cx = 0; int cy = 0;
     Team team = Team::Undefined;
     Direction dir;
     m_pID = GameManager::Get().GetSlotiIdx();   // 나 몇번째 플레이어니?
@@ -100,9 +100,9 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
 
         dir = (w.pId == 1) ? Direction::Right : Direction::Left;
         auto cellPos = GetCellByID(w.currentTile);
-        cx = cellPos.x;     cz = cellPos.z;
+        cx = cellPos.x;     cy = cellPos.y;
 
-        auto [px, pz] = m_grids[(int)m_nowG]->CellToWorld(cx, cz);
+        auto [px, pz] = m_grids[(int)m_nowG]->CellToWorld(cx, cy);
 
         // 타일 상태 갱신
         m_tiles[w.currentTile].to = (team == Team::Ally) ?
@@ -119,7 +119,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         pPiece->SetDir(dir, false);
 
         // 기물 정보 등록
-        m_pieces.emplace(gp, PieceInfo{ cx, cz, pPiece->GetID(), w.hp, dir, team });
+        m_pieces.emplace(gp, PieceInfo{ cx, cy, pPiece->GetID(), w.hp, dir, team });
 
         // 빈 박스에 자식 객체로 등록. (for 정리)
         m_gridBox->Attach(pPiece);
@@ -418,7 +418,7 @@ Direction PlayGridSystem::GetCollisionDir(float oldcx, float oldcz, float cx, fl
 
 }
 
-F2 PlayGridSystem::GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cz)
+Float2 PlayGridSystem::GetCollisionPos(Direction dir, Direction pieceDir, int cx, int cz)
 {
     auto [wx, wz] = m_grids[(int)m_nowG]->CellToWorld(cx, cz);
     float width = (m_cellSizeX / 2.f);
