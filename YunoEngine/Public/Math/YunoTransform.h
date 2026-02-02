@@ -256,12 +256,16 @@ inline Float3& Float3::operator=(const Float4& v) { x = v.x; y = v.y; z = v.z; r
 
 struct Int2 
 {
-    int x, y;
+    constexpr Int2() = default;
+    constexpr Int2(int _x, int _y) : x(_x), y(_y) {}
+    int x = 0, y = 0;
 };
 
 struct Int3
 {
-    int x, y, z;
+    constexpr Int3() = default;
+    constexpr Int3(int _x, int _y, int _z) : x(_x), y(_y), z(_z) {}
+    int x = 0, y = 0, z = 0;
 };
 
 struct Int4

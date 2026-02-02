@@ -28,8 +28,8 @@ protected:
     std::vector<std::unique_ptr<Card>> m_deck;      // 카드 덱 // 그리드 시스템 이용할수도??
 
     // 세팅된 카드 / 스냅 위치 정보
-    std::queue<Card*> m_SetCards;                   // 세팅한 카드 // 슬롯 4개로 할 것
-    std::vector<CardSlot*> m_SetCardSlots;          // 카드 세팅할 슬롯 위젯
+    std::vector<Card*> m_Cards;                   // 세팅한 카드 // 슬롯 4개로 할 것
+    std::vector<CardSlot*> m_CardSlots;          // 카드 세팅할 슬롯 위젯
 
 
     //std::unique_ptr<Minimap> m_miniMap;           // 미니맵 // 스폰 포지션 따로 받기?
