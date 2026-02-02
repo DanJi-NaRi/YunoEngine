@@ -11,6 +11,7 @@ struct EffectDesc
     BillboardMode billboard = BillboardMode::ScreenAligned;
     float lifetime = 1.0f;
     float emissive = 0.5f;
+    XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
     int framecount = 0;
     int cols = 0;
     int rows = 0;
@@ -28,6 +29,7 @@ private:
 
     IRenderer* m_pRenderer;
 
+    bool isPlay = true;
 public:
     EffectManager();
     virtual ~EffectManager();
@@ -35,10 +37,22 @@ public:
     void Init(int count);
 
     bool RegisterEffect(const EffectDesc& desc);
+
+    void SetEmissive(EffectID id, float emissive);
     
     Effect* Spawn(EffectID id, const XMFLOAT3& pos, const XMFLOAT3& scale = {1, 1, 1}, const XMFLOAT3& dir = {1, 0, 0});
+
+    void Play();
+    void Stop();
 
     void Update(float dt);
 
     void Submit(float dt);
+
+#ifdef _DEBUG
+    void Serialize();
+
+private:
+    EffectID m_selectedTemplate = EffectID::Count;
+#endif
 };

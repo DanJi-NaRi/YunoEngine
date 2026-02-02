@@ -110,13 +110,13 @@ public:
 
     void Attach(Unit* obj);
     void DettachParent();
-    void DettachChild(uint32_t id);
-    void ClearChild();
+    virtual void DettachChild(uint32_t id);
+    virtual void ClearChild();
 
     Unit* GetParent() { return m_Parent; }
     std::unordered_map<uint32_t, Unit*>& GetChilds() { return m_Childs; }
 
-    XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
+    virtual XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
 
     void SetMeshPath(const std::wstring& meshpath) { m_meshpath = meshpath; }
     UnitDesc GetDesc();
