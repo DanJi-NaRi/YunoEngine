@@ -260,11 +260,11 @@
     <ClCompile Include="Private\Input\InputContextBase.cpp">
       <Filter>Public\System</Filter>
     </ClCompile>
-    <ClCompile Include="Private\UI\Slot.cpp">
-      <Filter>Public\UI\BaseWidget</Filter>
-    </ClCompile>
     <ClCompile Include="Private\UI\Letterbox.cpp">
       <Filter>Public\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\Slot.cpp">
+      <Filter>Public\UI\BaseWidget</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -466,6 +466,9 @@
     </ClInclude>
     <ClInclude Include="Public\UI\Letterbox.h">
       <Filter>Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\ImGUI_Debug.h">
+      <Filter>Public</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->

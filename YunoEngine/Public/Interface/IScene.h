@@ -2,6 +2,7 @@
 
 class IRenderer;
 class SceneDesc;
+class UIManager;
 
 class IScene
 {
@@ -21,6 +22,8 @@ public:
     virtual void Update(float dt) = 0;
     virtual void SubmitObj() = 0;              // 오브젝트들
     virtual void SubmitUI() = 0;                // UI들
+
+    virtual UIManager* GetUIManager() = 0;
 
     virtual SceneDesc BuildSceneDesc() = 0;
 

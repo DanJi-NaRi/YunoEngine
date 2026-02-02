@@ -25,6 +25,8 @@
 #include "UImgui.h"
 
 
+#include "ImGUI_Debug.h"
+
 IRenderer* YunoEngine::s_renderer = nullptr;
 ITextureManager* YunoEngine::s_textureManager = nullptr;
 IInput* YunoEngine::s_input = nullptr;
@@ -189,6 +191,23 @@ int YunoEngine::Run()
 #ifdef _DEBUG
         ImGuiManager::BeginFrame();
 
+        if (m_sceneManager->GetActiveScene()->GetUIManager()) {
+            auto& map = m_sceneManager->GetActiveScene()->GetUIManager()->GetWidgetlist();
+            for (const auto& kv : map) // kv: pair<const UINT, Widget*>
+            {
+
+                if (auto* cs = dynamic_cast<Slot*>(kv.second))
+                {
+                    DrawDebugRect_Client(cs->GetSnapPoint().m_snapRange, Int3(255,0,0));
+                    //DrawDebugRect_Client(cs->GetRect());
+                }
+
+                if (auto* cs = dynamic_cast<Button*>(kv.second))
+                    DrawDebugRect_Client(cs->GetRect());
+            }
+        }
+
+        
         ImGuiManager::EndFrame();
 #endif
 
