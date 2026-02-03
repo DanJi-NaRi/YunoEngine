@@ -329,7 +329,7 @@ void PlayGridSystem::ApplyPacketChanges(Dirty_US dirty, const std::array<UnitSta
         }
         else
         {
-            m_playQ->Insert(m_playQ->Move_S(whichPiece, cx, cz));
+            m_playQ->Insert(m_playQ->Move_S(whichPiece, cx, cz, true));
         }
     }
     // 이동만 할 때
@@ -381,23 +381,23 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz, bool 
 
     TileWho who = static_cast<TileWho>(pieceType);
     
-    if (oldcx == cx && oldcz == cz)                          // 본인 자리
-    {
-        std::cout << "[PlayGridSystem]::It's Already there\n";
-        return;
-    }
-    else if (to.occuType == TileOccuType::Collapesed)       // 없어진 자리
+    //if (oldcx == cx && oldcz == cz)                          // 본인 자리
+    //{
+    //    std::cout << "[PlayGridSystem]::It's Already there\n";
+    //    return;
+    //}
+    /*else */if (to.occuType == TileOccuType::Collapesed)       // 없어진 자리
     {
         std::cout << "[PlayGridSystem]::Collapesed\n";
 
         return;
     }
-    else if (to.occuType == TileOccuType::Ally_Occupied || to.occuType == TileOccuType::Enemy_Occupied)
-    {
-        std::cout << "[PlayGridSystem]::It's not empty\n";
+    //else if (to.occuType == TileOccuType::Ally_Occupied || to.occuType == TileOccuType::Enemy_Occupied)
+    //{
+    //    std::cout << "[PlayGridSystem]::It's not empty\n";
 
-        return;
-    }
+    //    return;
+    //}
     else if (isCollided)                                    // 충돌 시
     {
         if (isEnemy)                                        // 적군과 충돌

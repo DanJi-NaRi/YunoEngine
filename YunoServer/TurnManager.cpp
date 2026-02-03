@@ -296,10 +296,36 @@ namespace yuno::server
                     }
 
                     uint8_t probeId = PosToTileId(probe);
-                    if (grid[probeId] != -1)
+                    int occupantIndex = grid[probeId];
+                    if (occupantIndex != -1) // 무언가가 있는경우
                     {
-                        std::cout << "IsInGrif flase" << std::endl;
-                        return true;
+                        std::cout << "Blocked by unit on tile " << static_cast<int>(probeId) << std::endl;
+                        UnitState& other = *units[occupantIndex];
+                        bool isEnemy = (unitIndex / 2) != (occupantIndex / 2);
+
+                        if (isEnemy)
+                        {
+                            // 적군 충돌
+                            std::cout << "Enemy collision: self -10, enemy -5" << std::endl;
+
+                            auto subClamp = [](auto& hp, int dmg)
+                                {
+                                    using T = std::decay_t<decltype(hp)>;
+                                    int v = static_cast<int>(hp) - dmg;
+                                    if (v < 0) v = 0;
+                                    hp = static_cast<T>(v);
+                                };
+
+                            subClamp(unit.hp, 10);
+                            subClamp(other.hp, 5);
+                        }
+                        else
+                        {
+                            // 아군 충돌
+                            std::cout << "Blocked by ally" << std::endl;
+                        }
+
+                        return true; // 이동은 항상 막힘
                     }
                 }
 
@@ -330,16 +356,24 @@ namespace yuno::server
                     std::cout << "do not Use Cost" << std::endl;
                 }
 
-                if (cardData.m_type == CardType::Move)
+                if (cardData.m_type == CardType::Buff)
+                {
+                    std::cout << "Buff Card On" << std::endl;
+                }
+                else if(cardData.m_type == CardType::Move)
                 {
                     if (const auto* moveData = m_cardDB.GetMoveData(card.dataId))
                     {
                         eventOccurred = applyMove(unitIndex, *moveData, card.dir);
                     }
                 }
+                else if (cardData.m_type == CardType::Attack)
+                {
+                    std::cout << "Attck Card On" << std::endl;
+                }
                 else 
                 {
-                    std::cout << "not Move Card" << std::endl;
+                    std::cout << "Utility Card On" << std::endl;
                 }
 
                 using namespace yuno::net::packets;

@@ -31,27 +31,16 @@
 bool PhaseScene::OnCreateScene()
 {
 
-    //auto pLine = m_uiManager->CreateWidget<GridLine<Widget>>(L"gridline", XMFLOAT3(7*25, 5*25, 0));
-    //pLine->SetScale({ 1, 1, 1 });
-    //std::cout << "[UIScene] OnCreate\n";   
-
-    // 디렉션 라이트 생성
-    //m_objectManager->CreateDirLight();
     m_uiManager->SetOrthoFlag(true);
 
-    // m_uiManager->CreateWidget<Image>(L"tstImg1", XMFLOAT3(500, 500, 0));
-
-     //m_uiManager->CreateWidget<Image>(L"tstImg2", XMFLOAT3(510, 510, 0));
 
     auto clientX = YunoEngine::GetWindow()->GetClientWidth();
     auto clientY = YunoEngine::GetWindow()->GetClientHeight();
 
-    CreateWidget<CardConfirmButton>(L"tstButton", Float2(140, 55), XMFLOAT3(0, 0, 0), UIDirection::LeftTop);
-    CreateWidget<CardSlot>(L"tstSlot0", Float2(100, 135), XMFLOAT3(600, 100, 0), UIDirection::LeftTop);
-    CreateWidget<CardSlot>(L"tstSlot1", Float2(100, 135), XMFLOAT3(900, 100, 0),  UIDirection::LeftTop);
-    CreateWidget<CardSlot>(L"tstSlot2", Float2(100, 135), XMFLOAT3(1200, 100, 0),  UIDirection::LeftTop);
-    CreateWidget<Card>(L"tstCard0", Float2(100, 135), XMFLOAT3(300, 100, 0), UIDirection::LeftTop);
-    CreateWidget<Card>(L"tstCard1", Float2(100, 135), XMFLOAT3(600, 100, 0), UIDirection::LeftTop);
+    //CreateWidget<CardConfirmButton>(L"tstButton", XMFLOAT3(0, 0, 0), Float2(140, 55), UIDirection::LeftTop);
+    //CreateWidget<CardSlot>(L"tstSlot", XMFLOAT3(600, 100, 0), Float2(100, 135), UIDirection::LeftTop);
+    //CreateWidget<Card>(L"tstCard", XMFLOAT3(300, 100, 0), Float2(100, 135), UIDirection::LeftTop);
+
     
 
 

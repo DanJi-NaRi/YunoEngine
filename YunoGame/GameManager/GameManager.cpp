@@ -9,6 +9,8 @@
 #include "TitleScene.h"
 #include "WeaponSelectScene.h"
 #include "PlayScene.h"
+#include "PhaseScene.h"
+
 #include "YunoClientNetwork.h"
 
 //패킷
@@ -115,6 +117,11 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::SubmitCard:
     {
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = false;
+
+        sm->RequestPush(std::make_unique<PhaseScene>(), sp);
         break;
     }
     case CurrentSceneState::AutoBattle:

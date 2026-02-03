@@ -331,7 +331,7 @@ namespace yuno::game
                         << "\n";
                 }
             }
-        );// TestCardList Packet End
+        ); // TestCardList Packet End
 
         // BattleResult Packet Start
         Dispatcher().RegisterRaw(
