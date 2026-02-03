@@ -124,6 +124,10 @@ void YunoDirectionalLight::Serialize()
         {
 
         }
+        if (UI::DragFloat3Editable("LightColor", &m_desc.diff.x, 0.001f, 0.0f, 1.0f))
+        {
+
+        }
     }
 }
 #endif

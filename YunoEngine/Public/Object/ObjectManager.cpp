@@ -240,6 +240,10 @@ void ObjectManager::ApplyUnitFromDesc(const std::vector<UnitDesc>& uds)
         o->SetPos(ToXM(d.transform.position));
         o->SetRot(radRot);
         o->SetScale(ToXM(d.transform.scale));
+        for (auto emissveInfo : d.MatDesc)
+        {
+            o->SetEmissive(emissveInfo.meshNum, ToXM(emissveInfo.emissiveCol), emissveInfo.emissive);
+        } 
     }
 }
 

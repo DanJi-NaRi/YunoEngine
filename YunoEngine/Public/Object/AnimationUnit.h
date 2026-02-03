@@ -26,7 +26,7 @@ public:
     virtual void DettachChild(uint32_t id) override;
     virtual void ClearChild() override;
 
-    XMMATRIX GetWorldBoneMatrix();
+    virtual XMMATRIX GetAttachMatrixForChild(Unit* child) override;
 
     void SetLoop(const std::string& name, bool isLoop);
     void SetLoop(UINT id, bool isLoop);

@@ -96,7 +96,9 @@ public:
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
     void SaveMesh(std::unique_ptr<MeshNode>& node, std::vector<Mesh*>& out);
 
+    void SetEmissive(int num, const XMFLOAT4& color, float pow);
     void SetEmissiveColor(int num, const XMFLOAT4& color);
+    void SetEmissivePow(int num, float pow);
 
     UINT GetMeshNum() { return m_Meshs.size(); }
 
@@ -117,6 +119,8 @@ public:
     std::unordered_map<uint32_t, Unit*>& GetChilds() { return m_Childs; }
 
     virtual XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
+    virtual XMMATRIX GetAttachMatrixForChild(Unit* child); //본에 붙은 자식 행렬 얻어오기용 버츄얼 함수 애니메이션 유닛에서 사용함
+                                                                                                            //부모의 본에 붙는 오브젝트는 부모 행렬받아올 때 이거 써야함
 
     void SetMeshPath(const std::wstring& meshpath) { m_meshpath = meshpath; }
     UnitDesc GetDesc();

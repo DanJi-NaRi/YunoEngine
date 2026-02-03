@@ -97,7 +97,7 @@ struct DirectionalLightDescSave
 
     Vec4Desc spec = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    float intensity = 3.0f;
+    float intensity = 30.0f;
 };
 
 struct PointLightDesc
@@ -108,7 +108,7 @@ struct PointLightDesc
 
     XMFLOAT4 lightCol = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    float intensity = 3.0f;
+    float intensity = 30.0f;
 };
 
 struct PointLightDescSave
@@ -122,6 +122,14 @@ struct PointLightDescSave
     float intensity = 3.0f;
 };
 
+struct PostProcessDesc
+{
+    uint32_t ppFlag;
+    float threshold = 1.01f;
+    float bloomIntensity = 0.1f;
+    float exposure = 1.3f;
+};
+
 struct SceneDesc
 {
     int version = 1;
@@ -130,6 +138,7 @@ struct SceneDesc
 
     bool isOrtho;
 
+    PostProcessDesc postprocess;
     std::vector<UnitDesc> units;
     std::optional<DirectionalLightDesc> dirLight;
     std::vector<PointLightDesc> pointLights;

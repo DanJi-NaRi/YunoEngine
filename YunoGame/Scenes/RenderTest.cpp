@@ -55,8 +55,8 @@ bool RenderTest::OnCreateScene()
 
     PassOption po;
 
-    //auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
-    //map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
+    auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
+    map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
     //map->SetScale(XMFLOAT3(1, 1, 1));
     
     //Building* tile;
@@ -65,13 +65,20 @@ bool RenderTest::OnCreateScene()
     //gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
 
     gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Razer/Razer.fbx");
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx")->SetScale({ 100, 100, 100 });
 
     gun->AddAnimationClip("capo1", L"../Assets/fbx/Tile/floor1.fbx");
-    gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor2_crash_Anim.fbx");
-    gun->AddAnimationClip("capo3", L"../Assets/fbx/Tile/Tile_anim/Floor3_crash_Anim.fbx");
-    gun->AddAnimationClip("capo4", L"../Assets/fbx/Tile/Tile_anim/Floor4_crash_Anim.fbx");
-    gun->AddAnimationClip("capo5", L"../Assets/fbx/Tile/Tile_anim/Floor5_crash_Anim.fbx");
+    //gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor1_crash_Anim.fbx");
+    //gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor2_crash_Anim.fbx");
+    //gun->AddAnimationClip("capo3", L"../Assets/fbx/Tile/Tile_anim/Floor3_crash_Anim.fbx");
+    //gun->AddAnimationClip("capo4", L"../Assets/fbx/Tile/Tile_anim/Floor4_crash_Anim.fbx");
+    //gun->AddAnimationClip("capo5", L"../Assets/fbx/Tile/Tile_anim/Floor5_crash_Anim.fbx");
+    //gun->AddAnimationClip("capo6", L"../Assets/fbx/Tile/Tile_anim/Floor1_Wave_Anim.fbx");
+    //gun->AddAnimationClip("capo7", L"../Assets/fbx/Tile/Tile_anim/Floor2_Wave_Anim.fbx");
+    //gun->AddAnimationClip("capo8", L"../Assets/fbx/Tile/Tile_anim/Floor3_Wave_Anim.fbx");
+    //gun->AddAnimationClip("capo9", L"../Assets/fbx/Tile/Tile_anim/Floor4_Wave_Anim.fbx");
+    //gun->AddAnimationClip("capo10", L"../Assets/fbx/Tile/Tile_anim/Floor5_Wave_Anim.fbx");
 
     //gun->SetScale({ 100, 100, 100 });
     //gun->SetScale({ 0.01f, 0.01f, 0.01f });
@@ -84,22 +91,22 @@ bool RenderTest::OnCreateScene()
     //gun2->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
 
     EffectDesc ed{};
-    ed.id = EffectID::Lazer;
+    ed.id = EffectID::Razer;
     ed.shaderid = ShaderId::EffectBase;
     ed.billboard = BillboardMode::ScreenAligned;
     ed.lifetime = 1.0f;
     ed.framecount = 100;
-    ed.cols = 10;
-    ed.rows = 10;
-    ed.texPath = L"../Assets/Effects/Coin/EF_Coin1P.png";
+    ed.cols = 6;
+    ed.rows = 5;
+    ed.texPath = L"../Assets/Effects/Razer/EF_Razer_Yellow.png";
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::HitRed;
     ed.framecount = 30;
     ed.cols = 6;
     ed.rows = 5;
-    ed.billboard = BillboardMode::None;
-    ed.texPath = L"../Assets/Effects/hit/EF_Target.png";
+    ed.billboard = BillboardMode::AxisLocked;
+    ed.texPath = L"../Assets/Effects/Razer/EF_Rager.png";
     ed.emissive = 1.0f;
     ed.color = { 1, 0, 0, 1 };
     m_effectManager->RegisterEffect(ed);
@@ -142,15 +149,16 @@ void RenderTest::Update(float dt)
         auto eff = m_effectManager->Spawn(EffectID::HitBlue, { 1, 0.1f, 1.f }, { 1.5f, 1.5f, 1.5f });
         gun->Attach(eff);
     }
-    if (YunoEngine::GetInput()->IsKeyPressed('H'))
-    {
-        auto eff = m_effectManager->Spawn(EffectID::HitRed, { 0, 0.1f, 1.f }, { 1.5f, 1.5f, 1.5f });
-        gun->Attach(eff);
-    }
     if (YunoEngine::GetInput()->IsKeyPressed('G'))
     {
-        m_effectManager->Play();
+        auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 2.f, 0.f }, { 1.5f, 5.f, 1.5f });
     }
+    if (YunoEngine::GetInput()->IsKeyPressed('H'))
+    {
+        auto eff = m_effectManager->Spawn(EffectID::HitRed, { 0, 0.5f, 0.f }, { 1.5f, 1.5f, 1.5f }, {-1, 0, 0});
+        gun->AttachChildBone(eff, 1);
+    }
+    
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);
 }
