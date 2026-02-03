@@ -38,6 +38,7 @@ namespace yuno::net::packets
         w.WriteU8(ownerSlot);
         w.WriteU8(unitLocalIndex);
         w.WriteU8(dir);
+        w.WriteU32LE(actionTime);
 
         // order count
         w.WriteU8(order.size());
@@ -58,7 +59,7 @@ namespace yuno::net::packets
         pkt.ownerSlot = r.ReadU8();
         pkt.unitLocalIndex = r.ReadU8();
         pkt.dir = r.ReadU8();
-
+        pkt.actionTime = r.ReadU32LE();
 
         uint8_t orderSize = r.ReadU8();
 

@@ -18,6 +18,7 @@ struct BattleResult
     uint8_t pId = 0;    // 0 에러
     uint8_t slotId = 0; // 0 에러
     uint8_t dir = 0;    // 0 에러 , 1234 상하좌우
+    uint32_t actionTime = 0;
 
     std::vector<std::array<UnitState, 4>> order;
 };
