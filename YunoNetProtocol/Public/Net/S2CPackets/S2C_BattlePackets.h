@@ -15,7 +15,6 @@ namespace yuno::net::packets
         uint8_t ownerSlot;       // 플레이어 식별 (1,2)
         uint8_t unitLocalIndex;  // 해당 플레이어의 유닛 (1,2)
 
-
         uint8_t hp;
         uint8_t stamina;
         uint8_t targetTileID;

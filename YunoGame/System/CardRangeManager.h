@@ -12,17 +12,14 @@ struct RangeData
     std::vector<RangeOffset> offsets;
 };
 
-namespace yuno::server
+class CardRangeManager
 {
-    class CardRangeManager
-    {
-    public:
-        bool LoadFromCSV(const std::string& path);
+public:
+    bool LoadFromCSV(const std::string& path);
 
-        const RangeData* GetRange(uint32_t rangeId) const;
-        size_t GetRangeCount() const { return m_ranges.size(); }
+    const RangeData* GetRange(uint32_t rangeId) const;
+    size_t GetRangeCount() const { return m_ranges.size(); }
 
-    private:
-        std::unordered_map<uint32_t, RangeData> m_ranges;
-    };
-}
+private:
+    std::unordered_map<uint32_t, RangeData> m_ranges;
+};

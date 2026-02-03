@@ -26,17 +26,14 @@ private:
     void Init();
     void CreateTileAndPiece(float x, float y, float z);
     void CheckMyQ();
-    void CheckPacket();
+    void CheckPacket(float dt);
 
 private:
     void MoveEvent(const GamePiece& pieceType, int cx, int cz, 
         bool isCollided = false, bool isEnemy = false, int damage1 = 0, int damage2 = 0);
-    
-    bool CheckExisting(const GamePiece pieceType);
-    void CheckHealth(PieceInfo& pieceInfo);
-    
-    void ApplyPacketChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit);
 
+    void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit);
+    void ApplyPacketChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit);
 
 private:
     void ChangeTileTO(int cx, int cz, const TileOccupy to);
@@ -50,6 +47,9 @@ private:
     int GetUnitID(int pId, int slotID);
     int GetOtherUnitDamage(const std::array<UnitState, 4>& newUnitStates, int mainUnit);
 
+    bool CheckExisting(const GamePiece pieceType);
+    void CheckHealth(PieceInfo& pieceInfo);
+
     std::wstring GetWeaponFileName(int weaponID);           // 테스트용
     std::wstring GetTileFileName(int tile);
 
@@ -57,6 +57,7 @@ private:
     void ClearTileState();
  
 private:
+    // 기물 및 타일 관련 변수
     float m_wy;                                             // 기물의 world y
 
     NG_P m_nowG;
@@ -67,8 +68,14 @@ private:
 
     std::unique_ptr<PlayGridQ> m_playQ;
 
+private:
+    // 패킷 관련 변수
     int m_pID = 0;
     std::array<UnitState, 4> m_UnitStates;
+
+    bool isProcessing = false;
+    float m_pktTime = 0;
+    float m_currTime = 0;
 
     // grid를 여러 개 운용한다면
     //std::unordered_map<NG_P, std::vector<TileState>> m_tiles;    // 타일 상태

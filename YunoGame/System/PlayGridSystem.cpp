@@ -51,7 +51,7 @@ void PlayGridSystem::Init()
 
 void PlayGridSystem::Update(float dt)
 {
-    CheckPacket();
+    CheckPacket(dt);
     CheckMyQ();
 }
 
@@ -238,12 +238,15 @@ void PlayGridSystem::CheckMyQ()
     }
 }
 
-void PlayGridSystem::CheckPacket()
+void PlayGridSystem::CheckPacket(float dt)
 {
+    // 게임 매니저에서 배틀 패킷 하나씩 받아옴
     auto& mng = GameManager::Get();
-    if (!mng.IsEmptyBattlePacket())
+    if (!mng.IsEmptyBattlePacket() && !isProcessing)
     {
         const auto pckt = mng.PopBattlePacket();
+        isProcessing = true;
+        m_pktTime = pckt.actionTime / 1000.f; //임의값 넣어둠
 
         const auto runTimeCardID = pckt.runTimeCardID;
         const auto dir = pckt.dir;
@@ -252,18 +255,53 @@ void PlayGridSystem::CheckPacket()
         GamePiece whichPiece = GetGamePiece(pckt.pId, pckt.slotId);
         int mainUnit = GetUnitID(pckt.pId, pckt.slotId);
 
-        // runtimeCardID로 CardManager에서 카드 정보 얻어올 수 있게 되면
-        // 해당 카드가 어떤 카드인지 알아오자
+        // runtimeCardID로 CardManager에서 카드 정보 얻어옴
+        const auto& cardData = mng.GetCardData(runTimeCardID);
 
-        // 행동 순서
-        for (int i = 0; i < order.size(); i++)
+        const int effectID = cardData.m_effectId;
+        const int soundID = cardData.m_soundId;
+
+        const RangeData* rangeData = mng.GetRangeData(runTimeCardID);
+        const std::vector<RangeOffset>& ranges = rangeData->offsets;
+        const CardType cardType = cardData.m_type;
+        
+        switch (cardType)
         {
-            const std::array<UnitState, 4>& unitStates_Now = order[i];
-
-            Dirty_US dirty = Diff_US(m_UnitStates[mainUnit], unitStates_Now[mainUnit]);
-            ApplyPacketChanges(dirty, unitStates_Now, mainUnit);
-            
+        case CardType::Buff:
+            break;
+        case CardType::Move:
+            ApplyActionOrder(order, mainUnit);
+            break;
+        case CardType::Attack:
+            break;
+        case CardType::Utility:
+            break;
         }
+    }
+
+    // 지금 처리 중인 패킷 시간 체크
+    if (isProcessing)
+    {
+        m_currTime += dt;
+        if (m_currTime >= m_pktTime)
+        {
+            isProcessing = false;
+            m_currTime -= m_pktTime;
+            std::cout << "Packet Time is Over\n";
+        }
+    }
+}
+
+void PlayGridSystem::ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit)
+{
+    // 행동 순서
+    for (int i = 0; i < order.size(); i++)
+    {
+        const std::array<UnitState, 4>& unitStates_Now = order[i];
+
+        Dirty_US dirty = Diff_US(m_UnitStates[mainUnit], unitStates_Now[mainUnit]);
+        ApplyPacketChanges(dirty, unitStates_Now, mainUnit);
+
     }
 }
 
@@ -578,6 +616,7 @@ int PlayGridSystem::GetOtherUnitDamage(const std::array<UnitState, 4>& newUnitSt
     }
     return damageU;
 }
+
 
 std::wstring PlayGridSystem::GetWeaponFileName(int weaponID)
 {

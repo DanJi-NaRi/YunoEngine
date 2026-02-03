@@ -6,6 +6,9 @@
 #include "S2C_StartCardList.h"
 #include "BattlePackets.h"
 
+#include "CardManager.h"
+#include "CardRangeManager.h"
+
 class ISceneManager;
 class ObjectManager;
 namespace yuno::game
@@ -23,6 +26,7 @@ class GameManager
 {
 public:
     static void Initialize(GameManager* inst);
+    void Init();
     static void Shutdown();
     static GameManager& Get();
 
@@ -52,25 +56,21 @@ public:
 
     //void RoundInit(yuno::net::packets::S2C_Error data);
 
+// 카드 관련 변수와 함수
+private:
+    CardManager m_cardBasicMng;
+    CardRangeManager m_cardRangeMng;
+
+public:
     //카드 생성 저장
     void SetCards(const std::vector<yuno::net::packets::CardSpawnInfo>& cards);
     //카드 선택용 인덱스 -> runtimeID
-    uint32_t GetCardRuntimeIDByIndex(int index) const
-    {
-        if (index < 0 || index >= (int)m_Cards.size())
-            return 0;
-
-        return m_Cards[index].runtimeID;
-    }
+    uint32_t GetCardRuntimeIDByIndex(int index) const;
     //UI 표시용 runtimeID -> dataID
-    uint32_t GetCardDataID(uint32_t runtimeID) const
-    {
-        auto it = m_CardRuntimeIDs.find(runtimeID);
-        if (it == m_CardRuntimeIDs.end())
-            return 0;
+    uint32_t GetCardDataID(uint32_t runtimeID) const;
+    const CardData GetCardData(uint32_t runtimeID);
+    const RangeData* GetRangeData(uint32_t runtimeID);
 
-        return it->second;
-    }
 private:
     static GameManager* s_instance;
 

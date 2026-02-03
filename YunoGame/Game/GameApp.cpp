@@ -86,6 +86,7 @@ bool GameApp::OnInit()
    m_gameManager = std::make_unique<GameManager>();
    GameManager::Initialize(m_gameManager.get());
    m_gameManager->BindClientNetwork(&m_clientNet);
+   GameManager::Get().Init();
 
    SceneTransitionOptions opt{};
    opt.immediate = true;
@@ -98,7 +99,6 @@ bool GameApp::OnInit()
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
 
-   CardManager::Get().LoadFromCSV("../Assets/CardData/CardData.csv");
     // 네트워크 스레드 시작
     m_clientNet.Start("127.0.0.1", 9000);
 
