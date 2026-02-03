@@ -1,7 +1,14 @@
 #include "MatchManager.h"
 
+#include "ServerCardManager.h"
+#include "S2C_StartCardList.h"
+#include "BattleState.h"
+#include "PlayerCardController.h"
+
 namespace yuno::server
 {
+    BattleState g_battleState{};
+
     int MatchManager::FindSlotBySessionId(std::uint64_t sid) const
     {
         if (sid == 0) return -1;
@@ -110,5 +117,98 @@ namespace yuno::server
 
         slot.ready = isReady;
         return true;
+    }
+
+    constexpr int kGridColumns = 7;
+
+    static uint8_t PosToTileId(int x, int y)
+    {
+        return static_cast<uint8_t>(y * kGridColumns + x + 1);
+    }
+    static void InitUnitPosition(UnitState& unit, int x, int y)
+    {
+        unit.x = x;
+        unit.y = y;
+        unit.tileID = PosToTileId(x, y);
+    }
+    static void InitUnitStatsByUnitId(UnitState& unit)
+    {
+        switch (unit.WeaponID)
+        {
+        case 1: // 블래스터
+            unit.hp = 80;
+            unit.stamina = 120;
+            break;
+
+        case 2: // 차크람
+            unit.hp = 90;
+            unit.stamina = 110;
+            break;
+
+        case 3: // 브리처  
+            unit.hp = 100;
+            unit.stamina = 100;
+            break;
+
+        case 4: // 사이드
+            unit.hp = 100;
+            unit.stamina = 100;
+            break;
+
+        case 5: // 임팩터
+            unit.hp = 120;
+            unit.stamina = 80;
+            break;             
+
+        case 6: // 클리버
+            unit.hp = 110;
+            unit.stamina = 90;
+            break;
+
+        default:
+            unit.hp = 100;
+            unit.stamina = 100;
+            break;
+        }
+    }
+    void MatchManager::InitBattleState()
+    {
+        g_battleState.turnNumber = 0;
+
+        for (int i = 0; i < 2; ++i)
+        {
+            const auto& slot = m_slots[i];
+            auto& player = g_battleState.players[i];
+
+            // 기본 정보
+            player.sessionId = slot.sessionId;
+            player.PID = slot.userId;
+
+            // UnitID 초기화
+            player.unit1.WeaponID = slot.unitId1;
+            player.unit2.WeaponID = slot.unitId2;
+
+            //유닛 위치 초기화
+            if (i == 0)
+            {
+                InitUnitPosition(player.unit1, 1, 1);
+                InitUnitPosition(player.unit2, 1, 3);
+            }
+            else
+            {
+                InitUnitPosition(player.unit1, 6, 1);
+                InitUnitPosition(player.unit2, 6, 3);
+            }
+
+            InitUnitStatsByUnitId(player.unit1);
+            InitUnitStatsByUnitId(player.unit2);
+
+            // 카드 관련 초기화는 컨트롤러에 위임
+            //m_cardController.InitPlayerCards(player);
+        }
+
+
+        // 이후: 초기 핸드 패킷 전송
+        //SendInitialHands();
     }
 }
