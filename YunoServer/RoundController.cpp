@@ -85,18 +85,14 @@ namespace yuno::server
             if (!slot.occupied)
                 continue;
 
-            auto session = m_network.FindSession(slot.sessionId);
-            if (!session)
-                continue;
-
-            // 무기 기반 카드 풀 생성 (서버 전용 정보)
+            // 무기 기반 카드 풀 생성
             auto cards =
                 m_cardDealer.MakeInitialDeck(
                     slot.unitId1,
                     slot.unitId2);
 
             yuno::net::packets::S2C_TestCardList pkt;
-            pkt.cards = std::move(cards);
+            pkt.cards = cards;
 
             auto bytes = yuno::net::PacketBuilder::Build(
                 yuno::net::PacketType::S2C_TestCardList,
@@ -105,7 +101,7 @@ namespace yuno::server
                     pkt.Serialize(w);
                 });
 
-            session->Send(std::move(bytes));
+            m_network.Broadcast(std::move(bytes));
         }
     }
 
