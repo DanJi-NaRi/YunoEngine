@@ -1,19 +1,20 @@
 #pragma once
 
 enum class CardType : uint8_t {
+    None,
     Buff,
     Move,
     Attack,
     Utility, // 특수
     Count,
-    None,
+
 };
 
 enum class CardRarity : uint8_t {
+    None,
     Common, // 일반 등급
     Unique, // 고유 등급
     Count,
-    None,
 };
 
 enum class PieceType : uint8_t { // 비트마스크로도 활용 가능
@@ -29,10 +30,12 @@ enum class PieceType : uint8_t { // 비트마스크로도 활용 가능
 };
 
 enum Dir : uint8_t {
+    None,
     North,
     South,
     East,
     West,
+    Count,
 };
 
 using PieceMask = uint32_t;
