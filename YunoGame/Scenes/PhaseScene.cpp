@@ -42,16 +42,25 @@ bool PhaseScene::OnCreateScene()
     // m_uiManager->CreateWidget<Image>(L"tstImg1", XMFLOAT3(500, 500, 0));
 
      //m_uiManager->CreateWidget<Image>(L"tstImg2", XMFLOAT3(510, 510, 0));
+
     auto clientX = YunoEngine::GetWindow()->GetClientWidth();
     auto clientY = YunoEngine::GetWindow()->GetClientHeight();
 
-    CreateWidget<CardConfirmButton>(L"tstButton", XMFLOAT3(0, 0, 0), Float2(140, 55), UIDirection::LeftTop);
-    CreateWidget<CardSlot>(L"tstSlot", XMFLOAT3(600, 100, 0), Float2(100, 135), UIDirection::LeftTop);
-    CreateWidget<Card>(L"tstCard", XMFLOAT3(300, 100, 0), Float2(100, 135), UIDirection::LeftTop);
+    CreateWidget<CardConfirmButton>(L"tstButton", Float2(140, 55), XMFLOAT3(0, 0, 0), UIDirection::LeftTop);
+    CreateWidget<CardSlot>(L"tstSlot0", Float2(100, 135), XMFLOAT3(600, 100, 0), UIDirection::LeftTop);
+    CreateWidget<CardSlot>(L"tstSlot1", Float2(100, 135), XMFLOAT3(900, 100, 0),  UIDirection::LeftTop);
+    CreateWidget<CardSlot>(L"tstSlot2", Float2(100, 135), XMFLOAT3(1200, 100, 0),  UIDirection::LeftTop);
+    CreateWidget<Card>(L"tstCard0", Float2(100, 135), XMFLOAT3(300, 100, 0), UIDirection::LeftTop);
+    CreateWidget<Card>(L"tstCard1", Float2(100, 135), XMFLOAT3(600, 100, 0), UIDirection::LeftTop);
     
 
-    CreateWidget<CardConfirmPanel>(L"CardConformPanel", XMFLOAT3(0, clientY, 0), Float2(140, 55), UIDirection::LeftBottom);
-    CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", XMFLOAT3(clientX, clientY, 0), Float2(140, 55), UIDirection::RightBottom);
+
+
+    CreateWidget<CardConfirmPanel>(L"CardConformPanel", Float2(50, 50), XMFLOAT3(0, clientY, 0), UIDirection::LeftBottom);
+    
+    std::cout << clientX << " : " << clientY << std::endl;
+    //CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(140, 55), XMFLOAT3(clientX, clientY, 0),  UIDirection::RightBottom);
+
 
 
     //CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0));
@@ -71,9 +80,9 @@ bool PhaseScene::OnCreateScene()
 
     //m_objectManager->CreateWidget<Image>(L"tst", XMFLOAT3(0, 0, 0));
 
-    auto* a = m_uiManager->CreateWidget<Letterbox>(L"LetterBoxA", XMFLOAT3(0, 0, 0));
+    auto* a = CreateWidget<Letterbox>(L"LetterBoxA", Float2(50, 50), XMFLOAT3(0, 0, 0) );
     a->SetRole(Letterbox::Role::BarA);
-    auto* b = m_uiManager->CreateWidget<Letterbox>(L"LetterBoxB", XMFLOAT3(0, 0, 0));
+    auto* b = CreateWidget<Letterbox>(L"LetterBoxB", Float2(50, 50), XMFLOAT3(0, 0, 0));
     b->SetRole(Letterbox::Role::BarB);
     //m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
     //m_minimap->CreateObject(1000, 900, 0);

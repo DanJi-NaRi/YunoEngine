@@ -19,9 +19,9 @@ void Card::Clear()
 {
 }
 
-bool Card::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool Card::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Button::Create(name, id, vPos);
+    Button::Create(name, id, sizePx, vPos, rotZ, vScale);
     m_pDrag = std::make_unique<DragProvider>(); // 드래그 기능 사용
     if (!m_pDrag) return false;
 

@@ -65,12 +65,12 @@ void WidgetGridSystem::CreateGrid(int row, int column, float cellSizeX, float ce
 
 void WidgetGridSystem::CreateGridBox(float x, float y, float z)
 {
-    m_gridBox = m_manager->CreateObject<WidgetGridBox>(L"GridBox", XMFLOAT3(x, y, z));
+    m_gridBox = m_manager->CreateObject<WidgetGridBox>(L"GridBox", g_defWidgetSize, XMFLOAT3(x, y, z));
 }
 
 
 void WidgetGridSystem::CreateGridLine(float x, float y, float z)
 {
-    auto pLine = m_manager->CreateObject<WidgetGridLine>(L"DebugGridLine", XMFLOAT3(x, y, z));
+    auto pLine = m_manager->CreateObject<WidgetGridLine>(L"DebugGridLine", g_defWidgetSize, XMFLOAT3(x, y, z));
     pLine->SetScale({ m_cellSizeX, m_cellSizeZ, 1 });
 }

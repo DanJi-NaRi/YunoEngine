@@ -34,7 +34,7 @@ bool Title::OnCreateScene()
     // FBX 파일로부터 오브젝트 생성 예시
     //m_objectManager->CreateObjectFromFile<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
-    m_titleImage = m_uiManager->CreateWidget<TitleImage>(L"Title", XMFLOAT3(0, 0, 0));
+    m_titleImage = CreateWidget<TitleImage>(L"Title", g_defWidgetSize, XMFLOAT3(0, 0, 0));
     m_titleImage->SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
     return true;
 }

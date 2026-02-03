@@ -28,9 +28,9 @@ void ReadyButton::Clear()
     m_isReady = false;
 }
 
-bool ReadyButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool ReadyButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Button::Create(name, id, vPos);
+    Button::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     m_bindkey = 0; // 0인 경우, 안쓴다는 뜻
 

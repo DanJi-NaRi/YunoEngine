@@ -15,6 +15,7 @@ struct MeshNode {
     std::vector<std::unique_ptr<Mesh>> m_Meshs;
 
     void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
+    //void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize); //★
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 };
@@ -75,6 +76,7 @@ public:
 
 
     void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
+    void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize);
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 

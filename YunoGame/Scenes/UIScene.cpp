@@ -43,7 +43,6 @@ bool UIScene::OnCreateScene()
 
     // 자식이 있는 경우 체이닝으로 생성 
     // this반환해서 그냥 써도 똑같은 효과
-    CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0)); 
     //m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0))->CreateChild(); 
     //m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0)); 
 
@@ -61,9 +60,9 @@ bool UIScene::OnCreateScene()
 
     //m_objectManager->CreateWidget<Image>(L"tst", XMFLOAT3(0, 0, 0));
 
-    auto* a = m_uiManager->CreateWidget<Letterbox>(L"LetterBoxA", XMFLOAT3(0, 0, 0));
+    auto* a = CreateWidget<Letterbox>(L"LetterBoxA", Float2(50, 50), XMFLOAT3(0, 0, 0) );
     a->SetRole(Letterbox::Role::BarA);
-    auto* b = m_uiManager->CreateWidget<Letterbox>(L"LetterBoxB", XMFLOAT3(0, 0, 0));
+    auto* b = CreateWidget<Letterbox>(L"LetterBoxB", Float2(50, 50), XMFLOAT3(0, 0, 0));
     b->SetRole(Letterbox::Role::BarB);
     //m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
     //m_minimap->CreateObject(1000, 900, 0);

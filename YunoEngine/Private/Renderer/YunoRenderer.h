@@ -234,6 +234,7 @@ private:
     YunoConstantBuffer<CBPerObject_Material> m_cbObject_Material;
     YunoConstantBuffer<CBLight_All> m_cbLight;
     YunoConstantBuffer<CBEffect> m_cbEffect;
+    YunoConstantBuffer<CBWidget> m_cbWidget;
 
     CBLight_All m_LightInfo;
 
