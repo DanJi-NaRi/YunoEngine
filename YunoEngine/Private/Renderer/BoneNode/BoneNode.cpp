@@ -32,7 +32,7 @@ void BoneNode::UpdateBoneMatrix(const std::vector<XMMATRIX>& localPose, std::vec
     XMMATRIX global = local * parentGlobal;
 
     if (boneIndex >= 0 && boneIndex < outFinal.size())
-        XMStoreFloat4x4(&outGlobal[boneIndex], global);
+        XMStoreFloat4x4(&outGlobal[boneIndex], m_BoneOffset * global);
 
     for (auto& c : m_Childs)
         c->UpdateBoneMatrix(localPose, outFinal, outGlobal, global);

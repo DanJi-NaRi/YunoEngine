@@ -9,13 +9,13 @@ enum class BillboardMode
     AxisLocked          // 특정 축만 회전
 };
 
-enum class EffectID : int
+enum class EffectID : uint32_t
 {
     Default,
     HitRed,
     HitBlue,
     Lightning,
-    Lazer,
+    Razer,
 
     Count
 };

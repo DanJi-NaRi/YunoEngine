@@ -35,9 +35,9 @@ namespace yuno::net::packets
     void S2C_BattleResult::Serialize(ByteWriter& w) const
     {
         w.WriteU32LE(runtimeCardId);
+        w.WriteU8(dir);
         w.WriteU8(ownerSlot);
         w.WriteU8(unitLocalIndex);
-        w.WriteU8(dir);
         w.WriteU32LE(actionTime);
 
         // order count
@@ -56,9 +56,9 @@ namespace yuno::net::packets
     {
         S2C_BattleResult pkt;
         pkt.runtimeCardId = r.ReadU32LE();
+        pkt.dir = r.ReadU8();
         pkt.ownerSlot = r.ReadU8();
         pkt.unitLocalIndex = r.ReadU8();
-        pkt.dir = r.ReadU8();
         pkt.actionTime = r.ReadU32LE();
 
         uint8_t orderSize = r.ReadU8();

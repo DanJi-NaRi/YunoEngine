@@ -59,7 +59,7 @@ void AnimationUnit::AddAnimationClip(const std::string& name, const std::wstring
 
 void AnimationUnit::AttachChildBone(Unit* child, int idx)
 {
-    if (m_animator->GetBoneCount() >= idx || 0 > idx)
+    if (m_animator->GetBoneCount() <= idx || 0 > idx)
         return;
 
     Attach(child);
@@ -84,7 +84,7 @@ void AnimationUnit::AttachChildBone(Unit* child, const std::string& bonename)
 {
     auto idx = m_animator->FindIndex(bonename);
 
-    if (m_animator->GetBoneCount() >= idx || 0 > idx)
+    if (m_animator->GetBoneCount() <= idx || 0 > idx)
         return;
 
     Attach(child);
@@ -134,6 +134,20 @@ void AnimationUnit::ClearChild()
 
     m_BoneChilds.clear();
     m_ChildToIdx.clear();
+}
+
+XMMATRIX AnimationUnit::GetAttachMatrixForChild(Unit* child)
+{
+    auto it = m_ChildToIdx.find(child);
+    if (it == m_ChildToIdx.end())
+        return GetWorldMatrix();
+
+    int boneIdx = it->second;
+
+    XMMATRIX boneGlobal =
+        XMLoadFloat4x4(&m_animator->GetBoneGlobal(boneIdx));
+
+    return boneGlobal * GetWorldMatrix();
 }
 
 void AnimationUnit::SetLoop(const std::string& name, bool isLoop)
