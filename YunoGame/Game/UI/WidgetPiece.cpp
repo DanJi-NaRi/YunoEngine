@@ -39,9 +39,9 @@ WidgetPiece::~WidgetPiece()
 }
 
 
-bool WidgetPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool WidgetPiece::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Widget::Create(name, id, vPos);
+    Widget::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     if (!this->m_pInput || !this->m_pRenderer || !this->m_pTextures)
         return false;

@@ -75,7 +75,7 @@ void MinimapGridSystem::CreateTileAndPiece(float x, float y, float z)
         float tx = wx * m_uiScale + x;
         float ty = wy * m_uiScale + y;
         //auto pTile = m_objectManager->CreateObject<Tile>(L"Tile", XMFLOAT3(wx, y, wz));
-        auto pTile = m_manager->CreateWidget<WidgetTile>(L"Tile", XMFLOAT3(tx, ty, z));
+        auto pTile = m_manager->CreateWidget<WidgetTile>(L"Tile", Float2(50, 50), XMFLOAT3(tx, ty, z));
         pTile->SetScale({ m_cellSizeX * 0.9f, m_cellSizeZ * 0.9f, 1 });
         m_tilesIDs.push_back(pTile->GetID());
         
@@ -124,7 +124,7 @@ void MinimapGridSystem::CreateTileAndPiece(float x, float y, float z)
         GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
 
         //std::wstring fileName = GetWeaponFileName(w.weaponId);
-        auto pPiece = m_manager->CreateObject<WidgetPiece>(L"Piece", XMFLOAT3(tx, ty, m_wz));
+        auto pPiece = m_manager->CreateObject<WidgetPiece>(L"Piece", Float2(50, 50), XMFLOAT3(tx, ty, m_wz));
         //auto pPiece = m_objectManager->CreateObjectFromFile<Piece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
         pPiece->SetWho(gp);
         pPiece->SetScale({ m_uiScale, m_uiScale, 1 });

@@ -7,6 +7,8 @@
 #include "YunoTransform.h"
 #include "Mesh.h"
 
+constexpr Float2 g_defWidgetSize{ 50, 50 };
+
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
 
 //class UIManager;
@@ -224,8 +226,8 @@ public:
     virtual ~Widget();
 
     //Create는 오브젝트 매니저만 쓰기
-    virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
-    virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
+    virtual bool  Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos);
+    virtual bool  Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale);
     virtual bool  Start(); // Create 다 끝나고 호출. 
     virtual void  CreateChild() {};
 

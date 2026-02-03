@@ -11,9 +11,9 @@ CardSlot::~CardSlot()
     Clear();
 }
 
-bool CardSlot::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool CardSlot::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Slot::Create(name, id, vPos);
+    Slot::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     //m_pivot = PivotFromUIDirection(UIDirection::Center);
     //SetPivotDir(UIDirection::Center);

@@ -9,9 +9,9 @@ Slot::~Slot()
 {
 }
 
-bool Slot::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool Slot::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Widget::Create(name, id, vPos);
+    Widget::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     m_anchor = UIDirection::LeftTop;
 

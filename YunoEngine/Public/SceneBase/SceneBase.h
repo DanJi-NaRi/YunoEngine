@@ -33,13 +33,11 @@ public:
     const char* GetDebugName() const override { return m_name.c_str(); }
 
     template<typename T> // 모든 씬 공용 Widget 생성 함수
-    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos);
+    T* CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos);
     template<typename T> // 모든 씬 공용 Widget 생성 함수
-    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size);
+    T* CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, Float2 pivot);
     template<typename T> // 모든 씬 공용 Widget 생성 함수
-    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, Float2 pivot);
-    template<typename T> // 모든 씬 공용 Widget 생성 함수
-    T* CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, UIDirection pivot);
+    T* CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, UIDirection pivot);
     UIManager* GetUIManager() { return m_uiManager.get(); }
 
 #ifdef _DEBUG
@@ -89,42 +87,32 @@ protected:
 
 /////
 template<typename T> // 모든 씬 공용 Widget 생성 함수
-T* SceneBase::CreateWidget(const std::wstring& name, XMFLOAT3 pos)
+T* SceneBase::CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos)
 {
     static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
     assert(m_uiManager);
 
-    T* pWidget = m_uiManager->CreateWidget<T>(name, pos);
+    T* pWidget = m_uiManager->CreateWidget<T>(name, sizePx, pos);
     pWidget->CreateChild(); // 자식 생성
     return pWidget;
 }
 template<typename T> // 모든 씬 공용 Widget 생성 함수
-T* SceneBase::CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size)
+T* SceneBase::CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, Float2 pivot)
 {
     static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
     assert(m_uiManager);
 
-    T* pWidget = m_uiManager->CreateWidget<T>(name, pos, size);
+    T* pWidget = m_uiManager->CreateWidget<T>(name, sizePx, pos, pivot);
     pWidget->CreateChild(); // 자식 생성
     return pWidget;
 }
 template<typename T> // 모든 씬 공용 Widget 생성 함수
-T* SceneBase::CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, Float2 pivot)
+T* SceneBase::CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos,  UIDirection pivot)
 {
     static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
     assert(m_uiManager);
 
-    T* pWidget = m_uiManager->CreateWidget<T>(name, pos, size, pivot);
-    pWidget->CreateChild(); // 자식 생성
-    return pWidget;
-}
-template<typename T> // 모든 씬 공용 Widget 생성 함수
-T* SceneBase::CreateWidget(const std::wstring& name, XMFLOAT3 pos, Float2 size, UIDirection pivot)
-{
-    static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
-    assert(m_uiManager);
-
-    T* pWidget = m_uiManager->CreateWidget<T>(name, pos, size, pivot);
+    T* pWidget = m_uiManager->CreateWidget<T>(name, sizePx, pos, pivot);
     pWidget->CreateChild(); // 자식 생성
     return pWidget;
 }

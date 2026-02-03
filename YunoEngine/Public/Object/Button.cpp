@@ -14,9 +14,9 @@ Button::~Button()
     Clear();
 }
 
-bool Button::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool Button::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Widget::Create(name, id, vPos);
+    Widget::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     m_btnState = ButtonState::Idle;
     m_bindkey = 0;

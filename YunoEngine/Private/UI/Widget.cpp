@@ -185,7 +185,7 @@ bool Widget::AddMaterial(MaterialDesc& desc)
 }
 
 
-bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool Widget::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos)
 {
     m_pRenderer = YunoEngine::GetRenderer();
     m_pTextures = YunoEngine::GetTextureManager();
@@ -194,6 +194,7 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     m_id = id;
     m_name = name;
 
+    m_size = sizePx;
     m_vPos = vPos;
 
 
@@ -236,13 +237,13 @@ bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     return true;
 }
 
-bool Widget::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale)
+bool Widget::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
 
-    m_vRot = vRot;
+    m_vRot.z = rotZ;
     m_vScale = vScale;
 
-    Create(name, id, vPos);
+    Create(name, id, sizePx, vPos);
 
     return true;
 }
