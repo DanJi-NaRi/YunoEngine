@@ -240,6 +240,10 @@ void ObjectManager::ApplyUnitFromDesc(const std::vector<UnitDesc>& uds)
         o->SetPos(ToXM(d.transform.position));
         o->SetRot(radRot);
         o->SetScale(ToXM(d.transform.scale));
+        for (auto& emissveInfo : d.MatDesc)
+        {
+            o->SetEmissive(emissveInfo.meshNum, ToXM(emissveInfo.emissiveCol), emissveInfo.emissive);
+        } 
     }
 }
 
@@ -254,9 +258,12 @@ void ObjectManager::ApplyPointLightsFromDesc(const std::vector<PointLightDesc>& 
 {
     if (m_pointLights.empty()) return;
 
-    for (auto& d : m_pointLights)
+    for (auto& d : pds)
     {
-        d->SetDesc(pds[d->GetDesc().id - 1]);
+        if(d.id > m_pointLights.size() || d.id < 1)
+            continue;
+
+        m_pointLights[d.id - 1]->SetDesc(d);
     }
 }
 

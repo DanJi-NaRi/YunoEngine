@@ -33,6 +33,7 @@ private:
     std::vector<XMMATRIX> m_BlendBoneTM;
     std::vector<XMFLOAT4X4> m_FinalBoneTM;
     std::vector<XMFLOAT4X4> m_GlobalBoneTM;
+    XMFLOAT4X4 m_Identity;
 
     UINT m_BoneCount;
 
