@@ -2,6 +2,8 @@
 
 #include "SceneBase.h"
 
+class AnimTest;
+
 class RenderTest final : public SceneBase
 {
 public:
@@ -19,5 +21,5 @@ protected:
     void OnDestroyScene() override;
 
 private:
-
+    AnimTest* gun;
 };

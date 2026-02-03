@@ -31,7 +31,7 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
     m_weapons.push_back(data);
 }
 
-void GameManager::PushBattlePacket(const BattleResult& _BattleResult)
+void GameManager::PushBattlePacket(const BattleResult _BattleResult)
 {
     m_turnPkts.push(_BattleResult);
     std::cout << "Battle Packet is inserted into Queue.\n";

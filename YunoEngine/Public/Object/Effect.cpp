@@ -16,6 +16,7 @@ void Effect::SetTemplate(const EffectTemplate& temp)
 
     m_lifetime = temp.lifetime;
     m_emissive = temp.emissive;
+    m_emissiveCol = temp.color;
     m_frameCount = temp.frameCount;
     m_cols = temp.cols;
     m_rows = temp.rows;
@@ -183,6 +184,8 @@ void Effect::UpdateFrame()
     frame = std::min(frame, m_frameCount - 1);
 
     m_renderItem.isEffect = true;
+    m_renderItem.Constant.emissive = m_emissive;
+    m_renderItem.Constant.emissiveColor = m_emissiveCol;
     m_renderItem.effectConst.effectData =
     {
         (float)frame,

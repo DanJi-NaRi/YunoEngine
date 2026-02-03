@@ -60,17 +60,24 @@ bool RenderTest::OnCreateScene()
     //map->SetScale(XMFLOAT3(1, 1, 1));
     
     //Building* tile;
-    //for (int i = 0; i < 30; i++)
-    //{
-    //    tile = m_objectManager->CreateObjectFromFile<Building>(L"Tile" + std::to_wstring(i + 1), XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor" + std::to_wstring(i + 1) + L".fbx");
-    //    tile->SetScale(XMFLOAT3(0.9f, 1, 1.1f));
-    //    //tile->SetPos(XMFLOAT3(0, 0.02, 0));
-    //}
+    //tile = m_objectManager->CreateObjectFromFile<Building>(L"Tile" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx");
 
-    auto gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
+    //gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
 
-    auto text = m_uiManager->CreateWidget<Text>(L"TestText", XMFLOAT3(1, 1, 0));
-    text->SetText(L"Hello World!");
+    gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx")->SetScale({ 100, 100, 100 });
+
+    gun->AddAnimationClip("capo1", L"../Assets/fbx/Tile/floor1.fbx");
+    gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor2_crash_Anim.fbx");
+    gun->AddAnimationClip("capo3", L"../Assets/fbx/Tile/Tile_anim/Floor3_crash_Anim.fbx");
+    gun->AddAnimationClip("capo4", L"../Assets/fbx/Tile/Tile_anim/Floor4_crash_Anim.fbx");
+    gun->AddAnimationClip("capo5", L"../Assets/fbx/Tile/Tile_anim/Floor5_crash_Anim.fbx");
+
+    //gun->SetScale({ 100, 100, 100 });
+    //gun->SetScale({ 0.01f, 0.01f, 0.01f });
+
+    //auto text = m_uiManager->CreateWidget<Text>(L"TestText", XMFLOAT3(1, 1, 0));
+    //text->SetText(L"Hello World!");
     //gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
 
     //auto gun2 = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun2", XMFLOAT3(0, 2, 2), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
@@ -87,12 +94,18 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Coin/EF_Coin1P.png";
     m_effectManager->RegisterEffect(ed);
 
-    ed.id = EffectID::Hit;
+    ed.id = EffectID::HitRed;
     ed.framecount = 30;
     ed.cols = 6;
     ed.rows = 5;
     ed.billboard = BillboardMode::None;
     ed.texPath = L"../Assets/Effects/hit/EF_Target.png";
+    ed.emissive = 1.0f;
+    ed.color = { 1, 0, 0, 1 };
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::HitBlue;
+    ed.color = { 0, 0, 1, 1 };
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::Default;
@@ -126,15 +139,17 @@ void RenderTest::Update(float dt)
 {
     if (YunoEngine::GetInput()->IsKeyPressed('F'))
     {
-        m_effectManager->Spawn(EffectID::Default, { 0, 1, 0 }, { 1, 1, 1 });
+        auto eff = m_effectManager->Spawn(EffectID::HitBlue, { 1, 0.1f, 1.f }, { 1.5f, 1.5f, 1.5f });
+        gun->Attach(eff);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('H'))
     {
-        m_effectManager->Spawn(EffectID::Hit, { 0, 0.1f, 0 }, { 1.5f, 1.5f, 1.5f });
+        auto eff = m_effectManager->Spawn(EffectID::HitRed, { 0, 0.1f, 1.f }, { 1.5f, 1.5f, 1.5f });
+        gun->Attach(eff);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('G'))
     {
-        m_effectManager->Spawn(EffectID::Lazer, { 2, 1, 0 }, { 1, 1, 1 });
+        m_effectManager->Play();
     }
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);

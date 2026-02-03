@@ -9,10 +9,11 @@ enum class BillboardMode
     AxisLocked          // 특정 축만 회전
 };
 
-enum class EffectID
+enum class EffectID : int
 {
     Default,
-    Hit,
+    HitRed,
+    HitBlue,
     Lightning,
     Lazer,
 
@@ -29,6 +30,7 @@ struct EffectTemplate
 
     float lifetime;
     float emissive;
+    XMFLOAT4 color;
     int frameCount;
     int cols;
     int rows;

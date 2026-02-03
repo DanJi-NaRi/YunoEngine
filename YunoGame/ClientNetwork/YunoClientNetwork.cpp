@@ -367,13 +367,13 @@ namespace yuno::game
                 // MK 추가
                 // 게임 매니저 큐에 push.
                 std::vector<std::array<UnitState, 4>> order;
-                for (int i = 0; i < order.size(); i++)
+                for (int i = 0; i < pkt.order.size(); i++)
                 {
                     const auto& u = pkt.order[i];
                     std::array<UnitState, 4> us;
                     for (int j = 0; j < us.size(); j++)
                     {
-                        us[0] = { u[j].ownerSlot, u[j].unitLocalIndex, u[j].hp,
+                        us[j] = { u[j].ownerSlot, u[j].unitLocalIndex, u[j].hp,
                                   u[j].stamina, u[j].targetTileID, u[j].isEvent };
                     }
                     order.push_back(us);
@@ -383,21 +383,21 @@ namespace yuno::game
                 gm.PushBattlePacket(br);
 
                 // 디버깅용
-                for (const auto& d : pkt.order)
+                for (const auto& d : order)
                 {
                     for (int i = 0; i < d.size(); i++)
                     {
-                        const int slot = static_cast<int>(d[i].ownerSlot);
-                        const int unit = static_cast<int>(d[i].unitLocalIndex);
+                        const int slot = static_cast<int>(d[i].pId);
+                        const int unit = static_cast<int>(d[i].slotId);
 
                         std::cout
                             << "[Client] Apply Delta |\n" 
                             << " Player = " << slot
                             << "\n unit =" << unit
-                            << "\n hp =" << d[i].hp
-                            << "\n stamina =" << d[i].stamina
-                            << "\n move =" << d[i].targetTileID
-                            << "\n isEvent =(" << d[i].isEvent << ")\n";
+                            << "\n hp =" << static_cast<int>(d[i].hp)
+                            << "\n stamina =" << static_cast<int>(d[i].stamina)
+                            << "\n move =" << static_cast<int>(d[i].targetTileID)
+                            << "\n isEvent =(" << static_cast<bool>(d[i].isEvent) << ")\n";
                     }
                 }
             }

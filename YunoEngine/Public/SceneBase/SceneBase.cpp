@@ -266,6 +266,8 @@ void SceneBase::DrawObjectList()
             }
         }
     }
+
+    m_effectManager->Serialize();
 }
 
 void SceneBase::DrawObjectNode(Unit* obj)

@@ -10,7 +10,10 @@
 
 #include "PacketBuilder.h"
 #include "S2C_BattlePackets.h"
+#include "S2C_StartCardList.h"
 #include "ServerCardManager.h"
+
+#include "BattleState.h"
 
 static bool IsALess(const ResolvedCard& a, const ResolvedCard& b, bool& coinTossUsed)
 {
@@ -117,23 +120,22 @@ namespace yuno::server
         // 쓰레기 값 들어가고 있어서 테스트를 위해 하드코딩
         //pkt.runtimeCardId = c.runtimeId;
         //pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
-        pkt.runtimeCardId = 1;
-        pkt.ownerSlot = 1;
-        pkt.unitLocalIndex = 1;
-        pkt.dir = 0;
+        //pkt.runtimeCardId = 1;
+        //pkt.ownerSlot = 1;
+        //pkt.unitLocalIndex = 1;
+        //pkt.dir = 0;
 
-        //pkt.runtimeCardId = c.runtimeId;
-        //pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
-        //pkt.unitLocalIndex = static_cast<uint8_t>(c.localIndex);
-        //pkt.dir = static_cast<uint8_t>(c.dir);
-
+        pkt.runtimeCardId = c.runtimeId;
+        pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
+        pkt.unitLocalIndex = static_cast<uint8_t>(c.localIndex);
+        pkt.dir = static_cast<uint8_t>(c.dir);
 
         //  테스트용 하드코딩 결과
         std::array<UnitStateDelta, 4> us;
-        us[0] = { 1, 1, 100, 100, 5, 1 };
-        us[1] = { 1, 2, 100, 100, 10, 2 };
-        us[2] = { 2, 1, 100, 100, 15, 3 };
-        us[3] = { 2, 2, 100, 100, 20, 4 };
+        us[0] = { 1, 1, 90, 100, 16, 1 };
+        us[1] = { 1, 2, 95, 100, 12, 0 };
+        us[2] = { 2, 1, 100, 100, 23, 0 };
+        us[3] = { 2, 2, 100, 100, 27, 0 };
         pkt.order.push_back(us);
 
 
@@ -196,8 +198,8 @@ namespace yuno::server
             }
         }
 
-        auto& p1 = m_roundController.GetPlayerUnitState(1); // 1P 유닛 정보 가져오기
-        auto& p2 = m_roundController.GetPlayerUnitState(2); // 2P 유닛 정보 가져오기
+        auto& p1 = g_battleState.players[0];
+        auto& p2 = g_battleState.players[1];
 
         std::array<UnitState*, 4> units = {
             &p1.unit1,
@@ -221,25 +223,39 @@ namespace yuno::server
         auto buildDeltaSnapshot = [&](int eventUnitIndex, bool hasEvent)
             {
                 std::array<yuno::net::packets::UnitStateDelta, 4> deltas{};
-                for (int i = 0; i < static_cast<int>(units.size()); ++i)
+                int deltaIndex = 0;
+
+                for (int p = 0; p < 2; ++p)
                 {
-                    uint8_t ownerSlot = (i < 2) ? 1 : 2; // 1P = 0,1 이므로 1 / 2P = 2,3 이므로 2
-                    uint8_t unitLocalIndex = (i % 2) + 1; // 1,2
-                    deltas[i] = {
-                        ownerSlot,
-                        unitLocalIndex,
-                        units[i]->hp,
-                        units[i]->stamina,
-                        units[i]->tileID,
-                        static_cast<uint8_t>((hasEvent && i == eventUnitIndex) ? 1 : 0)
+                    const auto& player = g_battleState.players[p];
+
+                    const UnitState* playerUnits[2] = {
+                        &player.unit1,
+                        &player.unit2
                     };
+
+                    for (int u = 0; u < 2; ++u)
+                    {
+                        const UnitState* unit = playerUnits[u];
+                        bool isEventUnit = (deltaIndex == eventUnitIndex);
+
+                        deltas[deltaIndex++] = {
+                            player.PID,     
+                            unit->slotID,    
+                            unit->hp,
+                            unit->stamina,
+                            unit->tileID,
+                            static_cast<uint8_t>(hasEvent && isEventUnit)
+                        };
+                    }
                 }
                 return deltas;
             };
 
         auto getUnitIndexForCard = [&](int ownerSlot, const CardData& card) -> int
             {
-                auto& player = (ownerSlot == 0) ? p1 : p2;          // 0은 1P , 1은 2P  >> 얘는 배열을 사용해서 이렇게 해야됨;;
+                auto& player = (ownerSlot == 0) ? g_battleState.players[0] : g_battleState.players[1];
+
                 if (player.unit1.WeaponID == card.m_allowedUnits)
                     return (ownerSlot == 0) ? 0 : 2;
                 if (player.unit2.WeaponID == card.m_allowedUnits)
