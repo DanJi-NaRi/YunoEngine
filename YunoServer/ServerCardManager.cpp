@@ -148,7 +148,18 @@ namespace yuno::server
     const CardMoveData* ServerCardManager::GetMoveData(int cardID) const
     {
         auto it = m_moveData.find(cardID);
-        return (it != m_moveData.end()) ? &it->second : nullptr;
+        std::cout << "now card ID : " << cardID << "  ";
+        if (it != m_moveData.end()) 
+        {
+            return &it->second;
+        }
+        else 
+        {
+            std::cout << "data Null " << std::endl;
+            return nullptr;
+        }
+
+        //return (it != m_moveData.end()) ? &it->second : nullptr;
     }
 
     const CardEffectData* ServerCardManager::GetEffectData(int cardID) const

@@ -311,7 +311,7 @@ namespace yuno::server
         );// Submit Weapon Packet End
 
 
-        //Submit ReadyTurn Packet Start         // 클라가 카드 4장 선택하고 준비완료 누르면 이 패킷 보내는거지?
+        //Submit ReadyTurn Packet Start         
         m_dispatcher.RegisterRaw(
             PacketType::C2S_ReadyTurn,
             [this](const NetPeer& peer,
@@ -323,6 +323,10 @@ namespace yuno::server
                 const auto pkt =
                     packets::C2S_ReadyTurn::Deserialize(r);
 
+                for (auto& data : pkt.commands)
+                {
+                    std::cout << " data : " << data.runtimeID << " " << std::endl;
+                }
 
                 m_turnManager.SubmitTurn(
                     peer.sId,

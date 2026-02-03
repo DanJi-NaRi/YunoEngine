@@ -356,6 +356,14 @@ namespace yuno::game
                     << " ownerSlot=" << static_cast<int>(pkt.ownerSlot)
                     << "\n";
 
+                for (auto& data : pkt.order) 
+                {
+                    std::cout << "tileId(1,2,3,4) : " << static_cast<int>(data[0].targetTileID) << ", "
+                        << static_cast<int>(data[1].targetTileID) << ", "
+                        << static_cast<int>(data[2].targetTileID) << ", "
+                        << static_cast<int>(data[3].targetTileID) << std::endl;
+                }
+
                 // MK 추가
                 // 게임 매니저 큐에 push.
                 std::vector<std::array<UnitState, 4>> order;
