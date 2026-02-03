@@ -323,6 +323,10 @@ namespace yuno::server
                 const auto pkt =
                     packets::C2S_ReadyTurn::Deserialize(r);
 
+                for (auto& data : pkt.commands)
+                {
+                    std::cout << " data : " << data.runtimeID << " " << std::endl;
+                }
 
                 m_turnManager.SubmitTurn(
                     peer.sId,

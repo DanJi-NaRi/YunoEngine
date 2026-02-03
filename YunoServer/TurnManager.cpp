@@ -59,14 +59,14 @@ namespace yuno::server
             int dy = std::abs(moveY);
             switch (dir)
             {
-            case Direction::Up: return { 0, -dy };
-            case Direction::Down: return { 0, dy };
+            case Direction::Up: return { 0, -dx };
+            case Direction::Down: return { 0, dx };
             case Direction::Left: return { -dx, 0 };
             case Direction::Right: return { dx, 0 };
-            case Direction::UpLeft: return { -dx, -dy };
-            case Direction::UpRight: return { dx, -dy };
-            case Direction::DownLeft: return { -dx, dy };
-            case Direction::DownRight: return { dx, dy };
+            case Direction::UpLeft: return { -dy, -dy };
+            case Direction::UpRight: return { dy, -dy };
+            case Direction::DownLeft: return { -dy, dy };
+            case Direction::DownRight: return { dy, dy };
             case Direction::Same:
             case Direction::None:
             default:
@@ -180,7 +180,7 @@ namespace yuno::server
                     card.m_speed,
                     slot,
                     localIndex++,
-                    cmd.dir 
+                    cmd.dir
                     });
 
                 std::cout
@@ -213,6 +213,7 @@ namespace yuno::server
             if (tileId != 0 && tileId <= kGridSize)
             {
                 grid[tileId] = i;       // 서버 내부 그리드에 유닛 배치
+                std::cout << static_cast<int>(tileId) << "  ";
             }
         }
 
@@ -248,6 +249,7 @@ namespace yuno::server
 
         auto applyMove = [&](int unitIndex, const CardMoveData& moveData, Direction dir) -> bool
             {
+                std::cout << "Enter ApplyMove , ";
                 UnitState& unit = *units[unitIndex];
                 if (unit.tileID == 0)
                     return false;
@@ -257,7 +259,11 @@ namespace yuno::server
                 TilePos target = { current.x + delta.x, current.y + delta.y };
 
                 if (!IsInBounds(target))
+                {
+                    std::cout << "IsInBounds false" << std::endl;
                     return true;
+                }
+
 
                 int steps = std::max(std::abs(delta.x), std::abs(delta.y));
                 int stepX = (delta.x == 0) ? 0 : (delta.x > 0 ? 1 : -1);
@@ -269,11 +275,15 @@ namespace yuno::server
                     probe.x += stepX;
                     probe.y += stepY;
                     if (!IsInBounds(probe))
+                    {
+                        std::cout << "IsInBounds false" << std::endl;
                         return true;
+                    }
 
                     uint8_t probeId = PosToTileId(probe);
                     if (grid[probeId] != -1)
                     {
+                        std::cout << "IsInGrif flase" << std::endl;
                         return true;
                     }
                 }
@@ -283,6 +293,7 @@ namespace yuno::server
                 grid[oldTile] = -1;
                 grid[newTile] = unitIndex;
                 unit.tileID = newTile;
+                std::cout << "oldPos : " << static_cast<int>(oldTile) << "newPos : " << static_cast<int>(newTile) << std::endl;
                 return false;
             };
 
@@ -297,6 +308,11 @@ namespace yuno::server
                     UnitState& unit = *units[unitIndex];
                     unit.stamina = static_cast<uint8_t>(
                         std::max(0, static_cast<int>(unit.stamina) - cardData.m_cost));
+                    std::cout << "stamina : " << static_cast<int>(unit.stamina) << std::endl;
+                }
+                else 
+                {
+                    std::cout << "do not Use Cost" << std::endl;
                 }
 
                 if (cardData.m_type == CardType::Move)
@@ -306,14 +322,20 @@ namespace yuno::server
                         eventOccurred = applyMove(unitIndex, *moveData, card.dir);
                     }
                 }
+                else 
+                {
+                    std::cout << "not Move Card" << std::endl;
+                }
 
                 using namespace yuno::net::packets;
                 S2C_BattleResult pkt;
                 pkt.runtimeCardId = card.runtimeId;
+                pkt.dir = static_cast<uint8_t>(card.dir);
                 pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
                 pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
-                pkt.dir = static_cast<uint8_t>(card.dir);
+                pkt.actionTime = 3000;
                 pkt.order.push_back(buildDeltaSnapshot(unitIndex, eventOccurred));
+
 
                 auto bytes = yuno::net::PacketBuilder::Build(
                     yuno::net::PacketType::S2C_BattleResult,
@@ -344,43 +366,31 @@ namespace yuno::server
 
         for (size_t i = 0; i < maxCount; ++i)
         {
-            bool hasA = i < slotCards[0].size();
-            bool hasB = i < slotCards[1].size();
 
-            if (hasA && hasB)
+            bool coinTossUsed = false;
+            bool aFirst = IsALess(slotCards[0][i], slotCards[1][i], coinTossUsed);
+
+            if (coinTossUsed)
             {
-                bool coinTossUsed = false;
-                bool aFirst = IsALess(slotCards[0][i], slotCards[1][i], coinTossUsed);
-
-                if (coinTossUsed)
-                {
-                    std::cout << "[Server] COIN TOSS EVENT "
-                        << "A(runtime=" << slotCards[0][i].runtimeId << ") vs "
-                        << "B(runtime=" << slotCards[1][i].runtimeId << ")\n";
-                }
-
-                if (aFirst)
-                {
-                    applyCard(slotCards[0][i]);
-                    applyCard(slotCards[1][i]);
-                }
-                else
-                {
-                    applyCard(slotCards[1][i]);
-                    applyCard(slotCards[0][i]);
-                }
+                std::cout << "[Server] COIN TOSS EVENT "
+                    << "A(runtime=" << slotCards[0][i].runtimeId << ") vs "
+                    << "B(runtime=" << slotCards[1][i].runtimeId << ")\n";
             }
-            else if (hasA)
+
+            if (aFirst)
             {
                 applyCard(slotCards[0][i]);
-            }
-            else if (hasB)
-            {
                 applyCard(slotCards[1][i]);
             }
+            else
+            {
+                applyCard(slotCards[1][i]);
+                applyCard(slotCards[0][i]);
+            }
+
         }
 
-
+    
 
         ClearTurn();
     }

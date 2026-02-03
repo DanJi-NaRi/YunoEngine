@@ -146,11 +146,11 @@ namespace yuno::server
         player.unit1.tileID = rs.units[2].SpawnTileId = 13;
 
         rs.units[3].PID = 2;
-        unit2.slotID = rs.units[3].slotID = 2;
-        unit2.WeaponID = rs.units[3].WeaponID = static_cast<std::uint8_t>(s[1].unitId2);
-        unit2.hp = rs.units[3].hp = 100;
-        unit2.stamina = rs.units[3].stamina = 100;
-        unit2.tileID = rs.units[3].SpawnTileId = 27;
+        player.unit2.slotID = rs.units[3].slotID = 2;
+        player.unit2.WeaponID = rs.units[3].WeaponID = static_cast<std::uint8_t>(s[1].unitId2);
+        player.unit2.hp = rs.units[3].hp = 100;
+        player.unit2.stamina = rs.units[3].stamina = 100;
+        player.unit2.tileID = rs.units[3].SpawnTileId = 27;
 
         // MK 추가
         allPlayerUnits.emplace(player.PID, player);
