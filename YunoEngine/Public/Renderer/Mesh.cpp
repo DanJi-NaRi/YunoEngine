@@ -172,9 +172,10 @@ MeshDesc Mesh::BuildDesc()
 {
     MeshDesc md;
 
+    md.emissive = m_renderItem.Constant.emissive;
+    md.emissiveCol = FromXM(m_renderItem.Constant.emissiveColor);
 
-
-    return MeshDesc();
+    return md;
 }
 
 #ifdef _DEBUG

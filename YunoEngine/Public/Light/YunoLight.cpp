@@ -124,6 +124,10 @@ void YunoDirectionalLight::Serialize()
         {
 
         }
+        if (UI::DragFloat3Editable("LightColor", &m_desc.diff.x, 0.001f, 0.0f, 1.0f))
+        {
+
+        }
     }
 }
 #endif
@@ -186,7 +190,7 @@ void YunoPointLight::Serialize()
 
             if (!editPos)
             {
-                if (UI::DragFloat3("Position##Drag", &pos.x, 0.1f))
+                if (UI::DragFloat3("Position##Drag", &pos.x, 0.001f, 0.0f, 0.0f, "%.3f"))
                 {
                 }
 

@@ -163,12 +163,29 @@ void Unit::SaveMesh(std::unique_ptr<MeshNode>& node, std::vector<Mesh*>& out)
         SaveMesh(child, out);
 }
 
+void Unit::SetEmissive(int num, const XMFLOAT4& color, float pow)
+{
+    if (num >= m_Meshs.size() && num < 0)
+        return;
+
+    m_Meshs[num]->SetEmissiveColor(color);
+    m_Meshs[num]->SetEmissivePow(pow);
+}
+
 void Unit::SetEmissiveColor(int num, const XMFLOAT4& color)
 {
     if (num >= m_Meshs.size() && num < 0)
         return;
 
     m_Meshs[num]->SetEmissiveColor(color);
+}
+
+void Unit::SetEmissivePow(int num, float pow)
+{
+    if (num >= m_Meshs.size() && num < 0)
+        return;
+
+    m_Meshs[num]->SetEmissivePow(pow);
 }
 
 void Unit::SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepath)
@@ -232,6 +249,11 @@ void Unit::ClearChild()
     m_Childs.clear();
 }
 
+XMMATRIX Unit::GetAttachMatrixForChild(Unit* child)
+{
+    return GetWorldMatrix();
+}
+
 UnitDesc Unit::GetDesc()
 {
     UnitDesc d;
@@ -250,10 +272,15 @@ UnitDesc Unit::GetDesc()
     d.transform.rotation = degRot; // deg
     d.transform.scale = FromXM(m_vScale);
 
-    std::vector<MaterialDesc> mds;
+    std::vector<MeshDesc> mds;
+    int num = 0;
     for (auto& m : m_Meshs)
     {
         MeshDesc md = m->BuildDesc();
+        md.meshNum = num;
+
+        d.MatDesc.push_back(md);
+        num++;
     }
 
     return d;

@@ -13,6 +13,7 @@ Animator::Animator()
     animCount = 0;
     curAnim = -1;
     m_CurAnim = nullptr;
+    XMStoreFloat4x4(&m_Identity, XMMatrixIdentity());
 }
 
 Animator::~Animator()
@@ -106,6 +107,9 @@ void Animator::Update(float dTime)
 
 const XMFLOAT4X4& Animator::GetBoneGlobal(int idx)
 {
+    if (idx < 0 || idx >= m_BoneCount)
+        return m_Identity;
+
     return m_GlobalBoneTM[idx];
 }
 
