@@ -67,6 +67,22 @@ namespace nlohmann
         j.at("scale").get_to(t.scale);
     }
 
+    inline void to_json(json& j, const MeshDesc& t)
+    {
+        j = {
+            { "meshNum", t.meshNum },
+            { "emissiveColor", t.emissiveCol },
+            { "pow", t.emissive } 
+        };
+    }
+
+    inline void from_json(const json& j, MeshDesc& t)
+    {
+        j.at("meshNum").get_to(t.meshNum);
+        j.at("emissiveColor").get_to(t.emissiveCol);
+        j.at("pow").get_to(t.emissive);
+    }
+
     inline void to_json(json& j, const UnitDesc& d)
     {
         j = {
@@ -75,7 +91,8 @@ namespace nlohmann
             { "name",      WStringToUtf8(d.name) },
             { "meshPath",  WStringToUtf8(d.meshPath) },
             { "unitType",  WStringToUtf8(d.unitType) },
-            { "transform", d.transform }
+            { "transform", d.transform },
+            {"meshEmissive", d.MatDesc}
         };
     }
 
@@ -89,6 +106,7 @@ namespace nlohmann
         d.unitType = Utf8ToWString(j.at("unitType").get<std::string>());
 
         j.at("transform").get_to(d.transform);
+        j.at("meshEmissive").get_to(d.MatDesc);
     }
 
     inline void to_json(json& j, const WidgetDesc& d)
@@ -212,6 +230,24 @@ namespace nlohmann
         return dl;
     }
 
+    inline void to_json(json& j, const PostProcessDesc& d)
+    {
+        j = {
+        { "optionflag",  d.ppFlag },
+        { "threshold",  d.threshold },
+        { "bloomIntensity",  d.bloomIntensity },
+        { "exposure",  d.exposure }
+        };
+    }
+
+    inline void from_json(const json& j, PostProcessDesc& d)
+    {
+        j.at("optionflag").get_to(d.ppFlag);
+        j.at("threshold").get_to(d.threshold);
+        j.at("bloomIntensity").get_to(d.bloomIntensity);
+        j.at("exposure").get_to(d.exposure);
+    }
+
     inline void to_json(json& j, const SceneDesc& s)
     {
         auto pls = ConvertToSave(s.pointLights);
@@ -225,6 +261,7 @@ namespace nlohmann
             { "version",     s.version },
             { "scenename",     name },
             { "isOrtho",     s.isOrtho },
+            { "postprocessOption",     s.postprocess },
             { "units",       s.units },
             { "widgets",       s.widgets },
             { "pointLights", pls }
@@ -239,6 +276,7 @@ namespace nlohmann
         j.at("version").get_to(s.version);
         s.sceneName = Utf8ToWString(j.at("scenename").get<std::string>());
         j.at("isOrtho").get_to(s.isOrtho);
+        j.at("postprocessOption").get_to(s.postprocess);
 
         j.at("units").get_to(s.units);
         j.at("widgets").get_to(s.widgets);

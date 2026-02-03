@@ -16,6 +16,7 @@ void Effect::SetTemplate(const EffectTemplate& temp)
 
     m_lifetime = temp.lifetime;
     m_emissive = temp.emissive;
+    m_emissiveCol = temp.color;
     m_frameCount = temp.frameCount;
     m_cols = temp.cols;
     m_rows = temp.rows;
@@ -64,7 +65,7 @@ void Effect::UpdateWorldMatrix()
     XMMATRIX mTM;
 
     if (m_Parent)
-        mTM = S * R * T * m_Parent->GetWorldMatrix();
+        mTM = S * R * T * m_Parent->GetAttachMatrixForChild(this);
     else
         mTM = S * R * T;
 
@@ -154,14 +155,16 @@ XMMATRIX Effect::UpdateAxisLock()
 
     // 카메라 forward 가져오기 (빌보드 두께 유지용)
     XMVECTOR camForward = m_pRenderer->GetCamera().GetForward();
+    XMVECTOR worldUp = XMVectorSet(0, 1, 0, 0);
        
     // right = 카메라 기준으로 빔이 얇아지지 않게
     XMVECTOR right = XMVector3Normalize(
-        XMVector3Cross(camForward, forward)
+        XMVector3Cross(worldUp, forward)
     );
 
     // up = forward x right
-    XMVECTOR up = XMVector3Cross(forward, right);
+    XMVECTOR up = -XMVector3Cross(camForward, right);
+    //XMVECTOR up = -camForward;
 
     // 회전행렬 생성
     XMMATRIX R;
@@ -183,6 +186,8 @@ void Effect::UpdateFrame()
     frame = std::min(frame, m_frameCount - 1);
 
     m_renderItem.isEffect = true;
+    m_renderItem.Constant.emissive = m_emissive;
+    m_renderItem.Constant.emissiveColor = m_emissiveCol;
     m_renderItem.effectConst.effectData =
     {
         (float)frame,

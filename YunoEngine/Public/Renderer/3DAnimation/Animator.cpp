@@ -13,6 +13,7 @@ Animator::Animator()
     animCount = 0;
     curAnim = -1;
     m_CurAnim = nullptr;
+    XMStoreFloat4x4(&m_Identity, XMMatrixIdentity());
 }
 
 Animator::~Animator()
@@ -20,16 +21,18 @@ Animator::~Animator()
 
 }
 
-void Animator::SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, UINT boneCount)
+void Animator::SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, const std::unordered_map<std::string, UINT>& nameToIndex, UINT boneCount)
 {
     assert(boneCount <= MAX_BONE); //본 일단 넉넉하게 70개 제한 나중에 줄이기 ㄱ
 
     m_RootBone = std::move(rootNode);
+    m_BoneNameToIndex = nameToIndex;
 
     m_LocalBoneA.resize(boneCount);
     m_LocalBoneB.resize(boneCount);
     m_BlendBoneTM.resize(boneCount);
     m_FinalBoneTM.resize(boneCount);
+    m_GlobalBoneTM.resize(boneCount);
     m_BoneCount = boneCount;
     for (size_t i = 0; i < m_BoneCount; i++)
     {
@@ -68,6 +71,7 @@ bool Animator::AddAnimationFromFile(const std::string& name, const std::wstring&
     auto clip = Parser::Instance().LoadAnimationClipFromFile(filepath);
 
     clip->name = name;
+    clip->isLoop = true;
     AddAnimationClip(name, std::move(clip));
 
     return true;
@@ -98,7 +102,24 @@ void Animator::Update(float dTime)
         m_RootBone->SampleLocalPose(CurTickTime, m_CurAnim->channels, m_BlendBoneTM);
     }
 
-    m_RootBone->UpdateBoneMatrix(m_BlendBoneTM, m_FinalBoneTM, XMMatrixIdentity());
+    m_RootBone->UpdateBoneMatrix(m_BlendBoneTM, m_FinalBoneTM, m_GlobalBoneTM, XMMatrixIdentity());
+}
+
+const XMFLOAT4X4& Animator::GetBoneGlobal(int idx)
+{
+    if (idx < 0 || idx >= m_BoneCount)
+        return m_Identity;
+
+    return m_GlobalBoneTM[idx];
+}
+
+int Animator::FindIndex(const std::string& name)
+{
+    auto it = m_BoneNameToIndex.find(name);
+    if (it == m_BoneNameToIndex.end())
+        return -1;
+
+    return it->second;
 }
 
 void Animator::BlendingUpdate(float dTime)
@@ -149,6 +170,29 @@ void Animator::BlendLocalPose(
             XMMatrixTranslationFromVector(t);
     }
 }
+
+void Animator::SetLoop(const std::string& name, bool isLoop)
+{
+    auto it = m_NameToID.find(name);
+
+    if (it != m_NameToID.end())
+    {
+        UINT id = m_NameToID[name];
+
+        m_AnimationClips[id]->isLoop = isLoop;
+    }
+}
+
+void Animator::SetLoop(UINT id, bool isLoop)
+{
+    auto it = m_AnimationClips.find(id);
+
+    if (it != m_AnimationClips.end())
+    {
+        m_AnimationClips[id]->isLoop = isLoop;
+    }
+}
+
 
 void Animator::Change(UINT id, float duration)
 {
@@ -241,10 +285,11 @@ void Animator::Serialize()
             if (UI::SliderFloat("TickTime", &CurTickTime, 0.0f, m_CurAnim->duration))
             {
                 //CurTickTime = curTimeSec * m_CurAnim->TickPerSec;
-
+                m_RootBone->SampleLocalPose(CurTickTime, m_CurAnim->channels, m_BlendBoneTM);
                 m_RootBone->UpdateBoneMatrix(
                     m_BlendBoneTM,
                     m_FinalBoneTM,
+                    m_GlobalBoneTM,
                     XMMatrixIdentity()
                 );
             }
@@ -252,9 +297,11 @@ void Animator::Serialize()
             {
                 CurTickTime = curTimeSec * m_CurAnim->TickPerSec;
 
+                m_RootBone->SampleLocalPose(CurTickTime, m_CurAnim->channels, m_BlendBoneTM);
                 m_RootBone->UpdateBoneMatrix(
                     m_BlendBoneTM,
                     m_FinalBoneTM,
+                    m_GlobalBoneTM,
                     XMMatrixIdentity()
                 );
             }

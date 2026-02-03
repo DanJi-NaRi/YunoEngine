@@ -356,40 +356,55 @@ namespace yuno::game
                     << " ownerSlot=" << static_cast<int>(pkt.ownerSlot)
                     << "\n";
 
+                for (auto& data : pkt.order) 
+                {
+                    std::cout << "tileId(1,2,3,4) : " << static_cast<int>(data[0].targetTileID) << ", "
+                        << static_cast<int>(data[1].targetTileID) << ", "
+                        << static_cast<int>(data[2].targetTileID) << ", "
+                        << static_cast<int>(data[3].targetTileID) << std::endl;
+                }
+
                 // MK 추가
                 // 게임 매니저 큐에 push.
                 std::vector<std::array<UnitState, 4>> order;
-                for (int i = 0; i < order.size(); i++)
+                for (int i = 0; i < pkt.order.size(); i++)
                 {
                     const auto& u = pkt.order[i];
                     std::array<UnitState, 4> us;
                     for (int j = 0; j < us.size(); j++)
                     {
-                        us[0] = { u[j].ownerSlot, u[j].unitLocalIndex, u[j].hp,
+                        us[j] = { u[j].ownerSlot, u[j].unitLocalIndex, u[j].hp,
                                   u[j].stamina, u[j].targetTileID, u[j].isEvent };
                     }
                     order.push_back(us);
                 }
 
-                BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, pkt.dir, order };
+                BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, pkt.dir, pkt.actionTime, order };
                 gm.PushBattlePacket(br);
 
                 // 디버깅용
-                for (const auto& d : pkt.order)
+                std::cout
+                    << "[BattleResult]"
+                    << "\nrunTimeCardID = " << static_cast<int>(br.runTimeCardID)
+                    << "\nPID = " << static_cast<int>(br.pId)
+                    << "\nUnit = " << static_cast<int>(br.slotId)
+                    << "\nDir = " << static_cast<int>(br.dir)
+                    << "\nActionTime = " << static_cast<int>(br.actionTime);
+                for (const auto& d : order)
                 {
                     for (int i = 0; i < d.size(); i++)
                     {
-                        const int slot = static_cast<int>(d[i].ownerSlot);
-                        const int unit = static_cast<int>(d[i].unitLocalIndex);
+                        const int slot = static_cast<int>(d[i].pId);
+                        const int unit = static_cast<int>(d[i].slotId);
 
                         std::cout
-                            << "[Client] Apply Delta |\n" 
+                            << "\n[Client] Apply Delta |\n" 
                             << " Player = " << slot
                             << "\n unit =" << unit
-                            << "\n hp =" << d[i].hp
-                            << "\n stamina =" << d[i].stamina
-                            << "\n move =" << d[i].targetTileID
-                            << "\n isEvent =(" << d[i].isEvent << ")\n";
+                            << "\n hp =" << static_cast<int>(d[i].hp)
+                            << "\n stamina =" << static_cast<int>(d[i].stamina)
+                            << "\n move =" << static_cast<int>(d[i].targetTileID)
+                            << "\n isEvent =(" << static_cast<bool>(d[i].isEvent) << ")\n";
                     }
                 }
             }

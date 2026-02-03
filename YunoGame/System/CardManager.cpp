@@ -3,13 +3,6 @@
 #include "CardManager.h"
 
 
-//싱글톤
-CardManager& CardManager::Get()
-{
-    static CardManager instance;
-    return instance;
-}
-
 //CSV 한 줄 분리 유틸
 static std::vector<std::string> Split(const std::string& line, char delim)
 {

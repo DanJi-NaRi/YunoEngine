@@ -31,7 +31,7 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
     m_weapons.push_back(data);
 }
 
-void GameManager::PushBattlePacket(const BattleResult& _BattleResult)
+void GameManager::PushBattlePacket(const BattleResult _BattleResult)
 {
     m_turnPkts.push(_BattleResult);
     std::cout << "Battle Packet is inserted into Queue.\n";
@@ -56,6 +56,12 @@ void GameManager::Initialize(GameManager* inst)
     assert(inst);
     assert(!s_instance);
     s_instance = inst;
+
+}
+
+void GameManager::Init()
+{
+    m_cardBasicMng.LoadFromCSV("../Assets/CardData/CardData.csv");
 }
 
 void GameManager::Shutdown()
@@ -146,6 +152,35 @@ void GameManager::SetCards(
 
         m_CardRuntimeIDs[c.runtimeID] = c.dataID;
     }
+}
+
+uint32_t GameManager::GetCardRuntimeIDByIndex(int index) const
+{
+    if (index < 0 || index >= (int)m_Cards.size())
+        return 0;
+
+    return m_Cards[index].runtimeID;
+}
+
+uint32_t GameManager::GetCardDataID(uint32_t runtimeID) const
+{
+    auto it = m_CardRuntimeIDs.find(runtimeID);
+    if (it == m_CardRuntimeIDs.end())
+        return 0;
+    
+    return it->second;
+}
+
+const CardData GameManager::GetCardData(uint32_t runtimeID)
+{
+    auto dataID = GetCardDataID(runtimeID);
+    return m_cardBasicMng.GetCardData(dataID);
+}
+
+const RangeData* GameManager::GetRangeData(uint32_t runtimeID)
+{
+    auto dataID = GetCardData(runtimeID);
+    return m_cardRangeMng.GetRange(dataID.m_rangeId);
 }
 
 void GameManager::StartCountDown(int countTime, int S1U1, int S1U2, int S2U1, int S2U2)

@@ -1,6 +1,6 @@
 #pragma once
 
-
+using namespace yuno::server;
 
 struct CardActionContext
 {

@@ -2,73 +2,81 @@
 
 #include "CardRangeManager.h"
 
-namespace yuno::server
+//namespace yuno::server
+//{
+//}
+static std::vector<std::string> Split(const std::string& line, char delim)
 {
-    static std::vector<std::string> Split(const std::string& line, char delim)
-    {
-        std::vector<std::string> tokens;
-        std::stringstream ss(line);
-        std::string item;
+    std::vector<std::string> tokens;
+    std::stringstream ss(line);
+    std::string item;
 
-        while (std::getline(ss, item, delim))
-        {
-            tokens.push_back(item);
-        }
-        return tokens;
+    while (std::getline(ss, item, delim))
+    {
+        tokens.push_back(item);
     }
+    return tokens;
+}
 
-    static void RemoveBOM(std::string& s)
+static void RemoveBOM(std::string& s)
+{
+    if (s.size() >= 3 &&
+        (unsigned char)s[0] == 0xEF &&
+        (unsigned char)s[1] == 0xBB &&
+        (unsigned char)s[2] == 0xBF)
     {
-        if (s.size() >= 3 &&
-            (unsigned char)s[0] == 0xEF &&
-            (unsigned char)s[1] == 0xBB &&
-            (unsigned char)s[2] == 0xBF)
-        {
-            s.erase(0, 3);
-        }
+        s.erase(0, 3);
     }
+}
 
-    bool CardRangeManager::LoadFromCSV(const std::string& path)
+
+bool CardRangeManager::LoadFromCSV(const std::string& path)
+{
+    std::ifstream file(path);
+    if (!file.is_open())
+        return false;
+
+    std::string line;
+    std::getline(file, line); // header skip
+
+    while (std::getline(file, line))
     {
-        std::ifstream file(path);
-        if (!file.is_open())
-            return false;
+        auto cols = Split(line, ',');
+        if (cols.empty()) continue;
 
-        std::string line;
-        std::getline(file, line); // header skip
+        RemoveBOM(cols[0]);
 
-        while (std::getline(file, line))
+        RangeData range;
+        range.rangeId = std::stoul(cols[0]);
+
+        for (size_t i = 1; i < cols.size(); ++i)
         {
-            auto cols = Split(line, ',');
-            if (cols.empty()) continue;
+            if (cols[i] == "0" || cols[i].empty())
+                continue;
 
-            RemoveBOM(cols[0]);
+            auto pos = cols[i].find(';');
+            if (pos == std::string::npos)
+                continue;
 
-            RangeData range;
-            range.rangeId = std::stoul(cols[0]);
+            int dx = std::stoi(cols[i].substr(0, pos));
+            int dy = std::stoi(cols[i].substr(pos + 1));
 
-            for (size_t i = 1; i < cols.size(); ++i)
-            {
-                if (cols[i] == "0" || cols[i].empty())
-                    continue;
-
-                auto pos = cols[i].find(';');
-                if (pos == std::string::npos)
-                    continue;
-
-                int dx = std::stoi(cols[i].substr(0, pos));
-                int dy = std::stoi(cols[i].substr(pos + 1));
-
-                range.offsets.push_back({ dx, dy });
-            }
-
-            m_ranges[range.rangeId] = range;
+            range.offsets.push_back({ dx, dy });
         }
 
-        std::cout << "[CardRangeManager] Loaded Ranges: "
-            << m_ranges.size() << "\n";
-
-        return true;
+        m_ranges[range.rangeId] = range;
     }
 
+    std::cout << "[CardRangeManager] Loaded Ranges: "
+        << m_ranges.size() << "\n";
+
+    return true;
+}
+
+const RangeData* CardRangeManager::GetRange(uint32_t rangeId) const
+{
+    auto it = m_ranges.find(rangeId);
+    if (it == m_ranges.end())
+        return nullptr;
+    return &it->second;
 }

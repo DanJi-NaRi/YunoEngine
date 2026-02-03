@@ -17,6 +17,8 @@
 #include "IWindow.h"
 #include "YunoEngine.h"
 
+#include "SerializeScene.h"
+
 using Microsoft::WRL::ComPtr;
 
 
@@ -1101,6 +1103,7 @@ void YunoRenderer::BindBloomCombine(ID3D11ShaderResourceView* input)
     m_context->Draw(3, 0);
 }
 
+
 void YunoRenderer::PostProcessFinal(ID3D11ShaderResourceView* input)
 {
     UnBindAllSRV();
@@ -1994,13 +1997,28 @@ std::pair<int, int> YunoRenderer::GetTextureSize(TextureHandle handle) const
 
 }
 
-void YunoRenderer::SetPostProcessOption(uint32_t flag)
+void YunoRenderer::SetPostProcessOption(const PostProcessDesc& opt)
 {
     if(m_PPFlag = 0)
         m_PPFlag = PostProcessFlag::Default;
-    m_PPFlag |= flag;
+    m_PPFlag |= opt.ppFlag;
+
+    m_Threshold = opt.threshold;
+    m_BloomIntensity = opt.bloomIntensity;
+    m_Exposure = opt.exposure;
 
     SetPP_Pass();
+}
+
+PostProcessDesc YunoRenderer::GetPostProcessOption()
+{
+    PostProcessDesc pd;
+    pd.threshold = m_Threshold;
+    pd.bloomIntensity = m_BloomIntensity;
+    pd.exposure = m_Exposure;
+    pd.ppFlag = m_PPFlag;
+
+    return pd;
 }
 
 void YunoRenderer::ResetPostProcessOption()
@@ -2888,13 +2906,13 @@ void YunoRenderer::RegisterDrawUI()
 
             if (UI::CollapsingHeader("BloomFilter"))
             {
-                UI::DragFloatEditable("Threshold", &m_Threshold, 0.01f, 0.0f, 1.5f);
-                UI::DragFloatEditable("BloomIntensity", &m_BloomIntensity, 0.01f, 0.0f, 2.0f);
+                UI::DragFloatEditable("Threshold", &m_Threshold, 0.001f, 0.0f, 5.0f);
+                UI::DragFloatEditable("BloomIntensity", &m_BloomIntensity, 0.001f, 0.0f, 5.0f);
             }
 
             if (UI::CollapsingHeader("ToneMapping"))
             {
-                UI::DragFloatEditable("Exposure", &m_Exposure, 0.01f, 0.0f, 5.0f);
+                UI::DragFloatEditable("Exposure", &m_Exposure, 0.001f, 0.0f, 10.0f);
             }
 
             UI::EndPanel();

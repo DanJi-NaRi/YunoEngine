@@ -61,6 +61,7 @@ class IWindow;
 class YunoRenderPass;
 class YunoMeshBuffer;
 class YunoShader;
+struct PostProcessDesc;
 
 namespace
 {
@@ -194,8 +195,9 @@ public:
     YunoCamera& GetCamera() override { return m_camera; }
     std::pair<int, int> GetTextureSize(TextureHandle handle) const;
     
-    void SetPostProcessOption(uint32_t flag); //Use PostProcessFlag (기존 설정된 옵션 있으면 +, 없으면 Set)
-    void ResetPostProcessOption(); //Reset PostProcessOption
+    void SetPostProcessOption(const PostProcessDesc& opt) override; //Use PostProcessFlag (기존 설정된 옵션 있으면 +, 없으면 Set)
+    PostProcessDesc GetPostProcessOption() override;
+    void ResetPostProcessOption() override; //Reset PostProcessOption
 private:
     void BindConstantBuffers(const RenderItem& item);
     void DrawTextBatch();

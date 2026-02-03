@@ -10,7 +10,10 @@
 
 #include "PacketBuilder.h"
 #include "S2C_BattlePackets.h"
+#include "S2C_StartCardList.h"
 #include "ServerCardManager.h"
+
+#include "BattleState.h"
 
 static bool IsALess(const ResolvedCard& a, const ResolvedCard& b, bool& coinTossUsed)
 {
@@ -59,14 +62,14 @@ namespace yuno::server
             int dy = std::abs(moveY);
             switch (dir)
             {
-            case Direction::Up: return { 0, -dy };
-            case Direction::Down: return { 0, dy };
+            case Direction::Up: return { 0, -dx };
+            case Direction::Down: return { 0, dx };
             case Direction::Left: return { -dx, 0 };
             case Direction::Right: return { dx, 0 };
-            case Direction::UpLeft: return { -dx, -dy };
-            case Direction::UpRight: return { dx, -dy };
-            case Direction::DownLeft: return { -dx, dy };
-            case Direction::DownRight: return { dx, dy };
+            case Direction::UpLeft: return { -dy, -dy };
+            case Direction::UpRight: return { dy, -dy };
+            case Direction::DownLeft: return { -dy, dy };
+            case Direction::DownRight: return { dy, dy };
             case Direction::Same:
             case Direction::None:
             default:
@@ -103,6 +106,7 @@ namespace yuno::server
             << " submitted " << commands.size()
             << " commands\n";
 
+        // 두 플레이어가 모두 CardSubmit하면 아래 함수 실행됨
         TryResolveTurn();
     }
 
@@ -112,17 +116,25 @@ namespace yuno::server
         using namespace yuno::net::packets;
 
         S2C_BattleResult pkt;
+
+        // 쓰레기 값 들어가고 있어서 테스트를 위해 하드코딩
+        //pkt.runtimeCardId = c.runtimeId;
+        //pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
         pkt.runtimeCardId = c.runtimeId;
-        pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
-        pkt.unitLocalIndex = static_cast<uint8_t>(c.localIndex);
-        pkt.dir = static_cast<uint8_t>(c.dir);
+        pkt.ownerSlot = 1;
+        pkt.unitLocalIndex = 1;
+        pkt.dir = 0;
+
+        //pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
+        //pkt.unitLocalIndex = static_cast<uint8_t>(c.localIndex);
+        //pkt.dir = static_cast<uint8_t>(c.dir);
 
         //  테스트용 하드코딩 결과
         std::array<UnitStateDelta, 4> us;
-        us[0] = { 1, 1, 100, 100, 5, 1 };
-        us[1] = { 1, 2, 100, 100, 10, 2 };
-        us[2] = { 2, 1, 100, 100, 15, 3 };
-        us[3] = { 2, 2, 100, 100, 20, 4 };
+        us[0] = { 1, 1, 90, 100, 16, 1 };
+        us[1] = { 1, 2, 95, 100, 12, 0 };
+        us[2] = { 2, 1, 100, 100, 23, 0 };
+        us[3] = { 2, 2, 100, 100, 27, 0 };
         pkt.order.push_back(us);
 
 
@@ -149,27 +161,27 @@ namespace yuno::server
 
         std::cout << "[Server] Both players submitted turn\n";
 
-        std::vector<ResolvedCard> slotCards[2];
+        std::vector<ResolvedCard> slotCards[2]; // 0 은 1P, 1은 2P
 
 
         for (int slot = 0; slot < 2; ++slot)
         {
             int localIndex = 0;
 
-            for (const CardPlayCommand& cmd : m_turnCards[slot])
+            for (const CardPlayCommand& cmd : m_turnCards[slot]) // 플레이어가 제출한 카드들
             {
                 uint32_t runtimeId = cmd.runtimeID;
-                uint32_t dataId = m_runtime.GetDataID(runtimeId);
-                const CardData& card = m_cardDB.GetCardData(dataId);
+                uint32_t dataId = m_runtime.GetDataID(runtimeId); // 런타임ID >> 데이터ID로 변경
+                const CardData& card = m_cardDB.GetCardData(dataId); // 데이터ID로 카드DB에서 카드 데이터 가져옴
 
-                slotCards[slot].push_back({
+                slotCards[slot].push_back({ // 슬롯에 장착한 카드 정보 삽입
                     runtimeId,
                     dataId,
                     card.m_allowedUnits,
                     card.m_speed,
                     slot,
                     localIndex++,
-                    cmd.dir 
+                    cmd.dir
                     });
 
                 std::cout
@@ -185,8 +197,8 @@ namespace yuno::server
             }
         }
 
-        auto& p1 = m_roundController.GetPlayerUnitState(1);
-        auto& p2 = m_roundController.GetPlayerUnitState(2);
+        auto& p1 = g_battleState.players[0];
+        auto& p2 = g_battleState.players[1];
 
         std::array<UnitState*, 4> units = {
             &p1.unit1,
@@ -195,38 +207,54 @@ namespace yuno::server
             &p2.unit2
         };
 
-        std::vector<int> grid(kGridSize + 1, -1);
+        std::vector<int> grid(kGridSize + 1, -1);   // size 36 , 0은 Error, 1~35가 TileId
         for (int i = 0; i < static_cast<int>(units.size()); ++i)
         {
             uint8_t tileId = units[i]->tileID;
             if (tileId != 0 && tileId <= kGridSize)
             {
-                grid[tileId] = i;
+                grid[tileId] = i;       // 서버 내부 그리드에 유닛 배치
+                std::cout << static_cast<int>(tileId) << "  ";
             }
         }
 
+        // 변경된 정보를 기반으로 스냅샷 찍어서 패킷 만들기, (UnitStateDelta) 만드는 애임
         auto buildDeltaSnapshot = [&](int eventUnitIndex, bool hasEvent)
             {
                 std::array<yuno::net::packets::UnitStateDelta, 4> deltas{};
-                for (int i = 0; i < static_cast<int>(units.size()); ++i)
+                int deltaIndex = 0;
+
+                for (int p = 0; p < 2; ++p)
                 {
-                    uint8_t ownerSlot = (i < 2) ? 1 : 2;
-                    uint8_t unitLocalIndex = (i % 2) + 1;
-                    deltas[i] = {
-                        ownerSlot,
-                        unitLocalIndex,
-                        units[i]->hp,
-                        units[i]->stamina,
-                        units[i]->tileID,
-                        static_cast<uint8_t>((hasEvent && i == eventUnitIndex) ? 1 : 0)
+                    const auto& player = g_battleState.players[p];
+
+                    const UnitState* playerUnits[2] = {
+                        &player.unit1,
+                        &player.unit2
                     };
+
+                    for (int u = 0; u < 2; ++u)
+                    {
+                        const UnitState* unit = playerUnits[u];
+                        bool isEventUnit = (deltaIndex == eventUnitIndex);
+
+                        deltas[deltaIndex++] = {
+                            player.PID,     
+                            unit->slotID,    
+                            unit->hp,
+                            unit->stamina,
+                            unit->tileID,
+                            static_cast<uint8_t>(hasEvent && isEventUnit)
+                        };
+                    }
                 }
                 return deltas;
             };
 
         auto getUnitIndexForCard = [&](int ownerSlot, const CardData& card) -> int
             {
-                auto& player = (ownerSlot == 0) ? p1 : p2;
+                auto& player = (ownerSlot == 0) ? g_battleState.players[0] : g_battleState.players[1];
+
                 if (player.unit1.WeaponID == card.m_allowedUnits)
                     return (ownerSlot == 0) ? 0 : 2;
                 if (player.unit2.WeaponID == card.m_allowedUnits)
@@ -236,6 +264,7 @@ namespace yuno::server
 
         auto applyMove = [&](int unitIndex, const CardMoveData& moveData, Direction dir) -> bool
             {
+                std::cout << "Enter ApplyMove , ";
                 UnitState& unit = *units[unitIndex];
                 if (unit.tileID == 0)
                     return false;
@@ -245,7 +274,11 @@ namespace yuno::server
                 TilePos target = { current.x + delta.x, current.y + delta.y };
 
                 if (!IsInBounds(target))
+                {
+                    std::cout << "IsInBounds false" << std::endl;
                     return true;
+                }
+
 
                 int steps = std::max(std::abs(delta.x), std::abs(delta.y));
                 int stepX = (delta.x == 0) ? 0 : (delta.x > 0 ? 1 : -1);
@@ -257,11 +290,15 @@ namespace yuno::server
                     probe.x += stepX;
                     probe.y += stepY;
                     if (!IsInBounds(probe))
+                    {
+                        std::cout << "IsInBounds false" << std::endl;
                         return true;
+                    }
 
                     uint8_t probeId = PosToTileId(probe);
                     if (grid[probeId] != -1)
                     {
+                        std::cout << "IsInGrif flase" << std::endl;
                         return true;
                     }
                 }
@@ -271,6 +308,7 @@ namespace yuno::server
                 grid[oldTile] = -1;
                 grid[newTile] = unitIndex;
                 unit.tileID = newTile;
+                std::cout << "oldPos : " << static_cast<int>(oldTile) << "newPos : " << static_cast<int>(newTile) << std::endl;
                 return false;
             };
 
@@ -285,6 +323,11 @@ namespace yuno::server
                     UnitState& unit = *units[unitIndex];
                     unit.stamina = static_cast<uint8_t>(
                         std::max(0, static_cast<int>(unit.stamina) - cardData.m_cost));
+                    std::cout << "stamina : " << static_cast<int>(unit.stamina) << std::endl;
+                }
+                else 
+                {
+                    std::cout << "do not Use Cost" << std::endl;
                 }
 
                 if (cardData.m_type == CardType::Move)
@@ -294,14 +337,20 @@ namespace yuno::server
                         eventOccurred = applyMove(unitIndex, *moveData, card.dir);
                     }
                 }
+                else 
+                {
+                    std::cout << "not Move Card" << std::endl;
+                }
 
                 using namespace yuno::net::packets;
                 S2C_BattleResult pkt;
                 pkt.runtimeCardId = card.runtimeId;
+                pkt.dir = static_cast<uint8_t>(card.dir);
                 pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
                 pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
-                pkt.dir = static_cast<uint8_t>(card.dir);
+                pkt.actionTime = 3000;
                 pkt.order.push_back(buildDeltaSnapshot(unitIndex, eventOccurred));
+
 
                 auto bytes = yuno::net::PacketBuilder::Build(
                     yuno::net::PacketType::S2C_BattleResult,
@@ -313,56 +362,50 @@ namespace yuno::server
                 m_network.Broadcast(std::move(bytes));
             };
 
-        size_t maxCount =
-            std::max(slotCards[0].size(), slotCards[1].size());
+        constexpr size_t CardsPerPlayer = 4;
+
+        if (slotCards[0].size() != CardsPerPlayer || slotCards[1].size() != CardsPerPlayer)
+        {
+            std::cout << "[Server] INVALID TURN CARD COUNT "
+                << "p1=" << slotCards[0].size()
+                << " p2=" << slotCards[1].size()
+                << " expected=" << CardsPerPlayer
+                << "\n";
+
+            ClearTurn();
+            return; // 잘못 들어왔으면 걍 턴종료
+
+        }
+
+        size_t maxCount = std::max(slotCards[0].size(), slotCards[1].size());
 
         for (size_t i = 0; i < maxCount; ++i)
         {
-            bool hasA = i < slotCards[0].size();
-            bool hasB = i < slotCards[1].size();
 
-            if (hasA && hasB)
+            bool coinTossUsed = false;
+            bool aFirst = IsALess(slotCards[0][i], slotCards[1][i], coinTossUsed);
+
+            if (coinTossUsed)
             {
-                bool coinTossUsed = false;
-                bool aFirst = IsALess(slotCards[0][i], slotCards[1][i], coinTossUsed);
-
-                if (coinTossUsed)
-                {
-                    std::cout << "[Server] COIN TOSS EVENT "
-                        << "A(runtime=" << slotCards[0][i].runtimeId << ") vs "
-                        << "B(runtime=" << slotCards[1][i].runtimeId << ")\n";
-                }
-
-                if (aFirst)
-                {
-                    applyCard(slotCards[0][i]);
-                    applyCard(slotCards[1][i]);
-                }
-                else
-                {
-                    applyCard(slotCards[1][i]);
-                    applyCard(slotCards[0][i]);
-                }
+                std::cout << "[Server] COIN TOSS EVENT "
+                    << "A(runtime=" << slotCards[0][i].runtimeId << ") vs "
+                    << "B(runtime=" << slotCards[1][i].runtimeId << ")\n";
             }
-            else if (hasA)
+
+            if (aFirst)
             {
                 applyCard(slotCards[0][i]);
-            }
-            else if (hasB)
-            {
                 applyCard(slotCards[1][i]);
             }
-        }
-        //for (const auto& c : finalOrder)
-        //{
-        //    ExecuteCard(c); //  여기서 행동 계산 호출
-        //}
-       
+            else
+            {
+                applyCard(slotCards[1][i]);
+                applyCard(slotCards[0][i]);
+            }
 
-        // TODO:
-        // - 카드 속도 기준 정렬 V 완료
-        // - 행동 실행 V 진행
-        // - 결과 패킷 생성 V 진행
+        }
+
+    
 
         ClearTurn();
     }

@@ -67,7 +67,7 @@ void YunoSceneManager::RegisterDrawSceneUI()
         [this]() {
             UI::SetNextUIPos(1, 50);
             UI::SetNextUISize(120, 60);
-            UI::BeginPanel("Save/Load");
+            UI::BeginPanel("Save");
 
             if (UI::Button("Save"))
             {

@@ -62,6 +62,7 @@ public:
     void EmissiveOff() { m_renderItem.isEmissive = false; }
 
     void SetEmissiveColor(const XMFLOAT4& color);
+    void SetEmissivePow(float pow) { m_renderItem.Constant.emissive = pow; }
 
     void CheckOption();
 

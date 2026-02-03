@@ -61,7 +61,6 @@ bool SceneBase::OnCreate()
     m_selectedWidget = nullptr;
 #endif
 
-
     m_objectManager = std::make_unique<ObjectManager>();
     if (!m_objectManager->Init())
         return false;
@@ -83,6 +82,8 @@ bool SceneBase::OnCreate()
     if (LoadScene(filepath, sd))
     {
         OnCreateScene();
+
+        YunoEngine::GetRenderer()->SetPostProcessOption(sd.postprocess);
 
         m_objectManager->ProcessPending();
         if(sd.dirLight)
@@ -116,6 +117,7 @@ SceneDesc SceneBase::BuildSceneDesc()
     SceneDesc sd = m_objectManager->BuildSceneDesc();
     sd.sceneName = Utf8ToWString(GetDebugName());
     sd.widgets = m_uiManager->BuildWidgetDesc();
+    sd.postprocess = YunoEngine::GetRenderer()->GetPostProcessOption();
 
     return sd;
 }
@@ -266,6 +268,8 @@ void SceneBase::DrawObjectList()
             }
         }
     }
+
+    m_effectManager->Serialize();
 }
 
 void SceneBase::DrawObjectNode(Unit* obj)

@@ -18,6 +18,7 @@ class Animator
 private:
     std::unique_ptr<BoneNode> m_RootBone;
 
+    std::unordered_map<std::string, UINT> m_BoneNameToIndex;
     std::unordered_map<UINT, std::unique_ptr<AnimationClip>> m_AnimationClips;
     std::unordered_map<std::string, UINT> m_NameToID;
     UINT animCount = 0;
@@ -31,6 +32,8 @@ private:
     std::vector<XMMATRIX> m_LocalBoneB;
     std::vector<XMMATRIX> m_BlendBoneTM;
     std::vector<XMFLOAT4X4> m_FinalBoneTM;
+    std::vector<XMFLOAT4X4> m_GlobalBoneTM;
+    XMFLOAT4X4 m_Identity;
 
     UINT m_BoneCount;
 
@@ -51,14 +54,23 @@ public:
     void Play() { isPlay = true; }
     void Stop() { isPlay = false; }
 
-    void SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, UINT boneCount);
+    bool isPlaying() { return isPlay; }
+
+    void SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, const std::unordered_map<std::string, UINT>& nameToIndex, UINT boneCount);
     //겹치는 id 이미 있으면 실패 false 반환
     bool AddAnimationClip(const std::string& id, std::unique_ptr<AnimationClip>&& clip);
     bool AddAnimationFromFile(const std::string& name, const std::wstring& filepath);
     void Update(float dTime);
     void BlendLocalPose(const std::vector<XMMATRIX>& A, const std::vector<XMMATRIX>& B, float alpha, std::vector<XMMATRIX>& out);
 
+    void SetLoop(const std::string& name, bool isLoop);
+
+    void SetLoop(UINT id, bool isLoop);
+
     UINT GetAnimationNum() { return m_AnimationClips.size(); }
+    UINT GetBoneCount() { return m_BoneCount; }
+    const XMFLOAT4X4& GetBoneGlobal(int idx);
+    int FindIndex(const std::string& name);
 
     void BlendingUpdate(float dTime);
 

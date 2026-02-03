@@ -24,16 +24,19 @@ void BoneNode::SampleLocalPose(float CurTickTime, std::vector<std::unique_ptr<Bo
     }
 }
 
-void BoneNode::UpdateBoneMatrix(const std::vector<XMMATRIX>& localPose, std::vector<XMFLOAT4X4>& out, const XMMATRIX& parentGlobal)
+void BoneNode::UpdateBoneMatrix(const std::vector<XMMATRIX>& localPose, std::vector<XMFLOAT4X4>& outFinal, std::vector<XMFLOAT4X4>& outGlobal, const XMMATRIX& parentGlobal)
 {
     XMMATRIX local =
         (boneIndex >= 0) ? localPose[boneIndex] : m_BindLocal;
 
     XMMATRIX global = local * parentGlobal;
 
-    for (auto& c : m_Childs)
-        c->UpdateBoneMatrix(localPose, out, global);
+    if (boneIndex >= 0 && boneIndex < outFinal.size())
+        XMStoreFloat4x4(&outGlobal[boneIndex], m_BoneOffset * global);
 
-    if(boneIndex >= 0 && boneIndex < out.size())
-        XMStoreFloat4x4(&out[boneIndex], m_BoneOffset * global);
+    for (auto& c : m_Childs)
+        c->UpdateBoneMatrix(localPose, outFinal, outGlobal, global);
+
+    if(boneIndex >= 0 && boneIndex < outFinal.size())
+        XMStoreFloat4x4(&outFinal[boneIndex], m_BoneOffset * global);
 }

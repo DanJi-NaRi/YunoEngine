@@ -5,8 +5,6 @@
 class CardManager
 {
 public:
-    static CardManager& Get();
-
     bool LoadFromCSV(const std::string& path);
 
     const CardData& GetCardData(int cardID) const;
