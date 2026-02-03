@@ -196,8 +196,8 @@ namespace yuno::server
             }
             else
             {
-                InitUnitPosition(player.unit1, 6, 1);
-                InitUnitPosition(player.unit2, 6, 3);
+                InitUnitPosition(player.unit1, 5, 1);
+                InitUnitPosition(player.unit2, 5, 3);
             }
 
             InitUnitStatsByUnitId(player.unit1);
