@@ -38,12 +38,12 @@ bool RenderTest::OnCreateScene()
     m_objectManager->CreateDirLight();
 
     int j = 0;
-   /* for (int i = -3; i < 3; i++)
+    for (int i = -3; i < 3; i++)
     {
         m_objectManager->CreatePointLight(XMFLOAT3(i * 2, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
         j++;
-    }*/
-    m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
+    }
+    //m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
 
@@ -64,12 +64,13 @@ bool RenderTest::OnCreateScene()
 
     //gun = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(0, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
 
+    for(int i = 0; i < 30; i++)
+    {
+    }
     gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx");
-    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Razer/Razer.fbx");
-    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx")->SetScale({ 100, 100, 100 });
 
     gun->AddAnimationClip("capo1", L"../Assets/fbx/Tile/floor1.fbx");
-    //gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor1_crash_Anim.fbx");
+    gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor1_crash_Anim.fbx");
     //gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor2_crash_Anim.fbx");
     //gun->AddAnimationClip("capo3", L"../Assets/fbx/Tile/Tile_anim/Floor3_crash_Anim.fbx");
     //gun->AddAnimationClip("capo4", L"../Assets/fbx/Tile/Tile_anim/Floor4_crash_Anim.fbx");
