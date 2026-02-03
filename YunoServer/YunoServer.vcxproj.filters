@@ -23,6 +23,7 @@
     <ClCompile Include="TurnManager.cpp" />
     <ClCompile Include="ServerCardRangeManager.cpp" />
     <ClCompile Include="BattleManager.cpp" />
+    <ClCompile Include="PlayerCardController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ServerNetwork\YunoServerNetwork.h">
@@ -40,5 +41,6 @@
     <ClInclude Include="CardActionContext.h" />
     <ClInclude Include="BattleState.h" />
     <ClInclude Include="BattleManager.h" />
+    <ClInclude Include="PlayerCardController.h" />
   </ItemGroup>
 </Project>

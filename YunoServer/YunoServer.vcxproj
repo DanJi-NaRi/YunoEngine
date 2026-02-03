@@ -141,6 +141,7 @@
     <ClCompile Include="BattleManager.cpp" />
     <ClCompile Include="main\main.cpp" />
     <ClCompile Include="MatchManager\MatchManager.cpp" />
+    <ClCompile Include="PlayerCardController.cpp" />
     <ClCompile Include="RoundController.cpp" />
     <ClCompile Include="ServerCardDealer.cpp" />
     <ClCompile Include="ServerCardManager.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="CardActionContext.h" />
     <ClInclude Include="CardActionTypes.h" />
     <ClInclude Include="MatchManager\MatchManager.h" />
+    <ClInclude Include="PlayerCardController.h" />
     <ClInclude Include="RoundController.h" />
     <ClInclude Include="ServerCardData.h" />
     <ClInclude Include="ServerCardDealer.h" />

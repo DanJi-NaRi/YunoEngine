@@ -10,7 +10,10 @@
 
 #include "PacketBuilder.h"
 #include "S2C_BattlePackets.h"
+#include "S2C_StartCardList.h"
 #include "ServerCardManager.h"
+
+#include "BattleState.h"
 
 static bool IsALess(const ResolvedCard& a, const ResolvedCard& b, bool& coinTossUsed)
 {
@@ -194,8 +197,8 @@ namespace yuno::server
             }
         }
 
-        auto& p1 = m_roundController.GetPlayerUnitState(1);
-        auto& p2 = m_roundController.GetPlayerUnitState(2);
+        auto& p1 = g_battleState.players[0];
+        auto& p2 = g_battleState.players[1];
 
         std::array<UnitState*, 4> units = {
             &p1.unit1,
@@ -217,25 +220,39 @@ namespace yuno::server
         auto buildDeltaSnapshot = [&](int eventUnitIndex, bool hasEvent)
             {
                 std::array<yuno::net::packets::UnitStateDelta, 4> deltas{};
-                for (int i = 0; i < static_cast<int>(units.size()); ++i)
+                int deltaIndex = 0;
+
+                for (int p = 0; p < 2; ++p)
                 {
-                    uint8_t ownerSlot = (i < 2) ? 1 : 2;
-                    uint8_t unitLocalIndex = (i % 2) + 1;
-                    deltas[i] = {
-                        ownerSlot,
-                        unitLocalIndex,
-                        units[i]->hp,
-                        units[i]->stamina,
-                        units[i]->tileID,
-                        static_cast<uint8_t>((hasEvent && i == eventUnitIndex) ? 1 : 0)
+                    const auto& player = g_battleState.players[p];
+
+                    const UnitState* playerUnits[2] = {
+                        &player.unit1,
+                        &player.unit2
                     };
+
+                    for (int u = 0; u < 2; ++u)
+                    {
+                        const UnitState* unit = playerUnits[u];
+                        bool isEventUnit = (deltaIndex == eventUnitIndex);
+
+                        deltas[deltaIndex++] = {
+                            player.PID,     
+                            unit->slotID,    
+                            unit->hp,
+                            unit->stamina,
+                            unit->tileID,
+                            static_cast<uint8_t>(hasEvent && isEventUnit)
+                        };
+                    }
                 }
                 return deltas;
             };
 
         auto getUnitIndexForCard = [&](int ownerSlot, const CardData& card) -> int
             {
-                auto& player = (ownerSlot == 0) ? p1 : p2;
+                auto& player = (ownerSlot == 0) ? g_battleState.players[0] : g_battleState.players[1];
+
                 if (player.unit1.WeaponID == card.m_allowedUnits)
                     return (ownerSlot == 0) ? 0 : 2;
                 if (player.unit2.WeaponID == card.m_allowedUnits)
