@@ -4,6 +4,7 @@
 #include "IInput.h"
 #include "YunoTransform.h"
 
+#include "Slot.h"
 //DragProvider::DragProvider(IInput* pInput)
 //{
 //    Clear();
@@ -54,6 +55,11 @@ void DragProvider::Clear()
 
 void DragProvider::UpdateDrag(float dTime)
 {   
+    if (m_pSnappedSlot) {
+        m_bkPos = m_pSnappedSlot->GetPos();
+        *m_pPos = m_pSnappedSlot->GetPos();
+    }
+
     if (!m_isDrag || !m_pInput || !m_pPos) return;
         
     // 갱신

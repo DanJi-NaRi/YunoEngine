@@ -66,6 +66,7 @@ bool YunoRenderer::Initialize(IWindow* window)
     if (!m_cbObject_Material.Create(m_device.Get())) return false; 
     if (!m_cbLight.Create(m_device.Get())) return false;
     if (!m_cbEffect.Create(m_device.Get())) return false;
+    if (!m_cbWidget.Create(m_device.Get())) return false;
     if (!CreatePPCB()) return false;
 
 
@@ -2486,6 +2487,21 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
         m_context->VSSetConstantBuffers(5, 1, cbEffectBuffers);
         m_context->PSSetConstantBuffers(5, 1, cbEffectBuffers);
     }
+
+    // -----------------------------
+    // CBWidget (b6) ★[UI]
+    // -----------------------------
+    /*if (item.isWidget)
+    {
+        CBWidget cbWidget{};
+        cbWidget.widgetSize = item.Constant.widgetSize;
+
+        m_cbWidget.Update(m_context.Get(), cbWidget);
+
+        ID3D11Buffer* cbEffectBuffers[] = { m_cbWidget.Get() };
+        m_context->VSSetConstantBuffers(6, 1, cbEffectBuffers);
+        m_context->PSSetConstantBuffers(6, 1, cbEffectBuffers);
+    }*/
 }
 
 

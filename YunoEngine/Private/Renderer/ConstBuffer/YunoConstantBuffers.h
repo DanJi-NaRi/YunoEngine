@@ -84,6 +84,10 @@ struct CBEffect
     XMFLOAT4 effectData; //x : index, y : time, z : cols, w : rows
 };
 
+struct CBWidget
+{
+    XMFLOAT2 widgetSize; //x : width, y : height
+};
 
 template<typename T>
 class YunoConstantBuffer

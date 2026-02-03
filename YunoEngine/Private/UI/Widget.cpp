@@ -81,14 +81,13 @@ Widget::Widget(UIFactory& uiFactory) : m_uiFactory(uiFactory)
     m_canvasSize.x = 0;
     m_canvasSize.y = 0;
 
-    m_finalSize.x = 0;
-    m_finalSize.y = 0;
-
-    m_finalSize.x = m_size.x * m_vScale.x;
-    m_finalSize.y = m_size.y * m_vScale.y;
+    m_finalScale.x = 1;
+    m_finalScale.y = 1;
 
     m_anchor = UIDirection::LeftTop;
     m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
+
+    //m_renderItem.isWidget = true; ★
 }
 
 Widget::~Widget()
@@ -275,7 +274,7 @@ bool Widget::UpdateTransform(float dTime)
             m_canvasLetterboxOffset = Float2(0.0f, 0.0f);
 
             m_finalPos = Float3(m_vPos.x, m_vPos.y, m_vPos.z);
-            m_finalSize = Float3(m_size.x * m_vScale.x, m_size.y * m_vScale.y, 1.0f);
+            m_finalScale = Float3(m_vScale.x, m_vScale.y, 1.0f);
         }
         else
         {
@@ -298,9 +297,9 @@ bool Widget::UpdateTransform(float dTime)
             //m_canvasLetterboxOffset = letterboxOffset; // 이동
             m_canvasLetterboxOffset = applyLetterboxOffset ? letterboxOffset : Float2(0.0f, 0.0f); 
 
-            m_finalSize.x = m_size.x * m_vScale.x * m_canvasScale.x;
-            m_finalSize.y = m_size.y * m_vScale.y * m_canvasScale.y;
-            m_finalSize.z = 1.0f;
+            m_finalScale.x = m_vScale.x * m_canvasScale.x;
+            m_finalScale.y = m_vScale.y * m_canvasScale.y;
+            m_finalScale.z = 1.0f;
 
             m_finalPos.x = m_vPos.x * m_canvasScale.x + m_canvasLetterboxOffset.x;
             m_finalPos.y = m_vPos.y * m_canvasScale.y + m_canvasLetterboxOffset.y;
@@ -309,45 +308,42 @@ bool Widget::UpdateTransform(float dTime)
     }
     else { // 화면비 스케일 사용 X
         m_finalPos = Float3(m_vPos.x, m_vPos.y, m_vPos.z);
-        m_finalSize = Float3(m_size.x * m_vScale.x, m_size.y * m_vScale.y, m_size.z * m_vScale.z);
+        m_finalScale = Float3(m_vScale.x, m_vScale.y, 1.0f);
         
         // 보정 (의도에 따라..)
-        //m_finalPos.z = 0.0f;
-        m_finalSize.z = 1.0f;
+        m_finalPos.z = 0.0f;
+        //m_finalScale.z = 1.0f;
     }
 
-    //m_vScale.z = 1.0f; // UI는 z scale 의미 없음(일단 1로 고정)
 
-    XMMATRIX mScale = XMMatrixScaling(m_finalSize.x, m_finalSize.y, 1.0f);
-    XMMATRIX mRot = XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
-    XMMATRIX mTrans = XMMatrixTranslation(m_finalPos.x, m_finalPos.y, m_finalPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
     XMMATRIX mPivot = XMMatrixTranslation(-m_pivot.x, -m_pivot.y, 0.0f); // 피벗
-
-
-    XMMATRIX mLocalTM = mPivot * mScale * mRot * mTrans; // 로컬(스케일 포함)
-    XMMATRIX mLocalNoScaleTM = mPivot * mRot * mTrans;         // 로컬(스케일 제외)
-
-    XMMATRIX mWorldTM;
-    XMMATRIX mNoScaleWorldTM;
-
-    if (m_Parent) {
-        // 부모 TM 적용 버전
-        //mTM = mPivot * mScale * mRot * mTrans *  m_Parent->GetWorldMatrix();
-        // 부모 Scale제외 TM 버전
-        mWorldTM = mLocalTM * m_Parent->GetNoScaleWorldMatrix();
-        mNoScaleWorldTM = mLocalNoScaleTM * m_Parent->GetNoScaleWorldMatrix();
-    }
-    else
-    {
-        mWorldTM = mLocalTM;
-        mNoScaleWorldTM = mLocalNoScaleTM;
-    }
+    XMMATRIX mSize = XMMatrixScaling(m_size.x, m_size.y, 1.0f);
+    XMMATRIX mScale = XMMatrixScaling(m_finalScale.x, m_finalScale.y, 1.0f); // 실제 크기가 아님. m_size 적용이 안된 순수 scale. 사용에 주의.
+    XMMATRIX mRot   = XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
+    XMMATRIX mTrans = XMMatrixTranslation(m_finalPos.x, m_finalPos.y, m_finalPos.z); // 스크린 좌표 - 픽셀 기준(z는 사용 안함)
     
+
+
+    XMMATRIX mLocalWithSize = mPivot * mSize * mScale * mRot * mTrans;  // size 포함
+    XMMATRIX mLocalNoSize = mPivot * mScale * mRot * mTrans;            // size 제외 (하지만 uiScale 포함)
+
+
+    // 자식은 size 미적용 부모 곱을 가져옴
+    XMMATRIX parentNoSize = XMMatrixIdentity();
+
+    if (m_Parent) parentNoSize = m_Parent->GetWorldNoSizeMatrix();
+
+    // 월드 사이즈 업데이트 
+    // 부모 없으면 Identity 들어감, 있으면 mWorldNoSize 들어감
+    XMMATRIX mWorldWithSize = mLocalWithSize * parentNoSize;
+    XMMATRIX mWorldNoSize = mLocalNoSize * parentNoSize; 
+    
+
     XMStoreFloat4x4(&m_mScale, mScale);
     XMStoreFloat4x4(&m_mRot, mRot);
     XMStoreFloat4x4(&m_mTrans, mTrans);
-    XMStoreFloat4x4(&m_mWorld, mWorldTM);
-    XMStoreFloat4x4(&m_mNoScaleWorld, mNoScaleWorldTM);
+    XMStoreFloat4x4(&m_mWorld, mWorldWithSize);
+    XMStoreFloat4x4(&m_mWorldNoSize, mWorldNoSize);
 
     UpdateRect(); // m_rect 갱신
 
@@ -401,6 +397,7 @@ Float2 Widget::AddTextureSize(TextureHandle& handle)
     return m_textureSizes.back();
 }
 
+
 void Widget::Backup()
 {
     m_vPosBk = m_vPos;
@@ -414,7 +411,7 @@ bool Widget::Submit(float dTime)
     if (!m_MeshNode) return true;
 
     m_MeshNode->Submit(m_mWorld, m_vPos);
-
+    //m_MeshNode->Submit(m_mWorld, m_vPos, m_size.ToXM2()); ★
     LastSubmit(dTime);
 
     // 사실상 이제 생성 순서만으로 이미 정렬이 되어있어, 
@@ -458,17 +455,65 @@ void Widget::SubmitChild_Internal(float dTime) // 실제 재귀
 
 void Widget::UpdateRect()
 {
-    // 회전 무시된 Rect 크기
-    float left = m_finalPos.x - (m_pivot.x * m_finalSize.x);
-    float top = m_finalPos.y - (m_pivot.y * m_finalSize.y);
-    float right = left + m_finalSize.x;
-    float bottom = top + m_finalSize.y;
+    // 자식(부모가 있음)이면: 회전이 없어도 월드 기반으로 계산해야 정확
+    if (m_Parent != nullptr)
+    {
+        UpdateRectWorld();
+        return;
+    }
 
-    // 뒤집기(음수 스케일) 대비
-    float minX = (left < right) ? left : right;
-    float maxX = (left > right) ? left : right;
-    float minY = (top < bottom) ? top : bottom;
-    float maxY = (top > bottom) ? top : bottom;
+    // 루트이면서 회전도 없으면: 빠른 버전 허용
+    if (fabsf(m_vRot.z) <= 0.00001f)
+    {
+        const float w = m_size.x * m_finalScale.x;
+        const float h = m_size.y * m_finalScale.y;
+
+        const float left = m_finalPos.x - (m_pivot.x * w);
+        const float top = m_finalPos.y - (m_pivot.y * h);
+        const float right = left + w;
+        const float bottom = top + h;
+
+        m_rect =
+        {
+            (LONG)std::floor((left < right) ? left : right),
+            (LONG)std::floor((top < bottom) ? top : bottom),
+            (LONG)std::ceil((left > right) ? left : right),
+            (LONG)std::ceil((top > bottom) ? top : bottom)
+        };
+        return;
+    }
+}
+
+void Widget::UpdateRectWorld()
+{
+    const float ox = -m_pivot.x;
+    const float oy = -m_pivot.y;
+
+    const XMVECTOR localCorners[4] =
+    {
+        XMVectorSet(ox,     oy,     0.0f, 1.0f),
+        XMVectorSet(ox + 1, oy,     0.0f, 1.0f),
+        XMVectorSet(ox,     oy + 1, 0.0f, 1.0f),
+        XMVectorSet(ox + 1, oy + 1, 0.0f, 1.0f),
+    };
+
+    // 렌더/스냅/Rect와 동일한 월드(=WithSize)
+    const XMMATRIX W = XMLoadFloat4x4(&m_mWorld);
+
+    float minX = FLT_MAX, minY = FLT_MAX;
+    float maxX = -FLT_MAX, maxY = -FLT_MAX;
+
+    for (int i = 0; i < 4; ++i)
+    {
+        const XMVECTOR p = XMVector4Transform(localCorners[i], W);
+        const float x = XMVectorGetX(p);
+        const float y = XMVectorGetY(p);
+
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+    }
 
     m_rect =
     {

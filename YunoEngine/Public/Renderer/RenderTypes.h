@@ -70,6 +70,7 @@ struct Update_Data
     float shadowBias = 0.005f;
     float opacity = 1.0f;
     float emissive = 1.0f;
+    //XMFLOAT2 widgetSize = { 0, 0 }; ★
 };
 
 struct Effect_Data
@@ -109,6 +110,7 @@ struct RenderItem
     bool haveAnim = false;
     bool castShadow = true; //그림자맵에 그릴 오브젝트
     bool receiveShadow = true; //그림자가 적용될 오브젝트(파티클, 반투명 오브젝트 제외용)
+    //bool isWidget = false;  // 위젯만 갱신(b6)
 };
 
 // -------------------- PassKey --------------------

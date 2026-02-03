@@ -198,7 +198,9 @@ int YunoEngine::Run()
 
                 if (auto* cs = dynamic_cast<Slot*>(kv.second))
                 {
-                    DrawDebugRect_Client(cs->GetSnapPoint().m_snapRange, Int3(255,0,0));
+                    if(cs->IsSnapped()) DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(0, 0, 255));
+                    else DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(255, 0, 0));
+                    
                     //DrawDebugRect_Client(cs->GetRect());
                 }
 

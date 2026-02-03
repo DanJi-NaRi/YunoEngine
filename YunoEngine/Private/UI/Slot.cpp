@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Slot.h"
 
+#include "Button.h"
+
 Slot::Slot(UIFactory& uiFactory) : Widget(uiFactory)
 {
 }
@@ -31,6 +33,14 @@ bool Slot::Update(float dTime)
 {
     Widget::Update(dTime);
     
+
+    return true;
+}
+
+bool Slot::UpdateTransform(float dTime)
+{
+    Widget::UpdateTransform(dTime);
+    UpdateSnapPoint(dTime); // 스냅 포인트 갱신
     return true;
 }
 
@@ -46,12 +56,18 @@ bool Slot::Submit(float dTime)
     return true;
 }
 
+void Slot::UpdateSnapPoint(float dTime)
+{
+    m_snapPoint.snapPos = { m_vPos.x, m_vPos.y };
+    m_snapPoint.snapRange = ExpandRect(m_rect, m_snapPoint.snapPadding);
+}
+
 void Slot::SetSnapPoint(float padding, WidgetClass target)
 {
-    m_snapPoint.m_snapPos = { m_vPos.x, m_vPos.y };
-    m_snapPoint.m_snapPadding = padding;
-    m_snapPoint.m_snapRange = ExpandRect(m_rect, padding);
-    m_snapPoint.m_snapTargetClass = target;
+    m_snapPoint.snapPos = { m_vPos.x, m_vPos.y };
+    m_snapPoint.snapPadding = padding;
+    m_snapPoint.snapRange = ExpandRect(m_rect, padding);
+    m_snapPoint.snapTargetClass = target;
 }
 
 

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CardSlot.h"
 
+#include "IInput.h"
+
 CardSlot::CardSlot(UIFactory& uiFactory) : Slot(uiFactory)
 {
     Clear();
@@ -30,6 +32,9 @@ bool CardSlot::Start()
 
 bool CardSlot::Update(float dTime) {
     Slot::Update(dTime);
+
+    if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50 * dTime; }
+    if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50 * dTime; }
 
     return true;
 }
