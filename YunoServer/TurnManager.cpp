@@ -103,6 +103,7 @@ namespace yuno::server
             << " submitted " << commands.size()
             << " commands\n";
 
+        // 두 플레이어가 모두 CardSubmit하면 아래 함수 실행됨
         TryResolveTurn();
     }
 
@@ -112,10 +113,20 @@ namespace yuno::server
         using namespace yuno::net::packets;
 
         S2C_BattleResult pkt;
-        pkt.runtimeCardId = c.runtimeId;
-        pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
-        pkt.unitLocalIndex = static_cast<uint8_t>(c.localIndex);
-        pkt.dir = static_cast<uint8_t>(c.dir);
+
+        // 쓰레기 값 들어가고 있어서 테스트를 위해 하드코딩
+        //pkt.runtimeCardId = c.runtimeId;
+        //pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
+        pkt.runtimeCardId = 1;
+        pkt.ownerSlot = 1;
+        pkt.unitLocalIndex = 1;
+        pkt.dir = 0;
+
+        //pkt.runtimeCardId = c.runtimeId;
+        //pkt.ownerSlot = static_cast<uint8_t>(c.ownerSlot);
+        //pkt.unitLocalIndex = static_cast<uint8_t>(c.localIndex);
+        //pkt.dir = static_cast<uint8_t>(c.dir);
+
 
         //  테스트용 하드코딩 결과
         std::array<UnitStateDelta, 4> us;
@@ -149,20 +160,20 @@ namespace yuno::server
 
         std::cout << "[Server] Both players submitted turn\n";
 
-        std::vector<ResolvedCard> slotCards[2];
+        std::vector<ResolvedCard> slotCards[2]; // 0 은 1P, 1은 2P
 
 
         for (int slot = 0; slot < 2; ++slot)
         {
             int localIndex = 0;
 
-            for (const CardPlayCommand& cmd : m_turnCards[slot])
+            for (const CardPlayCommand& cmd : m_turnCards[slot]) // 플레이어가 제출한 카드들
             {
                 uint32_t runtimeId = cmd.runtimeID;
-                uint32_t dataId = m_runtime.GetDataID(runtimeId);
-                const CardData& card = m_cardDB.GetCardData(dataId);
+                uint32_t dataId = m_runtime.GetDataID(runtimeId); // 런타임ID >> 데이터ID로 변경
+                const CardData& card = m_cardDB.GetCardData(dataId); // 데이터ID로 카드DB에서 카드 데이터 가져옴
 
-                slotCards[slot].push_back({
+                slotCards[slot].push_back({ // 슬롯에 장착한 카드 정보 삽입
                     runtimeId,
                     dataId,
                     card.m_allowedUnits,
@@ -185,8 +196,8 @@ namespace yuno::server
             }
         }
 
-        auto& p1 = m_roundController.GetPlayerUnitState(1);
-        auto& p2 = m_roundController.GetPlayerUnitState(2);
+        auto& p1 = m_roundController.GetPlayerUnitState(1); // 1P 유닛 정보 가져오기
+        auto& p2 = m_roundController.GetPlayerUnitState(2); // 2P 유닛 정보 가져오기
 
         std::array<UnitState*, 4> units = {
             &p1.unit1,
@@ -195,23 +206,24 @@ namespace yuno::server
             &p2.unit2
         };
 
-        std::vector<int> grid(kGridSize + 1, -1);
+        std::vector<int> grid(kGridSize + 1, -1);   // size 36 , 0은 Error, 1~35가 TileId
         for (int i = 0; i < static_cast<int>(units.size()); ++i)
         {
             uint8_t tileId = units[i]->tileID;
             if (tileId != 0 && tileId <= kGridSize)
             {
-                grid[tileId] = i;
+                grid[tileId] = i;       // 서버 내부 그리드에 유닛 배치
             }
         }
 
+        // 변경된 정보를 기반으로 스냅샷 찍어서 패킷 만들기, (UnitStateDelta) 만드는 애임
         auto buildDeltaSnapshot = [&](int eventUnitIndex, bool hasEvent)
             {
                 std::array<yuno::net::packets::UnitStateDelta, 4> deltas{};
                 for (int i = 0; i < static_cast<int>(units.size()); ++i)
                 {
-                    uint8_t ownerSlot = (i < 2) ? 1 : 2;
-                    uint8_t unitLocalIndex = (i % 2) + 1;
+                    uint8_t ownerSlot = (i < 2) ? 1 : 2; // 1P = 0,1 이므로 1 / 2P = 2,3 이므로 2
+                    uint8_t unitLocalIndex = (i % 2) + 1; // 1,2
                     deltas[i] = {
                         ownerSlot,
                         unitLocalIndex,
@@ -226,7 +238,7 @@ namespace yuno::server
 
         auto getUnitIndexForCard = [&](int ownerSlot, const CardData& card) -> int
             {
-                auto& player = (ownerSlot == 0) ? p1 : p2;
+                auto& player = (ownerSlot == 0) ? p1 : p2;          // 0은 1P , 1은 2P  >> 얘는 배열을 사용해서 이렇게 해야됨;;
                 if (player.unit1.WeaponID == card.m_allowedUnits)
                     return (ownerSlot == 0) ? 0 : 2;
                 if (player.unit2.WeaponID == card.m_allowedUnits)
@@ -313,8 +325,22 @@ namespace yuno::server
                 m_network.Broadcast(std::move(bytes));
             };
 
-        size_t maxCount =
-            std::max(slotCards[0].size(), slotCards[1].size());
+        constexpr size_t CardsPerPlayer = 4;
+
+        if (slotCards[0].size() != CardsPerPlayer || slotCards[1].size() != CardsPerPlayer)
+        {
+            std::cout << "[Server] INVALID TURN CARD COUNT "
+                << "p1=" << slotCards[0].size()
+                << " p2=" << slotCards[1].size()
+                << " expected=" << CardsPerPlayer
+                << "\n";
+
+            ClearTurn();
+            return; // 잘못 들어왔으면 걍 턴종료
+
+        }
+
+        size_t maxCount = std::max(slotCards[0].size(), slotCards[1].size());
 
         for (size_t i = 0; i < maxCount; ++i)
         {
@@ -353,16 +379,8 @@ namespace yuno::server
                 applyCard(slotCards[1][i]);
             }
         }
-        //for (const auto& c : finalOrder)
-        //{
-        //    ExecuteCard(c); //  여기서 행동 계산 호출
-        //}
-       
 
-        // TODO:
-        // - 카드 속도 기준 정렬 V 완료
-        // - 행동 실행 V 진행
-        // - 결과 패킷 생성 V 진행
+
 
         ClearTurn();
     }
