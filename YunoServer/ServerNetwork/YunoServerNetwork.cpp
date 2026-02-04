@@ -40,9 +40,10 @@ namespace yuno::server
         , m_cardRangeDB()
         , m_cardRuntime()
         , m_cardDealer(m_cardDB, m_cardRuntime)
+        , m_turnManager(m_match, *this, m_cardRuntime, m_cardDB, m_cardRangeDB, m_roundController)
         , m_roundController(m_match, m_cardDealer, *this, m_cardController)
-        , m_turnManager(m_match, *this, m_cardRuntime, m_cardDB, m_roundController)
         , m_cardController(m_cardDealer, m_cardDB, m_cardRuntime)
+
     {
 
 
@@ -276,7 +277,7 @@ namespace yuno::server
                     });
 
                 m_server.Broadcast(std::move(bytes));
-                m_roundController.TryStartRound();
+                //m_roundController.TryStartRound();
             }
         ); // ReadySet Packet End
 

@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "YunoSceneManager.h"
+#include "YunoCamera.h"
 
 #include "IScene.h"
 #include "SceneBase.h"
@@ -388,6 +389,7 @@ void YunoSceneManager::SubmitAndRender(IRenderer* renderer)
     }
 
 #if defined(_DEBUG)
+    renderer->GetCamera().SetOrthoFlag(false);
     renderer->DrawDebug();
 #endif
 

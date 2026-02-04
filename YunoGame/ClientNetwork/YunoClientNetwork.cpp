@@ -229,11 +229,16 @@ namespace yuno::game
 
                 GameManager& gm = GameManager::Get();
 
-                gm.StartCountDown(
-                    countTime,
-                    pkt.slot1_UnitId1, pkt.slot1_UnitId2,
-                    pkt.slot2_UnitId1, pkt.slot2_UnitId2
-                );
+                std::cout << "game state : " << static_cast<int>(gm.GetSceneState()) << std::endl;
+                // 현재 씬이 게임 스타트 상태 즉 WeaponSelectScene일때만 패킷 동작
+                if (gm.GetSceneState() == CurrentSceneState::GameStart) {
+                    gm.StartCountDown(
+                        countTime,
+                        pkt.slot1_UnitId1, pkt.slot1_UnitId2,
+                        pkt.slot2_UnitId1, pkt.slot2_UnitId2
+                    );
+                }
+
             });// CountDown Packet End
         
         // RoundStart Packet Start
@@ -331,7 +336,7 @@ namespace yuno::game
                         << "\n";
                 }
             }
-        );// TestCardList Packet End
+        ); // TestCardList Packet End
 
         // BattleResult Packet Start
         Dispatcher().RegisterRaw(

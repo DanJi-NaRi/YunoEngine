@@ -2,19 +2,29 @@
 
 namespace yuno::server
 {
+    struct BuffState
+    {
+        int nextDamageBonus = 0;
+        int nextDamageReduce = 0;
+        int nextDamageIncrease = 0;
+    };
+
     struct UnitState
     {
         uint8_t slotID = 0;         // 몇번째 유닛인지
-        uint8_t WeaponID;       // 선택한 유닛(무기/직업 등)
+        uint8_t WeaponID;           // 선택한 유닛(무기/직업 등)
 
         int x = 0;                      
         int y = 0;                       //배틀 계산용 좌표
         uint8_t tileID = 0;          // 현재 좌표
-        uint8_t hp = 0;                     //체력
+        uint8_t hp = 0;                 //체력
         uint8_t stamina = 0;            //스테미나
+
+        BuffState buffstat = {0,0,0};
 
         // 버프/디버프 상태도 나중에 여기
     };
+
 
     struct PlayerBattleState
     {

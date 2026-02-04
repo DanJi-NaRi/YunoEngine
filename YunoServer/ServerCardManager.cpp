@@ -68,8 +68,8 @@ namespace yuno::server
                 continue;
 
             // -------------------------
-            // CardData
-            // -------------------------
+        // CardData
+        // -------------------------
             CardData card;
             card.m_cardID = std::stoi(cols[0]);
             card.m_name = cols[1];
@@ -86,11 +86,12 @@ namespace yuno::server
             card.m_soundId = 0;
             card.m_explainText = "";
 
+
             m_cardData[card.m_cardID] = card;
 
             // -------------------------
-            // Move Data
-            // -------------------------
+                // Move Data
+                // -------------------------
             int moveX = std::stoi(cols[9]);
             int moveY = std::stoi(cols[10]);
 
@@ -102,14 +103,16 @@ namespace yuno::server
                 m_moveData[card.m_cardID] = move;
             }
 
+
             // -------------------------
-            // Effect Data
-            // -------------------------
+                // Effect Data
+                // -------------------------
             int damage = std::stoi(cols[8]);
             int giveDamageBonus = std::stoi(cols[13]);
             int takeDamageReduce = std::stoi(cols[14]);
             int takeDamageIncrease = std::stoi(cols[15]);
             int staminaRecover = std::stoi(cols[16]);
+
 
             if (damage != 0 || giveDamageBonus != 0 ||
                 takeDamageReduce != 0 || takeDamageIncrease != 0 ||

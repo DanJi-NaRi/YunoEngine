@@ -46,8 +46,8 @@ public:
     std::string m_name;         // 카드 이름
     int m_Rarity;       // 카드 희귀도
     CardType m_type;           // 카드 타입
-    
-    PieceMask m_allowedUnits;   // 카드 사용 가능 기물  
+
+    PieceMask m_allowedUnits;   // 카드 사용 가능 기물
 
     int m_speed;                    // 카드 속도
     int m_useId;                  // 사용ID
@@ -87,4 +87,6 @@ struct CardEffectData
     int m_takeDamageIncrease;
 
     int m_staminaRecover;
+    int m_pullDistance;
+    int m_pushDistance;
 };

@@ -42,6 +42,7 @@ public:
     void BindClientNetwork(yuno::game::YunoClientNetwork* net) { m_clientNet = net; }
 
     void SetSceneState(CurrentSceneState state);
+    CurrentSceneState GetSceneState() { return m_state; };
     void StartCountDown(int countTime,int S1U1,int S1U2,int S2U1,int S2U2);
     void Tick(float dt);
 
