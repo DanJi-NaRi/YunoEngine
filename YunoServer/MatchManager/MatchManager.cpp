@@ -181,7 +181,11 @@ namespace yuno::server
 
             // 기본 정보
             player.sessionId = slot.sessionId;
-            player.PID = slot.userId;
+            player.PID = static_cast<uint8_t>(i+1);       // 이거는 환경변수로 초기화 하면 안됨
+
+            //UnitSlot 고정
+            player.unit1.slotID = 1;
+            player.unit2.slotID = 2;
 
             // UnitID 초기화
             player.unit1.WeaponID = slot.unitId1;

@@ -10,8 +10,8 @@ namespace yuno::net::packets
 {
     struct CardSpawnInfo
     {
-        uint8_t slotID;
-        uint8_t weaponID;
+        uint8_t PID;           // 1P,2P
+        uint8_t slotID;      // slot ID, 첫번째 무기인지 두번째 무기인지 (1,2)
         uint32_t runtimeID;
         uint32_t dataID;
     };

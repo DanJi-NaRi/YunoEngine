@@ -173,10 +173,14 @@ void GameManager::AddCards(
 {
     for (const auto& card : cards)
     {
-        ClientCardInfo info{ card.runtimeID, card.dataID };
+        ClientCardInfo info{card.runtimeID, card.dataID };
 
-        bool isMine = (card.slotID == m_PID);
-        int unitIdx = card.weaponID - 1;
+
+        bool isMine = (card.PID == m_PID); // PID = 1,2
+        int unitIdx = card.slotID - 1;
+        
+        if(unitIdx < 0 || unitIdx >= 2)
+            continue;
 
         if (isMine)
             m_myHands[unitIdx].cards.push_back(info);

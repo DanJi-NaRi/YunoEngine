@@ -311,7 +311,7 @@ namespace yuno::game
     
         // TestCardList Packet Start
         Dispatcher().RegisterRaw(
-            PacketType::S2C_TestCardList,
+            PacketType::S2C_StartCardList,
             [this](const NetPeer& peer,
                 const PacketHeader& header,
                 const std::uint8_t* body,

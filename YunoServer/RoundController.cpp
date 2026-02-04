@@ -98,7 +98,7 @@ namespace yuno::server
         pkt.cards = allCards;
 
         auto bytes = yuno::net::PacketBuilder::Build(
-            yuno::net::PacketType::S2C_TestCardList,
+            yuno::net::PacketType::S2C_StartCardList,
             [&](yuno::net::ByteWriter& w)
             {
                 pkt.Serialize(w);

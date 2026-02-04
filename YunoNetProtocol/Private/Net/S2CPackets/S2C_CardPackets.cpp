@@ -10,8 +10,8 @@ namespace yuno::net::packets
 
         for (const auto& card : cards)
         {
+            w.WriteU8(card.PID);
             w.WriteU8(card.slotID);
-            w.WriteU8(card.weaponID);
             w.WriteU32LE(card.runtimeID);
             w.WriteU32LE(card.dataID);
         }
@@ -27,8 +27,8 @@ namespace yuno::net::packets
         for (uint16_t i = 0; i < count; ++i)
         {
             CardSpawnInfo info;
+            info.PID = r.ReadU8();
             info.slotID = r.ReadU8();
-            info.weaponID = r.ReadU8();
             info.runtimeID = r.ReadU32LE();
             info.dataID = r.ReadU32LE();
 
@@ -44,8 +44,8 @@ namespace yuno::net::packets
 
         for (const auto& card : cards)
         {
+            w.WriteU8(card.PID);
             w.WriteU8(card.slotID);
-            w.WriteU8(card.weaponID);
             w.WriteU32LE(card.runtimeID);
             w.WriteU32LE(card.dataID);
         }
@@ -61,8 +61,8 @@ namespace yuno::net::packets
         for (uint16_t i = 0; i < count; ++i)
         {
             CardSpawnInfo info;
+            info.PID = r.ReadU8();
             info.slotID = r.ReadU8();
-            info.weaponID = r.ReadU8();
             info.runtimeID = r.ReadU32LE();
             info.dataID = r.ReadU32LE();
 

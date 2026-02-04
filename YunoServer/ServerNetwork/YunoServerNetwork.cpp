@@ -82,7 +82,7 @@ namespace yuno::server
     {
         std::cout << "[Server] Start called. port=" << port << "\n";
 
-        if (!m_cardDB.LoadFromCSV("../Assets/CardData/CardData3.csv"))       // 카드 데이터 로드
+        if (!m_cardDB.LoadFromCSV("../Assets/CardData/CardData.csv"))       // 카드 데이터 로드
         {
             std::cerr << "[Server] Card CSV load failed\n";
             return false;
