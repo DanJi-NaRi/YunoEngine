@@ -64,6 +64,7 @@ bool CardConfirmPanel::Start()
 }
 
 void CardConfirmPanel::CreateChild() {
+
     // 고정 하위 위젯 생성
 
     m_setCardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S0", Float2(50, 85), XMFLOAT3(25, -240, 0),  UIDirection::LeftTop, this));
@@ -83,9 +84,6 @@ void CardConfirmPanel::CreateChild() {
 bool CardConfirmPanel::Update(float dTime)
 {
     Image::Update(dTime);
-
-    if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50 * dTime; }
-    if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50 * dTime; }
 
 
     return true;

@@ -8,6 +8,8 @@ Image,
 Button,
 Text,
 Slot,
+ProgressBar,
+Gauge, // ProgressBar의 확정 자식
 */
 
 
@@ -55,6 +57,20 @@ Slot,
 #include "CardSlot.h"
 //////////////////////////////
 
+
+//////////////////////////////
+// ProgressBar 클래스
+#include "ProgressBar.h"
+
+// ProgressBar 파생 클래스
+#include "ProgressBar.h"
+
+// Gauge 클래스
+#include "Gauge.h"
+
+// ProgressBar 파생 클래스
+//#include "Gauge.h"
+//////////////////////////////
 
 
 

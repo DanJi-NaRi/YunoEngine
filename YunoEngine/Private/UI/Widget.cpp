@@ -8,7 +8,7 @@
 //#include "YunoTextureManager.h"
 #include "UIFactory.h"
 #include "IInput.h"
-
+#include "YunoConstantBuffers.h"
 
 VERTEX_Pos g_Widget_pos[] = {
     { 0,0,0 },    // 좌상
@@ -87,7 +87,7 @@ Widget::Widget(UIFactory& uiFactory) : m_uiFactory(uiFactory)
     m_anchor = UIDirection::LeftTop;
     m_pivot = PivotFromUIDirection(UIDirection::LeftTop);
 
-    //m_renderItem.isWidget = true; ★
+    m_renderItem.isWidget = true; //★
 }
 
 Widget::~Widget()
@@ -410,8 +410,9 @@ bool Widget::Submit(float dTime)
 {
     if (!m_MeshNode) return true;
 
-    m_MeshNode->Submit(m_mWorld, m_vPos);
-    //m_MeshNode->Submit(m_mWorld, m_vPos, m_size.ToXM2()); ★
+    m_renderItem.Constant.widgetSize = m_size.ToXM(); // 사이즈 등록
+
+    m_MeshNode->SubmitWidget(m_mWorld, m_vPos, m_renderItem.Constant);
     LastSubmit(dTime);
 
     // 사실상 이제 생성 순서만으로 이미 정렬이 되어있어, 

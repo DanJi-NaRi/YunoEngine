@@ -15,7 +15,7 @@ struct MeshNode {
     std::vector<std::unique_ptr<Mesh>> m_Meshs;
 
     void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
-    //void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize); //★
+    void SubmitWidget(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const Update_Data& updateData);
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
     std::unique_ptr<MeshNode> Clone() const;
@@ -79,7 +79,7 @@ public:
 
 
     void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
-    void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize);
+    void SubmitWidget(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const Update_Data& updateData);
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 

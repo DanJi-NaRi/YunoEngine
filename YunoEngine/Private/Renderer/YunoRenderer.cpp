@@ -119,6 +119,7 @@ bool YunoRenderer::CreateShaders()
     if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::UIGauge, "../Assets/Shaders/UI_Gauge.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::EffectBase, "../Assets/Shaders/EffectBase.hlsl", "VSMain", "PSMain")) return false;
 
     if (!CreatePPShader()) return false;
@@ -2532,17 +2533,21 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
     // -----------------------------
     // CBWidget (b6) ★[UI]
     // -----------------------------
-    /*if (item.isWidget)
+    if (item.isWidget)
     {
         CBWidget cbWidget{};
         cbWidget.widgetSize = item.Constant.widgetSize;
+        cbWidget.widgetValueFloat = item.Constant.widgetValueFloat;
+        cbWidget.widgetValueInt = item.Constant.widgetValueInt;
+        cbWidget.widgetSize = item.Constant.widgetSize;
+        
 
         m_cbWidget.Update(m_context.Get(), cbWidget);
 
         ID3D11Buffer* cbEffectBuffers[] = { m_cbWidget.Get() };
         m_context->VSSetConstantBuffers(6, 1, cbEffectBuffers);
         m_context->PSSetConstantBuffers(6, 1, cbEffectBuffers);
-    }*/
+    }
 }
 
 

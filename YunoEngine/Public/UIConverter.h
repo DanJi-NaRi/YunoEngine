@@ -18,15 +18,30 @@ struct UICanvasMapping
 
 
 
-
-inline Float2 LocalToWorldPos(const Float2& localPos, const Float2& parentPos, const Float2& parentScale)
+inline Float3 LocalToWorldPos(const Float3& localPos, const Float3& parentPos, const Float3& parentScale)
 {
     return { localPos.x * parentScale.x + parentPos.x,
-             localPos.y * parentScale.y + parentPos.y };
+             localPos.y * parentScale.y + parentPos.y,
+             localPos.z * parentScale.z + parentPos.z };
 }
 
-inline Float2 WorldToLocalPos(const Float2& worldPos, const Float2& parentPos, const Float2& parentScale)
+inline Float3 WorldToLocalPos(const Float3& worldPos, const Float3& parentPos, const Float3& parentScale)
 {
     return { (worldPos.x - parentPos.x) / parentScale.x,
-             (worldPos.y - parentPos.y) / parentScale.y };
+             (worldPos.y - parentPos.y) / parentScale.y,
+             (worldPos.z - parentPos.z) / parentScale.z };
+}
+
+inline XMFLOAT3 LocalToWorldPos(const XMFLOAT3& localPos, const XMFLOAT3& parentPos, const XMFLOAT3& parentScale)
+{
+    return { localPos.x * parentScale.x + parentPos.x,
+             localPos.y * parentScale.y + parentPos.y,
+             localPos.z * parentScale.z + parentPos.z };
+}
+
+inline XMFLOAT3 WorldToLocalPos(const XMFLOAT3& worldPos, const XMFLOAT3& parentPos, const XMFLOAT3& parentScale)
+{
+    return { (worldPos.x - parentPos.x) / parentScale.x,
+             (worldPos.y - parentPos.y) / parentScale.y,
+             (worldPos.z - parentPos.z) / parentScale.z };
 }
