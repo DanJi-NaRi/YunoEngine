@@ -75,6 +75,7 @@ bool CardManager::LoadFromCSV(const std::string& path)
         card.m_rangeId = std::stoul(cols[11]);
         card.m_controlId = std::stoul(cols[12]);
         card.m_destroyCnt = 0;
+
         card.m_effectId = 0;
         card.m_soundId = 0;
         card.m_explainText = "";

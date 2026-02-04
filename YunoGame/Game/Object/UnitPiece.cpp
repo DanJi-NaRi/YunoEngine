@@ -166,22 +166,22 @@ bool UnitPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Unit::Create(name, id, vPos);
 
-    if (!m_pInput || !m_pRenderer || !m_pTextures)
-        return false;
-    if (!CreateMesh())
-        return false;
-    if (!CreateMaterial())
-        return false;
+    //if (!m_pInput || !m_pRenderer || !m_pTextures)
+    //    return false;
+    //if (!CreateMesh())
+    //    return false;
+    //if (!CreateMaterial())
+    //    return false;
 
-    auto mesh = std::make_unique<Mesh>();
+    //auto mesh = std::make_unique<Mesh>();
 
 
-    XMMATRIX i = XMMatrixIdentity();
-    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
+    //XMMATRIX i = XMMatrixIdentity();
+    //mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
 
-    m_MeshNode = std::make_unique<MeshNode>();
+    //m_MeshNode = std::make_unique<MeshNode>();
 
-    m_MeshNode->m_Meshs.push_back(std::move(mesh));
+    //m_MeshNode->m_Meshs.push_back(std::move(mesh));
 
     Backup();
 
@@ -233,7 +233,7 @@ bool UnitPiece::Update(float dTime)
             if (m_AnimDone)
             {
                 PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Turn_Over, m_who));
-                ClearQ();
+                //ClearQ();
                 m_AnimDone = false;
             }
         }
@@ -243,6 +243,8 @@ bool UnitPiece::Update(float dTime)
             XMStoreFloat3(&this->m_vPos, res);
         }
     }
+
+    UpdateFlash(dTime);
 
     // 애니메이션이 끝나면 하나씩 빼가게 하기
     while (!m_Q.empty() && !isMoving && !isRotating)
@@ -261,6 +263,7 @@ bool UnitPiece::Update(float dTime)
         }
         case CommandType::Hit:
         {
+            SetFlashColor({0,0,0,1},1,0.3f);
             PlayGridQ::Insert(PlayGridQ::Hit_S(m_who, tp.hit.damage1));
             if (tp.hit.whichPiece != GamePiece::None)
                 PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece, tp.hit.damage2));
@@ -270,6 +273,7 @@ bool UnitPiece::Update(float dTime)
     }
 
     UpdateMatrix();
+    AnimationUpdate(dTime);
 
     return true;
 }
@@ -350,6 +354,38 @@ bool UnitPiece::UpdateMatrix()
     return true;
 }
 
+void UnitPiece::UpdateFlash(float dt)
+{
+    if (isFlashing)
+    {
+        // 속도 조절 가능
+        m_flashTime += dt;
+
+        // 0에서 시작해 1까지 올라갔다 다시 내려오는 부드러운 곡선
+        float btw0_1 = Graph(m_flashTime);
+
+        // btw0_1을 기반으로 색상 보간
+        Float4 fc = GetLerpColor(btw0_1);
+        //SetMaskColor({ fc.x, fc.y, fc.z, fc.w });
+        SetEmissiveColor(2, { fc.x, fc.y, fc.z, fc.w });
+
+        if (m_flashTime >= m_blinkTime)
+        {
+            m_count--;
+            m_flashTime = 0.f;
+        }
+        if (m_count == 0)
+        {
+            // 종료 시 원래 색 복원
+            //SetMaskColor({ m_vtmpColor.x, m_vtmpColor.y, m_vtmpColor.z, m_vtmpColor.w });
+            SetEmissiveColor(2, { m_vtmpColor.x, m_vtmpColor.y, m_vtmpColor.z, m_vtmpColor.w });
+            m_flashTime = 0.f;
+            isFlashing = false;
+        }
+
+    }
+}
+
 
 void UnitPiece::InsertQ(PGridCmd cmd)
 {
@@ -385,6 +421,14 @@ void UnitPiece::SetDir(Direction dir, bool isAnim)
     m_yaw = (isAnim) ? m_yaw : m_targetYaw;
 }
 
+void UnitPiece::SetFlashColor(Float4 color, int count, float blinkTime)
+{
+    m_flashColor = color;
+    m_count = count;
+    m_blinkTime = blinkTime;
+    isFlashing = true;
+}
+
 
 void UnitPiece::SetTarget(XMFLOAT3 targetPos, float speed)
 {
@@ -408,6 +452,11 @@ void UnitPiece::SetDead()
     isDead = true;
 }
 
+void UnitPiece::SetTmpColor(Float4 color)
+{
+    m_vtmpColor = color;
+}
+
 
 void UnitPiece::SendDone()
 {
@@ -421,4 +470,20 @@ void UnitPiece::ClearQ()
     {
         m_Q.pop();
     }
+}
+
+Float4 UnitPiece::GetLerpColor(float dt)
+{
+    float r = m_vtmpColor.x * (1 - dt) + m_flashColor.x * (dt);
+    float g = m_vtmpColor.y * (1 - dt) + m_flashColor.y * (dt);
+    float b = m_vtmpColor.z * (1 - dt) + m_flashColor.z * (dt);
+    float a = m_vtmpColor.w * (1 - dt) + m_flashColor.w * (dt);
+    return { r, g, b, a };
+}
+
+float UnitPiece::Graph(float x)
+{
+    float result = -(2.f / m_blinkTime * x - 1.f) * (2.f / m_blinkTime * x - 1.f) + 1.f;
+
+    return result;
 }
