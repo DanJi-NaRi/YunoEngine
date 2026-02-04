@@ -74,12 +74,13 @@ namespace yuno::server
             card.m_cardID = std::stoi(cols[0]);
             card.m_name = cols[1];
             card.m_allowedUnits = std::stoul(cols[2]);
-            card.m_Rarity = static_cast<CardRarity>(std::stoi(cols[3]));
+            card.m_Rarity = std::stoi(cols[3]);
             card.m_type = static_cast<CardType>(std::stoi(cols[4]));
             card.m_speed = std::stoi(cols[5]);
-            card.m_useCnt = std::stoi(cols[6]);
+            card.m_useId = std::stoi(cols[6]);
             card.m_cost = std::stoi(cols[7]);
             card.m_rangeId = std::stoul(cols[11]);
+            card.m_controlId = std::stoul(cols[12]);
             card.m_destroyCnt = 0;
             card.m_effectId = 0;
             card.m_soundId = 0;

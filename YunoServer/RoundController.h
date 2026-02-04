@@ -6,7 +6,7 @@ namespace yuno::server
     class MatchManager;
     class ServerCardDealer;
     class YunoServerNetwork;
-
+    class PlayerCardController;
     //// MK 추가
     //struct UnitState
     //{
@@ -32,7 +32,8 @@ namespace yuno::server
         RoundController(
             MatchManager& match,
             ServerCardDealer& dealer,
-            YunoServerNetwork& network);
+            YunoServerNetwork& network,
+            PlayerCardController& mcardController);
 
         void TryStartRound();
 
@@ -47,7 +48,7 @@ namespace yuno::server
         MatchManager& m_match;
         ServerCardDealer& m_cardDealer;
         YunoServerNetwork& m_network;
-        
+        PlayerCardController& m_cardController;
 
         bool m_roundStarted = false;
         std::unordered_map<uint32_t, uint8_t> m_unitIdMap;

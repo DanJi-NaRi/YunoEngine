@@ -17,3 +17,25 @@ uint32_t ServerCardRuntime::CreateCard(uint32_t dataID)
 
     return runtimeID;
 }
+
+void ServerCardRuntime::RemoveCard(uint32_t runtimeID)
+{
+    auto it = m_runtimeToData.find(runtimeID);
+    if (it == m_runtimeToData.end())
+    {
+        std::cout
+            << "[Server] RemoveCard FAILED runtimeID="
+            << runtimeID
+            << " (not found)\n";
+        return;
+    }
+
+    std::cout
+        << "[Server] RemoveCard runtimeID="
+        << runtimeID
+        << " dataID="
+        << it->second
+        << std::endl;
+
+    m_runtimeToData.erase(it);
+}

@@ -19,7 +19,7 @@
 
 #include "C2S_SubmitWeapon.h"
 
-#include "S2C_StartCardList.h"
+#include "S2C_CardPackets.h"
 
 
 
@@ -314,9 +314,9 @@ namespace yuno::game
             {
                 ByteReader r(body, bodyLen);
                 const auto pkt =
-                    yuno::net::packets::S2C_TestCardList::Deserialize(r);
+                    yuno::net::packets::S2C_StartCardList::Deserialize(r);
 
-                GameManager::Get().SetCards(pkt.cards);
+                GameManager::Get().InitHands(pkt.cards);
 
                 std::cout << "[Client] TestCardList stored. count="
                     << pkt.cards.size() << "\n";
