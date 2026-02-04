@@ -2,6 +2,7 @@
 #include <array>
 #include <algorithm>
 #include <cstdlib>
+#include <limits>
 
 #include "TurnManager.h"
 #include "MatchManager.h"
@@ -227,6 +228,8 @@ namespace yuno::server
             &p2.unit2
         };
 
+        std::array<BuffState, 4> buffStates{};
+
         std::vector<int> grid(kGridSize + 1, -1);   // size 36 , 0은 Error, 1~35가 TileId
         for (int i = 0; i < static_cast<int>(units.size()); ++i)
         {
@@ -358,6 +361,16 @@ namespace yuno::server
                 return false;
             };
 
+        auto addClamp = [](auto& value, int delta)
+            {
+                using T = std::decay_t<decltype(value)>;
+                int v = static_cast<int>(value) + delta;
+                int maxValue = static_cast<int>(std::numeric_limits<T>::max());
+                if (v < 0) v = 0;
+                if (v > maxValue) v = maxValue;
+                value = static_cast<T>(v);
+            };
+
         auto applyAttack = [&](int unitIndex, uint32_t cardDataId, const CardData& cardData, Direction dir) -> bool
             {
                 const auto* effectData = m_cardDB.GetEffectData(cardDataId);
@@ -379,7 +392,14 @@ namespace yuno::server
                     return false;
 
                 TilePos origin = TileIdToPos(attacker.tileID);
-                int totalDamage = effectData->m_damage + effectData->m_giveDamageBonus;
+                int totalDamage = effectData->m_damage;
+
+                if (attacker.buffstat.nextDamageBonus != 0)
+                {
+                    std::cout << "--Damage Enhanced-- ";
+                    totalDamage += attacker.buffstat.nextDamageBonus;
+                    attacker.buffstat.nextDamageBonus = 0;
+                }
 
                 auto subClamp = [](auto& hp, int dmg)
                     {
@@ -421,12 +441,24 @@ namespace yuno::server
                     if (totalDamage > 0)
                     {
                         UnitState& targetUnit = *units[occupantIndex];
-                        subClamp(targetUnit.hp, totalDamage);
+                        int adjustedDamage = totalDamage;
+                        if (targetUnit.buffstat.nextDamageIncrease != 0) // 타겟이 보유중인 받는 피해 증가 디버프가 있는 경우
+                        {
+                            adjustedDamage += targetUnit.buffstat.nextDamageIncrease;
+                            targetUnit.buffstat.nextDamageIncrease = 0;
+                        }
+                        if (targetUnit.buffstat.nextDamageReduce != 0)  // 타겟이 보유중인 받는 피해 감소 버프 있는 경우
+                        {
+                            adjustedDamage = std::max(0, adjustedDamage - targetUnit.buffstat.nextDamageReduce);
+                            targetUnit.buffstat.nextDamageReduce = 0;
+                        }
+
+                        subClamp(targetUnit.hp, adjustedDamage);
 
                         eventOccurred = true;
 
                         std::cout << "Attack hit unit " << occupantIndex
-                            << " damage=" << totalDamage << std::endl;
+                            << " damage=" << adjustedDamage << std::endl;
                     }
                 }
 
@@ -458,6 +490,31 @@ namespace yuno::server
                 if (cardData.m_type == CardType::Buff)
                 {
                     std::cout << "Buff Card On" << std::endl;
+                    if (const auto* effectData = m_cardDB.GetEffectData(card.dataId))
+                    {
+                        UnitState& unit = *units[unitIndex];
+                        if (effectData->m_staminaRecover != 0)
+                        {
+                            std::cout << "--Stamana Recovery--" << std::endl;
+                            addClamp(unit.stamina, effectData->m_staminaRecover);
+                        }
+                        if (effectData->m_giveDamageBonus != 0)
+                        {
+                            std::cout << "--Get nextDamageBonus--" << std::endl;
+                            unit.buffstat.nextDamageBonus += effectData->m_giveDamageBonus;
+                        }
+                        if (effectData->m_takeDamageReduce != 0)
+                        {
+                            std::cout << "--Get nextDamageReduce--" << std::endl;
+                            unit.buffstat.nextDamageReduce += effectData->m_takeDamageReduce;
+                        }
+                        // 얘는 특수였음;;  
+/*                      if (effectData->m_takeDamageIncrease != 0)
+                        {
+                            std::cout << "--Stamana Recovery--" << std::endl;
+                            unit.buffstat.nextDamageIncrease += effectData->m_takeDamageIncrease;
+                        }*/
+                    }
                 }
                 else if(cardData.m_type == CardType::Move)
                 {

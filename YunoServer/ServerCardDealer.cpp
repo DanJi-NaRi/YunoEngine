@@ -26,7 +26,7 @@ namespace yuno::server
         auto c2 = CollectCardsByWeapon(weapon2);
 
         // 무기 1
-        for (size_t i = 0; i < 6 && i < c1.size(); ++i)
+        for (size_t i = 0; i < 16 && i < c1.size(); ++i)
         {
             uint32_t dataID = c1[i];
             uint32_t runtimeID = m_runtime.CreateCard(dataID);
@@ -38,7 +38,7 @@ namespace yuno::server
         }
 
         // 무기 2
-        for (size_t i = 0; i < 6 && i < c2.size(); ++i)
+        for (size_t i = 0; i < 16 && i < c2.size(); ++i)
         {
             uint32_t dataID = c2[i];
             uint32_t runtimeID = m_runtime.CreateCard(dataID);
