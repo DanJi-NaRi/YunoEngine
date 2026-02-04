@@ -227,6 +227,7 @@ void PlayGridSystem::CheckPacket(float dt)
 
         const RangeData* rangeData = mng.GetRangeData(runTimeCardID);
         const CardType cardType = cardData.m_type;
+        if (cardType == CardType::Attack)    m_pktTime = 7.f;
         
         ApplyActionOrder(order, mainUnit, cardType, rangeData, (Direction)dir);
     }
