@@ -263,7 +263,7 @@ bool UnitPiece::Update(float dTime)
         }
         case CommandType::Hit:
         {
-            SetFlashColor({1,0,1,1},1,0.3f);
+            SetFlashColor({0,0,0,1},1,0.3f);
             PlayGridQ::Insert(PlayGridQ::Hit_S(m_who, tp.hit.damage1));
             if (tp.hit.whichPiece != GamePiece::None)
                 PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece, tp.hit.damage2));
@@ -366,8 +366,8 @@ void UnitPiece::UpdateFlash(float dt)
 
         // btw0_1을 기반으로 색상 보간
         Float4 fc = GetLerpColor(btw0_1);
-        SetMaskColor({ fc.x, fc.y, fc.z, fc.w });
-        //SetEmissiveColor(2, { fc.x, fc.y, fc.z, fc.w });
+        //SetMaskColor({ fc.x, fc.y, fc.z, fc.w });
+        SetEmissiveColor(2, { fc.x, fc.y, fc.z, fc.w });
 
         if (m_flashTime >= m_blinkTime)
         {
@@ -377,8 +377,8 @@ void UnitPiece::UpdateFlash(float dt)
         if (m_count == 0)
         {
             // 종료 시 원래 색 복원
-            SetMaskColor({ 1, 1, 1, 1 });
-            //SetEmissiveColor(2, { 1, 1, 1, 1 });
+            //SetMaskColor({ m_vtmpColor.x, m_vtmpColor.y, m_vtmpColor.z, m_vtmpColor.w });
+            SetEmissiveColor(2, { m_vtmpColor.x, m_vtmpColor.y, m_vtmpColor.z, m_vtmpColor.w });
             m_flashTime = 0.f;
             isFlashing = false;
         }
@@ -452,6 +452,11 @@ void UnitPiece::SetDead()
     isDead = true;
 }
 
+void UnitPiece::SetTmpColor(Float4 color)
+{
+    m_vtmpColor = color;
+}
+
 
 void UnitPiece::SendDone()
 {
@@ -469,10 +474,10 @@ void UnitPiece::ClearQ()
 
 Float4 UnitPiece::GetLerpColor(float dt)
 {
-    float r = 1 * (1 - dt) + m_flashColor.x * (dt);
-    float g = 1 * (1 - dt) + m_flashColor.y * (dt);
-    float b = 1 * (1 - dt) + m_flashColor.z * (dt);
-    float a = 1 * (1 - dt) + m_flashColor.w * (dt);
+    float r = m_vtmpColor.x * (1 - dt) + m_flashColor.x * (dt);
+    float g = m_vtmpColor.y * (1 - dt) + m_flashColor.y * (dt);
+    float b = m_vtmpColor.z * (1 - dt) + m_flashColor.z * (dt);
+    float a = m_vtmpColor.w * (1 - dt) + m_flashColor.w * (dt);
     return { r, g, b, a };
 }
 

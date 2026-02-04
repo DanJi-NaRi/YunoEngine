@@ -123,21 +123,27 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         switch (w.weaponId)
         {
         case 1:
+            pPiece->SetTmpColor({ 1, 0, 0, 1 });
             pPiece->SetEmissiveColor(2, { 1, 0, 0, 1 });       // 빨
             break;
         case 2:
+            pPiece->SetTmpColor({ 1, 0.5f, 0, 1 });
             pPiece->SetEmissiveColor(2, { 1, 0.5f, 0, 1 });    // 주
             break;
         case 3:
+            pPiece->SetTmpColor({ 1, 1, 0, 1 });
             pPiece->SetEmissiveColor(2, { 1, 1, 0, 1 });       // 노
             break;
         case 4:
+            pPiece->SetTmpColor({ 0, 1, 0, 1 });
             pPiece->SetEmissiveColor(2, { 0, 1, 0, 1 });       // 초
             break;
         case 5:
+            pPiece->SetTmpColor({ 0, 0, 1, 1 });
             pPiece->SetEmissiveColor(2, { 0, 0, 1, 1 });       // 파
             break;
         case 6:
+            pPiece->SetTmpColor({ 0.5f, 0, 0.5f, 1 });
             pPiece->SetEmissiveColor(2, { 0.5f, 0, 0.5f, 1 }); // 보
             break;
         }
