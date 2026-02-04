@@ -47,6 +47,15 @@ bool RenderTest::OnCreateScene()
         m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
         j++;
     }
+
+    for (int i = 0; i < 35; i++)
+    {
+        gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx");
+        gun->SetRot({ 0, XMConvertToRadians(90), 0 });
+
+        gun->AddAnimationClip("capo1", L"../Assets/fbx/Tile/floor1.fbx");
+        gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor1_crash_Anim.fbx");
+    }
     //m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
 
@@ -62,24 +71,13 @@ bool RenderTest::OnCreateScene()
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
     map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
     //map->SetScale(XMFLOAT3(1, 1, 1));
-    
+    m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx");
     //Building* tile;
-    //tile = m_objectManager->CreateObjectFromFile<Building>(L"Tile" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx");
+    auto blade = m_objectManager->CreateObjectFromFile<AnimTest>(L"blade" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
+    blade->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
+    blade->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
 
-    m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(2, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
-    m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(-2, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
-    m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(4, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
-    m_objectManager->CreateObjectFromFile<Building>(L"LaserGun", XMFLOAT3(-4, 2, 0), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
 
-    for(int i = 0; i < 35; i++)
-    {
-        gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx");
-        gun->SetRot({ 0, XMConvertToRadians(90), 0 });
-
-        gun->AddAnimationClip("capo1", L"../Assets/fbx/Tile/floor1.fbx");
-        gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor1_crash_Anim.fbx");
-    }
-    
     //gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor2_crash_Anim.fbx");
     //gun->AddAnimationClip("capo3", L"../Assets/fbx/Tile/Tile_anim/Floor3_crash_Anim.fbx");
     //gun->AddAnimationClip("capo4", L"../Assets/fbx/Tile/Tile_anim/Floor4_crash_Anim.fbx");
@@ -108,7 +106,7 @@ bool RenderTest::OnCreateScene()
     ed.framecount = 100;
     ed.cols = 6;
     ed.rows = 5;
-    ed.emissive = 10.0f;
+    ed.emissive = 50.0f;
     ed.color = { 1, 0, 0, 1 };
     ed.rot = { XMConvertToRadians(90), XMConvertToRadians(90), 0 };
     ed.texPath = L"../Assets/Effects/Razer/EF_Razer_Yellow.png";
@@ -121,7 +119,7 @@ bool RenderTest::OnCreateScene()
     ed.rows = 5;
     ed.billboard = BillboardMode::AxisLocked;
     ed.texPath = L"../Assets/Effects/Razer/EF_Rager.png";
-    ed.emissive = 1.0f;
+    ed.emissive = 50.0f;
     ed.color = { 1, 0, 0, 1 };
     ed.rot = { 0, 0, 0 };
     m_effectManager->RegisterEffect(ed);
@@ -165,13 +163,13 @@ void RenderTest::Update(float dt)
     }
     if (YunoEngine::GetInput()->IsKeyPressed('G'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 0.1f, 0.f }, { 1.0f, 6.f, 1.0f }, { 0, 0, -1 });
+        auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 0.1f, 0.f }, { 1.0f, 6.f, 1.0f }, { 0, 0, 1 });
         //m_effectManager->Spawn(EffectID::Razer, { 0.f, 2.f, 2.f }, { 1.5f, 5.f, 1.5f });
         //m_effectManager->Spawn(EffectID::Razer, { 0.f, 2.f, -2.f }, { 1.5f, 5.f, 1.5f });
     }
     if (YunoEngine::GetInput()->IsKeyPressed('H'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::HitRed, { 0, 0.1f, 0.f }, { 6.f, 1.0f, 1.0f }, { 0, 0, -1 });
+        auto eff = m_effectManager->Spawn(EffectID::HitRed, { 0, 0.1f, 0.f }, { 6.f, 1.0f, 1.0f }, { 0, 0, 1 });
     }
     
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ

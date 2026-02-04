@@ -193,7 +193,7 @@ void EffectManager::Serialize()
         float emissive = temp.emissive;
         XMFLOAT4 color = temp.color;
 
-        if (UI::DragFloatEditable("Emissive", &emissive, 0.01f, 0.0f, 50.0f))
+        if (UI::DragFloatEditable("Emissive", &emissive, 0.01f, 0.0f, 100.0f))
         {
             temp.emissive = emissive;
         }

@@ -165,7 +165,7 @@ void Unit::SaveMesh(std::unique_ptr<MeshNode>& node, std::vector<Mesh*>& out)
 
 void Unit::SetEmissive(int num, const XMFLOAT4& color, float pow)
 {
-    if (num >= m_Meshs.size() && num < 0)
+    if (num >= m_Meshs.size() || num < 0)
         return;
 
     m_Meshs[num]->SetEmissiveColor(color);

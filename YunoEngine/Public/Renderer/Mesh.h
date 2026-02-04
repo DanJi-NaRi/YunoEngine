@@ -17,6 +17,7 @@ struct MeshNode {
     void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
+    std::unique_ptr<MeshNode> Clone() const;
 };
 
 enum class TextureUse
@@ -48,6 +49,8 @@ protected:
 public:
     Mesh();
     virtual ~Mesh();
+
+    std::unique_ptr<Mesh> Clone() const;
 
     void SetName(const std::string& name) { m_name = name; }
 

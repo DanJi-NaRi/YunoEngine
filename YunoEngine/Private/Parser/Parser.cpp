@@ -193,10 +193,8 @@ void CreateBoneNameSet(const aiScene* scene, std::unordered_map<std::string, UIN
                 std::string name = bone->mName.C_Str();
                 
                 std::string Arm = scene->mRootNode->FindNode(bone->mName)->mParent->mName.C_Str();
-                if (Arm.find("Armature") != std::string::npos)
-                {
-                    indexOut.emplace(Arm, -1);
-                }
+
+                indexOut.emplace(Arm, -1);
 
                 if (indexOut.find(name) == indexOut.end())
                 {

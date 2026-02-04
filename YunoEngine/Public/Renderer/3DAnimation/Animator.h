@@ -69,6 +69,7 @@ public:
 
     UINT GetAnimationNum() { return m_AnimationClips.size(); }
     UINT GetBoneCount() { return m_BoneCount; }
+    const UINT& GetCurFrame() { return static_cast<UINT>(CurTickTime); }
     const XMFLOAT4X4& GetBoneGlobal(int idx);
     int FindIndex(const std::string& name);
 

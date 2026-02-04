@@ -34,7 +34,7 @@ public:
 
     XMMATRIX UpdateBillBoard();
 
-    XMMATRIX UpdateDefault();
+    XMMATRIX UpdateBeam();
     XMMATRIX UpdateScreenAlign();
     XMMATRIX UpdateWorldUpAlign();
     XMMATRIX UpdateAxisLock();

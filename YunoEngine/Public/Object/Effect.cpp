@@ -85,9 +85,45 @@ XMMATRIX Effect::UpdateBillBoard()
         return UpdateWorldUpAlign();
     case BillboardMode::AxisLocked :
         return UpdateAxisLock();
+    case BillboardMode::Beam:
+        return UpdateBeam();
     default:
         return XMMatrixIdentity();
     }
+}
+
+XMMATRIX Effect::UpdateBeam()
+{
+    XMVECTOR forward = XMVector3Normalize(XMLoadFloat3(&m_vDir));
+    XMVECTOR worldup = XMVectorSet(0, 1, 0, 0);
+
+    // 카메라 forward 가져오기 (빌보드 두께 유지용)
+    /*XMVECTOR toCam = XMVector3Normalize(
+        XMLoadFloat3(&m_pRenderer->GetCamera().Position()) - XMLoadFloat3(&m_vPos)
+    );*/
+    // right = 카메라 기준으로 빔이 얇아지지 않게
+    XMVECTOR right = XMVector3Normalize(
+        XMVector3Cross(worldup, forward)
+    );
+
+    // up = forward x right
+    XMVECTOR up = XMVector3Normalize(
+        XMVector3Cross(forward, right)
+    );
+
+    right = XMVector3Normalize(
+        XMVector3Cross(worldup, forward)
+    );
+    //XMVECTOR up = -camForward;
+
+    // 회전행렬 생성
+    XMMATRIX R;
+    R.r[0] = right;
+    R.r[1] = up;
+    R.r[2] = forward;
+    R.r[3] = XMVectorSet(0, 0, 0, 1);
+
+    return R;
 }
 
 XMMATRIX Effect::UpdateScreenAlign()

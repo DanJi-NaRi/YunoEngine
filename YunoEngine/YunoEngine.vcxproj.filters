@@ -521,6 +521,9 @@
     <FxCompile Include="..\Assets\Shaders\EffectBase.hlsl">
       <Filter>Shaders\effect</Filter>
     </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\SkinningShadowMapWrite.hlsl">
+      <Filter>Shaders\shadowMap</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\ConstantBuffers.hlsli">

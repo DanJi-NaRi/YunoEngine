@@ -1783,6 +1783,7 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
 
     // 저장하고 핸들 반환 (1-based)
     m_meshes.push_back(std::move(mr));
+
     return static_cast<MeshHandle>(m_meshes.size());
 }
 
@@ -1817,6 +1818,7 @@ MaterialHandle YunoRenderer::CreateMaterial(const MaterialDesc& desc)
     mat.ao = desc.ao;
 
     m_materials.push_back(mat);
+
     return static_cast<MaterialHandle>(m_materials.size()); // 1-based
 }
 
@@ -1993,7 +1995,6 @@ std::pair<int, int> YunoRenderer::GetTextureSize(TextureHandle handle) const
         return { -1, -1 };
     const TextureResource& tr = m_textures[handle - 1];
     return { static_cast<int>(tr.w), static_cast<int>(tr.h) };
-
 }
 
 void YunoRenderer::SetPostProcessOption(const PostProcessDesc& opt)
