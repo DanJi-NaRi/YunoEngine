@@ -13,6 +13,8 @@
 #include "RoundController.h"
 #include "ServerCardDealer.h"
 #include "TurnManager.h"
+#include "PlayerCardController.h"
+#include "BattleState.h"
 
 namespace yuno::net
 {
@@ -61,6 +63,6 @@ namespace yuno::server
         ServerCardRuntime m_cardRuntime;
         RoundController m_roundController;
         TurnManager m_turnManager;
-
+        PlayerCardController m_cardController;
     };
 }

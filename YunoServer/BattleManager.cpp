@@ -1,7 +1,7 @@
 #include "ServerCardManager.h"
 
 #include "C2S_BattlePackets.h"
-#include "S2C_StartCardList.h"
+#include "S2C_CardPackets.h"
 
 #include "BattleState.h"
 #include "CardActionContext.h"

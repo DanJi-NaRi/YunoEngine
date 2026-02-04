@@ -15,7 +15,7 @@
 #include "S2C_CountDown.h"
 #include "S2C_ReadyState.h"
 #include "S2C_RoundStart.h"
-#include "S2C_StartCardList.h"
+#include "S2C_CardPackets.h"
 
 
 #include <iostream>
@@ -40,8 +40,9 @@ namespace yuno::server
         , m_cardRangeDB()
         , m_cardRuntime()
         , m_cardDealer(m_cardDB, m_cardRuntime)
-        , m_roundController(m_match, m_cardDealer, *this)
+        , m_roundController(m_match, m_cardDealer, *this, m_cardController)
         , m_turnManager(m_match, *this, m_cardRuntime, m_cardDB, m_roundController)
+        , m_cardController(m_cardDealer, m_cardDB, m_cardRuntime)
     {
 
 
@@ -80,7 +81,7 @@ namespace yuno::server
     {
         std::cout << "[Server] Start called. port=" << port << "\n";
 
-        if (!m_cardDB.LoadFromCSV("../Assets/CardData/CardData.csv"))       // 카드 데이터 로드
+        if (!m_cardDB.LoadFromCSV("../Assets/CardData/CardData3.csv"))       // 카드 데이터 로드
         {
             std::cerr << "[Server] Card CSV load failed\n";
             return false;

@@ -68,16 +68,20 @@ void PlayScene::HandleCardSelect(int key, int index)
     if (m_pendingCardRuntimeID != 0)
         return; // 이미 카드 하나 대기 중이면 무시
 
+    int unitSlot = m_selectedUnitSlot;
+
     uint32_t runtimeID =
-        GameManager::Get().GetCardRuntimeIDByIndex(index);
+        GameManager::Get().GetMyCardRuntimeID(unitSlot, index);
 
     if (runtimeID == 0)
         return;
 
     m_pendingCardRuntimeID = runtimeID;
 
-    std::cout << "[Card Selected] runtimeID = "
-        << runtimeID
+    std::cout << "[Card Selected] unitSlot="
+        << (unitSlot + 1)
+        << " index=" << index
+        << " runtimeID=" << runtimeID
         << " (waiting for direction)\n";
 }
 

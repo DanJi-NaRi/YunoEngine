@@ -10,10 +10,8 @@
 
 #include "PacketBuilder.h"
 #include "S2C_BattlePackets.h"
-#include "S2C_StartCardList.h"
+#include "S2C_CardPackets.h"
 #include "ServerCardManager.h"
-
-#include "BattleState.h"
 
 static bool IsALess(const ResolvedCard& a, const ResolvedCard& b, bool& coinTossUsed)
 {
