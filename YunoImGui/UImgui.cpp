@@ -43,12 +43,12 @@ namespace UI
         ImGui::EndDisabled();
     }
 
-    void DrawFps()
+    void DrawDebugHUD(float* v, float* v2)
     {
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
         ImGui::SetNextWindowBgAlpha(0.35f);
 
-        ImGui::Begin("Stats",
+        ImGui::Begin("DebugHUD",
             nullptr,
             ImGuiWindowFlags_NoDecoration |
             ImGuiWindowFlags_AlwaysAutoResize |
@@ -57,9 +57,26 @@ namespace UI
             ImGuiWindowFlags_NoFocusOnAppearing |
             ImGuiWindowFlags_NoNav);
 
+        // ===========================
+        // FPS 출력
+        // ===========================
         ImGuiIO& io = ImGui::GetIO();
         ImGui::Text("FPS: %.1f", io.Framerate);
-        //ImGui::Text("Frame Time: %.3f ms", io.DeltaTime * 1000.0f);
+
+        ImGui::Separator();
+
+        // ===========================
+        // Camera Position 출력
+        // ===========================
+        ImGui::Text("Cam Pos:");
+        ImGui::Text("(%.2f, %.2f, %.2f)",
+        v[0], v[1], v[2]);
+
+        ImGui::Separator();
+
+        ImGui::Text("Cam Target:");
+        ImGui::Text("(%.2f, %.2f, %.2f)",
+            v2[0], v2[1], v2[2]);
 
         ImGui::End();
     }

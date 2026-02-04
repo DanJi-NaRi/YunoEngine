@@ -331,5 +331,18 @@ void ObjectManager::FrameDataSubmit()
 
 std::unique_ptr<MeshNode> ObjectManager::CreateMeshNode(const std::wstring& filepath, PassOption opt)
 {
-    return Parser::Instance().LoadFile(filepath, opt);
+    //return Parser::Instance().LoadFile(filepath, opt);
+
+    MeshCacheKey key{ filepath, opt };
+    auto it = m_meshCache.find(key);
+    if (it != m_meshCache.end())
+        return it->second->Clone();
+
+    auto loaded = Parser::Instance().LoadFile(filepath, opt);
+    if (!loaded)
+        return nullptr;
+
+    auto instance = loaded->Clone();
+    m_meshCache.emplace(std::move(key), std::move(loaded));
+    return instance;
 }

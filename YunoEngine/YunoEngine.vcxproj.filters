@@ -152,9 +152,6 @@
     <ClCompile Include="Private\Renderer\Shader\YunoShaderCompiler.cpp">
       <Filter>Private\Renderer\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Renderer\YunoRenderer.cpp">
-      <Filter>Private\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Private\Resource\YunoTextureManager.cpp">
       <Filter>Private\Resource</Filter>
     </ClCompile>
@@ -265,6 +262,9 @@
     </ClCompile>
     <ClCompile Include="Private\UI\Slot.cpp">
       <Filter>Public\UI\BaseWidget</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\YunoRenderer.cpp">
+      <Filter>Private\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -520,6 +520,9 @@
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\EffectBase.hlsl">
       <Filter>Shaders\effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\SkinningShadowMapWrite.hlsl">
+      <Filter>Shaders\shadowMap</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

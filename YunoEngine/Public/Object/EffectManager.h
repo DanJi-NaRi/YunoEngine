@@ -12,6 +12,7 @@ struct EffectDesc
     float lifetime = 1.0f;
     float emissive = 0.5f;
     XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    XMFLOAT3 rot = {0, 0, 0};
     int framecount = 0;
     int cols = 0;
     int rows = 0;

@@ -193,10 +193,8 @@ void CreateBoneNameSet(const aiScene* scene, std::unordered_map<std::string, UIN
                 std::string name = bone->mName.C_Str();
                 
                 std::string Arm = scene->mRootNode->FindNode(bone->mName)->mParent->mName.C_Str();
-                if (Arm.find("Armature") != std::string::npos)
-                {
-                    indexOut.emplace(Arm, -1);
-                }
+
+                indexOut.emplace(Arm, -1);
 
                 if (indexOut.find(name) == indexOut.end())
                 {
@@ -236,7 +234,7 @@ std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
         XMMATRIX root = XMMatrixIdentity();
-        CreateBoneNode(node->mChildren[i], index, bRoot.get(), nullptr, root, root, nameToIndex, nameToOffset);
+        CreateBoneNode(node->mChildren[i], index, bRoot.get(), bRoot.get(), root, root, nameToIndex, nameToOffset);
     }
 
     animator->SetBoneTree(std::move(bRoot), nameToIndex, nameToIndex.size());

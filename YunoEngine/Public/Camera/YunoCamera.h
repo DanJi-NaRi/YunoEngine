@@ -21,6 +21,7 @@ struct YunoCamera
         XMVECTOR pos = XMLoadFloat3(&position);
         XMVECTOR lookat = XMLoadFloat3(&target);
 
+        //return lookat;
         return XMVector3Normalize(lookat - pos);
     }
 

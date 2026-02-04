@@ -10,6 +10,7 @@
 
 #include "ImGuiManager.h"
 #include "UImgui.h"
+#include "YunoCamera.h"
 
 
 SceneEntry::~SceneEntry() = default;
@@ -66,7 +67,7 @@ void YunoSceneManager::RegisterDrawSceneUI()
 
     ImGuiManager::RegisterDraw(
         [this]() {
-            UI::SetNextUIPos(1, 50);
+            UI::SetNextUIPos(YunoEngine::GetWindow()->GetClientWidth() - 120, 1);
             UI::SetNextUISize(120, 60);
             UI::BeginPanel("Save");
 
