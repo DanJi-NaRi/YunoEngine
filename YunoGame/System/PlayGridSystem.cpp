@@ -411,7 +411,6 @@ void PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState
     bool isCollided = newUS.isEvent;
     if (isCollided)
     {
-
         if (HasThis_US(dirty, Dirty_US::hp))
         {
             int damageMe = prevUS.hp - newUS.hp;
