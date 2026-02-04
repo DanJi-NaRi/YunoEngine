@@ -1,9 +1,8 @@
 #include "MatchManager.h"
 
 #include "ServerCardManager.h"
-#include "S2C_StartCardList.h"
+#include "S2C_CardPackets.h"
 #include "BattleState.h"
-#include "PlayerCardController.h"
 
 namespace yuno::server
 {
@@ -182,7 +181,11 @@ namespace yuno::server
 
             // 기본 정보
             player.sessionId = slot.sessionId;
-            player.PID = slot.userId;
+            player.PID = static_cast<uint8_t>(i+1);       // 이거는 환경변수로 초기화 하면 안됨
+
+            //UnitSlot 고정
+            player.unit1.slotID = 1;
+            player.unit2.slotID = 2;
 
             // UnitID 초기화
             player.unit1.WeaponID = slot.unitId1;
@@ -202,13 +205,6 @@ namespace yuno::server
 
             InitUnitStatsByUnitId(player.unit1);
             InitUnitStatsByUnitId(player.unit2);
-
-            // 카드 관련 초기화는 컨트롤러에 위임
-            //m_cardController.InitPlayerCards(player);
         }
-
-
-        // 이후: 초기 핸드 패킷 전송
-        //SendInitialHands();
     }
 }

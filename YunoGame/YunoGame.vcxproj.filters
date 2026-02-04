@@ -106,9 +106,6 @@
     <Filter Include="System\GridSystem\Queue_test">
       <UniqueIdentifier>{a112416b-9bd3-4b1e-b689-f66c726ce9b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scenes\3.Phase">
-      <UniqueIdentifier>{6b093a5a-706d-4922-8eba-d0cc15908609}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\UI\Image\CardTable">
       <UniqueIdentifier>{8dae683b-fb3e-4c62-9d9c-597c2549a80b}</UniqueIdentifier>
     </Filter>
@@ -117,6 +114,9 @@
     </Filter>
     <Filter Include="System\Battle">
       <UniqueIdentifier>{10337b04-c219-4415-9dd2-2a6822a18358}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\3.Phase">
+      <UniqueIdentifier>{6b093a5a-706d-4922-8eba-d0cc15908609}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

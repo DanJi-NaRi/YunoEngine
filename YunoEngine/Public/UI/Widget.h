@@ -7,6 +7,8 @@
 #include "YunoTransform.h"
 #include "Mesh.h"
 
+constexpr Float2 g_defWidgetSize{ 50, 50 };
+
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
 
 //class UIManager;
@@ -100,15 +102,6 @@ constexpr bool PivotMinMax(Float2 pivot) { // 피벗 최소 최대치 비교
             pivot.x <= g_PivotMax &&
             pivot.y <= g_PivotMax);
 }
-    
-
-struct SnapPoint {
-    XMFLOAT2 m_snapPos; // 스냅 위치 : 기본적으로 slot과 1:1이겠지만, 슬롯이 여러 스냅포인트를 가진 경우 달라질 수 있다.
-    RECT m_snapRange;   // 스냅 검사 Rect : 위젯이 해당 Rect와 AABB가 통과되면, snapPos로 스냅한다.
-    float m_snapPadding; // 범위 보정치 : Rect 감지 범위에 padding만큼 추가 보정을 한다.
-    WidgetClass m_snapTargetClass; // 스냅 조건
-    // 추가 조건 있으면 추가...
-};
 
 constexpr Float2 g_DefaultClientXY{ 1920,1080 };
 
@@ -130,12 +123,17 @@ protected:
     XMFLOAT3	m_vRot;     // 스크린상의 위젯 Rot
     XMFLOAT3	m_vScale;   // 스크린상의 위젯 크기 배율 (z는 의미 없음, 사용 안함)
     
-    XMFLOAT4X4	m_mWorld;
-    XMFLOAT4X4	m_mNoScaleWorld; // 스케일 곱만 빠진 버전
+    XMFLOAT4X4	m_mWorld; //m_mWorldWithSize; // 렌더/Rect/스냅에 쓰는 월드 (m_size 사용, 자식 결합에 사용)
+    XMFLOAT4X4& m_mWorldWithSize = m_mWorld;  // m_mWorld 별명
+    XMFLOAT4X4	m_mWorldNoSize;               // 부모가 자식에게 상속하는 월드 (m_size 안씀, 부모만 사용)
 
+    
+
+    XMFLOAT4X4  m_mSize;
     XMFLOAT4X4	m_mScale;
     XMFLOAT4X4  m_mRot;
     XMFLOAT4X4  m_mTrans;
+    XMFLOAT4X4  m_mPivot;
 
     XMFLOAT3	m_vPosBk;
     XMFLOAT3	m_vRotBk;
@@ -153,7 +151,7 @@ protected:
 
     Float3 m_finalPos;
 
-    Float3 m_finalSize;           // 최종 위젯 사이즈 XY // m_height * m_scale.y * m_canvasOffset
+    Float3 m_finalScale;           // 최종 위젯 스케일 XY // m_finalScale * m_canvasScale
 
     // 캔버스 관련 데이터
 
@@ -161,8 +159,8 @@ protected:
           
     //Float3 m_clientSize;        // 클라이언트 사이즈 XY
 
-    Float3 m_canvasScale;       // 캔버스 결과 적용 스케일 (canvasSizeXY/clientSizeXY)
-    Float3 m_canvasLetterboxOffset; // 레터박스 보정 오프셋
+    Float3 m_canvasScale;           // 해상도 대응 스케일 (canvasSizeXY/clientSizeXY) - Scale에 적용
+    Float3 m_canvasLetterboxOffset; // 레터박스 보정 오프셋 - Pos에 적용
     //Canvas* m_canvas;
 
 
@@ -224,8 +222,8 @@ public:
     virtual ~Widget();
 
     //Create는 오브젝트 매니저만 쓰기
-    virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
-    virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
+    virtual bool  Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos);
+    virtual bool  Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale);
     virtual bool  Start(); // Create 다 끝나고 호출. 
     virtual void  CreateChild() {};
 
@@ -247,8 +245,8 @@ public:
     //////////////////////////////////////////////////
     public:
 
-
     void          UpdateRect();
+    void          UpdateRectWorld();
 
     // 위치 세팅 // 더티 플래그는 아직 미사용
     void          SetSize(Float2 size)          { m_size = size; m_transformDirty = true; }
@@ -270,6 +268,7 @@ public:
     Float2        AddTextureSize(TextureHandle& handle);
 
 
+
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
 
@@ -283,7 +282,9 @@ public:
     XMMATRIX                     GetRotMatrix() { return XMLoadFloat4x4(&m_mRot); }
     XMMATRIX                     GetScaleMatrix() { return XMLoadFloat4x4(&m_mScale); }
     XMMATRIX                     GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
-    XMMATRIX                     GetNoScaleWorldMatrix() { return XMLoadFloat4x4(&m_mNoScaleWorld); }
+    XMMATRIX                     GetWorldWithSizeMatrix() { return XMLoadFloat4x4(&m_mWorldWithSize); } // Rect / 히트테스트용, 스냅용 
+    XMMATRIX                     GetWorldNoSizeMatrix() { return XMLoadFloat4x4(&m_mWorldNoSize); } // 자식 결합(부모-자식)체인용 중점 : "간격"
+    
     const RECT                   GetRect() const { return m_rect; }
     const Float2                 GetPivot() { return m_pivot; }
     bool                         GetIsRoot() { return m_isRoot; }
@@ -412,7 +413,6 @@ inline bool IsIntersect(const RECT& a, const RECT& b)
     //    a.bottom <= b.top ||
     //    a.top >= b.bottom);
 }
-
 
 
 

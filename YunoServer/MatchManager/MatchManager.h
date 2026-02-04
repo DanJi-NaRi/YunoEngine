@@ -5,7 +5,6 @@
 
 namespace yuno::server
 {
-
     // 무기 선택 페이즈때 필요한 데이터
     class MatchManager final
     {
@@ -22,8 +21,6 @@ namespace yuno::server
             std::uint32_t unitId2 = 0;      // 선택 무기 2번 id
 
             bool ready = false;
-
-
 
             bool IsReady() const { return (unitId1 != 0 && unitId2 != 0); }
             bool IsUnitsFilled() const
@@ -55,8 +52,6 @@ namespace yuno::server
 
         void InitBattleState();//battlestate 초기화
     private:
-        //PlayerCardController m_cardController;
-
         std::array<MatchSlot, kMaxSlots> m_slots{};
     };
 }

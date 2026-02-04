@@ -21,9 +21,9 @@ void CardTable::Clear()
 {
 }
 
-bool CardTable::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool CardTable::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Image::Create(name, id, vPos);
+    Image::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     if (!m_pInput || !m_pRenderer || !m_pTextures)
         return false;
@@ -65,8 +65,6 @@ bool CardTable::Start()
 void CardTable::CreateChild() {
     // 고정 하위 위젯 생성
     this->SetLayer(WidgetLayer::Panels);
-
-    m_SetCardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S1", XMFLOAT3(0, 0, 0), this));
 }
 
 

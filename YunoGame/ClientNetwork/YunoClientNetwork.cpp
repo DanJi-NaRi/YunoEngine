@@ -19,7 +19,7 @@
 
 #include "C2S_SubmitWeapon.h"
 
-#include "S2C_StartCardList.h"
+#include "S2C_CardPackets.h"
 
 
 
@@ -229,11 +229,16 @@ namespace yuno::game
 
                 GameManager& gm = GameManager::Get();
 
-                gm.StartCountDown(
-                    countTime,
-                    pkt.slot1_UnitId1, pkt.slot1_UnitId2,
-                    pkt.slot2_UnitId1, pkt.slot2_UnitId2
-                );
+                std::cout << "game state : " << static_cast<int>(gm.GetSceneState()) << std::endl;
+                // 현재 씬이 게임 스타트 상태 즉 WeaponSelectScene일때만 패킷 동작
+                if (gm.GetSceneState() == CurrentSceneState::GameStart) {
+                    gm.StartCountDown(
+                        countTime,
+                        pkt.slot1_UnitId1, pkt.slot1_UnitId2,
+                        pkt.slot2_UnitId1, pkt.slot2_UnitId2
+                    );
+                }
+
             });// CountDown Packet End
         
         // RoundStart Packet Start
@@ -306,7 +311,7 @@ namespace yuno::game
     
         // TestCardList Packet Start
         Dispatcher().RegisterRaw(
-            PacketType::S2C_TestCardList,
+            PacketType::S2C_StartCardList,
             [this](const NetPeer& peer,
                 const PacketHeader& header,
                 const std::uint8_t* body,
@@ -314,9 +319,9 @@ namespace yuno::game
             {
                 ByteReader r(body, bodyLen);
                 const auto pkt =
-                    yuno::net::packets::S2C_TestCardList::Deserialize(r);
+                    yuno::net::packets::S2C_StartCardList::Deserialize(r);
 
-                GameManager::Get().SetCards(pkt.cards);
+                GameManager::Get().InitHands(pkt.cards);
 
                 std::cout << "[Client] TestCardList stored. count="
                     << pkt.cards.size() << "\n";
@@ -331,7 +336,7 @@ namespace yuno::game
                         << "\n";
                 }
             }
-        );// TestCardList Packet End
+        ); // TestCardList Packet End
 
         // BattleResult Packet Start
         Dispatcher().RegisterRaw(

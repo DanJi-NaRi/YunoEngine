@@ -12,7 +12,7 @@ public:
     // 생성자는 (UIFactory& uiFactory) 인자를 기본으로
     ButtonTemplate(UIFactory& uiFactory);
     virtual ~ButtonTemplate();
-    bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    bool Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale) override;
     void CreateChild() override;         // 위젯 생성 동시에 바로 다음 차례에 자식 위젯을 생성해야 한다면 (자식 생성 공간)
     bool Start() override;                          // 생성 이후, 시작 지점 (자식 객체를 생성한다면 여기에)
     bool Update(float dTime = 0) override;     // UIManager가 전체 순회 업데이트 (Logic)
@@ -65,7 +65,7 @@ class CardCancelButton : public Button
 public:
     CardCancelButton(UIFactory& uiFactory);
     virtual ~CardCancelButton();
-    bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    bool Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale) override;
     void CreateChild() override;                     // 위젯 생성 동시에 바로 다음 차례에 자식 위젯을 생성해야 한다면 (자식 생성 공간)
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;

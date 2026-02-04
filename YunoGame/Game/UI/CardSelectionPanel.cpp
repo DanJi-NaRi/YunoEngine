@@ -21,9 +21,9 @@ void CardSelectionPanel::Clear()
 {
 }
 
-bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Image::Create(name, id, vPos);
+    Image::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     if (!m_pInput || !m_pRenderer || !m_pTextures)
         return false;
@@ -66,21 +66,21 @@ void CardSelectionPanel::CreateChild() {
     // 고정 하위 위젯 생성
     this->SetLayer(WidgetLayer::Panels);
 
-    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S0", XMFLOAT3(-25, -180, 0), Float2(100, 135), UIDirection::RightTop, this));
+    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S0", Float2(100, 135), XMFLOAT3(-25, -180, 0), UIDirection::RightTop, this));
 
-    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S1", XMFLOAT3(-145, -180, 0), Float2(100, 135), UIDirection::RightTop, this));
+    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S1", Float2(100, 135),  XMFLOAT3(-145, -180, 0), UIDirection::RightTop, this));
 
-    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S2", XMFLOAT3(-265, -180, 0), Float2(100, 135), UIDirection::RightTop, this));
+    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S2", Float2(100, 135), XMFLOAT3(-265, -180, 0), UIDirection::RightTop, this));
 
-    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S3", XMFLOAT3(-390, -180, 0), Float2(100, 135), UIDirection::RightTop, this));
+    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", XMFLOAT3(-25, -180, 0), Float2(100, 135), UIDirection::RightTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(100, 135), XMFLOAT3(-25, -180, 0), UIDirection::RightTop, this));
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", XMFLOAT3(-145, -180, 0), Float2(100, 135), UIDirection::RightTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(100, 135), XMFLOAT3(-145, -180, 0), UIDirection::RightTop, this));
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", XMFLOAT3(-265, -180, 0), Float2(100, 135), UIDirection::RightTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(100, 135), XMFLOAT3(-265, -180, 0), UIDirection::RightTop, this));
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", XMFLOAT3(-390, -180, 0), Float2(100, 135), UIDirection::RightTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));
 
 }
 

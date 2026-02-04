@@ -2,6 +2,7 @@
 
 class IInput;
 //class UIManager;
+class Slot;
 
 // 드래그 기능 공급자
 // 슬롯과 피봇이 동일하지 않으면 차이가 벌어질 수 있음.
@@ -17,6 +18,11 @@ public:
     void StartDrag();
     void EndDrag();
     bool IsNowDragging();
+    bool IsSnapped() { return (m_pSnappedSlot); }
+
+    Slot* GetSnappedSlot() { return m_pSnappedSlot; }
+    void SetSnappedSlot(Slot* pSlot) { m_pSnappedSlot = pSlot; }
+
     XMFLOAT2 GetDeltaFromDragStart(const XMFLOAT2& prevPos, const XMFLOAT2& nowPos);
 
    //const std::vector<XMFLOAT3>& GetSnapPoints() const { return m_snapPoint; }
@@ -44,5 +50,8 @@ protected:
 
     //XMFLOAT2 m_dragDelta;          // 커서 델타
     //std::vector<XMFLOAT3> m_snapPoint; // 스냅 포인트
+
+    // 스냅 위젯
+    Slot* m_pSnappedSlot;
 };
 

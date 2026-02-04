@@ -26,7 +26,7 @@ namespace yuno::net
         S2C_CountDown = 130,  // 카운트다운 시작/동기화
         S2C_RoundStart = 131,  // 게임 시작
         S2C_BattleResult = 133,  // 전투 결과/상태 갱신
-        S2C_TestCardList = 134, //카드id 배정
+        S2C_StartCardList = 134, //카드id 배정
         S2C_Pong = 135,
 
         // System / Error

@@ -35,7 +35,7 @@ bool PlayScene::OnCreateScene()
     m_playGrid->CreateObject(0, 1, 0);
     
     // 디렉션 라이트 생성
-    //m_objectManager->CreateDirLight();
+    m_objectManager->CreateDirLight();
 
 
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
@@ -68,16 +68,20 @@ void PlayScene::HandleCardSelect(int key, int index)
     if (m_pendingCardRuntimeID != 0)
         return; // 이미 카드 하나 대기 중이면 무시
 
+    int unitSlot = m_selectedUnitSlot;
+
     uint32_t runtimeID =
-        GameManager::Get().GetCardRuntimeIDByIndex(index);
+        GameManager::Get().GetMyCardRuntimeID(unitSlot, index);
 
     if (runtimeID == 0)
         return;
 
     m_pendingCardRuntimeID = runtimeID;
 
-    std::cout << "[Card Selected] runtimeID = "
-        << runtimeID
+    std::cout << "[Card Selected] unitSlot="
+        << (unitSlot + 1)
+        << " index=" << index
+        << " runtimeID=" << runtimeID
         << " (waiting for direction)\n";
 }
 
@@ -130,47 +134,6 @@ void PlayScene::EndTurn()
 
 void PlayScene::TestInput()
 {
-    //// 테스트용 -> ally1으로 부여한 기물이 움직여용
-    //if (m_input->IsKeyPressed(0x31))
-    //{
-    //    PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 3, true, true, 5, 1));   // 왼쪽
-    //}
-    //if (m_input->IsKeyPressed(0x32))
-    //{
-    //    PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 2, true, true, 5, 1));   // 아래
-    //}
-    //if (m_input->IsKeyPressed(0x33))
-    //{
-    //    PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 3, true, true, 5, 1));   // 위
-    //}
-    //if (m_input->IsKeyPressed(0x34))
-    //{
-    //    PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 4, true, true, 5, 1));   // 오른쪽
-    //}
-    //if (m_input->IsKeyPressed(0x35))
-    //{
-    //    PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 2, true, true, 5, 1));   // 왼쪽 위
-    //}
-    //if (m_input->IsKeyPressed(0x36))
-    //{
-    //    PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 2, true, true, 5, 1));   // 오른쪽 위
-    //}
-    //if (m_input->IsKeyPressed(0x37))
-    //{
-    //    PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 0, 4, true, true, 5, 1));   // 왼쪽 아래
-    //}
-    //if (m_input->IsKeyPressed(0x38))
-    //{
-    //    PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 4, true, true, 5, 1));   // 오른쪽 아래
-    //}
-    //if (m_input->IsKeyPressed(0x39))
-    //{
-    //    PlayGridQ::Insert(PlayGridQ::Attack_S_TST(GamePiece::Ally1));   // 공격
-    //}
-    //if (m_input->IsKeyPressed(0x30))
-    //{
-    //    PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 3));   // 충돌
-    //}
 
     // 디버깅용
     // 카드 선택 (넘버패드 = UI 버튼 대용)

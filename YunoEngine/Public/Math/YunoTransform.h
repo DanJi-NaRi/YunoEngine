@@ -79,6 +79,7 @@ struct Float3
     Float3& operator=(const Float4& v);
 
     XMFLOAT3 ToXM() const { return XMFLOAT3{ x, y, z }; }
+    XMFLOAT2 ToXM2() const { return XMFLOAT2{ x, y }; }
 
     // same-dim compound
     Float3& operator+=(const Float3& o) { x += o.x; y += o.y; z += o.z; return *this; }

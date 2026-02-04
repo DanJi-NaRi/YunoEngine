@@ -159,6 +159,15 @@ void Mesh::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
     m_renderItem.Constant.worldPos = pos;
 }
 
+// 위젯용 Submit
+//void Mesh::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize) ★
+//{
+//    XMStoreFloat4x4(&m_renderItem.Constant.world, XMLoadFloat4x4(&mWorld));
+//    m_renderItem.isWidget = true;
+//    m_renderItem.Constant.worldPos = pos;
+//    m_renderItem.Constant.widgetSize = widgetSize;
+//}
+
 void Mesh::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
 {
     if (!m_renderItem.haveAnim) m_renderItem.haveAnim = true;
@@ -172,8 +181,6 @@ void Mesh::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
 void Mesh::LastSubmit()
 {
     YunoEngine::GetRenderer()->Submit(m_renderItem);
-
-    // 
 }
 
 void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
@@ -188,6 +195,22 @@ void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
     for (auto& child : m_Childs)
         child->Submit(worldF, pos);
 }
+
+//void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize) ★
+//{
+//    XMMATRIX world = mUserTM * XMLoadFloat4x4(&mWorld);
+//    XMFLOAT4X4 worldF;
+//    XMStoreFloat4x4(&worldF, world);
+//
+//    for (auto& mesh : m_Meshs)
+//        mesh->Submit(worldF, pos);
+//        //mesh->Submit(worldF, pos, widgetSize);
+//
+//    for (auto& child : m_Childs)
+//        child->Submit(worldF, pos);
+//        //child->Submit(worldF, pos, widgetSize);
+//}
+
 
 void MeshNode::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
 {

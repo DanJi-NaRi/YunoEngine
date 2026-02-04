@@ -3,24 +3,24 @@
 #include "MatchManager.h"
 #include "ServerCardDealer.h"
 #include "YunoServerNetwork.h"
-#include "ServerCardInstance.h"
+#include "PlayerCardController.h"
 
 #include "PacketBuilder.h"
 #include "S2C_CountDown.h"
 #include "S2C_RoundStart.h"
-#include "S2C_StartCardList.h"
-
-#include "BattleState.h"
+#include "S2C_CardPackets.h"
 
 namespace yuno::server
 {
     RoundController::RoundController(
         MatchManager& match,
         ServerCardDealer& dealer,
-        YunoServerNetwork& network)
+        YunoServerNetwork& network,
+        PlayerCardController& cardController)
         : m_match(match)
         , m_cardDealer(dealer)
         , m_network(network)
+        , m_cardController(cardController)
     {
     }
 
@@ -37,12 +37,16 @@ namespace yuno::server
         m_roundStarted = true;
 
         m_match.InitBattleState();
-        
-        //SendInitialBattleState();
+        for (int i = 0; i < 2; ++i)
+        {
+            m_cardController.InitPlayerCards(g_battleState.players[i]);
+        }
+
         SendInitialCards();
+
         SendCountDown();
 
-        SendRoundStart();
+        SendRoundStart();       
     }
 
     // ------------------------------------------------------
@@ -78,35 +82,29 @@ namespace yuno::server
 
     void RoundController::SendInitialCards()
     {
-        const auto& slots = m_match.Slots();
+        std::vector<yuno::net::packets::CardSpawnInfo> allCards;
 
-        for (const auto& slot : slots)
+        for (int p = 0; p < 2; ++p)
         {
-            if (!slot.occupied)
-                continue;
+            auto& player = g_battleState.players[p];
 
-            auto session = m_network.FindSession(slot.sessionId);
-            if (!session)
-                continue;
-
-            // 무기 기반 카드 풀 생성 (서버 전용 정보)
-            auto cards =
-                m_cardDealer.MakeInitialDeck(
-                    slot.unitId1,
-                    slot.unitId2);
-
-            yuno::net::packets::S2C_TestCardList pkt;
-            pkt.cards = std::move(cards);
-
-            auto bytes = yuno::net::PacketBuilder::Build(
-                yuno::net::PacketType::S2C_TestCardList,
-                [&](yuno::net::ByteWriter& w)
-                {
-                    pkt.Serialize(w);
-                });
-
-            session->Send(std::move(bytes));
+            allCards.insert(
+                allCards.end(),
+                player.handCards.begin(),
+                player.handCards.end());
         }
+
+        yuno::net::packets::S2C_StartCardList pkt;
+        pkt.cards = allCards;
+
+        auto bytes = yuno::net::PacketBuilder::Build(
+            yuno::net::PacketType::S2C_StartCardList,
+            [&](yuno::net::ByteWriter& w)
+            {
+                pkt.Serialize(w);
+            });
+
+        m_network.Broadcast(std::move(bytes));
     }
 
     // ------------------------------------------------------
@@ -137,9 +135,9 @@ namespace yuno::server
                 rsUnit.PID = player.PID;
                 rsUnit.slotID = static_cast<uint8_t>(u + 1);
 
-                unit.slotID = rsUnit.slotID;
-                unit.WeaponID = static_cast<uint8_t>(
-                    (u == 0) ? slot.unitId1 : slot.unitId2);
+                //unit.slotID = rsUnit.slotID;
+                //unit.WeaponID = static_cast<uint8_t>(
+                //    (u == 0) ? slot.unitId1 : slot.unitId2);
 
                 rsUnit.WeaponID = unit.WeaponID;
 

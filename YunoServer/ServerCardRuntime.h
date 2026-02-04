@@ -8,14 +8,14 @@ namespace yuno::server
     {
     public:
         uint32_t CreateCard(uint32_t dataID);
-
+        void RemoveCard(uint32_t runtimeID);
         uint32_t GetDataID(uint32_t runtimeID) const
         {
             return m_runtimeToData.at(runtimeID);
         }
 
     private:
-        uint32_t m_nextRuntimeID = 0; // 일단은 냅두고 나중에 문제 생기면 여기부터 체크
+        uint32_t m_nextRuntimeID = 0; 
         std::unordered_map<uint32_t, uint32_t> m_runtimeToData;
     };
 }

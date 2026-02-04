@@ -2,6 +2,7 @@
 #include <array>
 #include <algorithm>
 #include <cstdlib>
+#include <limits>
 
 #include "TurnManager.h"
 #include "MatchManager.h"
@@ -10,10 +11,9 @@
 
 #include "PacketBuilder.h"
 #include "S2C_BattlePackets.h"
-#include "S2C_StartCardList.h"
+#include "S2C_CardPackets.h"
 #include "ServerCardManager.h"
-
-#include "BattleState.h"
+#include "ServerCardRangeManager.h"
 
 static bool IsALess(const ResolvedCard& a, const ResolvedCard& b, bool& coinTossUsed)
 {
@@ -76,6 +76,23 @@ namespace yuno::server
                 return { 0, 0 };
             }
         }
+
+        TilePos RotateRangeOffset(const RangeOffset& offset, Direction dir)
+        {
+            switch (dir)
+            {
+            case Direction::Up:
+                return { -offset.dy , -offset.dx};
+            case Direction::Down:
+                return { offset.dy, offset.dx };
+            case Direction::Left:
+                return { -offset.dx, -offset.dy };
+            case Direction::Right: // 얘가 디폴트 방향임 (1,1)
+                return { offset.dx, -offset.dy };
+            default:
+                return { offset.dx, -offset.dy };
+            }
+        }
     }
 
     TurnManager::TurnManager(
@@ -83,11 +100,13 @@ namespace yuno::server
         YunoServerNetwork& network,
         ServerCardRuntime& runtime,
         ServerCardManager& cardDB,
+        ServerCardRangeManager& rangeDB,
         RoundController& roundController)
         : m_match(match)
         , m_network(network)
         , m_runtime(runtime)
         , m_cardDB(cardDB)
+        , m_cardRangeDB(rangeDB)
         , m_roundController(roundController)
     {
     }
@@ -207,6 +226,8 @@ namespace yuno::server
             &p2.unit2
         };
 
+        std::array<BuffState, 4> buffStates{};
+
         std::vector<int> grid(kGridSize + 1, -1);   // size 36 , 0은 Error, 1~35가 TileId
         for (int i = 0; i < static_cast<int>(units.size()); ++i)
         {
@@ -296,10 +317,36 @@ namespace yuno::server
                     }
 
                     uint8_t probeId = PosToTileId(probe);
-                    if (grid[probeId] != -1)
+                    int occupantIndex = grid[probeId];
+                    if (occupantIndex != -1) // 무언가가 있는경우
                     {
-                        std::cout << "IsInGrif flase" << std::endl;
-                        return true;
+                        std::cout << "Blocked by unit on tile " << static_cast<int>(probeId) << std::endl;
+                        UnitState& other = *units[occupantIndex];
+                        bool isEnemy = (unitIndex / 2) != (occupantIndex / 2);
+
+                        if (isEnemy)
+                        {
+                            // 적군 충돌
+                            std::cout << "Enemy collision: self -10, enemy -5" << std::endl;
+
+                            auto subClamp = [](auto& hp, int dmg)
+                                {
+                                    using T = std::decay_t<decltype(hp)>;
+                                    int v = static_cast<int>(hp) - dmg;
+                                    if (v < 0) v = 0;
+                                    hp = static_cast<T>(v);
+                                };
+
+                            subClamp(unit.hp, 10);
+                            subClamp(other.hp, 5);
+                        }
+                        else
+                        {
+                            // 아군 충돌
+                            std::cout << "Blocked by ally" << std::endl;
+                        }
+
+                        return true; // 이동은 항상 막힘
                     }
                 }
 
@@ -308,12 +355,119 @@ namespace yuno::server
                 grid[oldTile] = -1;
                 grid[newTile] = unitIndex;
                 unit.tileID = newTile;
-                std::cout << "oldPos : " << static_cast<int>(oldTile) << "newPos : " << static_cast<int>(newTile) << std::endl;
+                std::cout << "oldPos : " << static_cast<int>(oldTile) << ", newPos : " << static_cast<int>(newTile) << std::endl;
                 return false;
+            };
+
+        auto addClamp = [](auto& value, int delta)
+            {
+                using T = std::decay_t<decltype(value)>;
+                int v = static_cast<int>(value) + delta;
+                int maxValue = static_cast<int>(std::numeric_limits<T>::max());
+                if (v < 0) v = 0;
+                if (v > maxValue) v = maxValue;
+                value = static_cast<T>(v);
+            };
+
+        auto applyAttack = [&](int unitIndex, uint32_t cardDataId, const CardData& cardData, Direction dir) -> bool
+            {
+                const auto* effectData = m_cardDB.GetEffectData(cardDataId);
+                const auto* rangeData = m_cardRangeDB.GetRange(cardData.m_rangeId);
+
+                if (!effectData)
+                {
+                    std::cout << "Attack effect data missing" << std::endl;
+                    return false;
+                }
+                if (!rangeData)
+                {
+                    std::cout << "Attack range data missing" << std::endl;
+                    return false;
+                }
+
+                UnitState& attacker = *units[unitIndex];
+                if (attacker.tileID == 0)
+                    return false;
+
+                TilePos origin = TileIdToPos(attacker.tileID);
+                int totalDamage = effectData->m_damage;
+
+                if (attacker.buffstat.nextDamageBonus != 0)
+                {
+                    std::cout << "--Damage Enhanced-- ";
+                    totalDamage += attacker.buffstat.nextDamageBonus;
+                    attacker.buffstat.nextDamageBonus = 0;
+                }
+
+                auto subClamp = [](auto& hp, int dmg)
+                    {
+                        using T = std::decay_t<decltype(hp)>;
+                        int v = static_cast<int>(hp) - dmg;
+                        if (v < 0) v = 0;
+                        hp = static_cast<T>(v);
+                    };
+
+                bool eventOccurred = false;
+
+                for (const auto& offset : rangeData->offsets)
+                {
+                    TilePos delta = RotateRangeOffset(offset, dir);
+                    TilePos target = { origin.x + delta.x, origin.y + delta.y };
+
+                    if (!IsInBounds(target))
+                    {
+                        std::cout << "Enter Out of Grid" << std::endl;
+                        continue;
+                    }
+
+                    uint8_t targetTile = PosToTileId(target);
+                    int occupantIndex = grid[targetTile];
+
+                    if (occupantIndex == -1)
+                    {
+                        std::cout << "Enter Empty tile" << std::endl;
+                        continue;
+                    }
+
+                    bool isEnemy = (unitIndex / 2) != (occupantIndex / 2);
+                    if (!isEnemy)
+                    {
+                        std::cout << "Enter Ally Attack" << std::endl;
+                        continue;
+                    }
+
+                    if (totalDamage > 0)
+                    {
+                        UnitState& targetUnit = *units[occupantIndex];
+                        int adjustedDamage = totalDamage;
+                        if (targetUnit.buffstat.nextDamageIncrease != 0) // 타겟이 보유중인 받는 피해 증가 디버프가 있는 경우
+                        {
+                            adjustedDamage += targetUnit.buffstat.nextDamageIncrease;
+                            targetUnit.buffstat.nextDamageIncrease = 0;
+                        }
+                        if (targetUnit.buffstat.nextDamageReduce != 0)  // 타겟이 보유중인 받는 피해 감소 버프 있는 경우
+                        {
+                            adjustedDamage = std::max(0, adjustedDamage - targetUnit.buffstat.nextDamageReduce);
+                            targetUnit.buffstat.nextDamageReduce = 0;
+                        }
+
+                        subClamp(targetUnit.hp, adjustedDamage);
+
+                        eventOccurred = true;
+
+                        std::cout << "Attack hit unit " << occupantIndex
+                            << " damage=" << adjustedDamage << std::endl;
+                    }
+                }
+
+                return eventOccurred;
             };
 
         auto applyCard = [&](const ResolvedCard& card)
             {
+				static int count = 0;
+				std::cout << "------------------------applyCard Count : " << ++count << std::endl;
+
                 const CardData& cardData = m_cardDB.GetCardData(card.dataId);
                 int unitIndex = getUnitIndexForCard(card.ownerSlot, cardData);
                 bool eventOccurred = false;
@@ -321,25 +475,61 @@ namespace yuno::server
                 if (cardData.m_cost > 0)
                 {
                     UnitState& unit = *units[unitIndex];
+                    std::cout << "before stamina : " << static_cast<int>(unit.stamina);
                     unit.stamina = static_cast<uint8_t>(
                         std::max(0, static_cast<int>(unit.stamina) - cardData.m_cost));
-                    std::cout << "stamina : " << static_cast<int>(unit.stamina) << std::endl;
+                    std::cout << ", after stamina : " << static_cast<int>(unit.stamina) << std::endl;
                 }
                 else 
                 {
                     std::cout << "do not Use Cost" << std::endl;
                 }
 
-                if (cardData.m_type == CardType::Move)
+                if (cardData.m_type == CardType::Buff)
+                {
+                    std::cout << "Buff Card On" << std::endl;
+                    if (const auto* effectData = m_cardDB.GetEffectData(card.dataId))
+                    {
+                        UnitState& unit = *units[unitIndex];
+                        if (effectData->m_staminaRecover != 0)
+                        {
+                            std::cout << "--Stamana Recovery--" << std::endl;
+                            addClamp(unit.stamina, effectData->m_staminaRecover);
+                        }
+                        if (effectData->m_giveDamageBonus != 0)
+                        {
+                            std::cout << "--Get nextDamageBonus--" << std::endl;
+                            unit.buffstat.nextDamageBonus += effectData->m_giveDamageBonus;
+                        }
+                        if (effectData->m_takeDamageReduce != 0)
+                        {
+                            std::cout << "--Get nextDamageReduce--" << std::endl;
+                            unit.buffstat.nextDamageReduce += effectData->m_takeDamageReduce;
+                        }
+                        // 얘는 특수였음;;  
+/*                      if (effectData->m_takeDamageIncrease != 0)
+                        {
+                            std::cout << "--Stamana Recovery--" << std::endl;
+                            unit.buffstat.nextDamageIncrease += effectData->m_takeDamageIncrease;
+                        }*/
+                    }
+                }
+                else if(cardData.m_type == CardType::Move)
                 {
                     if (const auto* moveData = m_cardDB.GetMoveData(card.dataId))
                     {
                         eventOccurred = applyMove(unitIndex, *moveData, card.dir);
                     }
                 }
+                else if (cardData.m_type == CardType::Attack)
+                {
+                    std::cout << "Attck Card On" << std::endl;
+                    applyAttack(unitIndex, card.dataId, cardData, card.dir);
+					
+                }
                 else 
                 {
-                    std::cout << "not Move Card" << std::endl;
+                    std::cout << "Utility Card On" << std::endl;
                 }
 
                 using namespace yuno::net::packets;
@@ -381,7 +571,6 @@ namespace yuno::server
 
         for (size_t i = 0; i < maxCount; ++i)
         {
-
             bool coinTossUsed = false;
             bool aFirst = IsALess(slotCards[0][i], slotCards[1][i], coinTossUsed);
 
