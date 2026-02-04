@@ -1,16 +1,17 @@
 #pragma once
 
-#pragma once
 #include "RenderTypes.h"
 #include "AnimationUnit.h"
 #include "CursurSystem.h"
 #include "Widget.h"
+#include "SerializeScene.h"
 
 enum class ButtonState;
 
 class Button;
 class YunoDirectionalLight;
 class UIFactory;
+//class UIConverter;
 
 struct Float2;
 struct Float3;
@@ -25,7 +26,7 @@ private:
     IInput* m_pInput;
     CursurSystem m_cursurSystem;
     std::unique_ptr<UIFactory> m_uiFactory;
-
+    //std::unique_ptr<UIConverter> m_uiConverter;
 
     // Widgets
     std::deque<std::unique_ptr<Widget>> m_widgets;
@@ -110,6 +111,9 @@ private:
 };
 
 
+
+// CreateWidget 오버로드
+//////////////////////////////////////////////////////////////////////
 template<typename T>
 T* UIManager::CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos)
 {
@@ -196,3 +200,4 @@ T* UIManager::CreateObject(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos
 
     return pWidget;
 }
+//////////////////////////////////////////////////////////////////////

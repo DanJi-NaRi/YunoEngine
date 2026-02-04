@@ -1,6 +1,5 @@
 #pragma once
 
-#pragma once
 #include "RenderTypes.h"
 #include "Unit.h"
 #include "AnimationUnit.h"

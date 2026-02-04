@@ -452,6 +452,7 @@ void SceneBase::DrawInspector()
     {
         if (UI::CollapsingHeader("Transform"))
         {
+            auto& size = m_selectedWidget->GetSize();
             auto& pos = m_selectedWidget->GetPos();
             auto& rot = m_selectedWidget->GetRot();
             auto& scale = m_selectedWidget->GetScale();
@@ -469,6 +470,12 @@ void SceneBase::DrawInspector()
 
             UI::Separator();
 
+
+            if (UI::DragFloat2Editable("Size", &size.x, 1.0f))
+            {
+                isChange = true;
+            }
+            UI::NextLine();
             if (UI::DragFloat3Editable("Position", &pos.x, 1.0f))
             {
                 isChange = true;

@@ -145,7 +145,7 @@ protected:
 
     // 사이즈 데이터
 
-    Float3 m_size;               // 위젯 자체의 사이즈 (width, height)s
+    Float2 m_size;               // 위젯 자체의 사이즈 (width, height)s
 
     std::vector<Float2> m_textureSizes;
 
@@ -272,6 +272,7 @@ public:
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
 
+    Float2&                      GetSize() { return m_size; }
     XMFLOAT3&                    GetPos() { return m_vPos; }
     XMFLOAT3&                    GetRot() { return m_vRot; }
     XMFLOAT3&                    GetScale() { return m_vScale; }

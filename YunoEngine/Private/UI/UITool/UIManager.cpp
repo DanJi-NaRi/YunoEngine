@@ -461,6 +461,7 @@ void UIManager::ApplyWidgetFromDesc(const std::vector<WidgetDesc>& wds)
 
         XMFLOAT3 radRot = { XMConvertToRadians(d.transform.rotation.x), XMConvertToRadians(d.transform.rotation.y), XMConvertToRadians(d.transform.rotation.z) };
 
+        w->SetSize(ToFloat(d.size));
         w->SetPos(ToXM(d.transform.position));
         w->SetRot(radRot);
         w->SetScale(ToXM(d.transform.scale));

@@ -95,6 +95,7 @@ bool GameApp::OnInit()
    //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<PhaseScene>(), opt);
+   sm->RequestReplaceRoot(std::make_unique<PhaseScene>(), opt);
 
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);

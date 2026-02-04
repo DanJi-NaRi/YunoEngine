@@ -266,6 +266,9 @@
     <ClCompile Include="Private\Renderer\YunoRenderer.cpp">
       <Filter>Private\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Private\UIConverter.cpp">
+      <Filter>Public\UI\UISystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -469,6 +472,9 @@
     </ClInclude>
     <ClInclude Include="Public\ImGUI_Debug.h">
       <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UIConverter.h">
+      <Filter>Public\UI\UISystem</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->

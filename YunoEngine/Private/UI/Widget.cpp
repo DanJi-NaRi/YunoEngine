@@ -610,6 +610,8 @@ WidgetDesc Widget::BuildWidgetDesc()
 
     Vec3Desc degRot = { XMConvertToDegrees(m_vRot.x), XMConvertToDegrees(m_vRot.y), XMConvertToDegrees(m_vRot.z) };
 
+
+    wd.size = FromFloat(m_size);
     wd.transform.position = FromXM(m_vPos);
     wd.transform.rotation = degRot;
     wd.transform.scale = FromXM(m_vScale);

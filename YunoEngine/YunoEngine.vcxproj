@@ -240,6 +240,7 @@
     <ClInclude Include="Public\UI\Widget.h" />
     <ClInclude Include="Public\UI\UITool\UIManager.h" />
     <ClInclude Include="Public\UI\UITool\UIFactory.h" />
+    <ClInclude Include="Public\UIConverter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EnginePCH\pch.cpp">
@@ -295,6 +296,7 @@
     <ClCompile Include="Private\UI\Text.cpp" />
     <ClCompile Include="Private\UI\UITool\UIManager.cpp" />
     <ClCompile Include="Private\UI\UITool\UIFactory.cpp" />
+    <ClCompile Include="Private\UIConverter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">
