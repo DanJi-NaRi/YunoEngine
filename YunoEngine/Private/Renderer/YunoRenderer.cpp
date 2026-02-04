@@ -128,6 +128,7 @@ bool YunoRenderer::CreateShaders()
 
     //ps 안씀
     if (!LoadShader(ShaderId::ShadowPass, "../Assets/Shaders/ShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
+    //if (!LoadShader(ShaderId::ShadowPassSkinning, "../Assets/Shaders/SkinningShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
 
     //픽셀셰이더 필요없을 때 쓰는 셰이더(섀도우맵)
     YunoShader empty;
@@ -467,6 +468,15 @@ void YunoRenderer::InitShadowPass()
     m_ShadowPassKey.depth = DepthPreset::ReadWrite;
 
     m_ShadowPass = GetOrCreatePass(m_ShadowPassKey);
+
+    m_ShadowSkinPassKey.vs = ShaderId::ShadowPassSkinning;
+    m_ShadowSkinPassKey.ps = ShaderId::None;
+    m_ShadowSkinPassKey.vertexFlags = VSF_Pos | VSF_BoneIndex | VSF_BoneWeight;
+    m_ShadowSkinPassKey.blend = BlendPreset::Opaque;
+    m_ShadowSkinPassKey.raster = RasterPreset::CullFront;
+    m_ShadowSkinPassKey.depth = DepthPreset::ReadWrite;
+
+    m_ShadowSkinPass = GetOrCreatePass(m_ShadowSkinPassKey);
 }
 
 void YunoRenderer::DrawShadowMap()
@@ -495,12 +505,12 @@ void YunoRenderer::DrawShadowMap()
         return;
 
     // 렌더 패스 바인드
-    m_passes[m_ShadowPass - 1]->Bind(m_context.Get());
-
     ID3D11Buffer* cb = m_cbShadow.Get();
 
     m_context->VSSetConstantBuffers(4, 1, &cb);
     //m_context->PSSetConstantBuffers(4, 1, &cb);
+
+    RenderPassHandle boundPass = 0;
 
     for (const RenderItem& item : m_renderQueue)
     {
@@ -519,6 +529,18 @@ void YunoRenderer::DrawShadowMap()
         {
             if (m_defaultMaterial > 0 && m_defaultMaterial <= m_materials.size())
                 material = &m_materials[m_defaultMaterial - 1];
+        }
+
+        RenderPassHandle targetPass = m_ShadowPass;// item.haveAnim ? m_ShadowSkinPass : m_ShadowPass;
+        if (targetPass == 0 || targetPass > m_passes.size())
+            targetPass = m_ShadowPass;
+        if (targetPass == 0 || targetPass > m_passes.size())
+            continue;
+
+        if (targetPass != boundPass)
+        {
+            m_passes[targetPass - 1]->Bind(m_context.Get());
+            boundPass = targetPass;
         }
 
         // 메쉬 바인드

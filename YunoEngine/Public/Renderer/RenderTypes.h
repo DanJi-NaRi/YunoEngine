@@ -173,6 +173,7 @@ enum class ShaderId : uint8_t
 
     //Shadow
     ShadowPass,
+    ShadowPassSkinning,
 
     //PostProcess
     PP_Default,

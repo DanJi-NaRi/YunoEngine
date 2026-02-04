@@ -234,7 +234,7 @@ std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std
     for (size_t i = 0; i < node->mNumChildren; i++)
     {
         XMMATRIX root = XMMatrixIdentity();
-        CreateBoneNode(node->mChildren[i], index, bRoot.get(), nullptr, root, root, nameToIndex, nameToOffset);
+        CreateBoneNode(node->mChildren[i], index, bRoot.get(), bRoot.get(), root, root, nameToIndex, nameToOffset);
     }
 
     animator->SetBoneTree(std::move(bRoot), nameToIndex, nameToIndex.size());

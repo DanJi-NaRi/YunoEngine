@@ -73,9 +73,9 @@ bool RenderTest::OnCreateScene()
     //map->SetScale(XMFLOAT3(1, 1, 1));
     m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx");
     //Building* tile;
-    auto blade = m_objectManager->CreateObjectFromFile<AnimTest>(L"blade" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
-    blade->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
-    blade->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
+    auto blade = m_objectManager->CreateObjectFromFile<AnimTest>(L"blade" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+    blade->AddAnimationClip("idle", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+    //blade->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
 
 
     //gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor2_crash_Anim.fbx");
