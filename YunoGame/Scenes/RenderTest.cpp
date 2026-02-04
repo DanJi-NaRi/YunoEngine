@@ -101,15 +101,14 @@ bool RenderTest::OnCreateScene()
     EffectDesc ed{};
     ed.id = EffectID::Razer;
     ed.shaderid = ShaderId::EffectBase;
-    ed.billboard = BillboardMode::AxisLocked;
+    ed.billboard = BillboardMode::Beam;
     ed.lifetime = 3.f;
     ed.framecount = 100;
     ed.cols = 6;
     ed.rows = 5;
     ed.emissive = 50.0f;
     ed.color = { 1, 0, 0, 1 };
-    ed.rot = { XMConvertToRadians(90), XMConvertToRadians(90), 0 };
-    ed.texPath = L"../Assets/Effects/Razer/EF_Razer_Yellow.png";
+    ed.texPath = L"../Assets/Effects/Razer/EF_Rager_White.png";
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::HitRed;
@@ -117,7 +116,7 @@ bool RenderTest::OnCreateScene()
     ed.lifetime = 1.2f;
     ed.cols = 6;
     ed.rows = 5;
-    ed.billboard = BillboardMode::AxisLocked;
+    ed.billboard = BillboardMode::Beam;
     ed.texPath = L"../Assets/Effects/Razer/EF_Rager.png";
     ed.emissive = 50.0f;
     ed.color = { 1, 0, 0, 1 };
@@ -163,13 +162,13 @@ void RenderTest::Update(float dt)
     }
     if (YunoEngine::GetInput()->IsKeyPressed('G'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 0.1f, 0.f }, { 1.0f, 6.f, 1.0f }, { 0, 0, 1 });
+        auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 0.1f, 0.f }, { 6.0f, 1.f, 1.0f }, { -1, 0, 0 });
         //m_effectManager->Spawn(EffectID::Razer, { 0.f, 2.f, 2.f }, { 1.5f, 5.f, 1.5f });
         //m_effectManager->Spawn(EffectID::Razer, { 0.f, 2.f, -2.f }, { 1.5f, 5.f, 1.5f });
     }
     if (YunoEngine::GetInput()->IsKeyPressed('H'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::HitRed, { 0, 0.1f, 0.f }, { 6.f, 1.0f, 1.0f }, { 0, 0, 1 });
+        auto eff = m_effectManager->Spawn(EffectID::HitRed, { 0, 0.1f, 0.f }, { 6.f, 1.0f, 1.0f }, { -1, 0, 0 });
     }
     
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
