@@ -51,15 +51,16 @@ struct CardData // 카드 정보
 public:
     int m_cardID;                   // 카드 고유 ID
     std::string m_name;         // 카드 이름
-    CardRarity m_Rarity;       // 카드 희귀도
+    int m_Rarity;       // 카드 희귀도
     CardType m_type;           // 카드 타입
-    
-    PieceMask m_allowedUnits;   // 카드 사용 가능 기물  
+
+    PieceMask m_allowedUnits;   // 카드 사용 가능 기물
 
     int m_speed;                    // 카드 속도
-    int m_useCnt;                  // 턴 당 사용 가능 횟수
+    int m_useId;                  // 사용ID
     int m_destroyCnt;            // 카드 소멸 횟수
     int m_cost;                      // 소모 스태미나 비용
+    int m_controlId;                  //그랩 및 넉백 같은 효과ID
     uint32_t m_rangeId;        // 카드 범위
 
     int m_effectId;                     // 사용 시 발동할 Effect ID
@@ -93,4 +94,6 @@ struct CardEffectData
     int m_takeDamageIncrease;
 
     int m_staminaRecover;
+    int m_pullDistance;
+    int m_pushDistance;
 };

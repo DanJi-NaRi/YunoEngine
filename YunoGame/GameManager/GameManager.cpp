@@ -115,7 +115,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
         // 이미 라운드 씬이면 무시
         //if (m_state == CurrentSceneState::RoundStart) return;
-        std::cout << "Enter Here!!!!!!!!!!!!!" << std::endl;
         m_state = CurrentSceneState::RoundStart;
         SceneTransitionOptions opt{};
         opt.immediate = true;
