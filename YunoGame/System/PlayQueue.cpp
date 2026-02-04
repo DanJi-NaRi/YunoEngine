@@ -25,11 +25,11 @@ const PGridCmd PlayGridQ::Pop()
 }
 
 
-PGridCmd PlayGridQ::Move_S(GamePiece pieceType, int cx, int cz, bool isCollided, bool isEnemy, int damageMe, int damageU)
+PGridCmd PlayGridQ::Move_S(GamePiece pieceType, int oldcx, int oldcz, int cx, int cz, bool isCollided, bool isEnemy, int damageMe, int damageU)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Move;
-    cmd.mv_s = { pieceType, cx, cz, isCollided, isEnemy, damageMe, damageU };
+    cmd.mv_s = { pieceType, oldcx, oldcz, cx, cz, isCollided, isEnemy, damageMe, damageU };
     return cmd;
 }
 

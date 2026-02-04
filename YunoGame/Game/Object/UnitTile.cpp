@@ -197,34 +197,7 @@ bool UnitTile::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool UnitTile::Update(float dTime)
 {
-    float PI = 3.141592;
-    if (isFlashing)
-    {
-        // 속도 조절 가능
-        m_flashTime += dTime;
-
-        // 0에서 시작해 1까지 올라갔다 다시 내려오는 부드러운 곡선
-        float btw0_1 = Graph(m_flashTime);
-
-        // btw0_1을 기반으로 색상 보간
-        Float4 fc = GetLerpColor(btw0_1);
-        SetMaskColor({ fc.x, fc.y, fc.z, fc.w });
-        
-        if (m_flashTime >= m_blinkTime)
-        {
-            m_count--;
-            m_flashTime = 0.f;
-        }
-        if (m_count == 0)
-        {
-            // 종료 시 원래 색 복원
-            SetMaskColor({ 1, 1, 1, 1 });
-            m_flashTime = 0.f;
-            isFlashing = false;
-        }
-
-     }
-
+    UpdateFlash(dTime);
 
     Unit::Update(dTime);
     return true;
@@ -284,6 +257,36 @@ bool UnitTile::CreateMaterial()
     return true;
 }
 
+
+void UnitTile::UpdateFlash(float dt)
+{
+    if (isFlashing)
+    {
+        // 속도 조절 가능
+        m_flashTime += dt;
+
+        // 0에서 시작해 1까지 올라갔다 다시 내려오는 부드러운 곡선
+        float btw0_1 = Graph(m_flashTime);
+
+        // btw0_1을 기반으로 색상 보간
+        Float4 fc = GetLerpColor(btw0_1);
+        SetMaskColor({ fc.x, fc.y, fc.z, fc.w });
+
+        if (m_flashTime >= m_blinkTime)
+        {
+            m_count--;
+            m_flashTime = 0.f;
+        }
+        if (m_count == 0)
+        {
+            // 종료 시 원래 색 복원
+            SetMaskColor({ 1, 1, 1, 1 });
+            m_flashTime = 0.f;
+            isFlashing = false;
+        }
+
+    }
+}
 
 void UnitTile::SetFlashColor(Float4 color, int count, float blinkTime)
 {

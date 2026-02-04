@@ -35,7 +35,7 @@ bool PlayScene::OnCreateScene()
     m_playGrid->CreateObject(0, 1, 0);
     
     // 디렉션 라이트 생성
-    //m_objectManager->CreateDirLight();
+    m_objectManager->CreateDirLight();
 
 
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));

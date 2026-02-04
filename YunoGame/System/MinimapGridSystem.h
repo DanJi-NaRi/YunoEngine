@@ -33,7 +33,7 @@ private:
     void CheckInput();
 
 private:
-    void MoveEvent(const GamePiece& pieceType, int cx, int cy);
+    void MoveEvent(const GamePiece& pieceType, int cx, int cy); // 수정 필요
     bool CheckExisting(const GamePiece pieceType);
 
 private:

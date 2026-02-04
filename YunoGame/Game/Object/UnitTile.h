@@ -1,6 +1,7 @@
 #pragma once
 #include "AnimationUnit.h"
 #include "YunoTransform.h"
+#include "PieceHelper.h"
 
 class UnitTile : public AnimationUnit
 {
@@ -15,6 +16,8 @@ private:
     bool CreateMesh() override;      // 메시 생성 (한 번만)
     bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
 
+private:
+    void UpdateFlash(float dt);
 public:
     void SetFlashColor(Float4 color, int count, float blinkTime);
 private:
@@ -23,10 +26,11 @@ private:
 
 private:
     Float4 m_flashColor{ 1, 1, 1, 1 };// 알람 색깔
-    float m_flashTime = 0;
+    float m_flashTime = 0;           // 현재 누적 시간
     float m_blinkTime = 0.5f;        // 한 번 반짝이는 시간
     int m_count = 0;                 // 몇번 번쩍일 건지
     bool isFlashing = false;
 
     bool isDone = false;
+
 };

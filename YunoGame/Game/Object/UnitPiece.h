@@ -19,10 +19,12 @@ private:
 
     bool UpdateMatrix();
 
+    void UpdateFlash(float dt);
 public:
     void InsertQ(PGridCmd targetPos);
     void SetWho(GamePiece type);
     void SetDir(Direction dir, bool isAnim = true);
+    void SetFlashColor(Float4 color, int count, float blinkTime);
     void SetDead();
 
 private:
@@ -30,8 +32,18 @@ private:
     void SendDone();
     void ClearQ();
 
+    Float4 GetLerpColor(float dt);
+    float Graph(float x);
+
 private:
     bool m_AnimDone = false;
+
+    // 반짝
+    Float4 m_flashColor{ 1, 1, 1, 1 };
+    float m_flashTime = 0;
+    float m_blinkTime = 0.5f;
+    int m_count = 0;
+    bool isFlashing = false;
 
     // 이동
     XMVECTOR m_Target{};
