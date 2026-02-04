@@ -1,9 +1,11 @@
 #include "pch.h"
 
-#include "SerializeScene.h"
 #include "json.hpp"
 #include "YunoLight.h"
-#include "ObjectManager.h"
+//#include "ObjectManager.h"
+//#include "UIManager.h"
+
+#include "SerializeScene.h"
 
 inline std::string WStringToUtf8(const std::wstring& w)
 {
@@ -25,6 +27,18 @@ inline std::wstring Utf8ToWString(const std::string& s)
 
 namespace nlohmann
 {
+    inline void to_json(json& j, const Vec2Desc& v)
+    {
+        j = json::array({ v.x, v.y });
+    }
+
+    inline void from_json(const json& j, Vec2Desc& v)
+    {
+        // 배열 형태: [x, y]
+        v.x = j.at(0).get<float>();
+        v.y = j.at(1).get<float>();
+    }
+
     inline void to_json(json& j, const Vec3Desc& v)
     {
         j = json::array({ v.x, v.y, v.z });
@@ -115,7 +129,7 @@ namespace nlohmann
             { "ID",        d.ID },
             { "parentID",  d.parentID },
             { "name",      WStringToUtf8(d.name) },
-
+            { "size", d.size },
             { "transform", d.transform }
         };
     }
@@ -126,7 +140,7 @@ namespace nlohmann
         j.at("parentID").get_to(d.parentID);
 
         d.name = Utf8ToWString(j.at("name").get<std::string>());
-
+        j.at("size").get_to(d.size);
         j.at("transform").get_to(d.transform);
     }
 
@@ -291,6 +305,8 @@ namespace nlohmann
             s.pointLights = ConvertToLoad(j.at("pointLights").get<std::vector<PointLightDescSave>>());
     }
 }
+
+
 
 void SaveSceneToFile(const SceneDesc& scene, const std::wstring& path)
 {

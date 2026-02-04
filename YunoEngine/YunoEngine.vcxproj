@@ -168,6 +168,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h" />
+    <ClInclude Include="Public\UI\Gauge.h" />
+    <ClInclude Include="Public\UI\ProgressBar.h" />
     <ClInclude Include="Public\ImGUI_Debug.h" />
     <ClInclude Include="Public\UI\Letterbox.h" />
     <ClInclude Include="Public\Object\Effect.h" />
@@ -240,12 +242,14 @@
     <ClInclude Include="Public\UI\Widget.h" />
     <ClInclude Include="Public\UI\UITool\UIManager.h" />
     <ClInclude Include="Public\UI\UITool\UIFactory.h" />
+    <ClInclude Include="Public\UIConverter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EnginePCH\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Private\UI\Gauge.cpp" />
     <ClCompile Include="Private\UI\Letterbox.cpp" />
     <ClCompile Include="Private\UI\Slot.cpp" />
     <ClCompile Include="Private\UI\UITool\CursurSystem.cpp" />
@@ -271,6 +275,7 @@
     <ClCompile Include="Private\Timer\YunoTimer.cpp" />
     <ClCompile Include="Private\Window\YunoWindow.cpp" />
     <ClCompile Include="Private\YunoEngine.cpp" />
+    <ClCompile Include="Private\UI\ProgressBar.cpp" />
     <ClCompile Include="Public\Object\Button.cpp" />
     <ClCompile Include="Public\Light\YunoLight.cpp" />
     <ClCompile Include="Public\Object\AnimationUnit.cpp" />
@@ -295,6 +300,7 @@
     <ClCompile Include="Private\UI\Text.cpp" />
     <ClCompile Include="Private\UI\UITool\UIManager.cpp" />
     <ClCompile Include="Private\UI\UITool\UIFactory.cpp" />
+    <ClCompile Include="Private\UIConverter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">
@@ -362,6 +368,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\UI_Base.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_Gauge.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

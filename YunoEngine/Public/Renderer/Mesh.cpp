@@ -158,15 +158,18 @@ void Mesh::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
     XMStoreFloat4x4(&m_renderItem.Constant.world, XMLoadFloat4x4(&mWorld));
     m_renderItem.Constant.worldPos = pos;
 }
+void Mesh::SubmitWidget(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const Update_Data& updateData)
+{
+    //m_renderItem.Constant = updateData;
+    m_renderItem.isWidget = true;
 
-// 위젯용 Submit
-//void Mesh::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize) ★
-//{
-//    XMStoreFloat4x4(&m_renderItem.Constant.world, XMLoadFloat4x4(&mWorld));
-//    m_renderItem.isWidget = true;
-//    m_renderItem.Constant.worldPos = pos;
-//    m_renderItem.Constant.widgetSize = widgetSize;
-//}
+    XMStoreFloat4x4(&m_renderItem.Constant.world, XMLoadFloat4x4(&mWorld));
+    m_renderItem.Constant.worldPos = pos;
+
+    m_renderItem.Constant.widgetSize = updateData.widgetSize;
+    m_renderItem.Constant.widgetValueFloat = updateData.widgetValueFloat;
+    m_renderItem.Constant.widgetValueInt = updateData.widgetValueInt;
+}
 
 void Mesh::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
 {
@@ -196,20 +199,19 @@ void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
         child->Submit(worldF, pos);
 }
 
-//void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize) ★
-//{
-//    XMMATRIX world = mUserTM * XMLoadFloat4x4(&mWorld);
-//    XMFLOAT4X4 worldF;
-//    XMStoreFloat4x4(&worldF, world);
-//
-//    for (auto& mesh : m_Meshs)
-//        mesh->Submit(worldF, pos);
-//        //mesh->Submit(worldF, pos, widgetSize);
-//
-//    for (auto& child : m_Childs)
-//        child->Submit(worldF, pos);
-//        //child->Submit(worldF, pos, widgetSize);
-//}
+// 위젯용
+void MeshNode::SubmitWidget(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const Update_Data& updateData)
+{
+    XMMATRIX world = mUserTM * XMLoadFloat4x4(&mWorld);
+    XMFLOAT4X4 worldF;
+    XMStoreFloat4x4(&worldF, world);
+
+    for (auto& mesh : m_Meshs)
+        mesh->SubmitWidget(worldF, pos, updateData);
+
+    for (auto& child : m_Childs)
+        child->SubmitWidget(worldF, pos, updateData);
+}
 
 
 void MeshNode::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)

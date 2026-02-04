@@ -131,6 +131,9 @@
     <Filter Include="Shaders\effect">
       <UniqueIdentifier>{c7201cee-dca9-4513-af31-88666aad6757}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\UI\BaseWidget\ProgressBar">
+      <UniqueIdentifier>{083d0648-f299-41f9-92fa-567b3cfd7d41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -257,14 +260,23 @@
     <ClCompile Include="Private\Input\InputContextBase.cpp">
       <Filter>Public\System</Filter>
     </ClCompile>
-    <ClCompile Include="Private\UI\Letterbox.cpp">
-      <Filter>Public\UI</Filter>
-    </ClCompile>
     <ClCompile Include="Private\UI\Slot.cpp">
       <Filter>Public\UI\BaseWidget</Filter>
     </ClCompile>
     <ClCompile Include="Private\Renderer\YunoRenderer.cpp">
       <Filter>Private\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UIConverter.cpp">
+      <Filter>Public\UI\UISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\ProgressBar.cpp">
+      <Filter>Public\UI\BaseWidget\ProgressBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\Gauge.cpp">
+      <Filter>Public\UI\BaseWidget\ProgressBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\Letterbox.cpp">
+      <Filter>Public\UI\BaseWidget</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -464,11 +476,20 @@
     <ClInclude Include="Public\UI\Slot.h">
       <Filter>Public\UI\BaseWidget</Filter>
     </ClInclude>
-    <ClInclude Include="Public\UI\Letterbox.h">
-      <Filter>Public\UI</Filter>
-    </ClInclude>
     <ClInclude Include="Public\ImGUI_Debug.h">
       <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UIConverter.h">
+      <Filter>Public\UI\UISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\ProgressBar.h">
+      <Filter>Public\UI\BaseWidget\ProgressBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\Gauge.h">
+      <Filter>Public\UI\BaseWidget\ProgressBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\Letterbox.h">
+      <Filter>Public\UI\BaseWidget</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
@@ -523,6 +544,9 @@
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\SkinningShadowMapWrite.hlsl">
       <Filter>Shaders\shadowMap</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_Gauge.hlsl">
+      <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

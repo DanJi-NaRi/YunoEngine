@@ -47,9 +47,6 @@ bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, Float2 si
 
     m_anchor = UIDirection::LeftTop;
 
-    m_vScale.y = 5;
-    m_vScale.x = 5;
-
     Backup();
 
     return true;
@@ -66,7 +63,7 @@ void CardSelectionPanel::CreateChild() {
     // 고정 하위 위젯 생성
     this->SetLayer(WidgetLayer::Panels);
 
-    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S0", Float2(100, 135), XMFLOAT3(-25, -180, 0), UIDirection::RightTop, this));
+    /*m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S0", Float2(100, 135), XMFLOAT3(-25, -180, 0), UIDirection::RightTop, this));
 
     m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S1", Float2(100, 135),  XMFLOAT3(-145, -180, 0), UIDirection::RightTop, this));
 
@@ -80,7 +77,7 @@ void CardSelectionPanel::CreateChild() {
 
     m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(100, 135), XMFLOAT3(-265, -180, 0), UIDirection::RightTop, this));
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));*/
 
 }
 

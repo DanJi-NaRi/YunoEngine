@@ -151,6 +151,11 @@ namespace UI
         return ImGui::Selectable(label, selected);
     }
 
+    void NextLine()
+    {
+        ImGui::Spacing();
+    }
+
     void Text(const char* fmt, ...)
     {
         va_list args;
@@ -242,6 +247,77 @@ namespace UI
             changed |= ImGui::InputFloat("##Z", &v[2]);
         ImGui::PopStyleColor();
         ImGui::PopItemWidth();
+
+        // ===== 더블 클릭 → 입력 모드 =====
+        if (!edit &&
+            ImGui::IsItemHovered() &&
+            ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+        {
+            edit = true;
+        }
+
+        if (edit && ImGui::IsItemDeactivatedAfterEdit())
+        {
+            edit = false;
+        }
+
+        ImGui::PopID();
+        return changed;
+    }
+
+    bool DragFloat2(const char* label, float* v, float speed,
+        float v_min, float v_max, const char* format)
+    {
+        return ImGui::DragFloat2(label, v, speed, v_min, v_max, format);
+    }
+
+    bool DragFloat2Editable(
+        const char* label,
+        float* v,
+        float speed,
+        float v_min,
+        float v_max)
+    {
+        bool changed = false;
+        static bool edit = false;
+
+        std::string displayLabel = label;
+
+        // ## 뒤 제거
+        size_t pos = displayLabel.find("##");
+        if (pos != std::string::npos)
+            displayLabel = displayLabel.substr(0, pos);
+
+        ImGui::PushID(label);
+
+        // 화면에는 displayLabel만 출력
+        ImGui::TextUnformatted(displayLabel.c_str());
+        ImGui::SameLine();
+
+        const float width = ImGui::CalcItemWidth();
+        ImGui::PushMultiItemsWidths(3, width);
+
+        // ===== X (Red) =====
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 80, 80, 255));
+        if (!edit)
+            changed |= ImGui::DragFloat("##X", &v[0], speed, v_min, v_max);
+        else
+            changed |= ImGui::InputFloat("##X", &v[0]);
+        ImGui::PopStyleColor();
+        ImGui::PopItemWidth();
+
+        ImGui::SameLine();
+
+        // ===== Y (Green) =====
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(80, 255, 80, 255));
+        if (!edit)
+            changed |= ImGui::DragFloat("##Y", &v[1], speed, v_min, v_max);
+        else
+            changed |= ImGui::InputFloat("##Y", &v[1]);
+        ImGui::PopStyleColor();
+        ImGui::PopItemWidth();
+
+        ImGui::SameLine();
 
         // ===== 더블 클릭 → 입력 모드 =====
         if (!edit &&

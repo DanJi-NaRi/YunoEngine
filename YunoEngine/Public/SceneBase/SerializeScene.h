@@ -1,17 +1,17 @@
 #pragma once
+#include "YunoTransform.h"
+
+struct Vec2Desc
+{
+    float x = 0.f;
+    float y = 0.f;
+};
 
 struct Vec3Desc
 {
     float x = 0.f;
     float y = 0.f;
     float z = 0.f;
-};
-
-struct TransformDesc
-{
-    Vec3Desc position{ 0, 0, 0 };
-    Vec3Desc rotation{ 0, 0, 0 };   // Euler (deg or rad 통일)
-    Vec3Desc scale{ 1, 1, 1 };
 };
 
 struct Vec4Desc
@@ -22,6 +22,54 @@ struct Vec4Desc
     float w = 0.f;
 };
 
+struct TransformDesc
+{
+    Vec3Desc position{ 0, 0, 0 };
+    Vec3Desc rotation{ 0, 0, 0 };   // Euler (deg or rad 통일)
+    Vec3Desc scale{ 1, 1, 1 };
+};
+
+inline Vec2Desc FromFloat(const Float2& xm)
+{
+    return Vec2Desc{ xm.x, xm.y };
+}
+
+inline Float2 ToFloat(const Vec2Desc& vd)
+{
+    return Float2(vd.x, vd.y);
+}
+
+inline Float3 ToFloat(const Vec3Desc& vd)
+{
+    return Float3(vd.x, vd.y, vd.z);
+}
+
+inline Vec3Desc FromFloat(const Float3& xm)
+{
+    return Vec3Desc{ xm.x, xm.y, xm.z };
+}
+
+inline Float4 ToFloat(const Vec4Desc& vd)
+{
+    return Float4(vd.x, vd.y, vd.z, vd.w);
+}
+
+inline Vec4Desc FromFloat(const Float4& xm)
+{
+    return Vec4Desc{ xm.x, xm.y, xm.z, xm.w };
+}
+
+
+inline XMFLOAT2 ToXM(const Vec2Desc& vd)
+{
+    return XMFLOAT2(vd.x, vd.y);
+}
+
+inline Vec2Desc FromXM(const XMFLOAT2& xm)
+{
+    return Vec2Desc{ xm.x, xm.y };
+}
+
 inline XMFLOAT3 ToXM(const Vec3Desc& vd)
 {
     return XMFLOAT3(vd.x, vd.y, vd.z);
@@ -31,6 +79,7 @@ inline Vec3Desc FromXM(const XMFLOAT3& xm)
 {
     return Vec3Desc{ xm.x, xm.y, xm.z };
 }
+
 
 inline XMFLOAT4 ToXM(const Vec4Desc& vd)
 {
@@ -71,6 +120,7 @@ struct WidgetDesc
     ObjectID parentID = 0;
     std::wstring name;
 
+    Vec2Desc size{ 0, 0 };
     TransformDesc transform;
 };
 
@@ -146,6 +196,7 @@ struct SceneDesc
 };
 
 class ObjectManager;
+class UIManager;
 
 void SaveSceneToFile(const SceneDesc& scene, const std::wstring& path);
 

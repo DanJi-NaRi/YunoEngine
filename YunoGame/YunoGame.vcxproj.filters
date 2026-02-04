@@ -118,6 +118,18 @@
     <Filter Include="Scenes\3.Phase">
       <UniqueIdentifier>{6b093a5a-706d-4922-8eba-d0cc15908609}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\UI\Image\Imoji">
+      <UniqueIdentifier>{781c21f0-d0c5-49e8-bac6-b01dea046461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\ProgressBar">
+      <UniqueIdentifier>{0a82f177-3584-4e79-b2ee-48c87198d580}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\ProgressBar\Gauge">
+      <UniqueIdentifier>{26959a8a-79b7-4e76-a248-517f298c6f9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Image\Panel">
+      <UniqueIdentifier>{147e273c-ec98-4aa8-98c8-aeb9b16c39e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -278,6 +290,27 @@
     </ClCompile>
     <ClCompile Include="System\BattlePackets.cpp">
       <Filter>System\Battle</Filter>
+    </ClCompile>
+    <ClCompile Include="Emoji.cpp">
+      <Filter>Game\UI\Image\Imoji</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeechBubble.cpp">
+      <Filter>Game\UI\Image\Imoji</Filter>
+    </ClCompile>
+    <ClCompile Include="StaminaBar.cpp">
+      <Filter>Game\UI\ProgressBar</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthBar.cpp">
+      <Filter>Game\UI\ProgressBar</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthGauge.cpp">
+      <Filter>Game\UI\ProgressBar\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="StaminaGauge.cpp">
+      <Filter>Game\UI\ProgressBar\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerIcon.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -454,6 +487,27 @@
     </ClInclude>
     <ClInclude Include="Game\UI\WidgetPiece.h">
       <Filter>Game\Object\Piece</Filter>
+    </ClInclude>
+    <ClInclude Include="Emoji.h">
+      <Filter>Game\UI\Image\Imoji</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeechBubble.h">
+      <Filter>Game\UI\Image\Imoji</Filter>
+    </ClInclude>
+    <ClInclude Include="StaminaBar.h">
+      <Filter>Game\UI\ProgressBar</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthBar.h">
+      <Filter>Game\UI\ProgressBar</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthGauge.h">
+      <Filter>Game\UI\ProgressBar\Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="StaminaGauge.h">
+      <Filter>Game\UI\ProgressBar\Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerIcon.h">
+      <Filter>Game\UI\Image\Panel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

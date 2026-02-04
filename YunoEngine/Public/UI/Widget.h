@@ -34,7 +34,8 @@ enum class WidgetType : int { // 자신 / 부모 클래스 타입
     Button,
     Text,
     Slot,
-    //Progress,
+    ProgressBar,
+    Gauge,
     //Slider,
     Count,
 };
@@ -45,6 +46,8 @@ enum class WidgetClass : int {
     Button,
     Text,
     Slot,
+    ProgressBar,
+    Gauge,
     CardTable,
     Card,
     CardSlot,
@@ -57,6 +60,14 @@ enum class WidgetClass : int {
     ReadyButton,
     ExitButton,
     WeaponButton,
+
+    // 전투 씬
+    BarPanel,
+    PieceImage,
+    HealthBar,
+    HealthGauge,
+    StaminaBar,
+    StaminaGauge,
 };
 
 enum class WidgetLayer : int {
@@ -145,7 +156,7 @@ protected:
 
     // 사이즈 데이터
 
-    Float3 m_size;               // 위젯 자체의 사이즈 (width, height)s
+    Float2 m_size;               // 위젯 자체의 사이즈 (width, height)s
 
     std::vector<Float2> m_textureSizes;
 
@@ -272,6 +283,7 @@ public:
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
 
+    Float2&                      GetSize() { return m_size; }
     XMFLOAT3&                    GetPos() { return m_vPos; }
     XMFLOAT3&                    GetRot() { return m_vRot; }
     XMFLOAT3&                    GetScale() { return m_vScale; }
@@ -297,7 +309,7 @@ public:
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();
 
-    bool CreateMaterial(std::wstring path, MaterialDesc* pDesc = nullptr);
+    virtual bool CreateMaterial(std::wstring path, MaterialDesc* pDesc = nullptr);
 
     template <typename Path, typename... Paths>
     bool CreateMaterials(Path&& path, Paths&&... paths) // wstring_view 타입일 것

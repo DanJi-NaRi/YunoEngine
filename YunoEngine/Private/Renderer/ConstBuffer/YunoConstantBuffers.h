@@ -87,6 +87,8 @@ struct CBEffect
 struct CBWidget
 {
     XMFLOAT2 widgetSize; //x : width, y : height
+    float widgetValueFloat; // 자율 용도 밸류
+    int   widgetValueInt;   // 자율 용도 밸류
 };
 
 template<typename T>

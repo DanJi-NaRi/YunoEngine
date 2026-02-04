@@ -28,44 +28,16 @@
 
 bool UIScene::OnCreateScene()
 {
-
-    //auto pLine = m_uiManager->CreateWidget<GridLine<Widget>>(L"gridline", XMFLOAT3(7*25, 5*25, 0));
-    //pLine->SetScale({ 1, 1, 1 });
-    //std::cout << "[UIScene] OnCreate\n";   
-    
-    // 디렉션 라이트 생성
-    //m_objectManager->CreateDirLight();
+    // 테스트 공간
     m_uiManager->SetOrthoFlag(true);
 
-   // m_uiManager->CreateWidget<Image>(L"tstImg1", XMFLOAT3(500, 500, 0));
+    CreateWidget<PlayerIcon>(L"tstPlayerIcon", Float2(217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
     
-    //m_uiManager->CreateWidget<Image>(L"tstImg2", XMFLOAT3(510, 510, 0));
-
-    // 자식이 있는 경우 체이닝으로 생성 
-    // this반환해서 그냥 써도 똑같은 효과
-    //m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0))->CreateChild(); 
-    //m_uiManager->CreateWidget<CardTable>(L"tstCardTable", XMFLOAT3(500, 500, 0)); 
-
-
-    //auto* slot0 = m_uiManager->CreateWidget<CardSlot>(L"S0", XMFLOAT3(300, 100, 0));
-    //auto* slot1 = m_uiManager->CreateWidget<CardSlot>(L"S1", XMFLOAT3(400, 100, 0));
-    //auto* slot2 = m_uiManager->CreateWidget<CardSlot>(L"S2", XMFLOAT3(500, 100, 0));
-    //auto* slot3 = m_uiManager->CreateWidget<CardSlot>(L"S3", XMFLOAT3(600, 100, 0));
-    //m_uiManager->CreateWidget<Card>(L"tstCard", XMFLOAT3(600, 0, 0));
-    //m_uiManager->CreateWidget<Button>(L"tstBtn", XMFLOAT3(400, 0, 0));
-    
-    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
-    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
-    
-
-    //m_objectManager->CreateWidget<Image>(L"tst", XMFLOAT3(0, 0, 0));
-
+    auto* asd = CreateWidget<PlayerIcon>(L"tstPlayerIcon", Float2(217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
     auto* a = CreateWidget<Letterbox>(L"LetterBoxA", Float2(50, 50), XMFLOAT3(0, 0, 0) );
     a->SetRole(Letterbox::Role::BarA);
     auto* b = CreateWidget<Letterbox>(L"LetterBoxB", Float2(50, 50), XMFLOAT3(0, 0, 0));
     b->SetRole(Letterbox::Role::BarB);
-    //m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
-    //m_minimap->CreateObject(1000, 900, 0);
 
     return true;
 }

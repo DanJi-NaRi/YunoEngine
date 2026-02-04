@@ -70,7 +70,14 @@ struct Update_Data
     float shadowBias = 0.001f;
     float opacity = 1.0f;
     float emissive = 1.0f;
-    //XMFLOAT2 widgetSize = { 0, 0 }; ★
+    /////// 위젯 ///////
+    XMFLOAT2 widgetSize = { 0, 0 }; //★
+    float widgetValueFloat;  // 자유 사용 빈공간 ★
+    int   widgetValueInt;    // 자유 사용 빈공간 ★
+    //XMFLOAT2 _widgetPad0 = { 0, 0 }; // 패딩. 다른 용도로도 사용 가능★
+    //XMFLOAT4 widgetValueFloat;  // 자유 사용 빈공간 ★
+    //XMINT4   widgetValueInt;    // 자유 사용 빈공간 ★
+    ///////////////////
 };
 
 struct Effect_Data
@@ -110,7 +117,7 @@ struct RenderItem
     bool haveAnim = false;
     bool castShadow = true; //그림자맵에 그릴 오브젝트
     bool receiveShadow = true; //그림자가 적용될 오브젝트(파티클, 반투명 오브젝트 제외용)
-    //bool isWidget = false;  // 위젯만 갱신(b6)
+    bool isWidget = false;  // 위젯만 갱신(b6) // ★
 };
 
 // -------------------- PassKey --------------------
@@ -171,6 +178,7 @@ enum class ShaderId : uint8_t
     Unlit,
     Skybox,
     UIBase,
+    UIGauge,
     EffectBase,
 
     //Shadow

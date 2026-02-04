@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CursurSystem.h"
 #include "DragProvider.h"
+#include "UIConverter.h"
 #include "Widget.h"
 #include "Button.h"
 #include "Slot.h"
@@ -94,7 +95,10 @@ bool CursurSystem::FindSnapWidget()
         XMFLOAT3 snapPos = { point->snapPos.x, point->snapPos.y, 0 };
 
         drag->SetBkPos(snapPos);
-        m_focusedWidget->SetPos(snapPos);
+
+        if (Widget* pParent = slot->GetParent(); pParent) m_focusedWidget->SetPos(LocalToWorldPos(snapPos, pParent->GetPos(), pParent->GetScale()));
+        else m_focusedWidget->SetPos(snapPos);
+        
         point->pSnapOwner = m_focusedWidget;
 
         //m_focusedWidget->SetPosBK(snapPos); // 근본 백업은 냅둬야하지 않나??
