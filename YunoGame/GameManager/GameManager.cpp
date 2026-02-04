@@ -87,6 +87,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
     case CurrentSceneState::Title:
     {
+        m_state = CurrentSceneState::Title;
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
@@ -94,6 +95,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::GameStart:
     {
+        m_state = CurrentSceneState::GameStart;
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
@@ -103,16 +105,24 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::CountDown:
     {
 
-        std::cout << "3...2...1...Battle Start!!!!!" << std::endl;
-        SetSceneState(CurrentSceneState::RoundStart);
+        std::cout << "3...2...1...Battle Start!!!!!" << std::endl;  
+
+        //SetSceneState(CurrentSceneState::RoundStart);
 
         break;
     }
     case CurrentSceneState::RoundStart:
     {
+        // 이미 라운드 씬이면 무시
+        //if (m_state == CurrentSceneState::RoundStart) return;
+        std::cout << "Enter Here!!!!!!!!!!!!!" << std::endl;
+        m_state = CurrentSceneState::RoundStart;
         SceneTransitionOptions opt{};
-        opt.immediate = false;
+        opt.immediate = true;
+
         sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+
+        SetSceneState(CurrentSceneState::SubmitCard);
         break;
     }
     case CurrentSceneState::SubmitCard:
@@ -122,6 +132,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockUpdateBelow = false;
 
         sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+
         break;
     }
     case CurrentSceneState::AutoBattle:
@@ -215,7 +226,7 @@ void GameManager::Tick(float dt)
         {
             m_countdownActive = false;
             m_countdownRemaining = 0.0f;
-
+    
             SetSceneState(CurrentSceneState::RoundStart);
         }
     }

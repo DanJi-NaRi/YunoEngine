@@ -93,8 +93,8 @@ bool GameApp::OnInit()
    //sm->RequestReplaceRoot(std::make_unique<RenderTest>(), opt);  // 본인이 작업중인 씬으로 넣으면 됨
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
-   //sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
-   sm->RequestReplaceRoot(std::make_unique<PhaseScene>(), opt);
+   sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
+   //sm->RequestReplaceRoot(std::make_unique<PhaseScene>(), opt);
 
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
@@ -184,54 +184,54 @@ void GameApp::OnUpdate(float dt)
             //sm->RequestPush(std::make_unique<PlayScene>());
         }
 
-        if (input->IsKeyPressed(VK_F2))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
-            //sm->RequestPush(std::make_unique<PlayScene>());
-        }
+        //if (input->IsKeyPressed(VK_F2))
+        //{
+        //    SceneTransitionOptions opt{};
+        //    opt.immediate = true;
+        //    sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+        //    //sm->RequestPush(std::make_unique<PlayScene>());
+        //}
 
-        if (input->IsKeyPressed(VK_F3))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
-            //sm->RequestPush(std::make_unique<PlayScene>());
-        }
-
-        if (input->IsKeyPressed(VK_F4))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            ScenePolicy policy;
-            policy.blockUpdateBelow = false;
-            policy.blockRenderBelow = false;
-            //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
-            sm->RequestPush(std::make_unique<TitleScene>(), policy);
-        }
-
-        if (input->IsKeyPressed(VK_F5))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            ScenePolicy policy;
-            policy.blockUpdateBelow = false;
-            policy.blockRenderBelow = false;
-            //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
-            sm->RequestPush(std::make_unique<PlayScene>(), policy);
-        }
-
-        if (input->IsKeyPressed(VK_F6))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            ScenePolicy policy;
-            policy.blockUpdateBelow = false;
-            policy.blockRenderBelow = false;
-            //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
-            sm->RequestPush(std::make_unique<UIScene>(), policy);
-        }
+        //if (input->IsKeyPressed(VK_F3))
+        //{
+        //    SceneTransitionOptions opt{};
+        //    opt.immediate = true;
+        //    sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
+        //    //sm->RequestPush(std::make_unique<PlayScene>());
+        //}
+        //
+        //if (input->IsKeyPressed(VK_F4))
+        //{
+        //    SceneTransitionOptions opt{};
+        //    opt.immediate = true;
+        //    ScenePolicy policy;
+        //    policy.blockUpdateBelow = false;
+        //    policy.blockRenderBelow = false;
+        //    //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+        //    sm->RequestPush(std::make_unique<TitleScene>(), policy);
+        //}
+        //
+        //if (input->IsKeyPressed(VK_F5))
+        //{
+        //    SceneTransitionOptions opt{};
+        //    opt.immediate = true;
+        //    ScenePolicy policy;
+        //    policy.blockUpdateBelow = false;
+        //    policy.blockRenderBelow = false;
+        //    //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+        //    sm->RequestPush(std::make_unique<PlayScene>(), policy);
+        //}
+        //
+        //if (input->IsKeyPressed(VK_F6))
+        //{
+        //    SceneTransitionOptions opt{};
+        //    opt.immediate = true;
+        //    ScenePolicy policy;
+        //    policy.blockUpdateBelow = false;
+        //    policy.blockRenderBelow = false;
+        //    //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+        //    sm->RequestPush(std::make_unique<UIScene>(), policy);
+        //}
 
         //if (input->IsKeyPressed(VK_OEM_PERIOD))
         //{

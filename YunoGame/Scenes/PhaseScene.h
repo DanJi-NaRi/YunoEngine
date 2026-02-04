@@ -16,7 +16,7 @@ public:
     void SubmitObj() override;
     void SubmitUI() override;
 
-    const char* GetDebugName() const override { return "UIScene"; }
+    const char* GetDebugName() const override { return "PhaseUIScene"; }
 
 protected:
     bool OnCreateScene() override;
