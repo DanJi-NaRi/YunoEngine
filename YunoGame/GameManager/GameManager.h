@@ -3,11 +3,12 @@
 #include "SceneState.h"
 #include "CardData.h"
 #include "C2S_BattlePackets.h"
-#include "S2C_StartCardList.h"
+#include "S2C_CardPackets.h"
 #include "BattlePackets.h"
 
 #include "CardManager.h"
 #include "CardRangeManager.h"
+
 
 class ISceneManager;
 class ObjectManager;
@@ -18,8 +19,14 @@ namespace yuno::game
 
 struct ClientCardInfo //UI에 적용하기 위한 데이터 저장
 {
+    uint8_t slotID;
+    uint8_t weaponID;
     uint32_t runtimeID;
     uint32_t dataID;
+};
+struct UnitHand
+{
+    std::vector<ClientCardInfo> cards;
 };
 // 얘가 뭘 가지고있어야 될까?
 class GameManager
@@ -29,7 +36,7 @@ public:
     void Init();
     static void Shutdown();
     static GameManager& Get();
-
+    
     void BindSceneManager(ISceneManager* sm) { m_sceneManager = sm; }
     yuno::game::YunoClientNetwork* GetClientNetwork() const {return m_clientNet;}
     void BindClientNetwork(yuno::game::YunoClientNetwork* net) { m_clientNet = net; }
@@ -63,10 +70,14 @@ private:
     CardRangeManager m_cardRangeMng;
 
 public:
+    //초기 카드 생성
+    void InitHands(const std::vector<yuno::net::packets::CardSpawnInfo>& cards);
     //카드 생성 저장
-    void SetCards(const std::vector<yuno::net::packets::CardSpawnInfo>& cards);
+    void AddCards(const std::vector<yuno::net::packets::CardSpawnInfo>& cards);
+    //카드 제거
+    void RemoveCard(uint32_t runtimeID);
     //카드 선택용 인덱스 -> runtimeID
-    uint32_t GetCardRuntimeIDByIndex(int index) const;
+    uint32_t GetMyCardRuntimeID(int unitSlot, int index) const;
     //UI 표시용 runtimeID -> dataID
     uint32_t GetCardDataID(uint32_t runtimeID) const;
     const CardData GetCardData(uint32_t runtimeID);
@@ -86,7 +97,8 @@ private:
 
     bool m_isReady = false;
 
-    std::vector<ClientCardInfo> m_Cards;                                        //UI용 순서 있음
+    UnitHand m_myHands[2];                                                             //UI 카드 선택용
+    UnitHand m_enemyHands[2];                                                       //UI 보여주기용
     std::unordered_map<uint32_t, uint32_t> m_CardRuntimeIDs;   //엑셀로드용
 
     bool m_countdownActive = false;

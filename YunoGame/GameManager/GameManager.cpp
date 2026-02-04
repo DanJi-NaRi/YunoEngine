@@ -154,29 +154,71 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
 }
 
-void GameManager::SetCards(
+void GameManager::InitHands(
     const std::vector<yuno::net::packets::CardSpawnInfo>& cards)
 {
-    m_Cards.clear();
+    for (int i = 0; i < 2; ++i)
+    {
+        m_myHands[i].cards.clear();
+        m_enemyHands[i].cards.clear();
+    }
+
     m_CardRuntimeIDs.clear();
 
-    for (const auto& c : cards)
-    {
-        m_Cards.push_back({
-            c.runtimeID,
-            c.dataID
-            });
+    AddCards(cards);
+}
 
-        m_CardRuntimeIDs[c.runtimeID] = c.dataID;
+void GameManager::AddCards(
+    const std::vector<yuno::net::packets::CardSpawnInfo>& cards)
+{
+    for (const auto& card : cards)
+    {
+        ClientCardInfo info{ card.runtimeID, card.dataID };
+
+        bool isMine = (card.slotID == m_PID);
+        int unitIdx = card.weaponID - 1;
+
+        if (isMine)
+            m_myHands[unitIdx].cards.push_back(info);
+        else
+            m_enemyHands[unitIdx].cards.push_back(info);
+
+        m_CardRuntimeIDs[card.runtimeID] = card.dataID;
     }
 }
 
-uint32_t GameManager::GetCardRuntimeIDByIndex(int index) const
+void GameManager::RemoveCard(uint32_t runtimeID)
 {
-    if (index < 0 || index >= (int)m_Cards.size())
+    for (int u = 0; u < 2; ++u)
+    {
+        auto& hand = m_myHands[u].cards;
+        auto it = std::find_if(hand.begin(), hand.end(),
+            [&](const ClientCardInfo& c)
+            {
+                return c.runtimeID == runtimeID;
+            });
+
+        if (it != hand.end())
+        {
+            hand.erase(it);
+            break;
+        }
+    }
+
+    m_CardRuntimeIDs.erase(runtimeID);
+}
+
+uint32_t GameManager::GetMyCardRuntimeID(int unitSlot, int index) const
+{
+    if (unitSlot < 0 || unitSlot >= 2)
         return 0;
 
-    return m_Cards[index].runtimeID;
+    const auto& hand = m_myHands[unitSlot].cards;
+
+    if (index < 0 || index >= static_cast<int>(hand.size()))
+        return 0;
+
+    return hand[index].runtimeID;
 }
 
 uint32_t GameManager::GetCardDataID(uint32_t runtimeID) const

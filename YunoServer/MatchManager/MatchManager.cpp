@@ -1,9 +1,8 @@
 #include "MatchManager.h"
 
 #include "ServerCardManager.h"
-#include "S2C_StartCardList.h"
+#include "S2C_CardPackets.h"
 #include "BattleState.h"
-#include "PlayerCardController.h"
 
 namespace yuno::server
 {
@@ -202,13 +201,6 @@ namespace yuno::server
 
             InitUnitStatsByUnitId(player.unit1);
             InitUnitStatsByUnitId(player.unit2);
-
-            // 카드 관련 초기화는 컨트롤러에 위임
-            //m_cardController.InitPlayerCards(player);
         }
-
-
-        // 이후: 초기 핸드 패킷 전송
-        //SendInitialHands();
     }
 }

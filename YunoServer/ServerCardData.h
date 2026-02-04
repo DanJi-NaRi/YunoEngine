@@ -10,13 +10,6 @@ enum class CardType : uint8_t {
 
 };
 
-enum class CardRarity : uint8_t {
-    None,
-    Common, // 일반 등급
-    Unique, // 고유 등급
-    Count,
-};
-
 enum class PieceType : uint8_t { // 비트마스크로도 활용 가능
     None,
     Blaster, // 1 부터 시작
