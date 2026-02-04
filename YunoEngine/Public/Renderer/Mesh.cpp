@@ -17,6 +17,45 @@ Mesh::~Mesh()
 
 }
 
+std::unique_ptr<Mesh> Mesh::Clone() const
+{
+    auto clone = std::make_unique<Mesh>();
+    clone->m_name = m_name;
+    clone->m_renderItem = m_renderItem;
+    clone->m_Mesh = m_Mesh;
+    clone->m_Material = m_Material;
+    clone->m_Albedo = m_Albedo;
+    clone->m_Normal = m_Normal;
+    clone->m_Orm = m_Orm;
+#ifdef _DEBUG
+    clone->mat = mat;
+    clone->emissive = emissive;
+    clone->emissiveCol = emissiveCol;
+#endif
+    return clone;
+}
+
+std::unique_ptr<MeshNode> MeshNode::Clone() const
+{
+    auto clone = std::make_unique<MeshNode>();
+    clone->m_name = m_name;
+    clone->mUserTM = mUserTM;
+
+    clone->m_Meshs.reserve(m_Meshs.size());
+    for (const auto& mesh : m_Meshs)
+        clone->m_Meshs.push_back(mesh->Clone());
+
+    clone->m_Childs.reserve(m_Childs.size());
+    for (const auto& child : m_Childs)
+    {
+        auto childClone = child->Clone();
+        childClone->m_Parent = clone.get();
+        clone->m_Childs.push_back(std::move(childClone));
+    }
+
+    return clone;
+}
+
 void Mesh::Create(MeshHandle mesh, MaterialHandle mat)
 {
     m_Mesh = mesh;
@@ -120,6 +159,15 @@ void Mesh::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
     m_renderItem.Constant.worldPos = pos;
 }
 
+// 위젯용 Submit
+//void Mesh::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize) ★
+//{
+//    XMStoreFloat4x4(&m_renderItem.Constant.world, XMLoadFloat4x4(&mWorld));
+//    m_renderItem.isWidget = true;
+//    m_renderItem.Constant.worldPos = pos;
+//    m_renderItem.Constant.widgetSize = widgetSize;
+//}
+
 void Mesh::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
 {
     if (!m_renderItem.haveAnim) m_renderItem.haveAnim = true;
@@ -133,8 +181,6 @@ void Mesh::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
 void Mesh::LastSubmit()
 {
     YunoEngine::GetRenderer()->Submit(m_renderItem);
-
-    // 
 }
 
 void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
@@ -149,6 +195,22 @@ void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
     for (auto& child : m_Childs)
         child->Submit(worldF, pos);
 }
+
+//void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize) ★
+//{
+//    XMMATRIX world = mUserTM * XMLoadFloat4x4(&mWorld);
+//    XMFLOAT4X4 worldF;
+//    XMStoreFloat4x4(&worldF, world);
+//
+//    for (auto& mesh : m_Meshs)
+//        mesh->Submit(worldF, pos);
+//        //mesh->Submit(worldF, pos, widgetSize);
+//
+//    for (auto& child : m_Childs)
+//        child->Submit(worldF, pos);
+//        //child->Submit(worldF, pos, widgetSize);
+//}
+
 
 void MeshNode::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
 {

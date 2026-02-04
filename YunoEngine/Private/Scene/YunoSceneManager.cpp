@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "YunoSceneManager.h"
+#include "YunoCamera.h"
 
 #include "IScene.h"
 #include "SceneBase.h"
@@ -9,6 +10,7 @@
 
 #include "ImGuiManager.h"
 #include "UImgui.h"
+#include "YunoCamera.h"
 
 
 SceneEntry::~SceneEntry() = default;
@@ -65,7 +67,7 @@ void YunoSceneManager::RegisterDrawSceneUI()
 
     ImGuiManager::RegisterDraw(
         [this]() {
-            UI::SetNextUIPos(1, 50);
+            UI::SetNextUIPos(YunoEngine::GetWindow()->GetClientWidth() - 120, 1);
             UI::SetNextUISize(120, 60);
             UI::BeginPanel("Save");
 
@@ -388,6 +390,7 @@ void YunoSceneManager::SubmitAndRender(IRenderer* renderer)
     }
 
 #if defined(_DEBUG)
+    renderer->GetCamera().SetOrthoFlag(false);
     renderer->DrawDebug();
 #endif
 

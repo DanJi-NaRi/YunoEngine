@@ -9,7 +9,7 @@ public:
         : Widget(ui) {}
     virtual ~WidgetGridLine();
 
-    bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
+    bool Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale);
     bool Update(float dTime = 0);
     bool Submit(float dTime = 0);
 private:

@@ -11,7 +11,7 @@ namespace UI
     void BeginDisabled(bool b = true);
     void EndDisabled();
 
-    void DrawFps();
+    void DrawDebugHUD(float* v, float* v2);
 
     bool TreeNodeEx(const void* id, bool selected, bool haschild, const char* name);
     void TreePop();

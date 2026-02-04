@@ -234,6 +234,7 @@ private:
     YunoConstantBuffer<CBPerObject_Material> m_cbObject_Material;
     YunoConstantBuffer<CBLight_All> m_cbLight;
     YunoConstantBuffer<CBEffect> m_cbEffect;
+    YunoConstantBuffer<CBWidget> m_cbWidget;
 
     CBLight_All m_LightInfo;
 
@@ -265,6 +266,8 @@ private:
 
     PassKey m_ShadowPassKey;
     RenderPassHandle m_ShadowPass;
+    PassKey m_ShadowSkinPassKey;
+    RenderPassHandle m_ShadowSkinPass;
 
     bool CreateShadowMap(uint32_t width, uint32_t height);
     void InitShadowPass();

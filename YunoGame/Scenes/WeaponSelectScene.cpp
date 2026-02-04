@@ -29,38 +29,38 @@ bool WeaponSelectScene::OnCreateScene()
 
     // 선택창 UI
     {
-        m_pUserImage0 = m_uiManager->CreateWidget<UserImage>(L"P1 U1", XMFLOAT3(0, 0, 0));
-        m_pUserImage1 = m_uiManager->CreateWidget<UserImage>(L"P1 U2", XMFLOAT3(0, 150, 0));
-        m_pUserImage2 = m_uiManager->CreateWidget<UserImage>(L"P2 U1", XMFLOAT3(1000, 0, 0));
-        m_pUserImage3 = m_uiManager->CreateWidget<UserImage>(L"P2 U2", XMFLOAT3(1000, 150, 0));
+        m_pUserImage0 = CreateWidget<UserImage>(L"P1 U1", Float2(50, 50), XMFLOAT3(0, 0, 0));
+        m_pUserImage1 = CreateWidget<UserImage>(L"P1 U2", Float2(50, 50), XMFLOAT3(0, 150, 0));
+        m_pUserImage2 = CreateWidget<UserImage>(L"P2 U1", Float2(50, 50), XMFLOAT3(1000, 0, 0));
+        m_pUserImage3 = CreateWidget<UserImage>(L"P2 U2", Float2(50, 50), XMFLOAT3(1000, 150, 0));
 
         // 그리드 기능 쓰기??
-        m_PWeaponBtn_Blaster    = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Blaster",  XMFLOAT3(250, 100, 0));
+        m_PWeaponBtn_Blaster = CreateWidget<WeaponButton>(L"Weapon_Blaster", Float2(50, 50), XMFLOAT3(250, 100, 0));
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Blaster)->SetPieceType(PieceType::Blaster);
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Blaster)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
 
-        m_PWeaponBtn_Impactor   = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Impactor", XMFLOAT3(750, 100, 0));
+        m_PWeaponBtn_Impactor = CreateWidget<WeaponButton>(L"Weapon_Impactor", Float2(50, 50), XMFLOAT3(750, 100, 0));
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Impactor)->SetPieceType(PieceType::Impactor);
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Impactor)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
 
-        m_PWeaponBtn_Breacher   = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Breacher", XMFLOAT3(500, 100, 0));
+        m_PWeaponBtn_Breacher = CreateWidget<WeaponButton>(L"Weapon_Breacher", Float2(50, 50), XMFLOAT3(500, 100, 0));
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Breacher)->SetPieceType(PieceType::Breacher);
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Breacher)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
 
-        m_PWeaponBtn_Chakram    = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Chakra",   XMFLOAT3(250, 300, 0));
+        m_PWeaponBtn_Chakram = CreateWidget<WeaponButton>(L"Weapon_Chakra", Float2(50, 50), XMFLOAT3(250, 300, 0));
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetPieceType(PieceType::Chakram);
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
 
-        m_PWeaponBtn_Scythe     = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Scythe",   XMFLOAT3(500, 300, 0));
+        m_PWeaponBtn_Scythe = CreateWidget<WeaponButton>(L"Weapon_Scythe", Float2(50, 50), XMFLOAT3(500, 300, 0));
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Scythe)->SetPieceType(PieceType::Scythe);
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Scythe)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
 
-        m_PWeaponBtn_Cleaver    = m_uiManager->CreateWidget<WeaponButton>(L"Weapon_Cleaver",  XMFLOAT3(750, 300, 0));
+        m_PWeaponBtn_Cleaver = CreateWidget<WeaponButton>(L"Weapon_Cleaver", Float2(50, 50), XMFLOAT3(750, 300, 0));
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetPieceType(PieceType::Cleaver);
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
 
-        m_pReadyBtn             = m_uiManager->CreateWidget<ReadyButton>(L"ReadyButton",      XMFLOAT3(450, 500, 0));
-        m_pExitBtn              = m_uiManager->CreateWidget<ExitButton>(L"ExitButton",        XMFLOAT3(750, 500, 0));
+        m_pReadyBtn = CreateWidget<ReadyButton>(L"ReadyButton", Float2(50, 50), XMFLOAT3(450, 500, 0));
+        m_pExitBtn = CreateWidget<ExitButton>(L"ExitButton", Float2(50, 50), XMFLOAT3(750, 500, 0));
 
 
     }

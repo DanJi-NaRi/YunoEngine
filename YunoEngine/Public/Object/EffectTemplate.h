@@ -6,7 +6,8 @@ enum class BillboardMode
     None,                   // 빔, 링 등
     ScreenAligned,   // 폭발 (카메라 정면)
     WorldAligned,    // 불꽃 기둥 (Y축 고정)
-    AxisLocked          // 특정 축만 회전
+    AxisLocked,          // 특정 축만 회전
+    Beam                    // 가로 레이저 하드코딩
 };
 
 enum class EffectID : uint32_t
@@ -31,6 +32,7 @@ struct EffectTemplate
     float lifetime;
     float emissive;
     XMFLOAT4 color;
+    XMFLOAT3 rot;
     int frameCount;
     int cols;
     int rows;

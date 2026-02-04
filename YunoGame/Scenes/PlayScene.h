@@ -36,4 +36,6 @@ private:
     CardQueue m_cardQueue;
 
     uint32_t m_pendingCardRuntimeID = 0; //방향 선택 확인
+
+    int m_selectedUnitSlot = 0; // 어떤 유닛인지 선택
 };

@@ -12,10 +12,9 @@ bool Text::CreateMaterial()
     return true;
 }
 
-bool Text::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool Text::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    if (!Widget::Create(name, id, vPos))
-        return false;
+    Widget::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     if (m_MeshNode)
         m_MeshNode->m_Meshs.clear();
@@ -44,10 +43,17 @@ bool Text::Submit(float dTime)
 {
     if (m_pRenderer && !m_desc.text.empty())
     {
-        m_desc.position = XMFLOAT2(m_finalPos.x + m_textOffset.x, m_finalPos.y + m_textOffset.y);
+        const float finalW = m_size.x * m_finalScale.x;
+        const float finalH = m_size.y * m_finalScale.y;
+
+        m_desc.position = XMFLOAT2(m_finalPos.x + m_textOffset.x,
+            m_finalPos.y + m_textOffset.y);
+
         m_desc.rotation = m_vRot.z;
-        m_desc.scale = { m_vScale.x, m_vScale.y };
-        m_desc.origin = XMFLOAT2(m_pivot.x * m_finalSize.x, m_pivot.y * m_finalSize.y); //텍스트 사각형 내부에서 텍스트 위치
+        m_desc.scale = { m_finalScale.x, m_finalScale.y }; // 보통 이게 정답
+        m_desc.origin = XMFLOAT2(m_pivot.x * finalW,
+            m_pivot.y * finalH);
+
         m_desc.layerDepth = 0.0f;
         m_pRenderer->SubmitText(m_desc);
     }

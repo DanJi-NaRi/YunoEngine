@@ -100,9 +100,9 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
 
     ImGuiManager::Initialize(static_cast<HWND>(m_window->GetNativeHandle()), yunorenderer->m_device.Get(), yunorenderer->m_context.Get());
 
-    ImGuiManager::RegisterDraw([]()
+    ImGuiManager::RegisterDraw([this]()
         {
-            UI::DrawFps();
+            UI::DrawDebugHUD(&m_renderer->GetCamera().position.x, m_renderer->GetCamera().GetForward().m128_f32);
         }
     );
 #endif
@@ -191,6 +191,7 @@ int YunoEngine::Run()
 #ifdef _DEBUG
         ImGuiManager::BeginFrame();
 
+
         if (m_sceneManager->GetActiveScene()->GetUIManager()) {
             auto& map = m_sceneManager->GetActiveScene()->GetUIManager()->GetWidgetlist();
             for (const auto& kv : map) // kv: pair<const UINT, Widget*>
@@ -198,7 +199,9 @@ int YunoEngine::Run()
 
                 if (auto* cs = dynamic_cast<Slot*>(kv.second))
                 {
-                    DrawDebugRect_Client(cs->GetSnapPoint().m_snapRange, Int3(255,0,0));
+                    if(cs->IsSnapped()) DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(0, 0, 255));
+                    else DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(255, 0, 0));
+                    
                     //DrawDebugRect_Client(cs->GetRect());
                 }
 

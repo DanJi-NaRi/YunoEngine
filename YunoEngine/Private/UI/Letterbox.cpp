@@ -9,9 +9,9 @@
 Letterbox::Letterbox(UIFactory& uiFactory) : Image(uiFactory) {}
 Letterbox::~Letterbox() {}
 
-bool Letterbox::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool Letterbox::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Image::Create(name, id, vPos);
+    Image::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     m_useAspectComp = false; // 화면비 스케일 끄기
 

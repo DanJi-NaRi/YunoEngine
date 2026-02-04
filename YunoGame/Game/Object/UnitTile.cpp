@@ -170,9 +170,9 @@ UnitTile::~UnitTile()
 
 bool UnitTile::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
-    Unit::Create(name, id, vPos);
+    AnimationUnit::Create(name, id, vPos);
 
-    if (!this->m_pInput || !this->m_pRenderer || !this->m_pTextures)
+    /*if (!this->m_pInput || !this->m_pRenderer || !this->m_pTextures)
         return false;
     if (!CreateMesh())
         return false;
@@ -189,7 +189,7 @@ bool UnitTile::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
     this->m_MeshNode->m_Meshs.push_back(std::move(mesh));
 
-    Backup();
+    Backup();*/
 
     return true;
 }
@@ -197,16 +197,18 @@ bool UnitTile::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool UnitTile::Update(float dTime)
 {
+
     UpdateFlash(dTime);
 
-    Unit::Update(dTime);
+    AnimationUnit::Update(dTime);
+  
     return true;
 }
 
 
 bool UnitTile::Submit(float dTime)
 {
-    Unit::Submit(dTime);
+    AnimationUnit::Submit(dTime);
     return true;
 }
 

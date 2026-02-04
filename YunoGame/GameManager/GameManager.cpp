@@ -9,6 +9,8 @@
 #include "TitleScene.h"
 #include "WeaponSelectScene.h"
 #include "PlayScene.h"
+#include "PhaseScene.h"
+
 #include "YunoClientNetwork.h"
 
 //패킷
@@ -86,6 +88,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
     case CurrentSceneState::Title:
     {
+        m_state = CurrentSceneState::Title;
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
@@ -93,6 +96,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::GameStart:
     {
+        m_state = CurrentSceneState::GameStart;
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
@@ -102,20 +106,33 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::CountDown:
     {
 
-        std::cout << "3...2...1...Battle Start!!!!!" << std::endl;
-        SetSceneState(CurrentSceneState::RoundStart);
+        std::cout << "3...2...1...Battle Start!!!!!" << std::endl;  
+
+        //SetSceneState(CurrentSceneState::RoundStart);
 
         break;
     }
     case CurrentSceneState::RoundStart:
     {
+        // 이미 라운드 씬이면 무시
+        //if (m_state == CurrentSceneState::RoundStart) return;
+        m_state = CurrentSceneState::RoundStart;
         SceneTransitionOptions opt{};
-        opt.immediate = false;
+        opt.immediate = true;
+
         sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+
+        SetSceneState(CurrentSceneState::SubmitCard);
         break;
     }
     case CurrentSceneState::SubmitCard:
     {
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = false;
+
+        sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+
         break;
     }
     case CurrentSceneState::AutoBattle:
@@ -138,29 +155,75 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
 }
 
-void GameManager::SetCards(
+void GameManager::InitHands(
     const std::vector<yuno::net::packets::CardSpawnInfo>& cards)
 {
-    m_Cards.clear();
+    for (int i = 0; i < 2; ++i)
+    {
+        m_myHands[i].cards.clear();
+        m_enemyHands[i].cards.clear();
+    }
+
     m_CardRuntimeIDs.clear();
 
-    for (const auto& c : cards)
-    {
-        m_Cards.push_back({
-            c.runtimeID,
-            c.dataID
-            });
+    AddCards(cards);
+}
 
-        m_CardRuntimeIDs[c.runtimeID] = c.dataID;
+void GameManager::AddCards(
+    const std::vector<yuno::net::packets::CardSpawnInfo>& cards)
+{
+    for (const auto& card : cards)
+    {
+        ClientCardInfo info{card.runtimeID, card.dataID };
+
+
+        bool isMine = (card.PID == m_PID); // PID = 1,2
+        int unitIdx = card.slotID - 1;
+        
+        if(unitIdx < 0 || unitIdx >= 2)
+            continue;
+
+        if (isMine)
+            m_myHands[unitIdx].cards.push_back(info);
+        else
+            m_enemyHands[unitIdx].cards.push_back(info);
+
+        m_CardRuntimeIDs[card.runtimeID] = card.dataID;
     }
 }
 
-uint32_t GameManager::GetCardRuntimeIDByIndex(int index) const
+void GameManager::RemoveCard(uint32_t runtimeID)
 {
-    if (index < 0 || index >= (int)m_Cards.size())
+    for (int u = 0; u < 2; ++u)
+    {
+        auto& hand = m_myHands[u].cards;
+        auto it = std::find_if(hand.begin(), hand.end(),
+            [&](const ClientCardInfo& c)
+            {
+                return c.runtimeID == runtimeID;
+            });
+
+        if (it != hand.end())
+        {
+            hand.erase(it);
+            break;
+        }
+    }
+
+    m_CardRuntimeIDs.erase(runtimeID);
+}
+
+uint32_t GameManager::GetMyCardRuntimeID(int unitSlot, int index) const
+{
+    if (unitSlot < 0 || unitSlot >= 2)
         return 0;
 
-    return m_Cards[index].runtimeID;
+    const auto& hand = m_myHands[unitSlot].cards;
+
+    if (index < 0 || index >= static_cast<int>(hand.size()))
+        return 0;
+
+    return hand[index].runtimeID;
 }
 
 uint32_t GameManager::GetCardDataID(uint32_t runtimeID) const
@@ -209,7 +272,7 @@ void GameManager::Tick(float dt)
         {
             m_countdownActive = false;
             m_countdownRemaining = 0.0f;
-
+    
             SetSceneState(CurrentSceneState::RoundStart);
         }
     }

@@ -67,16 +67,36 @@ bool CursurSystem::FindSnapWidget()
         if (widget->GetWidgetType() != WidgetType::Slot) continue; // 슬롯 아니면 continue
         Slot* slot = dynamic_cast<Slot*>(widget.get());
         if (!slot) continue;
-        SnapPoint point = slot->GetSnapPoint();
-        if (point.m_snapTargetClass != focusClass) continue;
+        SnapPoint* point = slot->GetSnapPoint();
+        if (point->snapTargetClass != focusClass) continue; // 타겟 클래스가 아니면 continue
 
-        if (!IsIntersect(m_focusedWidget->GetRect(), ExpandRect(point.m_snapRange, point.m_snapPadding))) continue; // 범위 안에 있지 않으면 continue
+        if (!IsIntersect(m_focusedWidget->GetRect(), ExpandRect(point->snapRange, point->snapPadding))) continue; // 범위 안에 있지 않으면 continue
+
+
+        if (point->IsSnapped()) { // 슬롯이 이미 스냅되어있으면
+            std::cout << "Faild!! already Intersect!!" << std::endl;
+            continue;
+        }
 
         std::cout << "Intersect Success!!" << std::endl;
+        
+        // 드래그 프로바이더 슬롯 갱신
+        Slot* beforeSlot = nullptr;
+        if (beforeSlot = drag->GetSnappedSlot()) {  // DragProvider에 이미 등록된 슬롯이 있으면
+            if (SnapPoint* beforeSP = beforeSlot->GetSnapPoint(); beforeSP->pSnapOwner == m_focusedWidget) {
+                beforeSP->pSnapOwner = nullptr;
+            }
+        }
 
-        XMFLOAT3 snapPos = { point.m_snapPos.x, point.m_snapPos.y, 0 };
+        drag->SetSnappedSlot(slot); // 드래그에 새 슬롯 등록
+
+        //스냅 시작
+        XMFLOAT3 snapPos = { point->snapPos.x, point->snapPos.y, 0 };
+
         drag->SetBkPos(snapPos);
         m_focusedWidget->SetPos(snapPos);
+        point->pSnapOwner = m_focusedWidget;
+
         //m_focusedWidget->SetPosBK(snapPos); // 근본 백업은 냅둬야하지 않나??
         
         return true;

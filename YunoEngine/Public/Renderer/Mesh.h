@@ -15,8 +15,10 @@ struct MeshNode {
     std::vector<std::unique_ptr<Mesh>> m_Meshs;
 
     void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
+    //void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize); //★
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
+    std::unique_ptr<MeshNode> Clone() const;
 };
 
 enum class TextureUse
@@ -49,6 +51,8 @@ public:
     Mesh();
     virtual ~Mesh();
 
+    std::unique_ptr<Mesh> Clone() const;
+
     void SetName(const std::string& name) { m_name = name; }
 
     void Create(MeshHandle mesh, MaterialHandle mat);
@@ -75,6 +79,7 @@ public:
 
 
     void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
+    void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const XMFLOAT2& widgetSize);
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 
