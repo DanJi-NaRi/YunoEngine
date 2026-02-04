@@ -244,6 +244,8 @@ bool UnitPiece::Update(float dTime)
         }
     }
 
+    UpdateFlash(dTime);
+
     // 애니메이션이 끝나면 하나씩 빼가게 하기
     while (!m_Q.empty() && !isMoving && !isRotating)
     {
@@ -261,6 +263,7 @@ bool UnitPiece::Update(float dTime)
         }
         case CommandType::Hit:
         {
+            SetFlashColor({1,0,1,1},1,0.3f);
             PlayGridQ::Insert(PlayGridQ::Hit_S(m_who, tp.hit.damage1));
             if (tp.hit.whichPiece != GamePiece::None)
                 PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece, tp.hit.damage2));

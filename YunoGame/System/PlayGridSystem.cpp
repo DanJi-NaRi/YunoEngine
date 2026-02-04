@@ -409,7 +409,7 @@ void PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState
 
     // 이동하다가 충돌했을 때
     bool isCollided = newUS.isEvent;
-    if (HasThis_US(dirty, Dirty_US::targetTileID) && isCollided)
+    if (isCollided)
     {
 
         if (HasThis_US(dirty, Dirty_US::hp))
@@ -575,7 +575,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
             }
 
             // 충돌지점까지 이동 후 원래 자리로 되돌아감
-            pPiece->InsertQ(PlayGridQ::Move_P(fdir, colW.x, m_wy, colW.y));                  // 충돌 위치까지 이동 후
+            pPiece->InsertQ(PlayGridQ::Move_P(fdir, colW.x, m_wy, colW.y));              // 충돌 위치까지 이동 후
             pPiece->InsertQ(PlayGridQ::Hit_P(damageMe, existWho, damageU));              // 피 감소
             pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, wx, m_wy, wz, 1));        // 제자리로 돌아감
         }
