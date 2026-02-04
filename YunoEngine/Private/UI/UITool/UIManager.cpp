@@ -86,8 +86,8 @@ void UIManager::LayerSubmit(float dTime)
         layerWidgets[(int)pushWidget->GetLayer()].push_back(pushWidget.get());
     }
 
-    // 역순회 -> Default(0)가 가장 뒤에 그려짐
-    for (int i = (int)WidgetLayer::Count - 1; i >= 0; --i)
+    // 순회 -> Default(0)가 가장 뒤에 그려짐
+    for (int i = 0; i < (int)WidgetLayer::Count; ++i)
     {
         auto& widgetVec = layerWidgets[i];
 

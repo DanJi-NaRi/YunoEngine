@@ -23,6 +23,7 @@ Gauge, // ProgressBar의 확정 자식
 #include "CardSelectionPanel.h"
 #include "CardConfirmPanel.h"
 #include "UserImage.h"
+#include "PlayerIcon.h"
 //////////////////////////////
 
 
@@ -63,13 +64,16 @@ Gauge, // ProgressBar의 확정 자식
 #include "ProgressBar.h"
 
 // ProgressBar 파생 클래스
-#include "ProgressBar.h"
+#include "HealthBar.h"
+#include "StaminaBar.h"
+
 
 // Gauge 클래스
 #include "Gauge.h"
 
 // ProgressBar 파생 클래스
-//#include "Gauge.h"
+#include "HealthGauge.h"
+#include "StaminaGauge.h"
 //////////////////////////////
 
 

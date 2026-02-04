@@ -1,6 +1,5 @@
 #pragma once
 #include "Widget.h"
-#include <functional>
 
 enum class FillDirection : int { // 채워지는 방향
     LeftToRight, // 왼쪽  -> 오른쪽
@@ -40,8 +39,8 @@ public:
     void SetFillDirection(FillDirection fillDir);
     void SetGaugeMax(Float2 max) { m_gaugeMax = max; } // 게이지 최대치 재할당
 
-    virtual WidgetType GetWidgetType() override { return WidgetType::ProgressBar; }
-    virtual WidgetClass GetWidgetClass() override { return WidgetClass::ProgressBar; }
+    virtual WidgetType GetWidgetType() override { return WidgetType::Gauge; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::Gauge; }
 
     bool IsFillHorizontal() const;
     bool IsFillVertical() const;
@@ -49,10 +48,8 @@ public:
 protected:
     float m_value; // 0.0f ~ 100.0f 백분율
     Float2 m_gaugeMax; // 최대 게이지 사이즈 = (프로그래스 바 사이즈 - margin)
-
     FillDirection m_fillDir; // 채워지는 방향
 
-private:
-    bool CreateMaterial() override; //{ return Widget::CreateMaterial(L"../Assets/UI/Widget/PlayerHUD/Bar_HP.png"); }  // 머테리얼 생성 (한 번만)
-
+    virtual bool CreateMaterial() override { return Gauge::CreateMaterial(L"../Assets/UI/Widget/PlayerHUD/Bar_HP.png"); }  // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial(std::wstring path, MaterialDesc* pDesc = nullptr) override;
 };

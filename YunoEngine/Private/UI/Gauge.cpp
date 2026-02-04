@@ -6,8 +6,7 @@
 Gauge::Gauge(UIFactory& uiFactory) : Widget(uiFactory)
 {
     m_value = 100.0f;
-    //m_fillDir = FillDirection::LeftToRight;
-    m_fillDir = FillDirection::RightToLeft;
+    m_fillDir = FillDirection::LeftToRight;
 }
 
 Gauge::~Gauge()
@@ -25,6 +24,8 @@ bool Gauge::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT
 
 bool Gauge::Start()
 {
+    Widget::Start();
+
     return true;
 }
 
@@ -64,8 +65,6 @@ void Gauge::GuageUpdate(float dTime)
     //if(IsFillHorizontal()) m_size.x = (m_value / 100.0f) * m_gaugeMax.x;  // 가로 계산
     //else                   m_size.y = (m_value / 100.0f) * m_gaugeMax.y;  // 세로 계산
 
-    std::cout << (m_value / 100) << std::endl;
-
     // 상수 버퍼 갱신
     m_renderItem.Constant.widgetValueFloat = (m_value / 100);       // value 할당. 미리 나눗셈까지는 해둠
     m_renderItem.Constant.widgetValueInt = (int)m_fillDir;  // Enum FillDir 할당
@@ -98,34 +97,38 @@ bool Gauge::IsFillVertical() const
             m_fillDir == FillDirection::BottomToTop);
 }
 
-bool Gauge::CreateMaterial()
+bool Gauge::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
 {
-    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/UI/Widget/PlayerHUD/Bar_HP.png");
+    m_Albedo = m_pTextures->LoadTexture2D(path.c_str());
+
+    AddTextureSize(m_Albedo);
 
     MaterialDesc md{};
+    if (pDesc) {
+        md = *pDesc;
+    }
+    else {
+        md.passKey.vs = ShaderId::UIGauge;
+        md.passKey.ps = ShaderId::UIGauge;
+        md.passKey.vertexFlags = VSF_Pos | VSF_UV;
 
-    md.passKey.vs = ShaderId::UIGauge;
-    md.passKey.ps = ShaderId::UIGauge;
-    md.passKey.vertexFlags = VSF_Pos | VSF_UV;
+        md.passKey.blend = BlendPreset::AlphaBlend;
+        md.passKey.raster = RasterPreset::CullNone;
+        md.passKey.depth = DepthPreset::Off;
 
-    md.passKey.blend = BlendPreset::AlphaBlend;
-    md.passKey.raster = RasterPreset::CullNone;
-    md.passKey.depth = DepthPreset::Off;
+        md.albedo = m_Albedo;
+        //md.albedo = 0;
+        md.normal = 0;
+        md.orm = 0;
 
-
-    md.albedo = m_Albedo;
-    //md.albedo = 0;
-    md.normal = 0;
-    md.orm = 0;
-
-    md.metal = 0;
-    md.rough = 0;
-    md.ao = 0;
+        md.metal = 0;
+        md.rough = 0;
+        md.ao = 0;
+    }
 
     // 첫번째 머테리얼 생성
     m_defaultMaterial = m_pRenderer->CreateMaterial(md);
-    if (m_defaultMaterial == 0)
-        return false;
+    if (m_defaultMaterial == 0) return false;
 
     return true;
 }

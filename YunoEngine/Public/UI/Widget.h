@@ -60,6 +60,14 @@ enum class WidgetClass : int {
     ReadyButton,
     ExitButton,
     WeaponButton,
+
+    // 전투 씬
+    BarPanel,
+    PieceImage,
+    HealthBar,
+    HealthGauge,
+    StaminaBar,
+    StaminaGauge,
 };
 
 enum class WidgetLayer : int {
@@ -301,7 +309,7 @@ public:
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();
 
-    bool CreateMaterial(std::wstring path, MaterialDesc* pDesc = nullptr);
+    virtual bool CreateMaterial(std::wstring path, MaterialDesc* pDesc = nullptr);
 
     template <typename Path, typename... Paths>
     bool CreateMaterials(Path&& path, Paths&&... paths) // wstring_view 타입일 것

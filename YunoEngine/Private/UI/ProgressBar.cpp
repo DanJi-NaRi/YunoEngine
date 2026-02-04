@@ -25,8 +25,8 @@ bool ProgressBar::Create(const std::wstring& name, uint32_t id, Float2 sizePx, X
 void ProgressBar::CreateChild()
 {
     //m_pGauge = m_uiFactory;
-    m_pGauge = m_uiFactory.CreateChild<Gauge>(m_name + L"_Gauge0", Float2(1083, 34), XMFLOAT3(0, 0, 0), UIDirection::Center, this);
-    m_pGauge->SetFillDirection(FillDirection::BottomToTop);
+    m_pGauge = m_uiFactory.CreateChild<Gauge>(m_name + L"_Gauge0", Float2(1077, 28), XMFLOAT3(0, 0.6f, 0), UIDirection::Center, this);
+    m_pGauge->SetFillDirection(FillDirection::LeftToRight);
 }
 
 bool ProgressBar::Start()
@@ -57,6 +57,4 @@ bool ProgressBar::Submit(float dTime)
 
 void ProgressBar::GuageUpdate(float dTime)
 {
-    if (m_pInput->IsKeyDown(VK_OEM_6)) { m_pGauge->AddValue(30 * dTime); }
-    if (m_pInput->IsKeyDown(VK_OEM_4)) { m_pGauge->SubValue(30 * dTime); }
 }

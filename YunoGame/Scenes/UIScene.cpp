@@ -31,8 +31,9 @@ bool UIScene::OnCreateScene()
     // 테스트 공간
     m_uiManager->SetOrthoFlag(true);
 
-    CreateWidget<ProgressBar>(L"tstProgressBar", Float2(1083, 34), XMFLOAT3(700, 500, 0), UIDirection::Center);
-
+    CreateWidget<PlayerIcon>(L"tstPlayerIcon", Float2(217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
+    
+    auto* asd = CreateWidget<PlayerIcon>(L"tstPlayerIcon", Float2(217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
     auto* a = CreateWidget<Letterbox>(L"LetterBoxA", Float2(50, 50), XMFLOAT3(0, 0, 0) );
     a->SetRole(Letterbox::Role::BarA);
     auto* b = CreateWidget<Letterbox>(L"LetterBoxB", Float2(50, 50), XMFLOAT3(0, 0, 0));

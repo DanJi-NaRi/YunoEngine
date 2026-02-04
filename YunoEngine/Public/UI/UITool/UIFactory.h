@@ -23,13 +23,17 @@ public:
     //    return m_uiManager.CreateWidget<T>(name, pos); // UIManager 멤버 접근은 내부에서
     //}
      
-    // 자식 생성
+    // 자식 생성 (부모 레이어 초회 상속)
     template<typename T>
     T* CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, Widget* pParent);
     template<typename T>
     T* CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, Float2 pivot, Widget* pParent);
     template<typename T>
     T* CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, UIDirection dir, Widget* pParent);
+    
+    // 유일하게 레이어 따로 설정
+    template<typename T>
+    T* CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, UIDirection pivot, WidgetLayer layer, Widget* pParent) ;
     //===================================//
 
 
@@ -50,10 +54,13 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     if (!pParent) return nullptr;
 
     T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos); // UIManager 멤버 접근은 내부에서
+    //pChild->SetLayer(pParent->GetLayer());
+   
     pParent->Attach(pChild);
-    pChild->SetLayer(pParent->GetLayer());
+    pChild->CreateChild(); // 자식 생성
     //pChild->SetPivot(pParent->GetPivot());
 
+    assert(pChild);
     if (!pChild) return nullptr;
 
     return pChild;
@@ -64,10 +71,13 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     if (!pParent) return nullptr;
 
     T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, pivot); // UIManager 멤버 접근은 내부에서
+    //pChild->SetLayer(pParent->GetLayer());
+    pChild->CreateChild(); // 자식 생성
     pParent->Attach(pChild);
-    pChild->SetLayer(pParent->GetLayer());
+    
     //pChild->SetPivot(pParent->GetPivot());
 
+    assert(pChild);
     if (!pChild) return nullptr;
 
     return pChild;
@@ -79,9 +89,32 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
 
     T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, pivot); // UIManager 멤버 접근은 내부에서
     pParent->Attach(pChild);
-    pChild->SetLayer(pParent->GetLayer());
+    //pChild->SetLayer(pParent->GetLayer());
+    pChild->CreateChild(); // 자식 생성
+    
+    
     //pChild->SetPivot(pParent->GetPivot());
 
+    assert(pChild);
+    if (!pChild) return nullptr;
+
+    return pChild;
+}
+
+template<typename T>
+T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, UIDirection pivot, WidgetLayer layer, Widget* pParent) {
+    assert(pParent);
+    if (!pParent) return nullptr;
+
+    T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, pivot); // UIManager 멤버 접근은 내부에서
+    pParent->Attach(pChild);
+    pChild->SetLayer(layer);
+    pChild->CreateChild(); // 자식 생성
+    
+    
+    //pChild->SetPivot(pParent->GetPivot());
+
+    assert(pChild);
     if (!pChild) return nullptr;
 
     return pChild;
