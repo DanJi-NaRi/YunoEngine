@@ -12,6 +12,7 @@
 #include "S2C_BattlePackets.h"
 #include "S2C_StartCardList.h"
 #include "ServerCardManager.h"
+#include "ServerCardRangeManager.h"
 
 #include "BattleState.h"
 
@@ -76,6 +77,23 @@ namespace yuno::server
                 return { 0, 0 };
             }
         }
+
+        TilePos RotateRangeOffset(const RangeOffset& offset, Direction dir)
+        {
+            switch (dir)
+            {
+            case Direction::Up:
+                return { -offset.dy , -offset.dx};
+            case Direction::Down:
+                return { offset.dy, offset.dx };
+            case Direction::Left:
+                return { -offset.dx, -offset.dy };
+            case Direction::Right: // 얘가 디폴트 방향임 (1,1)
+                return { offset.dx, -offset.dy };
+            default:
+                return { offset.dx, -offset.dy };
+            }
+        }
     }
 
     TurnManager::TurnManager(
@@ -83,11 +101,13 @@ namespace yuno::server
         YunoServerNetwork& network,
         ServerCardRuntime& runtime,
         ServerCardManager& cardDB,
+        ServerCardRangeManager& rangeDB,
         RoundController& roundController)
         : m_match(match)
         , m_network(network)
         , m_runtime(runtime)
         , m_cardDB(cardDB)
+        , m_cardRangeDB(rangeDB)
         , m_roundController(roundController)
     {
     }
@@ -334,12 +354,90 @@ namespace yuno::server
                 grid[oldTile] = -1;
                 grid[newTile] = unitIndex;
                 unit.tileID = newTile;
-                std::cout << "oldPos : " << static_cast<int>(oldTile) << "newPos : " << static_cast<int>(newTile) << std::endl;
+                std::cout << "oldPos : " << static_cast<int>(oldTile) << ", newPos : " << static_cast<int>(newTile) << std::endl;
                 return false;
+            };
+
+        auto applyAttack = [&](int unitIndex, uint32_t cardDataId, const CardData& cardData, Direction dir) -> bool
+            {
+                const auto* effectData = m_cardDB.GetEffectData(cardDataId);
+                const auto* rangeData = m_cardRangeDB.GetRange(cardData.m_rangeId);
+
+                if (!effectData)
+                {
+                    std::cout << "Attack effect data missing" << std::endl;
+                    return false;
+                }
+                if (!rangeData)
+                {
+                    std::cout << "Attack range data missing" << std::endl;
+                    return false;
+                }
+
+                UnitState& attacker = *units[unitIndex];
+                if (attacker.tileID == 0)
+                    return false;
+
+                TilePos origin = TileIdToPos(attacker.tileID);
+                int totalDamage = effectData->m_damage + effectData->m_giveDamageBonus;
+
+                auto subClamp = [](auto& hp, int dmg)
+                    {
+                        using T = std::decay_t<decltype(hp)>;
+                        int v = static_cast<int>(hp) - dmg;
+                        if (v < 0) v = 0;
+                        hp = static_cast<T>(v);
+                    };
+
+                bool eventOccurred = false;
+
+                for (const auto& offset : rangeData->offsets)
+                {
+                    TilePos delta = RotateRangeOffset(offset, dir);
+                    TilePos target = { origin.x + delta.x, origin.y + delta.y };
+
+                    if (!IsInBounds(target))
+                    {
+                        std::cout << "Enter Out of Grid" << std::endl;
+                        continue;
+                    }
+
+                    uint8_t targetTile = PosToTileId(target);
+                    int occupantIndex = grid[targetTile];
+
+                    if (occupantIndex == -1)
+                    {
+                        std::cout << "Enter Empty tile" << std::endl;
+                        continue;
+                    }
+
+                    bool isEnemy = (unitIndex / 2) != (occupantIndex / 2);
+                    if (!isEnemy)
+                    {
+                        std::cout << "Enter Ally Attack" << std::endl;
+                        continue;
+                    }
+
+                    if (totalDamage > 0)
+                    {
+                        UnitState& targetUnit = *units[occupantIndex];
+                        subClamp(targetUnit.hp, totalDamage);
+
+                        eventOccurred = true;
+
+                        std::cout << "Attack hit unit " << occupantIndex
+                            << " damage=" << totalDamage << std::endl;
+                    }
+                }
+
+                return eventOccurred;
             };
 
         auto applyCard = [&](const ResolvedCard& card)
             {
+				static int count = 0;
+				std::cout << "------------------------applyCard Count : " << ++count << std::endl;
+
                 const CardData& cardData = m_cardDB.GetCardData(card.dataId);
                 int unitIndex = getUnitIndexForCard(card.ownerSlot, cardData);
                 bool eventOccurred = false;
@@ -347,9 +445,10 @@ namespace yuno::server
                 if (cardData.m_cost > 0)
                 {
                     UnitState& unit = *units[unitIndex];
+                    std::cout << "before stamina : " << static_cast<int>(unit.stamina);
                     unit.stamina = static_cast<uint8_t>(
                         std::max(0, static_cast<int>(unit.stamina) - cardData.m_cost));
-                    std::cout << "stamina : " << static_cast<int>(unit.stamina) << std::endl;
+                    std::cout << ", after stamina : " << static_cast<int>(unit.stamina) << std::endl;
                 }
                 else 
                 {
@@ -370,6 +469,8 @@ namespace yuno::server
                 else if (cardData.m_type == CardType::Attack)
                 {
                     std::cout << "Attck Card On" << std::endl;
+                    applyAttack(unitIndex, card.dataId, cardData, card.dir);
+					
                 }
                 else 
                 {
@@ -415,7 +516,6 @@ namespace yuno::server
 
         for (size_t i = 0; i < maxCount; ++i)
         {
-
             bool coinTossUsed = false;
             bool aFirst = IsALess(slotCards[0][i], slotCards[1][i], coinTossUsed);
 

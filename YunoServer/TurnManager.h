@@ -23,6 +23,7 @@ namespace yuno::server
     class MatchManager;
     class YunoServerNetwork;
     class ServerCardManager;
+    class ServerCardRangeManager;
     class ServerCardRuntime;
     class RoundController;
 
@@ -34,6 +35,7 @@ namespace yuno::server
             YunoServerNetwork& network,
             ServerCardRuntime& runtime,
             ServerCardManager& cardDB,
+            ServerCardRangeManager& rangeDB,
             RoundController& roundController);
 
         void SubmitTurn(
@@ -49,6 +51,7 @@ namespace yuno::server
         YunoServerNetwork& m_network;
         ServerCardRuntime& m_runtime;
         ServerCardManager& m_cardDB;
+        ServerCardRangeManager& m_cardRangeDB;
         RoundController& m_roundController;
 
         std::vector<CardPlayCommand> m_turnCards[2];

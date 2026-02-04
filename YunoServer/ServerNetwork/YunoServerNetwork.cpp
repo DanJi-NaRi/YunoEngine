@@ -41,7 +41,7 @@ namespace yuno::server
         , m_cardRuntime()
         , m_cardDealer(m_cardDB, m_cardRuntime)
         , m_roundController(m_match, m_cardDealer, *this)
-        , m_turnManager(m_match, *this, m_cardRuntime, m_cardDB, m_roundController)
+        , m_turnManager(m_match, *this, m_cardRuntime, m_cardDB, m_cardRangeDB, m_roundController)
     {
 
 
