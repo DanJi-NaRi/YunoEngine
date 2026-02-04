@@ -5,7 +5,9 @@
 #include "BattlePackets.h"
 
 class PlayGridQ;
-
+enum class CardType : uint8_t;
+struct RangeData;
+struct RangeOffset;
 
 enum class NG_P : int   // NowGrid_PlayGrid
 {
@@ -32,9 +34,10 @@ private:
     void MoveEvent(const GamePiece& pieceType, int cx, int cz, 
         bool isCollided = false, bool isEnemy = false, int damage1 = 0, int damage2 = 0);
 
-    void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit);
-    void ApplyPacketChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit);
-
+    void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, CardType cardType, const RangeData* rangeData, Direction dir);
+    void ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit);
+    void ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
+    
 private:
     void ChangeTileTO(int cx, int cz, const TileOccupy to);
     const TileOccupy GetTileTO(int cx, int cz);
@@ -46,6 +49,7 @@ private:
     GamePiece GetGamePiece(int pId, int unitId);
     int GetUnitID(int pId, int slotID);
     int GetOtherUnitDamage(const std::array<UnitState, 4>& newUnitStates, int mainUnit);
+    const std::vector<int> GetRangeTileIDs(const Int2 unitCell, const std::vector<RangeOffset>& ranges, Direction dir);
 
     bool CheckExisting(const GamePiece pieceType);
     void CheckHealth(PieceInfo& pieceInfo);

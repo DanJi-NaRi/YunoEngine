@@ -233,7 +233,7 @@ bool UnitPiece::Update(float dTime)
             if (m_AnimDone)
             {
                 PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Turn_Over, m_who));
-                ClearQ();
+                //ClearQ();
                 m_AnimDone = false;
             }
         }

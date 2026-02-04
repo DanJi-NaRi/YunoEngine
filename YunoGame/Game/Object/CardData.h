@@ -64,6 +64,7 @@ public:
     int m_destroyCnt;           // 카드 소멸 횟수
     int m_cost;                 // 소모 스태미나 비용
     uint32_t m_rangeId;         // 카드 범위
+    int m_control;
     
     //std::string range // 기획에는 이렇게 써있지만 string??
     //std::pair<int,int> range; // 3 * 3 뭐 이런식으로?

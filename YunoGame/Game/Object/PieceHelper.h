@@ -29,6 +29,8 @@ enum class CommandType : uint8_t
     Hit,
     Dead,
 
+    AlarmTile,
+
     Turn_Over
 };
 

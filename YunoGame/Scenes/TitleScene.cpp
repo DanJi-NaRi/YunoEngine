@@ -139,10 +139,10 @@ void TitleScene::Update(float dt)
     {
         PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 2, 4));   // 오른쪽 아래
     }
-    if (m_input->IsKeyPressed(0x39))
-    {
-        PlayGridQ::Insert(PlayGridQ::Attack_S_TST(GamePiece::Ally1));   // 공격
-    }
+    //if (m_input->IsKeyPressed(0x39))
+    //{
+    //    PlayGridQ::Insert(PlayGridQ::Attack_S_TST(GamePiece::Ally1));   // 공격
+    //}
     if (m_input->IsKeyPressed(0x30))
     {
         PlayGridQ::Insert(PlayGridQ::Move_S(GamePiece::Ally1, 1, 3));   // 충돌

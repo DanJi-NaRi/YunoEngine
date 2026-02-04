@@ -180,7 +180,7 @@ void PlayGridSystem::CheckMyQ()
 
         case CommandType::Attack:
         {
-            const GamePiece pieceType = cmd.atk_s.whichPiece;
+            const GamePiece pieceType = cmd.atk_s.attackPiece;
             if (!CheckExisting(pieceType)) return;  // 죽어서 없어진 기물인지 확인
 
             // 공격 시행 팀 확인. 피격 팀 확인하기.
@@ -201,7 +201,8 @@ void PlayGridSystem::CheckMyQ()
 
                 // 타격 타일 표시
                 auto* pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
-
+                if(pTile) pTile->SetFlashColor({ 0.2f, 0.2f, 0.8f, 1 }, 3, 0.2f);
+                
 
                 if (condition1 || condition2)
                 {
@@ -262,21 +263,9 @@ void PlayGridSystem::CheckPacket(float dt)
         const int soundID = cardData.m_soundId;
 
         const RangeData* rangeData = mng.GetRangeData(runTimeCardID);
-        const std::vector<RangeOffset>& ranges = rangeData->offsets;
         const CardType cardType = cardData.m_type;
         
-        switch (cardType)
-        {
-        case CardType::Buff:
-            break;
-        case CardType::Move:
-            ApplyActionOrder(order, mainUnit);
-            break;
-        case CardType::Attack:
-            break;
-        case CardType::Utility:
-            break;
-        }
+        ApplyActionOrder(order, mainUnit, cardType, rangeData, (Direction)dir);
     }
 
     // 지금 처리 중인 패킷 시간 체크
@@ -292,7 +281,7 @@ void PlayGridSystem::CheckPacket(float dt)
     }
 }
 
-void PlayGridSystem::ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit)
+void PlayGridSystem::ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, CardType cardType, const RangeData* rangeData, Direction dir)
 {
     // 행동 순서
     for (int i = 0; i < order.size(); i++)
@@ -300,12 +289,27 @@ void PlayGridSystem::ApplyActionOrder(const std::vector<std::array<UnitState, 4>
         const std::array<UnitState, 4>& unitStates_Now = order[i];
 
         Dirty_US dirty = Diff_US(m_UnitStates[mainUnit], unitStates_Now[mainUnit]);
-        ApplyPacketChanges(dirty, unitStates_Now, mainUnit);
 
+        const auto& ranges = rangeData->offsets;
+        switch (cardType)
+        {
+        case CardType::Buff:
+            break;
+        case CardType::Move: 
+            ApplyMoveChanges(dirty, unitStates_Now, mainUnit);
+            break;
+        case CardType::Attack:
+            ApplyAttackChanges(dirty, unitStates_Now, mainUnit, ranges, dir);
+            break;
+        case CardType::Utility:
+            break;
+        }
+
+        m_UnitStates = unitStates_Now;
     }
 }
 
-void PlayGridSystem::ApplyPacketChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit)
+void PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit)
 {
     const UnitState prevUS = m_UnitStates[mainUnit];
     const UnitState newUS = newUnitStates[mainUnit];
@@ -338,15 +342,68 @@ void PlayGridSystem::ApplyPacketChanges(Dirty_US dirty, const std::array<UnitSta
         auto [cx, cz] = GetCellByID(newUS.targetTileID);
         m_playQ->Insert(m_playQ->Move_S(whichPiece, cx, cz));
     }
-    // 체력의 변화가 생겼을 때
-    else if (HasThis_US(dirty, Dirty_US::hp))
+
+}
+
+void PlayGridSystem::ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir)
+{
+    const UnitState prevUS = m_UnitStates[mainUnit];
+    const UnitState newUS = newUnitStates[mainUnit];
+    GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
+    if (!CheckExisting(whichPiece))
     {
+        // 부활 규칙이 없으므로 return 합니다.
+        return;
+    }
+    Int2 cellPos = { m_pieces[whichPiece].cx, m_pieces[whichPiece].cz };
+    const auto targetTileIDs = GetRangeTileIDs(cellPos, ranges, dir);
+
+    int damage = GetOtherUnitDamage(newUnitStates, mainUnit);
+
+    m_playQ->Insert(m_playQ->Attack_S_TST(whichPiece, damage, targetTileIDs));
+}
+
+const std::vector<int> PlayGridSystem::GetRangeTileIDs(const Int2 unitCell, const std::vector<RangeOffset>& ranges, Direction dir)
+{
+    std::vector<int> tileIDs;
+    // 그리드가 여러 개라면, SetNG_P() 호출해줘야 함
+
+    std::vector<Int2> relativeRanges;
+    for (int i = 0; i < ranges.size(); i++)
+    {
+        const auto& range = ranges[i];
+
+        switch (dir)
+        {
+        case Direction::Up:
+            relativeRanges.push_back({ -range.dy, range.dx });
+            break;
+        case Direction::Down:
+            relativeRanges.push_back({ -range.dy, -range.dx });
+            break;
+        case Direction::Left:
+            relativeRanges.push_back({ -range.dx, range.dy });
+            break;
+        case Direction::Right:
+            relativeRanges.push_back({ range.dx, range.dy });
+            break;
+        }
+    }
+    std::vector<Int2> absoluteRanges;
+
+    for (int i = 0; i < relativeRanges.size(); i++)
+    {
+        int cx = unitCell.x + relativeRanges[i].x;
+        int cz = unitCell.y + relativeRanges[i].y;
+        absoluteRanges.push_back({ cx, cz });
     }
 
-    // 스테미나에 변화가 생겼을 때
-    if (HasThis_US(dirty, Dirty_US::stamina))
+    for (int i = 0; i < absoluteRanges.size(); i++)
     {
+        tileIDs.push_back(GetID(absoluteRanges[i].x, absoluteRanges[i].y));
     }
+
+    return tileIDs;
 }
 
 void PlayGridSystem::MoveEvent(const GamePiece& pieceType, int cx, int cz, bool isCollided, bool isEnemy, int damageMe, int damageU)

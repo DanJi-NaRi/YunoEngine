@@ -42,15 +42,16 @@ PGridCmd PlayGridQ::Move_P(Direction dir, float wx, float wy, float wz, float sp
     return cmd;
 }
 
-PGridCmd PlayGridQ::Attack_S_TST(GamePiece pieceType, int damagae)
+PGridCmd PlayGridQ::Attack_S_TST(GamePiece pieceType, int damagae, const std::vector<int>& tileIDs)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Attack;
     cmd.atk_s.damage = damagae;
-    cmd.atk_s.whichPiece = pieceType;
-    for (int i = 1; i < 36; i++)
+    cmd.atk_s.attackPiece = pieceType;
+    memset(cmd.atk_s.tileIDs, 0, sizeof(uint8_t) * 35);
+    for (int i = 0; i < tileIDs.size(); i++)
     {
-        cmd.atk_s.tileIDs[i-1] = i;
+        cmd.atk_s.tileIDs[i] = tileIDs[i];
     }
     return cmd;
     
