@@ -135,9 +135,9 @@ namespace yuno::server
                 rsUnit.PID = player.PID;
                 rsUnit.slotID = static_cast<uint8_t>(u + 1);
 
-                unit.slotID = rsUnit.slotID;
-                unit.WeaponID = static_cast<uint8_t>(
-                    (u == 0) ? slot.unitId1 : slot.unitId2);
+                //unit.slotID = rsUnit.slotID;
+                //unit.WeaponID = static_cast<uint8_t>(
+                //    (u == 0) ? slot.unitId1 : slot.unitId2);
 
                 rsUnit.WeaponID = unit.WeaponID;
 
