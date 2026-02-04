@@ -59,6 +59,7 @@ bool EffectManager::RegisterEffect(const EffectDesc& desc)
     temp.lifetime = desc.lifetime;
     temp.emissive = desc.emissive;
     temp.color = desc.color;
+    temp.rot = desc.rot;
     temp.frameCount = desc.framecount;
     temp.cols = desc.cols;
     temp.rows = desc.rows;

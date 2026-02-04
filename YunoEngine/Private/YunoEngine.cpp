@@ -100,9 +100,9 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
 
     ImGuiManager::Initialize(static_cast<HWND>(m_window->GetNativeHandle()), yunorenderer->m_device.Get(), yunorenderer->m_context.Get());
 
-    ImGuiManager::RegisterDraw([]()
+    ImGuiManager::RegisterDraw([this]()
         {
-            UI::DrawFps();
+            UI::DrawDebugHUD(&m_renderer->GetCamera().position.x, m_renderer->GetCamera().GetForward().m128_f32);
         }
     );
 #endif

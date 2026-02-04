@@ -31,6 +31,7 @@ struct EffectTemplate
     float lifetime;
     float emissive;
     XMFLOAT4 color;
+    XMFLOAT3 rot;
     int frameCount;
     int cols;
     int rows;
