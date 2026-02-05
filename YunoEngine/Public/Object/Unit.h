@@ -7,6 +7,7 @@
 #include "Mesh.h"
 
 class UnitDesc;
+class IEffectManager;
 // 모든 메쉬는 CW 시계방향 정점이 앞면임
 /* 예시)
 01
@@ -62,6 +63,7 @@ protected:
     IRenderer* m_pRenderer = nullptr;
     ITextureManager* m_pTextures = nullptr;
     IInput* m_pInput = nullptr;
+    IEffectManager* m_pEffectManager = nullptr;
 
 public:
     explicit Unit();
@@ -121,6 +123,9 @@ public:
     virtual XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
     virtual XMMATRIX GetAttachMatrixForChild(Unit* child); //본에 붙은 자식 행렬 얻어오기용 버츄얼 함수 애니메이션 유닛에서 사용함
                                                                                                             //부모의 본에 붙는 오브젝트는 부모 행렬받아올 때 이거 써야함
+
+    IEffectManager* GetEffectManager() const { return m_pEffectManager; }
+    void SetEffectManager(IEffectManager* manager) { m_pEffectManager = manager; }
 
     void SetMeshPath(const std::wstring& meshpath) { m_meshpath = meshpath; }
     UnitDesc GetDesc();

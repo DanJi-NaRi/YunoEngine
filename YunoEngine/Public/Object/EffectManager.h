@@ -19,7 +19,15 @@ struct EffectDesc
     std::wstring texPath = L"";
 };
 
-class EffectManager
+class EffectManager;
+class IEffectManager
+{
+public:
+    virtual ~IEffectManager() = default;
+    virtual Effect* Spawn(EffectID id, const XMFLOAT3& pos, const XMFLOAT3& scale = { 1, 1, 1 }, const XMFLOAT3& dir = { 1, 0, 0 }) = 0;
+};
+
+class EffectManager : public IEffectManager
 {
 private:
     std::vector<std::unique_ptr<Effect>> m_pool;
@@ -41,7 +49,7 @@ public:
 
     void SetEmissive(EffectID id, float emissive);
     
-    Effect* Spawn(EffectID id, const XMFLOAT3& pos, const XMFLOAT3& scale = {1, 1, 1}, const XMFLOAT3& dir = {1, 0, 0});
+    Effect* Spawn(EffectID id, const XMFLOAT3& pos, const XMFLOAT3& scale = {1, 1, 1}, const XMFLOAT3& dir = {1, 0, 0}) override;
 
     void Play();
     void Stop();
