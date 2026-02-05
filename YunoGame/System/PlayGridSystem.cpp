@@ -293,7 +293,8 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         // 애니메이션 대신 반짝이는 걸로 잠시 대체
         pPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
         as.phaseStarted = false;
-
+        
+        std::cout << "[Attack Sequence]\nAttacker hp: " << static_cast<int>(m_UnitStates[GetUnitID(as.attacker)].hp) << std::endl;
         break;
     }
     case AttackPhase::TileHit:
@@ -350,6 +351,7 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         const auto& pieces = as.hitPieces;
         for (int i = 0; i < pieces.size(); i++)
         {
+            if (!CheckExisting(pieces[i]))    continue;
             auto& pieceinfo = m_pieces[pieces[i]];
             int id = GetUnitID(pieces[i]);
             CheckHealth(m_UnitStates[id], pieceinfo);
@@ -634,6 +636,7 @@ bool PlayGridSystem::CheckExisting(const GamePiece pieceType)
 
 void PlayGridSystem::CheckHealth(const UnitState& us, PieceInfo& pieceInfo)
 {
+    std::cout << "[Attack Sequence]\Hitter hp: " << static_cast<int>(us.hp) << std::endl;
     if (us.hp <= 0)
     {
         // 해당 기물 렌더X
