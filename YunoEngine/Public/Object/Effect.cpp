@@ -77,6 +77,52 @@ void Effect::UpdateWorldMatrix()
     XMStoreFloat4x4(&m_mWorld, mTM);
 }
 
+XMMATRIX Effect::GetParentRotationMatrix() const
+{
+    if (!m_Parent)
+    {
+        return XMMatrixIdentity();
+    }
+
+    XMMATRIX parentAttach = m_Parent->GetAttachMatrixForChild(const_cast<Effect*>(this));
+    XMVECTOR scale{};
+    XMVECTOR rotation{};
+    XMVECTOR translation{};
+
+    if (!XMMatrixDecompose(&scale, &rotation, &translation, parentAttach))
+    {
+        return XMMatrixIdentity();
+    }
+
+    return XMMatrixRotationQuaternion(rotation);
+}
+
+XMFLOAT3 Effect::GetWorldPosition() const
+{
+    if (!m_Parent)
+    {
+        return m_vPos;
+    }
+
+    XMMATRIX parentAttach = m_Parent->GetAttachMatrixForChild(const_cast<Effect*>(this));
+    XMVECTOR pos = XMVector3TransformCoord(XMLoadFloat3(&m_vPos), parentAttach);
+    XMFLOAT3 out{};
+    XMStoreFloat3(&out, pos);
+    return out;
+}
+
+XMMATRIX Effect::AdjustBillboardForParent(const XMMATRIX& billboardWorld) const
+{
+    if (!m_Parent)
+    {
+        return billboardWorld;
+    }
+
+    XMMATRIX parentRot = GetParentRotationMatrix();
+    XMMATRIX parentInv = XMMatrixInverse(nullptr, parentRot);
+    return billboardWorld * parentInv;
+}
+
 XMMATRIX Effect::UpdateBillBoard()
 {
     switch(billboard)
@@ -96,16 +142,14 @@ XMMATRIX Effect::UpdateBillBoard()
 
 XMMATRIX Effect::UpdateBeam()
 {
-    if (m_Parent)
-    {
-
-    }
+    XMMATRIX parentRot = GetParentRotationMatrix();
     XMVECTOR right = XMVector3Normalize(
-        XMLoadFloat3(&m_vDir)
+        XMVector3TransformNormal(XMLoadFloat3(&m_vDir), parentRot)
     );
 
+    const XMFLOAT3 worldPos = GetWorldPosition();
     XMVECTOR toCam = XMVector3Normalize(
-        XMLoadFloat3(&m_pRenderer->GetCamera().Position()) - XMLoadFloat3(&m_vPos)
+        XMLoadFloat3(&m_pRenderer->GetCamera().Position()) - XMLoadFloat3(&worldPos)
     );
 
     XMVECTOR up = XMVector3Normalize(
@@ -122,7 +166,7 @@ XMMATRIX Effect::UpdateBeam()
     R.r[2] = front;
     R.r[3] = XMVectorSet(0, 0, 0, 1);
 
-    return R;
+    return AdjustBillboardForParent(R);
 }
 
 XMMATRIX Effect::UpdateScreenAlign()
@@ -152,7 +196,8 @@ XMMATRIX Effect::UpdateWorldUpAlign()
     // 카메라 위치 가져오기
     const XMFLOAT3& camPos = m_pRenderer->GetCamera().Position();
 
-    XMVECTOR P = XMLoadFloat3(&m_vPos);
+    const XMFLOAT3 worldPos = GetWorldPosition();
+    XMVECTOR P = XMLoadFloat3(&worldPos);
     XMVECTOR C = XMLoadFloat3(&camPos);
 
     XMVECTOR worldUp = XMVectorSet(0, 1, 0, 0);
@@ -178,17 +223,21 @@ XMMATRIX Effect::UpdateWorldUpAlign()
     R.r[2] = look;
     R.r[3] = XMVectorSet(0, 0, 0, 1);
 
-    return R;
+    return AdjustBillboardForParent(R);
 }
 
 XMMATRIX Effect::UpdateAxisLock()
 {
-    XMVECTOR forward = XMVector3Normalize(XMLoadFloat3(&m_vDir));
+    XMMATRIX parentRot = GetParentRotationMatrix();
+    XMVECTOR forward = XMVector3Normalize(
+        XMVector3TransformNormal(XMLoadFloat3(&m_vDir), parentRot)
+    );
     XMVECTOR worldup = XMVectorSet(0, 1, 0, 0);
 
     // 카메라 forward 가져오기 (빌보드 두께 유지용)
+    const XMFLOAT3 worldPos = GetWorldPosition();
     XMVECTOR toCam = XMVector3Normalize(
-        XMLoadFloat3(&m_pRenderer->GetCamera().Position()) - XMLoadFloat3(&m_vPos)
+        XMLoadFloat3(&m_pRenderer->GetCamera().Position()) - XMLoadFloat3(&worldPos)
     );
     // right = 카메라 기준으로 빔이 얇아지지 않게
     XMVECTOR right = XMVector3Normalize(
@@ -212,7 +261,7 @@ XMMATRIX Effect::UpdateAxisLock()
     R.r[2] = forward;
     R.r[3] = XMVectorSet(0, 0, 0, 1);
 
-    return R;
+    return AdjustBillboardForParent(R);
 }
 
 void Effect::UpdateFrame()

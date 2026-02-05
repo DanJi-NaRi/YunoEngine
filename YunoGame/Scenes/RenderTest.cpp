@@ -157,7 +157,7 @@ void RenderTest::Update(float dt)
     }
     if (YunoEngine::GetInput()->IsKeyPressed('G'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::BlasterAttack, { 0.f, 0.f, 0.f }, { 0.5f, 0.5f, 0.5f }, {-1, 0, -1});
+        auto eff = m_effectManager->Spawn(EffectID::BlasterAttack, { 0.f, 0.f, 0.f }, { 0.5f, 0.5f, 0.5f }, {0, 0, 1});
         gun->AttachChildBone(eff, 3);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('H'))
