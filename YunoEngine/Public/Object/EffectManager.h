@@ -32,7 +32,7 @@ class EffectManager : public IEffectManager
 private:
     std::vector<std::unique_ptr<Effect>> m_pool;
     std::vector<Effect*> m_active;
-    std::vector<Effect*> m_free;
+    std::queue<Effect*> m_free;
 
     std::unordered_map<EffectID, EffectTemplate> m_templates;
 

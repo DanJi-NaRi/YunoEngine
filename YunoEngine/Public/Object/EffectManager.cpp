@@ -19,7 +19,8 @@ void EffectManager::Init(int count)
     for (int i = 0; i < count; i++)
     {
         auto e = std::make_unique<Effect>();
-        m_free.push_back(e.get());
+        e->SetID(i + 1 * 100);
+        m_free.push(e.get());
         m_pool.push_back(std::move(e));
     }
 }
@@ -86,8 +87,8 @@ Effect* EffectManager::Spawn(EffectID id, const XMFLOAT3& pos, const XMFLOAT3& s
 
     if (m_free.empty()) return nullptr;
 
-    Effect* e = m_free.back();
-    m_free.pop_back();
+    Effect* e = m_free.front();
+    m_free.pop();
 
     e->SetTemplate(it->second);
     e->Play(pos, scale, dir);
@@ -121,7 +122,7 @@ void EffectManager::Update(float dt)
         if (!e->Update(dTime))
         {
             e->Reset();
-            m_free.push_back(e);
+            m_free.push(e);
             it = m_active.erase(it);
 
             if (e->GetParent())

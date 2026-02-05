@@ -33,6 +33,7 @@ void Animator::SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, const std::unor
     m_BlendBoneTM.resize(boneCount);
     m_FinalBoneTM.resize(boneCount);
     m_GlobalBoneTM.resize(boneCount);
+    m_GlobalBoneNoOffsetTM.resize(boneCount);
     m_BoneCount = boneCount;
     for (size_t i = 0; i < m_BoneCount; i++)
     {
@@ -40,6 +41,7 @@ void Animator::SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, const std::unor
         m_LocalBoneB[i] = XMMatrixIdentity();
         m_BlendBoneTM[i] = XMMatrixIdentity();
         XMStoreFloat4x4(&m_FinalBoneTM[i], XMMatrixIdentity());
+        XMStoreFloat4x4(&m_GlobalBoneNoOffsetTM[i], XMMatrixIdentity());
     }
 }
 
@@ -102,7 +104,13 @@ void Animator::Update(float dTime)
         m_RootBone->SampleLocalPose(CurTickTime, m_CurAnim->channels, m_BlendBoneTM);
     }
 
-    m_RootBone->UpdateBoneMatrix(m_BlendBoneTM, m_FinalBoneTM, m_GlobalBoneTM, XMMatrixIdentity());
+    m_RootBone->UpdateBoneMatrix(
+        m_BlendBoneTM,
+        m_FinalBoneTM,
+        m_GlobalBoneTM,
+        m_GlobalBoneNoOffsetTM,
+        XMMatrixIdentity()
+    );
 }
 
 const XMFLOAT4X4& Animator::GetBoneGlobal(int idx)
@@ -111,6 +119,14 @@ const XMFLOAT4X4& Animator::GetBoneGlobal(int idx)
         return m_Identity;
 
     return m_GlobalBoneTM[idx];
+}
+
+const XMFLOAT4X4& Animator::GetBoneGlobalNoOffset(int idx)
+{
+    if (idx < 0 || idx >= m_BoneCount)
+        return m_Identity;
+
+    return m_GlobalBoneNoOffsetTM[idx];
 }
 
 int Animator::FindIndex(const std::string& name)
@@ -290,6 +306,7 @@ void Animator::Serialize()
                     m_BlendBoneTM,
                     m_FinalBoneTM,
                     m_GlobalBoneTM,
+                    m_GlobalBoneNoOffsetTM,
                     XMMatrixIdentity()
                 );
             }
@@ -302,6 +319,7 @@ void Animator::Serialize()
                     m_BlendBoneTM,
                     m_FinalBoneTM,
                     m_GlobalBoneTM,
+                    m_GlobalBoneNoOffsetTM,
                     XMMatrixIdentity()
                 );
             }

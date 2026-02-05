@@ -33,6 +33,7 @@ private:
     std::vector<XMMATRIX> m_BlendBoneTM;
     std::vector<XMFLOAT4X4> m_FinalBoneTM;
     std::vector<XMFLOAT4X4> m_GlobalBoneTM;
+    std::vector<XMFLOAT4X4> m_GlobalBoneNoOffsetTM;
     XMFLOAT4X4 m_Identity;
 
     UINT m_BoneCount;
@@ -71,6 +72,7 @@ public:
     UINT GetBoneCount() { return m_BoneCount; }
     const UINT& GetCurFrame() { return static_cast<UINT>(CurTickTime); }
     const XMFLOAT4X4& GetBoneGlobal(int idx);
+    const XMFLOAT4X4& GetBoneGlobalNoOffset(int idx);
     int FindIndex(const std::string& name);
 
     void BlendingUpdate(float dTime);

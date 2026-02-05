@@ -71,7 +71,7 @@ bool SceneBase::OnCreate()
         return false;
 
     m_effectManager = std::make_unique<EffectManager>();
-    m_effectManager->Init(30);
+    m_effectManager->Init(50);
     m_objectManager->SetEffectManager(m_effectManager.get());
 
     if (m_input = YunoEngine::GetInput(); !m_input)

@@ -68,7 +68,9 @@ void Effect::UpdateWorldMatrix()
     XMMATRIX mTM;
 
     if (m_Parent)
+    {
         mTM = S * R * T * m_Parent->GetAttachMatrixForChild(this);
+    }
     else
         mTM = S * R * T;
 
@@ -94,6 +96,10 @@ XMMATRIX Effect::UpdateBillBoard()
 
 XMMATRIX Effect::UpdateBeam()
 {
+    if (m_Parent)
+    {
+
+    }
     XMVECTOR right = XMVector3Normalize(
         XMLoadFloat3(&m_vDir)
     );

@@ -29,7 +29,12 @@ public:
 
     void SampleLocalPose(float CurTickTime, std::vector<std::unique_ptr<BoneAnimation>>& clip, std::vector<XMMATRIX>& outArr);
 
-    void UpdateBoneMatrix(const std::vector<XMMATRIX>& localPose, std::vector<XMFLOAT4X4>& outFinal, std::vector<XMFLOAT4X4>& outGlobal, const XMMATRIX& parentGlobal);
+    void UpdateBoneMatrix(
+        const std::vector<XMMATRIX>& localPose,
+        std::vector<XMFLOAT4X4>& outFinal,
+        std::vector<XMFLOAT4X4>& outGlobal,
+        std::vector<XMFLOAT4X4>& outGlobalNoOffset,
+        const XMMATRIX& parentGlobal);
 
     const XMMATRIX& GetBoneTM() { return m_mUser; }
 };
