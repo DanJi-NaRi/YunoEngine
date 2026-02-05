@@ -351,6 +351,7 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         const auto& pieces = as.hitPieces;
         for (int i = 0; i < pieces.size(); i++)
         {
+            std::cout << "[Attack Sequence]\nHitter hp: " << static_cast<int>(m_UnitStates[GetUnitID(pieces[i])].hp) << std::endl;
             if (!CheckExisting(pieces[i]))    continue;
             auto& pieceinfo = m_pieces[pieces[i]];
             int id = GetUnitID(pieces[i]);
@@ -636,7 +637,6 @@ bool PlayGridSystem::CheckExisting(const GamePiece pieceType)
 
 void PlayGridSystem::CheckHealth(const UnitState& us, PieceInfo& pieceInfo)
 {
-    std::cout << "[Attack Sequence]\Hitter hp: " << static_cast<int>(us.hp) << std::endl;
     if (us.hp <= 0)
     {
         // 해당 기물 렌더X
@@ -778,10 +778,21 @@ int PlayGridSystem::GetUnitID(int pId, int slotID)
 
 int PlayGridSystem::GetUnitID(GamePiece gamePiece)
 {
-    return
-        (gamePiece == GamePiece::Ally1) ? 0 :
-        (gamePiece == GamePiece::Ally2) ? 1 :
-        (gamePiece == GamePiece::Enemy1) ? 2 : 3;
+    if (m_pID == 1)
+    {
+        return
+            (gamePiece == GamePiece::Ally1) ? 0 :
+            (gamePiece == GamePiece::Ally2) ? 1 :
+            (gamePiece == GamePiece::Enemy1) ? 2 : 3;
+    }
+    else
+    {
+        return
+            (gamePiece == GamePiece::Ally1) ? 2 :
+            (gamePiece == GamePiece::Ally2) ? 3 :
+            (gamePiece == GamePiece::Enemy1) ? 0 : 1;
+    }
+
 }
 
 int PlayGridSystem::GetOtherUnitDamage(const std::array<UnitState, 4>& newUnitStates, int mainUnit)
