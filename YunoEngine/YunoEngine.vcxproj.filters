@@ -134,6 +134,9 @@
     <Filter Include="Public\UI\BaseWidget\ProgressBar">
       <UniqueIdentifier>{083d0648-f299-41f9-92fa-567b3cfd7d41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\UI">
+      <UniqueIdentifier>{311bdcd1-2fb9-465e-a36d-096cc06a11c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -276,6 +279,9 @@
       <Filter>Public\UI\BaseWidget\ProgressBar</Filter>
     </ClCompile>
     <ClCompile Include="Private\UI\Letterbox.cpp">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\UI\SpriteSheet.cpp">
       <Filter>Public\UI\BaseWidget</Filter>
     </ClCompile>
   </ItemGroup>
@@ -491,6 +497,9 @@
     <ClInclude Include="Public\UI\Letterbox.h">
       <Filter>Public\UI\BaseWidget</Filter>
     </ClInclude>
+    <ClInclude Include="Public\UI\SpriteSheet.h">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>
@@ -507,9 +516,6 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\PBR_Animation.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Assets\Shaders\UI_Base.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\PP_Default.hlsl">
@@ -545,8 +551,14 @@
     <FxCompile Include="..\Assets\Shaders\SkinningShadowMapWrite.hlsl">
       <Filter>Shaders\shadowMap</Filter>
     </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_Base.hlsl">
+      <Filter>Shaders\UI</Filter>
+    </FxCompile>
     <FxCompile Include="..\Assets\Shaders\UI_Gauge.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_SpriteAnim.hlsl">
+      <Filter>Shaders\UI</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -262,7 +262,7 @@ private:
     YunoConstantBuffer<CBShadow> m_cbShadow;
     CBShadow m_shadowInfo;
     YunoCamera m_shadowCamera;
-    float m_shadowBias = 0.0001f;
+    float m_shadowBias = 0.000001f;
 
     PassKey m_ShadowPassKey;
     RenderPassHandle m_ShadowPass;

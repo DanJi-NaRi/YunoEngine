@@ -6,7 +6,7 @@ struct AnimationClip
 {
     std::string name;
 
-    UINT TickPerSec;
+    int TickPerSec;
     UINT duration; //애니메이션 한 사이클 도는 틱 타임
     bool isLoop;
 

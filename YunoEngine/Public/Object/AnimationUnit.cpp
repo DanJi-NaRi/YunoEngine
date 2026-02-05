@@ -147,7 +147,7 @@ XMMATRIX AnimationUnit::GetAttachMatrixForChild(Unit* child)
     XMMATRIX boneGlobal =
         XMLoadFloat4x4(&m_animator->GetBoneGlobal(boneIdx));
 
-    return boneGlobal * GetWorldMatrix();
+    return boneGlobal * GetDeleteRotWorldMatrix();
 }
 
 void AnimationUnit::SetLoop(const std::string& name, bool isLoop)

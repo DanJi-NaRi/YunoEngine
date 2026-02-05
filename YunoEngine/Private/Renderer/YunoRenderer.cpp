@@ -120,6 +120,7 @@ bool YunoRenderer::CreateShaders()
     if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UIGauge, "../Assets/Shaders/UI_Gauge.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::UISpriteSheet, "../Assets/Shaders/UI_SpriteAnim.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::EffectBase, "../Assets/Shaders/EffectBase.hlsl", "VSMain", "PSMain")) return false;
 
     if (!CreatePPShader()) return false;
@@ -2839,7 +2840,7 @@ void YunoRenderer::SubmitDebugGrid()
     item.Constant.baseColor = { 1, 1, 0, 1 };
     item.Constant.roughRatio = 1.0f;
     item.Constant.metalRatio = 1.0f;
-    item.Constant.shadowBias = 0.005f;
+    item.Constant.shadowBias = 0.00005f;
 
     Submit(item);
 }

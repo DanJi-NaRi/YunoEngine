@@ -36,6 +36,7 @@ enum class WidgetType : int { // 자신 / 부모 클래스 타입
     Slot,
     ProgressBar,
     Gauge,
+    SpriteSheet,
     //Slider,
     Count,
 };
@@ -48,6 +49,7 @@ enum class WidgetClass : int {
     Slot,
     ProgressBar,
     Gauge,
+    SpriteSheet,
     CardTable,
     Card,
     CardSlot,

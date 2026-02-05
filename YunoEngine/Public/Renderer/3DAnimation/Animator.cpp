@@ -306,6 +306,8 @@ void Animator::Serialize()
                 );
             }
             UI::EndDisabled();
+
+            UI::DragInt("FramePerSec", &m_CurAnim->TickPerSec, 1, 1, 60);
         }
     }
 }

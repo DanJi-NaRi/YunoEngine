@@ -179,6 +179,7 @@ enum class ShaderId : uint8_t
     Skybox,
     UIBase,
     UIGauge,
+    UISpriteSheet,
     EffectBase,
 
     //Shadow
