@@ -177,6 +177,7 @@
     <ClInclude Include="Public\Object\EffectTemplate.h" />
     <ClInclude Include="Public\Object\ObjectTypeRegistry.h" />
     <ClInclude Include="Public\SceneBase\SerializeScene.h" />
+    <ClInclude Include="Public\UI\SpriteSheet.h" />
     <ClInclude Include="Public\UI\UITool\CursurSystem.h" />
     <ClInclude Include="Public\UI\UITool\DragProvider.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -301,6 +302,7 @@
     <ClCompile Include="Private\UI\UITool\UIManager.cpp" />
     <ClCompile Include="Private\UI\UITool\UIFactory.cpp" />
     <ClCompile Include="Private\UIConverter.cpp" />
+    <ClCompile Include="Public\UI\SpriteSheet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Shaders\BasicAnimation.hlsl">
@@ -372,6 +374,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\UI_Gauge.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_SpriteAnim.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

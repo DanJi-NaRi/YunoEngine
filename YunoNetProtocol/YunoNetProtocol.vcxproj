@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Public\Net\C2SPackets\C2S_BattlePackets.h" />
+    <ClInclude Include="Public\Net\C2SPackets\C2S_CardPackets.h" />
     <ClInclude Include="Public\Net\C2SPackets\C2S_MatchEnter.h" />
     <ClInclude Include="Public\Net\C2SPackets\C2S_MatchLeave.h" />
     <ClInclude Include="ProtocolPCH\pch.h" />
@@ -175,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Net\C2SPackets\C2S_BattlePackets.cpp" />
+    <ClCompile Include="Private\Net\C2SPackets\C2S_CardPackets.cpp" />
     <ClCompile Include="Private\Net\C2SPackets\C2S_MatchEnter.cpp" />
     <ClCompile Include="Private\Net\C2SPackets\C2S_MatchLeave.cpp" />
     <ClCompile Include="Private\Net\C2SPackets\C2S_ReadySet.cpp" />

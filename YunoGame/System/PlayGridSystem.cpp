@@ -116,37 +116,37 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
 
         std::wstring fileName = GetWeaponFileName(w.weaponId);
         //auto pPiece = m_manager->CreateObject<UnitPiece>(L"Piece", XMFLOAT3(px, m_wy, pz));
-        auto pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), L"../Assets/fbx/Ax/Ax.fbx");
+        auto pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
         //pPiece->AddAnimationClip("move", L"../Animation/move/scythe_move.fbx");
         //pPiece->SetLoop("move", true);
-        // weapon 구별을 위한 임시
-        switch (w.weaponId)
-        {
-        case 1:
-            pPiece->SetTmpColor({ 1, 0, 0, 1 });
-            pPiece->SetEmissiveColor(2, { 1, 0, 0, 1 });       // 빨
-            break;
-        case 2:
-            pPiece->SetTmpColor({ 1, 0.5f, 0, 1 });
-            pPiece->SetEmissiveColor(2, { 1, 0.5f, 0, 1 });    // 주
-            break;
-        case 3:
-            pPiece->SetTmpColor({ 1, 1, 0, 1 });
-            pPiece->SetEmissiveColor(2, { 1, 1, 0, 1 });       // 노
-            break;
-        case 4:
-            pPiece->SetTmpColor({ 0, 1, 0, 1 });
-            pPiece->SetEmissiveColor(2, { 0, 1, 0, 1 });       // 초
-            break;
-        case 5:
-            pPiece->SetTmpColor({ 0, 0, 1, 1 });
-            pPiece->SetEmissiveColor(2, { 0, 0, 1, 1 });       // 파
-            break;
-        case 6:
-            pPiece->SetTmpColor({ 0.5f, 0, 0.5f, 1 });
-            pPiece->SetEmissiveColor(2, { 0.5f, 0, 0.5f, 1 }); // 보
-            break;
-        }
+        //// weapon 구별을 위한 임시
+        //switch (w.weaponId)
+        //{
+        //case 1:
+        //    pPiece->SetTmpColor({ 1, 0, 0, 1 });
+        //    pPiece->SetEmissiveColor(2, { 1, 0, 0, 1 });       // 빨
+        //    break;
+        //case 2:
+        //    pPiece->SetTmpColor({ 1, 0.5f, 0, 1 });
+        //    pPiece->SetEmissiveColor(2, { 1, 0.5f, 0, 1 });    // 주
+        //    break;
+        //case 3:
+        //    pPiece->SetTmpColor({ 1, 1, 0, 1 });
+        //    pPiece->SetEmissiveColor(2, { 1, 1, 0, 1 });       // 노
+        //    break;
+        //case 4:
+        //    pPiece->SetTmpColor({ 0, 1, 0, 1 });
+        //    pPiece->SetEmissiveColor(2, { 0, 1, 0, 1 });       // 초
+        //    break;
+        //case 5:
+        //    pPiece->SetTmpColor({ 0, 0, 1, 1 });
+        //    pPiece->SetEmissiveColor(2, { 0, 0, 1, 1 });       // 파
+        //    break;
+        //case 6:
+        //    pPiece->SetTmpColor({ 0.5f, 0, 0.5f, 1 });
+        //    pPiece->SetEmissiveColor(2, { 0.5f, 0, 0.5f, 1 }); // 보
+        //    break;
+        //}
         pPiece->SetWho(gp);
         pPiece->SetScale({ 0.8f, 0.8f, 0.8f });
         pPiece->SetDir(dir, false);
@@ -380,6 +380,7 @@ void PlayGridSystem::ApplyActionOrder(const std::vector<std::array<UnitState, 4>
         switch (cardType)
         {
         case CardType::Buff:
+            ApplyBuffChanges(dirty, unitStates_Now, mainUnit);
             break;
         case CardType::Move: 
             ApplyMoveChanges(dirty, unitStates_Now, mainUnit, dir);
@@ -392,6 +393,35 @@ void PlayGridSystem::ApplyActionOrder(const std::vector<std::array<UnitState, 4>
         }
 
         m_UnitStates = unitStates_Now;
+    }
+}
+
+void PlayGridSystem::ApplyBuffChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit)
+{
+    const UnitState prevUS = m_UnitStates[mainUnit];
+    const UnitState newUS = newUnitStates[mainUnit];
+    GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
+    if (!CheckExisting(whichPiece))
+    {
+        // 부활 규칙이 없으므로 return 합니다.
+        return;
+    }
+
+    if (HasThis_US(dirty, Dirty_US::stamina))
+    {
+        bool isUsed = newUS.stamina < prevUS.stamina;
+        auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(m_pieces[whichPiece].id));
+
+        if (isUsed)     // 스태미나 소모 시
+        {
+            Float4 purple = { 1, 0, 1, 1 };
+            pPiece->SetFlashColor(purple, 1, 2.f);
+        }
+        else            // 스태미나 회복 시
+        {
+            Float4 green = { 0, 1, 0, 1 };
+            pPiece->SetFlashColor(green, 1, 2.f);
+        }
     }
 }
 
@@ -417,19 +447,16 @@ void PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState
         {
             int damageMe = prevUS.hp - newUS.hp;
             int damageU = GetOtherUnitDamage(newUnitStates, mainUnit);
-            //m_playQ->Insert(m_playQ->Move_S(whichPiece, oldcx, oldcz, cx, cz, true, true, damageMe, damageU));
             MoveEvent(whichPiece, oldcell, newcell, dir, true, true, damageMe, damageU);
         }
         else
         {
-            //m_playQ->Insert(m_playQ->Move_S());
             MoveEvent(whichPiece, oldcell, newcell, dir, true);
         }
     }
     // 이동만 할 때
     else if (HasThis_US(dirty, Dirty_US::targetTileID))
     {
-        //m_playQ->Insert(m_playQ->Move_S(whichPiece, oldcx, oldcz, cx, cz));
         MoveEvent(whichPiece, oldcell, newcell, dir);
     }
 
@@ -482,6 +509,26 @@ void PlayGridSystem::ApplyAttackChanges(Dirty_US dirty, const std::array<UnitSta
 
 }
 
+void PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir)
+{
+    const UnitState prevUS = m_UnitStates[mainUnit];
+    const UnitState newUS = newUnitStates[mainUnit];
+    GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
+    if (!CheckExisting(whichPiece))
+    {
+        // 부활 규칙이 없으므로 return 합니다.
+        return;
+    }
+
+    // 1. 이동 처리
+    ApplyMoveChanges(dirty, newUnitStates, mainUnit, dir);
+
+    // 2. 공격 처리
+    ApplyAttackChanges(dirty, newUnitStates, mainUnit, ranges, dir);
+
+    // 3. 넉백 처리
+}
+
 const std::vector<int> PlayGridSystem::GetRangeTileIDs(const Int2 unitCell, const std::vector<RangeOffset>& ranges, Direction dir)
 {
     std::vector<int> tileIDs;
@@ -495,10 +542,10 @@ const std::vector<int> PlayGridSystem::GetRangeTileIDs(const Int2 unitCell, cons
         switch (dir)
         {
         case Direction::Up:
-            relativeRanges.push_back({ -range.dy, range.dx });
+            relativeRanges.push_back({ -range.dy, -range.dx });
             break;
         case Direction::Down:
-            relativeRanges.push_back({ -range.dy, -range.dx });
+            relativeRanges.push_back({ -range.dy, range.dx });
             break;
         case Direction::Left:
             relativeRanges.push_back({ -range.dx, range.dy });
@@ -514,6 +561,7 @@ const std::vector<int> PlayGridSystem::GetRangeTileIDs(const Int2 unitCell, cons
     {
         int cx = unitCell.x + relativeRanges[i].x;
         int cz = unitCell.y + relativeRanges[i].y;
+        if(!(m_grids[(int)m_nowG]->InBounds(cx, cz)))   continue;
         absoluteRanges.push_back({ cx, cz });
     }
 
@@ -813,27 +861,27 @@ int PlayGridSystem::GetOtherUnitDamage(const std::array<UnitState, 4>& newUnitSt
 
 
 std::wstring PlayGridSystem::GetWeaponFileName(int weaponID)
-{
+{   
     std::wstring filaName;
     switch (weaponID)
     {
     case 1:
-        filaName = L"../Assets/fbx/Ax/Ax.fbx";
+        filaName = L"../Assets/fbx/weapon/LaserGun/LaserGun.fbx";
         break;
     case 2:
-        filaName = L"../Assets/fbx/Drill/Drill.fbx";
+        filaName = L"../Assets/fbx/weapon/Chakram/Chakram.fbx";
         break;
     case 3:
-        filaName = L"../Assets/fbx/LaserGun/LaserGun.fbx";
+        filaName = L"../Assets/fbx/weapon/Drill/Drill.fbx";
         break;
     case 4:
-        filaName = L"../Assets/fbx/Ax/Ax.fbx";
+        filaName = L"../Assets/fbx/weapon/Scythe/Scythe.fbx";
         break;
     case 5:
-        filaName = L"../Assets/fbx/Drill/Drill.fbx";
+        filaName = L"../Assets/fbx/weapon/Ax/Ax.fbx";
         break;
     case 6:
-        filaName = L"../Assets/fbx/LaserGun/LaserGun.fbx";
+        filaName = L"../Assets/fbx/weapon/Ax/Ax.fbx";
         break;
     }
     return filaName;

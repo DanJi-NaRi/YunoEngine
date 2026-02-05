@@ -17,6 +17,12 @@ enum class EffectID : uint32_t
     HitBlue,
     Lightning,
     Razer,
+    BlasterAttack,
+    AxAttack,
+    Buff,
+    DrillAttack1,
+    DrillAttack2,
+    PeacePos,
 
     Count
 };

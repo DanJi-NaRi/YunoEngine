@@ -36,6 +36,7 @@ enum class WidgetType : int { // 자신 / 부모 클래스 타입
     Slot,
     ProgressBar,
     Gauge,
+    SpriteSheet,
     //Slider,
     Count,
 };
@@ -50,6 +51,8 @@ enum class WidgetClass : int {
     Slot,
     ProgressBar,
     Gauge,
+    SpriteSheet,
+
     LetterBox,
     GridLine,
 
@@ -136,27 +139,29 @@ constexpr bool PivotMinMax(Float2 pivot) { // 피벗 최소 최대치 비교
             pivot.y <= g_PivotMax);
 }
 
-// Left Top 기준 Pos를 넣으면, 피벗 적용 Pos 반환
-inline constexpr XMFLOAT3 MakePivotPosFromLT(const XMFLOAT3& ltPos, const Float2& sizePx, UIDirection pivot)
-{
-    Float2 pv = PivotFromUIDirection(pivot); // (0~1)
-    return XMFLOAT3(
-        ltPos.x + sizePx.x * pv.x,
-        ltPos.y + sizePx.y * pv.y,
-        ltPos.z
-    );
-}
 
 // Left Top 기준 Pos를 넣으면, 피벗 적용 Pos 반환
-inline constexpr XMFLOAT3 MakePivotPosFromLT(const XMFLOAT3& ltPos, const Float2& sizePx, Float2 pivot)
-{
-    Clamp(pivot);
-    return XMFLOAT3(
-        ltPos.x + sizePx.x * pivot.x,
-        ltPos.y + sizePx.y * pivot.y,
-        ltPos.z
-    );
-}
+//inline constexpr XMFLOAT3 MakePivotPosFromLT(const XMFLOAT3& ltPos, const Float2& sizePx, UIDirection pivot)
+//{
+//    Float2 pv = PivotFromUIDirection(pivot); // (0~1)
+//    return XMFLOAT3(
+//        ltPos.x + sizePx.x * pv.x,
+//        ltPos.y + sizePx.y * pv.y,
+//        ltPos.z
+//    );
+//}
+//
+//// Left Top 기준 Pos를 넣으면, 피벗 적용 Pos 반환
+//inline constexpr XMFLOAT3 MakePivotPosFromLT(const XMFLOAT3& ltPos, const Float2& sizePx, Float2 pivot)
+//{
+//    Clamp(pivot);
+//    return XMFLOAT3(
+//        ltPos.x + sizePx.x * pivot.x,
+//        ltPos.y + sizePx.y * pivot.y,
+//        ltPos.z
+//    );
+//}
+
 
 constexpr Float2 g_DefaultClientXY{ 1920,1080 };
 

@@ -58,8 +58,8 @@ public:
     void Create(MeshHandle mesh, MaterialHandle mat);
     void Create(MeshHandle mesh, MaterialHandle mat, const XMFLOAT3& vPos, const XMFLOAT3& vRot, const XMFLOAT3& vScale);
 
-    void SetMesh(MeshHandle mesh) { m_Mesh = mesh; }
-    void SetMaterial(MaterialHandle mat) { m_Material = mat; }
+    void SetMesh(MeshHandle mesh) { m_Mesh = mesh; m_renderItem.meshHandle = m_Mesh; }
+    void SetMaterial(MaterialHandle mat) { m_Material = mat; m_renderItem.materialHandle = mat; }
 
     void EmissiveOn() { m_renderItem.isEmissive = true; }
     void EmissiveOff() { m_renderItem.isEmissive = false; }

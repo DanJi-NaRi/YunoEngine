@@ -22,6 +22,7 @@
 #include "AudioQueue.h"
 #include "PlayQueue.h"
 #include "Text.h"
+#include "SpriteSheet.h"
 
 
 // 사용법
@@ -34,6 +35,7 @@ bool RenderTest::OnCreateScene()
 {
     YunoEngine::GetRenderer()->GetCamera().position = { 0, 5, -10 };
     YunoEngine::GetRenderer()->GetCamera().target = { 0, 0, -2 };
+    m_uiManager->SetOrthoFlag(true);
 
     std::cout << "[RenderTest] OnCreate\n";
 
@@ -48,21 +50,36 @@ bool RenderTest::OnCreateScene()
         j++;
     }
 
-    for (int i = 0; i < 35; i++)
+    for (int i = -3; i <= 3; i++)
     {
-        gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx");
-        gun->SetRot({ 0, XMConvertToRadians(90), 0 });
+        for (int j = -2; j <= 2; j++)
+        {
+            if (i == -3 || i == 3)
+            {
+                int abs = 1;
+                if (i == 3)
+                    abs = -1;
 
-        gun->AddAnimationClip("capo1", L"../Assets/fbx/Tile/floor1.fbx");
-        gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor1_crash_Anim.fbx");
+                XMFLOAT3 pos{ i * 1.07f, 0, j * abs * 1.19f };
+                auto tile = m_objectManager->CreateObjectFromFile<AnimTest>(L"tile", pos, L"../Assets/fbx/Tile/floor1.fbx");
+                tile->SetRot({ 0, XMConvertToRadians(90), 0 });
+
+                tile->AddAnimationClip("idle", L"../Assets/fbx/Tile/floor1.fbx");
+                tile->AddAnimationClip("fall", L"../Assets/fbx/Tile/Tile_anim/Floor1_crash_Anim.fbx");
+            }
+            else
+            {
+                XMFLOAT3 pos{ i * 1.07f, 0, j * 1.19f };
+                auto tile = m_objectManager->CreateObjectFromFile<Building>(L"tile", pos, L"../Assets/fbx/Tile/floor2.fbx");
+                tile->SetRot({ 0, XMConvertToRadians(90), 0 });
+            }
+        }
     }
+
+    //auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 500, 500 }, XMFLOAT3{ 100, 100, 0 }, UIDirection::LeftTop);
+    //sheet->SetSpriteSheet(L"../Assets/Effects/Coin/EF_Coin1P.png", 10, 10, 100, 50.f, true);
     //m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
-
-
-    //m_gridSystem = std::make_unique<PlayGridSystem>(m_objectManager.get());
-    //m_gridSystem->Init(5, 7, 2, 2);
-    //m_gridSystem->CreateObject(0, 1, 0);
 
     //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
 
@@ -71,33 +88,11 @@ bool RenderTest::OnCreateScene()
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
     map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
     //map->SetScale(XMFLOAT3(1, 1, 1));
-    m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx");
     //Building* tile;
-    auto blade = m_objectManager->CreateObjectFromFile<AnimTest>(L"blade" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
-    blade->AddAnimationClip("idle", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
-    //blade->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
-
-
-    //gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor2_crash_Anim.fbx");
-    //gun->AddAnimationClip("capo3", L"../Assets/fbx/Tile/Tile_anim/Floor3_crash_Anim.fbx");
-    //gun->AddAnimationClip("capo4", L"../Assets/fbx/Tile/Tile_anim/Floor4_crash_Anim.fbx");
-    //gun->AddAnimationClip("capo5", L"../Assets/fbx/Tile/Tile_anim/Floor5_crash_Anim.fbx");
-    //gun->AddAnimationClip("capo6", L"../Assets/fbx/Tile/Tile_anim/Floor1_Wave_Anim.fbx");
-    //gun->AddAnimationClip("capo7", L"../Assets/fbx/Tile/Tile_anim/Floor2_Wave_Anim.fbx");
-    //gun->AddAnimationClip("capo8", L"../Assets/fbx/Tile/Tile_anim/Floor3_Wave_Anim.fbx");
-    //gun->AddAnimationClip("capo9", L"../Assets/fbx/Tile/Tile_anim/Floor4_Wave_Anim.fbx");
-    //gun->AddAnimationClip("capo10", L"../Assets/fbx/Tile/Tile_anim/Floor5_Wave_Anim.fbx");
-
-    //gun->SetScale({ 100, 100, 100 });
-    //gun->SetScale({ 0.01f, 0.01f, 0.01f });
-
-    //auto text = m_uiManager->CreateWidget<Text>(L"TestText", XMFLOAT3(1, 1, 0));
-    //text->SetText(L"Hello World!");
-
-    //gun->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
-
-    //auto gun2 = m_objectManager->CreateObjectFromFile<Building>(L"LaserGun2", XMFLOAT3(0, 2, 2), L"../Assets/fbx/LaserGun/LaserGun.fbx", po);
-    //gun2->SetRot(XMFLOAT3(XMConvertToRadians(-24), XMConvertToRadians(-90), 0));
+    gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"blade" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/Animation/idle/Untitled.fbx");
+    gun->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Untitled.fbx");
+    gun->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Untitled.fbx");
 
     EffectDesc ed{};
     ed.id = EffectID::Razer;
@@ -112,16 +107,15 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Razer/EF_Rager_White.png";
     m_effectManager->RegisterEffect(ed);
 
-    ed.id = EffectID::HitRed;
+    ed.id = EffectID::BlasterAttack;
     ed.framecount = 30;
     ed.lifetime = 1.2f;
-    ed.cols = 6;
+    ed.cols = 5;
     ed.rows = 5;
     ed.billboard = BillboardMode::Beam;
-    ed.texPath = L"../Assets/Effects/Razer/EF_Rager.png";
+    ed.texPath = L"../Assets/Effects/Blaster/EF_Shot.png";
     ed.emissive = 50.0f;
     ed.color = { 1, 0, 0, 1 };
-    ed.rot = { 0, 0, 0 };
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::HitBlue;
@@ -163,13 +157,12 @@ void RenderTest::Update(float dt)
     }
     if (YunoEngine::GetInput()->IsKeyPressed('G'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 0.1f, 0.f }, { 6.0f, 1.f, 1.0f }, { -1, 0, 0 });
-        //m_effectManager->Spawn(EffectID::Razer, { 0.f, 2.f, 2.f }, { 1.5f, 5.f, 1.5f });
-        //m_effectManager->Spawn(EffectID::Razer, { 0.f, 2.f, -2.f }, { 1.5f, 5.f, 1.5f });
+        auto eff = m_effectManager->Spawn(EffectID::BlasterAttack, { 0.f, 0.f, 0.f }, { 0.5f, 0.5f, 0.5f }, {0, 0, 1});
+        gun->AttachChildBone(eff, 3);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('H'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::HitRed, { 0, 0.1f, 0.f }, { 6.f, 1.0f, 1.0f }, { -1, 0, 0 });
+       
     }
     
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ

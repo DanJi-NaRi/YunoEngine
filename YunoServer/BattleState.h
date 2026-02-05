@@ -44,8 +44,20 @@ namespace yuno::server
 
     struct BattleState
     {
-        PlayerBattleState players[2];
+        PlayerBattleState players[2];   // [0] = P1, [1] = P2
         int turnNumber = 0;
+    
+        // 3판 2선승제용 상태
+        uint8_t roundWins[2] = { 0, 0 }; // [0] = P1, [1] = P2
+        uint8_t currentRound = 1;
+        uint8_t winsToFinish = 2;
+
+        bool roundEnded = false;
+        uint8_t roundWinnerPID = 0; // 0 = 무승부/미결
+        uint8_t roundLoserPID = 0;
+
+        bool matchEnded = false;
+        uint8_t matchWinnerPID = 0; // 0 = 미결
     };
 
     extern BattleState g_battleState;

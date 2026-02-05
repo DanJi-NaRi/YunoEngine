@@ -32,6 +32,7 @@
 #include <cstring>
 #include <utility>
 #include <deque>
+#include <queue>
 #include <string_view>
 #include <type_traits>
 #include <fstream>

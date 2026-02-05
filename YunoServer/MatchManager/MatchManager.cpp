@@ -173,6 +173,9 @@ namespace yuno::server
     void MatchManager::InitBattleState()
     {
         g_battleState.turnNumber = 0;
+        g_battleState.roundEnded = false;
+        g_battleState.roundWinnerPID = 0;
+        g_battleState.roundLoserPID = 0;
 
         for (int i = 0; i < 2; ++i)
         {

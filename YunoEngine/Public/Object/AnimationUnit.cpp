@@ -145,7 +145,7 @@ XMMATRIX AnimationUnit::GetAttachMatrixForChild(Unit* child)
     int boneIdx = it->second;
 
     XMMATRIX boneGlobal =
-        XMLoadFloat4x4(&m_animator->GetBoneGlobal(boneIdx));
+        XMLoadFloat4x4(&m_animator->GetBoneGlobalNoOffset(boneIdx));
 
     return boneGlobal * GetWorldMatrix();
 }

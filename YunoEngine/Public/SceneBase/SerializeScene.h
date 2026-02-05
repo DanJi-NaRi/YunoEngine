@@ -188,6 +188,9 @@ struct SceneDesc
 
     bool isOrtho;
 
+    Vec3Desc camPos;
+    Vec3Desc camLookAt;
+
     PostProcessDesc postprocess;
     std::vector<UnitDesc> units;
     std::optional<DirectionalLightDesc> dirLight;

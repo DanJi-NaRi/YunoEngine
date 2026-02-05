@@ -46,6 +46,7 @@ namespace yuno::server
         void TryResolveTurn();
         void ClearTurn();
         void BroadcastTestBattleResult(const ResolvedCard& card);
+        void NotifyEndFinished();
 
         MatchManager& m_match;
         YunoServerNetwork& m_network;
