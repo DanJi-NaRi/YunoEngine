@@ -27,6 +27,7 @@ protected:
 private:
     void TestInput();
     void HandleCardSelect(int key, int index);
+    void AddCardSelect();
     void HandleDirectionInput();
     void EndTurn();
 

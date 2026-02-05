@@ -704,12 +704,9 @@ namespace yuno::server
                 applyCard(slotCards[1][i]);
                 applyCard(slotCards[0][i]);
             }
-
         }
-
-    
-
         ClearTurn();
+        NotifyEndFinished();
     }
 
     void TurnManager::ClearTurn()
@@ -718,5 +715,9 @@ namespace yuno::server
         m_turnCards[1].clear();
         m_submitted[0] = false;
         m_submitted[1] = false;
+    }
+    void TurnManager::NotifyEndFinished()
+    {
+        m_roundController.EndTurn();
     }
 }
