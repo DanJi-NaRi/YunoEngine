@@ -512,12 +512,12 @@ namespace yuno::server
         auto applyCard = [&](const ResolvedCard& card)
             {
 				static int count = 0;
-				std::cout << "------------------------applyCard Count : " << ++count << std::endl;
+
 
                 const CardData& cardData = m_cardDB.GetCardData(card.dataId);
                 int unitIndex = getUnitIndexForCard(card.ownerSlot, cardData);
                 bool eventOccurred = false;
-
+                std::cout << "-----------Unit Index : "<< unitIndex <<"  " << "applyCard Count : " << ++count << std::endl;
                 if (cardData.m_cost > 0)
                 {
                     UnitState& unit = *units[unitIndex];
