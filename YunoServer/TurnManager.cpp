@@ -392,7 +392,7 @@ namespace yuno::server
                         {
                             // 적군 충돌
                             std::cout << "Enemy collision: self -10, enemy -5" << std::endl;
-
+                            
                             auto subClamp = [](auto& hp, int dmg)
                                 {
                                     using T = std::decay_t<decltype(hp)>;
@@ -581,6 +581,12 @@ namespace yuno::server
                 const CardData& cardData = m_cardDB.GetCardData(card.dataId);
                 int unitIndex = getUnitIndexForCard(card.ownerSlot, cardData);
                 bool eventOccurred = false;
+                bool utilityMoveOccurred = false;
+                bool utilityAttackOccurred = false;
+                bool utilityControlOccurred = false;
+                std::array<yuno::net::packets::UnitStateDelta, 4> utilityMoveSnapshot{};
+                std::array<yuno::net::packets::UnitStateDelta, 4> utilityAttackSnapshot{};
+                std::array<yuno::net::packets::UnitStateDelta, 4> utilityControlSnapshot{};
                 
                 std::cout << "-----------Unit Index : " << unitIndex << "  " << "applyCard Count : " << ++count << std::endl;
 
@@ -588,6 +594,7 @@ namespace yuno::server
 
                 if (unit.hp == 0)
                 {
+                    grid[unit.tileID] = -1;
                     std::cout << "[Server] Skip card(runtime=" << card.runtimeId
                         << ") because unit is dead. unitIndex=" << unitIndex << "\n";
 
@@ -598,7 +605,16 @@ namespace yuno::server
                     pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
                     pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
                     pkt.actionTime = 3000;
-                    pkt.order.push_back(buildDeltaSnapshot(unitIndex, false));
+                    if (cardData.m_type == CardType::Utility)
+                    {
+                        pkt.order.push_back(buildDeltaSnapshot(unitIndex, false));
+                        pkt.order.push_back(buildDeltaSnapshot(unitIndex, false));
+                        pkt.order.push_back(buildDeltaSnapshot(unitIndex, false));
+                    }
+                    else
+                    {
+                        pkt.order.push_back(buildDeltaSnapshot(unitIndex, false));
+                    }
 
                     auto bytes = yuno::net::PacketBuilder::Build(
                         yuno::net::PacketType::S2C_BattleResult,
@@ -672,15 +688,18 @@ namespace yuno::server
                     applyAttack(unitIndex, card.dataId, cardData, card.dir);
 					
                 }
-                else 
+                else if (cardData.m_type == CardType::Utility)
                 {
                     std::cout << "Utility Card On" << std::endl;
 
                     UnitState& unit = *units[unitIndex];
                     if (const auto* moveData = m_cardDB.GetMoveData(card.dataId))
                     {
-                        eventOccurred = applyMove(unitIndex, *moveData, card.dir) || eventOccurred;
+                        utilityMoveOccurred = applyMove(unitIndex, *moveData, card.dir);
+                        eventOccurred = utilityMoveOccurred || eventOccurred;
                     }
+                
+                    utilityMoveSnapshot = buildDeltaSnapshot(unitIndex, utilityMoveOccurred);
 
                     const auto* effectData = m_cardDB.GetEffectData(card.dataId);
                     std::vector<int> hitTargets;
@@ -691,9 +710,10 @@ namespace yuno::server
                         unit.buffstat.nextDamageBonus += effectData->m_giveDamageBonus;
                     }
 
-                    if (effectData && effectData->m_damage != 0)
+                    if (units[unitIndex]->hp > 0 && effectData && effectData->m_damage != 0)
                     {
-                        eventOccurred = applyAttack(unitIndex, card.dataId, cardData, card.dir, &hitTargets) || eventOccurred;
+                        utilityAttackOccurred = applyAttack(unitIndex, card.dataId, cardData, card.dir, &hitTargets);
+                        eventOccurred = utilityAttackOccurred || eventOccurred;
                     }
 
                     if (effectData && effectData->m_takeDamageIncrease != 0 && !hitTargets.empty())
@@ -704,6 +724,7 @@ namespace yuno::server
                             targetUnit.buffstat.nextDamageIncrease += effectData->m_takeDamageIncrease;
                         }
                     }
+                    utilityAttackSnapshot = buildDeltaSnapshot(unitIndex, utilityAttackOccurred);
 
                     if (cardData.m_controlId != 0 && !hitTargets.empty())
                     {
@@ -732,18 +753,28 @@ namespace yuno::server
 
                         for (int targetIndex : hitTargets)
                         {
+                            if (units[targetIndex]->hp == 0)
+                            {
+                                grid[units[targetIndex]->slotID] = -1;
+                                continue;
+                            }
                             if (cardData.m_controlId == 1)
                             {
-                                eventOccurred = applyDisplacement(targetIndex, pullStep, 1) || eventOccurred;
+                                bool displaced = applyDisplacement(targetIndex, pullStep, 1);
+                                utilityControlOccurred = displaced || utilityControlOccurred;
+                                eventOccurred = displaced || eventOccurred;
                             }
                             else if (cardData.m_controlId == 2)
                             {
-                                eventOccurred = applyDisplacement(targetIndex, pushStep, 1) || eventOccurred;
+                                bool displaced = applyDisplacement(targetIndex, pushStep, 1);
+                                utilityControlOccurred = displaced || utilityControlOccurred;
+                                eventOccurred = displaced || eventOccurred;
                             }
                         }
                     }
+                    utilityControlSnapshot = buildDeltaSnapshot(unitIndex, utilityControlOccurred);
                 }
-
+                else { std::cout << "Card Type is invalid" << std::endl; };
                 using namespace yuno::net::packets;
                 S2C_BattleResult pkt;
                 pkt.runtimeCardId = card.runtimeId;
@@ -751,7 +782,16 @@ namespace yuno::server
                 pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
                 pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
                 pkt.actionTime = 3000;
-                pkt.order.push_back(buildDeltaSnapshot(unitIndex, eventOccurred));
+                if (cardData.m_type == CardType::Utility)
+                {
+                    pkt.order.push_back(utilityMoveSnapshot);
+                    pkt.order.push_back(utilityAttackSnapshot);
+                    pkt.order.push_back(utilityControlSnapshot);
+                }
+                else
+                {
+                    pkt.order.push_back(buildDeltaSnapshot(unitIndex, eventOccurred));
+                }
 
 
                 auto bytes = yuno::net::PacketBuilder::Build(

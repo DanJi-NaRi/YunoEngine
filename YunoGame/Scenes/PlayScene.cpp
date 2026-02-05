@@ -168,15 +168,15 @@ void PlayScene::TestInput()
     AddCardSelect();
     // 디버깅용
     // 카드 선택 (넘버패드 = UI 버튼 대용)
-    HandleCardSelect(VK_NUMPAD1, 0,0);  // 스태미너 회복        0 1 2 3 = 1번 무기
-    HandleCardSelect(VK_NUMPAD2, 0,2);  // 이동
-    HandleCardSelect(VK_NUMPAD3, 0,4);  // 공격
-    HandleCardSelect(VK_NUMPAD4, 0,15); // 특수
+    HandleCardSelect(VK_NUMPAD1, 0, 2); // 클라 1
+    HandleCardSelect(VK_NUMPAD2, 0, 14);
+    HandleCardSelect(VK_NUMPAD3, 1, 14);
+    HandleCardSelect(VK_NUMPAD4, 1, 2);
 
-    HandleCardSelect(VK_NUMPAD5, 1,0); // 스태미너 회복        4 5 6 7 = 2번 무기
-    HandleCardSelect(VK_NUMPAD6, 1,2); // 이동
-    HandleCardSelect(VK_NUMPAD7, 1,4); // 공격
-    HandleCardSelect(VK_NUMPAD8, 1,15); // 특수
+    HandleCardSelect(VK_NUMPAD5, 0, 2); // 클라 2
+    HandleCardSelect(VK_NUMPAD6, 0, 2);
+    HandleCardSelect(VK_NUMPAD7, 0, 15);
+    HandleCardSelect(VK_NUMPAD8, 1, 14);
 
     HandleCardSelect(VK_NUMPAD9, 1,8);
 
