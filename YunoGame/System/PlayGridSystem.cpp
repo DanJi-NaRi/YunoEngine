@@ -173,25 +173,13 @@ void PlayGridSystem::CheckMyQ()
 
         switch (cmd.cmdType)
         {
-        case CommandType::Move:
-        {
-            //const GamePiece& pieceType = cmd.mv_s.whichPiece;
-            //Int2 oldcell{ cmd.mv_s.oldcx, cmd.mv_s.oldcz };
-            //Int2 newcell{ cmd.mv_s.cx, cmd.mv_s.cz };
-            //bool isCollided = cmd.mv_s.isCollided;
-            //bool isEnemy = cmd.mv_s.isEnemy;
-            //int damageMe = cmd.mv_s.damageMe;
-            //int damageU = cmd.mv_s.damageU;
-
-            //MoveEvent(pieceType, oldcell, newcell, isCollided, isEnemy, damageMe, damageU);
-            //break;
-        }
         case CommandType::Hit:
         {
             const GamePiece pieceType = cmd.hit.whichPiece;
-            int damage = cmd.hit.damage1;
+
             auto& pieceInfo = m_pieces[pieceType];
             int uid = GetUnitID(pieceType);
+
             CheckHealth(m_UnitStates[uid], pieceInfo);
             std::cout << static_cast<int>(pieceType) << ". health: " << m_UnitStates[uid].hp << std::endl;
             break;
@@ -200,6 +188,10 @@ void PlayGridSystem::CheckMyQ()
         case CommandType::Dead:
         {
             const GamePiece pieceType = cmd.die_s.whichPiece;
+
+            //auto it = m_pieces.find(pieceType);
+            //if (it == m_pieces.end())    break;
+
             m_manager->DestroyObject(m_pieces[pieceType].id);
             m_pieces.erase(pieceType);
             break;
@@ -343,6 +335,7 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         const auto& pieces = as.hitPieces;
         for (int i = 0; i < pieces.size(); i++)
         {
+            if (!CheckExisting(pieces[i]))    continue;
             int id = m_pieces[pieces[i]].id;
             auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(id));
             // 애니메이션 대신 반짝이는 걸로 잠시 대체
