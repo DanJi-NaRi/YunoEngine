@@ -366,8 +366,8 @@ void UnitPiece::UpdateFlash(float dt)
 
         // btw0_1을 기반으로 색상 보간
         Float4 fc = GetLerpColor(btw0_1);
-        //SetMaskColor({ fc.x, fc.y, fc.z, fc.w });
-        SetEmissiveColor(2, { fc.x, fc.y, fc.z, fc.w });
+        SetMaskColor({ fc.x, fc.y, fc.z, fc.w });
+        //SetEmissiveColor(2, { fc.x, fc.y, fc.z, fc.w });
 
         if (m_flashTime >= m_blinkTime)
         {
@@ -377,8 +377,8 @@ void UnitPiece::UpdateFlash(float dt)
         if (m_count == 0)
         {
             // 종료 시 원래 색 복원
-            //SetMaskColor({ m_vtmpColor.x, m_vtmpColor.y, m_vtmpColor.z, m_vtmpColor.w });
-            SetEmissiveColor(2, { m_vtmpColor.x, m_vtmpColor.y, m_vtmpColor.z, m_vtmpColor.w });
+            SetMaskColor({ m_vtmpColor.x, m_vtmpColor.y, m_vtmpColor.z, m_vtmpColor.w });
+            //SetEmissiveColor(2, { m_vtmpColor.x, m_vtmpColor.y, m_vtmpColor.z, m_vtmpColor.w });
             m_flashTime = 0.f;
             isFlashing = false;
         }

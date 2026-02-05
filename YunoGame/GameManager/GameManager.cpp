@@ -221,7 +221,7 @@ uint32_t GameManager::GetMyCardRuntimeID(int unitSlot, int index) const
 
     const auto& hand = m_myHands[unitSlot].cards;
 
-    if (index < 0 || index >= static_cast<int>(hand.size()))
+    if (index < 0)
         return 0;
 
     return hand[index].runtimeID;
