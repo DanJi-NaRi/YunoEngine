@@ -21,9 +21,6 @@
 
 #include "S2C_CardPackets.h"
 
-
-
-
 namespace yuno::game
 {
     YunoClientNetwork::YunoClientNetwork()
@@ -450,5 +447,48 @@ namespace yuno::game
                 // GameManager::Get().SetDrawCandidates(pkt.cards);
             }
         ); // DrawCandidates Packet End
+
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_StartTurn,
+            [this](const NetPeer& peer,
+                const PacketHeader& header,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                if (body == nullptr || bodyLen == 0)
+                    return;
+
+                ByteReader r(body, bodyLen);
+                const auto pkt =
+                    yuno::net::packets::S2C_StartTurn::Deserialize(r);
+
+                std::cout << "\n[Client] === S2C_StartTurn ===\n";
+                std::cout << "[Client] TurnNumber = "
+                    << static_cast<int>(pkt.turnNumber) << "\n";
+
+                std::vector<yuno::net::packets::CardSpawnInfo> added;
+                added.push_back(pkt.addedCards[0]);
+                added.push_back(pkt.addedCards[1]);
+
+                GameManager::Get().AddCards(added);
+                GameManager::Get().ClearDrawCandidates();
+                GameManager::Get().ClearCardQueue();
+
+                for (int i = 0; i < 2; ++i)
+                {
+                    const auto& c = pkt.addedCards[i];
+
+                    std::cout
+                        << "[Client] AddedCard[" << i << "] "
+                        << " PID=" << static_cast<int>(c.PID)
+                        << " slotID=" << static_cast<int>(c.slotID)
+                        << " runtimeID=" << c.runtimeID
+                        << " dataID=" << c.dataID
+                        << "\n";
+                }
+
+                std::cout << "[Client] ======================\n";
+            }
+        );
     }
 }

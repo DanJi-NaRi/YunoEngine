@@ -292,6 +292,31 @@ void GameManager::ClearDrawCandidates()
     m_drawCandidates.clear();
 }
 
+bool GameManager::PushCardCommand(const CardPlayCommand& cmd)
+{
+    return m_cardQueue.Push(cmd);
+}
+
+void GameManager::ClearCardQueue()
+{
+    m_cardQueue.Clear();
+}
+
+bool GameManager::IsCardQueueEmpty() const
+{
+    return m_cardQueue.IsEmpty();
+}
+
+bool GameManager::IsCardQueueFull() const
+{
+    return m_cardQueue.IsFull();
+}
+
+const std::vector<CardPlayCommand>& GameManager::GetCardQueue() const
+{
+    return m_cardQueue.Get();
+}
+
 void GameManager::StartCountDown(int countTime, int S1U1, int S1U2, int S2U1, int S2U2)
 {
     // 상대방 슬롯에 전달받은 유닛ID에 맞는 텍스쳐로 변경하기 넣으면 됨

@@ -29,7 +29,8 @@ namespace yuno::net
         S2C_BattleResult = 133,  // 전투 결과/상태 갱신
         S2C_StartCardList = 134, //카드id 배정
         S2C_DrawCandidates = 135, //카드추가후보3장 제시
-        S2C_Pong = 136,
+        S2C_StartTurn = 136, // 턴 시작
+        S2C_Pong = 137,
 
         // System / Error
         S2C_Error = 240, // 에러 코드/메시지

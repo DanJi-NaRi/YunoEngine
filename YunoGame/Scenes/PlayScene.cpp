@@ -104,7 +104,7 @@ void PlayScene::HandleDirectionInput()
     cmd.runtimeID = m_pendingCardRuntimeID;
     cmd.dir = dir;
 
-    if (m_cardQueue.Push(cmd))
+    if (GameManager::Get().PushCardCommand(cmd))
     {
         std::cout << "[Card Queued] runtimeID="
             << cmd.runtimeID
@@ -152,10 +152,12 @@ void PlayScene::AddCardSelect()
 //TODO: 디버깅용 나중에는 UI씬에 OnEndTurnClicked함수 만들어서 옮겨야함
 void PlayScene::EndTurn()
 {
-    if (m_cardQueue.IsEmpty())
+    if (GameManager::Get().IsCardQueueEmpty())
         return;
 
-    GameManager::Get().SubmitTurn(m_cardQueue.Get());
+    GameManager::Get().SubmitTurn(
+        GameManager::Get().GetCardQueue()
+    );
     // TODO:
     // - 입력 잠금
     // - 서버에서 턴 결과 올 때까지 대기
