@@ -189,6 +189,7 @@ int YunoEngine::Run()
         //s_renderer->Flush();
 
 #ifdef _DEBUG
+        // IMGUI 디버깅 스코프
         ImGuiManager::BeginFrame();
 
 
@@ -201,8 +202,7 @@ int YunoEngine::Run()
                 {
                     if(cs->IsSnapped()) DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(0, 0, 255));
                     else DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(255, 0, 0));
-                    
-                    //DrawDebugRect_Client(cs->GetRect());
+                    //else DrawDebugRect_Client(cs->GetRect());
                 }
 
                 if (auto* cs = dynamic_cast<Button*>(kv.second))

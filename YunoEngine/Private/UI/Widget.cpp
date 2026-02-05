@@ -456,6 +456,7 @@ void Widget::SubmitChild_Internal(float dTime) // 실제 재귀
 
 void Widget::UpdateRect()
 {
+
     // 자식(부모가 있음)이면: 회전이 없어도 월드 기반으로 계산해야 정확
     if (m_Parent != nullptr)
     {

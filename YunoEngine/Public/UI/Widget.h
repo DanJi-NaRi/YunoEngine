@@ -101,7 +101,7 @@ inline constexpr Float2 kPivot[(int)UIDirection::Count] = {
     {1.0f, 1.0f}, // RightBottom
 };
 
-constexpr Float2 PivotFromUIDirection(UIDirection pivot) { // 피벗 전용 할당값
+constexpr const Float2 PivotFromUIDirection(UIDirection pivot) { // 피벗 전용 할당값
     const int i = (int)pivot;
     assert(0 <= i && i < (int)UIDirection::Count);
     return kPivot[(int)pivot];
@@ -112,6 +112,28 @@ constexpr bool PivotMinMax(Float2 pivot) { // 피벗 최소 최대치 비교
             pivot.y >= g_PivotMin &&
             pivot.x <= g_PivotMax &&
             pivot.y <= g_PivotMax);
+}
+
+// Left Top 기준 Pos를 넣으면, 피벗 적용 Pos 반환
+inline constexpr XMFLOAT3 MakePivotPosFromLT(const XMFLOAT3& ltPos, const Float2& sizePx, UIDirection pivot)
+{
+    Float2 pv = PivotFromUIDirection(pivot); // (0~1)
+    return XMFLOAT3(
+        ltPos.x + sizePx.x * pv.x,
+        ltPos.y + sizePx.y * pv.y,
+        ltPos.z
+    );
+}
+
+// Left Top 기준 Pos를 넣으면, 피벗 적용 Pos 반환
+inline constexpr XMFLOAT3 MakePivotPosFromLT(const XMFLOAT3& ltPos, const Float2& sizePx, Float2 pivot)
+{
+    Clamp(pivot);
+    return XMFLOAT3(
+        ltPos.x + sizePx.x * pivot.x,
+        ltPos.y + sizePx.y * pivot.y,
+        ltPos.z
+    );
 }
 
 constexpr Float2 g_DefaultClientXY{ 1920,1080 };
@@ -180,6 +202,8 @@ protected:
     RECT m_rect;                // 현재 위젯을 RECT로 치환한 값
 
     int m_zOrder;               // 아직 미사용
+
+    bool m_mirrorX = false;
 
     Visibility m_visible;       // 보이기 여부 // 아직 미사용
 
@@ -278,7 +302,8 @@ public:
 
     Float2        AddTextureSize(TextureHandle& handle);
 
-
+    void          MirrorScaleX() { m_vScale.x *= -1; }
+    void          MirrorScaleY() { m_vScale.y *= -1; }
 
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
@@ -372,41 +397,6 @@ inline MeshHandle GetDefWidgetMesh(MeshHandle* out = nullptr)
 {
     if (out) *out = g_defaultWidgetMesh;
     return g_defaultWidgetMesh;
-}
-
-
-// Rect
-
-inline RECT RotateRect(const RECT& rc, float rotRad, float pivotX, float pivotY)
-{
-    auto rot = [&](float x, float y) {
-        float dx = x - pivotX;
-        float dy = y - pivotY;
-        float c = cosf(rotRad);
-        float s = sinf(rotRad);
-        float rx = dx * c - dy * s + pivotX;
-        float ry = dx * s + dy * c + pivotY;
-        return std::pair<float, float>(rx, ry);
-        };
-
-    auto [x0, y0] = rot((float)rc.left, (float)rc.top);
-    auto [x1, y1] = rot((float)rc.right, (float)rc.top);
-    auto [x2, y2] = rot((float)rc.right, (float)rc.bottom);
-    auto [x3, y3] = rot((float)rc.left, (float)rc.bottom);
-
-    float minX = x0, maxX = x0, minY = y0, maxY = y0;
-    auto acc = [&](float x, float y) {
-        if (x < minX) minX = x; if (x > maxX) maxX = x;
-        if (y < minY) minY = y; if (y > maxY) maxY = y;
-        };
-    acc(x1, y1); acc(x2, y2); acc(x3, y3);
-
-    RECT out;
-    out.left = (LONG)floorf(minX);
-    out.top = (LONG)floorf(minY);
-    out.right = (LONG)ceilf(maxX);
-    out.bottom = (LONG)ceilf(maxY);
-    return out;
 }
 
 

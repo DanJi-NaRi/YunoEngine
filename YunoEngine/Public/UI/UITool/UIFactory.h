@@ -119,3 +119,4 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
 
     return pChild;
 }
+

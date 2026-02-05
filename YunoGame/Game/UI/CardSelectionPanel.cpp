@@ -63,21 +63,24 @@ void CardSelectionPanel::CreateChild() {
     // 고정 하위 위젯 생성
     this->SetLayer(WidgetLayer::Panels);
 
-    /*m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S0", Float2(100, 135), XMFLOAT3(-25, -180, 0), UIDirection::RightTop, this));
+    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S0", Float2(100, 135), XMFLOAT3(-25, -180, 0), UIDirection::LeftTop, this));
 
-    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S1", Float2(100, 135),  XMFLOAT3(-145, -180, 0), UIDirection::RightTop, this));
+    //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S1", Float2(100, 135), XMFLOAT3(-25, -180, 0), UIDirection::RightTop, this));
+    //std::cout << m_CardSlots.back()->GetPos().x << std::endl;
 
-    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S2", Float2(100, 135), XMFLOAT3(-265, -180, 0), UIDirection::RightTop, this));
+    //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S1", Float2(100, 135),  XMFLOAT3(-145, -180, 0), UIDirection::RightTop, this));
 
-    m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));
+    //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S2", Float2(100, 135), XMFLOAT3(-265, -180, 0), UIDirection::RightTop, this));
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(100, 135), XMFLOAT3(-25, -180, 0), UIDirection::RightTop, this));
+    //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(100, 135), XMFLOAT3(-145, -180, 0), UIDirection::RightTop, this));
+    //m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(100, 135), XMFLOAT3(-25, -180, 0), UIDirection::RightTop, this));
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(100, 135), XMFLOAT3(-265, -180, 0), UIDirection::RightTop, this));
+    //m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(100, 135), XMFLOAT3(-145, -180, 0), UIDirection::RightTop, this));
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));*/
+    //m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(100, 135), XMFLOAT3(-265, -180, 0), UIDirection::RightTop, this));
+
+    //m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));
 
 }
 
@@ -86,6 +89,14 @@ bool CardSelectionPanel::Update(float dTime)
 {
     Image::Update(dTime);
 
+    if (m_pInput->IsKeyPressed('Z')) {
+
+        if(m_CardSlots.back()->GetPivot() == PivotFromUIDirection(UIDirection::RightTop)) { m_CardSlots.back()->SetPivot(UIDirection::LeftTop); }
+        else if(m_CardSlots.back()->GetPivot() == PivotFromUIDirection(UIDirection::LeftTop)) { m_CardSlots.back()->SetPivot(UIDirection::RightTop); }
+
+        std::cout << m_CardSlots.back()->GetPos().x << std::endl;
+    }
+    
     if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50 * dTime; }
     if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50 * dTime; }
 
