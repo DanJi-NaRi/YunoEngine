@@ -48,7 +48,7 @@ struct AttackSequence
     Float4 m_tileEffectColor{ 0, 0, 0, 1 }; // 검정색
     float m_tileEffectDuration = 0.f;
 
-    Float4 m_hitColor{ 1, 0, 0, 1 };        // 빨간색
+    Float4 m_hitColor{ 0, 0, 0, 1 };        // 검정색
     float m_hitDuration = 0.f;
 };
 
@@ -69,12 +69,14 @@ private:
     void UpdateAttackSequence(float dt);
 
 private:
-    void MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 newcell, Direction moveDir,
-        bool isCollided = false, bool isEnemy = false, int damage1 = 0, int damage2 = 0);
-
     void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, CardType cardType, const RangeData* rangeData, Direction dir);
+    void ApplyBuffChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit);
     void ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir);
     void ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
+    void ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
+
+    void MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 newcell, Direction moveDir,
+        bool isCollided = false, bool isEnemy = false, int damage1 = 0, int damage2 = 0);
     
 private:
     void ChangeTileTO(int cx, int cz, const TileOccupy to);

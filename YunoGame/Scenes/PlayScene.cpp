@@ -60,7 +60,7 @@ void PlayScene::OnDestroyScene()
 }
 
 //TODO:  UIScene에 OnCardButtonClicked함수로 옮겨야 함
-void PlayScene::HandleCardSelect(int key, int index)
+void PlayScene::HandleCardSelect(int key, int unit, int index)
 {
     if (!m_input->IsKeyPressed(key))
         return;
@@ -68,10 +68,10 @@ void PlayScene::HandleCardSelect(int key, int index)
     if (m_pendingCardRuntimeID != 0)
         return; // 이미 카드 하나 대기 중이면 무시
 
-    int unitSlot = m_selectedUnitSlot;
+    int unitSlot = m_selectedUnitSlot;  // 0, 1 첫번째 무기인지 두번째 무기인지
 
     uint32_t runtimeID =
-        GameManager::Get().GetMyCardRuntimeID(unitSlot, index);
+        GameManager::Get().GetMyCardRuntimeID(unit, index);
 
     if (runtimeID == 0)
         return;
@@ -104,7 +104,7 @@ void PlayScene::HandleDirectionInput()
     cmd.runtimeID = m_pendingCardRuntimeID;
     cmd.dir = dir;
 
-    if (m_cardQueue.Push(cmd))
+    if (GameManager::Get().PushCardCommand(cmd))
     {
         std::cout << "[Card Queued] runtimeID="
             << cmd.runtimeID
@@ -118,13 +118,46 @@ void PlayScene::HandleDirectionInput()
         std::cout << "[Card Queue] Full\n";
     }
 }
+
+void PlayScene::AddCardSelect()
+{
+    int index = -1;
+
+    if (m_input->IsKeyPressed('Z'))
+        index = 0;
+    else if (m_input->IsKeyPressed('X'))
+        index = 1;
+    else if (m_input->IsKeyPressed('C'))
+        index = 2;
+
+    if (index == -1)
+        return;
+
+    const auto& candidates =
+        GameManager::Get().GetDrawCandidates();
+
+    if (index >= candidates.size())
+        return;
+
+    uint32_t runtimeID = candidates[index].runtimeID;
+
+    GameManager::Get().SendSelectCard(index);
+
+    std::cout << "[Client] Select card index="
+        << index
+        << " runtimeID="
+        << runtimeID
+        << "\n";
+}
 //TODO: 디버깅용 나중에는 UI씬에 OnEndTurnClicked함수 만들어서 옮겨야함
 void PlayScene::EndTurn()
 {
-    if (m_cardQueue.IsEmpty())
+    if (GameManager::Get().IsCardQueueEmpty())
         return;
 
-    GameManager::Get().SubmitTurn(m_cardQueue.Get());
+    GameManager::Get().SubmitTurn(
+        GameManager::Get().GetCardQueue()
+    );
     // TODO:
     // - 입력 잠금
     // - 서버에서 턴 결과 올 때까지 대기
@@ -134,18 +167,20 @@ void PlayScene::EndTurn()
 
 void PlayScene::TestInput()
 {
-
+    AddCardSelect();
     // 디버깅용
     // 카드 선택 (넘버패드 = UI 버튼 대용)
-    HandleCardSelect(VK_NUMPAD1, 0);
-    HandleCardSelect(VK_NUMPAD2, 1);
-    HandleCardSelect(VK_NUMPAD3, 2);
-    HandleCardSelect(VK_NUMPAD4, 3);
-    HandleCardSelect(VK_NUMPAD5, 4);
-    HandleCardSelect(VK_NUMPAD6, 5);
-    HandleCardSelect(VK_NUMPAD7, 6);
-    HandleCardSelect(VK_NUMPAD8, 7);
-    HandleCardSelect(VK_NUMPAD9, 8);
+    HandleCardSelect(VK_NUMPAD1, 0, 0); // 클라 1
+    HandleCardSelect(VK_NUMPAD2, 0, 1);
+    HandleCardSelect(VK_NUMPAD3, 0, 2);
+    HandleCardSelect(VK_NUMPAD4, 0, 3);
+
+    HandleCardSelect(VK_NUMPAD5, 1, 0); // 클라 2
+    HandleCardSelect(VK_NUMPAD6, 1, 1);
+    HandleCardSelect(VK_NUMPAD7, 1, 2);
+    HandleCardSelect(VK_NUMPAD8, 1, 3);
+
+    HandleCardSelect(VK_NUMPAD9, 1,8);
 
     //방향 선택
     HandleDirectionInput();

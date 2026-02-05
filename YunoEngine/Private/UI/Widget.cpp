@@ -262,7 +262,10 @@ bool Widget::UpdateTransform(float dTime)
                          (float)YunoEngine::GetWindow()->GetClientHeight());*/
     
     if (m_useAspectComp) { // 화면비 스케일 사용 (기본값)
+        
         Float2 origin = g_DefaultClientXY;          // 기준(디자인) 해상도
+
+
         Float2 canvas = m_uiFactory.GetCanvasSize();// 현재 클라이언트/캔버스
 
         const bool applyLetterboxOffset = (m_Parent == nullptr);

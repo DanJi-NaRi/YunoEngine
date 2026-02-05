@@ -40,7 +40,7 @@ private:
     bool m_AnimDone = false;
 
     // 반짝
-    Float4 m_vtmpColor;
+    Float4 m_vtmpColor{ 1, 1, 1, 1 };
     Float4 m_flashColor{ 1, 1, 1, 1 };
     float m_flashTime = 0;
     float m_blinkTime = 0.5f;

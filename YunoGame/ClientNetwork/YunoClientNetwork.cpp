@@ -21,9 +21,6 @@
 
 #include "S2C_CardPackets.h"
 
-
-
-
 namespace yuno::game
 {
     YunoClientNetwork::YunoClientNetwork()
@@ -389,12 +386,13 @@ namespace yuno::game
 
                 // 디버깅용
                 std::cout
-                    << "[BattleResult]"
-                    << "\nrunTimeCardID = " << static_cast<int>(br.runTimeCardID)
-                    << "\nPID = " << static_cast<int>(br.pId)
-                    << "\nUnit = " << static_cast<int>(br.slotId)
-                    << "\nDir = " << static_cast<int>(br.dir)
-                    << "\nActionTime = " << static_cast<int>(br.actionTime);
+                    << "\n------------------------------\n"
+                    << "    [BattleResult Packet]"
+                    << "\n runTimeCardID = " << static_cast<int>(br.runTimeCardID)
+                    << "\n PID = " << static_cast<int>(br.pId)
+                    << "  ,  Unit = " << static_cast<int>(br.slotId)
+                    << "\n Dir = " << static_cast<int>(br.dir)
+                    << "  ,  ActionTime = " << static_cast<int>(br.actionTime);
                 for (const auto& d : order)
                 {
                     for (int i = 0; i < d.size(); i++)
@@ -403,16 +401,94 @@ namespace yuno::game
                         const int unit = static_cast<int>(d[i].slotId);
 
                         std::cout
-                            << "\n[Client] Apply Delta |\n" 
+                            << "\n\n      <UnitState" << i << "> \n"
                             << " Player = " << slot
-                            << "\n unit =" << unit
+                            << "  ,  unit =" << unit
                             << "\n hp =" << static_cast<int>(d[i].hp)
-                            << "\n stamina =" << static_cast<int>(d[i].stamina)
+                            << "  ,  stamina =" << static_cast<int>(d[i].stamina)
                             << "\n move =" << static_cast<int>(d[i].targetTileID)
-                            << "\n isEvent =(" << static_cast<bool>(d[i].isEvent) << ")\n";
+                            << "  ,  isEvent =(" << static_cast<bool>(d[i].isEvent) << ")\n";
                     }
+                    std::cout << "------------------------------\n\n";
                 }
             }
         );// BattleResult Packet End
+
+        // DrawCandidates Packet Start
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_DrawCandidates,
+            [this](const NetPeer& peer,
+                const PacketHeader& header,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                if (body == nullptr || bodyLen == 0)
+                    return;
+
+                ByteReader r(body, bodyLen);
+                const auto pkt =
+                    yuno::net::packets::S2C_DrawCandidates::Deserialize(r);
+
+                GameManager::Get().SetDrawCandidates(pkt.cards);
+
+                for (size_t i = 0; i < pkt.cards.size(); ++i)
+                {
+                    const auto& card = pkt.cards[i];
+                    std::cout
+                        << "  [" << i << "]"
+                        << " PID=" << static_cast<int>(card.PID)
+                        << " UnitSlot=" << static_cast<int>(card.slotID)
+                        << " runtimeID=" << card.runtimeID
+                        << " dataID=" << card.dataID
+                        << "\n";
+                }
+
+                // 나중에 여기서 GameManager로 넘기면 됨
+                // GameManager::Get().SetDrawCandidates(pkt.cards);
+            }
+        ); // DrawCandidates Packet End
+
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_StartTurn,
+            [this](const NetPeer& peer,
+                const PacketHeader& header,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                if (body == nullptr || bodyLen == 0)
+                    return;
+
+                ByteReader r(body, bodyLen);
+                const auto pkt =
+                    yuno::net::packets::S2C_StartTurn::Deserialize(r);
+
+                std::cout << "\n[Client] === S2C_StartTurn ===\n";
+                std::cout << "[Client] TurnNumber = "
+                    << static_cast<int>(pkt.turnNumber) << "\n";
+
+                std::vector<yuno::net::packets::CardSpawnInfo> added;
+                added.push_back(pkt.addedCards[0]);
+                added.push_back(pkt.addedCards[1]);
+
+                GameManager::Get().AddCards(added);
+                GameManager::Get().ClearDrawCandidates();
+                GameManager::Get().ClearCardQueue();
+
+                for (int i = 0; i < 2; ++i)
+                {
+                    const auto& c = pkt.addedCards[i];
+
+                    std::cout
+                        << "[Client] AddedCard[" << i << "] "
+                        << " PID=" << static_cast<int>(c.PID)
+                        << " slotID=" << static_cast<int>(c.slotID)
+                        << " runtimeID=" << c.runtimeID
+                        << " dataID=" << c.dataID
+                        << "\n";
+                }
+
+                std::cout << "[Client] ======================\n";
+            }
+        );
     }
 }

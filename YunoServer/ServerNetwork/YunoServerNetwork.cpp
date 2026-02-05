@@ -8,6 +8,7 @@
 #include "C2S_SubmitWeapon.h"
 #include "C2S_ReadySet.h"
 #include "C2S_BattlePackets.h"
+#include "C2S_CardPackets.h"
 
 #include "S2C_Pong.h"
 #include "S2C_EnterOK.h"
@@ -335,6 +336,38 @@ namespace yuno::server
                     pkt.commands);
             }
         );//Submit ReadyTurn Packet End
+
+        // Select Card Packet Start
+        m_dispatcher.RegisterRaw(
+            PacketType::C2S_SelectCard,
+            [this](const NetPeer& peer,
+                const PacketHeader& /*header*/,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                if (body == nullptr || bodyLen < sizeof(uint32_t))
+                    return;
+
+                ByteReader r(body, bodyLen);
+                const auto pkt =
+                    yuno::net::packets::C2S_SelectCard::Deserialize(r);
+
+                const int idx = m_match.FindSlotBySessionId(peer.sId);
+                if (idx < 0) return;
+
+                auto& player = g_battleState.players[idx];
+
+                std::cout
+                    << "[Server] C2S_SelectCard received"
+                    << " SessionID=" << peer.sId
+                    << " PlayerID=" << int(player.PID)
+                    << " runtimeID=" << pkt.runtimeID  
+                    << "\n";
+
+                m_cardController.SelectCard(player, pkt.runtimeID);
+                m_roundController.OnPlayerSelectedCard(idx);
+            }
+        ); // Select Card Packet End
     }
 }
 

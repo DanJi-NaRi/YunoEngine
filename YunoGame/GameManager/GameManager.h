@@ -8,7 +8,7 @@
 
 #include "CardManager.h"
 #include "CardRangeManager.h"
-
+#include "CardQueue.h"
 
 class ISceneManager;
 class ObjectManager;
@@ -19,7 +19,7 @@ namespace yuno::game
 
 struct ClientCardInfo //UI에 적용하기 위한 데이터 저장
 {
-    //uint8_t slotID;         // 0 1 2 3 //PID
+    //uint8_t slotID;         // 0 1 2 3 
     //uint8_t weaponID;       // 어떤 무기인지 (1~6) //UnitSlot
     uint32_t runtimeID;
     uint32_t dataID;
@@ -80,6 +80,22 @@ public:
     uint32_t GetMyCardRuntimeID(int unitSlot, int index) const;
     //UI 표시용 runtimeID -> dataID
     uint32_t GetCardDataID(uint32_t runtimeID) const;
+    //~ 추가 후보 카드 저장 및 가져와서 서버에 보내고 배열 비우기
+    void SetDrawCandidates(const std::vector<yuno::net::packets::CardSpawnInfo>& cards);
+    void SendSelectCard(int index);
+    const std::vector<ClientCardInfo>& GetDrawCandidates() const;
+    void ClearDrawCandidates();
+    //~ 여기까지
+
+    //카드큐 관련
+    bool PushCardCommand(const CardPlayCommand& cmd);
+    void ClearCardQueue();
+
+    bool IsCardQueueEmpty() const;
+    bool IsCardQueueFull() const;
+
+    const std::vector<CardPlayCommand>& GetCardQueue() const;
+
     const CardData GetCardData(uint32_t runtimeID);
     const RangeData* GetRangeData(uint32_t runtimeID);
 
@@ -99,7 +115,9 @@ private:
 
     UnitHand m_myHands[2];                                                             //UI 카드 선택용
     UnitHand m_enemyHands[2];                                                       //UI 보여주기용
-    std::unordered_map<uint32_t, uint32_t> m_CardRuntimeIDs;   //엑셀로드용
+    std::unordered_map<uint32_t, uint32_t> m_CardRuntimeIDs;    //엑셀로드용
+    std::vector<ClientCardInfo> m_drawCandidates;                         //추가 후보 카드 임시 저장소
+    CardQueue m_cardQueue;
 
     bool m_countdownActive = false;
     float m_countdownRemaining = 0.0f;

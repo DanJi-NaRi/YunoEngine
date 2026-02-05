@@ -70,4 +70,38 @@ namespace yuno::net::packets
         }
         return out;
     }
+
+    void S2C_StartTurn::Serialize(ByteWriter& w) const
+    {
+        // 턴 번호
+        w.WriteU8(turnNumber);
+
+        // 플레이어당 1장, 총 2장 고정
+        for (const auto& card : addedCards)
+        {
+            w.WriteU8(card.PID);
+            w.WriteU8(card.slotID);
+            w.WriteU32LE(card.runtimeID);
+            w.WriteU32LE(card.dataID);
+        }
+    }
+
+    S2C_StartTurn S2C_StartTurn::Deserialize(ByteReader& r)
+    {
+        S2C_StartTurn out{};
+
+        // 턴 번호
+        out.turnNumber = r.ReadU8();
+
+        // 고정 2장
+        for (auto& card : out.addedCards)
+        {
+            card.PID = r.ReadU8();
+            card.slotID = r.ReadU8();
+            card.runtimeID = r.ReadU32LE();
+            card.dataID = r.ReadU32LE();
+        }
+
+        return out;
+    }
 }
