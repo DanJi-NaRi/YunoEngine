@@ -3,7 +3,7 @@
 #include "SceneBase.h"
 #include "Game_InputContext.h"
 #include "IGridSystem.h"
-#include "CardQueue.h"
+
 //class Game_InputContext;
 class Triangle;
 
@@ -34,7 +34,7 @@ private:
 private:
     std::unique_ptr<IGridSystem> m_playGrid;
     Game_InputContext m_gameCtx;
-    CardQueue m_cardQueue;
+    
 
     uint32_t m_pendingCardRuntimeID = 0; //방향 선택 확인
 

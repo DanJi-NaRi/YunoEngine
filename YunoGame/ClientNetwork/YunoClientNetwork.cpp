@@ -472,6 +472,7 @@ namespace yuno::game
 
                 GameManager::Get().AddCards(added);
                 GameManager::Get().ClearDrawCandidates();
+                GameManager::Get().ClearCardQueue();
 
                 for (int i = 0; i < 2; ++i)
                 {

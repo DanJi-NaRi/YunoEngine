@@ -214,11 +214,9 @@ namespace yuno::server
 
         SendDrawCandidates();   
 
-        bool testflag = true;
+        bool testflag = false;
         if (testflag)
-            StartTurn();
-        else
-            EndRound();
+            EndRound();            
 
         //종료 플래그 이미 받은 상태
         //턴스타트 라운드엔드
