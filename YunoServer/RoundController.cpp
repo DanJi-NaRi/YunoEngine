@@ -174,19 +174,75 @@ namespace yuno::server
         }
     }
 
+    void RoundController::EndRound()
+    {
+        bool testflag = true;
+        if (testflag)
+            TryStartRound();
+        else
+            EndGame();
+    }    //라운드엔드() <- 라운드스타트 게임엔드
+
     void RoundController::StartTurn()
     {
+        ++m_turnNumber;
+        std::cout << "[Round] StartTurn #" << m_turnNumber << "\n";
+
+        yuno::net::packets::S2C_StartTurn pkt{};
+        pkt.turnNumber = m_turnNumber;
+
+        // 두 플레이어가 선택한 카드 결과
+        pkt.addedCards[0] = g_battleState.players[0].handCards.back();
+        pkt.addedCards[1] = g_battleState.players[1].handCards.back();
+
+        auto bytes = yuno::net::PacketBuilder::Build(
+            yuno::net::PacketType::S2C_StartTurn,
+            [&](yuno::net::ByteWriter& w)
+            {
+                pkt.Serialize(w);
+            });
+
+        m_network.Broadcast(std::move(bytes));
     }
 
     void RoundController::EndTurn()
     {
-        std::cout << "DrawStart" << std::endl;
-        SendDrawCandidates();
-        std::cout << "DrawEnd" << std::endl;
+        std::cout << "[Round] EndTurn\n";
+
+        m_cardSelected[0] = false;
+        m_cardSelected[1] = false;
+
+        SendDrawCandidates();   
+
+        bool testflag = true;
+        if (testflag)
+            StartTurn();
+        else
+            EndRound();
 
         //종료 플래그 이미 받은 상태
         //턴스타트 라운드엔드
     }
 
-    //라운드엔드() <- 라운드스타트 게임엔드
+    void RoundController::EndGame()
+    {
+
+    }
+
+    void RoundController::OnPlayerSelectedCard(int playerIdx)
+    {
+        if (m_cardSelected[playerIdx])
+            return; // 중복 선택 방지
+
+        m_cardSelected[playerIdx] = true;
+
+        std::cout << "[Round] Player " << playerIdx
+            << " selected bonus card\n";
+
+        // 둘 다 선택 완료 확인
+        if (m_cardSelected[0] && m_cardSelected[1])
+        {
+            StartTurn();
+        }
+    }
 }

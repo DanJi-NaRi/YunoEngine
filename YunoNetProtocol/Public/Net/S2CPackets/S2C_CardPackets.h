@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdint>  
+#include <vector>   
+#include <array>     
+
 namespace yuno::net
 {
     class ByteWriter;
@@ -30,5 +34,14 @@ namespace yuno::net::packets
 
         void Serialize(ByteWriter& w) const;
         static S2C_DrawCandidates Deserialize(ByteReader& r);
+    };
+
+    struct S2C_StartTurn
+    {
+        uint8_t turnNumber;
+        std::array<CardSpawnInfo, 2> addedCards;
+
+        void Serialize(ByteWriter& w) const;
+        static S2C_StartTurn Deserialize(ByteReader& r);
     };
 }

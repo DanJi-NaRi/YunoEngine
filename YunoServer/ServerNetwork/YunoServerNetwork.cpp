@@ -365,6 +365,7 @@ namespace yuno::server
                     << "\n";
 
                 m_cardController.SelectCard(player, pkt.runtimeID);
+                m_roundController.OnPlayerSelectedCard(idx);
             }
         ); // Select Card Packet End
     }
