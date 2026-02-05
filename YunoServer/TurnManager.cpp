@@ -517,7 +517,37 @@ namespace yuno::server
                 const CardData& cardData = m_cardDB.GetCardData(card.dataId);
                 int unitIndex = getUnitIndexForCard(card.ownerSlot, cardData);
                 bool eventOccurred = false;
-                std::cout << "-----------Unit Index : "<< unitIndex <<"  " << "applyCard Count : " << ++count << std::endl;
+                
+                std::cout << "-----------Unit Index : " << unitIndex << "  " << "applyCard Count : " << ++count << std::endl;
+
+                UnitState& unit = *units[unitIndex];
+
+                if (unit.hp == 0)
+                {
+                    std::cout << "[Server] Skip card(runtime=" << card.runtimeId
+                        << ") because unit is dead. unitIndex=" << unitIndex << "\n";
+
+                    using namespace yuno::net::packets;
+                    S2C_BattleResult pkt;
+                    pkt.runtimeCardId = card.runtimeId;
+                    pkt.dir = static_cast<uint8_t>(card.dir);
+                    pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
+                    pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
+                    pkt.actionTime = 3000;
+                    pkt.order.push_back(buildDeltaSnapshot(unitIndex, false));
+
+                    auto bytes = yuno::net::PacketBuilder::Build(
+                        yuno::net::PacketType::S2C_BattleResult,
+                        [&](yuno::net::ByteWriter& w)
+                        {
+                            pkt.Serialize(w);
+                        });
+
+                    m_network.Broadcast(std::move(bytes));
+                    return;
+                }
+
+                
                 if (cardData.m_cost > 0)
                 {
                     UnitState& unit = *units[unitIndex];
