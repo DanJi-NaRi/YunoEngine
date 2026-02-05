@@ -50,6 +50,6 @@ protected:
     Float2 m_gaugeMax; // 최대 게이지 사이즈 = (프로그래스 바 사이즈 - margin)
     FillDirection m_fillDir; // 채워지는 방향
 
-    virtual bool CreateMaterial() override { return Gauge::CreateMaterial(L"../Assets/UI/Widget/PlayerHUD/Bar_HP.png"); }  // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Gauge::CreateMaterial(L"../Assets/UI/PLAY/Bar_HP.png"); }  // 머테리얼 생성 (한 번만)
     virtual bool CreateMaterial(std::wstring path, MaterialDesc* pDesc = nullptr) override;
 };

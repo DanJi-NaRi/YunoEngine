@@ -32,8 +32,8 @@ DragProvider::~DragProvider()
 /// <param name="pPos">     드래그 당할 위젯의 포지션  </param>
 /// <param name="canDrag">  드래그 가능 여부           </param>
 /// <returns></returns>
-bool DragProvider::Init(IInput* pInput, XMFLOAT3* pPos, bool canDrag) {
-    m_pInput = pInput;
+bool DragProvider::Init(XMFLOAT3* pPos, bool canDrag) {
+    m_pInput = YunoEngine::GetInput();
     if (!m_pInput) return false;
 
     m_pPos = pPos;  // 참조라서 포인터 연결
@@ -51,13 +51,16 @@ void DragProvider::Clear()
 {
     m_pInput = nullptr;
     m_pPos = nullptr;
+    m_pSnappedSlot = nullptr;
 }
 
 void DragProvider::UpdateDrag(float dTime)
 {   
     if (m_pSnappedSlot) {
-        m_bkPos = m_pSnappedSlot->GetPos();
-        *m_pPos = m_pSnappedSlot->GetPos();
+        if (m_pSnappedSlot->GetSnapPoint()->useSnap) {
+            m_bkPos = m_pSnappedSlot->GetPos();
+            *m_pPos = m_pSnappedSlot->GetPos();
+        }
     }
 
     if (!m_isDrag || !m_pInput || !m_pPos) return;
@@ -113,4 +116,9 @@ bool DragProvider::IsNowDragging()
 XMFLOAT2 DragProvider::GetDeltaFromDragStart(const XMFLOAT2& prevPos, const XMFLOAT2& nowPos)
 {
     return XMFLOAT2(nowPos.x - prevPos.x , nowPos.y - prevPos.y);
+}
+
+void DragProvider::DetachSnap() {
+    *m_pPos = m_bkPos;
+    m_pSnappedSlot = nullptr;
 }

@@ -2,9 +2,11 @@
 #include "Slot.h"
 
 #include "Button.h"
+#include "DragProvider.h"
 
 Slot::Slot(UIFactory& uiFactory) : Widget(uiFactory)
 {
+    m_snapPoint.useSnap = true;
 }
 
 Slot::~Slot()
@@ -54,6 +56,20 @@ bool Slot::Submit(float dTime)
     }
     Widget::Submit(dTime);
     return true;
+}
+
+void Slot::DetachSnap() {
+    if (!m_snapPoint.IsSnapped()) return;
+
+    assert(m_snapPoint.pSnapOwner);
+
+    auto* pOwner = dynamic_cast<Button*>(m_snapPoint.pSnapOwner);
+    auto* pDrag = pOwner->GetDragProvider();
+
+    assert(pDrag);
+
+    pDrag->DetachSnap(); // 연결되어있는 위젯 우선 제거
+    m_snapPoint.pSnapOwner = nullptr;
 }
 
 void Slot::UpdateSnapPoint(float dTime)

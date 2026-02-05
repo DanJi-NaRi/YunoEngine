@@ -190,6 +190,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CardConfirmArea.cpp" />
     <ClCompile Include="PlayerIcon.cpp" />
     <ClCompile Include="Emoji.cpp" />
     <ClCompile Include="Game\UI\CardCancelButton.cpp" />
@@ -198,6 +199,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\UI\CardSelectionPanel.cpp" />
     <ClCompile Include="HealthGauge.cpp" />
     <ClCompile Include="HealthBar.cpp" />
+    <ClCompile Include="SceneChangeButton.cpp" />
     <ClCompile Include="SpeechBubble.cpp" />
     <ClCompile Include="StaminaBar.cpp" />
     <ClCompile Include="StaminaGauge.cpp" />
@@ -270,6 +272,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\UI\WidgetTile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CardConfirmArea.h" />
     <ClInclude Include="PlayerIcon.h" />
     <ClInclude Include="Emoji.h" />
     <ClInclude Include="Game\UI\CardCancelButton.h" />
@@ -278,6 +281,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\CardSelectionPanel.h" />
     <ClInclude Include="HealthGauge.h" />
     <ClInclude Include="HealthBar.h" />
+    <ClInclude Include="SceneChangeButton.h" />
     <ClInclude Include="SpeechBubble.h" />
     <ClInclude Include="StaminaBar.h" />
     <ClInclude Include="StaminaGauge.h" />
@@ -352,6 +356,8 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\WidgetGridSystem.h" />
     <ClInclude Include="Game\UI\WidgetPiece.h" />
     <ClInclude Include="Game\UI\WidgetTile.h" />
+    <ClInclude Include="TitleScene_InputContext.h" />
+    <ClInclude Include="UI_InputContext.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

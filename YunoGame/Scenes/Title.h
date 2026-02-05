@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SceneBase.h"
+#include "TitleScene_InputContext.h"
 
 class UserImage;
 
@@ -21,5 +22,6 @@ protected:
     void OnDestroyScene() override;
 
 private:
+    TitleScene_InputContext m_uiCtx;
     Widget* m_titleImage = nullptr;
 };

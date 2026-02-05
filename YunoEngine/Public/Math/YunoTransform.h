@@ -46,6 +46,8 @@ struct Float2
     // Float2 -> XMFLOAT2 (명시 함수 권장)
     XMFLOAT2 ToXM() const { return XMFLOAT2{ x, y }; }
 
+    constexpr bool operator==(const Float2& o) const noexcept { return (x == o.x && y == o.y); }
+
     // same-dim compound
     Float2& operator+=(const Float2& o) { x += o.x; y += o.y; return *this; }
     Float2& operator-=(const Float2& o) { x -= o.x; y -= o.y; return *this; }
@@ -273,3 +275,24 @@ struct Int4
 {
     int x, y, z, w;
 };
+
+inline constexpr Float2 Clamp(Float2 v) noexcept {
+    v.x = std::clamp(v.x, 0.0f, 1.0f);
+    v.y = std::clamp(v.y, 0.0f, 1.0f);
+    return v;
+}
+
+inline constexpr Float3 Clamp(Float3 v) noexcept {
+    v.x = std::clamp(v.x, 0.0f, 1.0f);
+    v.y = std::clamp(v.y, 0.0f, 1.0f);
+    v.z = std::clamp(v.y, 0.0f, 1.0f);
+    return v;
+}
+
+inline constexpr Float4 Clamp(Float4 v) noexcept {
+    v.x = std::clamp(v.x, 0.0f, 1.0f);
+    v.y = std::clamp(v.y, 0.0f, 1.0f);
+    v.z = std::clamp(v.y, 0.0f, 1.0f);
+    v.w = std::clamp(v.y, 0.0f, 1.0f);
+    return v;
+}

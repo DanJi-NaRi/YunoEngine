@@ -27,22 +27,22 @@ bool UserImage::ChangeMaterial(int num)
     switch (static_cast<PieceType>(num))
     {
     case PieceType::Blaster:
-        texturePath = L"../Assets/Test/unit1.png";
+        ChangeTexture(L"../Assets/Test/unit1.png");
         break;
     case PieceType::Breacher:
-        texturePath = L"../Assets/Test/unit2.png";
+        ChangeTexture(L"../Assets/Test/unit2.png");
         break;
     case PieceType::Impactor:
-        texturePath = L"../Assets/Test/unit3.png";
+        ChangeTexture(L"../Assets/Test/unit3.png");
         break;
     case PieceType::Chakram:
-        texturePath = L"../Assets/Test/unit4.png";
+        ChangeTexture(L"../Assets/Test/unit4.png");
         break;
     case PieceType::Scythe:
-        texturePath = L"../Assets/Test/unit5.png";
+        ChangeTexture(L"../Assets/Test/unit5.png");
         break;
     case PieceType::Cleaver:
-        texturePath = L"../Assets/Test/unit6.png";
+        ChangeTexture(L"../Assets/Test/unit6.png");
         break;
     case PieceType::None:
     default:

@@ -4,6 +4,11 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 
+#include "CardConfirmArea.h"
+#include "DragProvider.h"
+#include "Slot.h"
+#include "Card.h"
+
 CardCancelButton::CardCancelButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
@@ -16,6 +21,7 @@ CardCancelButton::~CardCancelButton()
 
 void CardCancelButton::Clear()
 {
+    ClearSlot();
 }
 
 bool CardCancelButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
@@ -47,6 +53,7 @@ bool CardCancelButton::Submit(float dTime)
 bool CardCancelButton::IdleEvent()
 {
     //std::cout << "IdleEvent" << std::endl;
+    ChangeTexture(m_texturePathBk);
     // 내용 작성
     return true;
 }
@@ -54,7 +61,8 @@ bool CardCancelButton::IdleEvent()
 // 커서가 위에 올라있을 때
 bool CardCancelButton::HoveredEvent()
 {
-    std::cout << "HoveredEvent" << std::endl;
+    //std::cout << "HoveredEvent" << std::endl;
+    ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/select_card_back_mouseover.png");
     return true;
 }
 
@@ -68,43 +76,48 @@ bool CardCancelButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool CardCancelButton::LMBPressedEvent()
 {
-    std::cout << "(LMB)CardCancelButton Pressed" << std::endl;
+    //std::cout << "(LMB)CardCancelButton Pressed" << std::endl;
+    if (!m_slots.empty()) {
+        for (auto* slot : m_slots) {
+            slot->CleanSetup();
+        }
+    }
     return true;
 }
 
 // 우클릭 눌렀을 때
 bool CardCancelButton::RMBPressedEvent()
 {
-    std::cout << "(RMB)PressedEvent" << std::endl;
+    //std::cout << "(RMB)PressedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 눌렀을 때
 bool CardCancelButton::KeyPressedEvent(uint32_t key)
 {
-    if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
-    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;
+    //if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
+    //else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;
     return true;
 }
 
 // 왼클릭 뗐을 때
 bool CardCancelButton::LMBReleasedEvent()
 {
-    std::cout << "(LMB)ReleasedEvent" << std::endl;
+    //std::cout << "(LMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 우클릭 뗐을 때
 bool CardCancelButton::RMBReleasedEvent()
 {
-    std::cout << "(RMB)ReleasedEvent" << std::endl;
+    //std::cout << "(RMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 뗐을 때
 bool CardCancelButton::KeyReleasedEvent(uint32_t key)
 {
-    if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
-    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
+    /*if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
+    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;*/
     return true;
 }

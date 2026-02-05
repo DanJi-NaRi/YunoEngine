@@ -42,6 +42,8 @@ enum class WidgetType : int { // 자신 / 부모 클래스 타입
 };
 
 enum class WidgetClass : int {
+    //////////////////////////////
+    // 기본
     Widget,
     Image,
     Button,
@@ -50,12 +52,15 @@ enum class WidgetClass : int {
     ProgressBar,
     Gauge,
     SpriteSheet,
-    CardTable,
-    Card,
-    CardSlot,
+
     LetterBox,
     GridLine,
 
+    //////////////////////////////
+    // 씬 전환
+    SceneChangeButton,
+
+    //////////////////////////////
     // 첫 무기 선택 페이즈
     UserImage,
     TitleImage,
@@ -63,6 +68,22 @@ enum class WidgetClass : int {
     ExitButton,
     WeaponButton,
 
+    //////////////////////////////
+    // 카드 선택 페이즈 씬
+    Card,
+    CardSlot,
+    CardTable, // 미사용
+
+    // 카드 컨펌
+    CardConfirmPanel,
+    CardConfirmArea,
+    CardConfirmButton,
+    CardCancelButton,
+
+    // 카드 선택
+    CardSelectionPanel,
+
+    //////////////////////////////
     // 전투 씬
     BarPanel,
     PieceImage,
@@ -70,6 +91,8 @@ enum class WidgetClass : int {
     HealthGauge,
     StaminaBar,
     StaminaGauge,
+
+    //////////////////////////////
 };
 
 enum class WidgetLayer : int {
@@ -103,7 +126,7 @@ inline constexpr Float2 kPivot[(int)UIDirection::Count] = {
     {1.0f, 1.0f}, // RightBottom
 };
 
-constexpr Float2 PivotFromUIDirection(UIDirection pivot) { // 피벗 전용 할당값
+constexpr const Float2 PivotFromUIDirection(UIDirection pivot) { // 피벗 전용 할당값
     const int i = (int)pivot;
     assert(0 <= i && i < (int)UIDirection::Count);
     return kPivot[(int)pivot];
@@ -116,7 +139,30 @@ constexpr bool PivotMinMax(Float2 pivot) { // 피벗 최소 최대치 비교
             pivot.y <= g_PivotMax);
 }
 
-//constexpr Float2 g_DefaultClientXY{ 1920,1080 };
+
+// Left Top 기준 Pos를 넣으면, 피벗 적용 Pos 반환
+//inline constexpr XMFLOAT3 MakePivotPosFromLT(const XMFLOAT3& ltPos, const Float2& sizePx, UIDirection pivot)
+//{
+//    Float2 pv = PivotFromUIDirection(pivot); // (0~1)
+//    return XMFLOAT3(
+//        ltPos.x + sizePx.x * pv.x,
+//        ltPos.y + sizePx.y * pv.y,
+//        ltPos.z
+//    );
+//}
+//
+//// Left Top 기준 Pos를 넣으면, 피벗 적용 Pos 반환
+//inline constexpr XMFLOAT3 MakePivotPosFromLT(const XMFLOAT3& ltPos, const Float2& sizePx, Float2 pivot)
+//{
+//    Clamp(pivot);
+//    return XMFLOAT3(
+//        ltPos.x + sizePx.x * pivot.x,
+//        ltPos.y + sizePx.y * pivot.y,
+//        ltPos.z
+//    );
+//}
+
+
 constexpr Float2 g_DefaultClientXY{ 1920,1080 };
 
 class Widget
@@ -177,12 +223,17 @@ protected:
     Float3 m_canvasLetterboxOffset; // 레터박스 보정 오프셋 - Pos에 적용
     //Canvas* m_canvas;
 
+    std::wstring m_texturePath; // 현재 TexturePath
+    std::wstring m_texturePathBk; // 백업용 원본 TexturePath
+
 
     // 기타 데이터
 
     RECT m_rect;                // 현재 위젯을 RECT로 치환한 값
 
     int m_zOrder;               // 아직 미사용
+
+    bool m_mirrorX = false;
 
     Visibility m_visible;       // 보이기 여부 // 아직 미사용
 
@@ -281,7 +332,8 @@ public:
 
     Float2        AddTextureSize(TextureHandle& handle);
 
-
+    void          MirrorScaleX() { m_vScale.x *= -1; }
+    void          MirrorScaleY() { m_vScale.y *= -1; }
 
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
@@ -307,6 +359,7 @@ public:
     bool                         HasMeshNode() const { return m_MeshNode.get() != nullptr; }
     const Float3&                GetTextureSize(int num) const { assert(num >= 0 && num < m_textureSizes.size()); return m_textureSizes[num]; }
     const std::vector<Float2>&   GetTextureSizes() const { return m_textureSizes; }
+    std::wstring                 GetTexturePath() { return m_texturePath; }
    
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
@@ -338,6 +391,8 @@ public:
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 
     bool SwapMaterial(int num);
+
+    void ChangeTexture(std::wstring path) { if (path == m_texturePath) { return; } else { m_texturePath = path; m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, m_texturePath); } };
 
     void Attach(Widget* obj);
     void DettachParent();
@@ -375,41 +430,6 @@ inline MeshHandle GetDefWidgetMesh(MeshHandle* out = nullptr)
 {
     if (out) *out = g_defaultWidgetMesh;
     return g_defaultWidgetMesh;
-}
-
-
-// Rect
-
-inline RECT RotateRect(const RECT& rc, float rotRad, float pivotX, float pivotY)
-{
-    auto rot = [&](float x, float y) {
-        float dx = x - pivotX;
-        float dy = y - pivotY;
-        float c = cosf(rotRad);
-        float s = sinf(rotRad);
-        float rx = dx * c - dy * s + pivotX;
-        float ry = dx * s + dy * c + pivotY;
-        return std::pair<float, float>(rx, ry);
-        };
-
-    auto [x0, y0] = rot((float)rc.left, (float)rc.top);
-    auto [x1, y1] = rot((float)rc.right, (float)rc.top);
-    auto [x2, y2] = rot((float)rc.right, (float)rc.bottom);
-    auto [x3, y3] = rot((float)rc.left, (float)rc.bottom);
-
-    float minX = x0, maxX = x0, minY = y0, maxY = y0;
-    auto acc = [&](float x, float y) {
-        if (x < minX) minX = x; if (x > maxX) maxX = x;
-        if (y < minY) minY = y; if (y > maxY) maxY = y;
-        };
-    acc(x1, y1); acc(x2, y2); acc(x3, y3);
-
-    RECT out;
-    out.left = (LONG)floorf(minX);
-    out.top = (LONG)floorf(minY);
-    out.right = (LONG)ceilf(maxX);
-    out.bottom = (LONG)ceilf(maxY);
-    return out;
 }
 
 

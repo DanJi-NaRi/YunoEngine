@@ -8,11 +8,12 @@
 #include "IInput.h"
 
 #include "UIManager.h"
+#include "TitleScene.h"
 #include "Button.h"
 
 
 
-class Game_InputContext final : public InputContextBase
+class TitleScene_InputContext final : public InputContextBase
 {
 public:
     int GetPriority() const override { return 100; } // UI 우선
@@ -44,12 +45,12 @@ public:
         if (LMB_Pressed)
         {
             evt.consumed = m_uiManager->ProcessButtonMouse(ButtonState::Pressed, 0);
-            if (evt.consumed) std::cout << "[UI] Consumed LMB\n";
+            //if (evt.consumed) std::cout << "[UI] Consumed LMB\n";
             return evt.consumed;
         }
         else if (RMB_Pressed) {
             evt.consumed = m_uiManager->ProcessButtonMouse(ButtonState::Pressed, 1);
-            if (evt.consumed) std::cout << "[UI] Consumed RMB\n";
+            //if(evt.consumed) std::cout << "[UI] Consumed RMB\n";
             return evt.consumed;
         }
         else if (LMB_Up) {

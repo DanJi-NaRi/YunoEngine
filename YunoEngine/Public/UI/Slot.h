@@ -7,6 +7,7 @@ struct SnapPoint {
     float snapPadding; // 범위 보정치 : Rect 감지 범위에 padding만큼 추가 보정을 한다.
     WidgetClass snapTargetClass; // 스냅 조건
     Widget* pSnapOwner; // 스냅한 위젯. // 사실 이걸로 IsSnapped 역할도 한다.
+    bool useSnap = true; // 스냅이 아니라 단순 AABB 이벤트만 활용할 수 있기 때문에.
     //id를 알게 하면 더 최적화될수도?
 public:
     bool IsSnapped() { return (pSnapOwner); }
@@ -27,14 +28,17 @@ public:
     virtual bool UpdateTransform(float dTime = 0) override; //snapPoint 갱신 추가를 위해 override
     bool Submit(float dTime = 0) override;
 
-
     virtual WidgetType GetWidgetType() override { return WidgetType::Slot; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::Slot; }
+
+    virtual bool Event(float dTime = 0) = 0; // AABB 성공 시 작동하는 이벤트
 
     // 스냅 포인트
     void UpdateSnapPoint(float dTime = 0);
     void SetSnapPoint(float padding, WidgetClass target); // padding : 보정치, target : 받아들일 클래스 타입
     SnapPoint* GetSnapPoint() { return &m_snapPoint; }
+
+    void DetachSnap();
 
     bool IsSnapped() { return m_snapPoint.IsSnapped(); }
     bool ReleaseOwner() { m_snapPoint.pSnapOwner = nullptr; }

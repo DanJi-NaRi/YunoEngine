@@ -24,6 +24,7 @@ Gauge, // ProgressBar의 확정 자식
 #include "CardConfirmPanel.h"
 #include "UserImage.h"
 #include "PlayerIcon.h"
+#include "TitleImage.h"
 //////////////////////////////
 
 
@@ -38,6 +39,7 @@ Gauge, // ProgressBar의 확정 자식
 #include "WeaponButton.h"
 #include "CardConfirmButton.h"
 #include "CardCancelButton.h"
+#include "SceneChangeButton.h"
 //////////////////////////////
 
 

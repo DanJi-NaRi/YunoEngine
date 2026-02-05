@@ -47,7 +47,7 @@ bool CardConfirmButton::Submit(float dTime)
 bool CardConfirmButton::IdleEvent()
 {
     //std::cout << "IdleEvent" << std::endl;
-    // 내용 작성
+    ChangeTexture(m_texturePathBk);
     return true;
 }
 
@@ -55,6 +55,7 @@ bool CardConfirmButton::IdleEvent()
 bool CardConfirmButton::HoveredEvent()
 {
     std::cout << "HoveredEvent" << std::endl;
+    ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/select_card_confirm_mouseover.png");
     return true;
 }
 

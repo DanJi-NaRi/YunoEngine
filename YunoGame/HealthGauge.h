@@ -16,6 +16,6 @@ public:
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::HealthGauge; }
 
 private:
-    bool CreateMaterial() override { return Gauge::CreateMaterial(L"../Assets/UI/Widget/PlayerHUD/Bar_HP.png"); }  // 머테리얼 생성 (한 번만)
+    bool CreateMaterial() override { return Gauge::CreateMaterial(L"../Assets/UI/PLAY/Bar_HP.png"); }  // 머테리얼 생성 (한 번만)
 
 };
