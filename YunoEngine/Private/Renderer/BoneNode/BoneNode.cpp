@@ -24,7 +24,12 @@ void BoneNode::SampleLocalPose(float CurTickTime, std::vector<std::unique_ptr<Bo
     }
 }
 
-void BoneNode::UpdateBoneMatrix(const std::vector<XMMATRIX>& localPose, std::vector<XMFLOAT4X4>& outFinal, std::vector<XMFLOAT4X4>& outGlobal, const XMMATRIX& parentGlobal)
+void BoneNode::UpdateBoneMatrix(
+    const std::vector<XMMATRIX>& localPose,
+    std::vector<XMFLOAT4X4>& outFinal,
+    std::vector<XMFLOAT4X4>& outGlobal,
+    std::vector<XMFLOAT4X4>& outGlobalNoOffset,
+    const XMMATRIX& parentGlobal)
 {
     XMMATRIX local =
         (boneIndex >= 0) ? localPose[boneIndex] : m_BindLocal;
@@ -32,10 +37,20 @@ void BoneNode::UpdateBoneMatrix(const std::vector<XMMATRIX>& localPose, std::vec
     XMMATRIX global = local * parentGlobal;
 
     if (boneIndex >= 0 && boneIndex < outFinal.size())
+    {
         XMStoreFloat4x4(&outGlobal[boneIndex], m_BoneOffset * global);
+        XMVECTOR scale;
+        XMVECTOR rotation;
+        XMVECTOR translation;
+        XMMatrixDecompose(&scale, &rotation, &translation, m_BoneOffset);
+        XMMATRIX scaleFix = XMMatrixScalingFromVector(scale);
+        //XMMATRIX noOffsetGlobal = XMMatrixScaling(0.01f, 0.01f, 0.01f) * global;
+        XMStoreFloat4x4(&outGlobalNoOffset[boneIndex], scaleFix * global);
+    }
+        
 
     for (auto& c : m_Childs)
-        c->UpdateBoneMatrix(localPose, outFinal, outGlobal, global);
+        c->UpdateBoneMatrix(localPose, outFinal, outGlobal, outGlobalNoOffset, global);
 
     if(boneIndex >= 0 && boneIndex < outFinal.size())
         XMStoreFloat4x4(&outFinal[boneIndex], m_BoneOffset * global);

@@ -6,6 +6,7 @@
 
 #include "IRenderer.h"
 #include "YunoLight.h"
+#include "YunoCamera.h"
 #include "ObjectManager.h"
 #include "SerializeScene.h"
 #include "UIManager.h"
@@ -70,7 +71,8 @@ bool SceneBase::OnCreate()
         return false;
 
     m_effectManager = std::make_unique<EffectManager>();
-    m_effectManager->Init(30);
+    m_effectManager->Init(50);
+    m_objectManager->SetEffectManager(m_effectManager.get());
 
     if (m_input = YunoEngine::GetInput(); !m_input)
         return false;
@@ -82,6 +84,9 @@ bool SceneBase::OnCreate()
     if (LoadScene(filepath, sd))
     {
         OnCreateScene();
+
+        YunoEngine::GetRenderer()->GetCamera().position = ToXM(sd.camPos);
+        YunoEngine::GetRenderer()->GetCamera().position = ToXM(sd.camLookAt);
 
         YunoEngine::GetRenderer()->SetPostProcessOption(sd.postprocess);
 
@@ -118,6 +123,8 @@ SceneDesc SceneBase::BuildSceneDesc()
     sd.sceneName = Utf8ToWString(GetDebugName());
     sd.widgets = m_uiManager->BuildWidgetDesc();
     sd.postprocess = YunoEngine::GetRenderer()->GetPostProcessOption();
+    sd.camPos = FromXM(YunoEngine::GetRenderer()->GetCamera().position);
+    sd.camLookAt = FromXM(YunoEngine::GetRenderer()->GetCamera().target);
 
     return sd;
 }
@@ -204,7 +211,7 @@ void SceneBase::DrawObjectList()
 
         if (dirLight)
         {
-            bool selected = false;
+            bool selected = dirLight == m_selectedLight;
             if (UI::Selectable("DirectionalLight", selected))
             {
                 SelectLight(dirLight);
@@ -217,7 +224,7 @@ void SceneBase::DrawObjectList()
             int i = 0;
             for (auto& pl : pointLights)
             {
-                bool selected = false;
+                bool selected = pl.get() == m_selectedLight;
                 std::string name = "PointLight" + std::to_string(i);
                 if (UI::Selectable(name.c_str(), selected))
                 {

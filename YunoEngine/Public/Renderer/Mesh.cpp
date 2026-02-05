@@ -155,6 +155,9 @@ void Mesh::SetObjectConstants(const Update_Data& constants)
 
 void Mesh::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
 {
+    m_renderItem.materialHandle = m_Material;
+    m_renderItem.meshHandle = m_Mesh;
+
     XMStoreFloat4x4(&m_renderItem.Constant.world, XMLoadFloat4x4(&mWorld));
     m_renderItem.Constant.worldPos = pos;
 }

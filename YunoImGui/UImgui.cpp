@@ -374,4 +374,9 @@ namespace UI
     {
         return ImGui::SliderFloat(label, v, v_min, v_max, fmt);
     }
+
+    bool DragInt(const char* label, int* v, int speed, int v_min, int v_max, const char* fmt)
+    {
+        return ImGui::DragInt(label, v, speed, v_min, v_max, fmt);
+    }
 }

@@ -276,6 +276,8 @@ namespace nlohmann
             { "scenename",     name },
             { "isOrtho",     s.isOrtho },
             { "postprocessOption",     s.postprocess },
+            { "CameraPosition",     s.camPos },
+            { "CameraLookAt",     s.camLookAt },
             { "units",       s.units },
             { "widgets",       s.widgets },
             { "pointLights", pls }
@@ -292,6 +294,9 @@ namespace nlohmann
         j.at("isOrtho").get_to(s.isOrtho);
         j.at("postprocessOption").get_to(s.postprocess);
 
+        j.at("CameraPosition").get_to(s.camPos);
+        j.at("CameraLookAt").get_to(s.camLookAt);
+
         j.at("units").get_to(s.units);
         j.at("widgets").get_to(s.widgets);
 
@@ -305,8 +310,6 @@ namespace nlohmann
             s.pointLights = ConvertToLoad(j.at("pointLights").get<std::vector<PointLightDescSave>>());
     }
 }
-
-
 
 void SaveSceneToFile(const SceneDesc& scene, const std::wstring& path)
 {

@@ -53,6 +53,8 @@ namespace UI
     
     bool SliderFloat(const char* label, float* v, float v_min, float v_max, const char* fmt = "%.1f");
 
+    bool DragInt(const char* label, int* v, int speed, int v_min, int v_max, const char* fmt = "%d");
+
     bool Selectable(const char* label, bool selected);
 
     void NextLine(); // 줄바꿈

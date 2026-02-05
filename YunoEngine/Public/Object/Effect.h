@@ -25,6 +25,8 @@ public:
     Effect();
     virtual ~Effect() = default;
 
+    void SetID(int id) { m_id = id; }
+
     virtual void SetTemplate(const EffectTemplate& temp);
     virtual void Play(const XMFLOAT3& pos, const XMFLOAT3& scale, const XMFLOAT3& dir);
     virtual void Reset();
@@ -41,4 +43,9 @@ public:
 
     virtual bool Update(float dt) override;
     virtual bool Submit(float dt) override;
+
+private:
+    XMMATRIX GetParentRotationMatrix() const;
+    XMFLOAT3 GetWorldPosition() const;
+    XMMATRIX AdjustBillboardForParent(const XMMATRIX& billboardWorld) const;
 };
