@@ -369,7 +369,45 @@ namespace yuno::server
                 value = static_cast<T>(v);
             };
 
-        auto applyAttack = [&](int unitIndex, uint32_t cardDataId, const CardData& cardData, Direction dir) -> bool
+        auto applyDisplacement = [&](int targetIndex, const TilePos& step, int distance) -> bool
+            {
+                if (step.x == 0 && step.y == 0)
+                    return false;
+
+                UnitState& targetUnit = *units[targetIndex];
+                if (targetUnit.tileID == 0)
+                    return false;
+
+                bool moved = false;
+                TilePos current = TileIdToPos(targetUnit.tileID);
+
+                for (int i = 0; i < distance; ++i)
+                {
+                    TilePos next = { current.x + step.x, current.y + step.y };
+                    if (!IsInBounds(next))
+                    {
+                        std::cout << "Out of Grid" << std::endl;
+                        break;
+                    }
+
+                    uint8_t nextTile = PosToTileId(next);
+                    if (grid[nextTile] != -1)
+                    {
+                        std::cout << "object exist" << std::endl;
+                        break;
+                    }
+
+                    grid[targetUnit.tileID] = -1;
+                    grid[nextTile] = targetIndex;
+                    targetUnit.tileID = nextTile;
+                    current = next;
+                    moved = true;
+                }
+
+                return moved;
+            };
+
+        auto applyAttack = [&](int unitIndex, uint32_t cardDataId, const CardData& cardData, Direction dir, std::vector<int>* hitTargets = nullptr) -> bool
             {
                 const auto* effectData = m_cardDB.GetEffectData(cardDataId);
                 const auto* rangeData = m_cardRangeDB.GetRange(cardData.m_rangeId);
@@ -434,6 +472,14 @@ namespace yuno::server
                     {
                         std::cout << "Enter Ally Attack" << std::endl;
                         continue;
+                    }
+
+                    if (hitTargets)
+                    {
+                        if (std::find(hitTargets->begin(), hitTargets->end(), occupantIndex) == hitTargets->end())
+                        {
+                            hitTargets->push_back(occupantIndex);
+                        }
                     }
 
                     if (totalDamage > 0)
@@ -530,6 +576,73 @@ namespace yuno::server
                 else 
                 {
                     std::cout << "Utility Card On" << std::endl;
+
+                    UnitState& unit = *units[unitIndex];
+                    if (const auto* moveData = m_cardDB.GetMoveData(card.dataId))
+                    {
+                        eventOccurred = applyMove(unitIndex, *moveData, card.dir) || eventOccurred;
+                    }
+
+                    const auto* effectData = m_cardDB.GetEffectData(card.dataId);
+                    std::vector<int> hitTargets;
+
+                    if (effectData && effectData->m_giveDamageBonus != 0 && effectData->m_damage == 0)
+                    {
+                        std::cout << "--Get nextDamageBonus--" << std::endl;
+                        unit.buffstat.nextDamageBonus += effectData->m_giveDamageBonus;
+                    }
+
+                    if (effectData && effectData->m_damage != 0)
+                    {
+                        eventOccurred = applyAttack(unitIndex, card.dataId, cardData, card.dir, &hitTargets) || eventOccurred;
+                    }
+
+                    if (effectData && effectData->m_takeDamageIncrease != 0 && !hitTargets.empty())
+                    {
+                        for (int targetIndex : hitTargets)
+                        {
+                            UnitState& targetUnit = *units[targetIndex];
+                            targetUnit.buffstat.nextDamageIncrease += effectData->m_takeDamageIncrease;
+                        }
+                    }
+
+                    if (cardData.m_controlId != 0 && !hitTargets.empty())
+                    {
+                        TilePos pushStep = { 0, 0 };
+                        TilePos pullStep = { 0, 0 };
+                        switch (card.dir)
+                        {
+                        case Direction::Up:
+                            pushStep = { 0, -1 };
+                            pullStep = { 0, 1 };
+                            break;
+                        case Direction::Down:
+                            pushStep = { 0, 1 };
+                            pullStep = { 0, -1 };
+                            break;
+                        case Direction::Left:
+                            pushStep = { -1, 0 };
+                            pullStep = { 1, 0 };
+                            break;
+                        case Direction::Right:
+                        default:
+                            pushStep = { 1, 0 };
+                            pullStep = { -1, 0 };
+                            break;
+                        }
+
+                        for (int targetIndex : hitTargets)
+                        {
+                            if (cardData.m_controlId == 1)
+                            {
+                                eventOccurred = applyDisplacement(targetIndex, pullStep, 1) || eventOccurred;
+                            }
+                            else if (cardData.m_controlId == 2)
+                            {
+                                eventOccurred = applyDisplacement(targetIndex, pushStep, 1) || eventOccurred;
+                            }
+                        }
+                    }
                 }
 
                 using namespace yuno::net::packets;
