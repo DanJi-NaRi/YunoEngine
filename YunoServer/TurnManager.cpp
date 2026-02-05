@@ -283,6 +283,70 @@ namespace yuno::server
                 return (ownerSlot == 0) ? 0 : 2;
             };
 
+        auto isPlayerAllDead = [&](int playerIndex) -> bool
+            {
+                const UnitState& u1 = *units[playerIndex * 2];
+                const UnitState& u2 = *units[playerIndex * 2 + 1];
+                return u1.hp == 0 && u2.hp == 0;
+            };
+
+        auto evaluateRoundEnd = [&]() -> bool
+            {
+                bool p1AllDead = isPlayerAllDead(0);
+                bool p2AllDead = isPlayerAllDead(1);
+
+                if (!p1AllDead && !p2AllDead)
+                    return false;
+
+                g_battleState.roundEnded = true;
+
+                if (p1AllDead && !p2AllDead)
+                {
+                    g_battleState.roundWinnerPID = 2;
+                    g_battleState.roundLoserPID = 1;
+                    g_battleState.roundWins[1]++;
+                }
+                else if (!p1AllDead && p2AllDead)
+                {
+                    g_battleState.roundWinnerPID = 1;
+                    g_battleState.roundLoserPID = 2;
+                    g_battleState.roundWins[0]++;
+                }
+                else
+                {
+                    // 동시 전멸은 무승부 처리
+                    g_battleState.roundWinnerPID = 0;
+                    g_battleState.roundLoserPID = 0;
+                }
+
+                if (g_battleState.roundWins[0] >= g_battleState.winsToFinish)
+                {
+                    g_battleState.matchEnded = true;
+                    g_battleState.matchWinnerPID = 1;
+                }
+                else if (g_battleState.roundWins[1] >= g_battleState.winsToFinish)
+                {
+                    g_battleState.matchEnded = true;
+                    g_battleState.matchWinnerPID = 2;
+                }
+
+                if (!g_battleState.matchEnded)
+                {
+                    g_battleState.currentRound = static_cast<uint8_t>(g_battleState.currentRound + 1);
+                }
+
+                std::cout << "[Server] Round ended. winnerPID="
+                    << static_cast<int>(g_battleState.roundWinnerPID)
+                    << " loserPID=" << static_cast<int>(g_battleState.roundLoserPID)
+                    << " | score P1=" << static_cast<int>(g_battleState.roundWins[0])
+                    << " P2=" << static_cast<int>(g_battleState.roundWins[1])
+                    << " | matchEnded=" << (g_battleState.matchEnded ? 1 : 0)
+                    << " matchWinnerPID=" << static_cast<int>(g_battleState.matchWinnerPID)
+                    << "\n";
+
+                return true;
+            };
+
         auto applyMove = [&](int unitIndex, const CardMoveData& moveData, Direction dir) -> bool
             {
                 std::cout << "Enter ApplyMove , ";
@@ -547,6 +611,11 @@ namespace yuno::server
                     return;
                 }
 
+                if (g_battleState.roundEnded)
+                {
+                    return;
+                }
+
                 
                 if (cardData.m_cost > 0)
                 {
@@ -693,6 +762,7 @@ namespace yuno::server
                     });
 
                 m_network.Broadcast(std::move(bytes));
+                evaluateRoundEnd();
             };
 
         constexpr size_t CardsPerPlayer = 4;
@@ -727,13 +797,22 @@ namespace yuno::server
             if (aFirst)
             {
                 applyCard(slotCards[0][i]);
+                if (g_battleState.roundEnded) break;
                 applyCard(slotCards[1][i]);
             }
             else
             {
                 applyCard(slotCards[1][i]);
+                if (g_battleState.roundEnded) break;
                 applyCard(slotCards[0][i]);
             }
+
+            if (g_battleState.roundEnded)
+            {
+                break;
+            }
+
+
         }
         ClearTurn();
         NotifyEndFinished();
