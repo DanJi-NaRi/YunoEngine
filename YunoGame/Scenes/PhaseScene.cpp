@@ -46,7 +46,7 @@ bool PhaseScene::OnCreateScene()
     CreateWidget<CardConfirmPanel>(L"CardConformPanel", Float2(450, 250), XMFLOAT3(0, clientY, 0), UIDirection::LeftBottom);
     
     //std::cout << clientX << " : " << clientY << std::endl;
-    CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(720, 300), XMFLOAT3(clientX - 100, clientY - 50, 0),  UIDirection::RightBottom);
+    CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(720, 300), XMFLOAT3(clientX, clientY, 0),  UIDirection::RightBottom);
 
 
 
