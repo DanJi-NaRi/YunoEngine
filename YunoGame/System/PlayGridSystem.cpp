@@ -51,9 +51,9 @@ void PlayGridSystem::Init()
 
 void PlayGridSystem::Update(float dt)
 {
+    UpdateAttackSequence(dt);
     CheckPacket(dt);
     CheckMyQ();
-    UpdateAttackSequence(dt);
 }
 
 void PlayGridSystem::CreateObject(float x, float y, float z)
