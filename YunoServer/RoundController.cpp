@@ -164,7 +164,7 @@ namespace yuno::server
                 {
                     pkt.Serialize(w);
                 });
-
+            if(session==nullptr) return;
             session->Send(std::move(bytes));
 
             std::cout << "[Server] SendDrawCandidates to PID="
