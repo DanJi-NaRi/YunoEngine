@@ -542,10 +542,10 @@ const std::vector<int> PlayGridSystem::GetRangeTileIDs(const Int2 unitCell, cons
         switch (dir)
         {
         case Direction::Up:
-            relativeRanges.push_back({ -range.dy, range.dx });
+            relativeRanges.push_back({ -range.dy, -range.dx });
             break;
         case Direction::Down:
-            relativeRanges.push_back({ -range.dy, -range.dx });
+            relativeRanges.push_back({ -range.dy, range.dx });
             break;
         case Direction::Left:
             relativeRanges.push_back({ -range.dx, range.dy });
@@ -561,6 +561,7 @@ const std::vector<int> PlayGridSystem::GetRangeTileIDs(const Int2 unitCell, cons
     {
         int cx = unitCell.x + relativeRanges[i].x;
         int cz = unitCell.y + relativeRanges[i].y;
+        if(!(m_grids[(int)m_nowG]->InBounds(cx, cz)))   continue;
         absoluteRanges.push_back({ cx, cz });
     }
 
