@@ -80,11 +80,11 @@ struct CardMoveData
 
 struct CardEffectData
 {
-    int m_damage; //데미지
+    int m_damage = 0; //데미지
     //주는 피해 증가량,    받는 피해 감소량,    받는 피해 증가량
-    int m_giveDamageBonus;
-    int m_takeDamageReduce;
-    int m_takeDamageIncrease;
+    int m_giveDamageBonus=0;
+    int m_takeDamageReduce=0;
+    int m_takeDamageIncrease=0;
 
-    int m_staminaRecover;
+    int m_staminaRecover=0;
 };
