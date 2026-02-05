@@ -17,9 +17,10 @@ namespace yuno::net
         C2S_MatchLeave = 2,   // 매치/로비 이탈
         C2S_ReadySet = 3,   // 준비 완료/해제 (isReady)
         C2S_SubmitWeapon = 4,   // 무기 선택 제출 (weaponId)
-        C2S_SubmitCard = 5,   // 카드 제출 (cardId)
+        C2S_SubmitCard = 5,   // 카드 제출 (cardId) <- 이거 안쓰고 있음
         C2S_Ping = 6,
-        C2S_ReadyTurn = 7,
+        C2S_ReadyTurn = 7, //카드 선택 끝난 턴준비 보냄 <- 이게 카드 제출
+        C2S_SelectCard = 8,
         // S2C
         S2C_EnterOK = 128,  // 매치 진입 승인
         S2C_ReadyState = 129,  // 양측 준비 상태 동기화
@@ -27,7 +28,8 @@ namespace yuno::net
         S2C_RoundStart = 131,  // 게임 시작
         S2C_BattleResult = 133,  // 전투 결과/상태 갱신
         S2C_StartCardList = 134, //카드id 배정
-        S2C_Pong = 135,
+        S2C_DrawCandidates = 135, //카드추가후보3장 제시
+        S2C_Pong = 136,
 
         // System / Error
         S2C_Error = 240, // 에러 코드/메시지

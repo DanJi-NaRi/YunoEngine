@@ -414,5 +414,39 @@ namespace yuno::game
                 }
             }
         );// BattleResult Packet End
+
+        // DrawCandidates Packet Start
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_DrawCandidates,
+            [this](const NetPeer& peer,
+                const PacketHeader& header,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                if (body == nullptr || bodyLen == 0)
+                    return;
+
+                ByteReader r(body, bodyLen);
+                const auto pkt =
+                    yuno::net::packets::S2C_DrawCandidates::Deserialize(r);
+
+                GameManager::Get().SetDrawCandidates(pkt.cards);
+
+                for (size_t i = 0; i < pkt.cards.size(); ++i)
+                {
+                    const auto& card = pkt.cards[i];
+                    std::cout
+                        << "  [" << i << "]"
+                        << " PID=" << static_cast<int>(card.PID)
+                        << " UnitSlot=" << static_cast<int>(card.slotID)
+                        << " runtimeID=" << card.runtimeID
+                        << " dataID=" << card.dataID
+                        << "\n";
+                }
+
+                // 나중에 여기서 GameManager로 넘기면 됨
+                // GameManager::Get().SetDrawCandidates(pkt.cards);
+            }
+        ); // DrawCandidates Packet End
     }
 }

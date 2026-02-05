@@ -80,6 +80,13 @@ public:
     uint32_t GetMyCardRuntimeID(int unitSlot, int index) const;
     //UI 표시용 runtimeID -> dataID
     uint32_t GetCardDataID(uint32_t runtimeID) const;
+    //~ 추가 후보 카드 저장 및 가져와서 서버에 보내고 배열 비우기
+    void SetDrawCandidates(const std::vector<yuno::net::packets::CardSpawnInfo>& cards);
+    void SendSelectCard(int index);
+    const std::vector<ClientCardInfo>& GetDrawCandidates() const;
+    void ClearDrawCandidates();
+    //~ 여기까지
+
     const CardData GetCardData(uint32_t runtimeID);
     const RangeData* GetRangeData(uint32_t runtimeID);
 
@@ -99,7 +106,8 @@ private:
 
     UnitHand m_myHands[2];                                                             //UI 카드 선택용
     UnitHand m_enemyHands[2];                                                       //UI 보여주기용
-    std::unordered_map<uint32_t, uint32_t> m_CardRuntimeIDs;   //엑셀로드용
+    std::unordered_map<uint32_t, uint32_t> m_CardRuntimeIDs;    //엑셀로드용
+    std::vector<ClientCardInfo> m_drawCandidates;                         //추가 후보 카드 임시 저장소
 
     bool m_countdownActive = false;
     float m_countdownRemaining = 0.0f;

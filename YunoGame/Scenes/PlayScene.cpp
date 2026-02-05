@@ -118,6 +118,37 @@ void PlayScene::HandleDirectionInput()
         std::cout << "[Card Queue] Full\n";
     }
 }
+
+void PlayScene::AddCardSelect()
+{
+    int index = -1;
+
+    if (m_input->IsKeyPressed('Z'))
+        index = 0;
+    else if (m_input->IsKeyPressed('X'))
+        index = 1;
+    else if (m_input->IsKeyPressed('C'))
+        index = 2;
+
+    if (index == -1)
+        return;
+
+    const auto& candidates =
+        GameManager::Get().GetDrawCandidates();
+
+    if (index >= candidates.size())
+        return;
+
+    uint32_t runtimeID = candidates[index].runtimeID;
+
+    GameManager::Get().SendSelectCard(index);
+
+    std::cout << "[Client] Select card index="
+        << index
+        << " runtimeID="
+        << runtimeID
+        << "\n";
+}
 //TODO: 디버깅용 나중에는 UI씬에 OnEndTurnClicked함수 만들어서 옮겨야함
 void PlayScene::EndTurn()
 {
@@ -134,7 +165,7 @@ void PlayScene::EndTurn()
 
 void PlayScene::TestInput()
 {
-
+    AddCardSelect();
     // 디버깅용
     // 카드 선택 (넘버패드 = UI 버튼 대용)
     HandleCardSelect(VK_NUMPAD1, 0);

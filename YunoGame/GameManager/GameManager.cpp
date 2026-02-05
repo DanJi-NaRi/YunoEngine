@@ -17,6 +17,7 @@
 #include "PacketBuilder.h"
 #include "C2S_BattlePackets.h"
 #include "C2S_ReadySet.h"
+#include "C2S_CardPackets.h"
 GameManager* GameManager::s_instance = nullptr;
 
 
@@ -245,6 +246,50 @@ const RangeData* GameManager::GetRangeData(uint32_t runtimeID)
 {
     auto dataID = GetCardData(runtimeID);
     return m_cardRangeMng.GetRange(dataID.m_rangeId);
+}
+
+void GameManager::SetDrawCandidates(
+    const std::vector<yuno::net::packets::CardSpawnInfo>& cards)
+{
+    m_drawCandidates.clear();
+
+    for (const auto& c : cards)
+    {
+        m_drawCandidates.push_back({
+            c.runtimeID,
+            c.dataID
+            });
+    }
+
+    std::cout << "[Client] DrawCandidates stored. count="
+        << m_drawCandidates.size() << "\n";
+}
+void GameManager::SendSelectCard(int index)
+{
+    if (index < 0 || index >= m_drawCandidates.size())
+        return;
+
+    uint32_t runtimeID = m_drawCandidates[index].runtimeID;
+
+    yuno::net::packets::C2S_SelectCard pkt{};
+    pkt.runtimeID = runtimeID;
+
+    auto bytes = yuno::net::PacketBuilder::Build(
+        yuno::net::PacketType::C2S_SelectCard,
+        [&](yuno::net::ByteWriter& w)
+        {
+            pkt.Serialize(w);
+        });
+
+    m_clientNet->SendPacket(std::move(bytes));
+}
+const std::vector<ClientCardInfo>& GameManager::GetDrawCandidates() const
+{
+    return m_drawCandidates;
+}
+void GameManager::ClearDrawCandidates()
+{
+    m_drawCandidates.clear();
 }
 
 void GameManager::StartCountDown(int countTime, int S1U1, int S1U2, int S2U1, int S2U2)

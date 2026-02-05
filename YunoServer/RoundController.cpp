@@ -10,6 +10,8 @@
 #include "S2C_RoundStart.h"
 #include "S2C_CardPackets.h"
 
+#include <iostream>
+
 namespace yuno::server
 {
     RoundController::RoundController(
@@ -47,15 +49,11 @@ namespace yuno::server
         SendCountDown();
 
         SendRoundStart();       
+
+        StartTurn();
     }
 
     // ------------------------------------------------------
-
-    /*PlayerBattleState& RoundController::GetPlayerUnitState(uint8_t PID)
-    {
-        assert(PID == 1 || PID == 2);
-        return g_battleState.players[PID - 1];
-    }*/
 
     void RoundController::SendCountDown()
     {
@@ -115,10 +113,6 @@ namespace yuno::server
 
         yuno::net::packets::S2C_RoundStart rs{};
      
-        // MK 추가
-        //PlayerUnits player;
-        //UnitState unit1, unit2;
-
         for (int p = 0; p < 2; ++p)
         {
             auto& player = g_battleState.players[p];
@@ -134,54 +128,12 @@ namespace yuno::server
 
                 rsUnit.PID = player.PID;
                 rsUnit.slotID = static_cast<uint8_t>(u + 1);
-
-                //unit.slotID = rsUnit.slotID;
-                //unit.WeaponID = static_cast<uint8_t>(
-                //    (u == 0) ? slot.unitId1 : slot.unitId2);
-
                 rsUnit.WeaponID = unit.WeaponID;
-
                 rsUnit.hp = unit.hp;
                 rsUnit.stamina = unit.stamina;
                 rsUnit.SpawnTileId = unit.tileID;
             }
         }
-
-        //// slot0 (P1)
-        //player.PID = rs.units[0].PID = 1;
-        //player.unit1.slotID = rs.units[0].slotID = 1;
-        //player.unit1.WeaponID = rs.units[0].WeaponID = static_cast<std::uint8_t>(s[0].unitId1);
-        //player.unit1.hp = rs.units[0].hp = 100;
-        //player.unit1.stamina = rs.units[0].stamina = 100;
-        //player.unit1.tileID = rs.units[0].SpawnTileId = 9;
-
-        //rs.units[1].PID = 1;
-        //player.unit2.slotID = rs.units[1].slotID = 2;
-        //player.unit2.WeaponID = rs.units[1].WeaponID = static_cast<std::uint8_t>(s[0].unitId2);
-        //player.unit2.hp = rs.units[1].hp = 100;
-        //player.unit2.stamina = rs.units[1].stamina = 100;
-        //player.unit2.tileID = rs.units[1].SpawnTileId = 23;
-
-        //// MK 추가
-        //allPlayerUnits.emplace(player.PID, player);
-
-        //// slot1 (P2)
-        //player.PID = rs.units[2].PID = 2;
-        //player.unit1.slotID = rs.units[2].slotID = 1;
-        //player.unit1.WeaponID = rs.units[2].WeaponID = static_cast<std::uint8_t>(s[1].unitId1);
-        //player.unit1.hp = rs.units[2].hp = 100;
-        //player.unit1.stamina = rs.units[2].stamina = 100;
-        //player.unit1.tileID = rs.units[2].SpawnTileId = 13;
-
-        //rs.units[3].PID = 2;
-        //unit2.slotID = rs.units[3].slotID = 2;
-        //unit2.WeaponID = rs.units[3].WeaponID = static_cast<std::uint8_t>(s[1].unitId2);
-        //unit2.hp = rs.units[3].hp = 100;
-        //unit2.stamina = rs.units[3].stamina = 100;
-        //unit2.tileID = rs.units[3].SpawnTileId = 27;
-
-        //// MK 추가
-        //allPlayerUnits.emplace(player.PID, player);
 
         auto bytes = yuno::net::PacketBuilder::Build(
             yuno::net::PacketType::S2C_RoundStart,
@@ -192,4 +144,49 @@ namespace yuno::server
 
         m_network.Broadcast(std::move(bytes));
     }
+
+    void RoundController::SendDrawCandidates()
+    {
+        for (int p = 0; p < 2; ++p)
+        {
+            auto& player = g_battleState.players[p];
+
+            m_cardController.DrawCards(player);
+
+            auto session = m_network.FindSession(player.sessionId);
+
+            yuno::net::packets::S2C_DrawCandidates pkt;
+            pkt.cards = player.drawCandidates;
+
+            auto bytes = yuno::net::PacketBuilder::Build(
+                yuno::net::PacketType::S2C_DrawCandidates,
+                [&](yuno::net::ByteWriter& w)
+                {
+                    pkt.Serialize(w);
+                });
+
+            session->Send(std::move(bytes));
+
+            std::cout << "[Server] SendDrawCandidates to PID="
+                << int(player.PID)
+                << " count=" << pkt.cards.size()
+                << "\n";
+        }
+    }
+
+    void RoundController::StartTurn()
+    {
+    }
+
+    void RoundController::EndTurn()
+    {
+        std::cout << "DrawStart" << std::endl;
+        SendDrawCandidates();
+        std::cout << "DrawEnd" << std::endl;
+
+        //종료 플래그 이미 받은 상태
+        //턴스타트 라운드엔드
+    }
+
+    //라운드엔드() <- 라운드스타트 게임엔드
 }
