@@ -60,7 +60,7 @@ void PlayScene::OnDestroyScene()
 }
 
 //TODO:  UIScene에 OnCardButtonClicked함수로 옮겨야 함
-void PlayScene::HandleCardSelect(int key, int index)
+void PlayScene::HandleCardSelect(int key, int unit, int index)
 {
     if (!m_input->IsKeyPressed(key))
         return;
@@ -68,10 +68,10 @@ void PlayScene::HandleCardSelect(int key, int index)
     if (m_pendingCardRuntimeID != 0)
         return; // 이미 카드 하나 대기 중이면 무시
 
-    int unitSlot = m_selectedUnitSlot;
+    int unitSlot = m_selectedUnitSlot;  // 0, 1 첫번째 무기인지 두번째 무기인지
 
     uint32_t runtimeID =
-        GameManager::Get().GetMyCardRuntimeID(unitSlot, index);
+        GameManager::Get().GetMyCardRuntimeID(unit, index);
 
     if (runtimeID == 0)
         return;
@@ -170,17 +170,17 @@ void PlayScene::TestInput()
     AddCardSelect();
     // 디버깅용
     // 카드 선택 (넘버패드 = UI 버튼 대용)
-    HandleCardSelect(VK_NUMPAD1, 0);  // 스태미너 회복        0 1 2 3 = 1번 무기
-    HandleCardSelect(VK_NUMPAD2, 1);  // 이동
-    HandleCardSelect(VK_NUMPAD3, 3);  // 공격
-    HandleCardSelect(VK_NUMPAD4, 15); // 특수
+    HandleCardSelect(VK_NUMPAD1, 0, 0); // 클라 1
+    HandleCardSelect(VK_NUMPAD2, 0, 1);
+    HandleCardSelect(VK_NUMPAD3, 0, 2);
+    HandleCardSelect(VK_NUMPAD4, 0, 3);
 
-    HandleCardSelect(VK_NUMPAD5, 16); // 스태미너 회복        4 5 6 7 = 2번 무기
-    HandleCardSelect(VK_NUMPAD6, 17); // 이동
-    HandleCardSelect(VK_NUMPAD7, 19); // 공격
-    HandleCardSelect(VK_NUMPAD8, 31); // 특수
+    HandleCardSelect(VK_NUMPAD5, 1, 0); // 클라 2
+    HandleCardSelect(VK_NUMPAD6, 1, 1);
+    HandleCardSelect(VK_NUMPAD7, 1, 2);
+    HandleCardSelect(VK_NUMPAD8, 1, 3);
 
-    HandleCardSelect(VK_NUMPAD9, 8);
+    HandleCardSelect(VK_NUMPAD9, 1,8);
 
     //방향 선택
     HandleDirectionInput();

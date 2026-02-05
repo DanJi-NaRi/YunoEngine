@@ -19,7 +19,7 @@ namespace yuno::game
 
 struct ClientCardInfo //UI에 적용하기 위한 데이터 저장
 {
-    //uint8_t slotID;         // 0 1 2 3 //PID
+    //uint8_t slotID;         // 0 1 2 3 
     //uint8_t weaponID;       // 어떤 무기인지 (1~6) //UnitSlot
     uint32_t runtimeID;
     uint32_t dataID;

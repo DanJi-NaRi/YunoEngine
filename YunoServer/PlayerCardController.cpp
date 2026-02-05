@@ -30,9 +30,8 @@ void PlayerCardController::InitPlayerCards(PlayerBattleState& player)
             {
                 const auto& card = m_cardDB.GetCardData(dataID);
 
-               
-                //if (card.m_Rarity != 0)         // 이건 테스트임
                 if (card.m_Rarity == 1)       // 이게 디폴트임
+                //if (card.m_Rarity != 0)         // 이건 테스트임
                 {
                     // 초기 카드 -> 즉시 hand
                     uint32_t runtimeID =
