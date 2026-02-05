@@ -278,8 +278,9 @@ private:
 private:
     RenderTarget m_sceneRT;
     RenderTarget m_postRT[2]; //chain방식
-    RenderTarget m_bloomRT[4]; // 각각 해상도 다른 렌더타겟
-    RenderTarget m_blurTemp[4]; // 각 bloomRT에 대응
+    static constexpr int kBloomLevels = 3;
+    RenderTarget m_bloomRT[kBloomLevels]; // 각각 해상도 다른 렌더타겟
+    RenderTarget m_blurTemp[kBloomLevels];
 
     uint32_t m_postIndex = 0;
 

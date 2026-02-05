@@ -130,7 +130,7 @@ bool YunoRenderer::CreateShaders()
 
     //ps 안씀
     if (!LoadShader(ShaderId::ShadowPass, "../Assets/Shaders/ShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
-    //if (!LoadShader(ShaderId::ShadowPassSkinning, "../Assets/Shaders/SkinningShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::ShadowPassSkinning, "../Assets/Shaders/SkinningShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
 
     //픽셀셰이더 필요없을 때 쓰는 셰이더(섀도우맵)
     YunoShader empty;
@@ -416,7 +416,7 @@ bool YunoRenderer::CreateShadowMap(uint32_t width, uint32_t height)
     m_ShadowMap.srvFormat = DXGI_FORMAT_R32_FLOAT;
 
     m_shadowInfo.shadowMapSize = width;
-    m_shadowBias = 0.0005f;
+    m_shadowBias = 0.00001f;
 
     m_cbShadow.Create(m_device.Get());
 
@@ -533,7 +533,7 @@ void YunoRenderer::DrawShadowMap()
                 material = &m_materials[m_defaultMaterial - 1];
         }
 
-        RenderPassHandle targetPass = m_ShadowPass;// item.haveAnim ? m_ShadowSkinPass : m_ShadowPass;
+        RenderPassHandle targetPass = item.haveAnim ? m_ShadowSkinPass : m_ShadowPass;
         if (targetPass == 0 || targetPass > m_passes.size())
             targetPass = m_ShadowPass;
         if (targetPass == 0 || targetPass > m_passes.size())
@@ -722,7 +722,7 @@ bool YunoRenderer::CreateBloomRT(uint32_t width, uint32_t height)
     sd.Texture2D.MipLevels = td.MipLevels;
     sd.Texture2D.MostDetailedMip = 0;
 
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < kBloomLevels; ++i)
     {
         m_bloomRT[i] = {};
 
@@ -963,7 +963,7 @@ ID3D11ShaderResourceView* YunoRenderer::PostProcessBloom(ID3D11ShaderResourceVie
     m_ppCB.Update(m_context.Get(), cbpp);
     BindBloomThreshold(input);
 
-    for (int i = 1; i < 3; i++)
+    for (int i = 1; i < kBloomLevels; i++)
     {
         UnBindAllSRV();
         BindRT(m_bloomRT[i].rtv.Get());
@@ -973,7 +973,7 @@ ID3D11ShaderResourceView* YunoRenderer::PostProcessBloom(ID3D11ShaderResourceVie
         BindBloomDownSample(m_bloomRT[i - 1].srv.Get());
     }
 
-    for (int i = 3; i > -1; i--)
+    for (int i = kBloomLevels - 1; i > -1; i--)
     {
         UnBindAllSRV();
         BindRT(m_blurTemp[i].rtv.Get());
@@ -1110,7 +1110,7 @@ void YunoRenderer::BindBloomCombine(ID3D11ShaderResourceView* input)
     // 렌더 패스 바인드
     m_passes[passHandle - 1]->Bind(m_context.Get());
 
-    XMFLOAT4 weight = XMFLOAT4(0.4, 0.3f, 0.2f, 0.1f);
+    XMFLOAT4 weight = XMFLOAT4(0.5f, 0.3f, 0.2f, 0.0f);
     //XMFLOAT4 weight = XMFLOAT4(0.25, 0.15, 0.10, 0.02);
 
     m_ppCBloom.Update(m_context.Get(), { weight, m_BloomIntensity });
@@ -1119,8 +1119,9 @@ void YunoRenderer::BindBloomCombine(ID3D11ShaderResourceView* input)
     m_context->PSSetConstantBuffers(1, 1, &cb);
 
     m_context->PSSetShaderResources(0, 1, &input);
-    ID3D11ShaderResourceView* bloomRT[4] = { m_bloomRT[0].srv.Get(), m_bloomRT[1].srv.Get(), m_bloomRT[2].srv.Get(), m_bloomRT[3].srv.Get() };
-    m_context->PSSetShaderResources(2, 4, bloomRT);
+    //ID3D11ShaderResourceView* bloomRT[4] = { m_bloomRT[0].srv.Get(), m_bloomRT[1].srv.Get(), m_bloomRT[2].srv.Get(), m_bloomRT[3].srv.Get() };
+    ID3D11ShaderResourceView* bloomRT[kBloomLevels] = { m_bloomRT[0].srv.Get(), m_bloomRT[1].srv.Get(), m_bloomRT[2].srv.Get() };
+    m_context->PSSetShaderResources(2, kBloomLevels, bloomRT);
 
     // 드로우
     m_context->Draw(3, 0);

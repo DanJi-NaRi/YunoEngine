@@ -48,13 +48,17 @@ bool RenderTest::OnCreateScene()
         j++;
     }
 
-    for (int i = 0; i < 35; i++)
+    for (int i = -2; i <= 2; i++)
     {
-        gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Tile/floor1.fbx");
-        gun->SetRot({ 0, XMConvertToRadians(90), 0 });
+        for (int j = -3; j <= 3; j++)
+        {
+            XMFLOAT3 pos{ j * 1.07f, 0, i * 1.19f };
+            gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"Buliding", pos, L"../Assets/fbx/Tile/floor1.fbx");
+            gun->SetRot({ 0, XMConvertToRadians(90), 0 });
 
-        gun->AddAnimationClip("capo1", L"../Assets/fbx/Tile/floor1.fbx");
-        gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor1_crash_Anim.fbx");
+            gun->AddAnimationClip("capo1", L"../Assets/fbx/Tile/floor1.fbx");
+            gun->AddAnimationClip("capo2", L"../Assets/fbx/Tile/Tile_anim/Floor1_crash_Anim.fbx");
+        }
     }
     //m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
     //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
@@ -71,10 +75,10 @@ bool RenderTest::OnCreateScene()
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
     map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
     //map->SetScale(XMFLOAT3(1, 1, 1));
-    m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx");
+    //m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx");
     //Building* tile;
-    auto blade = m_objectManager->CreateObjectFromFile<AnimTest>(L"blade" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
-    blade->AddAnimationClip("idle", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+    //auto blade = m_objectManager->CreateObjectFromFile<AnimTest>(L"blade" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+    //blade->AddAnimationClip("idle", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
     //blade->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
 
 
