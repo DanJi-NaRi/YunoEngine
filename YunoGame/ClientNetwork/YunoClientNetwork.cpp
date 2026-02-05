@@ -389,12 +389,13 @@ namespace yuno::game
 
                 // 디버깅용
                 std::cout
-                    << "[BattleResult]"
-                    << "\nrunTimeCardID = " << static_cast<int>(br.runTimeCardID)
-                    << "\nPID = " << static_cast<int>(br.pId)
-                    << "\nUnit = " << static_cast<int>(br.slotId)
-                    << "\nDir = " << static_cast<int>(br.dir)
-                    << "\nActionTime = " << static_cast<int>(br.actionTime);
+                    << "\n------------------------------\n"
+                    << "    [BattleResult Packet]"
+                    << "\n runTimeCardID = " << static_cast<int>(br.runTimeCardID)
+                    << "\n PID = " << static_cast<int>(br.pId)
+                    << "  ,  Unit = " << static_cast<int>(br.slotId)
+                    << "\n Dir = " << static_cast<int>(br.dir)
+                    << "  ,  ActionTime = " << static_cast<int>(br.actionTime);
                 for (const auto& d : order)
                 {
                     for (int i = 0; i < d.size(); i++)
@@ -403,14 +404,15 @@ namespace yuno::game
                         const int unit = static_cast<int>(d[i].slotId);
 
                         std::cout
-                            << "\n[Client] Apply Delta |\n" 
+                            << "\n\n      <UnitState" << i << "> \n"
                             << " Player = " << slot
-                            << "\n unit =" << unit
+                            << "  ,  unit =" << unit
                             << "\n hp =" << static_cast<int>(d[i].hp)
-                            << "\n stamina =" << static_cast<int>(d[i].stamina)
+                            << "  ,  stamina =" << static_cast<int>(d[i].stamina)
                             << "\n move =" << static_cast<int>(d[i].targetTileID)
-                            << "\n isEvent =(" << static_cast<bool>(d[i].isEvent) << ")\n";
+                            << "  ,  isEvent =(" << static_cast<bool>(d[i].isEvent) << ")\n";
                     }
+                    std::cout << "------------------------------\n\n";
                 }
             }
         );// BattleResult Packet End
