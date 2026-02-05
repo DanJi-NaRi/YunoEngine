@@ -228,7 +228,6 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
 
         Btn->SetButtonState(ButtonState::Idle); // 초기화
 
-
         ////////////////// 키보드 입력 검사 단계 //////////////////
 
         if (Btn->IsBindkey()) { // 바인딩 키가 있을 경우
@@ -253,6 +252,8 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
         ////////////////// 마우스 입력 검사 단계 //////////////////
 
         if (!widget->IsCursorOverWidget(mouseXY)) { // 커서가 위젯 위에 있는지 체크
+            Btn->IdleEvent();
+            //std::cout << "Idle!!" << std::endl;
             Btn = nullptr;
             continue;
         }
@@ -287,9 +288,10 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
         //}
         else {
             Btn->SetButtonState(ButtonState::Hovered);
-            //Btn->HoveredEvent();
+            Btn->HoveredEvent();
             //std::cout << "Hovered!!" << std::endl;
         }
+
         Btn = nullptr; // 다음 검사를 위해 초기화
     }
 }

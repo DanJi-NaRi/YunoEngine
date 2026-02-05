@@ -51,4 +51,9 @@ void CardSlot::Clear()
     m_pCard = nullptr;
 }
 
+bool CardSlot::Event(float dTime)
+{
+    return true;
+}
+
 

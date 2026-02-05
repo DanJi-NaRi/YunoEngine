@@ -11,7 +11,7 @@ class DragProvider
 public:
     DragProvider();
     ~DragProvider();
-    bool Init(IInput* pInput, XMFLOAT3* pPos, bool canDrag);
+    bool Init(XMFLOAT3* pPos, bool canDrag);
     void Clear();
     void UpdateDrag(float dTime);
     void UpdatePos();
@@ -27,7 +27,9 @@ public:
 
    //const std::vector<XMFLOAT3>& GetSnapPoints() const { return m_snapPoint; }
     void SetBkPos(XMFLOAT3 bkPos) { m_bkPos = bkPos; }
-    // 스냅 포인트 받는 함수 빼두기??
+
+    void DetachSnap();
+
 protected:
     bool m_canDrag;                 // 드래그 가능 여부
     bool m_isDrag;                  // 현재 드래그 여부

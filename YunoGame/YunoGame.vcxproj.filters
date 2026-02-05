@@ -312,6 +312,8 @@
     <ClCompile Include="PlayerIcon.cpp">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClCompile>
+    <ClCompile Include="SceneChangeButton.cpp" />
+    <ClCompile Include="CardConfirmArea.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -509,6 +511,14 @@
     <ClInclude Include="PlayerIcon.h">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClInclude>
+    <ClInclude Include="SceneChangeButton.h" />
+    <ClInclude Include="TitleScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="CardConfirmArea.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

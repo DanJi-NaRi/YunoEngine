@@ -12,7 +12,7 @@
 
 
 
-class Game_InputContext final : public InputContextBase
+class UI_InputContext final : public InputContextBase
 {
 public:
     int GetPriority() const override { return 100; } // UI 우선
@@ -63,6 +63,7 @@ public:
             evt.consumed = m_uiManager->ProcessButtonKey(ButtonState::Released, evt.key);
             return evt.consumed;
         }
+
         return false;
     }
 

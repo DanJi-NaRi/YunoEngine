@@ -1,6 +1,9 @@
 #pragma once
 #include "Button.h"
 
+class CardConfirmArea;
+class Card;
+
 class CardCancelButton : public Button
 {
 public:
@@ -22,10 +25,13 @@ public:
     virtual bool RMBReleasedEvent() override;                   // 우클릭 뗐을 때
     virtual bool KeyReleasedEvent(uint32_t key = 0) override;   // 바인딩한 키 뗐을 때
 
+    void AddSlot(CardConfirmArea* pSlot) { m_slots.push_back(pSlot); }
+    void ClearSlot() { m_slots.clear(); }
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
-    virtual WidgetClass GetWidgetClass() override { return WidgetClass::Card; } // 바꾸기
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardCancelButton; } // 바꾸기
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/select_card_back_mouseout.png"); };    // 머테리얼 생성 (한 번만)
 protected:
+    std::vector<CardConfirmArea*> m_slots;
 };

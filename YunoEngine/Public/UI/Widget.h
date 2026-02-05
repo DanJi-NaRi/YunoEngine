@@ -41,6 +41,8 @@ enum class WidgetType : int { // 자신 / 부모 클래스 타입
 };
 
 enum class WidgetClass : int {
+    //////////////////////////////
+    // 기본
     Widget,
     Image,
     Button,
@@ -48,12 +50,14 @@ enum class WidgetClass : int {
     Slot,
     ProgressBar,
     Gauge,
-    CardTable,
-    Card,
-    CardSlot,
     LetterBox,
     GridLine,
 
+    //////////////////////////////
+    // 씬 전환
+    SceneChangeButton,
+
+    //////////////////////////////
     // 첫 무기 선택 페이즈
     UserImage,
     TitleImage,
@@ -61,6 +65,22 @@ enum class WidgetClass : int {
     ExitButton,
     WeaponButton,
 
+    //////////////////////////////
+    // 카드 선택 페이즈 씬
+    Card,
+    CardSlot,
+    CardTable, // 미사용
+
+    // 카드 컨펌
+    CardConfirmPanel,
+    CardConfirmArea,
+    CardConfirmButton,
+    CardCancelButton,
+
+    // 카드 선택
+    CardSelectionPanel,
+
+    //////////////////////////////
     // 전투 씬
     BarPanel,
     PieceImage,
@@ -68,6 +88,8 @@ enum class WidgetClass : int {
     HealthGauge,
     StaminaBar,
     StaminaGauge,
+
+    //////////////////////////////
 };
 
 enum class WidgetLayer : int {
@@ -195,6 +217,9 @@ protected:
     Float3 m_canvasScale;           // 해상도 대응 스케일 (canvasSizeXY/clientSizeXY) - Scale에 적용
     Float3 m_canvasLetterboxOffset; // 레터박스 보정 오프셋 - Pos에 적용
     //Canvas* m_canvas;
+
+    std::wstring m_texturePath; // 현재 TexturePath
+    std::wstring m_texturePathBk; // 백업용 원본 TexturePath
 
 
     // 기타 데이터
@@ -329,6 +354,7 @@ public:
     bool                         HasMeshNode() const { return m_MeshNode.get() != nullptr; }
     const Float3&                GetTextureSize(int num) const { assert(num >= 0 && num < m_textureSizes.size()); return m_textureSizes[num]; }
     const std::vector<Float2>&   GetTextureSizes() const { return m_textureSizes; }
+    std::wstring                 GetTexturePath() { return m_texturePath; }
    
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
@@ -360,6 +386,8 @@ public:
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 
     bool SwapMaterial(int num);
+
+    void ChangeTexture(std::wstring path) { if (path == m_texturePath) { return; } else { m_texturePath = path; m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, m_texturePath); } };
 
     void Attach(Widget* obj);
     void DettachParent();

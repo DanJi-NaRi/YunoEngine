@@ -23,5 +23,5 @@ protected:
     Gauge* m_pGauge;
 
 private:
-    bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/Widget/PlayerHUD/Bar_base.png"); }  // 머테리얼 생성 (한 번만)
+    bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/Bar_base.png"); }  // 머테리얼 생성 (한 번만)
 };

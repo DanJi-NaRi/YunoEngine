@@ -11,7 +11,7 @@
 #include "UIManager.h"
 
 // 여러 오브젝트들 ;; 
-#include "TitleImage.h"
+#include "UIWidgets.h"
 
 // 사용법
 // 컨트롤 + H 누르면 이름 변경 나옴
@@ -36,6 +36,10 @@ bool Title::OnCreateScene()
 
     m_titleImage = CreateWidget<TitleImage>(L"Title", g_defWidgetSize, XMFLOAT3(0, 0, 0));
     m_titleImage->SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
+
+
+    CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538,105), XMFLOAT3(0, 500, 0))->SetTargetScene(CurrentSceneState::GameStart);
+
     return true;
 }
 
@@ -48,11 +52,13 @@ void Title::OnDestroyScene()
 void Title::OnEnter()
 {
     //std::cout << "[Title] OnEnter\n"; 
+    YunoEngine::GetInput()->AddContext(&m_uiCtx, this);
 }
 
 void Title::OnExit()
 {
     //std::cout << "[Title] OnExit\n"; 
+    YunoEngine::GetInput()->RemoveContext(&m_uiCtx);
 }
 
 void Title::Update(float dt)

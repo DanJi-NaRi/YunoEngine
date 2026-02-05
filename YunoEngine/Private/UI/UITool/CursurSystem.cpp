@@ -90,16 +90,21 @@ bool CursurSystem::FindSnapWidget()
         }
 
         drag->SetSnappedSlot(slot); // 드래그에 새 슬롯 등록
+        point->pSnapOwner = m_focusedWidget; // 슬롯에 드래그 위젯 등록
 
-        //스냅 시작
-        XMFLOAT3 snapPos = { point->snapPos.x, point->snapPos.y, 0 };
+        // 스냅 여부
+        if (point->useSnap) {
+            //스냅 O
 
-        drag->SetBkPos(snapPos);
+            XMFLOAT3 snapPos = { point->snapPos.x, point->snapPos.y, 0 };
 
-        if (Widget* pParent = slot->GetParent(); pParent) m_focusedWidget->SetPos(LocalToWorldPos(snapPos, pParent->GetPos(), pParent->GetScale()));
-        else m_focusedWidget->SetPos(snapPos);
+            drag->SetBkPos(snapPos);
+
+            m_focusedWidget->SetPos(snapPos);
+        }
+        slot->Event(); // 스냅 X면 이벤트만
         
-        point->pSnapOwner = m_focusedWidget;
+        
 
         //m_focusedWidget->SetPosBK(snapPos); // 근본 백업은 냅둬야하지 않나??
         

@@ -122,6 +122,8 @@ bool Widget::CreateMesh()
 bool Widget::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
 {
     m_Albedo = m_pTextures->LoadTexture2D(path.c_str());
+    m_texturePath = path;
+    m_texturePathBk = path;
 
     AddTextureSize(m_Albedo);
 

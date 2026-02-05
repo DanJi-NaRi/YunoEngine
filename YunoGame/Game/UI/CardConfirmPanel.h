@@ -5,6 +5,7 @@ class Card;
 class CardSlot;
 class CardConfirmButton;
 class CardCancelButton;
+class CardConfirmArea;
 
 
 class CardConfirmPanel : public Image
@@ -24,11 +25,12 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardTable; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/white.png"); };    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/window_popup_battlesetup.png"); };    // 머테리얼 생성 (한 번만)
 protected:
     // 세팅된 카드 / 스냅 위치 정보
     std::queue<Card*> m_setCards;                   // 세팅한 카드 // 슬롯 4개로 할 것
-    std::vector<CardSlot*> m_setCardSlots;          // 카드 세팅할 슬롯 위젯
+    //std::vector<CardSlot*> m_setCardSlots;          // 카드 세팅할 슬롯 위젯
+    std::vector<CardConfirmArea*> m_setCardSlots;          // 카드 세팅할 슬롯 위젯
     CardConfirmButton* m_cardConfirmButton;         // 카드 컨펌(선택 완료) 버튼
     CardCancelButton* m_cardCancelButton;           // 카드 캔슬(선택 초기화) 버튼
     

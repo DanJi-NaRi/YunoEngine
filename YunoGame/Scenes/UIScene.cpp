@@ -31,10 +31,10 @@ bool UIScene::OnCreateScene()
     // 테스트 공간
     m_uiManager->SetOrthoFlag(true);
 
-    /*CreateWidget<PlayerIcon>(L"tstPlayerIconL", Float2(217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
+    CreateWidget<PlayerIcon>(L"tstPlayerIconL", Float2(217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
     
     auto* IconR = CreateWidget<PlayerIcon>(L"tstPlayerIconR", Float2(-217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
-    IconR->MirrorScaleX();*/
+    IconR->MirrorScaleX();
 
 
     auto* a = CreateWidget<Letterbox>(L"LetterBoxA", Float2(50, 50), XMFLOAT3(0, 0, 0) );

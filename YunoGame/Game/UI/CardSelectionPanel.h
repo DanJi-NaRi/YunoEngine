@@ -20,15 +20,15 @@ public:
     //void CardDrag();    // 카드 드래그
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
-    virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardTable; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardSelectionPanel; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/white.png"); };    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/window_popup_inventory.png"); };    // 머테리얼 생성 (한 번만)
 protected:
     // 덱 정보
     std::vector<std::unique_ptr<Card>> m_deck;      // 카드 덱 // 그리드 시스템 이용할수도??
 
     // 세팅된 카드 / 스냅 위치 정보
-    std::vector<Card*> m_Cards;                   // 세팅한 카드 // 슬롯 4개로 할 것
+    std::vector<Card*> m_Cards;                   // 꺼내갈 카드
     std::vector<CardSlot*> m_CardSlots;          // 카드 세팅할 슬롯 위젯
 
 
