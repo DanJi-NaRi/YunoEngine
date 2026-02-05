@@ -293,7 +293,8 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         // 애니메이션 대신 반짝이는 걸로 잠시 대체
         pPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
         as.phaseStarted = false;
-
+        
+        std::cout << "[Attack Sequence]\nAttacker hp: " << static_cast<int>(m_UnitStates[GetUnitID(as.attacker)].hp) << std::endl;
         break;
     }
     case AttackPhase::TileHit:
@@ -350,6 +351,8 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         const auto& pieces = as.hitPieces;
         for (int i = 0; i < pieces.size(); i++)
         {
+            std::cout << "[Attack Sequence]\nHitter hp: " << static_cast<int>(m_UnitStates[GetUnitID(pieces[i])].hp) << std::endl;
+            if (!CheckExisting(pieces[i]))    continue;
             auto& pieceinfo = m_pieces[pieces[i]];
             int id = GetUnitID(pieces[i]);
             CheckHealth(m_UnitStates[id], pieceinfo);
@@ -775,10 +778,21 @@ int PlayGridSystem::GetUnitID(int pId, int slotID)
 
 int PlayGridSystem::GetUnitID(GamePiece gamePiece)
 {
-    return
-        (gamePiece == GamePiece::Ally1) ? 0 :
-        (gamePiece == GamePiece::Ally2) ? 1 :
-        (gamePiece == GamePiece::Enemy1) ? 2 : 3;
+    if (m_pID == 1)
+    {
+        return
+            (gamePiece == GamePiece::Ally1) ? 0 :
+            (gamePiece == GamePiece::Ally2) ? 1 :
+            (gamePiece == GamePiece::Enemy1) ? 2 : 3;
+    }
+    else
+    {
+        return
+            (gamePiece == GamePiece::Ally1) ? 2 :
+            (gamePiece == GamePiece::Ally2) ? 3 :
+            (gamePiece == GamePiece::Enemy1) ? 0 : 1;
+    }
+
 }
 
 int PlayGridSystem::GetOtherUnitDamage(const std::array<UnitState, 4>& newUnitStates, int mainUnit)

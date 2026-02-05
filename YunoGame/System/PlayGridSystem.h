@@ -48,7 +48,7 @@ struct AttackSequence
     Float4 m_tileEffectColor{ 0, 0, 0, 1 }; // 검정색
     float m_tileEffectDuration = 0.f;
 
-    Float4 m_hitColor{ 1, 0, 0, 1 };        // 빨간색
+    Float4 m_hitColor{ 0, 0, 0, 1 };        // 검정색
     float m_hitDuration = 0.f;
 };
 
