@@ -73,8 +73,8 @@ public:
     static PGridCmd Move_P(Direction dir, float wx, float wy, float wz, float speed = 1, bool isDone = false);
 
     static PGridCmd Attack_S_TST(GamePiece pieceType, int damagae, const std::vector<int>& tileIDs);
-    static PGridCmd Hit_S(GamePiece pieceType, int damagae);
-    static PGridCmd Hit_P(int damagae1, GamePiece pieceType = GamePiece::None, int damage2 = 0);
+    static PGridCmd Hit_S(GamePiece pieceType);
+    static PGridCmd Hit_P(GamePiece pieceType = GamePiece::None);
 
     static PGridCmd Cmd_S(CommandType cmdType, GamePiece pieceType);
 

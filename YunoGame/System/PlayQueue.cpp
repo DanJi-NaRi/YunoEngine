@@ -57,21 +57,18 @@ PGridCmd PlayGridQ::Attack_S_TST(GamePiece pieceType, int damagae, const std::ve
     
 }
 
-PGridCmd PlayGridQ::Hit_S(GamePiece pieceType, int damage)
+PGridCmd PlayGridQ::Hit_S(GamePiece pieceType)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Hit;
-    cmd.hit.damage1 = damage;
     cmd.hit.whichPiece = pieceType;
     return cmd;
 }
 
-PGridCmd PlayGridQ::Hit_P(int damage1, GamePiece pieceType, int damage2)
+PGridCmd PlayGridQ::Hit_P(GamePiece pieceType)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Hit;
-    cmd.hit.damage1 = damage1;
-    cmd.hit.damage2 = damage2;
     cmd.hit.whichPiece = pieceType;
     return cmd;
 }
@@ -80,7 +77,7 @@ PGridCmd PlayGridQ::Cmd_S(CommandType cmdType, GamePiece pieceType)
 {
     PGridCmd cmd;
     cmd.cmdType = cmdType;
-    cmd.die_s.whichPiece = pieceType;
+    cmd.over_s.whichPiece = pieceType;
     return cmd;
 }
 

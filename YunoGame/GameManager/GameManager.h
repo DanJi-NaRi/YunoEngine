@@ -81,6 +81,7 @@ public:
     //UI 표시용 runtimeID -> dataID
     uint32_t GetCardDataID(uint32_t runtimeID) const;
     const CardData GetCardData(uint32_t runtimeID);
+    const CardEffectData* GetCardEffectData(uint32_t runtimeID);
     const RangeData* GetRangeData(uint32_t runtimeID);
 
 private:
