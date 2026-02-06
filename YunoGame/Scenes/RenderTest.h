@@ -22,4 +22,10 @@ protected:
 
 private:
     AnimTest* gun;
+    AnimTest* axe;
+    AnimTest* scythe;
+    AnimTest* blade;
+    AnimTest* breacher;
+    AnimTest* chakram01;
+    AnimTest* chakram02;
 };

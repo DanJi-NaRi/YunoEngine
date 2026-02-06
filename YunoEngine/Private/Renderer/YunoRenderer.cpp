@@ -454,7 +454,7 @@ bool YunoRenderer::CreateShadowMap(uint32_t width, uint32_t height)
     if (FAILED(m_device->CreateShaderResourceView(m_ShadowMap.dstex.Get(), &srvDesc, m_ShadowMap.dssrv.GetAddressOf())))
         return false;
 
-    m_shadowCamera.position = XMFLOAT3(0, 20, 0);
+    m_shadowCamera.position = XMFLOAT3(0, 20, -5);
     m_shadowCamera.target = XMFLOAT3(0, 0, -0.01f);
     m_shadowCamera.up = XMFLOAT3(0, 1, 0);
 
