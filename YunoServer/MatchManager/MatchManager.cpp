@@ -194,6 +194,11 @@ namespace yuno::server
             player.unit1.WeaponID = slot.unitId1;
             player.unit2.WeaponID = slot.unitId2;
 
+
+            // Unit BuffStat 초기화
+            player.unit1.buffstat = { 0,0,0 };
+            player.unit2.buffstat = { 0,0,0 };
+
             //유닛 위치 초기화
             if (i == 0)
             {

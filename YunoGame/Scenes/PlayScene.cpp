@@ -78,7 +78,7 @@ void PlayScene::HandleCardSelect(int key, int unit, int index)
     int unitSlot = m_selectedUnitSlot;  // 0, 1 첫번째 무기인지 두번째 무기인지
 
     uint32_t runtimeID =
-        GameManager::Get().GetMyCardRuntimeID(unit, index);
+        GameManager::Get().GetMyCardRuntimeID(unit, index-1);
 
     if (runtimeID == 0)
         return;
@@ -177,17 +177,17 @@ void PlayScene::TestInput()
     AddCardSelect();
     // 디버깅용
     // 카드 선택 (넘버패드 = UI 버튼 대용)
-    HandleCardSelect(VK_NUMPAD1, 0, 0); // 클라 1
-    HandleCardSelect(VK_NUMPAD2, 0, 2);
-    HandleCardSelect(VK_NUMPAD3, 0, 4);
-    HandleCardSelect(VK_NUMPAD4, 0, 15);
+    HandleCardSelect(VK_NUMPAD1, 0, 1); //버프
+    HandleCardSelect(VK_NUMPAD2, 0, 3); //이동
+    HandleCardSelect(VK_NUMPAD3, 0, 5); //공격
+    HandleCardSelect(VK_NUMPAD4, 0, 16);//특수
 
-    HandleCardSelect(VK_NUMPAD5, 1, 0); // 클라 2
-    HandleCardSelect(VK_NUMPAD6, 1, 2);
-    HandleCardSelect(VK_NUMPAD7, 1, 4);
-    HandleCardSelect(VK_NUMPAD8, 1, 15);
+    HandleCardSelect(VK_NUMPAD5, 1, 1); //버프
+    HandleCardSelect(VK_NUMPAD6, 1, 3); //이동
+    HandleCardSelect(VK_NUMPAD7, 1, 5); //공격
+    HandleCardSelect(VK_NUMPAD8, 1, 16);//특수
 
-    HandleCardSelect(VK_NUMPAD9, 1,8);
+    HandleCardSelect(VK_NUMPAD9, 1,9);
 
     //방향 선택
     HandleDirectionInput();

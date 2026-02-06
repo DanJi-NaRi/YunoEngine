@@ -39,19 +39,23 @@ namespace yuno::server
 
         m_roundStarted = true;
 
-        m_match.InitBattleState();  // 얘는 매 라운드
-        for (int i = 0; i < 2; ++i)
+        m_match.InitBattleState();  // 라운드초기화
+
+        if (!m_cardsInitialized)
         {
-            m_cardController.InitPlayerCards(g_battleState.players[i]); // 1번만
+            for (int i = 0; i < 2; ++i)
+            {
+                m_cardController.InitPlayerCards(g_battleState.players[i]); // 1회 초기화
+            }
+
+            SendInitialCards(); // 1회 초기화
+            SendCountDown(); // 1회 초기화
+            m_cardsInitialized = true;
         }
 
-        SendInitialCards(); // 1번만
+        SendRoundStart(); // 라운드초기화
 
-        SendCountDown(); // 1번만
-
-        SendRoundStart(); // 매 라운드
-
-        StartTurn(); // 매 라운드
+        StartTurn(); // 라운드초기화
     }
 
     // ------------------------------------------------------
@@ -177,12 +181,16 @@ namespace yuno::server
 
     void RoundController::EndRound()
     {
+        m_roundStarted = false;
 
-        if (!g_battleState.roundEnded)
-            TryStartRound();
-        else
+        if (g_battleState.matchEnded)   // 매치(게임)이 끝났으면 엔드게임
             EndGame();
-    }    //라운드엔드() <- 라운드스타트 게임엔드
+        else                            // 아직 안끝났으면 라운드 스타트
+        {
+            TryStartRound();
+        }
+
+    }    
 
     void RoundController::StartTurn()
     {
@@ -190,7 +198,7 @@ namespace yuno::server
         std::cout << "[Round] StartTurn #" << m_turnNumber << "\n";
 
         yuno::net::packets::S2C_StartTurn pkt{};
-        pkt.turnNumber = m_turnNumber;
+        pkt.turnNumber = g_battleState.turnNumber;
 
         // 두 플레이어가 선택한 카드 결과
         pkt.addedCards[0] = g_battleState.players[0].handCards.back();
@@ -208,24 +216,53 @@ namespace yuno::server
 
     void RoundController::EndTurn()
     {
-        std::cout << "[Round] EndTurn\n";
+        std::cout << "[Round] EndTurn , data : " << g_battleState.roundEnded << std::endl;
 
+        if (g_battleState.roundEnded)
+        {
+            EndRound();
+            return;
+        }
         m_cardSelected[0] = false;
         m_cardSelected[1] = false;
 
-        SendDrawCandidates();   
-
-
-        if (g_battleState.roundEnded)
-            EndRound();            
-
+        SendDrawCandidates();
         //종료 플래그 이미 받은 상태
         //턴스타트 라운드엔드
     }
 
     void RoundController::EndGame()
     {
-        std::cout << "stupid DDongMin" << std::endl;
+
+        // 여기서 엔딩씬으로 넘어갈거면 엔딩씬 넘기는 패킷에 데이터 담아서 보내고나서 
+        // 데이터 리셋 ㄱㄱ
+        std::cout << "[Round] Match ended. Reset loop state for next match\n";
+
+        m_roundStarted = false;
+        m_cardsInitialized = false;
+        m_turnNumber = 0;
+        m_cardSelected[0] = false;
+        m_cardSelected[1] = false;
+
+        g_battleState.roundWins[0] = 0;
+        g_battleState.roundWins[1] = 0;
+        g_battleState.currentRound = 1;
+
+        g_battleState.roundEnded = false;
+        g_battleState.roundWinnerPID = 0;
+        g_battleState.roundLoserPID = 0;
+
+        g_battleState.matchEnded = false;
+        g_battleState.matchWinnerPID = 0;
+
+        for (int i = 0; i < 2; ++i)
+        {
+            auto& player = g_battleState.players[i];
+            player.remainingDeck.clear();
+            player.handCards.clear();
+            player.drawCandidates.clear();
+        }
+
     }
     
     void RoundController::OnPlayerSelectedCard(int playerIdx)
