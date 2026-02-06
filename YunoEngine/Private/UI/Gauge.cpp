@@ -103,7 +103,8 @@ bool Gauge::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
     m_texturePath = path;
     m_texturePathBk = path;
 
-    AddTextureSize(m_Albedo);
+    //AddTextureSize(m_Albedo);
+    SetTextureSize(m_Albedo);
 
     MaterialDesc md{};
     if (pDesc) {

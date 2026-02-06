@@ -77,7 +77,7 @@ bool SceneChangeButton::HoveredEvent()
 {
     //std::cout << "HoveredEvent" << std::endl;
 
-    ChangeTexture(L"../Assets/UI/Title/start_mouseover.png");
+    ChangeTexture(m_hoverdTexturePath);
 
     //start_mouseover
 

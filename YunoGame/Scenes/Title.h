@@ -4,6 +4,7 @@
 #include "TitleScene_InputContext.h"
 
 class UserImage;
+class SceneChangeButton;
 
 class Title final : public SceneBase
 {
@@ -24,4 +25,5 @@ protected:
 private:
     TitleScene_InputContext m_uiCtx;
     Widget* m_titleImage = nullptr;
+    SceneChangeButton* m_startBtn = nullptr;
 };

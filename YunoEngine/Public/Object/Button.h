@@ -28,6 +28,14 @@ public:
     
     void ButtonUpdate(float dTime = 0);
 
+    std::wstring GetHoveredTexturePath() { return m_hoverdTexturePath; }
+
+    void SetCursurTexture(std::wstring idlePath, std::wstring hoverdPath);
+
+    void SetIdleTexture(std::wstring path);
+    void SetHoverdTexture(std::wstring path);
+    void SetClickedTexture(std::wstring path);
+
     virtual bool IdleEvent();
     virtual bool HoveredEvent();
     virtual bool LMBPressedEvent();
@@ -55,6 +63,10 @@ protected:
     ButtonState m_btnState;							//UI버튼별 상태 저장.
     uint32_t m_bindkey = 0;
     std::unique_ptr<DragProvider> m_pDrag = nullptr; // 드래그 기능 공급자. 기본은 null이니 파생해서 초기화 때 채워줄 것.
+
+    std::wstring m_hoverdTexturePath; // 커서를 올렸을 때, 바뀌는 텍스처
+    std::wstring m_PressedTexturePath; // 클릭했을 때, 바뀌는 텍스처 // 사용 안 함
+
 private:
     //bool CreateMesh() override;      // 메시 생성 (한 번만)
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)

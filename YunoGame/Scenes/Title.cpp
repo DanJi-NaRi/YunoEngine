@@ -38,8 +38,11 @@ bool Title::OnCreateScene()
     m_titleImage->SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
 
 
-    CreateWidget<SceneChangeButton>(L"StartBtn", Float2(500,100), XMFLOAT3(100, 200, 0))->SetTargetScene(CurrentSceneState::GameStart);
+    m_startBtn = CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538,105), XMFLOAT3(0, 500, 0));
+    m_startBtn->SetTargetScene(CurrentSceneState::GameStart);
+    m_startBtn->SetCursurTexture(L"../Assets/UI/TITLE/start_mouseout.png", L"../Assets/UI/TITLE/start_mouseover.png");
 
+    CreateWidget<ExitButton>(L"ExitBtn", Float2(1538, 105), XMFLOAT3(0, 800, 0))->SetCursurTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
     return true;
 }
 

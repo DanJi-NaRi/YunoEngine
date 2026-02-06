@@ -208,8 +208,6 @@ protected:
 
     Float2 m_size;               // 위젯 자체의 사이즈 (width, height)s
 
-    std::vector<Float2> m_textureSizes;
-
     Float3 m_finalPos;
 
     Float3 m_finalScale;           // 최종 위젯 스케일 XY // m_finalScale * m_canvasScale
@@ -226,7 +224,7 @@ protected:
 
     std::wstring m_texturePath; // 현재 TexturePath
     std::wstring m_texturePathBk; // 백업용 원본 TexturePath
-
+    Float2 m_textureSize;
 
     // 기타 데이터
 
@@ -328,10 +326,8 @@ public:
     void          SetCanvasSize(Float3 sizeXY)   { m_canvasSize = sizeXY; m_transformDirty = true;}
     void          SetIsRoot(bool isRoot) { m_isRoot = isRoot; }
     void          SetLayer(WidgetLayer layer) { m_layer = layer; }
-    void          SetTextureSize(int num, TextureHandle& handle);
-
-
-    Float2        AddTextureSize(TextureHandle& handle);
+    void          SetTextureSize(TextureHandle& texHandle);
+    void          SetTextureSize(std::wstring path);
 
     void          MirrorScaleX() { m_vScale.x *= -1; }
     void          MirrorScaleY() { m_vScale.y *= -1; }
@@ -358,10 +354,11 @@ public:
     bool                         GetIsRoot() { return m_isRoot; }
     WidgetLayer                  GetLayer() { return m_layer; }
     bool                         HasMeshNode() const { return m_MeshNode.get() != nullptr; }
-    const Float3&                GetTextureSize(int num) const { assert(num >= 0 && num < m_textureSizes.size()); return m_textureSizes[num]; }
-    const std::vector<Float2>&   GetTextureSizes() const { return m_textureSizes; }
+    const Float2                 GetTextureSize(int num) const { m_textureSize; }
     std::wstring                 GetTexturePath() { return m_texturePath; }
+    std::wstring                 GetTexturePathBk() { return m_texturePathBk; }
    
+
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();
@@ -383,17 +380,17 @@ public:
         return hr;
     }
 
+    void ChangeTexture(std::wstring path);
+
     virtual bool CreateMaterial() { return CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };
 
-    virtual bool AddMaterial(const std::wstring& path, MaterialDesc& desc);
+    //virtual bool AddMaterial(const std::wstring& path, MaterialDesc& desc); //  다중 머테리얼은 이용 안할듯?
 
-    virtual bool AddMaterial(MaterialDesc& desc);
+    //virtual bool AddMaterial(MaterialDesc& desc);                           //  다중 머테리얼은 이용 안할듯?
 
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 
-    bool SwapMaterial(int num);
-
-    void ChangeTexture(std::wstring path) { if (path == m_texturePath) { return; } else { m_texturePath = path; m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, m_texturePath); } };
+    //bool SwapMaterial(int num);
 
     void Attach(Widget* obj);
     void DettachParent();
