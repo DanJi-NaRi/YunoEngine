@@ -97,9 +97,12 @@ void PlayGridSystem::Update(float dt)
     if (!GameManager::Get().IsEmptyWeaponData())
         InitRound();
 
-    UpdateSequence(dt);
+    UpdateSequence(dt);         // 카드 타입별 step 진행
+
     CheckPacket(dt);
     CheckMyQ();
+
+    CheckOver();                // 라운드 끝났는지 체크
 }
 
 void PlayGridSystem::CreateObject(float x, float y, float z)
@@ -407,7 +410,6 @@ void PlayGridSystem::CheckPacket(float dt)
             isProcessing = false;
             m_currTime -= m_pktTime;
             std::cout << "Packet Time is Over\n";
-            CheckOver();
         }
     }
 }
