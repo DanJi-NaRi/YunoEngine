@@ -231,11 +231,13 @@ std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std
 
     size_t index = 0;
 
-    for (size_t i = 0; i < node->mNumChildren; i++)
+    /*for (size_t i = 0; i < node->mNumChildren; i++)
     {
         XMMATRIX root = XMMatrixIdentity();
         CreateBoneNode(node->mChildren[i], index, bRoot.get(), bRoot.get(), root, root, nameToIndex, nameToOffset);
-    }
+    }*/
+    XMMATRIX root = XMMatrixIdentity();
+    CreateBoneNode(node, index, bRoot.get(), nullptr, root, root, nameToIndex, nameToOffset);
 
     animator->SetBoneTree(std::move(bRoot), nameToIndex, nameToIndex.size());
 
@@ -626,6 +628,7 @@ std::pair<MeshHandle, MaterialHandle> CreateMesh(aiMesh* aiMesh, const aiScene* 
                 i--;
 
             texPath = texPath.substr(0, i + 1);
+
             auto albedoPath = texPath + L"_Albedo_" + texNum + L".png";
             TextureHandle diff = renderer->CreateColorTexture2DFromFile(albedoPath.c_str());
 
