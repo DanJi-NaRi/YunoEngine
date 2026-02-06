@@ -264,9 +264,9 @@ bool UnitPiece::Update(float dTime)
         case CommandType::Hit:
         {
             SetFlashColor({0,0,0,1},1,0.3f);
-            PlayGridQ::Insert(PlayGridQ::Hit_S(m_who, tp.hit.damage1));
+            PlayGridQ::Insert(PlayGridQ::Hit_S(m_who));
             if (tp.hit.whichPiece != GamePiece::None)
-                PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece, tp.hit.damage2));
+                PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece));
             break;
         }
         }
