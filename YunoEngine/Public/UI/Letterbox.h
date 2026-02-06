@@ -32,5 +32,6 @@ private:
 private:
     Role m_role = Role::BarA;
     // 기준 해상도(디자인 해상도)
-    XMFLOAT2 m_origin = { 1920.0f, 1080.0f };
+    //XMFLOAT2 m_origin = { 1920.0f, 1080.0f };
+    XMFLOAT2 m_origin = g_DefaultClientXY.ToXM();   // 디버그
 };

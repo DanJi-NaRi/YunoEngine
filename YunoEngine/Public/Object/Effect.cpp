@@ -21,6 +21,7 @@ void Effect::SetTemplate(const EffectTemplate& temp)
     m_frameCount = temp.frameCount;
     m_cols = temp.cols;
     m_rows = temp.rows;
+    m_loop = temp.isLoop;
 
     flipbook = (m_frameCount > 1);
 
@@ -290,7 +291,13 @@ bool Effect::Update(float dt)
     m_age += dt;
 
     if (m_age >= m_lifetime)
-        return false;
+    {
+        if (m_loop)
+            m_age = 0.0f;
+        else
+            return false;
+    }
+        
 
     UpdateWorldMatrix();
     UpdateFrame();

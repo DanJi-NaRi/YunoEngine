@@ -164,8 +164,8 @@ constexpr bool PivotMinMax(Float2 pivot) { // 피벗 최소 최대치 비교
 //}
 
 
+//constexpr Float2 g_DefaultClientXY{ 1920,1080 };
 constexpr Float2 g_DefaultClientXY{ 1920,1080 };
-
 class Widget
 {
 protected:
