@@ -34,9 +34,10 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::SceneChangeButton; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/Title/start_mouseout.png"); };    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Test/SceneButton.png"); };    // 머테리얼 생성 (한 번만)
 protected:
 
 private:
     CurrentSceneState m_targetScene;
+    
 };

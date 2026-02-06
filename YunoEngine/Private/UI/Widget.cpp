@@ -125,7 +125,7 @@ bool Widget::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
     m_texturePath = path;
     m_texturePathBk = path;
 
-    AddTextureSize(m_Albedo);
+    //SetTextureSize(m_Albedo);
 
     MaterialDesc md{};
     if (pDesc) {
@@ -157,33 +157,33 @@ bool Widget::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
     return true;
 }
 
-bool Widget::AddMaterial(const std::wstring& path, MaterialDesc& desc)
-{
-    MaterialDesc d = desc;
+//bool Widget::AddMaterial(const std::wstring& path, MaterialDesc& desc)
+//{
+//    MaterialDesc d = desc;
+//
+//    auto albedo = m_pTextures->LoadTexture2D(path.c_str());
+//    if (!albedo) return false;          // LoadTexture2D 실패 규약에 맞게 수정
+//
+//    d.albedo = albedo;
+//
+//    MaterialHandle mtrl = m_pRenderer->CreateMaterial(d);
+//    if (mtrl == 0) return false;        // invalid 규약에 맞게 수정
+//
+//    //AddTextureSize(d.albedo);
+//
+//    m_materials.push_back(mtrl);
+//    return true;
+//}
 
-    auto albedo = m_pTextures->LoadTexture2D(path.c_str());
-    if (!albedo) return false;          // LoadTexture2D 실패 규약에 맞게 수정
-
-    d.albedo = albedo;
-
-    MaterialHandle mtrl = m_pRenderer->CreateMaterial(d);
-    if (mtrl == 0) return false;        // invalid 규약에 맞게 수정
-
-    AddTextureSize(d.albedo);
-
-    m_materials.push_back(mtrl);
-    return true;
-}
-
-bool Widget::AddMaterial(MaterialDesc& desc)
-{
-    MaterialHandle mtrl = m_pRenderer->CreateMaterial(desc);
-    if (mtrl == 0) return false;
-
-    
-    m_materials.push_back(mtrl);
-    return true;
-}
+//bool Widget::AddMaterial(MaterialDesc& desc)
+//{
+//    MaterialHandle mtrl = m_pRenderer->CreateMaterial(desc);
+//    if (mtrl == 0) return false;
+//
+//    
+//    m_materials.push_back(mtrl);
+//    return true;
+//}
 
 
 bool Widget::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos)
@@ -215,7 +215,6 @@ bool Widget::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOA
         if (!CreateMaterial()) return false;
 
         m_MeshNode = std::make_unique<MeshNode>();
-
 
         auto mesh = std::make_unique<Mesh>();
         mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
@@ -384,24 +383,30 @@ bool Widget::Update(float dTime)
     return true;
 }
 
-void Widget::SetTextureSize(int num, TextureHandle& handle)
+
+void Widget::ChangeTexture(std::wstring path)
 {
-    const int size = m_textureSizes.size();
-    assert(num >= 0 && num < size);
-    if (num < 0 || num >= size) return;
-    auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(m_Albedo);
-    m_textureSizes[num].x = (float)textureSize.first;
-    m_textureSizes[num].y = (float)textureSize.second;
+    if (path == m_texturePath) return;
+
+    m_texturePath = path;
+    m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, m_texturePath);
+    //SetTextureSize(m_texturePath);
 }
 
-Float2 Widget::AddTextureSize(TextureHandle& handle)
+void Widget::SetTextureSize(TextureHandle& texHandle)
 {
-    auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(m_Albedo);
-    m_textureSizes.emplace_back(Float2{ (float)textureSize.first, (float)textureSize.second});
-
-    return m_textureSizes.back();
+    auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(texHandle);
+    m_textureSize.x = (float)textureSize.first;
+    m_textureSize.y = (float)textureSize.second;
 }
 
+void Widget::SetTextureSize(std::wstring path)
+{
+    m_Albedo = m_pTextures->LoadTexture2D(path.c_str()); // 알베도 갱신
+    auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(m_Albedo);
+    m_textureSize.x = (float)textureSize.first;
+    m_textureSize.y = (float)textureSize.second;
+}
 
 void Widget::Backup()
 {
@@ -541,13 +546,13 @@ void Widget::SetMesh(std::unique_ptr<MeshNode>&& mesh)
     m_MeshNode = std::move(mesh);
 }
 
-bool Widget::SwapMaterial(int num)
-{
-    if(num < 0 && m_materials.size() <= num) return false;
-
-    m_renderItem.materialHandle = m_materials[num];
-    return true;
-}
+//bool Widget::SwapMaterial(int num)
+//{
+//    if(num < 0 && m_materials.size() <= num) return false;
+//
+//    m_renderItem.materialHandle = m_materials[num];
+//    return true;
+//}
 
 void Widget::Attach(Widget* widget) // this가 부모, 파라미터로 자식
 {

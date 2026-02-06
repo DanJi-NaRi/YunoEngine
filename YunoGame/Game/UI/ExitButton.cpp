@@ -31,6 +31,7 @@ void ExitButton::Clear()
 bool ExitButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
+    //SetCursurTexture(m_texturePathBk, L"../Assets/UI/Title/exit_mouseout.png");
 
     m_bindkey = 0; // 0인 경우, 안쓴다는 뜻
 
@@ -39,13 +40,13 @@ bool ExitButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XM
 
 bool ExitButton::Update(float dTime) {
     Button::Update(dTime);
-
     return true;
 }
 
 bool ExitButton::Submit(float dTime)
 {
-    Button::Submit();
+    Button::Submit(dTime);
+
     return true;
 }
 
@@ -54,8 +55,6 @@ bool ExitButton::IdleEvent()
 {
     //std::cout << "IdleEvent" << std::endl;
     // 내용 작성
-    ChangeTexture(m_texturePathBk);
-
 
     return true;
 }
@@ -64,8 +63,6 @@ bool ExitButton::IdleEvent()
 bool ExitButton::HoveredEvent()
 {
     //std::cout << "HoveredEvent" << std::endl;
-    ChangeTexture(L"../Assets/UI/Title/start_mouseover.png");
-
     return true;
 }
 
@@ -79,7 +76,9 @@ bool ExitButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool ExitButton::LMBPressedEvent()
 {
+    //std::cout << "(LMB)PressedEvent" << std::endl;
     // 게임 끄기
+    PostQuitMessage(0);
     return true;
 }
 
