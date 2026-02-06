@@ -334,7 +334,10 @@ void PlayGridSystem::CheckMyQ()
         {
             const GamePiece pieceType = cmd.hit.whichPiece;
 
-            auto& pieceInfo = m_pieces[pieceType];
+            auto it = m_pieces.find(pieceType);
+            if (it == m_pieces.end()) break;
+
+            auto& pieceInfo = it->second;
             int uid = GetUnitID(pieceType);
 
             CheckHealth(m_UnitStates[uid], pieceInfo);
@@ -345,17 +348,18 @@ void PlayGridSystem::CheckMyQ()
         {
             const GamePiece pieceType = cmd.die_s.whichPiece;
 
-            //auto it = m_pieces.find(pieceType);
-            //if (it == m_pieces.end())    break;
 
-            //m_manager->DestroyObject(m_pieces[pieceType].id);
-            auto& pieceInfo = m_pieces[pieceType];
+            auto it = m_pieces.find(pieceType);
+            if (it == m_pieces.end()) break;
+
+            auto& pieceInfo = it->second;
+
             m_manager->DestroyObject(pieceInfo.id);
             for (uint32_t subId : pieceInfo.subIds)
             {
                 m_manager->DestroyObject(subId);
             }
-            m_pieces.erase(pieceType);
+            m_pieces.erase(pieceType); 
             break;
         }
         case CommandType::Turn_Over:
@@ -467,8 +471,22 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
 
         //int id = m_pieces[as.attacker].id;
         //auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(id));
-        const auto& pieceInfo = m_pieces[as.attacker];
+
+        auto attackerIt = m_pieces.find(as.attacker);
+        if (attackerIt == m_pieces.end())
+        {
+            as.phaseStarted = false;
+            break;
+        }
+
+        const auto& pieceInfo = attackerIt->second;
         auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
+        if (pPiece == nullptr)
+        {
+            as.phaseStarted = false;
+            break;
+        }
+
         // 애니메이션 대신 반짝이는 걸로 잠시 대체
         pPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
         pPiece->PlayAttack();
@@ -512,8 +530,15 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             if (!CheckExisting(pieces[i]))    continue;
             //int id = m_pieces[pieces[i]].id;
             //auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(id));
-            const auto& pieceInfo = m_pieces[pieces[i]];
+
+            auto it = m_pieces.find(pieces[i]);
+            if (it == m_pieces.end()) continue;
+
+            const auto& pieceInfo = it->second;
+
             auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
+            if (pPiece == nullptr) continue;
+
             // 애니메이션 대신 반짝이는 걸로 잠시 대체
             pPiece->SetFlashColor(as.m_hitColor, as.m_flashCount, as.m_flashInterval);
             for (uint32_t subId : pieceInfo.subIds)
@@ -534,7 +559,12 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         {
             std::cout << "[Attack Sequence]\nHitter hp: " << static_cast<int>(m_UnitStates[GetUnitID(pieces[i])].hp) << std::endl;
             if (!CheckExisting(pieces[i]))    continue;
-            auto& pieceinfo = m_pieces[pieces[i]];
+
+            auto it = m_pieces.find(pieces[i]);
+            if (it == m_pieces.end()) continue;
+
+            auto& pieceinfo = it->second;
+
             int id = GetUnitID(pieces[i]);
             CheckHealth(m_UnitStates[id], pieceinfo);
         }
