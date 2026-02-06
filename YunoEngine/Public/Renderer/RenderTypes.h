@@ -67,7 +67,7 @@ struct Update_Data
     XMFLOAT3 worldPos = { 0, 0, 0 }; //반투명 오브젝트 정렬용
     float roughRatio = 1.0f;
     float metalRatio = 1.0f;
-    float shadowBias = 0.001f;
+    float shadowBias = 0.0001f;
     float opacity = 1.0f;
     float emissive = 1.0f;
     /////// 위젯 ///////

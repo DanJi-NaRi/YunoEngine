@@ -42,4 +42,5 @@ struct EffectTemplate
     int frameCount;
     int cols;
     int rows;
+    bool isLoop;
 };

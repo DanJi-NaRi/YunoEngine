@@ -65,6 +65,7 @@ bool EffectManager::RegisterEffect(const EffectDesc& desc)
     temp.cols = desc.cols;
     temp.rows = desc.rows;
     temp.billboard = desc.billboard;
+    temp.isLoop = desc.isLoop;
 
     m_templates[desc.id] = temp;
     return true;

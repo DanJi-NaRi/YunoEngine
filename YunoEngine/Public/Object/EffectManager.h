@@ -6,6 +6,7 @@ class IRenderer;
 
 struct EffectDesc
 {
+    std::wstring texPath = L"";
     EffectID id = EffectID::Default;
     ShaderId shaderid = ShaderId::EffectBase;
     BillboardMode billboard = BillboardMode::ScreenAligned;
@@ -16,7 +17,7 @@ struct EffectDesc
     int framecount = 0;
     int cols = 0;
     int rows = 0;
-    std::wstring texPath = L"";
+    bool isLoop = false;
 };
 
 class EffectManager;
