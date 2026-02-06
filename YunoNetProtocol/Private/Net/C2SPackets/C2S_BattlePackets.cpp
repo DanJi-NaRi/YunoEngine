@@ -33,4 +33,18 @@ namespace yuno::net::packets
 
         return pkt;
     }
+
+
+    void C2S_RoundStartReadyOK::Serialize(ByteWriter& w) const
+    {
+
+    }
+
+    C2S_RoundStartReadyOK C2S_RoundStartReadyOK::Deserialize(ByteReader& r)
+    {
+
+        {
+            return {};
+        }
+    }
 }

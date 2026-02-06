@@ -52,11 +52,14 @@ namespace yuno::server
             SendInitialCards(); // 1회 초기화
             SendCountDown(); // 1회 초기화
             m_cardsInitialized = true;
+
+
         }
 
         SendRoundStart(); // 라운드초기화
 
         StartTurn(); // 라운드초기화
+
     }
 
     // ------------------------------------------------------
@@ -187,8 +190,11 @@ namespace yuno::server
 
         if (g_battleState.matchEnded || g_battleState.currentRound > 3)
             EndGame();
-        else
-            TryStartRound();
+        //else 
+        //{
+        //    TryStartRound(); // 이거 자동으로 시작되게 하는거 바꿔야 될듯
+        //}
+
     }
 
 

@@ -874,34 +874,6 @@ namespace yuno::server
         const auto applyObstacles = m_obstacleDB.GetObstacles(roundId, currentTurn);
         const auto warningObstacles = m_obstacleDB.GetObstacles(roundId, currentTurn + 1);
 
-        auto makeSnapshot = [&](const std::array<bool, 4>& eventFlags)
-            {
-                std::array<UnitStateDelta, 4> snapshot{};
-
-                const UnitState* units[4] =
-                {
-                    &g_battleState.players[0].unit1,
-                    &g_battleState.players[0].unit2,
-                    &g_battleState.players[1].unit1,
-                    &g_battleState.players[1].unit2
-                };
-
-                for (int i = 0; i < 4; ++i)
-                {
-                    const int ownerSlot = (i < 2) ? 1 : 2;
-                    const int unitLocalIndex = (i % 2) + 1;
-
-                    snapshot[i].ownerSlot = static_cast<uint8_t>(ownerSlot);
-                    snapshot[i].unitLocalIndex = static_cast<uint8_t>(unitLocalIndex);
-                    snapshot[i].hp = units[i]->hp;
-                    snapshot[i].stamina = units[i]->stamina;
-                    snapshot[i].targetTileID = units[i]->tileID;
-                    snapshot[i].isEvent = eventFlags[i] ? 1 : 0;
-                }
-
-                return snapshot;
-            };
-
         auto isTileMatched = [](const std::vector<int>& tiles, uint8_t tileId)
             {
                 const int tile = static_cast<int>(tileId);
@@ -918,6 +890,22 @@ namespace yuno::server
             &g_battleState.players[1].unit2
         };
 
+        auto fillUnitState = [&](ObstacleState& obstacleState)
+            {
+                for (int i = 0; i < 4; ++i)
+                {
+                    const int ownerSlot = (i < 2) ? 1 : 2;
+                    const int unitLocalIndex = (i % 2) + 1;
+
+                    obstacleState.unitState[i].ownerSlot = static_cast<uint8_t>(ownerSlot);
+                    obstacleState.unitState[i].unitLocalIndex = static_cast<uint8_t>(unitLocalIndex);
+                    obstacleState.unitState[i].hp = units[i]->hp;
+                    obstacleState.unitState[i].stamina = units[i]->stamina;
+                    obstacleState.unitState[i].targetTileID = units[i]->tileID;
+                    obstacleState.unitState[i].isEvent = damagedByObstacle[i] ? 1 : 0; // 장애물 패킷에서 isEvent는 장애물에 적중됐으면 T, 아니면 F
+                }
+            };
+
         for (const auto* obstacle : applyObstacles)
         {
             if (obstacle == nullptr)
@@ -928,7 +916,7 @@ namespace yuno::server
             for (int i = 0; i < 4; ++i)
             {
                 UnitState* unit = units[i];
-                if (unit->hp == 0)
+                if (unit->hp == 0)              // 이미 죽은 유닛 무시
                     continue;
                 if (!isTileMatched(obstacle->tileIds, unit->tileID))
                     continue;
@@ -993,8 +981,6 @@ namespace yuno::server
         }
 
         S2C_ObstacleResult pkt;
-        const auto snapshot = makeSnapshot(damagedByObstacle);
-
         if (!warningObstacles.empty())
         {
             for (const auto* obstacle : warningObstacles)
@@ -1011,7 +997,7 @@ namespace yuno::server
                         continue;
                     state.tileIDs.push_back(static_cast<uint8_t>(tileId));
                 }
-                state.unitState = snapshot;
+                fillUnitState(state);
                 pkt.obstacles.push_back(std::move(state));
             }
         }
@@ -1019,7 +1005,7 @@ namespace yuno::server
         {
             ObstacleState state{};
             state.obstacleID = 0;
-            state.unitState = snapshot;
+            fillUnitState(state);
             pkt.obstacles.push_back(std::move(state));
         }
 

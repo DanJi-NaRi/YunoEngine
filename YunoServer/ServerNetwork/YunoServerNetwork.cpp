@@ -321,6 +321,22 @@ namespace yuno::server
         );// Submit Weapon Packet End
 
 
+        // C2S_RoundStartReadyOK Packet Start
+        m_dispatcher.RegisterRaw(
+            PacketType::C2S_RoundStartReadyOK,
+            [this](const NetPeer& peer,
+                const PacketHeader&,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                ByteReader r(body, bodyLen);
+                const auto pkt = packets::C2S_RoundStartReadyOK::Deserialize(r);
+
+                m_roundController.TryStartRound();
+            }
+        );// Submit Weapon Packet End
+
+
         //Submit ReadyTurn Packet Start         
         m_dispatcher.RegisterRaw(
             PacketType::C2S_ReadyTurn,
