@@ -195,10 +195,13 @@ namespace yuno::server
     void RoundController::StartTurn()
     {
 
-        std::cout << "[Round] StartTurn #" << g_battleState.turnNumber << "\n";
+
 
         yuno::net::packets::S2C_StartTurn pkt{};
-        pkt.turnNumber = g_battleState.turnNumber;
+        pkt.turnNumber = ++g_battleState.turnNumber;        // 1턴부터 시작
+
+
+        std::cout << "[Round] StartTurn #" << g_battleState.turnNumber << "\n";
 
         // 두 플레이어가 선택한 카드 결과
         pkt.addedCards[0] = g_battleState.players[0].handCards.back();
