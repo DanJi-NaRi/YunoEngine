@@ -317,6 +317,9 @@
     </ClCompile>
     <ClCompile Include="SceneChangeButton.cpp" />
     <ClCompile Include="CardConfirmArea.cpp" />
+    <ClCompile Include="Minimap.cpp">
+      <Filter>Game\UI\Image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -524,6 +527,8 @@
     <ClInclude Include="CardConfirmArea.h" />
     <ClInclude Include="utilityClass.h">
       <Filter>System\Utility</Filter>
+    <ClInclude Include="Minimap.h">
+      <Filter>Game\UI\Image</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

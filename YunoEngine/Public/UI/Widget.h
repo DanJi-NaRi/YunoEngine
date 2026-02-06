@@ -73,6 +73,7 @@ enum class WidgetClass : int {
     Card,
     CardSlot,
     CardTable, // 미사용
+    Minimap,
 
     // 카드 컨펌
     CardConfirmPanel,
