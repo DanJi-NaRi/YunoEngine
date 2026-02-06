@@ -44,8 +44,11 @@ public:
     virtual bool Update(float dt) override;
     virtual bool Submit(float dt) override;
 
+    virtual UnitDesc GetDesc() override;
+
 private:
     XMMATRIX GetParentRotationMatrix() const;
+    XMMATRIX GetParentTranslationMatrix() const;
     XMFLOAT3 GetWorldPosition() const;
     XMMATRIX AdjustBillboardForParent(const XMMATRIX& billboardWorld) const;
 };

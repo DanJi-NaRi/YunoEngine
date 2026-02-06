@@ -111,6 +111,10 @@ struct UnitDesc
     TransformDesc transform;
     std::vector<MeshDesc> MatDesc;
 
+    bool hasEffectEmissive = false;
+    Vec4Desc effectEmissiveColor = { 1, 1, 1, 1 };
+    float effectEmissive = 0.0f;
+
     std::wstring unitType;
 };
 

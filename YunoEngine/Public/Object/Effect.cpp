@@ -28,6 +28,16 @@ void Effect::SetTemplate(const EffectTemplate& temp)
     billboard = temp.billboard;
 }
 
+UnitDesc Effect::GetDesc()
+{
+    UnitDesc d = Unit::GetDesc();
+    d.hasEffectEmissive = true;
+    d.effectEmissiveColor = FromXM(m_emissiveCol);
+    d.effectEmissive = m_emissive;
+
+    return d;
+}
+
 void Effect::Play(const XMFLOAT3& pos, const XMFLOAT3& scale, const XMFLOAT3& dir)
 {
     m_age = 0.0f;
@@ -98,6 +108,26 @@ XMMATRIX Effect::GetParentRotationMatrix() const
     return XMMatrixRotationQuaternion(rotation);
 }
 
+XMMATRIX Effect::GetParentTranslationMatrix() const
+{
+    if (!m_Parent)
+    {
+        return XMMatrixIdentity();
+    }
+
+    XMMATRIX parentAttach = m_Parent->GetAttachMatrixForChild(const_cast<Effect*>(this));
+    XMVECTOR scale{};
+    XMVECTOR rotation{};
+    XMVECTOR translation{};
+
+    if (!XMMatrixDecompose(&scale, &rotation, &translation, parentAttach))
+    {
+        return XMMatrixIdentity();
+    }
+
+    return XMMatrixTranslationFromVector(translation);
+}
+
 XMFLOAT3 Effect::GetWorldPosition() const
 {
     if (!m_Parent)
@@ -143,9 +173,13 @@ XMMATRIX Effect::UpdateBillBoard()
 
 XMMATRIX Effect::UpdateBeam()
 {
-    XMMATRIX parentRot = GetParentRotationMatrix();
+    /*XMMATRIX parentRot = GetParentRotationMatrix();
     XMVECTOR right = XMVector3Normalize(
         XMVector3TransformNormal(XMLoadFloat3(&m_vDir), parentRot)
+    );*/
+
+    XMVECTOR right = XMVector3Normalize(
+        XMLoadFloat3(&m_vDir)
     );
 
     const XMFLOAT3 worldPos = GetWorldPosition();
@@ -167,29 +201,41 @@ XMMATRIX Effect::UpdateBeam()
     R.r[2] = front;
     R.r[3] = XMVectorSet(0, 0, 0, 1);
 
+    //return R;
     return AdjustBillboardForParent(R);
 }
 
 XMMATRIX Effect::UpdateScreenAlign()
 {
-    XMMATRIX V = m_pRenderer->GetCamera().View();
+    const XMFLOAT3& camPos = m_pRenderer->GetCamera().Position();
 
-    // View 행렬의 역행렬 = Camera World Transform
-    XMMATRIX invView = XMMatrixInverse(nullptr, V);
+    const XMFLOAT3 worldPos = GetWorldPosition();
+    XMVECTOR P = XMLoadFloat3(&worldPos);
+    XMVECTOR C = XMLoadFloat3(&camPos);
 
-    // Camera 기준 축
-    XMVECTOR right = invView.r[0]; // 카메라 X축
-    XMVECTOR up = invView.r[1]; // 카메라 Y축
-    XMVECTOR look = invView.r[2]; // 카메라 Z축
+    XMVECTOR worldUp = XMVectorSet(0, 1, 0, 0);
 
-    // Billboard 회전행렬 생성
+    // 카메라 방향 = 카메라 → 이펙트
+    XMVECTOR look = XMVector3Normalize(P - C);
+    look = XMVectorSetY(look, 0.0f);
+
+    if (XMVector3LengthSq(look).m128_f32[0] < 0.0001f)
+    {
+        look = XMVectorSet(0, 0, 1, 0);
+    }
+
+    look = XMVector3Normalize(look);
+    XMVECTOR right = XMVector3Normalize(XMVector3Cross(worldUp, look));
+
+    XMVECTOR up = XMVector3Normalize(XMVector3Cross(right, look));
+
     XMMATRIX R;
     R.r[0] = right;
     R.r[1] = up;
     R.r[2] = look;
     R.r[3] = XMVectorSet(0, 0, 0, 1);
 
-    return R;
+    return AdjustBillboardForParent(R);
 }
 
 XMMATRIX Effect::UpdateWorldUpAlign()

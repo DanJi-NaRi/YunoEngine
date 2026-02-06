@@ -5,8 +5,8 @@
 #include "IRenderer.h"
 #include "ITextureManager.h"
 #include "Mesh.h"
+#include "SerializeScene.h"
 
-class UnitDesc;
 class IEffectManager;
 // 모든 메쉬는 CW 시계방향 정점이 앞면임
 /* 예시)
@@ -132,7 +132,7 @@ public:
     void SetEffectManager(IEffectManager* manager) { m_pEffectManager = manager; }
 
     void SetMeshPath(const std::wstring& meshpath) { m_meshpath = meshpath; }
-    UnitDesc GetDesc();
+    virtual UnitDesc GetDesc();
 
 #ifdef _DEBUG
     virtual void Serialize(); //나중에 상속해서 새로운 오브젝트 만들 때 임구이에 띄우고 싶은거있으면 이 함수 오버라이드하면됌

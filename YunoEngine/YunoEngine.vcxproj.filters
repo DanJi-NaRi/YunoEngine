@@ -284,6 +284,9 @@
     <ClCompile Include="Public\UI\SpriteSheet.cpp">
       <Filter>Public\UI\BaseWidget</Filter>
     </ClCompile>
+    <ClCompile Include="Public\Object\EffectUnit.cpp">
+      <Filter>Public\Object\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -499,6 +502,9 @@
     </ClInclude>
     <ClInclude Include="Public\UI\SpriteSheet.h">
       <Filter>Public\UI\BaseWidget</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\EffectUnit.h">
+      <Filter>Public\Object\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->

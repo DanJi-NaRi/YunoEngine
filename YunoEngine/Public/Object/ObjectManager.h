@@ -4,6 +4,7 @@
 #include "Unit.h"
 #include "AnimationUnit.h"
 #include "SerializeScene.h"
+#include "Effect.h"
 
 class YunoDirectionalLight;
 class YunoPointLight;
@@ -149,6 +150,15 @@ void ObjectManager::CreateObjectInternal(const UnitDesc& desc)
     obj->SetRot(radRot);
     obj->SetScale(ToXM(desc.transform.scale));
     obj->SetEffectManager(m_effectManager);
+
+    if (desc.hasEffectEmissive)
+    {
+        if (auto* effect = dynamic_cast<Effect*>(obj))
+        {
+            effect->m_emissiveCol = ToXM(desc.effectEmissiveColor);
+            effect->m_emissive = desc.effectEmissive;
+        }
+    }
 }
 
 template<typename T>

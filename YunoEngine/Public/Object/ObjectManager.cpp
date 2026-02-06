@@ -243,7 +243,16 @@ void ObjectManager::ApplyUnitFromDesc(const std::vector<UnitDesc>& uds)
         for (auto& emissveInfo : d.MatDesc)
         {
             o->SetEmissive(emissveInfo.meshNum, ToXM(emissveInfo.emissiveCol), emissveInfo.emissive);
-        } 
+        }
+
+        if (d.hasEffectEmissive)
+        {
+            if (auto* effect = dynamic_cast<Effect*>(o))
+            {
+                effect->m_emissiveCol = ToXM(d.effectEmissiveColor);
+                effect->m_emissive = d.effectEmissive;
+            }
+        }
     }
 }
 
