@@ -5,6 +5,7 @@
 #include "WeaponSelectScene_InputContext.h"
 
 class CursurSystem;
+class SceneChangeButton;
 
 class WeaponSelectScene final : public SceneBase
 {
@@ -40,7 +41,7 @@ private:
     Widget* m_PWeaponBtn_Cleaver    = nullptr;
 
     Widget* m_pReadyBtn = nullptr;
-    Widget* m_pExitBtn  = nullptr;
+    SceneChangeButton* m_pExitBtn  = nullptr;
 
     WeaponSelectScene_InputContext m_weaponCtx;
     CursurSystem* m_pCursurSys = nullptr;

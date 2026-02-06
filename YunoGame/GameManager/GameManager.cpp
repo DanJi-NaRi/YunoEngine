@@ -18,6 +18,7 @@
 #include "C2S_BattlePackets.h"
 #include "C2S_ReadySet.h"
 #include "C2S_CardPackets.h"
+#include "C2S_MatchLeave.h"
 GameManager* GameManager::s_instance = nullptr;
 
 
@@ -93,6 +94,16 @@ void GameManager::SetSceneState(CurrentSceneState state)
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
+        auto bytes = yuno::net::PacketBuilder::Build(
+            yuno::net::PacketType::C2S_MatchLeave,
+            [&](yuno::net::ByteWriter& w)
+            {
+                yuno::net::packets::C2S_MatchLeave req{};
+                req.Serialize(w);
+            });
+
+        GameManager::Get().SendPacket(std::move(bytes));
+
         break;
     }
     case CurrentSceneState::GameStart:

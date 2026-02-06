@@ -27,29 +27,30 @@ bool UserImage::ChangeMaterial(int num)
     switch (static_cast<PieceType>(num))
     {
     case PieceType::Blaster:
-        ChangeTexture(L"../Assets/Test/unit1.png");
+        texturePath = L"../Assets/Test/unit1.png";
         break;
     case PieceType::Breacher:
-        ChangeTexture(L"../Assets/Test/unit2.png");
+        texturePath = L"../Assets/Test/unit2.png";
         break;
     case PieceType::Impactor:
-        ChangeTexture(L"../Assets/Test/unit3.png");
+        texturePath = L"../Assets/Test/unit3.png";
         break;
     case PieceType::Chakram:
-        ChangeTexture(L"../Assets/Test/unit4.png");
+        texturePath = L"../Assets/Test/unit4.png";
         break;
     case PieceType::Scythe:
-        ChangeTexture(L"../Assets/Test/unit5.png");
+        texturePath = L"../Assets/Test/unit5.png";
         break;
     case PieceType::Cleaver:
-        ChangeTexture(L"../Assets/Test/unit6.png");
+        texturePath = L"../Assets/Test/unit6.png";
         break;
     case PieceType::None:
     default:
         break;
     }
 
-    m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
+    ChangeTexture(texturePath);
+    //m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
     return true;
 }
 
