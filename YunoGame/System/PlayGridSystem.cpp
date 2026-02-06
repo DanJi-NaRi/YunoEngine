@@ -57,7 +57,6 @@ void PlayGridSystem::InitRound()
     {
         int unitId = GetUnitID(w.pId, w.slotId);
         auto& us = m_UnitStates[unitId];
-        m_tiles[us.targetTileID].to = {};
     
         us.hp = w.hp;
         us.stamina = w.stamina;
@@ -75,7 +74,7 @@ void PlayGridSystem::InitRound()
         }
         else // 문제 안 생기는 거 확인하고 지울 예정
         {
-            std::cout << "Before Round Pieces ain't removed!!\n";
+            std::cout << "Before Round's Pieces ain't removed!!\n";
             assert(false);
             Direction dir = (w.pId == 1) ? Direction::Right : Direction::Left;
             auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(it->second.id));
@@ -291,6 +290,13 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
      }
 
+     if (pPiece == nullptr)
+     {
+         assert(false);
+         std::cout << "[PlayGridSystem]::CreatePiece failed to create object\n";
+         return;
+     }
+
      switch (w.weaponId)
      {
      case 1:
@@ -400,7 +406,7 @@ void PlayGridSystem::CheckPacket(float dt)
         const CardType cardType = cardData.m_type;
         
         if (cardType == CardType::Attack)    m_pktTime = 6.f;
-        else if (cardType == CardType::Utility)    m_pktTime = 10.f;
+        else if (cardType == CardType::Utility)    m_pktTime = 10.5f;
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
     }
@@ -469,13 +475,10 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
 
         if (!as.phaseStarted) break;
 
-        //int id = m_pieces[as.attacker].id;
-        //auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(id));
-
         auto attackerIt = m_pieces.find(as.attacker);
         if (attackerIt == m_pieces.end())
         {
-            as.phaseStarted = false;
+            as.attackPhase = AttackPhase::Over;
             break;
         }
 
@@ -483,7 +486,7 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
         if (pPiece == nullptr)
         {
-            as.phaseStarted = false;
+            as.attackPhase = AttackPhase::Over;
             break;
         }
 
@@ -494,8 +497,10 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         {
             auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
             if (pSubPiece != nullptr)
+            {
                 pSubPiece->PlayAttack();
                 pSubPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
+            }
         }
         as.phaseStarted = false;
         
@@ -527,9 +532,7 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         const auto& pieces = as.hitPieces;
         for (int i = 0; i < pieces.size(); i++)
         {
-            if (!CheckExisting(pieces[i]))    continue;
-            //int id = m_pieces[pieces[i]].id;
-            //auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(id));
+            if (!CheckDying(pieces[i])) continue;
 
             auto it = m_pieces.find(pieces[i]);
             if (it == m_pieces.end()) continue;
@@ -558,7 +561,6 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         for (int i = 0; i < pieces.size(); i++)
         {
             std::cout << "[Attack Sequence]\nHitter hp: " << static_cast<int>(m_UnitStates[GetUnitID(pieces[i])].hp) << std::endl;
-            if (!CheckExisting(pieces[i]))    continue;
 
             auto it = m_pieces.find(pieces[i]);
             if (it == m_pieces.end()) continue;
@@ -598,6 +600,7 @@ void PlayGridSystem::UpdateUtilitySequence(float dt)
         if (!us.phaseStarted)    break;
 
         const auto& pm = us.playerMove;
+
         ApplyMoveChanges(pm->dirty, pm->snapshot, pm->mainUnit, pm->dir);
 
         us.phaseStarted = false;
@@ -631,7 +634,7 @@ void PlayGridSystem::UpdateUtilitySequence(float dt)
         }
         for (int i = 0; i < pieces.size(); i++)
         {
-            if (!CheckExisting(pieces[i]))    continue;
+            if (!CheckDying(pieces[i]))    continue;
             ApplyMoveChanges(hm[i]->dirty, hm[i]->snapshot, hm[i]->mainUnit, hm[i]->dir);
         }
 
@@ -641,11 +644,23 @@ void PlayGridSystem::UpdateUtilitySequence(float dt)
     }
     case UtilityPhase::Buff:
     {
+        if (us.elapsed >= us.m_buffDuration)
+        {
+            ++us.utilityPhase;
+            us.phaseStarted = true;
+            us.elapsed = 0.f;
+            break;
+        }
+
         if (!us.phaseStarted)    break;
 
         if(us.buffData != nullptr)
             BuffEvent(us.playPiece, us.buffData);
 
+        break;
+    }
+    case UtilityPhase::Over:
+    {
         // 초기화
         m_utilityActive = false;
         delete us.playerMove;
@@ -656,7 +671,7 @@ void PlayGridSystem::UpdateUtilitySequence(float dt)
         us.hittersMove.clear();
         m_utilitySequence = {};
         break;
-    } 
+    }
     }
 
     us.elapsed += dt;
@@ -699,28 +714,33 @@ void PlayGridSystem::ApplyActionOrder(const std::vector<std::array<UnitState, 4>
     }
 }
 
-void PlayGridSystem::ApplyBuffChanges(int mainUnit, const CardEffectData*& buffData)
+bool PlayGridSystem::ApplyBuffChanges(int mainUnit, const CardEffectData*& buffData)
 {
     const UnitState US = m_UnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(US.pId, US.slotId);
-    if (!CheckExisting(whichPiece))
+    if (!CheckDying(whichPiece))
     {
         // 부활 규칙이 없으므로 return 합니다.
-        return;
+        m_pktTime -= buffDuration;
+        return false;
     }
 
-    BuffEvent(whichPiece, buffData);
+    if (!BuffEvent(whichPiece, buffData))
+        return false;
+
+    return true;
 }
 
-void PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir)
+bool PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir)
 {
     const UnitState prevUS = m_UnitStates[mainUnit];
     const UnitState newUS = newUnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
-    if (!CheckExisting(whichPiece))
+    if (!CheckDying(whichPiece))
     {
         // 부활 규칙이 없으므로 return 합니다.
-        return;
+        m_pktTime -= moveDuration;
+        return false;
     }
 
     auto newcell = GetCellByID(newUS.targetTileID);
@@ -744,22 +764,35 @@ void PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState
     {
         MoveEvent(whichPiece, oldcell, newcell, dir);
     }
-
+    else    // 충돌 X & 이동 X 일 경우
+    {
+        m_pktTime -= moveDuration;
+        return false;
+    }
+    return true;
 }
 
-void PlayGridSystem::ApplyAttackChanges
+bool PlayGridSystem::ApplyAttackChanges
 (Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir)
 {
     const UnitState prevUS = m_UnitStates[mainUnit];
     const UnitState newUS = newUnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
-    if (!CheckExisting(whichPiece))
+    if (!CheckDying(whichPiece))
     {
         // 부활 규칙이 없으므로 return 합니다.
-        return;
+        m_pktTime -= attackAndMoveDuration;
+        return false;
     }
     Int2 cellPos = { GetCellByID(prevUS.targetTileID) };
     const auto targetTileIDs = GetRangeTileIDs(cellPos, ranges, dir);
+
+    // 타격할 타일이 없으므로 return 합니다.
+    if (targetTileIDs.size() == 0)
+    {
+        m_pktTime -= attackAndMoveDuration;
+        return false;
+    }
 
     // 공격 시퀀스 채워넣기
     auto& as = m_attackSequence;
@@ -788,24 +821,25 @@ void PlayGridSystem::ApplyAttackChanges
         }
     }
 
-    as.m_flashCount = 3;
-    as.m_flashInterval = 0.3f;
-    as.m_alarmDuration = as.m_hitDuration 
-        = as.m_flashCount * as.m_flashInterval;
-    as.m_attackDuration = 3.5f;
+    as.m_flashCount = tileFlashCount;
+    as.m_flashInterval = tileFlashInterval;
+    as.m_alarmDuration = tileFlashDuration;
+    as.m_hitDuration = hitDuration;
+    as.m_attackDuration = attackDuration;
 
+    return true;
 }
 
-void PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, 
+bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit,
     const std::vector<RangeOffset>& ranges, Direction dir, const CardEffectData*& buffData, int snapNum)
 {
     const UnitState prevUS = m_UnitStates[mainUnit];
     const UnitState newUS = newUnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
-    if (!CheckExisting(whichPiece))
+    if (!CheckDying(whichPiece))
     {
         // 부활 규칙이 없으므로 return 합니다.
-        return;
+        return false;
     }
 
     auto& us = m_utilitySequence;
@@ -815,23 +849,33 @@ void PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
         // 1. 이동 값
         case 0:
         {
+            if (!HasThis_US(dirty, Dirty_US::targetTileID))
+                break;
+
             m_utilityActive = us.phaseStarted = true;
             us.utilityPhase = UtilityPhase::Move;
             us.playPiece = whichPiece;
             us.playerMove = new MoveInfo{ dirty, newUnitStates, mainUnit, dir};
-            us.m_moveDuration = 2.f;
+            us.m_moveDuration = moveDuration;
             break;
         }
         // 2. 공격 값
         case 1:
         {
-            ApplyAttackChanges(dirty, newUnitStates, mainUnit, ranges, dir);
+            if (!ApplyAttackChanges(dirty, newUnitStates, mainUnit, ranges, dir))
+                break;
+
+            us.m_attackAndMoveDuration = attackAndMoveDuration;
             break;
         }
         // 3. 그랩/넉백 & 버프 값
         case 2:
         {
+            float buffDuration = 0.5f;
+
             const auto& hps = m_attackSequence.hitPieces;
+            if (hps.size() == 0)
+                break;
             for (int i = 0; i < hps.size(); i++)
             {
                 int unitID = GetUnitID(hps[i]);
@@ -840,12 +884,12 @@ void PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
                 us.hittersMove.push_back(mi);
                 if (HasThis_US(d, Dirty_US::targetTileID))   us.hitMove = HitMove::Move;
             }
-            us.m_attackAndMoveDuration = 6.f;
             us.buffData = buffData;
+            us.m_buffDuration = buffDuration;
             break;
         }
     }
-
+    return true;
 }
 
 const std::vector<int> PlayGridSystem::GetRangeTileIDs(const Int2 unitCell, const std::vector<RangeOffset>& ranges, Direction dir)
@@ -895,8 +939,8 @@ const std::vector<int> PlayGridSystem::GetRangeTileIDs(const Int2 unitCell, cons
 void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 newcell, Direction moveDir,
     bool isCollided, bool isEnemy)
 {
-    // 죽어서 없어진 기물인지 확인
-    if (!CheckExisting(pieceType)) return;
+    // 죽어가고 있는 기물인지 확인
+    if (!CheckDying(pieceType)) return;
 
     // 이동 후, 상태 수정을 위해 참조로 받음
     PieceInfo& pieceInfo = m_pieces[pieceType];
@@ -973,21 +1017,28 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
         TileOccupy{ TileOccuType::Enemy_Occupied, who });
 }
 
-void PlayGridSystem::BuffEvent(const GamePiece& pieceType, const CardEffectData*& buffData)
+bool PlayGridSystem::BuffEvent(const GamePiece& pieceType, const CardEffectData*& buffData)
 {
-    //auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(m_pieces[pieceType].id));
-    const auto& pieceInfo = m_pieces[pieceType];
+    auto it = m_pieces.find(pieceType);
+    if (it == m_pieces.end())
+    {
+        m_pktTime -= buffDuration;
+        return false;
+    }
+
+    const auto& pieceInfo = it->second;
+
     auto applyFlash = [&](Float4 color)
         {
             auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
             if (pPiece != nullptr)
-                pPiece->SetFlashColor(color, 1, 2.f);
+                pPiece->SetFlashColor(color, 1, buffDuration);
 
             for (uint32_t subId : pieceInfo.subIds)
             {
                 auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
                 if (pSubPiece != nullptr)
-                    pSubPiece->SetFlashColor(color, 1, 2.f);
+                    pSubPiece->SetFlashColor(color, 1, buffDuration);
             }
         };
 
@@ -997,26 +1048,24 @@ void PlayGridSystem::BuffEvent(const GamePiece& pieceType, const CardEffectData*
     {
         Float4 yellow = { 1, 0.9f, 0, 1 };
         applyFlash(yellow);
-        //pPiece->SetFlashColor(yellow, 1, 2.f);
     }
     else if (data.m_takeDamageReduce != 0)      // 방어력 증가(버프)
     {
         Float4 skyblue = { 0, 1, 0.9f, 1 };
         applyFlash(skyblue);
-        //pPiece->SetFlashColor(skyblue, 1, 2.f);
     }
     else if (data.m_takeDamageIncrease != 0)    // 방어력 저하(디버프)
     {
         Float4 blue = { 0, 0.1f, 1, 1 };
         applyFlash(blue);
-        //pPiece->SetFlashColor(blue, 1, 2.f);
     }
     else if (data.m_staminaRecover != 0)        // 스태미나 회복
     {
         Float4 green = { 0, 1, 0, 1 };
         applyFlash(green);
-        //pPiece->SetFlashColor(green, 1, 2.f);
     }
+
+    return true;
 }
 
 void PlayGridSystem::CheckOver()
@@ -1062,7 +1111,9 @@ void PlayGridSystem::CheckOver()
     {
         if (!deadUnits[(int)i])
         {
-            auto& pieceinfo = m_pieces[i];
+            auto it = m_pieces.find(i);
+            if (it == m_pieces.end())    continue;
+            auto& pieceinfo = it->second;
             auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceinfo.id));
             // 일단 사라지게 하기 위해 dead로 처리
             pPiece->SetDead();  
@@ -1075,7 +1126,7 @@ void PlayGridSystem::CheckOver()
     }
 }
 
-bool PlayGridSystem::CheckExisting(const GamePiece pieceType)
+bool PlayGridSystem::CheckDying(const GamePiece pieceType)
 {
     auto pIt = m_pieces.find(pieceType);
     if (pIt == m_pieces.end())
@@ -1083,26 +1134,15 @@ bool PlayGridSystem::CheckExisting(const GamePiece pieceType)
         std::cout << "[PlayGridSystem]::It's Already Dead!!\n";
         return false;
     }
+    // 죽는 중인지까지 체크
+    int unitId = GetUnitID(pieceType);
+    if (m_UnitStates[unitId].hp == 0)
+    {
+        return false;
+    }
     return true;
 }
 
-//void PlayGridSystem::CheckHealth(PieceInfo& pieceInfo)
-//{
-//    if (pieceInfo.health <= 0)
-//    {
-//        // 해당 기물 렌더X
-//        auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
-//
-//        pPiece->SetDead();
-//
-//        // 해당 타일 정보 초기화
-//        int tileID = GetID(pieceInfo.cx, pieceInfo.cz);
-//        m_tiles[tileID] = TileState{};
-//
-//        // 해당 기물 정보 체력 0으로 보정
-//        pieceInfo.health = 0;
-//    }
-//}
 
 void PlayGridSystem::CheckHealth(const UnitState& us, PieceInfo& pieceInfo)
 {

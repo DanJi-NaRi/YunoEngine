@@ -96,6 +96,7 @@ struct UtilitySequence
 
     // buff 시행 시
     const CardEffectData* buffData = nullptr;
+    float m_buffDuration = 0.f;
 };
 
 class PlayGridSystem : public UnitGridSystem
@@ -123,15 +124,15 @@ private:
 
 private:
     void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, uint32_t runCardID, Direction dir);
-    void ApplyBuffChanges(int mainUnit, const CardEffectData*& buffData);
-    void ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir);
-    void ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
-    void ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, 
+    bool ApplyBuffChanges(int mainUnit, const CardEffectData*& buffData);
+    bool ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir);
+    bool ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
+    bool ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit,
         const std::vector<RangeOffset>& ranges, Direction dir, const CardEffectData*& buffData, int snapNum);
 
     void MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 newcell, Direction moveDir,
         bool isCollided = false, bool isEnemy = false);
-    void BuffEvent(const GamePiece& pieceType, const CardEffectData*& buffData);
+    bool BuffEvent(const GamePiece& pieceType, const CardEffectData*& buffData);
 
     void CheckOver();
     
@@ -149,7 +150,7 @@ private:
     int GetOtherUnitDamage(const std::array<UnitState, 4>& newUnitStates, int mainUnit);
     const std::vector<int> GetRangeTileIDs(const Int2 unitCell, const std::vector<RangeOffset>& ranges, Direction dir);
 
-    bool CheckExisting(const GamePiece pieceType);
+    bool CheckDying(const GamePiece pieceType);
     void CheckHealth(const UnitState& us, PieceInfo& pieceInfo);
 
     std::wstring GetWeaponFileName(int weaponID);           // 테스트용
@@ -172,6 +173,19 @@ private:
     std::unique_ptr<PlayGridQ> m_playQ;
 
 private:
+    // 시간 관련
+    float moveDuration = 2.5f;
+    float buffDuration = 2.f;
+    float attackDuration = 3.5f;
+
+    int tileFlashCount = 3;
+    float tileFlashInterval = 0.3f;
+    float tileFlashDuration = tileFlashCount * tileFlashInterval;
+
+    float hitDuration = tileFlashDuration;    // 미정. 현재 tileFlashDuration과 동일.
+
+    float attackAndMoveDuration = attackDuration + tileFlashDuration + hitDuration;
+    
     // 공격 처리
     bool m_attackActive = false;
     AttackSequence m_attackSequence;
