@@ -39,19 +39,19 @@ namespace yuno::server
 
         m_roundStarted = true;
 
-        m_match.InitBattleState();
+        m_match.InitBattleState();  // 얘는 매 라운드
         for (int i = 0; i < 2; ++i)
         {
-            m_cardController.InitPlayerCards(g_battleState.players[i]);
+            m_cardController.InitPlayerCards(g_battleState.players[i]); // 1번만
         }
 
-        SendInitialCards();
+        SendInitialCards(); // 1번만
 
-        SendCountDown();
+        SendCountDown(); // 1번만
 
-        SendRoundStart();       
+        SendRoundStart(); // 매 라운드
 
-        StartTurn();
+        StartTurn(); // 매 라운드
     }
 
     // ------------------------------------------------------

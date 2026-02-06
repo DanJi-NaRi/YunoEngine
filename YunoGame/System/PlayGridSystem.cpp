@@ -91,7 +91,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         auto [wx, wz] = m_grids[(int)m_nowG]->CellToWorld(i % m_column, i / m_column);
         auto fileName = GetTileFileName(tilenum);
         auto pTile = m_manager->CreateObjectFromFile<UnitTile>(L"Tile", XMFLOAT3(wx, y, wz), fileName);
-        pTile->SetRot({0, XMConvertToRadians(-90.f), 0});
+        pTile->SetRot({0, XMConvertToRadians(90.f), 0});
         if(tilenum > 0 && tilenum < 6)  // 1~5번 타일만
             SetTileInitState(pTile, tilenum);
         m_tilesIDs.push_back(pTile->GetID());
@@ -156,9 +156,9 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
             pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
             break;
         }
-        //pPiece->SetWho(gp);
+        pPiece->SetWho(gp);
         //pPiece->SetScale({ 0.8f, 0.8f, 0.8f });
-        //pPiece->SetDir(dir, false);
+        pPiece->SetDir(dir, false);
 
         // 기물 정보 등록
         m_pieces.emplace(gp, PieceInfo{pPiece->GetID(), dir, team });
