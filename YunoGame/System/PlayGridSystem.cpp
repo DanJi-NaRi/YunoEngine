@@ -49,10 +49,55 @@ void PlayGridSystem::Init()
     m_tiles = std::vector(m_column * m_row + 1, TileState{});
 }
 
+void PlayGridSystem::InitRound()
+{
+    const auto wData = GameManager::Get().GetWeaponData();
+    GameManager::Get().ResetWeaponData();
+    for (const auto& w : wData)
+    {
+        int unitId = GetUnitID(w.pId, w.slotId);
+        auto& us = m_UnitStates[unitId];
+        m_tiles[us.targetTileID].to = {};
+    
+        us.hp = w.hp;
+        us.stamina = w.stamina;
+        us.targetTileID = w.currentTile;
+        us.isEvent = 0;
+    
+        m_tiles[w.currentTile].te;  // 타일 이벤트 상태
+    
+        // 죽은 애도 살려내기
+        GamePiece gp = GetGamePiece(w.pId, w.slotId);
+        auto it = m_pieces.find(gp);
+        if (it == m_pieces.end())
+        {
+            CreatePiece(w);
+        }
+        else // 문제 안 생기는 거 확인하고 지울 예정
+        {
+            std::cout << "Before Round Pieces ain't removed!!\n";
+            assert(false);
+            Direction dir = (w.pId == 1) ? Direction::Right : Direction::Left;
+            auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(it->second.id));
+            pPiece->SetDir(dir, false);
+    
+            // 기물 방향 정보 갱신
+            m_pieces[gp].dir = dir;
+    
+            // 타일 정보 갱신
+            m_tiles[w.currentTile].to = (m_pID == w.pId) ?
+                TileOccupy{ TileOccuType::Ally_Occupied, (w.slotId == 1) ? TileWho::Ally1 : TileWho::Ally2 } :
+                TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
+        }
+    }  
+}
+
 void PlayGridSystem::Update(float dt)
 {
-    UpdateUtilitySequence(dt);
-    UpdateAttackSequence(dt);
+    if (!GameManager::Get().IsEmptyWeaponData())
+        InitRound();
+
+    UpdateSequence(dt);
     CheckPacket(dt);
     CheckMyQ();
 }
@@ -101,7 +146,8 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     }
 
     // 기물 생성
-    const auto& wData = GameManager::Get().GetWeaponData();
+    const auto wData = GameManager::Get().GetWeaponData();
+    GameManager::Get().ResetWeaponData();
     m_wy = y;
     int cx = 0; int cy = 0;
     Team team = Team::Undefined;
@@ -109,80 +155,80 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     m_pID = GameManager::Get().GetSlotiIdx();   // 나 몇번째 플레이어니?
     for (const auto& w : wData)
     {
-        team = (w.pId == m_pID) ? Team::Ally : Team::Enemy;
+        CreatePiece(w);
+        //team = (w.pId == m_pID) ? Team::Ally : Team::Enemy;
 
-        dir = (w.pId == 1) ? Direction::Right : Direction::Left;
-        auto cellPos = GetCellByID(w.currentTile);
-        cx = cellPos.x;     cy = cellPos.y;
+        //dir = (w.pId == 1) ? Direction::Right : Direction::Left;
+        //auto cellPos = GetCellByID(w.currentTile);
+        //cx = cellPos.x;     cy = cellPos.y;
 
-        auto [px, pz] = m_grids[(int)m_nowG]->CellToWorld(cx, cy);
+        //auto [px, pz] = m_grids[(int)m_nowG]->CellToWorld(cx, cy);
 
-        // 타일 상태 갱신
-        m_tiles[w.currentTile].to = (team == Team::Ally) ?
-            TileOccupy{ TileOccuType::Ally_Occupied, (w.slotId == 1) ? TileWho::Ally1 : TileWho::Ally2 } :
-            TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
+        //// 타일 상태 갱신
+        //m_tiles[w.currentTile].to = (team == Team::Ally) ?
+        //    TileOccupy{ TileOccuType::Ally_Occupied, (w.slotId == 1) ? TileWho::Ally1 : TileWho::Ally2 } :
+        //    TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
 
-        GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
-        PieceInfo pieceInfo{};
+        //GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
+        //PieceInfo pieceInfo{};
 
-        UnitPiece* pPiece = nullptr;
-        if (w.weaponId == 2)
-        {
-            pPiece = m_manager->CreateObject<UnitPiece>(
-                L"Weapon", XMFLOAT3(px, m_wy, pz));
+        //UnitPiece* pPiece = nullptr;
+        //if (w.weaponId == 2)
+        //{
+        //    pPiece = m_manager->CreateObject<UnitPiece>(
+        //        L"Weapon", XMFLOAT3(px, m_wy, pz));
 
-            auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
-                L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
-            pChakram1->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
-            pPiece->Attach(pChakram1);
+        //    auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
+        //        L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
+        //    pChakram1->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
+        //    pPiece->Attach(pChakram1);
 
-            auto pChakram2 = m_manager->CreateObjectFromFile<UnitPiece>(
-                L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
-            pChakram2->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
-            pPiece->Attach(pChakram2);
+        //    auto pChakram2 = m_manager->CreateObjectFromFile<UnitPiece>(
+        //        L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
+        //    pChakram2->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
+        //    pPiece->Attach(pChakram2);
 
-            pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
-            pieceInfo.subIds.push_back(pChakram1->GetID());
-            pieceInfo.subIds.push_back(pChakram2->GetID());
+        //    pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
+        //    pieceInfo.subIds.push_back(pChakram1->GetID());
+        //    pieceInfo.subIds.push_back(pChakram2->GetID());
 
-            m_gridBox->Attach(pPiece);
-        }
-        else
-        {
-            std::wstring fileName = GetWeaponFileName(w.weaponId);
-            pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
-        }
-        
-        //// weapon 구별을 위한 임시
-        switch (w.weaponId)
-        {
-        case 1:
-            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
-            pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
-            break;
-        case 3:
-            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/drill_idle.fbx");
-            break;
-        case 4:
-            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
-            break;
-        case 5:
-            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
-            pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
-            break;
-        case 6:
-            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
-            break;
-        }
-        pPiece->SetWho(gp);
+        //    m_gridBox->Attach(pPiece);
+        //}
+        //else
+        //{
+        //    std::wstring fileName = GetWeaponFileName(w.weaponId);
+        //    pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
+        //}
+        //
+        ////// weapon 구별을 위한 임시
+        //switch (w.weaponId)
+        //{
+        //case 1:
+        //    pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
+        //    pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+        //    break;
+        //case 3:
+        //    pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/drill_idle.fbx");
+        //    break;
+        //case 4:
+        //    pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
+        //    break;
+        //case 5:
+        //    pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
+        //    pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
+        //    break;
+        //case 6:
+        //    pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
+        //    break;
+        //pPiece->SetWho(gp);
 
-        pPiece->SetDir(dir, false);
+        //pPiece->SetDir(dir, false);
 
-        // 기물 정보 등록
-        m_pieces.emplace(gp, PieceInfo{pPiece->GetID(), dir, team });
+        //// 기물 정보 등록
+        //m_pieces.emplace(gp, PieceInfo{pPiece->GetID(), dir, team });
 
-        // 빈 박스에 자식 객체로 등록. (for 정리)
-        m_gridBox->Attach(pPiece);
+        //// 빈 박스에 자식 객체로 등록. (for 정리)
+        //m_gridBox->Attach(pPiece);
 
         int usID = GetUnitID(w.pId, w.slotId);
         m_UnitStates[usID] = {
@@ -190,6 +236,87 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
             (uint8_t)w.stamina, (uint8_t)w.currentTile, 0
         };
     }
+}
+
+void PlayGridSystem::CreatePiece(const Wdata& w)
+{
+    int cx = 0; int cy = 0;
+    Team team = Team::Undefined;
+    Direction dir;
+
+     team = (w.pId == m_pID) ? Team::Ally : Team::Enemy;
+
+     dir = (w.pId == 1) ? Direction::Right : Direction::Left;
+     auto cellPos = GetCellByID(w.currentTile);
+     cx = cellPos.x;     cy = cellPos.y;
+
+     auto [px, pz] = m_grids[(int)m_nowG]->CellToWorld(cx, cy);
+
+     // 타일 상태 갱신
+     m_tiles[w.currentTile].to = (team == Team::Ally) ?
+         TileOccupy{ TileOccuType::Ally_Occupied, (w.slotId == 1) ? TileWho::Ally1 : TileWho::Ally2 } :
+         TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
+
+     GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
+     PieceInfo pieceInfo{};
+
+     UnitPiece* pPiece = nullptr;
+     if (w.weaponId == 2)
+     {
+         pPiece = m_manager->CreateObject<UnitPiece>(
+             L"Weapon", XMFLOAT3(px, m_wy, pz));
+
+         auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
+             L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
+         pChakram1->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
+         pPiece->Attach(pChakram1);
+
+         auto pChakram2 = m_manager->CreateObjectFromFile<UnitPiece>(
+             L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
+         pChakram2->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
+         pPiece->Attach(pChakram2);
+
+         pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
+         pieceInfo.subIds.push_back(pChakram1->GetID());
+         pieceInfo.subIds.push_back(pChakram2->GetID());
+
+         m_gridBox->Attach(pPiece);
+     }
+     else
+     {
+         std::wstring fileName = GetWeaponFileName(w.weaponId);
+         pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
+     }
+
+     switch (w.weaponId)
+     {
+     case 1:
+         pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
+         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+         break;
+     case 3:
+         pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/drill_idle.fbx");
+         break;
+     case 4:
+         pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
+         break;
+     case 5:
+         pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
+         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
+         break;
+     case 6:
+         pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
+         break;
+     }
+     pPiece->SetWho(gp);
+
+     pPiece->SetDir(dir, false);
+
+     // 기물 정보 등록
+     m_pieces.emplace(gp, PieceInfo{ pPiece->GetID(), dir, team });
+
+     // 빈 박스에 자식 객체로 등록. (for 정리)
+     m_gridBox->Attach(pPiece);
 }
 
 void PlayGridSystem::CheckMyQ()
@@ -265,8 +392,8 @@ void PlayGridSystem::CheckPacket(float dt)
 
         const CardType cardType = cardData.m_type;
         
-        if (cardType == CardType::Attack)    m_pktTime = 5.f;
-        else if (cardType == CardType::Utility)    m_pktTime = 7.f;
+        if (cardType == CardType::Attack)    m_pktTime = 6.f;
+        else if (cardType == CardType::Utility)    m_pktTime = 10.f;
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
     }
@@ -280,8 +407,15 @@ void PlayGridSystem::CheckPacket(float dt)
             isProcessing = false;
             m_currTime -= m_pktTime;
             std::cout << "Packet Time is Over\n";
+            CheckOver();
         }
     }
+}
+
+void PlayGridSystem::UpdateSequence(float dt)
+{
+    UpdateAttackSequence(dt);
+    UpdateUtilitySequence(dt);
 }
 
 void PlayGridSystem::UpdateAttackSequence(float dt)
@@ -335,10 +469,12 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
         // 애니메이션 대신 반짝이는 걸로 잠시 대체
         pPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
+        pPiece->PlayAttack();
         for (uint32_t subId : pieceInfo.subIds)
         {
             auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
             if (pSubPiece != nullptr)
+                pSubPiece->PlayAttack();
                 pSubPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
         }
         as.phaseStarted = false;
@@ -622,8 +758,9 @@ void PlayGridSystem::ApplyAttackChanges
 
     as.m_flashCount = 3;
     as.m_flashInterval = 0.3f;
-    as.m_alarmDuration = as.m_attackDuration = as.m_hitDuration 
+    as.m_alarmDuration = as.m_hitDuration 
         = as.m_flashCount * as.m_flashInterval;
+    as.m_attackDuration = 3.5f;
 
 }
 
@@ -671,7 +808,7 @@ void PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
                 us.hittersMove.push_back(mi);
                 if (HasThis_US(d, Dirty_US::targetTileID))   us.hitMove = HitMove::Move;
             }
-            us.m_attackAndMoveDuration = 4.f;
+            us.m_attackAndMoveDuration = 6.f;
             us.buffData = buffData;
             break;
         }
@@ -847,6 +984,62 @@ void PlayGridSystem::BuffEvent(const GamePiece& pieceType, const CardEffectData*
         Float4 green = { 0, 1, 0, 1 };
         applyFlash(green);
         //pPiece->SetFlashColor(green, 1, 2.f);
+    }
+}
+
+void PlayGridSystem::CheckOver()
+{
+    int count = 2;
+    bool deadPlayer[2];
+    bool deadUnits[4];
+    memset(deadPlayer, false, sizeof(bool) * 2);
+    memset(deadUnits, false, sizeof(bool) * 4);
+
+    for (GamePiece i = GamePiece::Ally1; i < GamePiece::MAX; ++i)
+    {
+        auto it = m_pieces.find(i);
+        if (it == m_pieces.end())
+            deadUnits[(int)i] = true;
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (deadUnits[i] && deadUnits[i+1])
+        {
+            deadPlayer[i % 2] = true;
+        }
+    }
+
+    
+    if (deadPlayer[0] && deadPlayer[1]) // 무승부
+    {
+        std::cout << "This Round Result : Draw\n";
+    }
+    else if (deadPlayer[0])             // Lose
+    {
+        std::cout << "This Round Result : Lose\n";
+    }
+    else if (deadPlayer[1])              // Win
+    {
+        std::cout << "This Round Result : Win\n";
+    }
+    else
+        return;
+
+    for (GamePiece i = GamePiece::Ally1; i < GamePiece::MAX; ++i)
+    {
+        if (!deadUnits[(int)i])
+        {
+            auto& pieceinfo = m_pieces[i];
+            auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceinfo.id));
+            // 일단 사라지게 하기 위해 dead로 처리
+            pPiece->SetDead();  
+            for (auto sid : pieceinfo.subIds)
+            {
+                auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(sid));
+                pSub->SetDead();
+            }
+        }
     }
 }
 

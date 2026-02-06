@@ -32,6 +32,15 @@ struct UnitHand
 {
     std::vector<ClientCardInfo> cards;
 };
+struct Wdata
+{
+    int pId = 0;
+    int slotId = 0;
+    int weaponId = 0;
+    int hp = 0;
+    int stamina = 0;
+    int currentTile = 0;
+};
 // 얘가 뭘 가지고있어야 될까?
 class GameManager
 {
@@ -146,20 +155,12 @@ private:
 
     // 라운드 초기화 데이터
 private:
-    struct Wdata 
-    {
-        int pId = 0;
-        int slotId = 0;
-        int weaponId = 0;
-        int hp = 0;
-        int stamina = 0;
-        int currentTile = 0;
-    };
     // m_weapons에 데이터 담는 함수 만들기
     // m_weapons에 데이터 가져오는 함수 만들기
     std::vector<Wdata> m_weapons;
 
 public:
+    bool IsEmptyWeaponData();
     void ResetWeaponData() { m_weapons.clear(); };
     void SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, int _stamina, int _currentTile);
     std::vector<Wdata> GetWeaponData() {

@@ -36,13 +36,12 @@ enum class CommandType : uint8_t
 
 struct PieceInfo
 { 
-    uint32_t id;        // 불변. objectmanager에서 unit* 찾는용.
-    std::vector<uint32_t> subIds; // 복합 무기(예: 차크람)의 추가 파츠
-    Team team;          // 불변
-    Direction dir;      // 가변
-    //int health = 100;   // 가변
-    //int cx, cz;         // 가변
-    int whichGrid = 0;  // 가변. 그리드가 한 개일 때는 0 고정.
+    uint32_t id;                    // 불변. objectmanager에서 unit* 찾는용.
+    std::vector<uint32_t> subIds;   // 복합 무기(예: 차크람)의 추가 파츠
+    Team team;                      // 불변
+    Direction dir;                  // 가변
+
+    int whichGrid = 0;              // 가변. 그리드가 한 개일 때는 0 고정.
 
     PieceInfo() : id(-1), dir(Direction::Same), team(Team::Undefined) {}
     PieceInfo(uint32_t _id, Direction _dir,  Team _team) 

@@ -23,6 +23,11 @@
 GameManager* GameManager::s_instance = nullptr;
 
 
+bool GameManager::IsEmptyWeaponData()
+{
+    return m_weapons.empty();
+}
+
 void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, int _stamina, int _currentTile)
 {
     Wdata data;

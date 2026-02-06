@@ -187,7 +187,7 @@ void Animator::BlendLocalPose(
     }
 }
 
-void Animator::SetLoop(const std::string& name, bool isLoop)
+bool Animator::SetLoop(const std::string& name, bool isLoop)
 {
     auto it = m_NameToID.find(name);
 
@@ -196,27 +196,33 @@ void Animator::SetLoop(const std::string& name, bool isLoop)
         UINT id = m_NameToID[name];
 
         m_AnimationClips[id]->isLoop = isLoop;
+
+        return true;
     }
+    return false;
 }
 
-void Animator::SetLoop(UINT id, bool isLoop)
+bool Animator::SetLoop(UINT id, bool isLoop)
 {
     auto it = m_AnimationClips.find(id);
 
     if (it != m_AnimationClips.end())
     {
         m_AnimationClips[id]->isLoop = isLoop;
+
+        return true;
     }
+    return false;
 }
 
 
-void Animator::Change(UINT id, float duration)
+bool Animator::Change(UINT id, float duration)
 {
-    if (id == curAnim) return;
+    if (id == curAnim) return false;
 
     auto it = m_AnimationClips.find(id);
     if (it == m_AnimationClips.end())
-        return;
+        return false;
 
     curAnim = id;
     m_prevAnim = m_CurAnim;
@@ -226,21 +232,23 @@ void Animator::Change(UINT id, float duration)
     isBlending = true;
     blendDuration = duration;
     blendAlpha = 0.0f;
+
+    return true;
 }
 
-void Animator::Change(const std::string& name, float duration)
+bool Animator::Change(const std::string& name, float duration)
 {
     auto it1 = m_NameToID.find(name);
     if (it1 == m_NameToID.end())
-        return;
+        return false;
 
     UINT id = it1->second;
 
-    if (id == curAnim) return;
+    if (id == curAnim) return false;
 
     auto it2 = m_AnimationClips.find(id);
-    if (it2 != m_AnimationClips.end())
-        m_CurAnim = it2->second.get();
+    if (it2 == m_AnimationClips.end())
+        return false;
 
     curAnim = id;
     m_prevAnim = m_CurAnim;
@@ -250,6 +258,8 @@ void Animator::Change(const std::string& name, float duration)
     isBlending = true;
     blendDuration = duration;
     blendAlpha = 0.0f;
+
+    return true;
 }
 
 void Animator::Serialize()
