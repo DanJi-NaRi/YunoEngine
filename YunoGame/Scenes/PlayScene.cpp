@@ -171,14 +171,14 @@ void PlayScene::TestInput()
     // 디버깅용
     // 카드 선택 (넘버패드 = UI 버튼 대용)
     HandleCardSelect(VK_NUMPAD1, 0, 0); // 클라 1
-    HandleCardSelect(VK_NUMPAD2, 0, 1);
-    HandleCardSelect(VK_NUMPAD3, 0, 2);
-    HandleCardSelect(VK_NUMPAD4, 0, 3);
+    HandleCardSelect(VK_NUMPAD2, 0, 2);
+    HandleCardSelect(VK_NUMPAD3, 0, 4);
+    HandleCardSelect(VK_NUMPAD4, 0, 15);
 
     HandleCardSelect(VK_NUMPAD5, 1, 0); // 클라 2
-    HandleCardSelect(VK_NUMPAD6, 1, 1);
-    HandleCardSelect(VK_NUMPAD7, 1, 2);
-    HandleCardSelect(VK_NUMPAD8, 1, 3);
+    HandleCardSelect(VK_NUMPAD6, 1, 2);
+    HandleCardSelect(VK_NUMPAD7, 1, 4);
+    HandleCardSelect(VK_NUMPAD8, 1, 15);
 
     HandleCardSelect(VK_NUMPAD9, 1,8);
 

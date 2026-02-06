@@ -234,6 +234,7 @@ void PlayGridSystem::CheckPacket(float dt)
         const CardType cardType = cardData.m_type;
         
         if (cardType == CardType::Attack)    m_pktTime = 5.f;
+        else if (cardType == CardType::Utility)    m_pktTime = 7.f;
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
     }
@@ -601,7 +602,7 @@ void PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
             us.utilityPhase = UtilityPhase::Move;
             us.playPiece = whichPiece;
             us.playerMove = new MoveInfo{ dirty, newUnitStates, mainUnit, dir};
-            us.m_moveDuration = 3.f;
+            us.m_moveDuration = 2.f;
             break;
         }
         // 2. 공격 값
@@ -614,15 +615,15 @@ void PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
         case 2:
         {
             const auto& hps = m_attackSequence.hitPieces;
-            for (int i = 0; hps.size(); i++)
+            for (int i = 0; i < hps.size(); i++)
             {
                 int unitID = GetUnitID(hps[i]);
                 Dirty_US d = Diff_US(m_UnitStates[unitID], newUnitStates[unitID]);
                 MoveInfo* mi = new MoveInfo{ d, newUnitStates, unitID, dir };
                 us.hittersMove.push_back(mi);
-                if (HasThis_US(d, Dirty_US::targetTileID))   us.hitMove = HitMove::Move;
+                if (!(HasThis_US(d, Dirty_US::targetTileID)))   us.hitMove = HitMove::Move;
             }
-            us.m_attackAndMoveDuration = 7.f;
+            us.m_attackAndMoveDuration = 4.f;
             us.buffData = buffData;
             break;
         }
