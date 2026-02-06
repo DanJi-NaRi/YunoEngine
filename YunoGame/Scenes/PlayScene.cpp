@@ -30,9 +30,27 @@ bool PlayScene::OnCreateScene()
 
     m_name = "PlayScene";
 
+    YunoEngine::GetRenderer()->GetCamera().position = { 0, 7, -10 };
+    YunoEngine::GetRenderer()->GetCamera().target = { 0, 0, 0 };
+    m_uiManager->SetOrthoFlag(true);
+
+    m_objectManager->CreateDirLight();
+
+    int j = 0;
+    for (int i = 0; i < 10; i++)
+    {
+        m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
+        j++;
+    }
+
+    PassOption po;
+
+    auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
+    map->SetRot({ 0, XMConvertToRadians(-90.f), 0 });
+
     // 플레이 그리드 시스템 생성
     m_playGrid = std::make_unique<PlayGridSystem>(m_objectManager.get());
-    m_playGrid->CreateObject(0, 1, 0);
+    m_playGrid->CreateObject(0, 0, 0);
     
     // 디렉션 라이트 생성
     m_objectManager->CreateDirLight();

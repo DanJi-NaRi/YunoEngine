@@ -4,6 +4,7 @@
 #include "TileHelper.h"
 #include "BattlePackets.h"
 
+class UnitTile;
 class PlayGridQ;
 enum class CardType : uint8_t;
 struct CardEffectData;
@@ -144,6 +145,7 @@ private:
 
     std::wstring GetWeaponFileName(int weaponID);           // 테스트용
     std::wstring GetTileFileName(int tile);
+    void SetTileInitState(UnitTile*& pTile, int floornum);
 
 private:
     void ClearTileState();
