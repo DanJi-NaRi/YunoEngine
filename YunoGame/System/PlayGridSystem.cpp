@@ -1094,7 +1094,6 @@ void PlayGridSystem::CheckOver()
 {
     if (isRoundOver) return;
 
-    int count = 2;
     bool deadPlayer[2];
     bool deadUnits[4];
     memset(deadPlayer, false, sizeof(bool) * 2);
@@ -1107,14 +1106,9 @@ void PlayGridSystem::CheckOver()
             deadUnits[(int)i] = true;
     }
 
-    for (int i = 0; i < 3; i++)
-    {
-        if (deadUnits[i] && deadUnits[i+1])
-        {
-            deadPlayer[i % 2] = true;
-        }
-    }
-
+    // 팀 단위로 사망 판정 (Ally1/Ally2, Enemy1/Enemy2)
+    deadPlayer[0] = deadUnits[(int)GamePiece::Ally1] && deadUnits[(int)GamePiece::Ally2];
+    deadPlayer[1] = deadUnits[(int)GamePiece::Enemy1] && deadUnits[(int)GamePiece::Enemy2];
     
     if (deadPlayer[0] && deadPlayer[1]) // 무승부
     {
