@@ -20,7 +20,8 @@
 #include "C2S_SubmitWeapon.h"
 
 #include "S2C_CardPackets.h"
-
+#include "S2C_EndGame.h"
+#include "S2C_Emote.h"
 namespace yuno::game
 {
     YunoClientNetwork::YunoClientNetwork()
@@ -451,6 +452,7 @@ namespace yuno::game
             }
         ); // DrawCandidates Packet End
 
+        // S2C_StartTurn Packet Start
         Dispatcher().RegisterRaw(
             PacketType::S2C_StartTurn,
             [this](const NetPeer& peer,
@@ -492,6 +494,103 @@ namespace yuno::game
 
                 std::cout << "[Client] ======================\n";
             }
-        );
+        );// S2C_StartTurn Packet End
+
+        // S2C_EndGame Packet Start
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_EndGame,
+            [](const NetPeer& /*peer*/,
+                const PacketHeader& /*header*/,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                if (body == nullptr || bodyLen == 0)
+                    return;
+
+                yuno::net::ByteReader r(body, bodyLen);
+                const auto pkt =
+                    yuno::net::packets::S2C_EndGame::Deserialize(r);
+
+                std::cout << "=============================\n";
+                std::cout << "[Client] S2C_EndGame received\n";
+
+                for (int i = 0; i < 2; ++i)
+                {
+                    std::cout
+                        << " Player PID=" << int(pkt.results[i].PID)
+                        << " winCount=" << int(pkt.results[i].winCount)
+                        << "\n";
+                }
+
+                // 결과 판정
+                const uint8_t p1Wins = pkt.results[0].winCount;
+                const uint8_t p2Wins = pkt.results[1].winCount;
+
+                if (p1Wins > p2Wins)
+                    std::cout << "[Result] Player 1 WIN\n";
+                else if (p1Wins < p2Wins)
+                    std::cout << "[Result] Player 2 WIN\n";
+                else
+                    std::cout << "[Result] DRAW\n";
+
+                std::cout << "=============================\n";
+            }
+        );// S2C_EndGame Packet End
+
+        // S2C_Emote Packet Start
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_Emote,
+            [](const NetPeer&,
+                const PacketHeader&,
+                const uint8_t* body,
+                uint32_t bodyLen)
+            {
+                if (body == nullptr || bodyLen == 0)
+                    return;
+
+                yuno::net::ByteReader r(body, bodyLen);
+                const auto pkt =
+                    yuno::net::packets::S2C_Emote::Deserialize(r);
+
+                std::cout
+                    << "[Client] Emote Received "
+                    << "from PID=" << int(pkt.PID)
+                    << " emoteId=" << int(pkt.emoteId)
+                    << "\n";
+
+                GameManager::Get().PushEmote(pkt.PID, pkt.emoteId);
+            }
+        );// S2C_Emote Packet End
+
+        Dispatcher().RegisterRaw(//S2C_ObstacleResult Packet Start
+            PacketType::S2C_ObstacleResult,
+            [](const NetPeer&,
+                const PacketHeader&,
+                const uint8_t* body,
+                uint32_t bodyLen)
+            {
+                if (!body || bodyLen == 0)
+                    return;
+
+                yuno::net::ByteReader r(body, bodyLen);
+                auto pkt =
+                    yuno::net::packets::S2C_ObstacleResult::Deserialize(r);
+
+                //여기서 게임매니저에 만든 함수 가져와서 클라에 나올거 구현하기
+
+                std::cout
+                    << "[Client] ObstacleResult received "
+                    << " count=" << pkt.obstacles.size()
+                    << "\n";
+
+                for (const auto& o : pkt.obstacles)
+                {
+                    std::cout
+                        << "  obstacleID=" << int(o.obstacleID)
+                        << " tiles=" << o.tileIDs.size()
+                        << "\n";
+                }
+            }
+        );//S2C_ObstacleResult Packet End
     }
 }
