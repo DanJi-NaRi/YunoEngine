@@ -112,27 +112,7 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
 }
 
 template<typename T>
-T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, UIDirection pivot, WidgetLayer layer, Widget* pParent) {
-    assert(pParent);
-    if (!pParent) return nullptr;
-
-    T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, pivot); // UIManager 멤버 접근은 내부에서
-    pParent->Attach(pChild);
-    pChild->SetLayer(layer);
-    pChild->CreateChild(); // 자식 생성
-    
-    
-    //pChild->SetPivot(pParent->GetPivot());
-
-    assert(pChild);
-    if (!pChild) return nullptr;
-
-    return pChild;
-}
-
-
-template<typename T>
-T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, UIDirection pivot, Widget* pParent) {
+T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 scale, Float2 pivot, Widget* pParent) {
     assert(pParent);
     if (!pParent) return nullptr;
 
@@ -149,26 +129,6 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
 
     return pChild;
 }
-
-template<typename T>
-T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, UIDirection pivot, WidgetLayer layer, Widget* pParent) {
-    assert(pParent);
-    if (!pParent) return nullptr;
-
-    T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, pivot); // UIManager 멤버 접근은 내부에서
-    pParent->Attach(pChild);
-    pChild->SetLayer(layer);
-    pChild->CreateChild(); // 자식 생성
-
-
-    //pChild->SetPivot(pParent->GetPivot());
-
-    assert(pChild);
-    if (!pChild) return nullptr;
-
-    return pChild;
-}
-
 
 template<typename T>
 T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 scale, UIDirection pivot, Widget* pParent) {
@@ -190,13 +150,13 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
 }
 
 template<typename T>
-T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 scale, UIDirection pivot, WidgetLayer layer, Widget* pParent) {
+T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, float rot, DirectX::XMFLOAT3 scale, Float2 pivot, Widget* pParent) {
     assert(pParent);
     if (!pParent) return nullptr;
 
     T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, pivot); // UIManager 멤버 접근은 내부에서
     pParent->Attach(pChild);
-    pChild->SetLayer(layer);
+    //pChild->SetLayer(pParent->GetLayer());
     pChild->CreateChild(); // 자식 생성
 
 
@@ -207,7 +167,6 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
 
     return pChild;
 }
-
 
 template<typename T>
 T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, float rot, DirectX::XMFLOAT3 scale, UIDirection pivot, Widget* pParent) {
