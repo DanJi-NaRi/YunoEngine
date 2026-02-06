@@ -91,7 +91,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         auto [wx, wz] = m_grids[(int)m_nowG]->CellToWorld(i % m_column, i / m_column);
         auto fileName = GetTileFileName(tilenum);
         auto pTile = m_manager->CreateObjectFromFile<UnitTile>(L"Tile", XMFLOAT3(wx, y, wz), fileName);
-        pTile->SetRot({0, XMConvertToRadians(-90.f), 0});
+        pTile->SetRot({0, XMConvertToRadians(90.f), 0});
         if(tilenum > 0 && tilenum < 6)  // 1~5번 타일만
             SetTileInitState(pTile, tilenum);
         m_tilesIDs.push_back(pTile->GetID());
@@ -123,42 +123,59 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
             TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
 
         GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
-        std::wstring fileName = GetWeaponFileName(w.weaponId);
-        auto pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
-        
-        //if (w.weaponId == 2)
-        //{
-        //}
-        //else
-        //{
+        PieceInfo pieceInfo{};
 
-        //}
+        UnitPiece* pPiece = nullptr;
+        if (w.weaponId == 2)
+        {
+            pPiece = m_manager->CreateObject<UnitPiece>(
+                L"Weapon", XMFLOAT3(px, m_wy, pz));
+
+            auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
+                L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
+            pChakram1->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
+            pPiece->Attach(pChakram1);
+
+            auto pChakram2 = m_manager->CreateObjectFromFile<UnitPiece>(
+                L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
+            pChakram2->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
+            pPiece->Attach(pChakram2);
+
+            pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
+            pieceInfo.subIds.push_back(pChakram1->GetID());
+            pieceInfo.subIds.push_back(pChakram2->GetID());
+
+            m_gridBox->Attach(pPiece);
+        }
+        else
+        {
+            std::wstring fileName = GetWeaponFileName(w.weaponId);
+            pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
+        }
         
         //// weapon 구별을 위한 임시
         switch (w.weaponId)
         {
         case 1:
             pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
-            break;
-        case 2:
-            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
+            pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
             break;
         case 3:
-            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
+            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/drill_idle.fbx");
             break;
         case 4:
             pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
             break;
         case 5:
             pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
+            pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
             break;
         case 6:
             pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
             break;
         }
-        //pPiece->SetWho(gp);
-        //pPiece->SetScale({ 0.8f, 0.8f, 0.8f });
-        //pPiece->SetDir(dir, false);
+        pPiece->SetWho(gp);
+        pPiece->SetDir(dir, false);
 
         // 기물 정보 등록
         m_pieces.emplace(gp, PieceInfo{pPiece->GetID(), dir, team });
@@ -200,7 +217,13 @@ void PlayGridSystem::CheckMyQ()
             //auto it = m_pieces.find(pieceType);
             //if (it == m_pieces.end())    break;
 
-            m_manager->DestroyObject(m_pieces[pieceType].id);
+            //m_manager->DestroyObject(m_pieces[pieceType].id);
+            auto& pieceInfo = m_pieces[pieceType];
+            m_manager->DestroyObject(pieceInfo.id);
+            for (uint32_t subId : pieceInfo.subIds)
+            {
+                m_manager->DestroyObject(subId);
+            }
             m_pieces.erase(pieceType);
             break;
         }
@@ -305,10 +328,18 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
 
         if (!as.phaseStarted) break;
 
-        int id = m_pieces[as.attacker].id;
-        auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(id));
+        //int id = m_pieces[as.attacker].id;
+        //auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(id));
+        const auto& pieceInfo = m_pieces[as.attacker];
+        auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
         // 애니메이션 대신 반짝이는 걸로 잠시 대체
         pPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
+        for (uint32_t subId : pieceInfo.subIds)
+        {
+            auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
+            if (pSubPiece != nullptr)
+                pSubPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
+        }
         as.phaseStarted = false;
         
         std::cout << "[Attack Sequence]\nAttacker hp: " << static_cast<int>(m_UnitStates[GetUnitID(as.attacker)].hp) << std::endl;
@@ -340,10 +371,18 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         for (int i = 0; i < pieces.size(); i++)
         {
             if (!CheckExisting(pieces[i]))    continue;
-            int id = m_pieces[pieces[i]].id;
-            auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(id));
+            //int id = m_pieces[pieces[i]].id;
+            //auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(id));
+            const auto& pieceInfo = m_pieces[pieces[i]];
+            auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
             // 애니메이션 대신 반짝이는 걸로 잠시 대체
             pPiece->SetFlashColor(as.m_hitColor, as.m_flashCount, as.m_flashInterval);
+            for (uint32_t subId : pieceInfo.subIds)
+            {
+                auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
+                if (pSubPiece != nullptr)
+                    pSubPiece->SetFlashColor(as.m_hitColor, as.m_flashCount, as.m_flashInterval);
+            }
         }
         as.phaseStarted = false;
         break;
@@ -766,29 +805,47 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
 
 void PlayGridSystem::BuffEvent(const GamePiece& pieceType, const CardEffectData*& buffData)
 {
-    auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(m_pieces[pieceType].id));
+    //auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(m_pieces[pieceType].id));
+    const auto& pieceInfo = m_pieces[pieceType];
+    auto applyFlash = [&](Float4 color)
+        {
+            auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
+            if (pPiece != nullptr)
+                pPiece->SetFlashColor(color, 1, 2.f);
+
+            for (uint32_t subId : pieceInfo.subIds)
+            {
+                auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
+                if (pSubPiece != nullptr)
+                    pSubPiece->SetFlashColor(color, 1, 2.f);
+            }
+        };
 
     const auto& data = *buffData;
 
     if (data.m_giveDamageBonus != 0)            // 공격력 증가(버프)
     {
         Float4 yellow = { 1, 0.9f, 0, 1 };
-        pPiece->SetFlashColor(yellow, 1, 2.f);
+        applyFlash(yellow);
+        //pPiece->SetFlashColor(yellow, 1, 2.f);
     }
     else if (data.m_takeDamageReduce != 0)      // 방어력 증가(버프)
     {
         Float4 skyblue = { 0, 1, 0.9f, 1 };
-        pPiece->SetFlashColor(skyblue, 1, 2.f);
+        applyFlash(skyblue);
+        //pPiece->SetFlashColor(skyblue, 1, 2.f);
     }
     else if (data.m_takeDamageIncrease != 0)    // 방어력 저하(디버프)
     {
         Float4 blue = { 0, 0.1f, 1, 1 };
-        pPiece->SetFlashColor(blue, 1, 2.f);
+        applyFlash(blue);
+        //pPiece->SetFlashColor(blue, 1, 2.f);
     }
     else if (data.m_staminaRecover != 0)        // 스태미나 회복
     {
         Float4 green = { 0, 1, 0, 1 };
-        pPiece->SetFlashColor(green, 1, 2.f);
+        applyFlash(green);
+        //pPiece->SetFlashColor(green, 1, 2.f);
     }
 }
 
@@ -829,6 +886,13 @@ void PlayGridSystem::CheckHealth(const UnitState& us, PieceInfo& pieceInfo)
         auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
 
         pPiece->SetDead();
+
+        for (uint32_t subId : pieceInfo.subIds)
+        {
+            auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+            if (pSubPiece != nullptr)
+                pSubPiece->SetDead();
+        }
 
         // 해당 타일 정보 초기화
         int tileID = m_tilesIDs[us.targetTileID];
@@ -1006,13 +1070,8 @@ std::wstring PlayGridSystem::GetWeaponFileName(int weaponID)
     case 1:
         filaName = L"../Assets/fbx/weapon/Blaster/Blaster.fbx";
         break;
-    case 2:
-        //filaName = L"../Assets/fbx/weapon/Chakram/Chakram.fbx";
-        filaName = L"../Assets/fbx/weapon/Scythe/Scythe.fbx";
-        break;
     case 3:
-        filaName = L"../Assets/fbx/weapon/Blaster/Blaster.fbx";
-        //filaName = L"../Assets/fbx/weapon/Breacher/Breacher.fbx";
+        filaName = L"../Assets/fbx/weapon/Breacher/Breacher.fbx";
         break;
     case 4:
         filaName = L"../Assets/fbx/weapon/Scythe/Scythe.fbx";

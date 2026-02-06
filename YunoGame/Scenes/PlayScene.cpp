@@ -44,7 +44,7 @@ bool PlayScene::OnCreateScene()
     PassOption po;
 
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
-    map->SetRot({ 0, XMConvertToRadians(-90.f), 0 });
+    map->SetRot({ 0, XMConvertToRadians(90.f), 0 });
 
 
     // 플레이 그리드 시스템 생성

@@ -18,13 +18,15 @@ private:
     bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
 
     bool UpdateMatrix();
-
     void UpdateFlash(float dt);
+
+    void CheckAttack();
 public:
     void InsertQ(PGridCmd targetPos);
     void SetWho(GamePiece type);
     void SetDir(Direction dir, bool isAnim = true);
     void SetFlashColor(Float4 color, int count, float blinkTime);
+    void PlayAttack();
     void SetDead();
 
     void SetTmpColor(Float4 color);
@@ -38,6 +40,9 @@ private:
 
 private:
     bool m_AnimDone = false;
+
+    // 공격
+    bool isAttacking = false;
 
     // 반짝
     Float4 m_vtmpColor{ 1, 1, 1, 1 };
