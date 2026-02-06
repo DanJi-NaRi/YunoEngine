@@ -38,4 +38,12 @@ namespace yuno::net::packets
         void Serialize(ByteWriter& w) const;
         static C2S_ReadyTurn Deserialize(ByteReader& r);
     };
+
+
+    struct C2S_RoundStartReadyOK final
+    {
+
+        void Serialize(ByteWriter& w) const;
+        static C2S_RoundStartReadyOK Deserialize(ByteReader& r);
+    };
 }

@@ -43,7 +43,7 @@ namespace yuno::server
         , m_obstacleDB()
         , m_cardRuntime()
         , m_cardDealer(m_cardDB, m_cardRuntime)
-        , m_turnManager(m_match, *this, m_cardRuntime, m_cardDB, m_cardRangeDB, m_roundController)
+        , m_turnManager(m_match, *this, m_cardRuntime, m_cardDB, m_cardRangeDB, m_obstacleDB, m_roundController)
         , m_roundController(m_match, m_cardDealer, *this, m_cardController)
         , m_cardController(m_cardDealer, m_cardDB, m_cardRuntime)
 
@@ -124,6 +124,8 @@ namespace yuno::server
     void YunoServerNetwork::Tick()
     {
         const std::size_t n = m_io.poll_one();
+
+        m_roundController.Update();
     }
 
 
@@ -319,6 +321,27 @@ namespace yuno::server
                 m_roundController.TryStartRound();
             }
         );// Submit Weapon Packet End
+
+
+        // C2S_RoundStartReadyOK Packet Start
+        m_dispatcher.RegisterRaw(
+            PacketType::C2S_RoundStartReadyOK,
+            [this](const NetPeer& peer,
+                const PacketHeader&,
+                const std::uint8_t* body,
+                std::uint32_t bodyLen)
+            {
+                ByteReader r(body, bodyLen);
+                const auto pkt =
+                    packets::C2S_RoundStartReadyOK::Deserialize(r);
+
+                const int slotIdx = m_match.FindSlotBySessionId(peer.sId);
+                if (slotIdx < 0)
+                    return;
+
+                m_roundController.OnRoundStartReadyOK(slotIdx);
+            }
+        );// C2S_RoundStartReadyOK Packet End
 
 
         //Submit ReadyTurn Packet Start         

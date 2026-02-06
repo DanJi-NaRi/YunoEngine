@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <chrono>
 
 namespace yuno::server
 {
@@ -18,6 +19,8 @@ namespace yuno::server
             PlayerCardController& mcardController);
 
         void TryStartRound();
+        void Update();
+        void OnRoundStartReadyOK(int playerIdx);
         void EndTurn();
         void EndGame();
         void OnPlayerSelectedCard(int playerIdx);
@@ -39,6 +42,10 @@ namespace yuno::server
 
         bool m_roundStarted = false;
         bool m_cardsInitialized = false;
+
+        bool m_waitingRoundStartReady = false;
+        bool m_roundStartReady[2] = { false, false };
+        std::chrono::steady_clock::time_point m_roundStartReadyDeadline{};
 
         bool m_cardSelected[2] = { false, false };
         std::unordered_map<uint32_t, uint8_t> m_unitIdMap;

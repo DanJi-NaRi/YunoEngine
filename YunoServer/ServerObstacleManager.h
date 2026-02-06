@@ -10,7 +10,7 @@ public:
     int roundId;
     int turnId;
     std::vector<int> tileIds;
-    int obstacleId;
+    int obstacleType;
     int damage;
 };
 

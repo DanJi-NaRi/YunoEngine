@@ -26,13 +26,17 @@ namespace yuno::net::packets
 
     struct ObstacleState
     {
+        // 다음 턴에 발동할 obstacle 경고에 대한 데이터
         uint8_t obstacleID;                 // 장애물 타입 ID (0~3) 0은 장애물 없음
         std::vector<uint8_t> tileIDs;     // 장애물이 점유하는 타일들ID (1~35)
+
+        // 이전 턴에 받은 obstacleID, tileIDs가 적용된 결과
         std::array<UnitStateDelta, 4> unitState;
 
         void Serialize(ByteWriter& w) const;
         static ObstacleState Deserialize(ByteReader& r);
     };
+
     // 이게 서버가 시뮬 돌려서 결과 보내주는 패킷
     // 카드 8개의 발동 순서는 서버가 정렬해서 시뮬돌리고 패킷 8번 보낸다.
     struct S2C_BattleResult
@@ -44,7 +48,6 @@ namespace yuno::net::packets
         uint32_t actionTime;      // 해당 결과 액션 타임
 
         std::vector<std::array<UnitStateDelta, 4>> order;   // 카드 시뮬 결과
-        std::array<UnitStateDelta, 4>   obstacleUnitState;  // 오로지 장애물로 인한 유닛들의 스테이트 변동
         void Serialize(ByteWriter& w) const;
         static S2C_BattleResult Deserialize(ByteReader& r);
     };
