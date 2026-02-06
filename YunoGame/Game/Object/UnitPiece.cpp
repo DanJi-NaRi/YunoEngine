@@ -245,6 +245,7 @@ bool UnitPiece::Update(float dTime)
     }
 
     UpdateFlash(dTime);
+    CheckAttack();
 
     // 애니메이션이 끝나면 하나씩 빼가게 하기
     while (!m_Q.empty() && !isMoving && !isRotating)
@@ -386,6 +387,19 @@ void UnitPiece::UpdateFlash(float dt)
     }
 }
 
+void UnitPiece::CheckAttack()
+{
+    if (!isAttacking) return;
+
+    bool isPlaying = m_animator->isPlaying();
+
+    if (!isPlaying)
+    {
+        m_animator->SetLoop("idle", true);
+        isAttacking = false;
+    }
+}
+
 
 void UnitPiece::InsertQ(PGridCmd cmd)
 {
@@ -427,6 +441,12 @@ void UnitPiece::SetFlashColor(Float4 color, int count, float blinkTime)
     m_count = count;
     m_blinkTime = blinkTime;
     isFlashing = true;
+}
+
+void UnitPiece::PlayAttack()
+{
+    m_animator->Change("attack");
+    isAttacking = true;
 }
 
 

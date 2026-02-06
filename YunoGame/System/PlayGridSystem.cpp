@@ -158,6 +158,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         {
         case 1:
             pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
+            pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
             break;
         case 3:
             pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/drill_idle.fbx");
@@ -167,6 +168,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
             break;
         case 5:
             pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
+            pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
             break;
         case 6:
             pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
