@@ -41,7 +41,6 @@ namespace yuno::server
         bool m_cardsInitialized = false;
 
         bool m_cardSelected[2] = { false, false };
-        int m_turnNumber = 0;
         std::unordered_map<uint32_t, uint8_t> m_unitIdMap;
     };
 }

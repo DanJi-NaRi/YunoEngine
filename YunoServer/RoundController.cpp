@@ -194,8 +194,8 @@ namespace yuno::server
 
     void RoundController::StartTurn()
     {
-        ++m_turnNumber;
-        std::cout << "[Round] StartTurn #" << m_turnNumber << "\n";
+
+        std::cout << "[Round] StartTurn #" << g_battleState.turnNumber << "\n";
 
         yuno::net::packets::S2C_StartTurn pkt{};
         pkt.turnNumber = g_battleState.turnNumber;
@@ -240,7 +240,6 @@ namespace yuno::server
 
         m_roundStarted = false;
         m_cardsInitialized = false;
-        m_turnNumber = 0;
         m_cardSelected[0] = false;
         m_cardSelected[1] = false;
 
