@@ -38,7 +38,7 @@ bool Title::OnCreateScene()
     m_titleImage->SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
 
 
-    CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538,105), XMFLOAT3(0, 500, 0))->SetTargetScene(CurrentSceneState::GameStart);
+    CreateWidget<SceneChangeButton>(L"StartBtn", Float2(500,100), XMFLOAT3(100, 200, 0))->SetTargetScene(CurrentSceneState::GameStart);
 
     return true;
 }
