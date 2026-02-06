@@ -281,7 +281,7 @@ bool UnitPiece::Update(float dTime)
 
 bool UnitPiece::Submit(float dTime)
 {
-    Unit::Submit(dTime);
+    AnimationUnit::Submit(dTime);
     return true;
 }
 

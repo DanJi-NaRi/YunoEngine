@@ -19,6 +19,8 @@ struct BattleResult
     uint8_t slotId = 0; // 0 에러
     uint8_t dir = 0;    // 0 에러 , 1234 상하좌우
     uint32_t actionTime = 0;
+    // 장애물 타일 아이디(배열)
+    // 장애물 타입 : 0은 에러. 수평 레이저. 수직 레이저. 붕괴.
 
     std::vector<std::array<UnitState, 4>> order;
 };

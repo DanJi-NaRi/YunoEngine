@@ -35,6 +35,7 @@ namespace yuno::net::packets
         uint32_t actionTime;      // 해당 결과 액션 타임
 
         std::vector<std::array<UnitStateDelta, 4>> order;   // 카드 시뮬 결과
+        std::array<UnitStateDelta, 4>   obstacleUnitState;  // 오로지 장애물로 인한 유닛들의 스테이트 변동
         void Serialize(ByteWriter& w) const;
         static S2C_BattleResult Deserialize(ByteReader& r);
     };
