@@ -31,10 +31,10 @@ private:
     void HandleDirectionInput();
     void EndTurn();
 
+    void ShowEmoteImage(uint8_t pid, uint8_t emoteId); //YDM TEST IMOTE
 private:
     std::unique_ptr<IGridSystem> m_playGrid;
     Game_InputContext m_gameCtx;
-    
 
     uint32_t m_pendingCardRuntimeID = 0; //방향 선택 확인
 

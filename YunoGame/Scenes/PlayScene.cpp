@@ -16,19 +16,17 @@
 #include "Triangle.h"
 #include "Quad.h"
 #include "Dwarf.h"
-
+#include "Emoji.h" // test YDM
+#include "TitleImage.h"
 #include "PlayQueue.h"
-
-
-
-
-
-
 bool PlayScene::OnCreateScene()
 {
     //std::cout << "[PlayScene] OnCreate\n";
 
     m_name = "PlayScene";
+
+
+    m_uiManager->SetOrthoFlag(true);//여기서 ui 쓰는거 맞음?
 
     YunoEngine::GetRenderer()->GetCamera().position = { 0, 7, -10 };
     YunoEngine::GetRenderer()->GetCamera().target = { 0, 0, 0 };
@@ -156,6 +154,7 @@ void PlayScene::AddCardSelect()
         << runtimeID
         << "\n";
 }
+
 //TODO: 디버깅용 나중에는 UI씬에 OnEndTurnClicked함수 만들어서 옮겨야함
 void PlayScene::EndTurn()
 {
@@ -189,6 +188,13 @@ void PlayScene::TestInput()
 
     HandleCardSelect(VK_NUMPAD9, 1,9);
 
+    if (m_input->IsKeyPressed('Q'))
+        GameManager::Get().SendEmote(1);
+    if (m_input->IsKeyPressed('W'))
+        GameManager::Get().SendEmote(2);
+    if (m_input->IsKeyPressed('E'))
+        GameManager::Get().SendEmote(3);
+
     //방향 선택
     HandleDirectionInput();
     // 엔드 턴
@@ -211,6 +217,22 @@ void PlayScene::OnExit()
     YunoEngine::GetInput()->RemoveContext(&m_gameCtx);
 }
 
+void PlayScene::ShowEmoteImage(uint8_t pid, uint8_t emoteId)
+{
+    std::cout << "[PlayScene] ShowEmoteImage pid=" << int(pid)
+        << " emoteId=" << int(emoteId) << "\n";
+
+    auto* emoji = CreateWidget<Emoji>(
+        L"Emoji",
+        Float2{ 64, 64 },
+        (pid == 1) ? XMFLOAT3{ 300, 200, 0 } : XMFLOAT3{ 800, 200, 0 }
+    );
+
+    emoji->SetLayer(WidgetLayer::HUD);
+
+    emoji->ChangeMaterial(emoteId);
+}
+
 void PlayScene::Update(float dt)
 {
     SceneBase::Update(dt);
@@ -219,6 +241,11 @@ void PlayScene::Update(float dt)
 
     m_playGrid->Update(dt);
 
+    PendingEmote emote;
+    while (GameManager::Get().PopEmote(emote))
+    {
+        ShowEmoteImage(emote.pid, emote.emoteId);
+    }
 }
 
 void PlayScene::SubmitObj()

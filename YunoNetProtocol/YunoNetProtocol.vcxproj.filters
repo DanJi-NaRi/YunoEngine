@@ -93,6 +93,15 @@
     <ClInclude Include="Public\Net\C2SPackets\C2S_CardPackets.h">
       <Filter>Public\Network\Packets</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_EndGame.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_Emote.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Net\S2CPackets\S2C_Emote.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Net\ByteIO.cpp">
@@ -150,6 +159,15 @@
       <Filter>Private\Network\Packets</Filter>
     </ClCompile>
     <ClCompile Include="Private\Net\C2SPackets\C2S_CardPackets.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_EndGame.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\S2CPackets\S2C_Emote.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_Emote.cpp">
       <Filter>Private\Network\Packets</Filter>
     </ClCompile>
   </ItemGroup>

@@ -10,6 +10,7 @@
 #include "S2C_CountDown.h"
 #include "S2C_RoundStart.h"
 #include "S2C_CardPackets.h"
+#include "S2C_EndGame.h"
 
 #include <iostream>
 
@@ -181,16 +182,15 @@ namespace yuno::server
 
     void RoundController::EndRound()
     {
+
         m_roundStarted = false;
 
-        if (g_battleState.matchEnded)   // 매치(게임)이 끝났으면 엔드게임
+        if (g_battleState.matchEnded || g_battleState.currentRound > 3)
             EndGame();
-        else                            // 아직 안끝났으면 라운드 스타트
-        {
+        else
             TryStartRound();
-        }
+    }
 
-    }    
 
     void RoundController::StartTurn()
     {
@@ -229,14 +229,34 @@ namespace yuno::server
         SendDrawCandidates();
         //종료 플래그 이미 받은 상태
         //턴스타트 라운드엔드
+
     }
 
     void RoundController::EndGame()
     {
 
+        std::cout << "[Round] Match ended. Reset loop state for next match\n";
+        yuno::net::packets::S2C_EndGame pkt{};
+
+        // P1
+        pkt.results[0].PID = 1;
+        pkt.results[0].winCount = g_battleState.roundWins[0];
+
+        // P2
+        pkt.results[1].PID = 2;
+        pkt.results[1].winCount = g_battleState.roundWins[1];
+
+        auto bytes = yuno::net::PacketBuilder::Build(
+            yuno::net::PacketType::S2C_EndGame,
+            [&](yuno::net::ByteWriter& w)
+            {
+                pkt.Serialize(w);
+            });
+
+        m_network.Broadcast(std::move(bytes));
         // 여기서 엔딩씬으로 넘어갈거면 엔딩씬 넘기는 패킷에 데이터 담아서 보내고나서 
         // 데이터 리셋 ㄱㄱ
-        std::cout << "[Round] Match ended. Reset loop state for next match\n";
+
 
         m_roundStarted = false;
         m_cardsInitialized = false;
@@ -261,6 +281,8 @@ namespace yuno::server
             player.handCards.clear();
             player.drawCandidates.clear();
         }
+
+
 
     }
     

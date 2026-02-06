@@ -10,6 +10,7 @@
 #include "ServerCardRuntime.h"
 #include "ServerCardManager.h"
 #include "ServerCardRangeManager.h"
+#include "ServerObstacleManager.h"
 #include "RoundController.h"
 #include "ServerCardDealer.h"
 #include "TurnManager.h"
@@ -60,6 +61,7 @@ namespace yuno::server
         ServerCardDealer  m_cardDealer;
         ServerCardManager m_cardDB;
         ServerCardRangeManager m_cardRangeDB;
+        ServerObstacleManager m_obstacleDB;
         ServerCardRuntime m_cardRuntime;
         RoundController m_roundController;
         TurnManager m_turnManager;
