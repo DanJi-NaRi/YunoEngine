@@ -124,6 +124,8 @@ namespace yuno::server
     void YunoServerNetwork::Tick()
     {
         const std::size_t n = m_io.poll_one();
+
+        m_roundController.Update();
     }
 
 
@@ -330,11 +332,16 @@ namespace yuno::server
                 std::uint32_t bodyLen)
             {
                 ByteReader r(body, bodyLen);
-                const auto pkt = packets::C2S_RoundStartReadyOK::Deserialize(r);
+                const auto pkt =
+                    packets::C2S_RoundStartReadyOK::Deserialize(r);
 
-                m_roundController.TryStartRound();
+                const int slotIdx = m_match.FindSlotBySessionId(peer.sId);
+                if (slotIdx < 0)
+                    return;
+
+                m_roundController.OnRoundStartReadyOK(slotIdx);
             }
-        );// Submit Weapon Packet End
+        );// C2S_RoundStartReadyOK Packet End
 
 
         //Submit ReadyTurn Packet Start         

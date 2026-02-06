@@ -28,6 +28,42 @@ namespace yuno::server
     {
     }
 
+    void RoundController::Update()
+    {
+        if (!m_waitingRoundStartReady)
+            return;
+
+        if (std::chrono::steady_clock::now() < m_roundStartReadyDeadline)
+            return;
+
+        std::cout << "[Round] RoundStartReady timeout. Force starting next round\n";
+
+        m_waitingRoundStartReady = false;
+        TryStartRound();
+    }
+
+    void RoundController::OnRoundStartReadyOK(int playerIdx)
+    {
+        if (playerIdx < 0 || playerIdx > 1)
+            return;
+
+        if (!m_waitingRoundStartReady)
+            return;
+
+        if (m_roundStartReady[playerIdx])
+            return;
+
+        m_roundStartReady[playerIdx] = true;
+
+        std::cout << "[Round] RoundStartReadyOK from player " << playerIdx << "\n";
+
+        if (!(m_roundStartReady[0] && m_roundStartReady[1]))
+            return;
+
+        m_waitingRoundStartReady = false;
+        TryStartRound();
+    }
+
     void RoundController::TryStartRound()
     {
         const auto& s = m_match.Slots();
@@ -189,11 +225,23 @@ namespace yuno::server
         m_roundStarted = false;
 
         if (g_battleState.matchEnded || g_battleState.currentRound > 3)
+        {
             EndGame();
+            return;
+        }
+
+        m_waitingRoundStartReady = true;
+        m_roundStartReady[0] = false;
+        m_roundStartReady[1] = false;
+        m_roundStartReadyDeadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
         //else 
         //{
         //    TryStartRound(); // 이거 자동으로 시작되게 하는거 바꿔야 될듯
-        //}
+        //} 
+        // 이거 바꾼 이유 = 클라이언트에서 라운드 종료시 기존 유닛을 파괴하고 새로운 유닛을 생성해서
+        // 보유 유닛 벡터에 집어넣을 텐데 서버가 보내자마자 해당 행동을 시작해서 자동시작말고 클라에서 유닛 파괴하면
+        // 서버한테 C2S_RoundStartReadyOK 패킷을 보내서 알려주기로 바꿈
+        // 게임 크래쉬와 연관된 부분이라서 안전하게 패킷으로 통신해서 처리해야 된다고 판단
 
     }
 
@@ -269,6 +317,9 @@ namespace yuno::server
 
         m_roundStarted = false;
         m_cardsInitialized = false;
+        m_waitingRoundStartReady = false;
+        m_roundStartReady[0] = false;
+        m_roundStartReady[1] = false;
         m_cardSelected[0] = false;
         m_cardSelected[1] = false;
 
