@@ -1009,7 +1009,8 @@ std::wstring PlayGridSystem::GetWeaponFileName(int weaponID)
         filaName = L"../Assets/fbx/weapon/Ax/Ax.fbx";
         break;
     case 6:
-        filaName = L"../Assets/fbx/weapon/Cleaver/Cleaver.fbx";
+        filaName = L"../Assets/fbx/weapon/Ax/Ax.fbx";
+        //filaName = L"../Assets/fbx/weapon/Cleaver/Cleaver.fbx";
         break;
     }
     return filaName;
