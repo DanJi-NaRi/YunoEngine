@@ -168,6 +168,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EnginePCH\pch.h" />
+    <ClInclude Include="Public\Object\EffectUnit.h" />
     <ClInclude Include="Public\UI\Gauge.h" />
     <ClInclude Include="Public\UI\ProgressBar.h" />
     <ClInclude Include="Public\ImGUI_Debug.h" />
@@ -282,6 +283,7 @@
     <ClCompile Include="Public\Object\AnimationUnit.cpp" />
     <ClCompile Include="Public\Object\Effect.cpp" />
     <ClCompile Include="Public\Object\EffectManager.cpp" />
+    <ClCompile Include="Public\Object\EffectUnit.cpp" />
     <ClCompile Include="Public\Object\ObjectManager.cpp" />
     <ClCompile Include="Public\Object\ObjectTypeRegistry.cpp" />
     <ClCompile Include="Public\Object\Unit.cpp" />

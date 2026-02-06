@@ -24,8 +24,25 @@ enum class EffectID : uint32_t
     DrillAttack2,
     PeacePosAlly,
     PeacePosEnemy,
+    Warning,
 
     Count
+};
+
+struct EffectDesc
+{
+    std::wstring texPath = L"";
+    EffectID id = EffectID::Default;
+    ShaderId shaderid = ShaderId::EffectBase;
+    BillboardMode billboard = BillboardMode::ScreenAligned;
+    float lifetime = 1.0f;
+    float emissive = 0.5f;
+    XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    XMFLOAT3 rot = { 0, 0, 0 };
+    int framecount = 0;
+    int cols = 0;
+    int rows = 0;
+    bool isLoop = false;
 };
 
 struct EffectTemplate

@@ -23,6 +23,7 @@
 #include "PlayQueue.h"
 #include "Text.h"
 #include "SpriteSheet.h"
+#include "EffectUnit.h"
 
 
 // 사용법
@@ -114,7 +115,28 @@ bool RenderTest::OnCreateScene()
     scythe = m_objectManager->CreateObjectFromFile<AnimTest>(L"scythe", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx");
     scythe->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
 
+    
+
     EffectDesc ed{};
+    ed.id = EffectID::Warning;
+    ed.shaderid = ShaderId::EffectBase;
+    ed.billboard = BillboardMode::None;
+    ed.lifetime = 1.5f;
+    ed.framecount = 25;
+    ed.cols = 5;
+    ed.rows = 5;
+    ed.emissive = 30.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.rot = { 0, 0, 0 };
+    ed.isLoop = true;
+    ed.texPath = L"../Assets/Effects/Warning/EF_WARNING.png";
+
+    for (auto i = 0; i < 5; i++)
+    {
+        auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning", XMFLOAT3(0, 1, 0));
+        warning->BuildInternalEffectMaterial(ed);
+    }
+    
     ed.id = EffectID::PeacePosAlly;
     ed.shaderid = ShaderId::EffectBase;
     ed.billboard = BillboardMode::None;
