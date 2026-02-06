@@ -621,7 +621,7 @@ void PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
                 Dirty_US d = Diff_US(m_UnitStates[unitID], newUnitStates[unitID]);
                 MoveInfo* mi = new MoveInfo{ d, newUnitStates, unitID, dir };
                 us.hittersMove.push_back(mi);
-                if (!(HasThis_US(d, Dirty_US::targetTileID)))   us.hitMove = HitMove::Move;
+                if (HasThis_US(d, Dirty_US::targetTileID))   us.hitMove = HitMove::Move;
             }
             us.m_attackAndMoveDuration = 4.f;
             us.buffData = buffData;
