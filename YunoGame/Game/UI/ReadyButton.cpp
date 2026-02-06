@@ -61,7 +61,7 @@ bool ReadyButton::IdleEvent()
 // 커서가 위에 올라있을 때
 bool ReadyButton::HoveredEvent()
 {
-    std::cout << "HoveredEvent" << std::endl;
+    //std::cout << "HoveredEvent" << std::endl;
     return true;
 }
 
@@ -75,7 +75,6 @@ bool ReadyButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool ReadyButton::LMBPressedEvent()
 {
-
     GameManager& gm = GameManager::Get();
     if (gm.GetMyPiece(0)==PieceType::None|| gm.GetMyPiece(1) == PieceType::None) 
     {
@@ -90,7 +89,8 @@ bool ReadyButton::LMBPressedEvent()
     else
         texturePath = L"../Assets/Test/BtnOff.png";
 
-    m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
+    ChangeTexture(texturePath);
+    //m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
 
 
     // 패킷 초기화
@@ -122,8 +122,8 @@ bool ReadyButton::RMBPressedEvent()
 // 바인딩한 키 눌렀을 때
 bool ReadyButton::KeyPressedEvent(uint32_t key)
 {
-    if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
-    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;
+    /*if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
+    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;*/
     return true;
 }
 
@@ -137,15 +137,15 @@ bool ReadyButton::LMBReleasedEvent()
 // 우클릭 뗐을 때
 bool ReadyButton::RMBReleasedEvent()
 {
-    std::cout << "(RMB)ReleasedEvent" << std::endl;
+    //std::cout << "(RMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 뗐을 때
 bool ReadyButton::KeyReleasedEvent(uint32_t key)
 {
-    if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
-    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
+    //if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
+    //else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
     return true;
 }
 

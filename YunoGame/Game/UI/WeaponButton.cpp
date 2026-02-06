@@ -185,7 +185,9 @@ bool WeaponButton::SetPieceType(PieceType pieceType)
         break;
     }
 
-    m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
+    ChangeTexture(texturePath);
+    //m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
+
 
     return true;
 }
