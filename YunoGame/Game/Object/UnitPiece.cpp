@@ -191,6 +191,8 @@ bool UnitPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool UnitPiece::Update(float dTime)
 {
+    CheckAttack();
+
     // 죽은 상태인지 먼저 확인
     if (isDead && m_deadTime != -1)
     {
@@ -245,7 +247,6 @@ bool UnitPiece::Update(float dTime)
     }
 
     UpdateFlash(dTime);
-    CheckAttack();
 
     // 애니메이션이 끝나면 하나씩 빼가게 하기
     while (!m_Q.empty() && !isMoving && !isRotating)
@@ -395,7 +396,8 @@ void UnitPiece::CheckAttack()
 
     if (!isPlaying)
     {
-        m_animator->SetLoop("idle", true);
+        m_animator->Change("idle");
+        m_animator->Play();
         isAttacking = false;
     }
 }
@@ -445,7 +447,9 @@ void UnitPiece::SetFlashColor(Float4 color, int count, float blinkTime)
 
 void UnitPiece::PlayAttack()
 {
-    m_animator->Change("attack");
+    bool isChanged = m_animator->Change("attack");
+    if (!isChanged) return;
+    m_animator->SetLoop("attack", false);
     isAttacking = true;
 }
 

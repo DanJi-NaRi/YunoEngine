@@ -34,8 +34,7 @@ enum class TileEvent : uint8_t
 {
     None,
     Heal,
-    Lazer,
-    Meet
+    Lazer
 };
 
 struct TileState

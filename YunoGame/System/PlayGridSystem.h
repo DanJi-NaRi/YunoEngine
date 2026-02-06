@@ -7,6 +7,7 @@
 class UnitTile;
 class PlayGridQ;
 enum class CardType : uint8_t;
+struct Wdata;
 struct CardEffectData;
 struct RangeOffset;
 
@@ -109,8 +110,14 @@ public:
 private:
     void Init();
     void CreateTileAndPiece(float x, float y, float z);
+    void CreatePiece(const Wdata& wData);
+
+    void InitRound();
+
     void CheckMyQ();
     void CheckPacket(float dt);
+
+    void UpdateSequence(float dt);
     void UpdateAttackSequence(float dt);
     void UpdateUtilitySequence(float dt);
 
@@ -125,6 +132,8 @@ private:
     void MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 newcell, Direction moveDir,
         bool isCollided = false, bool isEnemy = false);
     void BuffEvent(const GamePiece& pieceType, const CardEffectData*& buffData);
+
+    void CheckOver();
     
 private:
     void ChangeTileTO(int cx, int cz, const TileOccupy to);

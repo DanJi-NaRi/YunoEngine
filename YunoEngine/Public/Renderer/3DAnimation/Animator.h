@@ -64,9 +64,9 @@ public:
     void Update(float dTime);
     void BlendLocalPose(const std::vector<XMMATRIX>& A, const std::vector<XMMATRIX>& B, float alpha, std::vector<XMMATRIX>& out);
 
-    void SetLoop(const std::string& name, bool isLoop);
+    bool SetLoop(const std::string& name, bool isLoop);
 
-    void SetLoop(UINT id, bool isLoop);
+    bool SetLoop(UINT id, bool isLoop);
 
     UINT GetAnimationNum() { return m_AnimationClips.size(); }
     UINT GetBoneCount() { return m_BoneCount; }
@@ -77,8 +77,8 @@ public:
 
     void BlendingUpdate(float dTime);
 
-    void Change(UINT id, float duration = 0.5f);
-    void Change(const std::string& name, float duration = 0.5f);
+    bool Change(UINT id, float duration = 0.5f);
+    bool Change(const std::string& name, float duration = 0.5f);
 
     void Serialize();
 
