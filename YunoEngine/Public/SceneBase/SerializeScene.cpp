@@ -108,6 +108,14 @@ namespace nlohmann
             { "transform", d.transform },
             {"meshEmissive", d.MatDesc}
         };
+
+        if (d.hasEffectEmissive)
+        {
+            j["effectEmissive"] = {
+                { "color", d.effectEmissiveColor },
+                { "pow", d.effectEmissive }
+            };
+        }
     }
 
     inline void from_json(const json& j, UnitDesc& d)
@@ -121,6 +129,14 @@ namespace nlohmann
 
         j.at("transform").get_to(d.transform);
         j.at("meshEmissive").get_to(d.MatDesc);
+
+        if (j.contains("effectEmissive"))
+        {
+            const auto& effectEmissive = j.at("effectEmissive");
+            effectEmissive.at("color").get_to(d.effectEmissiveColor);
+            effectEmissive.at("pow").get_to(d.effectEmissive);
+            d.hasEffectEmissive = true;
+        }
     }
 
     inline void to_json(json& j, const WidgetDesc& d)

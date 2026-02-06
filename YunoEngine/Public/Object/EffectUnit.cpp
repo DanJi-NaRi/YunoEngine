@@ -68,7 +68,7 @@ bool EffectUnit::BuildInternalEffectMaterial(const EffectDesc& desc)
     md.passKey.ps = desc.shaderid;
     md.passKey.blend = BlendPreset::AlphaBlend;
     //md.passKey.blend = BlendPreset::ColorBlendOne;
-    md.passKey.depth = DepthPreset::ReadOnly;
+    md.passKey.depth = DepthPreset::ReadWrite;
     md.passKey.raster = RasterPreset::CullNone;
     md.passKey.vertexFlags = VSF_Pos | VSF_UV;
     md.albedo = h;
@@ -126,6 +126,7 @@ void EffectUnit::Stop()
     }
 }
 
+#ifdef _DEBUG
 void EffectUnit::Serialize()
 {
     Unit::Serialize();
@@ -136,3 +137,4 @@ void EffectUnit::Serialize()
         UI::DragFloatEditable("Color", &m_emissive, 0.01f, 0.0f, 50.0f);
     }
 }
+#endif

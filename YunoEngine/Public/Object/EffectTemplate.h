@@ -13,7 +13,8 @@ enum class BillboardMode
 enum class EffectID : uint32_t
 {
     Default,
-    HitRed,
+    Hit,
+    Target,
     HitBlue,
     Lightning,
     Razer,
