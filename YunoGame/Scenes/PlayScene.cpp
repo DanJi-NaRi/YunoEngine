@@ -46,7 +46,6 @@ bool PlayScene::OnCreateScene()
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
     map->SetRot({ 0, XMConvertToRadians(90.f), 0 });
 
-
     // 플레이 그리드 시스템 생성
     m_playGrid = std::make_unique<PlayGridSystem>(m_objectManager.get());
     m_playGrid->CreateObject(0, 0, 0);
@@ -54,17 +53,6 @@ bool PlayScene::OnCreateScene()
     // 디렉션 라이트 생성
     m_objectManager->CreateDirLight();
 
-
-    //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
-
-
-
-    //m_objectManager->CreateObjectFromFile<Dwarf>(L"Dwarf", XMFLOAT3(-5, 0, 0), L"../Assets/fbx/Dwarf/Dwarf.fbx");
-
-    //m_objectManager->CreateObjectFromFile<Building>(L"Buliding", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
-
-    // 플레이어(삼각형)
-    //m_objectManager->CreateObject<Triangle>(L"player", XMFLOAT3(5, 0, 0));
 
 
     return true;
@@ -88,7 +76,7 @@ void PlayScene::HandleCardSelect(int key, int unit, int index)
     int unitSlot = m_selectedUnitSlot;  // 0, 1 첫번째 무기인지 두번째 무기인지
 
     uint32_t runtimeID =
-        GameManager::Get().GetMyCardRuntimeID(unit, index);
+        GameManager::Get().GetMyCardRuntimeID(unit, index-1);
 
     if (runtimeID == 0)
         return;
@@ -188,17 +176,17 @@ void PlayScene::TestInput()
     AddCardSelect();
     // 디버깅용
     // 카드 선택 (넘버패드 = UI 버튼 대용)
-    HandleCardSelect(VK_NUMPAD1, 0, 0); // 클라 1
-    HandleCardSelect(VK_NUMPAD2, 0, 2);
-    HandleCardSelect(VK_NUMPAD3, 0, 4);
-    HandleCardSelect(VK_NUMPAD4, 0, 15);
+    HandleCardSelect(VK_NUMPAD1, 0, 1); //버프
+    HandleCardSelect(VK_NUMPAD2, 0, 3); //이동
+    HandleCardSelect(VK_NUMPAD3, 0, 5); //공격
+    HandleCardSelect(VK_NUMPAD4, 0, 16);//특수
 
-    HandleCardSelect(VK_NUMPAD5, 1, 0); // 클라 2
-    HandleCardSelect(VK_NUMPAD6, 1, 2);
-    HandleCardSelect(VK_NUMPAD7, 1, 4);
-    HandleCardSelect(VK_NUMPAD8, 1, 15);
+    HandleCardSelect(VK_NUMPAD5, 1, 1); //버프
+    HandleCardSelect(VK_NUMPAD6, 1, 3); //이동
+    HandleCardSelect(VK_NUMPAD7, 1, 5); //공격
+    HandleCardSelect(VK_NUMPAD8, 1, 16);//특수
 
-    HandleCardSelect(VK_NUMPAD9, 1,8);
+    HandleCardSelect(VK_NUMPAD9, 1,9);
 
     if (m_input->IsKeyPressed('Q'))
         GameManager::Get().SendEmote(1);

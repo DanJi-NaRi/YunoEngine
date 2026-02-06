@@ -130,7 +130,7 @@
     <Filter Include="Game\UI\Image\Panel">
       <UniqueIdentifier>{147e273c-ec98-4aa8-98c8-aeb9b16c39e5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="System\Utillity">
+    <Filter Include="System\Utility">
       <UniqueIdentifier>{7d0b3f62-2755-4372-a23c-b2a2c4bc8917}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -522,8 +522,8 @@
       <Filter>System\UIContext</Filter>
     </ClInclude>
     <ClInclude Include="CardConfirmArea.h" />
-    <ClInclude Include="utillityClass.h">
-      <Filter>System\Utillity</Filter>
+    <ClInclude Include="utilityClass.h">
+      <Filter>System\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

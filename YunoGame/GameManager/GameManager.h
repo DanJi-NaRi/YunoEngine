@@ -160,10 +160,12 @@ private:
     std::vector<Wdata> m_weapons;
 
 public:
+    void ResetWeaponData() { m_weapons.clear(); };
     void SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, int _stamina, int _currentTile);
     std::vector<Wdata> GetWeaponData() {
         return m_weapons;
     }
+
 
     // 매 턴 매 슬롯 카드 하나 진행할 때마다 받아옴
 private:

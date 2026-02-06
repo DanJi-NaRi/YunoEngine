@@ -175,6 +175,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
             break;
         }
         pPiece->SetWho(gp);
+
         pPiece->SetDir(dir, false);
 
         // 기물 정보 등록

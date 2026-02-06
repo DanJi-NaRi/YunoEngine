@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SceneChangeButton.h"
-#include "utillityClass.h"
+#include "utilityClass.h"
 
 //#include "DragProvider.h" // 드래그가 필요하면
 #include "YunoEngine.h"
