@@ -19,6 +19,7 @@
 #include "C2S_ReadySet.h"
 #include "C2S_CardPackets.h"
 #include "C2S_MatchLeave.h"
+#include "C2S_Emote.h"
 GameManager* GameManager::s_instance = nullptr;
 
 
@@ -334,6 +335,38 @@ bool GameManager::IsCardQueueFull() const
 const std::vector<CardPlayCommand>& GameManager::GetCardQueue() const
 {
     return m_cardQueue.Get();
+}
+
+void GameManager::SendEmote(uint8_t emoteId)
+{
+    yuno::net::packets::C2S_Emote pkt{};
+    pkt.emoteId = emoteId;
+
+    auto bytes = yuno::net::PacketBuilder::Build(
+        yuno::net::PacketType::C2S_Emote,
+        [&](yuno::net::ByteWriter& w)
+        {
+            pkt.Serialize(w);
+        });
+
+    m_clientNet->SendPacket(std::move(bytes));
+
+    std::cout << "[Client] Send Emote emoteId=" << int(emoteId) << "\n";
+}
+
+void GameManager::PushEmote(uint8_t pid, uint8_t emoteId)
+{
+    m_pendingEmotes.push({ pid, emoteId });
+}
+
+bool GameManager::PopEmote(PendingEmote& out)
+{
+    if (m_pendingEmotes.empty())
+        return false;
+
+    out = m_pendingEmotes.front();
+    m_pendingEmotes.pop();
+    return true;
 }
 
 void GameManager::StartCountDown(int countTime, int S1U1, int S1U2, int S2U1, int S2U2)

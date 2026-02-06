@@ -20,7 +20,8 @@ namespace yuno::net
         C2S_SubmitCard = 5,   // 카드 제출 (cardId) <- 이거 안쓰고 있음
         C2S_Ping = 6,
         C2S_ReadyTurn = 7, //카드 선택 끝난 턴준비 보냄 <- 이게 카드 제출
-        C2S_SelectCard = 8,
+        C2S_SelectCard = 8, // 추가 카드 선택
+        C2S_Emote = 9, // 선택이모트 보내기
         // S2C
         S2C_EnterOK = 128,  // 매치 진입 승인
         S2C_ReadyState = 129,  // 양측 준비 상태 동기화
@@ -30,7 +31,10 @@ namespace yuno::net
         S2C_StartCardList = 134, //카드id 배정
         S2C_DrawCandidates = 135, //카드추가후보3장 제시
         S2C_StartTurn = 136, // 턴 시작
-        S2C_Pong = 137,
+        S2C_EndGame = 137, //게임 끝 결과
+        S2C_Emote = 138, // 이모트 브로드캐스트
+        S2C_ObstacleResult = 139, // 장애물 결과 패킷
+        S2C_Pong = 140,
 
         // System / Error
         S2C_Error = 240, // 에러 코드/메시지

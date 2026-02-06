@@ -25,6 +25,7 @@ Gauge, // ProgressBar의 확정 자식
 #include "UserImage.h"
 #include "PlayerIcon.h"
 #include "TitleImage.h"
+#include "Emoji.h"
 //////////////////////////////
 
 

@@ -16,7 +16,11 @@ namespace yuno::game
 {
     class YunoClientNetwork;
 }
-
+struct PendingEmote //이모지
+{
+    uint8_t pid;
+    uint8_t emoteId;
+};
 struct ClientCardInfo //UI에 적용하기 위한 데이터 저장
 {
     //uint8_t slotID;         // 0 1 2 3 
@@ -80,6 +84,7 @@ public:
     uint32_t GetMyCardRuntimeID(int unitSlot, int index) const;
     //UI 표시용 runtimeID -> dataID
     uint32_t GetCardDataID(uint32_t runtimeID) const;
+
     //~ 추가 후보 카드 저장 및 가져와서 서버에 보내고 배열 비우기
     void SetDrawCandidates(const std::vector<yuno::net::packets::CardSpawnInfo>& cards);
     void SendSelectCard(int index);
@@ -87,15 +92,21 @@ public:
     void ClearDrawCandidates();
     //~ 여기까지
 
-    //카드큐 관련
+    //~카드큐 관련
     bool PushCardCommand(const CardPlayCommand& cmd);
     void ClearCardQueue();
 
     bool IsCardQueueEmpty() const;
     bool IsCardQueueFull() const;
-
+    
     const std::vector<CardPlayCommand>& GetCardQueue() const;
-
+    //~여기까지
+    
+    //~여기부터 이모지
+    void PushEmote(uint8_t pid, uint8_t emoteId);
+    bool PopEmote(PendingEmote& out);
+    //~여기까지
+    void SendEmote(uint8_t emoteId);
     const CardData GetCardData(uint32_t runtimeID);
     const CardEffectData* GetCardEffectData(uint32_t runtimeID);
     const RangeData* GetRangeData(uint32_t runtimeID);
@@ -119,6 +130,8 @@ private:
     std::unordered_map<uint32_t, uint32_t> m_CardRuntimeIDs;    //엑셀로드용
     std::vector<ClientCardInfo> m_drawCandidates;                         //추가 후보 카드 임시 저장소
     CardQueue m_cardQueue;
+
+    std::queue<PendingEmote> m_pendingEmotes;
 
     bool m_countdownActive = false;
     float m_countdownRemaining = 0.0f;

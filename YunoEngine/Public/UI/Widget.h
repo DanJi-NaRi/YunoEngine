@@ -91,7 +91,8 @@ enum class WidgetClass : int {
     HealthGauge,
     StaminaBar,
     StaminaGauge,
-
+    //이모지
+    Emoji,
     //////////////////////////////
 };
 

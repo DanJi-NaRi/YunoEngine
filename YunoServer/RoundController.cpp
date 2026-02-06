@@ -10,6 +10,7 @@
 #include "S2C_CountDown.h"
 #include "S2C_RoundStart.h"
 #include "S2C_CardPackets.h"
+#include "S2C_EndGame.h"
 
 #include <iostream>
 
@@ -177,12 +178,11 @@ namespace yuno::server
 
     void RoundController::EndRound()
     {
-
-        if (!g_battleState.roundEnded)
-            TryStartRound();
-        else
+        if (g_battleState.matchEnded || g_battleState.currentRound > 3)
             EndGame();
-    }    //라운드엔드() <- 라운드스타트 게임엔드
+        else
+            TryStartRound();
+    }
 
     void RoundController::StartTurn()
     {
@@ -217,15 +217,31 @@ namespace yuno::server
 
 
         if (g_battleState.roundEnded)
-            EndRound();            
-
-        //종료 플래그 이미 받은 상태
-        //턴스타트 라운드엔드
+            EndRound(); 
     }
 
     void RoundController::EndGame()
     {
-        std::cout << "stupid DDongMin" << std::endl;
+        std::cout << "[Gmae] EndGame " << "\n";
+
+        yuno::net::packets::S2C_EndGame pkt{};
+
+        // P1
+        pkt.results[0].PID = 1;
+        pkt.results[0].winCount = g_battleState.roundWins[0];
+
+        // P2
+        pkt.results[1].PID = 2;
+        pkt.results[1].winCount = g_battleState.roundWins[1];
+
+        auto bytes = yuno::net::PacketBuilder::Build(
+            yuno::net::PacketType::S2C_EndGame,
+            [&](yuno::net::ByteWriter& w)
+            {
+                pkt.Serialize(w);
+            });
+
+        m_network.Broadcast(std::move(bytes));
     }
     
     void RoundController::OnPlayerSelectedCard(int playerIdx)

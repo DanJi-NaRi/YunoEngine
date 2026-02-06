@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="Public\Net\C2SPackets\C2S_BattlePackets.h" />
     <ClInclude Include="Public\Net\C2SPackets\C2S_CardPackets.h" />
+    <ClInclude Include="Public\Net\C2SPackets\C2S_Emote.h" />
     <ClInclude Include="Public\Net\C2SPackets\C2S_MatchEnter.h" />
     <ClInclude Include="Public\Net\C2SPackets\C2S_MatchLeave.h" />
     <ClInclude Include="ProtocolPCH\pch.h" />
@@ -167,6 +168,8 @@
     <ClInclude Include="Public\Net\PacketHeader.h" />
     <ClInclude Include="Public\Net\S2CPackets\S2C_BattlePackets.h" />
     <ClInclude Include="Public\Net\S2CPackets\S2C_CardPackets.h" />
+    <ClInclude Include="Public\Net\S2CPackets\S2C_Emote.h" />
+    <ClInclude Include="Public\Net\S2CPackets\S2C_EndGame.h" />
     <ClInclude Include="Public\Net\S2CPackets\S2C_RoundStart.h" />
     <ClInclude Include="Public\Net\S2CPackets\S2C_CountDown.h" />
     <ClInclude Include="Public\Net\S2CPackets\S2C_Pong.h" />
@@ -177,6 +180,7 @@
   <ItemGroup>
     <ClCompile Include="Private\Net\C2SPackets\C2S_BattlePackets.cpp" />
     <ClCompile Include="Private\Net\C2SPackets\C2S_CardPackets.cpp" />
+    <ClCompile Include="Private\Net\C2SPackets\C2S_Emote.cpp" />
     <ClCompile Include="Private\Net\C2SPackets\C2S_MatchEnter.cpp" />
     <ClCompile Include="Private\Net\C2SPackets\C2S_MatchLeave.cpp" />
     <ClCompile Include="Private\Net\C2SPackets\C2S_ReadySet.cpp" />
@@ -184,6 +188,8 @@
     <ClCompile Include="Private\Net\ErrorPackets\S2C_Error.cpp" />
     <ClCompile Include="Private\Net\S2CPackets\S2C_BattlePackets.cpp" />
     <ClCompile Include="Private\Net\S2CPackets\S2C_CardPackets.cpp" />
+    <ClCompile Include="Private\Net\S2CPackets\S2C_Emote.cpp" />
+    <ClCompile Include="Private\Net\S2CPackets\S2C_EndGame.cpp" />
     <ClCompile Include="Private\Net\S2CPackets\S2C_RoundStart.cpp" />
     <ClCompile Include="Private\Net\S2CPackets\S2C_ReadyState.cpp" />
     <ClCompile Include="ProtocolPCH\pch.cpp">

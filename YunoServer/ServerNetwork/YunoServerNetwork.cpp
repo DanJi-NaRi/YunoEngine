@@ -9,6 +9,7 @@
 #include "C2S_ReadySet.h"
 #include "C2S_BattlePackets.h"
 #include "C2S_CardPackets.h"
+#include "C2S_Emote.h"
 
 #include "S2C_Pong.h"
 #include "S2C_EnterOK.h"
@@ -17,7 +18,7 @@
 #include "S2C_ReadyState.h"
 #include "S2C_RoundStart.h"
 #include "S2C_CardPackets.h"
-
+#include "S2C_Emote.h"
 
 #include <iostream>
 namespace yuno::server
@@ -39,6 +40,7 @@ namespace yuno::server
         , m_match()
         , m_cardDB()
         , m_cardRangeDB()
+        , m_obstacleDB()
         , m_cardRuntime()
         , m_cardDealer(m_cardDB, m_cardRuntime)
         , m_turnManager(m_match, *this, m_cardRuntime, m_cardDB, m_cardRangeDB, m_roundController)
@@ -91,6 +93,11 @@ namespace yuno::server
         if (!m_cardRangeDB.LoadFromCSV("../Assets/CardData/CardRange.csv")) // 카드 범위 데이터 로드
         {
             std::cerr << "[Server] cardRange CSV load failed\n";
+            return false;
+        }
+        if (!m_obstacleDB.LoadFromCSV("../Assets/ObstacleData/ObstacleData.csv"))       // 장애물 데이터 로드
+        {
+            std::cerr << "[Server] obstacle CSV load failed\n";
             return false;
         }
 
@@ -364,10 +371,62 @@ namespace yuno::server
                     << " runtimeID=" << pkt.runtimeID  
                     << "\n";
 
-                m_cardController.SelectCard(player, pkt.runtimeID);
+                const bool success =
+                    m_cardController.SelectCard(player, pkt.runtimeID);
+
+                if (!success)
+                {
+                    std::cout
+                        << " PID=" << int(player.PID)
+                        << " runtimeID=" << pkt.runtimeID
+                        << "\n";
+                    return; //
+                }
+
                 m_roundController.OnPlayerSelectedCard(idx);
             }
         ); // Select Card Packet End
+
+        m_dispatcher.RegisterRaw(
+            PacketType::C2S_Emote,
+            [this](const NetPeer& peer,
+                const PacketHeader&,
+                const uint8_t* body,
+                uint32_t bodyLen)
+            {
+                if (body == nullptr || bodyLen < sizeof(uint8_t))
+                    return;
+
+                yuno::net::ByteReader r(body, bodyLen);
+                const auto pkt =
+                    yuno::net::packets::C2S_Emote::Deserialize(r);
+
+                int idx = m_match.FindSlotBySessionId(peer.sId);
+                if (idx < 0)
+                    return;
+
+                uint8_t pid = static_cast<uint8_t>(idx + 1); // 1 or 2
+
+                yuno::net::packets::S2C_Emote out{};
+                out.PID = pid;
+                out.emoteId = pkt.emoteId;
+
+                auto bytes = yuno::net::PacketBuilder::Build(
+                    yuno::net::PacketType::S2C_Emote,
+                    [&](yuno::net::ByteWriter& w)
+                    {
+                        out.Serialize(w);
+                    });
+
+                m_server.Broadcast(std::move(bytes));
+
+                std::cout
+                    << "[Server] Emote Broadcast "
+                    << "PID=" << int(pid)
+                    << " emoteId=" << int(pkt.emoteId)
+                    << "\n";
+            }
+        );
     }
 }
 

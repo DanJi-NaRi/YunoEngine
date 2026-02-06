@@ -24,6 +24,15 @@ namespace yuno::net::packets
         static UnitStateDelta Deserialize(ByteReader& r);
     };
 
+    struct ObstacleState
+    {
+        uint8_t obstacleID;                 // 장애물 타입 ID (0~3) 0은 장애물 없음
+        std::vector<uint8_t> tileIDs;     // 장애물이 점유하는 타일들ID (1~35)
+        std::array<UnitStateDelta, 4> unitState;
+
+        void Serialize(ByteWriter& w) const;
+        static ObstacleState Deserialize(ByteReader& r);
+    };
     // 이게 서버가 시뮬 돌려서 결과 보내주는 패킷
     // 카드 8개의 발동 순서는 서버가 정렬해서 시뮬돌리고 패킷 8번 보낸다.
     struct S2C_BattleResult
@@ -37,6 +46,14 @@ namespace yuno::net::packets
         std::vector<std::array<UnitStateDelta, 4>> order;   // 카드 시뮬 결과
         void Serialize(ByteWriter& w) const;
         static S2C_BattleResult Deserialize(ByteReader& r);
+    };
+
+    struct S2C_ObstacleResult
+    {
+        std::vector<ObstacleState> obstacles;
+
+        void Serialize(ByteWriter& w) const;
+        static S2C_ObstacleResult Deserialize(ByteReader& r);
     };
 }
 
