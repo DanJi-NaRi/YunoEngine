@@ -34,7 +34,7 @@ void PlayGridSystem::Init()
         {
         case NG_P::One:
         {
-            CreateGrid(5, 7, 3, 3);
+            CreateGrid(5, 7, 1.0721, 1.18713);
             break;
         }
         }
@@ -78,13 +78,22 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
 
     // 지금은 타일 매쉬와 메테리얼을 클래스 내부에서 수동으로 넣어주고 있지만
     // 후에 아트로부터 리소스를 받으면 CreateObject -> CreateObjectFromFile로 바뀌며 자동으로 로드됩니다.
+    const int floorOfTile[35] = {
+        5,10,15,20,25,30,1,
+        4,9,14,19,24,29,2,
+        3,8,13,18,23,28,3,
+        2,7,12,17,22,27,4,
+        1,6,11,16,21,26,5
+    };
     for (int i = 0; i < m_tiles.size() - 1; i++)
     {
+        int tilenum = floorOfTile[i];
         auto [wx, wz] = m_grids[(int)m_nowG]->CellToWorld(i % m_column, i / m_column);
-        //auto pTile = m_manager->CreateObject<UnitTile>(L"Tile", XMFLOAT3(wx, y, wz));
-        auto fileName = GetTileFileName(i);
+        auto fileName = GetTileFileName(tilenum);
         auto pTile = m_manager->CreateObjectFromFile<UnitTile>(L"Tile", XMFLOAT3(wx, y, wz), fileName);
-        pTile->SetScale({ m_cellSizeX * 0.8f, 1, m_cellSizeZ * 0.8f });
+        pTile->SetRot({0, XMConvertToRadians(-90.f), 0});
+        if(tilenum > 0 && tilenum < 6)  // 1~5번 타일만
+            SetTileInitState(pTile, tilenum);
         m_tilesIDs.push_back(pTile->GetID());
 
         // 빈 박스에 자식 객체로 등록. (for 정리)
@@ -114,43 +123,42 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
             TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
 
         GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
-
         std::wstring fileName = GetWeaponFileName(w.weaponId);
-        //auto pPiece = m_manager->CreateObject<UnitPiece>(L"Piece", XMFLOAT3(px, m_wy, pz));
         auto pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
-        //pPiece->AddAnimationClip("move", L"../Animation/move/scythe_move.fbx");
-        //pPiece->SetLoop("move", true);
-        //// weapon 구별을 위한 임시
-        //switch (w.weaponId)
+        
+        //if (w.weaponId == 2)
         //{
-        //case 1:
-        //    pPiece->SetTmpColor({ 1, 0, 0, 1 });
-        //    pPiece->SetEmissiveColor(2, { 1, 0, 0, 1 });       // 빨
-        //    break;
-        //case 2:
-        //    pPiece->SetTmpColor({ 1, 0.5f, 0, 1 });
-        //    pPiece->SetEmissiveColor(2, { 1, 0.5f, 0, 1 });    // 주
-        //    break;
-        //case 3:
-        //    pPiece->SetTmpColor({ 1, 1, 0, 1 });
-        //    pPiece->SetEmissiveColor(2, { 1, 1, 0, 1 });       // 노
-        //    break;
-        //case 4:
-        //    pPiece->SetTmpColor({ 0, 1, 0, 1 });
-        //    pPiece->SetEmissiveColor(2, { 0, 1, 0, 1 });       // 초
-        //    break;
-        //case 5:
-        //    pPiece->SetTmpColor({ 0, 0, 1, 1 });
-        //    pPiece->SetEmissiveColor(2, { 0, 0, 1, 1 });       // 파
-        //    break;
-        //case 6:
-        //    pPiece->SetTmpColor({ 0.5f, 0, 0.5f, 1 });
-        //    pPiece->SetEmissiveColor(2, { 0.5f, 0, 0.5f, 1 }); // 보
-        //    break;
         //}
-        pPiece->SetWho(gp);
-        pPiece->SetScale({ 0.8f, 0.8f, 0.8f });
-        pPiece->SetDir(dir, false);
+        //else
+        //{
+
+        //}
+        
+        //// weapon 구별을 위한 임시
+        switch (w.weaponId)
+        {
+        case 1:
+            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
+            break;
+        case 2:
+            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
+            break;
+        case 3:
+            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
+            break;
+        case 4:
+            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
+            break;
+        case 5:
+            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
+            break;
+        case 6:
+            pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
+            break;
+        }
+        //pPiece->SetWho(gp);
+        //pPiece->SetScale({ 0.8f, 0.8f, 0.8f });
+        //pPiece->SetDir(dir, false);
 
         // 기물 정보 등록
         m_pieces.emplace(gp, PieceInfo{pPiece->GetID(), dir, team });
@@ -996,42 +1004,50 @@ std::wstring PlayGridSystem::GetWeaponFileName(int weaponID)
     switch (weaponID)
     {
     case 1:
-        filaName = L"../Assets/fbx/weapon/LaserGun/LaserGun.fbx";
+        filaName = L"../Assets/fbx/weapon/Blaster/Blaster.fbx";
         break;
     case 2:
-        filaName = L"../Assets/fbx/weapon/Chakram/Chakram.fbx";
+        //filaName = L"../Assets/fbx/weapon/Chakram/Chakram.fbx";
+        filaName = L"../Assets/fbx/weapon/Scythe/Scythe.fbx";
         break;
     case 3:
-        filaName = L"../Assets/fbx/weapon/Drill/Drill.fbx";
+        filaName = L"../Assets/fbx/weapon/Blaster/Blaster.fbx";
+        //filaName = L"../Assets/fbx/weapon/Breacher/Breacher.fbx";
         break;
     case 4:
         filaName = L"../Assets/fbx/weapon/Scythe/Scythe.fbx";
         break;
     case 5:
-        filaName = L"../Assets/fbx/weapon/Ax/Ax.fbx";
+        filaName = L"../Assets/fbx/weapon/Impactor/Impactor.fbx";
         break;
     case 6:
-        filaName = L"../Assets/fbx/weapon/Ax/Ax.fbx";
-        //filaName = L"../Assets/fbx/weapon/Cleaver/Cleaver.fbx";
+        filaName = L"../Assets/fbx/weapon/Cleaver/Cleaver.fbx";
         break;
     }
     return filaName;
 }
 
-std::wstring PlayGridSystem::GetTileFileName(int tile)
+std::wstring PlayGridSystem::GetTileFileName(int num)
 {
-    static const int floorOfTile[35] = {
-        5,10,15,20,25,30,1,
-        4,9,14,19,24,29,2,
-        3,8,13,18,23,28,3,
-        2,7,12,17,22,27,4,
-        1,6,11,16,21,26,5
-    };
-
-    const int floorNum = floorOfTile[tile];
+    const int floorNum = num;
     wchar_t buf[256];
     swprintf_s(buf, L"../Assets/fbx/Tile/floor%d.fbx", floorNum);
     return buf;
+}
+
+void PlayGridSystem::SetTileInitState(UnitTile*& pTile, int floornum)
+{
+    wchar_t idle[256];
+    swprintf_s(idle, L"../Assets/fbx/Tile/floor%d.fbx", floornum);
+    pTile->AddAnimationClip("idle", idle);
+
+    wchar_t crash[256];
+    swprintf_s(crash, L"../Assets/fbx/Tile/Tile_Anim/Floor%d_crash_Anim.fbx", floornum);
+    pTile->AddAnimationClip("crash", crash);
+
+    wchar_t wave[256];
+    swprintf_s(wave, L"../Assets/fbx/Tile/Tile_Anim/Floor%d_Wave_Anim.fbx", floornum);
+    pTile->AddAnimationClip("crash", wave);
 }
 
 

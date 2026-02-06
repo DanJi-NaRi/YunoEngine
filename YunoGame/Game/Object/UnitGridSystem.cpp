@@ -66,6 +66,7 @@ void UnitGridSystem::CreateGrid(int row, int column, float cellSizeX, float cell
 void UnitGridSystem::CreateGridBox(float x, float y, float z)
 {
     m_gridBox = m_manager->CreateObject<UnitGridBox>(L"GridBox", XMFLOAT3(x, y, z));
+    m_gridBox->SetScale({ m_cellSizeX, 1.f, m_cellSizeZ });
 }
 
 
