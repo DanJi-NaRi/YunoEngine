@@ -288,6 +288,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      {
          std::wstring fileName = GetWeaponFileName(w.weaponId);
          pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
+         pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
      }
 
      if (pPiece == nullptr)
@@ -318,11 +319,10 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          break;
      }
      pPiece->SetWho(gp);
-
      pPiece->SetDir(dir, false);
 
      // 기물 정보 등록
-     m_pieces.emplace(gp, PieceInfo{ pPiece->GetID(), dir, team });
+     m_pieces.emplace(gp, pieceInfo);
 
      // 빈 박스에 자식 객체로 등록. (for 정리)
      m_gridBox->Attach(pPiece);
