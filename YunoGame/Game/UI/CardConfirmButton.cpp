@@ -54,7 +54,7 @@ bool CardConfirmButton::IdleEvent()
 // 커서가 위에 올라있을 때
 bool CardConfirmButton::HoveredEvent()
 {
-    std::cout << "HoveredEvent" << std::endl;
+    //std::cout << "HoveredEvent" << std::endl;
     ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/select_card_confirm_mouseover.png");
     return true;
 }

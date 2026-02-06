@@ -57,7 +57,7 @@ bool ButtonTemplate::Create(const std::wstring& name, uint32_t id, Float2 sizePx
     // 기본값은 True. // 만약 부모가 있다면, false로 취급.
     //m_useAspectComp = false;
 
-    m_pDrag->Init(m_pInput, &m_vPos, true);
+    m_pDrag->Init( &m_vPos, true);
     return true;
 }
 
@@ -100,7 +100,7 @@ bool ButtonTemplate::IdleEvent()
 // 커서가 위에 올라있을 때
 bool ButtonTemplate::HoveredEvent()
 {
-    std::cout << "HoveredEvent" << std::endl;
+    //std::cout << "HoveredEvent" << std::endl;
     return true;
 }
 

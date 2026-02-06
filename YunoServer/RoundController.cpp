@@ -4,6 +4,7 @@
 #include "ServerCardDealer.h"
 #include "YunoServerNetwork.h"
 #include "PlayerCardController.h"
+#include "BattleState.h"
 
 #include "PacketBuilder.h"
 #include "S2C_CountDown.h"
@@ -176,8 +177,8 @@ namespace yuno::server
 
     void RoundController::EndRound()
     {
-        bool testflag = true;
-        if (testflag)
+
+        if (!g_battleState.roundEnded)
             TryStartRound();
         else
             EndGame();
@@ -214,8 +215,8 @@ namespace yuno::server
 
         SendDrawCandidates();   
 
-        bool testflag = false;
-        if (testflag)
+
+        if (g_battleState.roundEnded)
             EndRound();            
 
         //종료 플래그 이미 받은 상태
@@ -224,9 +225,9 @@ namespace yuno::server
 
     void RoundController::EndGame()
     {
-
+        std::cout << "stupid DDongMin" << std::endl;
     }
-
+    
     void RoundController::OnPlayerSelectedCard(int playerIdx)
     {
         if (m_cardSelected[playerIdx])
