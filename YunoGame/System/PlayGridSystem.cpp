@@ -12,6 +12,8 @@
 #include "UnitTile.h"
 #include "UnitPiece.h"
 
+#include "PacketBuilder.h"
+
 #include "PlayGridSystem.h"
 
 
@@ -89,6 +91,7 @@ void PlayGridSystem::InitRound()
                 TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
         }
     }  
+    isRoundOver = false;
 }
 
 void PlayGridSystem::Update(float dt)
@@ -100,8 +103,6 @@ void PlayGridSystem::Update(float dt)
 
     CheckPacket(dt);
     CheckMyQ();
-
-    CheckOver();                // 라운드 끝났는지 체크
 }
 
 void PlayGridSystem::CreateObject(float x, float y, float z)
@@ -354,7 +355,6 @@ void PlayGridSystem::CheckMyQ()
         {
             const GamePiece pieceType = cmd.die_s.whichPiece;
 
-
             auto it = m_pieces.find(pieceType);
             if (it == m_pieces.end()) break;
 
@@ -365,7 +365,26 @@ void PlayGridSystem::CheckMyQ()
             {
                 m_manager->DestroyObject(subId);
             }
-            m_pieces.erase(pieceType); 
+
+            m_pieces.erase(it);
+
+            // m_pieces가 전부 사라졌는지 체크
+            if (m_pieces.size() == 0)
+            {
+                // 패킷 초기화
+                yuno::net::packets::C2S_RoundStartReadyOK req{};
+
+                // 패킷 바이너리화
+                auto bytes = yuno::net::PacketBuilder::Build(
+                    yuno::net::PacketType::C2S_RoundStartReadyOK,
+                    [&](yuno::net::ByteWriter& w)
+                    {
+                        req.Serialize(w);
+                    });
+
+                // 패킷 보내기
+                GameManager::Get().SendPacket(std::move(bytes));
+            }
             break;
         }
         case CommandType::Turn_Over:
@@ -422,6 +441,9 @@ void PlayGridSystem::CheckPacket(float dt)
             std::cout << "Packet Time is Over\n";
         }
     }
+
+    // 라운드 끝났는지 체크
+    CheckOver();
 }
 
 void PlayGridSystem::UpdateSequence(float dt)
@@ -532,7 +554,7 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         const auto& pieces = as.hitPieces;
         for (int i = 0; i < pieces.size(); i++)
         {
-            if (!CheckDying(pieces[i])) continue;
+            if (!CheckNotDying(pieces[i])) continue;
 
             auto it = m_pieces.find(pieces[i]);
             if (it == m_pieces.end()) continue;
@@ -634,7 +656,7 @@ void PlayGridSystem::UpdateUtilitySequence(float dt)
         }
         for (int i = 0; i < pieces.size(); i++)
         {
-            if (!CheckDying(pieces[i]))    continue;
+            if (!CheckNotDying(pieces[i]))    continue;
             ApplyMoveChanges(hm[i]->dirty, hm[i]->snapshot, hm[i]->mainUnit, hm[i]->dir);
         }
 
@@ -718,7 +740,7 @@ bool PlayGridSystem::ApplyBuffChanges(int mainUnit, const CardEffectData*& buffD
 {
     const UnitState US = m_UnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(US.pId, US.slotId);
-    if (!CheckDying(whichPiece))
+    if (!CheckNotDying(whichPiece))
     {
         // 부활 규칙이 없으므로 return 합니다.
         m_pktTime -= buffDuration;
@@ -736,7 +758,7 @@ bool PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState
     const UnitState prevUS = m_UnitStates[mainUnit];
     const UnitState newUS = newUnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
-    if (!CheckDying(whichPiece))
+    if (!CheckNotDying(whichPiece))
     {
         // 부활 규칙이 없으므로 return 합니다.
         m_pktTime -= moveDuration;
@@ -778,7 +800,7 @@ bool PlayGridSystem::ApplyAttackChanges
     const UnitState prevUS = m_UnitStates[mainUnit];
     const UnitState newUS = newUnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
-    if (!CheckDying(whichPiece))
+    if (!CheckNotDying(whichPiece))
     {
         // 부활 규칙이 없으므로 return 합니다.
         m_pktTime -= attackAndMoveDuration;
@@ -836,7 +858,7 @@ bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
     const UnitState prevUS = m_UnitStates[mainUnit];
     const UnitState newUS = newUnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
-    if (!CheckDying(whichPiece))
+    if (!CheckNotDying(whichPiece))
     {
         // 부활 규칙이 없으므로 return 합니다.
         return false;
@@ -940,7 +962,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
     bool isCollided, bool isEnemy)
 {
     // 죽어가고 있는 기물인지 확인
-    if (!CheckDying(pieceType)) return;
+    if (!CheckNotDying(pieceType)) return;
 
     // 이동 후, 상태 수정을 위해 참조로 받음
     PieceInfo& pieceInfo = m_pieces[pieceType];
@@ -1070,6 +1092,8 @@ bool PlayGridSystem::BuffEvent(const GamePiece& pieceType, const CardEffectData*
 
 void PlayGridSystem::CheckOver()
 {
+    if (isRoundOver) return;
+
     int count = 2;
     bool deadPlayer[2];
     bool deadUnits[4];
@@ -1124,9 +1148,10 @@ void PlayGridSystem::CheckOver()
             }
         }
     }
+    isRoundOver = true;
 }
 
-bool PlayGridSystem::CheckDying(const GamePiece pieceType)
+bool PlayGridSystem::CheckNotDying(const GamePiece pieceType)
 {
     auto pIt = m_pieces.find(pieceType);
     if (pIt == m_pieces.end())

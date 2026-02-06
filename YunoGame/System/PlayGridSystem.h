@@ -117,6 +117,7 @@ private:
 
     void CheckMyQ();
     void CheckPacket(float dt);
+    void CheckOver();
 
     void UpdateSequence(float dt);
     void UpdateAttackSequence(float dt);
@@ -133,8 +134,6 @@ private:
     void MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 newcell, Direction moveDir,
         bool isCollided = false, bool isEnemy = false);
     bool BuffEvent(const GamePiece& pieceType, const CardEffectData*& buffData);
-
-    void CheckOver();
     
 private:
     void ChangeTileTO(int cx, int cz, const TileOccupy to);
@@ -150,7 +149,7 @@ private:
     int GetOtherUnitDamage(const std::array<UnitState, 4>& newUnitStates, int mainUnit);
     const std::vector<int> GetRangeTileIDs(const Int2 unitCell, const std::vector<RangeOffset>& ranges, Direction dir);
 
-    bool CheckDying(const GamePiece pieceType);
+    bool CheckNotDying(const GamePiece pieceType);
     void CheckHealth(const UnitState& us, PieceInfo& pieceInfo);
 
     std::wstring GetWeaponFileName(int weaponID);           // 테스트용
@@ -198,6 +197,7 @@ private:
     int m_pID = 0;
     std::array<UnitState, 4> m_UnitStates;
 
+    bool isRoundOver = false;
     bool isProcessing = false;
     float m_pktTime = 0;
     float m_currTime = 0;
