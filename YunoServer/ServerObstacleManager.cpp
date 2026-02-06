@@ -65,13 +65,22 @@ namespace yuno::server
             ServerObstacleData data;
             data.roundId = std::stoi(cols[0]);
             data.turnId = std::stoi(cols[1]);
-            data.obstacleId = std::stoi(cols[2]);
-            data.damage = std::stoi(cols[3]);
+            data.obstacleType = std::stoi(cols[3]);
+            data.damage = std::stoi(cols[4]);
 
             // tileIds 파싱 ("3;4;5")
-            auto tiles = Split(cols[4], ';');
+            auto tiles = Split(cols[2], ';'); // 이거 csv에 2로 되어있어서 바꿈
             for (const auto& t : tiles)
-                data.tileIds.push_back(std::stoi(t));
+            {
+                if (t.empty())
+                    continue;
+
+                const int tileId = std::stoi(t);
+                if (tileId <= 0)
+                    continue;
+
+                data.tileIds.push_back(tileId);
+            }
 
             int key = data.roundId * 100 + data.turnId;
             m_ObstacleData[key].push_back(std::move(data));

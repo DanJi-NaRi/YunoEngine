@@ -14,6 +14,7 @@
 #include "S2C_CardPackets.h"
 #include "ServerCardManager.h"
 #include "ServerCardRangeManager.h"
+#include "ServerObstacleManager.h"
 
 static bool IsALess(const ResolvedCard& a, const ResolvedCard& b, bool& coinTossUsed)
 {
@@ -101,12 +102,14 @@ namespace yuno::server
         ServerCardRuntime& runtime,
         ServerCardManager& cardDB,
         ServerCardRangeManager& rangeDB,
+        ServerObstacleManager& obstacleDB,
         RoundController& roundController)
         : m_match(match)
         , m_network(network)
         , m_runtime(runtime)
         , m_cardDB(cardDB)
         , m_cardRangeDB(rangeDB)
+        , m_obstacleDB(obstacleDB)
         , m_roundController(roundController)
     {
     }
@@ -319,6 +322,7 @@ namespace yuno::server
                     g_battleState.roundLoserPID = 0;
                 }
 
+                // 최종 승자 판정 로직인데 동민이 쪽이랑 겹치면 수정해야 될 듯
                 if (g_battleState.roundWins[0] >= g_battleState.winsToFinish)
                 {
                     g_battleState.matchEnded = true;
@@ -775,6 +779,8 @@ namespace yuno::server
                     utilityControlSnapshot = buildDeltaSnapshot(unitIndex, utilityControlOccurred);
                 }
                 else { std::cout << "Card Type is invalid" << std::endl; };
+
+
                 using namespace yuno::net::packets;
                 S2C_BattleResult pkt;
                 pkt.runtimeCardId = card.runtimeId;
@@ -858,6 +864,175 @@ namespace yuno::server
         NotifyEndFinished();
     }
 
+    void TurnManager::SendObstacleResult()
+    {
+        using namespace yuno::net::packets;
+
+        const int roundId = static_cast<int>(g_battleState.currentRound);
+        const int currentTurn = g_battleState.turnNumber;
+
+        const auto applyObstacles = m_obstacleDB.GetObstacles(roundId, currentTurn);
+        const auto warningObstacles = m_obstacleDB.GetObstacles(roundId, currentTurn + 1);
+
+        auto makeSnapshot = [&](const std::array<bool, 4>& eventFlags)
+            {
+                std::array<UnitStateDelta, 4> snapshot{};
+
+                const UnitState* units[4] =
+                {
+                    &g_battleState.players[0].unit1,
+                    &g_battleState.players[0].unit2,
+                    &g_battleState.players[1].unit1,
+                    &g_battleState.players[1].unit2
+                };
+
+                for (int i = 0; i < 4; ++i)
+                {
+                    const int ownerSlot = (i < 2) ? 1 : 2;
+                    const int unitLocalIndex = (i % 2) + 1;
+
+                    snapshot[i].ownerSlot = static_cast<uint8_t>(ownerSlot);
+                    snapshot[i].unitLocalIndex = static_cast<uint8_t>(unitLocalIndex);
+                    snapshot[i].hp = units[i]->hp;
+                    snapshot[i].stamina = units[i]->stamina;
+                    snapshot[i].targetTileID = units[i]->tileID;
+                    snapshot[i].isEvent = eventFlags[i] ? 1 : 0;
+                }
+
+                return snapshot;
+            };
+
+        auto isTileMatched = [](const std::vector<int>& tiles, uint8_t tileId)
+            {
+                const int tile = static_cast<int>(tileId);
+                return std::find(tiles.begin(), tiles.end(), tile) != tiles.end();
+            };
+
+        std::array<bool, 4> damagedByObstacle{ false, false, false, false };
+
+        UnitState* units[4] =
+        {
+            &g_battleState.players[0].unit1,
+            &g_battleState.players[0].unit2,
+            &g_battleState.players[1].unit1,
+            &g_battleState.players[1].unit2
+        };
+
+        for (const auto* obstacle : applyObstacles)
+        {
+            if (obstacle == nullptr)
+                continue;
+            if (obstacle->obstacleType == 0 || obstacle->damage <= 0 || obstacle->tileIds.empty())
+                continue;
+
+            for (int i = 0; i < 4; ++i)
+            {
+                UnitState* unit = units[i];
+                if (unit->hp == 0)
+                    continue;
+                if (!isTileMatched(obstacle->tileIds, unit->tileID))
+                    continue;
+
+                int hp = static_cast<int>(unit->hp) - obstacle->damage;
+                if (hp < 0) hp = 0;
+                unit->hp = static_cast<uint8_t>(hp);
+                damagedByObstacle[i] = true;
+            }
+        }
+
+        auto isPlayerAllDead = [&](int playerIndex) -> bool
+            {
+                const UnitState& u1 = *units[playerIndex * 2];
+                const UnitState& u2 = *units[playerIndex * 2 + 1];
+                return u1.hp == 0 && u2.hp == 0;
+            };
+
+        if (!g_battleState.roundEnded)
+        {
+            bool p1AllDead = isPlayerAllDead(0);
+            bool p2AllDead = isPlayerAllDead(1);
+
+            if (p1AllDead || p2AllDead)
+            {
+                g_battleState.roundEnded = true;
+
+                if (p1AllDead && !p2AllDead)
+                {
+                    g_battleState.roundWinnerPID = 2;
+                    g_battleState.roundLoserPID = 1;
+                    g_battleState.roundWins[1]++;
+                }
+                else if (!p1AllDead && p2AllDead)
+                {
+                    g_battleState.roundWinnerPID = 1;
+                    g_battleState.roundLoserPID = 2;
+                    g_battleState.roundWins[0]++;
+                }
+                else
+                {
+                    g_battleState.roundWinnerPID = 0;
+                    g_battleState.roundLoserPID = 0;
+                }
+
+                if (g_battleState.roundWins[0] >= g_battleState.winsToFinish)
+                {
+                    g_battleState.matchEnded = true;
+                    g_battleState.matchWinnerPID = 1;
+                }
+                else if (g_battleState.roundWins[1] >= g_battleState.winsToFinish)
+                {
+                    g_battleState.matchEnded = true;
+                    g_battleState.matchWinnerPID = 2;
+                }
+
+                if (!g_battleState.matchEnded)
+                {
+                    g_battleState.currentRound = static_cast<uint8_t>(g_battleState.currentRound + 1);
+                }
+            }
+        }
+
+        S2C_ObstacleResult pkt;
+        const auto snapshot = makeSnapshot(damagedByObstacle);
+
+        if (!warningObstacles.empty())
+        {
+            for (const auto* obstacle : warningObstacles)
+            {
+                if (obstacle == nullptr)
+                    continue;
+
+                ObstacleState state{};
+                state.obstacleID = static_cast<uint8_t>(obstacle->obstacleType);
+                state.tileIDs.reserve(obstacle->tileIds.size());
+                for (int tileId : obstacle->tileIds)
+                {
+                    if (tileId <= 0)
+                        continue;
+                    state.tileIDs.push_back(static_cast<uint8_t>(tileId));
+                }
+                state.unitState = snapshot;
+                pkt.obstacles.push_back(std::move(state));
+            }
+        }
+        else
+        {
+            ObstacleState state{};
+            state.obstacleID = 0;
+            state.unitState = snapshot;
+            pkt.obstacles.push_back(std::move(state));
+        }
+
+        auto bytes = yuno::net::PacketBuilder::Build(
+            yuno::net::PacketType::S2C_ObstacleResult,
+            [&](yuno::net::ByteWriter& w)
+            {
+                pkt.Serialize(w);
+            });
+
+        m_network.Broadcast(std::move(bytes));
+    }
+
     void TurnManager::ClearTurn()
     {
         m_turnCards[0].clear();
@@ -867,6 +1042,7 @@ namespace yuno::server
     }
     void TurnManager::NotifyEndFinished()
     {
+        SendObstacleResult();
         m_roundController.EndTurn();
     }
 }

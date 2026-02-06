@@ -26,6 +26,7 @@ namespace yuno::server
     class ServerCardRangeManager;
     class ServerCardRuntime;
     class RoundController;
+    class ServerObstacleManager;
 
     class TurnManager
     {
@@ -36,6 +37,7 @@ namespace yuno::server
             ServerCardRuntime& runtime,
             ServerCardManager& cardDB,
             ServerCardRangeManager& rangeDB,
+            ServerObstacleManager& obstacleDB,
             RoundController& roundController);
 
         void SubmitTurn(
@@ -47,12 +49,14 @@ namespace yuno::server
         void ClearTurn();
         void BroadcastTestBattleResult(const ResolvedCard& card);
         void NotifyEndFinished();
+        void SendObstacleResult();
 
         MatchManager& m_match;
         YunoServerNetwork& m_network;
         ServerCardRuntime& m_runtime;
         ServerCardManager& m_cardDB;
         ServerCardRangeManager& m_cardRangeDB;
+        ServerObstacleManager& m_obstacleDB;
         RoundController& m_roundController;
 
         std::vector<CardPlayCommand> m_turnCards[2];
