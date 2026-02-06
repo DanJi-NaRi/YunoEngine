@@ -68,6 +68,7 @@ bool WeaponButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool WeaponButton::LMBPressedEvent()
 {
+    std::cout << "OnCLick" << std::endl;
     const int myIdx = GameManager::Get().GetSlotiIdx();
     if (myIdx != 1 && myIdx != 2)
         return true;

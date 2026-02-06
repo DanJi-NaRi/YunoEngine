@@ -1,6 +1,5 @@
 #include "pch.h"
 
-#include <cstdlib>              // OS 한테 환경변수 받아오기
 
 #include "RenderTypes.h"
 #include "IInput.h"
@@ -37,33 +36,7 @@
 #include "C2S_MatchLeave.h"
 
 
-namespace
-{
-    std::uint32_t ReadUserIdFromEnv()
-    {
-        char* buf = nullptr;
-        size_t len = 0;
 
-        if (_dupenv_s(&buf, &len, "YUNO_USER_ID") != 0 || buf == nullptr)
-        {
-            std::cout << "[GameApp] YUNO_USER_ID env not set\n";
-            return 0;
-        }
-
-        std::uint32_t uid = 0;
-        try
-        {
-            uid = static_cast<std::uint32_t>(std::stoul(buf));
-        }
-        catch (...)
-        {
-            uid = 0;
-        }
-
-        free(buf);
-        return uid;
-    }
-}
 
 
 GameApp::~GameApp() = default;
@@ -160,33 +133,7 @@ void GameApp::OnUpdate(float dt)
 
     if (input && sm)
     {
-        if (input->IsKeyPressed(VK_F1))
-        {
-            using namespace yuno::net;
-            yuno::net::packets::C2S_MatchEnter pkt{};
-            pkt.userId = ReadUserIdFromEnv();
-            
-            if (pkt.userId == 0)
-            {
-                std::cout << "[GameApp] MatchEnter aborted: invalid userId\n";
-                return; // 또는 UI 메시지 띄우고 종료
-            }
-            std::cout << "Env Id : " << pkt.userId << std::endl;
 
-            auto bytes = PacketBuilder::Build(
-                PacketType::C2S_MatchEnter,
-                [&](ByteWriter& w)
-                {
-                    pkt.Serialize(w);
-                });
-
-            m_clientNet.SendPacket(std::move(bytes));
-
-            //SceneTransitionOptions opt{};
-            //opt.immediate = true;
-            //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
-            //sm->RequestPush(std::make_unique<PlayScene>());
-        }
 
         //if (input->IsKeyPressed(VK_F2))
         //{

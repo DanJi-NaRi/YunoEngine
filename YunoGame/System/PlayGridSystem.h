@@ -6,7 +6,7 @@
 
 class PlayGridQ;
 enum class CardType : uint8_t;
-struct RangeData;
+struct CardEffectData;
 struct RangeOffset;
 
 enum class NG_P : int   // NowGrid_PlayGrid
@@ -15,41 +15,85 @@ enum class NG_P : int   // NowGrid_PlayGrid
     Max
 };
 
+enum class HitMove : uint8_t
+{
+    None,
+    Move
+};
+
 enum class AttackPhase : uint8_t
 {
     None,
     Alaram,
     Attack,
-    TileHit,
-    UnitHit,
+    Hit,
     Over
 };
 inline void operator++(AttackPhase& a) { a = (AttackPhase)((uint8_t)a + 1); }
 
 struct AttackSequence
 {
-    GamePiece attacker = GamePiece::None;
-    std::vector<int> tileIDs;
-    std::vector<GamePiece> hitPieces;
+    GamePiece attacker = GamePiece::None;   // 공격 기물
+    std::vector<int> tileIDs;               // 피격 타일들
+    std::vector<GamePiece> hitPieces;       // 피격 기물들
     AttackPhase attackPhase = AttackPhase::None;
     bool phaseStarted = false;
 
-    float elapsed = 0.f;
+    float elapsed = 0.f;                    // 누적된 시간
     
-    int m_flashCount = 0;
-    float m_flashInterval = 0.f;
-
-    Float4 m_alarmColor{ 1, 1, 1, 1 };
-    float m_alarmDuration = 0.f;
+    int m_flashCount = 0;                   // 번쩍이는 횟수
+    float m_flashInterval = 0.f;            // 한번 번쩍일 때 걸리는 시간
+    Float4 m_alarmColor{ 1, 1, 1, 1 };      // 아군 여부에 따라 달라짐(파/빨)
+    float m_alarmDuration = 0.f;            // 타일 알람 이펙트 시간
 
     Float4 m_attackColor{ 1, 0.84f, 0, 1 }; // 금색
-    float m_attackDuration = 0.f;
+    float m_attackDuration = 0.f;           // 공격 애니메이션 시간
 
     Float4 m_tileEffectColor{ 0, 0, 0, 1 }; // 검정색
-    float m_tileEffectDuration = 0.f;
 
     Float4 m_hitColor{ 0, 0, 0, 1 };        // 검정색
-    float m_hitDuration = 0.f;
+    float m_hitDuration = 0.f;              // 피격 애니메이션 시간
+
+};
+
+enum class UtilityPhase : uint8_t
+{
+    None,
+    Move,
+    AttackAndMove,
+    Buff,
+    Over
+};
+inline void operator++(UtilityPhase& a) { a = (UtilityPhase)((uint8_t)a + 1); }
+
+struct MoveInfo
+{
+    Dirty_US dirty = Dirty_US::None;
+    const std::array<UnitState, 4> snapshot;
+    int mainUnit = -1;
+    Direction dir = Direction::None;
+};
+
+struct UtilitySequence
+{
+    bool phaseStarted = false;
+    UtilityPhase utilityPhase = UtilityPhase::None;
+
+    float elapsed = 0.f;                    // 누적된 시간
+
+    GamePiece playPiece = GamePiece::None;
+    
+    // move 시행 시
+    const MoveInfo* playerMove = nullptr;
+    float m_moveDuration = 0.f;
+
+    // attack&move 시행 시
+    std::vector<MoveInfo*> hittersMove;
+    HitMove hitMove = HitMove::None;
+    float m_attackAndMoveDuration = 0.f;
+
+    // buff 시행 시
+    const CardEffectData* buffData = nullptr;
 };
 
 class PlayGridSystem : public UnitGridSystem
@@ -67,16 +111,19 @@ private:
     void CheckMyQ();
     void CheckPacket(float dt);
     void UpdateAttackSequence(float dt);
+    void UpdateUtilitySequence(float dt);
 
 private:
-    void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, CardType cardType, const RangeData* rangeData, Direction dir);
-    void ApplyBuffChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit);
+    void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, uint32_t runCardID, Direction dir);
+    void ApplyBuffChanges(int mainUnit, const CardEffectData*& buffData);
     void ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir);
     void ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
-    void ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
+    void ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, 
+        const std::vector<RangeOffset>& ranges, Direction dir, const CardEffectData*& buffData, int snapNum);
 
     void MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 newcell, Direction moveDir,
-        bool isCollided = false, bool isEnemy = false, int damage1 = 0, int damage2 = 0);
+        bool isCollided = false, bool isEnemy = false);
+    void BuffEvent(const GamePiece& pieceType, const CardEffectData*& buffData);
     
 private:
     void ChangeTileTO(int cx, int cz, const TileOccupy to);
@@ -117,6 +164,10 @@ private:
     // 공격 처리
     bool m_attackActive = false;
     AttackSequence m_attackSequence;
+
+    // 특수 카드 처리
+    bool m_utilityActive = false;
+    UtilitySequence m_utilitySequence;
 
     // 패킷 관련 변수
     int m_pID = 0;

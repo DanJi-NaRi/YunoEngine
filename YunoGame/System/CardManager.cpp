@@ -107,20 +107,22 @@ bool CardManager::LoadFromCSV(const std::string& path)
         int takeDamageIncrease = std::stoi(cols[15]);
         int staminaRecover = std::stoi(cols[16]);
 
+        // 이펙트 데이터가 다 0이어도 일단 다 넣는다.
+        CardEffectData effect;
+        effect.m_damage = damage;
+        effect.m_giveDamageBonus = giveDamageBonus;
+        effect.m_takeDamageReduce = takeDamageReduce;
+        effect.m_takeDamageIncrease = takeDamageIncrease;
+        effect.m_staminaRecover = staminaRecover;
 
-        if (damage != 0 || giveDamageBonus != 0 ||
-            takeDamageReduce != 0 || takeDamageIncrease != 0 ||
-            staminaRecover != 0)
-        {
-            CardEffectData effect;
-            effect.m_damage = damage;
-            effect.m_giveDamageBonus = giveDamageBonus;
-            effect.m_takeDamageReduce = takeDamageReduce;
-            effect.m_takeDamageIncrease = takeDamageIncrease;
-            effect.m_staminaRecover = staminaRecover;
+        m_effectData[card.m_cardID] = effect;
 
-            m_effectData[card.m_cardID] = effect;
-        }
+        //if (damage != 0 || giveDamageBonus != 0 ||
+        //    takeDamageReduce != 0 || takeDamageIncrease != 0 ||
+        //    staminaRecover != 0)
+        //{
+
+        //}
 
         // =========================
         // Act Data (확장용, 지금은 선택)

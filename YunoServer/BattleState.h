@@ -58,6 +58,11 @@ namespace yuno::server
 
         bool matchEnded = false;
         uint8_t matchWinnerPID = 0; // 0 = 미결
+
+        bool CheckMatchEnd() // 최종 승자 나왔는지 체크
+        {
+            return roundWins[0] == 2 || roundWins[1] == 2;
+        }
     };
 
     extern BattleState g_battleState;
