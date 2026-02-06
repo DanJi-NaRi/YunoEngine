@@ -66,7 +66,14 @@ public:
     T* CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, Float2 pivot);
     template<typename T>
     T* CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, UIDirection pivot);
-
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, XMFLOAT3 scale, Float2 pivot);
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, XMFLOAT3 scale, UIDirection pivot);
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, float rot, XMFLOAT3 scale, Float2 pivot);
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, float rot, XMFLOAT3 scale, UIDirection pivot);
  
 
     template<typename T>
@@ -169,6 +176,96 @@ T* UIManager::CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos
     CheckDedicateWidgetName(newname);
 
     widget->Create(newname, m_widgetIDs, sizePx, pos, 0, XMFLOAT3(1, 1, 1)); // 생성 (유니티로 치면 Awake)
+    widget->SetPivot(pivot);
+    //widget->UpdateTransform();
+
+    auto* pWidget = widget.get();
+
+    m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
+
+    return pWidget;
+}
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, float rot, XMFLOAT3 scale, Float2 pivot)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name;
+
+    auto widget = std::make_unique<T>(*m_uiFactory);
+    CheckDedicateWidgetName(newname);
+
+    widget->Create(newname, m_widgetIDs, sizePx, pos, rot, scale); // 생성 (유니티로 치면 Awake)
+    widget->SetPivot(pivot);
+    //widget->UpdateTransform();
+
+    auto* pWidget = widget.get();
+
+    m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
+
+    return pWidget;
+}
+
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, XMFLOAT3 scale, UIDirection pivot)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name;
+
+    auto widget = std::make_unique<T>(*m_uiFactory);
+    CheckDedicateWidgetName(newname);
+
+    widget->Create(newname, m_widgetIDs, sizePx, pos, 0, scale); // 생성 (유니티로 치면 Awake)
+    widget->SetPivot(pivot);
+    //widget->UpdateTransform();
+
+    auto* pWidget = widget.get();
+
+    m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
+
+    return pWidget;
+}
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, XMFLOAT3 scale, Float2 pivot)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name;
+
+    auto widget = std::make_unique<T>(*m_uiFactory);
+    CheckDedicateWidgetName(newname);
+
+    widget->Create(newname, m_widgetIDs, sizePx, pos, 0, scale); // 생성 (유니티로 치면 Awake)
+    widget->SetPivot(pivot);
+    //widget->UpdateTransform();
+
+    auto* pWidget = widget.get();
+
+    m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
+
+    return pWidget;
+}
+
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, float rot, XMFLOAT3 scale, UIDirection pivot)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name;
+
+    auto widget = std::make_unique<T>(*m_uiFactory);
+    CheckDedicateWidgetName(newname);
+
+    widget->Create(newname, m_widgetIDs, sizePx, pos, rot, scale); // 생성 (유니티로 치면 Awake)
     widget->SetPivot(pivot);
     //widget->UpdateTransform();
 
