@@ -138,6 +138,8 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::AutoBattle:
     {
+        m_state = CurrentSceneState::AutoBattle;
+
         break;
     }
     case CurrentSceneState::RoundEnd:
@@ -240,6 +242,12 @@ const CardData GameManager::GetCardData(uint32_t runtimeID)
 {
     auto dataID = GetCardDataID(runtimeID);
     return m_cardBasicMng.GetCardData(dataID);
+}
+
+const CardEffectData* GameManager::GetCardEffectData(uint32_t runtimeID)
+{
+    auto dataID = GetCardDataID(runtimeID);
+    return m_cardBasicMng.GetEffectData(dataID);
 }
 
 const RangeData* GameManager::GetRangeData(uint32_t runtimeID)

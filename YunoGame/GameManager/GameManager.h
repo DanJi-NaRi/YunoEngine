@@ -97,6 +97,7 @@ public:
     const std::vector<CardPlayCommand>& GetCardQueue() const;
 
     const CardData GetCardData(uint32_t runtimeID);
+    const CardEffectData* GetCardEffectData(uint32_t runtimeID);
     const RangeData* GetRangeData(uint32_t runtimeID);
 
 private:

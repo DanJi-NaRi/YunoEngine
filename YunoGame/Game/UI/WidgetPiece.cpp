@@ -128,21 +128,21 @@ bool WidgetPiece::Update(float dTime)
         m_Q.pop();
         switch (tp.cmdType)
         {
-        case CommandType::Move:
-        {
-            auto [wx, wy, wz, dir, speed] = tp.mv_p;
-            SetTarget({ wx, wy, wz }, speed);
-            SetDir(dir);
-            m_AnimDone = tp.isDone;        // 슬롯 턴 종료 메세지 보내라
-            break;
-        }
-        case CommandType::Hit:
-        {
-            PlayGridQ::Insert(PlayGridQ::Hit_S(m_who, tp.hit.damage1));
-            if (tp.hit.whichPiece != GamePiece::None)
-                PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece, tp.hit.damage2));
-            break;
-        }
+        //case CommandType::Move:
+        //{
+        //    auto [wx, wy, wz, dir, speed] = tp.mv_p;
+        //    SetTarget({ wx, wy, wz }, speed);
+        //    SetDir(dir);
+        //    m_AnimDone = tp.isDone;        // 슬롯 턴 종료 메세지 보내라
+        //    break;
+        //}
+        //case CommandType::Hit:
+        //{
+        //    PlayGridQ::Insert(PlayGridQ::Hit_S(m_who, tp.hit.damage1));
+        //    if (tp.hit.whichPiece != GamePiece::None)
+        //        PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece, tp.hit.damage2));
+        //    break;
+        //}
         }
     }
 

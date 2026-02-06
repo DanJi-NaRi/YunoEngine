@@ -366,8 +366,6 @@ namespace yuno::game
                         << static_cast<int>(data[3].targetTileID) << std::endl;
                 }
 
-                // MK 추가
-                // 게임 매니저 큐에 push.
                 std::vector<std::array<UnitState, 4>> order;
                 for (int i = 0; i < pkt.order.size(); i++)
                 {
@@ -383,6 +381,11 @@ namespace yuno::game
 
                 BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, pkt.dir, pkt.actionTime, order };
                 gm.PushBattlePacket(br);
+
+                gm.SetSceneState(CurrentSceneState::AutoBattle);
+                // MK 추가
+                // 게임 매니저 큐에 push.
+
 
                 // 디버깅용
                 std::cout
