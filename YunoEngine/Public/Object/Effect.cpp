@@ -98,6 +98,26 @@ XMMATRIX Effect::GetParentRotationMatrix() const
     return XMMatrixRotationQuaternion(rotation);
 }
 
+XMMATRIX Effect::GetParentTranslationMatrix() const
+{
+    if (!m_Parent)
+    {
+        return XMMatrixIdentity();
+    }
+
+    XMMATRIX parentAttach = m_Parent->GetAttachMatrixForChild(const_cast<Effect*>(this));
+    XMVECTOR scale{};
+    XMVECTOR rotation{};
+    XMVECTOR translation{};
+
+    if (!XMMatrixDecompose(&scale, &rotation, &translation, parentAttach))
+    {
+        return XMMatrixIdentity();
+    }
+
+    return XMMatrixTranslationFromVector(translation);
+}
+
 XMFLOAT3 Effect::GetWorldPosition() const
 {
     if (!m_Parent)
@@ -143,9 +163,13 @@ XMMATRIX Effect::UpdateBillBoard()
 
 XMMATRIX Effect::UpdateBeam()
 {
-    XMMATRIX parentRot = GetParentRotationMatrix();
+    /*XMMATRIX parentRot = GetParentRotationMatrix();
     XMVECTOR right = XMVector3Normalize(
         XMVector3TransformNormal(XMLoadFloat3(&m_vDir), parentRot)
+    );*/
+
+    XMVECTOR right = XMVector3Normalize(
+        XMLoadFloat3(&m_vDir)
     );
 
     const XMFLOAT3 worldPos = GetWorldPosition();
@@ -167,6 +191,7 @@ XMMATRIX Effect::UpdateBeam()
     R.r[2] = front;
     R.r[3] = XMVectorSet(0, 0, 0, 1);
 
+    //return R;
     return AdjustBillboardForParent(R);
 }
 
@@ -189,7 +214,7 @@ XMMATRIX Effect::UpdateScreenAlign()
     R.r[2] = look;
     R.r[3] = XMVectorSet(0, 0, 0, 1);
 
-    return R;
+    return AdjustBillboardForParent(R);
 }
 
 XMMATRIX Effect::UpdateWorldUpAlign()

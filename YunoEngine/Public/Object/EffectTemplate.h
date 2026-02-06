@@ -22,7 +22,8 @@ enum class EffectID : uint32_t
     Buff,
     DrillAttack1,
     DrillAttack2,
-    PeacePos,
+    PeacePosAlly,
+    PeacePosEnemy,
 
     Count
 };

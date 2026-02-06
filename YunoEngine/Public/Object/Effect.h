@@ -46,6 +46,7 @@ public:
 
 private:
     XMMATRIX GetParentRotationMatrix() const;
+    XMMATRIX GetParentTranslationMatrix() const;
     XMFLOAT3 GetWorldPosition() const;
     XMMATRIX AdjustBillboardForParent(const XMMATRIX& billboardWorld) const;
 };

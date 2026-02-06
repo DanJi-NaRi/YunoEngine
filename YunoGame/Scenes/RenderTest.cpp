@@ -115,19 +115,37 @@ bool RenderTest::OnCreateScene()
     scythe->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
 
     EffectDesc ed{};
-    ed.id = EffectID::PeacePos;
+    ed.id = EffectID::PeacePosAlly;
     ed.shaderid = ShaderId::EffectBase;
     ed.billboard = BillboardMode::None;
     ed.lifetime = 1.5f;
     ed.framecount = 60;
     ed.cols = 8;
     ed.rows = 8;
-    ed.emissive = 10.0f;
-    ed.color = { 0, 0, 0, 1 };
+    ed.emissive = 30.0f;
+    ed.color = { 0, 0, 1, 1 };
     ed.rot = { XM_PIDIV2, 0, 0 };
     ed.isLoop = true;
     ed.texPath = L"../Assets/Effects/Pos/EF_Player_Blue.png";
     m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::PeacePosEnemy;
+    ed.color = { 1, 0, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Pos/EF_Player_Red.png";
+    m_effectManager->RegisterEffect(ed);
+
+    auto eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    gun->Attach(eff);
+    eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    axe->Attach(eff);
+    eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    chakram01->Attach(eff);
+    eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    blade->Attach(eff);
+    eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    breacher->Attach(eff);
+    eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    scythe->Attach(eff);
 
     ed.id = EffectID::Razer;
     ed.shaderid = ShaderId::EffectBase;
@@ -142,6 +160,8 @@ bool RenderTest::OnCreateScene()
     ed.isLoop = false;
     ed.texPath = L"../Assets/Effects/Razer/EF_Rager_White.png";
     m_effectManager->RegisterEffect(ed);
+
+    ed.isLoop = false;
 
     ed.id = EffectID::BlasterAttack;
     ed.lifetime = 1.2f;
@@ -166,13 +186,14 @@ bool RenderTest::OnCreateScene()
     ed.rot = { XM_PIDIV2, 0, 0 };
     m_effectManager->RegisterEffect(ed);
 
-    ed.id = EffectID::Default;
+    ed.id = EffectID::DrillAttack1;
     ed.framecount = 30;
+    ed.lifetime = 1.2f;
     ed.cols = 6;
     ed.rows = 5;
     ed.billboard = BillboardMode::ScreenAligned;
     ed.rot = { 0, 0, 0 };
-    ed.texPath = L"../Assets/Effects/Lazer/EF_Rager.png";
+    ed.texPath = L"../Assets/Effects/Drill/EF_Drill.png";
     m_effectManager->RegisterEffect(ed);
 
     return true;
@@ -196,14 +217,14 @@ void RenderTest::OnExit()
 
 void RenderTest::Update(float dt)
 {
-    if (YunoEngine::GetInput()->IsKeyPressed('F'))
+    if (YunoEngine::GetInput()->IsKeyPressed('1'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::PeacePos, { 0.f, 0.1f, 0.f }, { 1.f, 1.f, 1.f });
-        gun->Attach(eff);
+        auto eff = m_effectManager->Spawn(EffectID::DrillAttack1, { 0.1f, 0.25f, 0.1f }, { 1.f, 1.f, 1.f }, {1, 0, 0});
+        breacher->AttachChildBone(eff, 3);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('G'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::BlasterAttack, { 0.f, -0.15f, 0.f }, { 0.5f, 0.5f, 0.5f }, { 0, -1, 0 });
+        auto eff = m_effectManager->Spawn(EffectID::BlasterAttack, { 0.f, 0.f, 0.15f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
         gun->AttachChildBone(eff, 3);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('H'))
