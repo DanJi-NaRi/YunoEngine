@@ -28,7 +28,7 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::WeaponButton; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Test/X.png"); };    // 머테리얼 생성 (한 번만)
 
     void SetUserImages(Widget* U1I1, Widget* U1I2, Widget* U2I1, Widget* U2I2); // 이미지 포인터 받아오기
 

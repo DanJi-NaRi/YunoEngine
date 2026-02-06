@@ -31,7 +31,7 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::ExitButton; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Test/BtnOn.png"); }    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/TITLE/exit_mouseout.png"); }    // 머테리얼 생성 (한 번만)
 protected:
     IScene* m_pExitScene = nullptr;
     // SceneEnum m_ExitScene = SceneEnum::Default;

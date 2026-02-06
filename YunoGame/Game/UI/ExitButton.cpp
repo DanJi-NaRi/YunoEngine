@@ -54,6 +54,9 @@ bool ExitButton::IdleEvent()
 {
     //std::cout << "IdleEvent" << std::endl;
     // 내용 작성
+    ChangeTexture(m_texturePathBk);
+
+
     return true;
 }
 
@@ -61,6 +64,8 @@ bool ExitButton::IdleEvent()
 bool ExitButton::HoveredEvent()
 {
     //std::cout << "HoveredEvent" << std::endl;
+    ChangeTexture(L"../Assets/UI/Title/start_mouseover.png");
+
     return true;
 }
 
@@ -74,55 +79,44 @@ bool ExitButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool ExitButton::LMBPressedEvent()
 {
-    auto bytes = yuno::net::PacketBuilder::Build(
-        yuno::net::PacketType::C2S_MatchLeave,
-        [&](yuno::net::ByteWriter& w)
-        {
-            yuno::net::packets::C2S_MatchLeave req{};
-            req.Serialize(w);
-        });
-
-    GameManager::Get().SendPacket(std::move(bytes));
-
-    GameManager::Get().SetSceneState(CurrentSceneState::Title);
-
+    // 게임 끄기
     return true;
 }
 
 // 우클릭 눌렀을 때
 bool ExitButton::RMBPressedEvent()
 {
-    std::cout << "(RMB)PressedEvent" << std::endl;
+    //std::cout << "(RMB)PressedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 눌렀을 때
 bool ExitButton::KeyPressedEvent(uint32_t key)
 {
-    if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
-    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;
+    /*if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
+    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;*/
     return true;
 }
 
 // 왼클릭 뗐을 때
 bool ExitButton::LMBReleasedEvent()
 {
-    std::cout << "(LMB)ReleasedEvent" << std::endl;
+    //std::cout << "(LMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 우클릭 뗐을 때
 bool ExitButton::RMBReleasedEvent()
 {
-    std::cout << "(RMB)ReleasedEvent" << std::endl;
+    //std::cout << "(RMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 뗐을 때
 bool ExitButton::KeyReleasedEvent(uint32_t key)
 {
-    if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
-    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
+   /* if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
+    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;*/
     return true;
 }
 

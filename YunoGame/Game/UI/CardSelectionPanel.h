@@ -22,7 +22,7 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardSelectionPanel; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/window_popup_inventory.png"); };    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/tap_all_click.png"); };    // 머테리얼 생성 (한 번만)
 protected:
     // 덱 정보
     std::vector<std::unique_ptr<Card>> m_deck;      // 카드 덱 // 그리드 시스템 이용할수도??

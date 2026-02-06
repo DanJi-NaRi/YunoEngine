@@ -60,7 +60,8 @@ bool WeaponSelectScene::OnCreateScene()
         dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
 
         m_pReadyBtn = CreateWidget<ReadyButton>(L"ReadyButton", Float2(50, 50), XMFLOAT3(450, 500, 0));
-        m_pExitBtn = CreateWidget<ExitButton>(L"ExitButton", Float2(50, 50), XMFLOAT3(750, 500, 0));
+        m_pExitBtn = CreateWidget<SceneChangeButton>(L"ExitButton", Float2(50, 50), XMFLOAT3(750, 500, 0));
+        m_pExitBtn->SetTargetScene(CurrentSceneState::Title);
 
 
     }
