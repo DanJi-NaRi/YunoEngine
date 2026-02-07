@@ -240,7 +240,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          break;
      case 4:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
-         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/attack/scythe_move.fbx");
+         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
          break;
      case 5:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
