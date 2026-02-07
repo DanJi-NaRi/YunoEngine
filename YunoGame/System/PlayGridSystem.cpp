@@ -401,11 +401,7 @@ void PlayGridSystem::CheckPacket(float dt)
     // 현재 씬이 '오토배틀'씬이 아니면 반환.
     if (mng.GetSceneState() != CurrentSceneState::AutoBattle)    return;
 
-    if (!mng.IsEmptyObstaclePacket())
-    {
-        const auto obstaclePkt = mng.PopObstaclePacket();
-        ApplyObstacleResult(obstaclePkt);
-    }
+
 
     // 게임 매니저에서 배틀 패킷 하나씩 받아옴
     if (!mng.IsEmptyBattlePacket() && !isProcessing)
@@ -451,7 +447,12 @@ void PlayGridSystem::CheckPacket(float dt)
         }
     }
 
-
+    // 장애물까지 발동하고 CheckOver
+    if (!mng.IsEmptyObstaclePacket()&& mng.IsEmptyBattlePacket()&& !isProcessing)
+    {
+        const auto obstaclePkt = mng.PopObstaclePacket();
+        ApplyObstacleResult(obstaclePkt);
+    }
 
     // 라운드 끝났는지 체크
     CheckOver();
@@ -1111,6 +1112,9 @@ void PlayGridSystem::CheckOver()
 {
     if (isRoundOver) return;
 
+    
+
+
     bool deadPlayer[2];
     bool deadUnits[4];
     memset(deadPlayer, false, sizeof(bool) * 2);
@@ -1176,8 +1180,9 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
     }
     std::cout << std::endl;
 
-    // 1) 이전 라운드에 경고된 장애물 발동 결과(unitState) 반영
     bool hasTriggerSnapshot = false;
+    Float4 warnColor{ 1.0f, 0.0f, 0.0f, 1.f };
+
     for (int i = 0; i < static_cast<int>(m_UnitStates.size()); ++i)
     {
         const auto& prev = m_UnitStates[i];
@@ -1187,6 +1192,7 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
             continue;
 
         hasTriggerSnapshot = true;
+
 
         std::cout
             << "  [Trigger] unit[" << i << "]"
@@ -1200,17 +1206,18 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
         if (pieceIt == m_pieces.end())
             continue;
 
+        // 장애물 발동해서 피 깎였으면 여기서 색 바꿔줌
         if (prev.hp != cur.hp || prev.stamina != cur.stamina)
         {
             auto* pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceIt->second.id));
             if (pPiece)
-                pPiece->SetFlashColor(m_attackSequence.m_hitColor, 1, tileFlashInterval);
-
+                pPiece->SetFlashColor(warnColor, 5, tileFlashInterval*3.3f);
+        
             for (uint32_t subId : pieceIt->second.subIds)
             {
                 auto* pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
                 if (pSubPiece)
-                    pSubPiece->SetFlashColor(m_attackSequence.m_hitColor, 1, tileFlashInterval);
+                    pSubPiece->SetFlashColor(warnColor, 5, tileFlashInterval*3.3f);
             }
         }
 
@@ -1218,10 +1225,12 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
             CheckHealth(cur, pieceIt->second);
     }
 
-    if (hasTriggerSnapshot)
+    if (hasTriggerSnapshot) // 누군가 맞은 애 있으면 obstacle 패킷에서 받은 스냅샷으로 현재 유닛 상태 변경
         m_UnitStates = obstacle.unitState;
 
-    Float4 warnColor{ 1.0f, 0.0f, 0.0f, 1.f };
+
+    // 다음 장애물 경고
+
     if (obstacle.obstacleID == 2) warnColor = { 0.0f, 1.0f, 0.0f, 1.f };
     else if (obstacle.obstacleID == 3) warnColor = { 0.0f, 0.0f, 1.0f, 1.f };
 
@@ -1232,7 +1241,7 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
 
         auto* pTile = static_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileId]));
         if (pTile)
-            pTile->SetFlashColor(warnColor, tileFlashCount, tileFlashInterval);
+            pTile->SetFlashColor(warnColor, 5, tileFlashInterval*3.3f);
     }
 }
 
