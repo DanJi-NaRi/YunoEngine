@@ -25,22 +25,6 @@ UnitGridSystem::~UnitGridSystem()
 
 }
 
-
-
-void UnitGridSystem::SetNG_P(Grid* NG_P)
-{
-    const Grid& grid = *NG_P;
-    m_row = grid.m_row;
-    m_column = grid.m_column;
-    m_halfCellsX = std::floorf(grid.m_column / 2.f);
-    m_halfCellsZ = std::floorf(grid.m_row / 2.f);
-    m_cellSizeX = grid.m_cellSizeX;
-    m_cellSizeZ = grid.m_cellSizeZ;
-    m_invX = 1.f / grid.m_cellSizeX;
-    m_invZ = 1.f / grid.m_cellSizeZ;
-}
-
-
 int UnitGridSystem::GetID(int cx, int cz)
 {
     int id = (cz * m_column + cx) + 1;

@@ -3,11 +3,15 @@
 
 #include "Card.h"
 #include "CardSlot.h"
+#include "WidgetGridLine.h"
 
 #include "IInput.h"
 #include "UIFactory.h"
 
-Minimap::Minimap(UIFactory& uiFactory) : Image(uiFactory), m_map(uiFactory)
+constexpr int g_MinimapRow = 7;
+constexpr int g_MinimapColumn = 5;
+
+Minimap::Minimap(UIFactory& uiFactory) : Image(uiFactory)
 {
     Clear();
 }
@@ -19,33 +23,13 @@ Minimap::~Minimap()
 
 void Minimap::Clear()
 {
+    m_pGridLine = nullptr;
+
 }
 
 bool Minimap::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
     Image::Create(name, id, sizePx, vPos, rotZ, vScale);
-
-    if (!m_pInput || !m_pRenderer || !m_pTextures)
-        return false;
-    m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
-    if (m_defaultMesh == 0)return false;
-    if (!CreateMaterial())
-        return false;
-
-    m_MeshNode = std::make_unique<MeshNode>();
-
-    auto mesh = std::make_unique<Mesh>();
-    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
-    m_MeshNode->m_Meshs.push_back(std::move(mesh));
-
-    {
-        m_constant.baseColor = XMFLOAT4(1, 1, 1, 1);
-        m_constant.roughRatio = 1.0f;
-        m_constant.metalRatio = 1.0f;
-        m_constant.shadowBias = 0.005f;
-    }
-
-    m_anchor = UIDirection::LeftTop;
 
     this->SetLayer(WidgetLayer::Panels);
 
@@ -65,18 +49,10 @@ void Minimap::CreateChild() {
 
     // 고정 하위 위젯 생성
 
-
-    //m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S0", Float2(50, 85), XMFLOAT3(25, -240, 0), UIDirection::LeftTop, this));
-
-    //m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S1", Float2(50, 85), XMFLOAT3(145, -240, 0), UIDirection::LeftTop, this));
-
-    //m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S2", Float2(50, 85), XMFLOAT3(265, -240, 0), UIDirection::LeftTop, this));
-
-    //m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S3", Float2(50, 85), XMFLOAT3(390, -240, 0), UIDirection::LeftTop, this));
-
-    //m_cardConfirmButton = m_uiFactory.CreateChild<CardConfirmButton>(m_name + L"_CardConfirmButton", Float2(200, 50), XMFLOAT3(100, -100, 0), UIDirection::LeftTop, this);
-
-    //m_cardCancelButton = m_uiFactory.CreateChild<CardCancelButton>(m_name + L"_CardCancelButton", Float2(200, 50), XMFLOAT3(400, -100, 0), UIDirection::LeftTop, this);
+    m_pGridLine = m_uiFactory.CreateChild<WidgetGridLine>(m_name + L"_DebugWidgetGridLine", 
+        Float2(m_pGrid->cellSize.x, m_pGrid->cellSize.y),XMFLOAT3(m_pGrid->cellSize.x, m_pGrid->cellSize.y, 1),
+        UIDirection::Center, this);
+    this->Attach(m_pGridLine);
 }
 
 
@@ -94,3 +70,11 @@ bool Minimap::Submit(float dTime)
     return false;
 }
 
+//void Minimap::CreateGridLine(float x, float y, float z)
+//{
+//    //if (m_gridBox == nullptr) return;
+//
+//    //auto pLine = m_manager->CreateObject<UnitGridLine>(L"DebugGridLine", XMFLOAT3(x, y + 0.01f, z));
+//    //pLine->SetScale({ m_cellSizeX, 1, m_cellSizeZ });
+//    //m_gridBox->Attach(pLine);
+//}

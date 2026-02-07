@@ -37,6 +37,7 @@ enum class WidgetType : int { // 자신 / 부모 클래스 타입
     ProgressBar,
     Gauge,
     SpriteSheet,
+    Debug,
     //Slider,
     Count,
 };
@@ -52,9 +53,11 @@ enum class WidgetClass : int {
     ProgressBar,
     Gauge,
     SpriteSheet,
-
     LetterBox,
-    GridLine,
+
+    //////////////////////////////
+    //Debug (부모없음 예외임)
+    WidgetGridLine,
 
     //////////////////////////////
     // 씬 전환

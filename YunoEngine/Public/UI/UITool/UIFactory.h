@@ -21,7 +21,6 @@ public:
     T* CreateWidget(const std::wstring& name, DirectX::XMFLOAT3 pos) // 위젯 생성 // 템플릿 함수
     {
         static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
-        assert(m_uiManager);
         Widget* pWidget = m_uiManager.CreateWidget<T>(name, pos); // UIManager 멤버 접근은 내부에서
         pWidget->CreateChild();
         return pWidget;
@@ -29,7 +28,6 @@ public:
     template<typename T>
     T* CreateWidget(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 scale, UIDirection dir, Widget* pParent) {
         static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
-        assert(m_uiManager);
         Widget* pWidget = m_uiManager.CreateWidget<T>(name, pos); // UIManager 멤버 접근은 내부에서
         pWidget->CreateChild();
         return pWidget;

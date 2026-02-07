@@ -83,16 +83,16 @@ bool Image::CreateMaterial()
         return false;
 
 
-    m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
+    //m_Albedo = m_pTextures->LoadTexture2D(L"../Assets/Textures/Grass.jpg");
 
-     //추가 머테리얼 생성
-    md.passKey.raster = RasterPreset::CullNone;
-    md.albedo = m_Albedo;
+    // //추가 머테리얼 생성
+    //md.passKey.raster = RasterPreset::CullNone;
+    //md.albedo = m_Albedo;
 
-    MaterialHandle mtrl = m_pRenderer->CreateMaterial(md);
-    m_materials.push_back(mtrl);
-    if (mtrl != m_materials.back())
-        return false;
+    //MaterialHandle mtrl = m_pRenderer->CreateMaterial(md);
+    //m_materials.push_back(mtrl);
+    //if (mtrl != m_materials.back())
+    //    return false;
 
     return true;
 }
