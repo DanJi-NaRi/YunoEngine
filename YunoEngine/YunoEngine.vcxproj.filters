@@ -290,7 +290,6 @@
     <ClCompile Include="Public\Object\EffectUnit.cpp">
       <Filter>Public\Object\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="Private\UI\WidgetGridLine.cpp" />
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -510,7 +509,6 @@
     <ClInclude Include="Public\Object\EffectUnit.h">
       <Filter>Public\Object\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="Public\UI\WidgetGridLine.h" />
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>
@@ -569,6 +567,9 @@
       <Filter>Shaders\UI</Filter>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\UI_SpriteAnim.hlsl">
+      <Filter>Shaders\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_Debug.hlsl">
       <Filter>Shaders\UI</Filter>
     </FxCompile>
   </ItemGroup>

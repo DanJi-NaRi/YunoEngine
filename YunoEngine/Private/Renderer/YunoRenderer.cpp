@@ -119,6 +119,7 @@ bool YunoRenderer::CreateShaders()
     if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::UIDebug, "../Assets/Shaders/UI_Debug.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UIGauge, "../Assets/Shaders/UI_Gauge.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UISpriteSheet, "../Assets/Shaders/UI_SpriteAnim.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::EffectBase, "../Assets/Shaders/EffectBase.hlsl", "VSMain", "PSMain")) return false;

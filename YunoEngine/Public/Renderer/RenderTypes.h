@@ -178,6 +178,7 @@ enum class ShaderId : uint8_t
     Unlit,
     Skybox,
     UIBase,
+    UIDebug,
     UIGauge,
     UISpriteSheet,
     EffectBase,

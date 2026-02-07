@@ -83,7 +83,7 @@ bool WidgetGridLine::CreateMesh()
     for (int i = 0; i <= m_column; ++i) {             // column+1개 라인
         float x = -halfX + i;          // 일정 간격으로
         m_lineVtx.push_back({ x, -halfY, z });
-        m_lineVtx.push_back({ x, -halfY, z });
+        m_lineVtx.push_back({ x, halfY, z });
     }
 
     VertexStreams streams{};

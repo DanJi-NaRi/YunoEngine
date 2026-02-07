@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "새 프로필",
+    "Projects": [
+      {
+        "Path": "YunoServer\\YunoServer.vcxproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "YunoGame\\YunoGame.vcxproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

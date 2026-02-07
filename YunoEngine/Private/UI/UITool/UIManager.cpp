@@ -499,7 +499,7 @@ void UIManager::AllParentsSetScale(float scale)
     // Transform 업데이트 - 루트만
     for (auto& widget : m_pendingCreateQ) {
         if (widget.get()->GetWidgetClass() == WidgetClass::LetterBox) continue;
-            
+
         if (widget->GetIsRoot()) widget->SetScale(XMFLOAT3(scale, scale, scale));
     }
             
