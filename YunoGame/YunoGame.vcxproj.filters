@@ -62,6 +62,7 @@
     <ClCompile Include="Game\UI\WidgetPiece.cpp" />
     <ClCompile Include="Game\UI\WidgetTile.cpp" />
     <ClCompile Include="MinimapTile.cpp" />
+    <ClCompile Include="Game\UI\DirSelectButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CardConfirmArea.h" />
@@ -138,5 +139,6 @@
     <ClInclude Include="UI_InputContext.h" />
     <ClInclude Include="utilityClass.h" />
     <ClInclude Include="MinimapTile.h" />
+    <ClInclude Include="Game\UI\DirSelectButton.h" />
   </ItemGroup>
 </Project>
