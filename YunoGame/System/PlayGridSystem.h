@@ -118,6 +118,7 @@ private:
     void CheckMyQ();
     void CheckPacket(float dt);
     void CheckOver();
+    void ApplyObstacleResult(const ObstacleResult& obstacle);   // 장애물 패킷 적용하는 함수
 
     void UpdateSequence(float dt);
     void UpdateAttackSequence(float dt);
