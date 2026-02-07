@@ -225,13 +225,28 @@ bool UnitPiece::Update(float dTime)
     if (isMoving)
     {
         if (dTime >= 1.f) return true;
-        m_AnimTime += dTime / m_Dist * m_speed * m_fixSpeed;
+        m_moveTime += dTime / m_Dist * m_speed * m_fixSpeed;
 
-        if (m_AnimTime >= 1.f)
+        if (m_moveTime >= 1.f)
         {
             XMStoreFloat3(&this->m_vPos, m_Target);
-            isMoving = false;
-            m_AnimTime = 0.f;
+            if (m_animator)
+            {
+                UINT currentFrame = m_animator->GetCurFrame();
+                if (currentFrame >= 28) // 일단 낫일 경우에는
+                {
+                    m_animator->Change("idle");
+                    m_animator->SetLoop("idle", true);      // 여기서 터지면 idle 애니메이션이 없는 것임으로 생성단계에 클립을 넣어야함!
+                    isMoving = false;
+                    m_moveTime = 0.f;
+                }
+            }
+            else
+            {
+                isMoving = false;
+                m_moveTime = 0.f;
+            }
+
             if (m_AnimDone)
             {
                 PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Turn_Over, m_who));
@@ -241,7 +256,7 @@ bool UnitPiece::Update(float dTime)
         }
         else
         {
-            XMVECTOR res = XMVectorLerp(m_Start, m_Target, m_AnimTime);
+            XMVECTOR res = XMVectorLerp(m_Start, m_Target, m_moveTime);
             XMStoreFloat3(&this->m_vPos, res);
         }
     }
@@ -421,7 +436,7 @@ void UnitPiece::SetWho(GamePiece type)
 }
 
 
-void UnitPiece::SetDir(Direction dir, bool isAnim)
+void UnitPiece::SetDir(Direction dir, bool isAnim, float speed)
 {
     switch (dir)
     {
@@ -429,16 +444,22 @@ void UnitPiece::SetDir(Direction dir, bool isAnim)
         return;
         break;
     case Direction::Right:
+        m_dir = Direction::Right;
         m_targetYaw = atan2(-1, 0);
         break;
     case Direction::Left:
+        m_dir = Direction::Left;
         m_targetYaw = atan2(1, 0);
+        break;
+    default:
+        return;
         break;
     }
     if (m_targetYaw == m_yaw) return;
 
     m_startYaw = m_yaw;
     isRotating = isAnim;
+    m_rotSpeed = speed;
 
     m_yaw = (isAnim) ? m_yaw : m_targetYaw;
 }
@@ -470,6 +491,13 @@ void UnitPiece::SetTarget(XMFLOAT3 targetPos, float speed)
     m_Start = XMLoadFloat3(&this->m_vPos);
     XMVECTOR Dist = XMVectorAbs(XMVector3Length(m_Target - m_Start));
     m_Dist = XMVectorGetX(XMVector3Length(Dist));
+    
+    if (m_animator)
+    {
+        bool isChanged = m_animator->Change("move");
+        if (isChanged)
+            m_animator->SetLoop("move", true);
+    }
 
     if (m_Dist == 0)
         return;

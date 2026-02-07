@@ -24,7 +24,7 @@ private:
 public:
     void InsertQ(PGridCmd targetPos);
     void SetWho(GamePiece type);
-    void SetDir(Direction dir, bool isAnim = true);
+    void SetDir(Direction dir, bool isAnim = true, float speed = 2.f);
     void SetFlashColor(Float4 color, int count, float blinkTime);
     void PlayAttack();
     void SetDead();
@@ -53,15 +53,18 @@ private:
     bool isFlashing = false;
 
     // 이동
+    float moveOffset = 0.2f;
     XMVECTOR m_Target{};
     XMVECTOR m_Start{};
     float m_Dist = 0;
     float m_speed = 10;
     float m_fixSpeed = 1;
-    float m_AnimTime = 0.f;
+    float m_moveTime = 0.f;
     bool isMoving = false;
 
     // 회전
+    //float rotOffset = XMConvertToRadians(35.f);
+    Direction m_dir = Direction::None;
     float m_rotTime = 0.f;
     float m_rotSpeed = 2.f;
     float m_yaw = atan2(0, 1);

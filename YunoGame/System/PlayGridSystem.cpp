@@ -159,79 +159,6 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     for (const auto& w : wData)
     {
         CreatePiece(w);
-        //team = (w.pId == m_pID) ? Team::Ally : Team::Enemy;
-
-        //dir = (w.pId == 1) ? Direction::Right : Direction::Left;
-        //auto cellPos = GetCellByID(w.currentTile);
-        //cx = cellPos.x;     cy = cellPos.y;
-
-        //auto [px, pz] = m_grids[(int)m_nowG]->CellToWorld(cx, cy);
-
-        //// 타일 상태 갱신
-        //m_tiles[w.currentTile].to = (team == Team::Ally) ?
-        //    TileOccupy{ TileOccuType::Ally_Occupied, (w.slotId == 1) ? TileWho::Ally1 : TileWho::Ally2 } :
-        //    TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
-
-        //GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
-        //PieceInfo pieceInfo{};
-
-        //UnitPiece* pPiece = nullptr;
-        //if (w.weaponId == 2)
-        //{
-        //    pPiece = m_manager->CreateObject<UnitPiece>(
-        //        L"Weapon", XMFLOAT3(px, m_wy, pz));
-
-        //    auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
-        //        L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
-        //    pChakram1->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
-        //    pPiece->Attach(pChakram1);
-
-        //    auto pChakram2 = m_manager->CreateObjectFromFile<UnitPiece>(
-        //        L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
-        //    pChakram2->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
-        //    pPiece->Attach(pChakram2);
-
-        //    pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
-        //    pieceInfo.subIds.push_back(pChakram1->GetID());
-        //    pieceInfo.subIds.push_back(pChakram2->GetID());
-
-        //    m_gridBox->Attach(pPiece);
-        //}
-        //else
-        //{
-        //    std::wstring fileName = GetWeaponFileName(w.weaponId);
-        //    pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
-        //}
-        //
-        ////// weapon 구별을 위한 임시
-        //switch (w.weaponId)
-        //{
-        //case 1:
-        //    pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
-        //    pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
-        //    break;
-        //case 3:
-        //    pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/drill_idle.fbx");
-        //    break;
-        //case 4:
-        //    pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
-        //    break;
-        //case 5:
-        //    pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
-        //    pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
-        //    break;
-        //case 6:
-        //    pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
-        //    break;
-        //pPiece->SetWho(gp);
-
-        //pPiece->SetDir(dir, false);
-
-        //// 기물 정보 등록
-        //m_pieces.emplace(gp, PieceInfo{pPiece->GetID(), dir, team });
-
-        //// 빈 박스에 자식 객체로 등록. (for 정리)
-        //m_gridBox->Attach(pPiece);
 
         int usID = GetUnitID(w.pId, w.slotId);
         m_UnitStates[usID] = {
@@ -272,11 +199,13 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
              L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
          pChakram1->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
+         //pChakram1->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_01.fbx");
          pPiece->Attach(pChakram1);
 
          auto pChakram2 = m_manager->CreateObjectFromFile<UnitPiece>(
              L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
          pChakram2->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
+         //pChakram2->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_02.fbx");
          pPiece->Attach(pChakram2);
 
          pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
@@ -303,20 +232,23 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      {
      case 1:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
-         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
          break;
      case 3:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/drill_idle.fbx");
+         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Breacher_attack.fbx");
          break;
      case 4:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
+         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/attack/scythe_move.fbx");
          break;
      case 5:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
-         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
+         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
          break;
      case 6:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
+         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Cleaver_attack.fbx");
          break;
      }
      pPiece->SetWho(gp);
@@ -426,8 +358,8 @@ void PlayGridSystem::CheckPacket(float dt)
 
         const CardType cardType = cardData.m_type;
         
-        if (cardType == CardType::Attack)    m_pktTime = 6.f;
-        else if (cardType == CardType::Utility)    m_pktTime = 10.5f;
+        if (cardType == CardType::Attack)    m_pktTime = attackPktTime;
+        else if (cardType == CardType::Utility)    m_pktTime = utilityPktTime;
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
     }
@@ -490,6 +422,23 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         }
 
         if (!as.phaseStarted) break;
+
+        auto attackerIt = m_pieces.find(as.attacker);
+        if (attackerIt == m_pieces.end())
+        {
+            as.attackPhase = AttackPhase::Over;
+            break;
+        }
+
+        const auto& pieceInfo = attackerIt->second;
+        auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
+        if (pPiece == nullptr)
+        {
+            as.attackPhase = AttackPhase::Over;
+            break;
+        }
+
+        pPiece->SetDir(as.dir, true, 3.f);
 
         const auto& tiles = as.tileIDs;
         for (int i = 0; i < tiles.size(); i++)
@@ -837,6 +786,7 @@ bool PlayGridSystem::ApplyAttackChanges
     // 공격 시퀀스 채워넣기
     auto& as = m_attackSequence;
     as.attacker = whichPiece;
+    as.dir = dir;
     as.tileIDs = targetTileIDs;
     as.attackPhase = AttackPhase::Alaram;
     as.phaseStarted = m_attackActive = true;
