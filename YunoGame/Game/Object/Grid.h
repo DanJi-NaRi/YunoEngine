@@ -21,6 +21,7 @@ public:
 
 struct GridXY
 {
+    GridXY() = default;
     GridXY(int row, int column, float cellSizeX, float cellSizeZ);
 
     Int2 WorldToCell(float x, float y);       // 월드(x, z) -> 셀 좌표
