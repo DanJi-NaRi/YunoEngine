@@ -227,15 +227,23 @@ void Unit::Attach(Unit* obj) //this가 부모, 파라미터로 자식
 
 void Unit::DettachParent()
 {
+    if (m_Parent == nullptr)
+        return;
+
     m_Parent->DettachChild(m_id);
+    m_Parent = nullptr;
 }
 
 void Unit::DettachChild(uint32_t id)
 {
-    if (m_Childs.find(id) == m_Childs.end())
+    auto it = m_Childs.find(id);
+    if (it == m_Childs.end())
         return;
 
-    m_Childs.erase(id);
+    if (it->second)
+        it->second->m_Parent = nullptr;
+
+    m_Childs.erase(it);
 }
 
 void Unit::ClearChild()
@@ -243,9 +251,28 @@ void Unit::ClearChild()
     if (m_Childs.empty())
         return;
 
-    for (auto& [id, child] : m_Childs)
+    //for (auto& [id, child] : m_Childs)
+    //{
+    //    child->DettachParent();
+    //}
+    std::vector<uint32_t> childIDs;
+    childIDs.reserve(m_Childs.size());
+
+    for (const auto& [id, child] : m_Childs)
     {
-        child->DettachParent();
+        childIDs.push_back(id);
+    }
+
+    for (uint32_t id : childIDs)
+    {
+        auto it = m_Childs.find(id);
+        if (it == m_Childs.end())
+            continue;
+
+        if (it->second)
+            it->second->DettachParent();
+        else
+            m_Childs.erase(it);
     }
 
     m_Childs.clear();

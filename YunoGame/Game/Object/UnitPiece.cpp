@@ -392,6 +392,12 @@ void UnitPiece::CheckAttack()
 {
     if (!isAttacking) return;
 
+    if (m_animator == nullptr)
+    {
+        isAttacking = false;
+        return;
+    }
+
     bool isPlaying = m_animator->isPlaying();
 
     if (!isPlaying)
@@ -447,6 +453,7 @@ void UnitPiece::SetFlashColor(Float4 color, int count, float blinkTime)
 
 void UnitPiece::PlayAttack()
 {
+    if (m_animator == nullptr) return;
     bool isChanged = m_animator->Change("attack");
     if (!isChanged) return;
     m_animator->SetLoop("attack", false);
