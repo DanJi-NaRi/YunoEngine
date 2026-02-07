@@ -348,7 +348,7 @@ void PlayGridSystem::CheckMyQ()
             int uid = GetUnitID(pieceType);
 
             CheckHealth(m_UnitStates[uid], pieceInfo);
-            std::cout << static_cast<int>(pieceType) << ". health: " << m_UnitStates[uid].hp << std::endl;
+            std::cout << static_cast<int>(pieceType) << ". health: " << static_cast<int>(m_UnitStates[uid].hp) << std::endl;
             break;
         }
         case CommandType::Dead:
@@ -443,9 +443,9 @@ void PlayGridSystem::CheckPacket(float dt)
 
         }
     }
-
     // 라운드 끝났는지 체크
     CheckOver();
+
 }
 
 void PlayGridSystem::UpdateSequence(float dt)
@@ -1167,7 +1167,7 @@ bool PlayGridSystem::CheckNotDying(const GamePiece pieceType)
 
 void PlayGridSystem::CheckHealth(const UnitState& us, PieceInfo& pieceInfo)
 {
-    if (us.hp <= 0)
+    if (static_cast<int>(us.hp ) <= 0)
     {
         // 해당 기물 렌더X
         auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
@@ -1182,8 +1182,9 @@ void PlayGridSystem::CheckHealth(const UnitState& us, PieceInfo& pieceInfo)
         }
 
         // 해당 타일 정보 초기화
-        int tileID = m_tilesIDs[us.targetTileID];
-        m_tiles[tileID] = TileState{};
+        //int tileID = m_tilesIDs[us.targetTileID];
+        //m_tiles[tileID] = TileState{};
+        m_tiles[us.targetTileID] = TileState{};
     }
 }
 
