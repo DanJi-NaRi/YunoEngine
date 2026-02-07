@@ -44,7 +44,7 @@ protected:                             // 그리드 라인 오브젝트 생성
 
 protected:
     // Grid // 기준 : XY
-    GridXY m_pGrid;
+    GridXY m_grid;
 
     WidgetGridLine* m_pGridLine = nullptr;
 
