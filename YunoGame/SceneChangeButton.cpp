@@ -124,10 +124,6 @@ bool SceneChangeButton::LMBPressedEvent()
     //opt.immediate = true;
     //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
     //sm->RequestPush(std::make_unique<PlayScene>());
-    
-
-
-
 
     return true;
 }

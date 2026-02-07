@@ -77,7 +77,7 @@ void PlayGridSystem::InitRound()
         else // 문제 안 생기는 거 확인하고 지울 예정
         {
             std::cout << "Before Round's Pieces ain't removed!!\n";
-            assert(false);
+            //assert(false);
             Direction dir = (w.pId == 1) ? Direction::Right : Direction::Left;
             auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(it->second.id));
             pPiece->SetDir(dir, false);
