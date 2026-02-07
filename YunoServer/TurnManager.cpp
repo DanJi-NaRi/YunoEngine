@@ -596,9 +596,18 @@ namespace yuno::server
 
                 UnitState& unit = *units[unitIndex];
 
+                for (auto& U : units) // 이렇게 하면 매 프레임 모든 죽은 유닛의 타일 위치를 초기화 시키는데 
+                {
+                    if (static_cast<int>(U->hp) == 0) 
+                    {
+                        grid[U->tileID] = -1;
+                        U->tileID = 0;      // 0은 Error
+                        std::cout << "Died Unit's TileID : " << U->tileID << "\n";
+                    }
+                }
+
                 if (unit.hp == 0)
                 {
-                    grid[unit.tileID] = -1;
                     std::cout << "[Server] Skip card(runtime=" << card.runtimeId
                         << ") because unit is dead. unitIndex=" << unitIndex << "\n";
 

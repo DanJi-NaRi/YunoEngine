@@ -36,6 +36,11 @@ namespace yuno::server
         if (std::chrono::steady_clock::now() < m_roundStartReadyDeadline)
             return;
 
+        auto remainingMs =
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                m_roundStartReadyDeadline - std::chrono::steady_clock::now());
+
+        std::cout << "remaining: " << remainingMs.count() << " ms" << std::endl;
         std::cout << "[Round] RoundStartReady timeout. Force starting next round\n";
 
         m_waitingRoundStartReady = false;
@@ -233,7 +238,8 @@ namespace yuno::server
         m_waitingRoundStartReady = true;
         m_roundStartReady[0] = false;
         m_roundStartReady[1] = false;
-        m_roundStartReadyDeadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
+        m_roundStartReadyDeadline = std::chrono::steady_clock::now() + std::chrono::seconds(50);
+
         //else 
         //{
         //    TryStartRound(); // 이거 자동으로 시작되게 하는거 바꿔야 될듯
@@ -273,10 +279,11 @@ namespace yuno::server
 
     void RoundController::EndTurn()
     {
-        std::cout << "[Round] EndTurn , data : " << g_battleState.roundEnded << std::endl;
+        std::cout << "[Round] EndTurn , round Ended data : " << g_battleState.roundEnded << std::endl;
 
         if (g_battleState.roundEnded)
         {
+            std::cout << "-----Enter EndRound()-----" << std::endl;
             EndRound();
             return;
         }

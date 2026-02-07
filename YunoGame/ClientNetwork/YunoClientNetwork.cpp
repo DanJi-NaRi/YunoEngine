@@ -249,6 +249,8 @@ namespace yuno::game
 
                 GameManager& gm = GameManager::Get();
 
+                gm.ResetWeaponData();
+
                 for (const auto& u : pkt.units)
                 {
                     gm.SetWeaponData(u.PID, u.slotID, u.WeaponID, u.hp, u.stamina, u.SpawnTileId);
