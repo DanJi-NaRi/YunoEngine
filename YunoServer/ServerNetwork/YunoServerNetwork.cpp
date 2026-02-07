@@ -470,11 +470,11 @@ namespace yuno::server
 
                 m_server.Broadcast(std::move(bytes));
 
-                std::cout
-                    << "[Server] Emote Broadcast "
-                    << "PID=" << int(pid)
-                    << " emoteId=" << int(pkt.emoteId)
-                    << "\n";
+                //std::cout
+                //    << "[Server] Emote Broadcast "
+                //    << "PID=" << int(pid)
+                //    << " emoteId=" << int(pkt.emoteId)
+                //    << "\n";
             }
         );
     }

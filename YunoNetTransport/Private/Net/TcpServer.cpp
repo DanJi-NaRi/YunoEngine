@@ -72,7 +72,7 @@ namespace yuno::net
                     DoAccept();
                     return;
                 }
-                std::cout << "[TcpServer] accepted\n";
+                //std::cout << "[TcpServer] accepted\n";
 
                 // 서버
                 const sessionId sid = NextSessionId();
