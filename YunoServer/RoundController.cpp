@@ -321,7 +321,12 @@ namespace yuno::server
         // 여기서 엔딩씬으로 넘어갈거면 엔딩씬 넘기는 패킷에 데이터 담아서 보내고나서 
         // 데이터 리셋 ㄱㄱ
 
+        ResetMatchState();
 
+    }
+
+    void RoundController::ResetMatchState()
+    {
         m_roundStarted = false;
         m_cardsInitialized = false;
         m_waitingRoundStartReady = false;
@@ -330,6 +335,7 @@ namespace yuno::server
         m_cardSelected[0] = false;
         m_cardSelected[1] = false;
 
+        g_battleState.turnNumber = 0;
         g_battleState.roundWins[0] = 0;
         g_battleState.roundWins[1] = 0;
         g_battleState.currentRound = 1;
@@ -344,13 +350,14 @@ namespace yuno::server
         for (int i = 0; i < 2; ++i)
         {
             auto& player = g_battleState.players[i];
+            player.sessionId = 0;
+            player.PID = 0;
+            player.unit1 = {};
+            player.unit2 = {};
             player.remainingDeck.clear();
             player.handCards.clear();
             player.drawCandidates.clear();
         }
-
-
-
     }
     
     void RoundController::OnPlayerSelectedCard(int playerIdx)

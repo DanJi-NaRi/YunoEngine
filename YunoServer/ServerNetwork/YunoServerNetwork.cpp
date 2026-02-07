@@ -68,11 +68,38 @@ namespace yuno::server
             {
                 const auto sid = static_cast<uint64_t>(session->GetSessionId());
 
-                m_match.DetachBySessionId(sid);
+                using namespace yuno::net;
+
+                const int idx = m_match.FindSlotBySessionId(sid);
+
+                if (idx >= 0)
+                {
+                    const auto& slots = m_match.Slots();
+                    const auto uid = slots[static_cast<std::size_t>(idx)].userId;
+                    m_match.LeaveByUserId(uid);
+
+                    m_roundController.ResetMatchState();
+                    m_countdownSent = false;
+
+                    yuno::net::packets::S2C_ReadyState response{};
+                    response.p1_isReady = static_cast<std::uint8_t>(m_match.Slots()[0].ready ? 1 : 0);
+                    response.p2_isReady = static_cast<std::uint8_t>(m_match.Slots()[1].ready ? 1 : 0);
+
+                    auto bytes = PacketBuilder::Build(
+                        PacketType::S2C_ReadyState,
+                        [&](ByteWriter& w)
+                        {
+                            response.Serialize(w);
+                        });
+
+                    m_server.Broadcast(std::move(bytes));
+                }
+
+
 
                 std::cout << "[Server] Disconnected sid=" << sid
                     << " ec=" << ec.message()
-                    << " -> slot freed\n";
+                    << " -> slot cleared\n";
             });
     }
 
