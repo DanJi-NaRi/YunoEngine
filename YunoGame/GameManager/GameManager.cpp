@@ -41,6 +41,8 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
     m_weapons.push_back(data);
 }
 
+
+// 배틀 전용 함수들
 void GameManager::PushBattlePacket(const BattleResult _BattleResult)
 {
     m_turnPkts.push(_BattleResult);
@@ -59,6 +61,28 @@ bool GameManager::IsEmptyBattlePacket()
 {
     return m_turnPkts.empty();
 }
+
+
+// 장애물 전용 함수들
+void GameManager::PushObstaclePacket(const ObstacleResult& obstacleResult)
+{
+    m_obstaclePkts.push(obstacleResult);
+    std::cout << "Obstacle Packet is inserted into Queue.\n";
+}
+
+ObstacleResult GameManager::PopObstaclePacket()
+{
+    ObstacleResult pkt = m_obstaclePkts.front();
+    m_obstaclePkts.pop();
+    std::cout << "Obstacle Packet is popped out of Queue.\n";
+    return pkt;
+}
+
+bool GameManager::IsEmptyObstaclePacket()
+{
+    return m_obstaclePkts.empty();
+}
+
 
 
 void GameManager::Initialize(GameManager* inst)

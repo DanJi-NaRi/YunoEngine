@@ -401,6 +401,12 @@ void PlayGridSystem::CheckPacket(float dt)
     // 현재 씬이 '오토배틀'씬이 아니면 반환.
     if (mng.GetSceneState() != CurrentSceneState::AutoBattle)    return;
 
+    if (!mng.IsEmptyObstaclePacket())
+    {
+        const auto obstaclePkt = mng.PopObstaclePacket();
+        ApplyObstacleResult(obstaclePkt);
+    }
+
     // 게임 매니저에서 배틀 패킷 하나씩 받아옴
     if (!mng.IsEmptyBattlePacket() && !isProcessing)
     {
@@ -429,6 +435,7 @@ void PlayGridSystem::CheckPacket(float dt)
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
     }
+    
 
     // 지금 처리 중인 패킷 시간 체크
     if (isProcessing)
@@ -443,10 +450,18 @@ void PlayGridSystem::CheckPacket(float dt)
 
         }
     }
+
+
+
     // 라운드 끝났는지 체크
     CheckOver();
 
 }
+
+
+
+
+
 
 void PlayGridSystem::UpdateSequence(float dt)
 {
@@ -1145,6 +1160,80 @@ void PlayGridSystem::CheckOver()
         }
     }
     isRoundOver = true;
+}
+
+void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
+{
+    std::cout
+        << "[PlayGridSystem] Obstacle packet received"
+        << " triggerSnapshot(PrevRound) + warning(NextRound)"
+        << " obstacleID=" << int(obstacle.obstacleID)
+        << " tiles=";
+
+    for (const auto& tile : obstacle.tileIDs) 
+    {
+        std::cout << static_cast<int>(tile) << " ";
+    }
+    std::cout << std::endl;
+
+    // 1) 이전 라운드에 경고된 장애물 발동 결과(unitState) 반영
+    bool hasTriggerSnapshot = false;
+    for (int i = 0; i < static_cast<int>(m_UnitStates.size()); ++i)
+    {
+        const auto& prev = m_UnitStates[i];
+        const auto& cur = obstacle.unitState[i];
+
+        if (cur.pId == 0 || cur.slotId == 0)
+            continue;
+
+        hasTriggerSnapshot = true;
+
+        std::cout
+            << "  [Trigger] unit[" << i << "]"
+            << " hp " << int(prev.hp) << "->" << int(cur.hp)
+            << " stamina " << int(prev.stamina) << "->" << int(cur.stamina)
+            << " tile " << int(prev.targetTileID) << "->" << int(cur.targetTileID)
+            << "\n";
+
+        GamePiece pieceType = GetGamePiece(cur.pId, cur.slotId);
+        auto pieceIt = m_pieces.find(pieceType);
+        if (pieceIt == m_pieces.end())
+            continue;
+
+        if (prev.hp != cur.hp || prev.stamina != cur.stamina)
+        {
+            auto* pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceIt->second.id));
+            if (pPiece)
+                pPiece->SetFlashColor(m_attackSequence.m_hitColor, 1, tileFlashInterval);
+
+            for (uint32_t subId : pieceIt->second.subIds)
+            {
+                auto* pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                if (pSubPiece)
+                    pSubPiece->SetFlashColor(m_attackSequence.m_hitColor, 1, tileFlashInterval);
+            }
+        }
+
+        if (prev.hp > cur.hp)
+            CheckHealth(cur, pieceIt->second);
+    }
+
+    if (hasTriggerSnapshot)
+        m_UnitStates = obstacle.unitState;
+
+    Float4 warnColor{ 1.0f, 0.0f, 0.0f, 1.f };
+    if (obstacle.obstacleID == 2) warnColor = { 0.0f, 1.0f, 0.0f, 1.f };
+    else if (obstacle.obstacleID == 3) warnColor = { 0.0f, 0.0f, 1.0f, 1.f };
+
+    for (auto tileId : obstacle.tileIDs)
+    {
+        if (tileId == 0 || tileId >= m_tilesIDs.size())
+            continue;
+
+        auto* pTile = static_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileId]));
+        if (pTile)
+            pTile->SetFlashColor(warnColor, tileFlashCount, tileFlashInterval);
+    }
 }
 
 bool PlayGridSystem::CheckNotDying(const GamePiece pieceType)

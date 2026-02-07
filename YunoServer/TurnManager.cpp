@@ -238,7 +238,7 @@ namespace yuno::server
             if (tileId != 0 && tileId <= kGridSize)
             {
                 grid[tileId] = i;       // 서버 내부 그리드에 유닛 배치
-                std::cout << static_cast<int>(tileId) << "  ";
+                std::cout << "Grid TileId : " << static_cast<int>(tileId) << std::endl;
             }
         }
 
@@ -353,7 +353,6 @@ namespace yuno::server
 
         auto applyMove = [&](int unitIndex, const CardMoveData& moveData, Direction dir) -> bool
             {
-                std::cout << "Enter ApplyMove , ";
                 UnitState& unit = *units[unitIndex];
                 if (unit.tileID == 0)
                     return false;
@@ -477,6 +476,7 @@ namespace yuno::server
 
         auto applyAttack = [&](int unitIndex, uint32_t cardDataId, const CardData& cardData, Direction dir, std::vector<int>* hitTargets = nullptr) -> bool
             {
+                std::cout << "Enter ApplyAttack , ";
                 const auto* effectData = m_cardDB.GetEffectData(cardDataId);
                 const auto* rangeData = m_cardRangeDB.GetRange(cardData.m_rangeId);
 
@@ -602,7 +602,7 @@ namespace yuno::server
                     {
                         grid[U->tileID] = -1;
                         U->tileID = 0;      // 0은 Error
-                        std::cout << "Died Unit's TileID : " << U->tileID << "\n";
+                        std::cout << "Died Unit's TileID : " << static_cast<int>(U->tileID) << "\n";
                     }
                 }
 
@@ -692,6 +692,7 @@ namespace yuno::server
                 {
                     if (const auto* moveData = m_cardDB.GetMoveData(card.dataId))
                     {
+                        std::cout << "Move Card On" << std::endl;
                         eventOccurred = applyMove(unitIndex, *moveData, card.dir);
                     }
                 }

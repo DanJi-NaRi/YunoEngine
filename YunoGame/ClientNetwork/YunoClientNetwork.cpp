@@ -583,14 +583,56 @@ namespace yuno::game
                 std::cout
                     << "[Client] ObstacleResult received "
                     << " count=" << pkt.obstacles.size()
-                    << "\n";
+                    << std::endl;
+
+                auto& gm = GameManager::Get();
 
                 for (const auto& o : pkt.obstacles)
                 {
                     std::cout
                         << "  obstacleID=" << int(o.obstacleID)
-                        << " tiles=" << o.tileIDs.size()
-                        << "\n";
+                        << " tiles=" << o.tileIDs.size();
+
+                    if (!o.tileIDs.empty())
+                    {
+                        std::cout << " [";
+                        for (size_t i = 0; i < o.tileIDs.size(); ++i)
+                        {
+                            std::cout << int(o.tileIDs[i]);
+                            if (i + 1 != o.tileIDs.size())
+                                std::cout << ", ";
+                        }
+                        std::cout << "]";
+                    }
+                    std::cout << "\n";
+
+                    ObstacleResult out{};
+                    out.obstacleID = o.obstacleID;
+                    out.tileIDs = o.tileIDs;
+
+                    for (int i = 0; i < static_cast<int>(out.unitState.size()); ++i)
+                    {
+                        out.unitState[i] = {
+                            o.unitState[i].ownerSlot,
+                            o.unitState[i].unitLocalIndex,
+                            o.unitState[i].hp,
+                            o.unitState[i].stamina,
+                            o.unitState[i].targetTileID,
+                            o.unitState[i].isEvent
+                        };
+
+                        std::cout
+                            << "    triggerUnit[" << i << "]"
+                            << " pId=" << int(out.unitState[i].pId)
+                            << " slot=" << int(out.unitState[i].slotId)
+                            << " hp=" << int(out.unitState[i].hp)
+                            << " stamina=" << int(out.unitState[i].stamina)
+                            << " tile=" << int(out.unitState[i].targetTileID)
+                            << " isEvent=" << int(out.unitState[i].isEvent)
+                            << "\n";
+                    }
+
+                    gm.PushObstaclePacket(out);
                 }
             }
         );//S2C_ObstacleResult Packet End

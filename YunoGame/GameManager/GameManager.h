@@ -172,9 +172,14 @@ public:
 private:
 
     std::queue<BattleResult> m_turnPkts;
+    std::queue<ObstacleResult> m_obstaclePkts;
 
 public:
     void PushBattlePacket(const BattleResult _BattleResult);
     BattleResult PopBattlePacket();
     bool IsEmptyBattlePacket();
+
+    void PushObstaclePacket(const ObstacleResult& obstacleResult);
+    ObstacleResult PopObstaclePacket();
+    bool IsEmptyObstaclePacket();
 };
