@@ -1,144 +1,543 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="CardConfirmArea.cpp" />
-    <ClCompile Include="Game\UI\WidgetGridLine.cpp" />
-    <ClCompile Include="Minimap.cpp" />
-    <ClCompile Include="PlayerIcon.cpp" />
-    <ClCompile Include="Emoji.cpp" />
-    <ClCompile Include="Game\UI\CardCancelButton.cpp" />
-    <ClCompile Include="Game\UI\CardConfirmButton.cpp" />
-    <ClCompile Include="Game\UI\CardConfirmPanel.cpp" />
-    <ClCompile Include="Game\UI\CardSelectionPanel.cpp" />
-    <ClCompile Include="HealthGauge.cpp" />
-    <ClCompile Include="HealthBar.cpp" />
-    <ClCompile Include="SceneChangeButton.cpp" />
-    <ClCompile Include="SpeechBubble.cpp" />
-    <ClCompile Include="StaminaBar.cpp" />
-    <ClCompile Include="StaminaGauge.cpp" />
-    <ClCompile Include="System\BattlePackets.cpp" />
-    <ClCompile Include="System\CardManager.cpp" />
-    <ClCompile Include="System\CardRangeManager.cpp" />
-    <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp" />
-    <ClCompile Include="Game\UI\ButtonTemplate.cpp" />
-    <ClCompile Include="Game\UI\CardSlot.cpp" />
-    <ClCompile Include="Game\Object\Test_Unit.cpp" />
-    <ClCompile Include="Game\UI\ExitButton.cpp" />
-    <ClCompile Include="Game\UI\ReadyButton.cpp" />
-    <ClCompile Include="Game\UI\TitleImage.cpp" />
-    <ClCompile Include="Game\UI\UserImage.cpp" />
-    <ClCompile Include="Game\Object\Grid.cpp" />
-    <ClCompile Include="System\MinimapQueue.cpp" />
-    <ClCompile Include="GameManager\GameManager.cpp" />
-    <ClCompile Include="Game\UI\Card.cpp" />
-    <ClCompile Include="Game\UI\CardTable.cpp" />
-    <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp" />
-    <ClCompile Include="GamePCH\pch.cpp" />
-    <ClCompile Include="Game\GameApp.cpp" />
-    <ClCompile Include="Game\Object\AnimTest.cpp" />
-    <ClCompile Include="Game\Object\Building.cpp" />
-    <ClCompile Include="Game\Object\Dwarf.cpp" />
-    <ClCompile Include="Scenes\PhaseScene.cpp" />
-    <ClCompile Include="Scenes\RenderTest.cpp" />
-    <ClCompile Include="System\GridFactory.cpp" />
-    <ClCompile Include="System\MinimapGridSystem.cpp" />
-    <ClCompile Include="System\PlayGridSystem.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Game\Object\Triangle.cpp" />
-    <ClCompile Include="Game\Object\Quad.cpp" />
-    <ClCompile Include="System\PlayQueue.cpp" />
-    <ClCompile Include="Scenes\PlayScene.cpp" />
-    <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp" />
-    <ClCompile Include="Scenes\TitleScene.cpp" />
-    <ClCompile Include="Scenes\UIScene.cpp" />
-    <ClCompile Include="Scenes\WeaponSelectScene.cpp" />
-    <ClCompile Include="Game\UI\WeaponButton.cpp" />
-    <ClCompile Include="Scenes\Title.cpp" />
-    <ClCompile Include="Game\Object\UnitGridBox.cpp" />
-    <ClCompile Include="Game\Object\UnitGridLine.cpp" />
-    <ClCompile Include="Game\Object\UnitGridSystem.cpp" />
-    <ClCompile Include="Game\Object\UnitPiece.cpp" />
-    <ClCompile Include="Game\Object\UnitTile.cpp" />
-    <ClCompile Include="Game\UI\WidgetPiece.cpp" />
-    <ClCompile Include="Game\UI\WidgetTile.cpp" />
-    <ClCompile Include="MinimapTile.cpp" />
-    <ClCompile Include="Game\UI\DirSelectButton.cpp" />
+    <Filter Include="main">
+      <UniqueIdentifier>{6a70feda-159a-4de9-91c5-b3f4aac0e982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{e5031400-6bf3-4c86-ba41-ea8b0c14f304}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GamePCH">
+      <UniqueIdentifier>{38f5e7a6-3988-4694-b80c-2399a2758a86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object">
+      <UniqueIdentifier>{4c21017b-91c4-436f-81a4-06b919079788}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Triangle">
+      <UniqueIdentifier>{e8537736-ea68-49da-94b7-d29dc58e2b4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Quad">
+      <UniqueIdentifier>{ecf648a9-22db-45d7-af4d-ce4d9e87cc76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{dddf83ad-e69d-43b6-885b-f95b1e186a91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System">
+      <UniqueIdentifier>{9361046d-0731-4de1-9145-d90d338d0e82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Building">
+      <UniqueIdentifier>{634a52df-c3f6-426d-9088-ebdfd94c30d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI">
+      <UniqueIdentifier>{7cf5f1df-0f47-4766-87b9-cbcce4497de0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Image">
+      <UniqueIdentifier>{886b6b45-32e8-4f8d-9c3a-1aeccba4ee20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Slider">
+      <UniqueIdentifier>{e189f2f1-ad82-43d5-8ce9-f8e63a9fe695}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Text">
+      <UniqueIdentifier>{d75203f4-897b-4c72-ad75-a53257c6b5fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Button">
+      <UniqueIdentifier>{de22c067-ae78-4163-9f35-1f853c353610}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Animation">
+      <UniqueIdentifier>{111487a2-554f-421d-9895-5bb73c8b009f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Dwarf">
+      <UniqueIdentifier>{4819ede5-efc2-41cb-a857-f54b670b66ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\SceneTemplate">
+      <UniqueIdentifier>{24b754d7-a2f6-4d5c-9cb2-02394ae55327}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ClientNetwork">
+      <UniqueIdentifier>{2d17bd28-28ed-4da1-973f-f4a65f411c14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Grid">
+      <UniqueIdentifier>{62f4b4f1-4d1b-4c87-8c7e-cafa5783c38b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Tile">
+      <UniqueIdentifier>{53d9ecd0-a8b7-414e-afa4-5e30c489fd1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Piece">
+      <UniqueIdentifier>{da3c17c2-968c-48e2-88f0-27e98aee6ca6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\GameContext">
+      <UniqueIdentifier>{5e610e02-9910-4288-8003-55dcb20743a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\UIContext">
+      <UniqueIdentifier>{1f741ae9-459b-421b-b0c8-0c44d2028232}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\System">
+      <UniqueIdentifier>{4d554d76-e075-4e88-9400-c5edee8bae71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\1.WeaponSelect">
+      <UniqueIdentifier>{1c2f987f-6b77-44ce-a3a6-b92c2ad7a991}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\2.Play">
+      <UniqueIdentifier>{189cae2d-f9fe-415c-9418-9da38eb5e240}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\99.Test">
+      <UniqueIdentifier>{2c6d8a18-2ee4-4ef6-b526-3a3819858a75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Button\ButtonTemplate">
+      <UniqueIdentifier>{b0617999-7a4b-4fcf-9ae3-a04170141035}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Slot">
+      <UniqueIdentifier>{5dfe4c0c-0b5d-493b-8267-0e0bf6b67d3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Card">
+      <UniqueIdentifier>{dcb893cc-151f-4aae-a92d-b87a6e5a817e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\999.RenderTest">
+      <UniqueIdentifier>{901ca8d6-4b9c-4f90-bdac-f4eacc332766}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\1.WeaponSelect\0.Title">
+      <UniqueIdentifier>{27fecdf2-c2ce-454b-8699-682c736c1721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Grid">
+      <UniqueIdentifier>{dc752127-1245-4da2-baf2-ab459ec897db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\GridSystem">
+      <UniqueIdentifier>{4a7b20b3-1044-47dd-a8da-963386a1c2ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\GridSystem\Queue_test">
+      <UniqueIdentifier>{a112416b-9bd3-4b1e-b689-f66c726ce9b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Image\CardTable">
+      <UniqueIdentifier>{8dae683b-fb3e-4c62-9d9c-597c2549a80b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\GameManager">
+      <UniqueIdentifier>{896c13df-476e-425f-9d5c-54609a012060}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Battle">
+      <UniqueIdentifier>{10337b04-c219-4415-9dd2-2a6822a18358}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\3.Phase">
+      <UniqueIdentifier>{6b093a5a-706d-4922-8eba-d0cc15908609}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Image\Imoji">
+      <UniqueIdentifier>{781c21f0-d0c5-49e8-bac6-b01dea046461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\ProgressBar">
+      <UniqueIdentifier>{0a82f177-3584-4e79-b2ee-48c87198d580}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\ProgressBar\Gauge">
+      <UniqueIdentifier>{26959a8a-79b7-4e76-a248-517f298c6f9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI\Image\Panel">
+      <UniqueIdentifier>{147e273c-ec98-4aa8-98c8-aeb9b16c39e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Utility">
+      <UniqueIdentifier>{7d0b3f62-2755-4372-a23c-b2a2c4bc8917}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CardConfirmArea.h" />
-    <ClInclude Include="Game\UI\WidgetGridLine.h" />
-    <ClInclude Include="Minimap.h" />
-    <ClInclude Include="PlayerIcon.h" />
-    <ClInclude Include="Emoji.h" />
-    <ClInclude Include="Game\UI\CardCancelButton.h" />
-    <ClInclude Include="Game\UI\CardConfirmButton.h" />
-    <ClInclude Include="Game\UI\CardConfirmPanel.h" />
-    <ClInclude Include="Game\UI\CardSelectionPanel.h" />
-    <ClInclude Include="HealthGauge.h" />
-    <ClInclude Include="HealthBar.h" />
+    <ClCompile Include="main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePCH\pch.cpp">
+      <Filter>GamePCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameApp.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Triangle.cpp">
+      <Filter>Game\Object\Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Quad.cpp">
+      <Filter>Game\Object\Quad</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Building.cpp">
+      <Filter>Game\Object\Building</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\AnimTest.cpp">
+      <Filter>Game\Object\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Dwarf.cpp">
+      <Filter>Game\Object\Dwarf</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\SceneTemplate\SceneTemplate.cpp">
+      <Filter>Scenes\SceneTemplate</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
+      <Filter>ClientNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="System\GridFactory.cpp">
+      <Filter>Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="System\PlayGridSystem.cpp">
+      <Filter>Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\CardSlot.cpp">
+      <Filter>Game\UI\Slot</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\TitleScene.cpp">
+      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\WeaponSelectScene.cpp">
+      <Filter>Scenes\1.WeaponSelect</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\PlayScene.cpp">
+      <Filter>Scenes\2.Play</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\WeaponButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\UIScene.cpp">
+      <Filter>Scenes\99.Test</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\ButtonTemplate.cpp">
+      <Filter>Game\UI\Button\ButtonTemplate</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\Title.cpp">
+      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\Card.cpp">
+      <Filter>Card</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\RenderTest.cpp">
+      <Filter>Scenes\999.RenderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\TypeRegisterTemplate.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="System\CardManager.cpp">
+      <Filter>Card</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\ReadyButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\ExitButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\TitleImage.cpp">
+      <Filter>Game\UI\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="System\CardRangeManager.cpp">
+      <Filter>Card</Filter>
+    </ClCompile>
+    <ClCompile Include="System\MinimapGridSystem.cpp">
+      <Filter>System\GridSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="System\PlayQueue.cpp">
+      <Filter>System\GridSystem\Queue_test</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\PhaseScene.cpp">
+      <Filter>Scenes\3.Phase</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\CardTable.cpp">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\CardConfirmPanel.cpp">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\CardSelectionPanel.cpp">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\CardCancelButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\CardConfirmButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager\GameManager.cpp">
+      <Filter>System\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\UserImage.cpp">
+      <Filter>Game\UI\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Test_Unit.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\UnitGridBox.cpp">
+      <Filter>Game\Object\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\UnitGridLine.cpp">
+      <Filter>Game\Object\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\WidgetGridBox.cpp">
+      <Filter>Game\Object\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\WidgetGridLine.cpp">
+      <Filter>Game\Object\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\WidgetTile.cpp">
+      <Filter>Game\Object\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\UnitTile.cpp">
+      <Filter>Game\Object\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\WidgetGridSystem.cpp">
+      <Filter>System\GridSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\UnitGridSystem.cpp">
+      <Filter>System\GridSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="System\MinimapQueue.cpp">
+      <Filter>System\GridSystem\Queue_test</Filter>
+    </ClCompile>
+    <ClCompile Include="System\MinimapGridSystem.cpp">
+      <Filter>System\GridSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Grid.cpp">
+      <Filter>System\GridSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\UnitPiece.cpp">
+      <Filter>Game\Object\Piece</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\WidgetPiece.cpp">
+      <Filter>Game\Object\Piece</Filter>
+    </ClCompile>
+    <ClCompile Include="System\BattlePackets.cpp">
+      <Filter>System\Battle</Filter>
+    </ClCompile>
+    <ClCompile Include="Emoji.cpp">
+      <Filter>Game\UI\Image\Imoji</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeechBubble.cpp">
+      <Filter>Game\UI\Image\Imoji</Filter>
+    </ClCompile>
+    <ClCompile Include="StaminaBar.cpp">
+      <Filter>Game\UI\ProgressBar</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthBar.cpp">
+      <Filter>Game\UI\ProgressBar</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthGauge.cpp">
+      <Filter>Game\UI\ProgressBar\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="StaminaGauge.cpp">
+      <Filter>Game\UI\ProgressBar\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerIcon.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneChangeButton.cpp" />
+    <ClCompile Include="CardConfirmArea.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GamePCH\pch.h">
+      <Filter>GamePCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameApp.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Triangle.h">
+      <Filter>Game\Object\Triangle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Quad.h">
+      <Filter>Game\Object\Quad</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Building.h">
+      <Filter>Game\Object\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\AnimTest.h">
+      <Filter>Game\Object\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Dwarf.h">
+      <Filter>Game\Object\Dwarf</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h">
+      <Filter>Scenes\SceneTemplate</Filter>
+    </ClInclude>
+    <ClInclude Include="System\UIScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="System\Game_InputContext.h">
+      <Filter>System\GameContext</Filter>
+    </ClInclude>
+    <ClInclude Include="System\SettingScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientNetwork\YunoClientNetwork.h">
+      <Filter>ClientNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="System\GridFactory.h">
+      <Filter>Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="System\IGridSystem.h">
+      <Filter>Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="System\PlayGridSystem.h">
+      <Filter>Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\TileHelper.h">
+      <Filter>Game\Object\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\PieceHelper.h">
+      <Filter>Game\Object\Piece</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\CardSlot.h">
+      <Filter>Game\UI\Slot</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\TitleScene.h">
+      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\WeaponSelectScene.h">
+      <Filter>Scenes\1.WeaponSelect</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\PlayScene.h">
+      <Filter>Scenes\2.Play</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\UIScene.h">
+      <Filter>Scenes\99.Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\WeaponButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\ButtonTemplate.h">
+      <Filter>Game\UI\Button\ButtonTemplate</Filter>
+    </ClInclude>
+    <ClInclude Include="System\WeaponSelectScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\Title.h">
+      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\CardQueue.h">
+      <Filter>Card</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\UnitPiece.h">
+      <Filter>Game\Object\Piece</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\UnitTile.h">
+      <Filter>Game\Object\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\WidgetTile.h">
+      <Filter>Game\Object\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\UnitGridLine.h">
+      <Filter>Game\Object\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\WidgetGridBox.h">
+      <Filter>Game\Object\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\WidgetGridLine.h">
+      <Filter>Game\Object\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\UnitGridBox.h">
+      <Filter>Game\Object\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Grid.h">
+      <Filter>System\GridSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="System\MinimapGridSystem.h">
+      <Filter>System\GridSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\UnitGridSystem.h">
+      <Filter>System\GridSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\WidgetGridSystem.h">
+      <Filter>System\GridSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="System\MinimapQueue.h">
+      <Filter>System\GridSystem\Queue_test</Filter>
+    </ClInclude>
+    <ClInclude Include="System\PlayQueue.h">
+      <Filter>System\GridSystem\Queue_test</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\ReadyButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\ExitButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\TitleImage.h">
+      <Filter>Game\UI\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\PhaseScene.h">
+      <Filter>Scenes\3.Phase</Filter>
+    </ClInclude>
+    <ClInclude Include="System\PhaseScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\CardTable.h">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\CardConfirmPanel.h">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\CardSelectionPanel.h">
+      <Filter>Game\UI\Image\CardTable</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\CardCancelButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\CardConfirmButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="System\CardRangeManager.h">
+      <Filter>Card</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager\GameManager.h">
+      <Filter>System\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager\SceneState.h">
+      <Filter>System\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\UserImage.h">
+      <Filter>Game\UI\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\UIWidgets.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Test_Unit.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="System\BattlePackets.h">
+      <Filter>System\Battle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\WidgetPiece.h">
+      <Filter>Game\Object\Piece</Filter>
+    </ClInclude>
+    <ClInclude Include="Emoji.h">
+      <Filter>Game\UI\Image\Imoji</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeechBubble.h">
+      <Filter>Game\UI\Image\Imoji</Filter>
+    </ClInclude>
+    <ClInclude Include="StaminaBar.h">
+      <Filter>Game\UI\ProgressBar</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthBar.h">
+      <Filter>Game\UI\ProgressBar</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthGauge.h">
+      <Filter>Game\UI\ProgressBar\Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="StaminaGauge.h">
+      <Filter>Game\UI\ProgressBar\Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerIcon.h">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClInclude>
     <ClInclude Include="SceneChangeButton.h" />
-    <ClInclude Include="SpeechBubble.h" />
-    <ClInclude Include="StaminaBar.h" />
-    <ClInclude Include="StaminaGauge.h" />
-    <ClInclude Include="System\BattlePackets.h" />
-    <ClInclude Include="System\CardManager.h" />
-    <ClInclude Include="Game\Object\CardQueue.h" />
-    <ClInclude Include="System\CardRangeManager.h" />
-    <ClInclude Include="GameManager\SceneState.h" />
-    <ClInclude Include="Game\UI\ButtonTemplate.h" />
-    <ClInclude Include="Game\UI\CardSlot.h" />
-    <ClInclude Include="Game\Object\Test_Unit.h" />
-    <ClInclude Include="Game\UI\ExitButton.h" />
-    <ClInclude Include="Game\UI\ReadyButton.h" />
-    <ClInclude Include="Game\UI\TitleImage.h" />
-    <ClInclude Include="Game\UI\UserImage.h" />
-    <ClInclude Include="Game\Object\Grid.h" />
-    <ClInclude Include="System\MinimapQueue.h" />
-    <ClInclude Include="GameManager\GameManager.h" />
-    <ClInclude Include="Game\UI\Card.h" />
-    <ClInclude Include="Game\UI\CardTable.h" />
-    <ClInclude Include="ClientNetwork\YunoClientNetwork.h" />
-    <ClInclude Include="GamePCH\pch.h" />
-    <ClInclude Include="Game\GameApp.h" />
-    <ClInclude Include="Game\Object\AnimTest.h" />
-    <ClInclude Include="Game\Object\Building.h" />
-    <ClInclude Include="Game\Object\Dwarf.h" />
-    <ClInclude Include="Game\Object\Triangle.h" />
-    <ClInclude Include="Game\Object\Quad.h" />
-    <ClInclude Include="Game\Object\CardData.h" />
-    <ClInclude Include="Scenes\PhaseScene.h" />
-    <ClInclude Include="System\PhaseScene_InputContext.h" />
-    <ClInclude Include="Scenes\RenderTest.h" />
-    <ClInclude Include="System\GridFactory.h" />
-    <ClInclude Include="System\MinimapGridSystem.h" />
-    <ClInclude Include="Game\Object\PieceHelper.h" />
-    <ClInclude Include="System\PlayGridSystem.h" />
-    <ClInclude Include="System\IGridSystem.h" />
-    <ClInclude Include="System\PlayQueue.h" />
-    <ClInclude Include="Scenes\PlayScene.h" />
-    <ClInclude Include="Scenes\SceneTemplate\SceneTemplate.h" />
-    <ClInclude Include="Scenes\TitleScene.h" />
-    <ClInclude Include="Scenes\UIScene.h" />
-    <ClInclude Include="System\Game_InputContext.h" />
-    <ClInclude Include="System\SettingScene_InputContext.h" />
-    <ClInclude Include="Game\Object\TileHelper.h" />
-    <ClInclude Include="System\UIScene_InputContext.h" />
-    <ClInclude Include="Game\UI\UIWidgets.h" />
-    <ClInclude Include="Scenes\WeaponSelectScene.h" />
-    <ClInclude Include="Game\UI\WeaponButton.h" />
-    <ClInclude Include="Scenes\Title.h" />
-    <ClInclude Include="Game\Object\UnitGridBox.h" />
-    <ClInclude Include="Game\Object\UnitGridLine.h" />
-    <ClInclude Include="Game\Object\UnitGridSystem.h" />
-    <ClInclude Include="Game\Object\UnitPiece.h" />
-    <ClInclude Include="Game\Object\UnitTile.h" />
-    <ClInclude Include="System\WeaponSelectScene_InputContext.h" />
-    <ClInclude Include="Game\UI\WidgetPiece.h" />
-    <ClInclude Include="Game\UI\WidgetTile.h" />
-    <ClInclude Include="TitleScene_InputContext.h" />
-    <ClInclude Include="UI_InputContext.h" />
-    <ClInclude Include="utilityClass.h" />
-    <ClInclude Include="MinimapTile.h" />
-    <ClInclude Include="Game\UI\DirSelectButton.h" />
+    <ClInclude Include="TitleScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="CardConfirmArea.h" />
+    <ClInclude Include="utilityClass.h">
+      <Filter>System\Utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game\UI\Card.h">
+      <Filter>Card</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\RenderTest.h">
+      <Filter>Scenes\999.RenderTest</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\CardData.h">
+      <Filter>Card</Filter>
+    </ClInclude>
+    <ClInclude Include="System\CardManager.h">
+      <Filter>Card</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
