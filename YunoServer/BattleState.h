@@ -16,7 +16,7 @@ namespace yuno::server
 
         int x = 0;                      
         int y = 0;                       //배틀 계산용 좌표
-        uint8_t tileID = 0;          // 현재 좌표
+        uint8_t tileID = 0;             // 현재 좌표
         uint8_t hp = 0;                 //체력
         uint8_t stamina = 0;            //스테미나
 

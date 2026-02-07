@@ -771,7 +771,7 @@ bool PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState
     auto oldcell = GetCellByID(prevUS.targetTileID);
 
     // 이동하다가 충돌했을 때
-    bool isCollided = newUS.isEvent;
+    bool isCollided = static_cast<bool>(newUS.isEvent);
     if (isCollided)
     {
         if (HasThis_US(dirty, Dirty_US::hp))
