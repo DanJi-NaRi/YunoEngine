@@ -438,7 +438,8 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             break;
         }
 
-        pPiece->SetDir(as.dir, true, 3.f);
+
+        pPiece->SetDir(as.dir, true, 3.0f);
 
         const auto& tiles = as.tileIDs;
         for (int i = 0; i < tiles.size(); i++)
