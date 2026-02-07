@@ -36,6 +36,7 @@ inline void operator++(AttackPhase& a) { a = (AttackPhase)((uint8_t)a + 1); }
 struct AttackSequence
 {
     GamePiece attacker = GamePiece::None;   // 공격 기물
+    Direction dir = Direction::Same;
     std::vector<int> tileIDs;               // 피격 타일들
     std::vector<GamePiece> hitPieces;       // 피격 기물들
     AttackPhase attackPhase = AttackPhase::None;
@@ -175,7 +176,7 @@ private:
     // 시간 관련
     float moveDuration = 2.5f;
     float buffDuration = 2.f;
-    float attackDuration = 3.5f;
+    float attackDuration = 3.f;
 
     int tileFlashCount = 3;
     float tileFlashInterval = 0.3f;
@@ -184,6 +185,10 @@ private:
     float hitDuration = tileFlashDuration;    // 미정. 현재 tileFlashDuration과 동일.
 
     float attackAndMoveDuration = attackDuration + tileFlashDuration + hitDuration;
+    
+    float pktOffset = 0.5f;
+    float attackPktTime = attackAndMoveDuration + pktOffset;
+    float utilityPktTime = moveDuration + attackAndMoveDuration + buffDuration + pktOffset;
     
     // 공격 처리
     bool m_attackActive = false;
