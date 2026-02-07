@@ -53,14 +53,14 @@ namespace yuno::server
         m_server.SetOnPacket(
             [this](std::shared_ptr<yuno::net::TcpSession> session, std::vector<std::uint8_t>&& packetBytes)
             {
-                std::cout << "-----------[Server] OnPacket: sid=" << session->GetSessionId()
-                    << ", bytes=" << packetBytes.size() << "\n";
+                //std::cout << "-----------[Server] OnPacket: sid=" << session->GetSessionId()
+                //    << ", bytes=" << packetBytes.size() << "\n";
 
                 yuno::net::NetPeer peer{};
                 peer.sId = session->GetSessionId();              
 
                 m_dispatcher.Dispatch(peer, packetBytes);
-                std::cout << "[Server] Dispatch called\n";
+                //::cout << "[Server] Dispatch called\n";
             });
 
         m_server.SetOnDisconnected(
