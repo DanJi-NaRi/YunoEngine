@@ -179,12 +179,12 @@ void PlayScene::TestInput()
     HandleCardSelect(VK_NUMPAD1, 0, 1); //버프
     HandleCardSelect(VK_NUMPAD2, 0, 3); //이동
     HandleCardSelect(VK_NUMPAD3, 0, 5); //공격
-    HandleCardSelect(VK_NUMPAD4, 0, 16);//특수
+    HandleCardSelect(VK_NUMPAD4, 0, 12);//특수
 
     HandleCardSelect(VK_NUMPAD5, 1, 1); //버프
     HandleCardSelect(VK_NUMPAD6, 1, 3); //이동
     HandleCardSelect(VK_NUMPAD7, 1, 5); //공격
-    HandleCardSelect(VK_NUMPAD8, 1, 16);//특수
+    HandleCardSelect(VK_NUMPAD8, 1, 12);//특수
 
     HandleCardSelect(VK_NUMPAD9, 1,9);
 
