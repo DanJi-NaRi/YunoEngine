@@ -8,6 +8,19 @@ namespace yuno::server
 {
     BattleState g_battleState{};
 
+    namespace
+    {
+        void ResetSlot(MatchManager::MatchSlot& slot)
+        {
+            slot.occupied = false;
+            slot.userId = 0;
+            slot.sessionId = 0;
+            slot.unitId1 = 0;
+            slot.unitId2 = 0;
+            slot.ready = false;
+        }
+    }
+
     int MatchManager::FindSlotBySessionId(std::uint64_t sid) const
     {
         if (sid == 0) return -1;
@@ -47,6 +60,8 @@ namespace yuno::server
         {
             if (!m_slots[i].occupied)
             {
+                ResetSlot(m_slots[i]);
+
                 m_slots[i].occupied = true;
                 m_slots[i].userId = uid;
                 m_slots[i].sessionId = sid;
@@ -71,9 +86,7 @@ namespace yuno::server
         const int idx = FindSlotByUserId(uid);
         if (idx < 0) return;
 
-        m_slots[idx].occupied = false;
-        m_slots[idx].userId = 0;
-        m_slots[idx].sessionId = 0;
+        ResetSlot(m_slots[idx]);
     }
 
     std::uint8_t MatchManager::GetOccupiedCount() const
@@ -88,8 +101,25 @@ namespace yuno::server
 
     bool MatchManager::ClearUnitByUserId(std::uint32_t uid, int slotWeaponIndex)
     {
-        return false;
+        const int idx = FindSlotByUserId(uid);
+        if (idx < 0)
+            return false;
+
+        auto& slot = m_slots[static_cast<std::size_t>(idx)];
+        if (!slot.occupied)
+            return false;
+
+        if (slotWeaponIndex == 1)
+            slot.unitId1 = 0;
+        else if (slotWeaponIndex == 2)
+            slot.unitId2 = 0;
+        else
+            return false;
+
+        slot.ready = false;
+        return true;
     }
+
     bool MatchManager::SetUnitsByUserId(std::uint32_t uid, std::uint32_t u1, std::uint32_t u2)
     {
         const int idx = FindSlotByUserId(uid);

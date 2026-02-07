@@ -24,6 +24,7 @@ namespace yuno::server
         void EndTurn();
         void EndGame();
         void OnPlayerSelectedCard(int playerIdx);
+        void ResetMatchState();
 
         
     private:
