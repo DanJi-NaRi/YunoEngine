@@ -52,3 +52,59 @@ bool Grid::InBounds(int cx, int cz)
 {
     return (0 <= cx && cx < m_column) && (0 <= cz && cz < m_row);
 }
+
+/////
+
+GridXY::GridXY(int row, int column, float cellSizeX, float cellSizeY)
+{
+    row = row;
+    column = column;
+    halfCells.x = std::floorf(column / 2.f);
+    halfCells.y = std::floorf(row / 2.f);
+    cellSize.x = cellSizeX;
+    cellSize.y = cellSizeY;
+    inv.x = 1.f / cellSizeX;
+    inv.y = 1.f / cellSizeY;
+}
+
+void GridXY::SetGridXY(int row, int column, float cellSizeX, float cellSizeY)
+{
+    this->row = row;
+    this->col = column;
+    halfCells.x = std::floorf(column / 2.f);
+    halfCells.y = std::floorf(row / 2.f);
+    cellSize.x = cellSizeX;
+    cellSize.y = cellSizeY;
+    inv.x = 1.f / cellSizeX;
+    inv.y = 1.f / cellSizeY;
+}
+
+
+Int2 GridXY::WorldToCell(float x, float y)
+{
+    float halfx = halfCells.x * cellSize.x;
+    float halfy = halfCells.y * cellSize.y;
+
+    int cx = (int)std::floor((x + halfx) * inv.x);
+    int cy = (int)std::floor((y + halfy) * inv.y);
+
+    return { cx, cy };
+}
+
+
+Float2 GridXY::CellToWorld(int cx, int cy)
+{
+    float halfx = halfCells.x * cellSize.x;
+    float halfy = halfCells.y * cellSize.y;
+
+    float wx = -halfx + cx * cellSize.x;
+    float wy = -halfy + cy * cellSize.y;
+
+    return { wx, wy };
+}
+
+
+bool GridXY::InBounds(int cx, int cy)
+{
+    return (0 <= cx && cx < col) && (0 <= cy && cy < row);
+}

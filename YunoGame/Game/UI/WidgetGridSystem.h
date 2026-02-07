@@ -2,9 +2,10 @@
 
 #pragma once
 #include "IGridSystem.h"
-
+#include "UIFactory.h"
 class UIManager;
 class Widget;
+class WidgetFacotry;
 class GridFactory;
 class Grid;
 
@@ -12,11 +13,8 @@ class WidgetGridBox;
 
 class WidgetGridSystem : public IGridSystem
 {
-protected:
-    UIManager* m_manager = nullptr;
-
 public:
-    WidgetGridSystem(UIManager* manager);                                                 // 씬에서 manager 받기
+    WidgetGridSystem(UIFactory& uiFactory);
     virtual ~WidgetGridSystem();
 
     void CreateObject(float x, float y, float z) = 0;
@@ -42,4 +40,6 @@ protected:
     std::vector<std::unique_ptr<Grid>> m_grids;
 
     std::unique_ptr<GridFactory> m_gridFactory;
+
+    UIFactory& m_uiFactory;
 };

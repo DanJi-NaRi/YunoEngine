@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "WidgetGridLine.h"
+#include "GridFactory.h"
+#include "Minimap.h"
 
+WidgetGridLine::WidgetGridLine(UIFactory& uiFactory) : Widget(uiFactory)
+{
+}
 
 WidgetGridLine::~WidgetGridLine()
 {
@@ -32,6 +37,15 @@ bool WidgetGridLine::Create(const std::wstring& name, uint32_t id, Float2 sizePx
     return true;
 }
 
+void WidgetGridLine::CreateChild()
+{
+}
+
+bool WidgetGridLine::Start()
+{
+    return true;
+}
+
 bool WidgetGridLine::Update(float dTime)
 {
     Widget::Update(dTime);
@@ -51,24 +65,25 @@ bool WidgetGridLine::CreateMesh()
     m_lineVtx.clear();
     m_lineVtx.reserve((m_row + 1) * 2 + (m_column + 1) * 2);
 
-    float y = 0.0f;
+    float z = 0.0f;
 
     // 전체 그리드의 반 길이 (셀 개수 기준!)
     float halfX = m_column * 0.5f;
-    float halfZ = m_row * 0.5f;
+    float halfY = m_row * 0.5f;
 
-    // 세로선(= Z방향으로 뻗는 선): x가 변하고 z는 [-halfZ, +halfZ]
-    for (int i = 0; i <= m_column; ++i) {             // column+1개 라인
-        float x = -halfX + i;          // 일정 간격으로
-        m_lineVtx.push_back({ x, -halfZ, y });
-        m_lineVtx.push_back({ x, halfZ, y });
-    }
 
     // 가로선(= X방향으로 뻗는 선): z가 변하고 x는 [-halfX, +halfX]
     for (int i = 0; i <= m_row; ++i) {               // row+1개 라인
-        float z = -halfZ + i;
-        m_lineVtx.push_back({ -halfX, z, y });
-        m_lineVtx.push_back({ halfX, z, y });
+        float y = -halfY + i;
+        m_lineVtx.push_back({ -halfX, y, z });
+        m_lineVtx.push_back({ halfX, y, z });
+    }
+
+    // 세로선(= Y방향으로 뻗는 선): x가 변하고 y는 [-halfY, +halfY]
+    for (int i = 0; i <= m_column; ++i) {             // column+1개 라인
+        float x = -halfX + i;          // 일정 간격으로
+        m_lineVtx.push_back({ x, -halfY, z });
+        m_lineVtx.push_back({ x, halfY, z });
     }
 
     VertexStreams streams{};
@@ -84,19 +99,3 @@ bool WidgetGridLine::CreateMesh()
     return true;
 }
 
-
-bool WidgetGridLine::CreateMaterial()
-{
-    MaterialDesc md{};
-    md.passKey.vs = ShaderId::DebugGrid;
-    md.passKey.ps = ShaderId::DebugGrid;
-    md.passKey.vertexFlags = VSF_Pos;
-
-    md.passKey.blend = BlendPreset::Opaque;
-    md.passKey.raster = RasterPreset::CullNone;
-    md.passKey.depth = DepthPreset::ReadWrite;
-
-    m_defaultMaterial = m_pRenderer->CreateMaterial(md);
-
-    return true;
-}

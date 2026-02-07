@@ -137,6 +137,9 @@
     <Filter Include="Shaders\UI">
       <UniqueIdentifier>{311bdcd1-2fb9-465e-a36d-096cc06a11c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\UI\UtilWIdget">
+      <UniqueIdentifier>{58b29e9d-f497-41cc-8819-8f7f0b3bf9e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -564,6 +567,9 @@
       <Filter>Shaders\UI</Filter>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\UI_SpriteAnim.hlsl">
+      <Filter>Shaders\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_Debug.hlsl">
       <Filter>Shaders\UI</Filter>
     </FxCompile>
   </ItemGroup>

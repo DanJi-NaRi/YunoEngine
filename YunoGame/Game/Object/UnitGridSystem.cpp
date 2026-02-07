@@ -10,6 +10,7 @@
 #include "Grid.h"
 #include "UnitGridBox.h"
 #include "UnitGridLine.h"
+#include "Minimap.h"
 
 
 
@@ -24,8 +25,6 @@ UnitGridSystem::~UnitGridSystem()
 {
 
 }
-
-
 
 void UnitGridSystem::SetNG_P(Grid* NG_P)
 {

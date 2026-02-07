@@ -11,12 +11,14 @@
 #include "WidgetGridBox.h"
 #include "WidgetGridLine.h"
 
+#include "UIFactory.h"
+#include "Widget.h"
 
 
-WidgetGridSystem::WidgetGridSystem(UIManager* manager) : m_manager(manager)
+WidgetGridSystem::WidgetGridSystem(UIFactory uiFactory) : m_uiFactory(uiFactory)
 {
     m_gridFactory = std::make_unique<GridFactory>();
-    assert(m_manager != nullptr); // 여기서 바로 잡힘
+    assert(m_gridFactory); // 여기서 바로 잡힘
 }
 
 
@@ -63,14 +65,14 @@ void WidgetGridSystem::CreateGrid(int row, int column, float cellSizeX, float ce
 }
 
 
-void WidgetGridSystem::CreateGridBox(float x, float y, float z)
-{
-    m_gridBox = m_manager->CreateObject<WidgetGridBox>(L"GridBox", g_defWidgetSize, XMFLOAT3(x, y, z));
-}
-
-
-void WidgetGridSystem::CreateGridLine(float x, float y, float z)
-{
-    auto pLine = m_manager->CreateObject<WidgetGridLine>(L"DebugGridLine", g_defWidgetSize, XMFLOAT3(x, y, z));
-    pLine->SetScale({ m_cellSizeX, m_cellSizeZ, 1 });
-}
+//void WidgetGridSystem::CreateGridBox(float x, float y, float z)
+//{
+//    m_gridBox = m_uiFactory.CreateWidget<WidgetGridBox>(L"GridBox", g_defWidgetSize, XMFLOAT3(x, y, z));
+//}
+//
+//
+//void WidgetGridSystem::CreateGridLine(float x, float y, float z)
+//{
+//    auto pLine = m_uiFactory.CreateWidget<WidgetGridLine>(L"DebugGridLine", g_defWidgetSize, XMFLOAT3(x, y, z));
+//    pLine->SetScale({ m_cellSizeX, m_cellSizeZ, 1 });
+//}

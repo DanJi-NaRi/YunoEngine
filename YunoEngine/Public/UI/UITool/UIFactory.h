@@ -17,11 +17,22 @@ public:
     // UIManager.h
     Float2 GetCanvasSize(); // 캔버스 사이즈 or 클라이언트 사이즈 반환
 
-    //template<typename T>
-    //T* CreateWidget(const std::wstring& name, DirectX::XMFLOAT3 pos) // 위젯 생성 // 템플릿 함수
-    //{
-    //    return m_uiManager.CreateWidget<T>(name, pos); // UIManager 멤버 접근은 내부에서
-    //}
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, DirectX::XMFLOAT3 pos) // 위젯 생성 // 템플릿 함수
+    {
+        static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+        Widget* pWidget = m_uiManager.CreateWidget<T>(name, pos); // UIManager 멤버 접근은 내부에서
+        pWidget->CreateChild();
+        return pWidget;
+    }
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, Float2 sizePx, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 scale, UIDirection dir, Widget* pParent) {
+        static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+        Widget* pWidget = m_uiManager.CreateWidget<T>(name, pos); // UIManager 멤버 접근은 내부에서
+        pWidget->CreateChild();
+        return pWidget;
+    }
+
      
     // 자식 생성 (부모 레이어 초회 상속)
     template<typename T>
@@ -116,7 +127,7 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     assert(pParent);
     if (!pParent) return nullptr;
 
-    T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, pivot); // UIManager 멤버 접근은 내부에서
+    T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, scale, pivot); // UIManager 멤버 접근은 내부에서
     pParent->Attach(pChild);
     //pChild->SetLayer(pParent->GetLayer());
     pChild->CreateChild(); // 자식 생성
@@ -135,7 +146,7 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     assert(pParent);
     if (!pParent) return nullptr;
 
-    T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, pivot); // UIManager 멤버 접근은 내부에서
+    T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, scale, pivot); // UIManager 멤버 접근은 내부에서
     pParent->Attach(pChild);
     //pChild->SetLayer(pParent->GetLayer());
     pChild->CreateChild(); // 자식 생성
@@ -154,7 +165,7 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     assert(pParent);
     if (!pParent) return nullptr;
 
-    T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, pivot); // UIManager 멤버 접근은 내부에서
+    T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, rot, scale, pivot); // UIManager 멤버 접근은 내부에서
     pParent->Attach(pChild);
     //pChild->SetLayer(pParent->GetLayer());
     pChild->CreateChild(); // 자식 생성
@@ -173,7 +184,7 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     assert(pParent);
     if (!pParent) return nullptr;
 
-    T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, pivot); // UIManager 멤버 접근은 내부에서
+    T* pChild = m_uiManager.CreateWidget<T>(name, sizePx, pos, rot, scale, pivot); // UIManager 멤버 접근은 내부에서
     pParent->Attach(pChild);
     //pChild->SetLayer(pParent->GetLayer());
     pChild->CreateChild(); // 자식 생성
