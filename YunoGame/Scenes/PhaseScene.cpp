@@ -48,7 +48,7 @@ bool PhaseScene::OnCreateScene()
     CreateWidget<Minimap>(L"Minimap", Float2(730, 616), XMFLOAT3(clientX*0.5f, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::Bottom);
 
     //테스트용
-    CreateWidget<WidgetGridLine>(L"_DebugWidgetGridLine", Float2(90, 90), XMFLOAT3(clientX*0.5f, clientY * 0.5f, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::Center);
+    //<WidgetGridLine>(L"_DebugWidgetGridLine", Float2(90, 90), XMFLOAT3(clientX*0.5f, clientY * 0.5f, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::Center);
     //CreateWidget<MinimapTile>(L"_tstTile", Float2(90, 90), XMFLOAT3(clientX * 0.5f, clientY * 0.5f, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::Center);
     //std::cout << clientX << " : " << clientY << std::endl;
     CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(1513, 578), XMFLOAT3(clientX, clientY, 0), XMFLOAT3(1, 1, 1),  UIDirection::RightBottom);
