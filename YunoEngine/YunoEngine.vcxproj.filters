@@ -586,5 +586,8 @@
     <None Include="..\Assets\Shaders\PP_TexturesSampler.hlsli">
       <Filter>Shaders\Include</Filter>
     </None>
+    <None Include="..\Assets\Shaders\ConstantBuffers_Widget.hlsli">
+      <Filter>Shaders\Include</Filter>
+    </None>
   </ItemGroup>
 </Project>
