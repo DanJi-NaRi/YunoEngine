@@ -42,6 +42,18 @@ namespace
 
         return L"../Assets/UI/WEAPON_SELECT/selected_" + pieceName + L"_" + std::to_wstring(slotTextureIndex) + L".png";
     }
+
+    std::wstring GetWeaponSlotTexturePath(PieceType pieceType, int slotTextureIndex)
+    {
+        const std::wstring pieceName = GetPieceNameLower(pieceType);
+        if (pieceName.empty())
+            return L"";
+
+        if (slotTextureIndex < 1 || slotTextureIndex > 4)
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/weapon_" + std::to_wstring(slotTextureIndex) + L"_" + pieceName + L".png";
+    }
 }
 
 WeaponButton::WeaponButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
@@ -133,28 +145,47 @@ bool WeaponButton::LMBPressedEvent()
 
 
     TextureImage* targetImage = nullptr;
+    TextureImage* targetWeaponImage = nullptr;
     int pickIndex = 0;
 
     if (GameManager::Get().GetMyPiece(0) == PieceType::None)
     {
         targetImage = slotImage0;
+        targetWeaponImage = (myIdx == 1)
+            ? dynamic_cast<TextureImage*>(m_pWeaponImage0)
+            : dynamic_cast<TextureImage*>(m_pWeaponImage2);
         pickIndex = 0;
     }
     else if (GameManager::Get().GetMyPiece(1) == PieceType::None)
     {
         targetImage = slotImage1;
+        targetWeaponImage = (myIdx == 1)
+            ? dynamic_cast<TextureImage*>(m_pWeaponImage1)
+            : dynamic_cast<TextureImage*>(m_pWeaponImage3);
         pickIndex = 1;
     }
     else
     {
         targetImage = slotImage0;
+        targetWeaponImage = (myIdx == 1)
+            ? dynamic_cast<TextureImage*>(m_pWeaponImage0)
+            : dynamic_cast<TextureImage*>(m_pWeaponImage2);
         pickIndex = 0;
     }
 
     const int slotTextureIndex = (myIdx == 1 ? 1 : 3) + pickIndex;
     const std::wstring slotTexturePath = GetSelectedSlotTexturePath(m_pieceType, slotTextureIndex);
     if (!slotTexturePath.empty())
+    {
         targetImage->ChangeTexture(slotTexturePath);
+    }
+
+    const std::wstring weaponTexturePath = GetWeaponSlotTexturePath(m_pieceType, slotTextureIndex);
+    if (targetWeaponImage && !weaponTexturePath.empty())
+    {
+        targetWeaponImage->ChangeTexture(weaponTexturePath);
+        targetWeaponImage->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
+    }
 
 
     GameManager::Get().SetMyPick(pickIndex, m_pieceType);
@@ -243,4 +274,10 @@ void WeaponButton::SetUserImages(Widget* U1I1, Widget* U1I2, Widget* U2I1, Widge
     m_pUserImage3 = U2I2;
 }
 
-
+void WeaponButton::SetWeaponImages(Widget* U1W1, Widget* U1W2, Widget* U2W1, Widget* U2W2)
+{
+    m_pWeaponImage0 = U1W1;
+    m_pWeaponImage1 = U1W2;
+    m_pWeaponImage2 = U2W1;
+    m_pWeaponImage3 = U2W2;
+}
