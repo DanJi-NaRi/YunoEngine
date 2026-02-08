@@ -30,8 +30,11 @@ bool UIScene::OnCreateScene()
 {
     // 테스트 공간
     m_uiManager->SetOrthoFlag(true);
-    auto clientX = YunoEngine::GetWindow()->GetClientWidth();
-    auto clientY = YunoEngine::GetWindow()->GetClientHeight();
+    //auto clientX = YunoEngine::GetWindow()->GetClientWidth();
+    //auto clientY = YunoEngine::GetWindow()->GetClientHeight();
+
+    const auto clientX = g_DefaultClientXY.x;
+    const auto clientY = g_DefaultClientXY.y;
     /*CreateWidget<PlayerIcon>(L"tstPlayerIconL", Float2(217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
     
     auto* IconR = CreateWidget<PlayerIcon>(L"tstPlayerIconR", Float2(-217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);

@@ -193,22 +193,26 @@ int YunoEngine::Run()
         ImGuiManager::BeginFrame();
 
 
-        if (m_sceneManager->GetActiveScene()->GetUIManager()) {
-            auto& map = m_sceneManager->GetActiveScene()->GetUIManager()->GetWidgetlist();
-            for (const auto& kv : map) // kv: pair<const UINT, Widget*>
-            {
-
-                if (auto* cs = dynamic_cast<Slot*>(kv.second))
+        {
+            // Slot 감지 범위 RECT
+            if (m_sceneManager->GetActiveScene()->GetUIManager()) {
+                auto& map = m_sceneManager->GetActiveScene()->GetUIManager()->GetWidgetlist();
+                for (const auto& kv : map) // kv: pair<const UINT, Widget*>
                 {
-                    if(cs->IsSnapped()) DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(0, 0, 255));
-                    else DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(255, 0, 0));
-                    //else DrawDebugRect_Client(cs->GetRect());
-                }
 
-                if (auto* cs = dynamic_cast<Button*>(kv.second))
-                    DrawDebugRect_Client(cs->GetRect());
+                    if (auto* cs = dynamic_cast<Slot*>(kv.second))
+                    {
+                        if (cs->IsSnapped()) DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(0, 0, 255));
+                        else DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(255, 0, 0));
+                        //else DrawDebugRect_Client(cs->GetRect());
+                    }
+
+                    if (auto* cs = dynamic_cast<Button*>(kv.second))
+                        DrawDebugRect_Client(cs->GetRect());
+                }
             }
         }
+
 
         
         ImGuiManager::EndFrame();

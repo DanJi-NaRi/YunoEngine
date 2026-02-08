@@ -4,6 +4,7 @@
 #include "AnimationUnit.h"
 #include "CursurSystem.h"
 #include "Widget.h"
+#include "UIConverter.h"
 #include "SerializeScene.h"
 
 enum class ButtonState;
@@ -103,6 +104,7 @@ public:
     bool ProcessButtonKey(ButtonState state, uint32_t key);
 
     Float2 GetCanvasSize();
+    UICanvasMapping GetCanvasMapping();
 
     std::vector<WidgetDesc> BuildWidgetDesc();
     void ApplyWidgetFromDesc(const std::vector<WidgetDesc>& wds);

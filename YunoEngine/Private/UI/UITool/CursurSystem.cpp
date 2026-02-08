@@ -41,7 +41,7 @@ void CursurSystem::UpdateCheckSnap()
     DragProvider* drag = m_focusedWidget->GetDragProvider();
     if (!drag) return;
 
-    drag->IsNowDragging();
+    drag->IsNowDragging();          // 얘 뭐지? 왜있는거지? - 준혁
     
     if (m_focusedWidget->GetButtonState() == ButtonState::Released) {
         FindSnapWidget();
@@ -96,7 +96,15 @@ bool CursurSystem::FindSnapWidget()
         if (point->useSnap) {
             //스냅 O
 
-            XMFLOAT3 snapPos = { point->snapPos.x, point->snapPos.y, 0 };
+            const XMFLOAT3 slotWorldPos = TransformPoint(
+                XMFLOAT3(0.0f, 0.0f, 0.0f),
+                slot->GetWorldNoSizeMatrix()
+            );
+
+            XMFLOAT3 snapPos = slotWorldPos;
+            if (Widget* parent = m_focusedWidget->GetParent()) {
+                snapPos = WorldToLocalPos(slotWorldPos, parent->GetWorldNoSizeMatrix());
+            }
 
             drag->SetBkPos(snapPos);
 
