@@ -4,6 +4,7 @@ class IInput;
 //class UIManager;
 class Slot;
 class UIFactory;
+class Widget;
 
 // 드래그 기능 공급자
 // 슬롯과 피봇이 동일하지 않으면 차이가 벌어질 수 있음.
@@ -12,7 +13,7 @@ class DragProvider
 public:
     DragProvider();
     ~DragProvider();
-    bool Init(XMFLOAT3* pPos, bool canDrag, UIFactory* uiFactory = nullptr);
+    bool Init(XMFLOAT3* pPos, bool canDrag, UIFactory* uiFactory = nullptr, Widget* ownerWidget = nullptr);
     void Clear();
     void UpdateDrag(float dTime);
     void UpdatePos();
@@ -37,7 +38,7 @@ protected:
     
     IInput* m_pInput;
     UIFactory* m_uiFactory;
-
+    Widget* m_ownerWidget;
 
     // 소유자 Position
     XMFLOAT3* m_pPos;               // DragProvider 소유자 포지션
