@@ -67,6 +67,8 @@ protected:
     std::wstring m_hoverdTexturePath; // 커서를 올렸을 때, 바뀌는 텍스처
     std::wstring m_PressedTexturePath; // 클릭했을 때, 바뀌는 텍스처 // 사용 안 함
 
+    std::function<void()> m_eventLMB; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용
+    std::function<void()> m_EventRMB; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용
 private:
     //bool CreateMesh() override;      // 메시 생성 (한 번만)
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)

@@ -43,6 +43,8 @@ public:
     bool IsSnapped() { return m_snapPoint.IsSnapped(); }
     bool ReleaseOwner() { m_snapPoint.pSnapOwner = nullptr; }
 
+    bool IsEnabled() { return m_isEnabled; }
+    void SetIsEnabled(bool isEnabled) { m_isEnabled = isEnabled; }
     //virtual void ChangeSprite(int mtrlNum); // 이거 이미지 or 위젯이 들고 있어도 되는 거 아님??
 protected:
     // 아직까지 배열로 활용할진 모르겠으니 최소 형태로 한 뒤 추후 배열로 확대합시다.
@@ -50,6 +52,7 @@ protected:
 
     //std::vector<SnapPoint> m_snapPoint;    // 위젯이 배치할 구간이 있다면
     SnapPoint m_snapPoint;    // 위젯이 배치할 구간이 있다면
+    bool m_isEnabled = true; // Slot 자체 사용 여부 (꺼지면 아예 기능안함)
 };
 
 
