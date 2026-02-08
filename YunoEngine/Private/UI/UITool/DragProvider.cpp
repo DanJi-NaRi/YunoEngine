@@ -2,6 +2,8 @@
 #
 #include "DragProvider.h"
 #include "IInput.h"
+#include "UIFactory.h"
+#include "UIConverter.h"
 #include "YunoTransform.h"
 
 #include "Slot.h"
@@ -32,7 +34,7 @@ DragProvider::~DragProvider()
 /// <param name="pPos">     드래그 당할 위젯의 포지션  </param>
 /// <param name="canDrag">  드래그 가능 여부           </param>
 /// <returns></returns>
-bool DragProvider::Init(XMFLOAT3* pPos, bool canDrag) {
+bool DragProvider::Init(XMFLOAT3* pPos, bool canDrag, UIFactory* uiFactory) {
     m_pInput = YunoEngine::GetInput();
     if (!m_pInput) return false;
 
@@ -43,6 +45,7 @@ bool DragProvider::Init(XMFLOAT3* pPos, bool canDrag) {
 
     m_canDrag = canDrag;
     m_isDrag = false;
+    m_uiFactory = uiFactory;
 
     return true;
 }
@@ -52,6 +55,7 @@ void DragProvider::Clear()
     m_pInput = nullptr;
     m_pPos = nullptr;
     m_pSnappedSlot = nullptr;
+    m_uiFactory = nullptr;
 }
 
 void DragProvider::UpdateDrag(float dTime)
@@ -80,14 +84,44 @@ void DragProvider::UpdateDrag(float dTime)
 
 void DragProvider::UpdatePos()
 {
-    m_mousePos = XMFLOAT2(m_pInput->GetMouseX(), m_pInput->GetMouseY());
+    const float rawX = m_pInput->GetMouseX();
+    const float rawY = m_pInput->GetMouseY();
+    if (!m_uiFactory) {
+        m_mousePos = XMFLOAT2(rawX, rawY);
+        return;
+    }
+
+    const UICanvasMapping mapping = m_uiFactory->GetCanvasMapping();
+    if (!mapping.valid || mapping.canvasScale.x == 0.0f || mapping.canvasScale.y == 0.0f) {
+        m_mousePos = XMFLOAT2(rawX, rawY);
+        return;
+    }
+
+    m_mousePos = XMFLOAT2(
+        (rawX - mapping.letterboxOffset.x) / mapping.canvasScale.x,
+        (rawY - mapping.letterboxOffset.y) / mapping.canvasScale.y
+    );
 }
 
 void DragProvider::StartDrag()
 {
     if (m_canDrag && !m_isDrag) {
         UpdatePos();
-        m_pressedPos = XMFLOAT2(m_pInput->GetPressedMouseX(), m_pInput->GetPressedMouseY());
+        const float rawX = m_pInput->GetPressedMouseX();
+        const float rawY = m_pInput->GetPressedMouseY();
+        if (m_uiFactory) {
+            const UICanvasMapping mapping = m_uiFactory->GetCanvasMapping();
+            if (mapping.valid && mapping.canvasScale.x != 0.0f && mapping.canvasScale.y != 0.0f) {
+                m_pressedPos = XMFLOAT2(
+                    (rawX - mapping.letterboxOffset.x) / mapping.canvasScale.x,
+                    (rawY - mapping.letterboxOffset.y) / mapping.canvasScale.y
+                );
+            } else {
+                m_pressedPos = XMFLOAT2(rawX, rawY);
+            }
+        } else {
+            m_pressedPos = XMFLOAT2(rawX, rawY);
+        }
         m_dragOffset = XMFLOAT2{ m_pPos->x - m_pressedPos.x, m_pPos->y - m_pressedPos.y };
         m_bkPos = *m_pPos; // 포지션 백업 // Init 때 이미 설정함, 스냅 때 갱신됨
         m_isDrag = true;  // 드래그 태그 ON, Update에서 커서 스냅
