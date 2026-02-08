@@ -21,6 +21,7 @@ namespace yuno::server
         }
     }
 
+
     int MatchManager::FindSlotBySessionId(std::uint64_t sid) const
     {
         if (sid == 0) return -1;
@@ -243,6 +244,16 @@ namespace yuno::server
 
             InitUnitStatsByUnitId(player.unit1);
             InitUnitStatsByUnitId(player.unit2);
+        }
+    }
+
+    void MatchManager::ClearReadyAndUnits()
+    {
+        for (auto& s : m_slots)
+        {
+            s.ready = false;
+            s.unitId1 = 0;
+            s.unitId2 = 0;
         }
     }
 }

@@ -39,6 +39,7 @@ namespace yuno::net
 
         // System / Error
         S2C_Error = 240, // 에러 코드/메시지
+        S2C_EndGame_Disconnect = 241, //게임 중 강제종료
         S2C_Error_EnterDenied = 255
     };
 

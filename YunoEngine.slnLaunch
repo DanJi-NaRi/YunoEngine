@@ -3,11 +3,11 @@
     "Name": "새 프로필",
     "Projects": [
       {
-        "Path": "YunoServer\\YunoServer.vcxproj",
+        "Path": "YunoGame\\YunoGame.vcxproj",
         "Action": "Start"
       },
       {
-        "Path": "YunoGame\\YunoGame.vcxproj",
+        "Path": "YunoEngine\\YunoEngine.vcxproj",
         "Action": "Start"
       }
     ]

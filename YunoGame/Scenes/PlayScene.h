@@ -6,6 +6,13 @@
 
 //class Game_InputContext;
 class Triangle;
+class Emoji;
+
+struct TimedEmoji
+{
+    Emoji* widget;
+    float remainTime; // 초
+};
 
 class PlayScene final : public SceneBase
 {
@@ -31,7 +38,7 @@ private:
     void HandleDirectionInput();
     void EndTurn();
 
-    void ShowEmoteImage(uint8_t pid, uint8_t emoteId); //YDM TEST IMOTE
+    void ShowEmoteImage(uint8_t pid, uint8_t emoteId);
 private:
     std::unique_ptr<IGridSystem> m_playGrid;
     Game_InputContext m_gameCtx;
@@ -39,4 +46,6 @@ private:
     uint32_t m_pendingCardRuntimeID = 0; //방향 선택 확인
 
     int m_selectedUnitSlot = 0; // 어떤 유닛인지 선택
+
+    std::vector<TimedEmoji> m_emojis; // 이모지 시간 관리
 };
