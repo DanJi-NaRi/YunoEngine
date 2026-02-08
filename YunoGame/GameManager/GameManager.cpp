@@ -13,6 +13,8 @@
 #include "CountdownScene.h"
 
 #include "Minimap.h" // 미니맵
+#include "CardConfirmPanel.h"   // 카드 컨펌 패널
+#include "CardSelectionPanel.h" // 카드 선택 패널
 
 #include "YunoClientNetwork.h"
 
@@ -89,6 +91,15 @@ bool GameManager::IsEmptyObstaclePacket()
     return m_obstaclePkts.empty();
 }
 
+void GameManager::SetConfirmPanel(CardConfirmPanel* pConfirmPanel)
+{
+}
+
+void GameManager::SetSelectionPanel(CardSelectionPanel* pSelectionPanel)
+{
+    
+}
+
 void GameManager::SetMinimap(Minimap* pMinimap)
 {
     m_pMinimap = pMinimap;
@@ -97,7 +108,7 @@ void GameManager::SetMinimap(Minimap* pMinimap)
 void GameManager::MinimapUpdate(const ObstacleResult& obstacleResult)
 {
     if (!m_pMinimap) return;
-    m_pMinimap->Update();
+    m_pMinimap->UpdateMinimap(obstacleResult);
 }
 
 
@@ -233,7 +244,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
 
-        //sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+        sm->RequestPush(std::make_unique<PhaseScene>(), sp);
 
         break;
     }

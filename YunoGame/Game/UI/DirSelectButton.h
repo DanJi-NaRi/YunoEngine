@@ -30,9 +30,9 @@ public:
     virtual bool KeyReleasedEvent(uint32_t key = 0) override;   // 바인딩한 키 뗐을 때
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
-    virtual WidgetClass GetWidgetClass() override { return WidgetClass::Card; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::DirSelectButton; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/direction_mouseout.png"); };    // 머테리얼 생성 (한 번만)
 protected:
 
 };

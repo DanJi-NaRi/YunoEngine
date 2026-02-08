@@ -31,5 +31,6 @@ public:
     bool IsPlayerTile() { return m_data.isPlayerTile; }
 
 protected:
+    bool isSimulation; // 시뮬레이션 중인지 판단
     TileData m_data;
 };

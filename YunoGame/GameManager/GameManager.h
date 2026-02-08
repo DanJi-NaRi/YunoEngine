@@ -11,6 +11,8 @@
 #include "CardQueue.h"
 
 class Minimap;
+class CardConfirmPanel;
+class CardSelectionPanel;
 
 class ISceneManager;
 class ObjectManager;
@@ -184,6 +186,9 @@ private:
     std::queue<ObstacleResult> m_obstaclePkts;
 
     Minimap* m_pMinimap = nullptr; // 미니맵
+    CardConfirmPanel* m_pConfirmPanel = nullptr;
+    CardSelectionPanel* m_pSelectionPanel = nullptr;
+
 public:
     void PushBattlePacket(const BattleResult _BattleResult);
     BattleResult PopBattlePacket();
@@ -194,5 +199,9 @@ public:
     bool IsEmptyObstaclePacket();
 
     void SetMinimap(Minimap* minimap);
+    void SetConfirmPanel(CardConfirmPanel* pConfirmPanel);
+    void SetSelectionPanel(CardSelectionPanel* pSelectionPanel);
+
+   
     void MinimapUpdate(const ObstacleResult& obstacleResult);
 };

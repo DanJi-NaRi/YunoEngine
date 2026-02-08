@@ -52,12 +52,15 @@ bool PhaseScene::OnCreateScene()
         CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(700, 600), XMFLOAT3(clientX, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::RightBottom);
     }*/
 
-
+    auto& gm = GameManager::Get();
     // 원본 사이즈
     {
-        CreateWidget<CardConfirmPanel>(L"CardConformPanel", Float2(1066, 579), XMFLOAT3(0, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftBottom);        // 이거 사이즈 달라서 고쳐둠
-        CreateWidget<Minimap>(L"Minimap", Float2(730, 616), XMFLOAT3(clientX * 0.5f, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::Bottom);
-        CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(1513, 578), XMFLOAT3(clientX, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::RightBottom);
+        m_pConfirmPanel = CreateWidget<CardConfirmPanel>(L"CardConformPanel", Float2(1066, 579), XMFLOAT3(0, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftBottom);        // 이거 사이즈 달라서 고쳐둠
+        gm.SetConfirmPanel(m_pConfirmPanel);
+        m_pMinimap = CreateWidget<Minimap>(L"Minimap", Float2(730, 616), XMFLOAT3(clientX * 0.5f, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::Bottom);
+        gm.SetMinimap(m_pMinimap);
+        m_pSelectionPanel = CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(1513, 578), XMFLOAT3(clientX, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::RightBottom);
+        gm.SetSelectionPanel(m_pSelectionPanel);
     }
 
 
