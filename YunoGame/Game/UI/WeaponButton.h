@@ -32,6 +32,7 @@ public:
 
     void SetUserImages(Widget* U1I1, Widget* U1I2, Widget* U2I1, Widget* U2I2); // 이미지 포인터 받아오기
     void SetWeaponImages(Widget* U1W1, Widget* U1W2, Widget* U2W1, Widget* U2W2); // 무기 이미지 포인터 받아오기
+    void SetWeaponPreviewImages(Widget* weaponNameImage, Widget* weaponCardImage); // 가운데 이름/카드 미리보기
 
 protected:
     PieceType m_pieceType = PieceType::None;
@@ -52,6 +53,9 @@ private:
     Widget* m_pWeaponImage1 = nullptr; // 왼쪽 2
     Widget* m_pWeaponImage2 = nullptr; // 오른쪽 1
     Widget* m_pWeaponImage3 = nullptr; // 오른쪽 2
+
+    Widget* m_pWeaponNameImage = nullptr;
+    Widget* m_pWeaponCardImage = nullptr;
 
 public:
     void SetMySlotIndex(std::uint8_t idx) { m_mySlotIndex = idx; }

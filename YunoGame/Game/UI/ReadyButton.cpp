@@ -85,14 +85,7 @@ bool ReadyButton::LMBPressedEvent()
 
 
     const bool isReady = gm.ToggleReady();
-    std::wstring texturePath;
-    if(!isReady)
-        texturePath = L"../Assets/Test/BtnOn.png";
-    else
-        texturePath = L"../Assets/Test/BtnOff.png";
 
-    ChangeTexture(texturePath);
-    //m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
 
 
     // 패킷 초기화

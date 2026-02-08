@@ -39,6 +39,9 @@ private:
     Widget* m_pWeaponImage2 = nullptr;
     Widget* m_pWeaponImage3 = nullptr;
 
+    Widget* m_pWeaponNameImage = nullptr;
+    Widget* m_pWeaponCardImage = nullptr;
+
     //std::array<Widget*, 6> m_pWeaponBtns;
     WeaponButton* m_PWeaponBtn_Blaster    = nullptr;
     WeaponButton* m_PWeaponBtn_Breacher   = nullptr;

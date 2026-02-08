@@ -16,31 +16,6 @@
 //#include "Building.h"
 #include "UIWidgets.h"
 
-namespace
-{
-    std::wstring GetWeaponNameTexturePath(PieceType pieceType)
-    {
-        switch (pieceType)
-        {
-        case PieceType::Blaster:
-            return L"../Assets/UI/WEAPON_SELECT/Weapon_name_blaster.png";
-        case PieceType::Breacher:
-            return L"../Assets/UI/WEAPON_SELECT/Weapon_name_breacher.png";
-        case PieceType::Impactor:
-            return L"../Assets/UI/WEAPON_SELECT/Weapon_name_impactor.png";
-        case PieceType::Chakram:
-            return L"../Assets/UI/WEAPON_SELECT/Weapon_name_chakram.png";
-        case PieceType::Scythe:
-            return L"../Assets/UI/WEAPON_SELECT/Weapon_name_scythe.png";
-        case PieceType::Cleaver:
-            return L"../Assets/UI/WEAPON_SELECT/Weapon_name_cleaver.png";
-        case PieceType::None:
-        default:
-            return L"";
-        }
-    }
-}
-
 bool WeaponSelectScene::OnCreateScene()
 {
     auto iwindow = YunoEngine::GetWindow();
@@ -62,8 +37,9 @@ bool WeaponSelectScene::OnCreateScene()
 
 
 
-
-    CreateWidget<TextureImage>(L"WeaponName", L"../Assets/UI/WEAPON_SELECT/Weapon_name_blaster.png", XMFLOAT3(ClientW/2, 255, 0), UIDirection::Center);
+    m_pWeaponNameImage = CreateWidget<TextureImage>(L"WeaponName", L"../Assets/UI/WEAPON_SELECT/Weapon_name_blaster.png", XMFLOAT3(ClientW / 2, 255, 0), UIDirection::Center);
+    m_pWeaponCardImage = CreateWidget<TextureImage>(L"WeaponCard", L"../Assets/UI/WEAPON_SELECT/Info_blaster_mouseover.png", XMFLOAT3(ClientW / 2, 530, 0), UIDirection::Center);
+    //CreateWidget<TextureImage>(L"WeaponName", L"../Assets/UI/WEAPON_SELECT/Weapon_name_blaster.png", XMFLOAT3(ClientW/2, 255, 0), UIDirection::Center);
 
 
 
@@ -89,6 +65,7 @@ bool WeaponSelectScene::OnCreateScene()
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Blaster)->SetPieceType(PieceType::Blaster);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Blaster)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Blaster)->SetWeaponImages(m_pWeaponImage0, m_pWeaponImage1, m_pWeaponImage2, m_pWeaponImage3);
+    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Blaster)->SetWeaponPreviewImages(m_pWeaponNameImage, m_pWeaponCardImage);
 
 
 
@@ -97,6 +74,7 @@ bool WeaponSelectScene::OnCreateScene()
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetPieceType(PieceType::Chakram);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetWeaponImages(m_pWeaponImage0, m_pWeaponImage1, m_pWeaponImage2, m_pWeaponImage3);
+    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetWeaponPreviewImages(m_pWeaponNameImage, m_pWeaponCardImage);
 
 
 
@@ -105,7 +83,7 @@ bool WeaponSelectScene::OnCreateScene()
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Breacher)->SetPieceType(PieceType::Breacher);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Breacher)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Breacher)->SetWeaponImages(m_pWeaponImage0, m_pWeaponImage1, m_pWeaponImage2, m_pWeaponImage3);
-
+    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Breacher)->SetWeaponPreviewImages(m_pWeaponNameImage, m_pWeaponCardImage);
 
 
 
@@ -114,6 +92,7 @@ bool WeaponSelectScene::OnCreateScene()
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Scythe)->SetPieceType(PieceType::Scythe);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Scythe)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Scythe)->SetWeaponImages(m_pWeaponImage0, m_pWeaponImage1, m_pWeaponImage2, m_pWeaponImage3);
+    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Scythe)->SetWeaponPreviewImages(m_pWeaponNameImage, m_pWeaponCardImage);
 
 
 
@@ -122,6 +101,8 @@ bool WeaponSelectScene::OnCreateScene()
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Impactor)->SetPieceType(PieceType::Impactor);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Impactor)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Impactor)->SetWeaponImages(m_pWeaponImage0, m_pWeaponImage1, m_pWeaponImage2, m_pWeaponImage3);
+    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Impactor)->SetWeaponPreviewImages(m_pWeaponNameImage, m_pWeaponCardImage);
+
 
 
     m_PWeaponBtn_Cleaver = CreateWidget<WeaponButton>(L"W6Btn", Float2(287, 490), XMFLOAT3(1289, 925, 0), UIDirection::Bottom);
@@ -129,6 +110,8 @@ bool WeaponSelectScene::OnCreateScene()
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetPieceType(PieceType::Cleaver);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetWeaponImages(m_pWeaponImage0, m_pWeaponImage1, m_pWeaponImage2, m_pWeaponImage3);
+    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetWeaponPreviewImages(m_pWeaponNameImage, m_pWeaponCardImage);
+
 
 
     m_pReadyBtn = CreateWidget<ReadyButton>(L"ReadyButton", Float2(487, 94), XMFLOAT3(1290, 1010, 0),UIDirection::Bottom);

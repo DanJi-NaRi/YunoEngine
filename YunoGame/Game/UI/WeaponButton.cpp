@@ -54,6 +54,24 @@ namespace
 
         return L"../Assets/UI/WEAPON_SELECT/weapon_" + std::to_wstring(slotTextureIndex) + L"_" + pieceName + L".png";
     }
+
+    std::wstring GetWeaponNameTexturePath(PieceType pieceType)
+    {
+        const std::wstring pieceName = GetPieceNameLower(pieceType);
+        if (pieceName.empty())
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/Weapon_name_" + pieceName + L".png";
+    }
+
+    std::wstring GetWeaponCardTexturePath(PieceType pieceType)
+    {
+        const std::wstring pieceName = GetPieceNameLower(pieceType);
+        if (pieceName.empty())
+            return L"";
+    
+        return L"../Assets/UI/CARD/card_" + pieceName + L"_3.png";
+    }
 }
 
 WeaponButton::WeaponButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
@@ -187,6 +205,25 @@ bool WeaponButton::LMBPressedEvent()
         targetWeaponImage->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
     }
 
+    TextureImage* weaponNameImage = dynamic_cast<TextureImage*>(m_pWeaponNameImage);
+    if (weaponNameImage)
+    {
+        const std::wstring weaponNameTexturePath = GetWeaponNameTexturePath(m_pieceType);
+        if (!weaponNameTexturePath.empty())
+        {
+            weaponNameImage->ChangeTexture(weaponNameTexturePath);
+        }
+    }
+
+    TextureImage* weaponCardImage = dynamic_cast<TextureImage*>(m_pWeaponCardImage);
+    if (weaponCardImage)
+    {
+        const std::wstring weaponCardTexturePath = GetWeaponCardTexturePath(m_pieceType);
+        if (!weaponCardTexturePath.empty())
+        {
+            weaponCardImage->ChangeTexture(weaponCardTexturePath);
+        }
+    }
 
     GameManager::Get().SetMyPick(pickIndex, m_pieceType);
 
@@ -280,4 +317,10 @@ void WeaponButton::SetWeaponImages(Widget* U1W1, Widget* U1W2, Widget* U2W1, Wid
     m_pWeaponImage1 = U1W2;
     m_pWeaponImage2 = U2W1;
     m_pWeaponImage3 = U2W2;
+}
+
+void WeaponButton::SetWeaponPreviewImages(Widget* weaponNameImage, Widget* weaponCardImage)
+{
+    m_pWeaponNameImage = weaponNameImage;
+    m_pWeaponCardImage = weaponCardImage;
 }
