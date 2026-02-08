@@ -528,7 +528,8 @@ void UIManager::AllParentsSetScale(float scale)
     for (auto& widget : m_pendingCreateQ) {
         if (widget.get()->GetWidgetClass() == WidgetClass::LetterBox) continue;
 
-        if (widget->GetIsRoot()) widget->SetScale(XMFLOAT3(scale, scale, scale));
+        if (widget->GetIsRoot()) 
+            widget->SetScale(XMFLOAT3(scale, scale, scale));
     }
             
 }
