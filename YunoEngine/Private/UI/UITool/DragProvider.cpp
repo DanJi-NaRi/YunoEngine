@@ -17,21 +17,6 @@
 //    m_isDrag = false;
 //}
 
-static XMFLOAT2 ToOwnerLocalFromCanvas(const XMFLOAT2& canvasPos, Widget* ownerWidget)
-{
-    if (!ownerWidget) return canvasPos;
-
-    if (Widget* parent = ownerWidget->GetParent())
-    {
-        const XMFLOAT3 local = WorldToLocalPos(
-            XMFLOAT3(canvasPos.x, canvasPos.y, 0.0f),
-            parent->GetWorldNoSizeMatrix()
-        );
-        return XMFLOAT2(local.x, local.y);
-    }
-
-    return canvasPos;
-}
 
 DragProvider::DragProvider()
 {
