@@ -79,6 +79,10 @@ public:
     T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, Float2 sizePx, XMFLOAT3 pos);
     template<typename T>
     T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, Float2 sizePx, XMFLOAT3 pos, UIDirection pivot);
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos);
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos, UIDirection pivot);
 
     template<typename T>
     T* CreateWidget_Internal(const std::wstring& name, XMFLOAT3 pos);
@@ -331,6 +335,26 @@ T* UIManager::CreateWidget(const std::wstring& name, const std::wstring& texture
     m_widgetIDs++;
 
     return pWidget;
+}
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos)
+{
+    const TextureHandle textureHandle = YunoEngine::GetTextureManager()->LoadTexture2D(texturePath.c_str());
+    const auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(textureHandle);
+    const Float2 sizePx = Float2(static_cast<float>(textureSize.first), static_cast<float>(textureSize.second));
+
+    return CreateWidget<T>(name, texturePath, sizePx, pos);
+}
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos, UIDirection pivot)
+{
+    const TextureHandle textureHandle = YunoEngine::GetTextureManager()->LoadTexture2D(texturePath.c_str());
+    const auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(textureHandle);
+    const Float2 sizePx = Float2(static_cast<float>(textureSize.first), static_cast<float>(textureSize.second));
+
+    return CreateWidget<T>(name, texturePath, sizePx, pos, pivot);
 }
 
 // 테스트용

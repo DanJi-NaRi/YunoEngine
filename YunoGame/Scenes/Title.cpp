@@ -31,7 +31,7 @@ bool Title::OnCreateScene()
     float ClientH = static_cast<float>(iwindow->GetClientHeight());
 
 
-    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background.png", Float2(ClientW, ClientH), XMFLOAT3(0, 0, 0));
+    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background.png", XMFLOAT3(0, 0, 0));
 
     m_startBtn = CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538, 105), XMFLOAT3(ClientW/2, ClientH/2, 0), UIDirection::Center);       // 나중에 1920 1080 <-> 960 540 정상화되면 /2 ㄱㄱ
     m_startBtn->SetTargetScene(CurrentSceneState::GameStart);

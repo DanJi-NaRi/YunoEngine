@@ -51,6 +51,10 @@ public:
     T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, Float2 sizePx, XMFLOAT3 pos);
     template<typename T> // 텍스처 경로 + 피벗 지정 Widget 생성 함수
     T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, Float2 sizePx, XMFLOAT3 pos, UIDirection pivot);
+    template<typename T> // 텍스처 원본 크기 자동 적용 Widget 생성 함수
+    T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos);
+    template<typename T> // 텍스처 원본 크기 자동 적용 + 피벗 지정 Widget 생성 함수
+    T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos, UIDirection pivot);
 
     UIManager* GetUIManager() { return m_uiManager.get(); }
 
@@ -189,6 +193,28 @@ T* SceneBase::CreateWidget(const std::wstring& name, const std::wstring& texture
     assert(m_uiManager);
 
     T* pWidget = m_uiManager->CreateWidget<T>(name, texturePath, sizePx, pos, pivot);
+    pWidget->CreateChild();
+    return pWidget;
+}
+
+template<typename T> // 텍스처 원본 크기 자동 적용 Widget 생성 함수
+T* SceneBase::CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+    assert(m_uiManager);
+
+    T* pWidget = m_uiManager->CreateWidget<T>(name, texturePath, pos);
+    pWidget->CreateChild();
+    return pWidget;
+}
+
+template<typename T> // 텍스처 원본 크기 자동 적용 + 피벗 지정 Widget 생성 함수
+T* SceneBase::CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos, UIDirection pivot)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must derive from Widget");
+    assert(m_uiManager);
+
+    T* pWidget = m_uiManager->CreateWidget<T>(name, texturePath, pos, pivot);
     pWidget->CreateChild();
     return pWidget;
 }

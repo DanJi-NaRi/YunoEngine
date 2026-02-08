@@ -67,8 +67,8 @@ bool GameApp::OnInit()
 
    //sm->RequestReplaceRoot(std::make_unique<RenderTest>(), opt);  // 본인이 작업중인 씬으로 넣으면 됨
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
-   //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
-   sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
+   sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
+   //sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<PhaseScene>(), opt);
 
 

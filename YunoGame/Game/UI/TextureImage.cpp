@@ -12,6 +12,9 @@ TextureImage::~TextureImage()
 
 bool TextureImage::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
+    sizePx.x /= 2;
+    sizePx.y /= 2;
+
     Image::Create(name, id, sizePx, vPos, rotZ, vScale);
     return true;
 }
