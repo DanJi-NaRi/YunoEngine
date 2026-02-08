@@ -39,19 +39,23 @@ bool PhaseScene::OnCreateScene()
 
     //CreateWidget<CardConfirmButton>(L"tstButton", XMFLOAT3(0, 0, 0), Float2(140, 55), UIDirection::LeftTop);
     //CreateWidget<CardSlot>(L"tstSlot", XMFLOAT3(600, 100, 0), Float2(100, 135), UIDirection::LeftTop);
-    //CreateWidget<Card>(L"tstCard", XMFLOAT3(300, 100, 0), Float2(100, 135), UIDirection::LeftTop);
+    CreateWidget<Card>(L"tstCard", Float2(100, 135), XMFLOAT3(300, 100, 0), XMFLOAT3(0.5f, 0.5f, 0.5f), UIDirection::LeftTop);
 
     
-
-    CreateWidget<CardConfirmPanel>(L"CardConformPanel", Float2(1566, 578), XMFLOAT3(0, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftBottom);
+    {
+        CreateWidget<CardConfirmPanel>(L"CardConformPanel", Float2(700, 500), XMFLOAT3(0, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftBottom);
+        CreateWidget<Minimap>(L"Minimap", Float2(500, 500), XMFLOAT3(clientX * 0.5f, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::Bottom);
+        CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(700, 600), XMFLOAT3(clientX, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::RightBottom);
+    }
+    //CreateWidget<CardConfirmPanel>(L"CardConformPanel", Float2(1566, 578), XMFLOAT3(0, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftBottom);
     
-    CreateWidget<Minimap>(L"Minimap", Float2(730, 616), XMFLOAT3(clientX*0.5f, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::Bottom);
+    //CreateWidget<Minimap>(L"Minimap", Float2(730, 616), XMFLOAT3(clientX*0.5f, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::Bottom);
 
     //테스트용
     //<WidgetGridLine>(L"_DebugWidgetGridLine", Float2(90, 90), XMFLOAT3(clientX*0.5f, clientY * 0.5f, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::Center);
     //CreateWidget<MinimapTile>(L"_tstTile", Float2(90, 90), XMFLOAT3(clientX * 0.5f, clientY * 0.5f, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::Center);
     //std::cout << clientX << " : " << clientY << std::endl;
-    CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(1513, 578), XMFLOAT3(clientX, clientY, 0), XMFLOAT3(1, 1, 1),  UIDirection::RightBottom);
+    //CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(1513, 578), XMFLOAT3(clientX, clientY, 0), XMFLOAT3(1, 1, 1),  UIDirection::RightBottom);
 
     
 
@@ -81,7 +85,7 @@ bool PhaseScene::OnCreateScene()
     //m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
     //m_minimap->CreateObject(1000, 900, 0);
 
-    m_uiManager->AllParentsSetScale(0.5f); // 일괄 사이즈 조정
+//m_uiManager->AllParentsSetScale(0.5f); // 일괄 사이즈 조정
 
     return true;
 }
