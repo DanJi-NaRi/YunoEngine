@@ -27,6 +27,9 @@ bool WeaponSelectScene::OnCreateScene()
     m_pCursurSys = m_uiManager->GetCursurStstem();
 
 
+    CreateWidget<TitleImage>(L"Title", g_defWidgetSize, XMFLOAT3(0, 0, 0), XMFLOAT3(0.5f, 0.5f, 0.5f),UIDirection::LeftTop);
+
+
     // 선택창 UI
     {
         m_pUserImage0 = CreateWidget<UserImage>(L"P1 U1", Float2(50, 50), XMFLOAT3(0, 0, 0));
