@@ -71,7 +71,7 @@ bool PhaseScene::OnCreateScene()
 
     //m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
 
-m_uiManager->AllParentsSetScale(0.5f); // 일괄 사이즈 조정
+    m_uiManager->AllParentsSetScale(0.5f); // 일괄 사이즈 조정
 
     return true;
 }
