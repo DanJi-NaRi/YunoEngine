@@ -45,3 +45,16 @@ inline XMFLOAT3 WorldToLocalPos(const XMFLOAT3& worldPos, const XMFLOAT3& parent
              (worldPos.y - parentPos.y) / parentScale.y,
              (worldPos.z - parentPos.z) / parentScale.z };
 }
+
+inline XMFLOAT3 TransformPoint(const XMFLOAT3& pos, const XMMATRIX& matrix)
+{
+    const XMVECTOR p = XMVectorSet(pos.x, pos.y, pos.z, 1.0f);
+    const XMVECTOR t = XMVector4Transform(p, matrix);
+    return { XMVectorGetX(t), XMVectorGetY(t), XMVectorGetZ(t) };
+}
+
+inline XMFLOAT3 WorldToLocalPos(const XMFLOAT3& worldPos, const XMMATRIX& parentWorld)
+{
+    const XMMATRIX invParent = XMMatrixInverse(nullptr, parentWorld);
+    return TransformPoint(worldPos, invParent);
+}

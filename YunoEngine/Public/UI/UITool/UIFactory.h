@@ -4,6 +4,7 @@
 #include "UIManager.h"
 class UIManager;
 class Float2;
+struct UICanvasMapping;
 
 //Widget한테 외부 매니저 클래스의 일부 기능을 공급하는 팩토리
 class UIFactory
@@ -16,6 +17,7 @@ public:
     //===================================//
     // UIManager.h
     Float2 GetCanvasSize(); // 캔버스 사이즈 or 클라이언트 사이즈 반환
+    UICanvasMapping GetCanvasMapping();
 
     template<typename T>
     T* CreateWidget(const std::wstring& name, DirectX::XMFLOAT3 pos) // 위젯 생성 // 템플릿 함수

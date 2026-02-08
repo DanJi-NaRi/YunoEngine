@@ -25,7 +25,7 @@ bool Card::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3
     m_pDrag = std::make_unique<DragProvider>(); // 드래그 기능 사용
     if (!m_pDrag) return false;
 
-    m_pDrag->Init(&m_vPos, true);
+    m_pDrag->Init(&m_vPos, true, &m_uiFactory);
     return true;
 }
 
