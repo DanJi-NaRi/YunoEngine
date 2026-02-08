@@ -34,8 +34,11 @@ bool PhaseScene::OnCreateScene()
     m_uiManager->SetOrthoFlag(true);
 
 
-    auto clientX = YunoEngine::GetWindow()->GetClientWidth();
-    auto clientY = YunoEngine::GetWindow()->GetClientHeight();
+    //auto clientX = YunoEngine::GetWindow()->GetClientWidth();
+    //auto clientY = YunoEngine::GetWindow()->GetClientHeight();
+
+    const auto clientX = g_DefaultClientXY.x;
+    const auto clientY = g_DefaultClientXY.y;
 
     //CreateWidget<CardConfirmButton>(L"tstButton", XMFLOAT3(0, 0, 0), Float2(140, 55), UIDirection::LeftTop);
     //CreateWidget<CardSlot>(L"tstSlot", XMFLOAT3(600, 100, 0), Float2(100, 135), UIDirection::LeftTop);

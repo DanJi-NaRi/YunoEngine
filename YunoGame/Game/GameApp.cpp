@@ -124,6 +124,9 @@ void GameApp::OnUpdate(float dt)
     ISceneManager* sm = YunoEngine::GetSceneManager();
     IAudioManager* am = YunoEngine::GetAudioManager();
 
+    if (input->IsKeyDown('I')) // >> 이거 인스턴스 호출해서 키다운하는거 불편하니까 나중에 바꾸기 ㄱㄱ
+        window->SetClientSize(960, 540);
+
     if (input->IsKeyDown('O')) // >> 이거 인스턴스 호출해서 키다운하는거 불편하니까 나중에 바꾸기 ㄱㄱ
         window->SetClientSize(1920, 1080);
 
