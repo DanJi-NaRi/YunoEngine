@@ -12,6 +12,8 @@
 #include "PhaseScene.h"
 #include "CountdownScene.h"
 
+#include "Minimap.h" // 미니맵
+
 #include "YunoClientNetwork.h"
 
 #include "utilityClass.h"
@@ -87,6 +89,16 @@ bool GameManager::IsEmptyObstaclePacket()
     return m_obstaclePkts.empty();
 }
 
+void GameManager::SetMinimap(Minimap* pMinimap)
+{
+    m_pMinimap = pMinimap;
+}
+
+void GameManager::MinimapUpdate(const ObstacleResult& obstacleResult)
+{
+    if (!m_pMinimap) return;
+    m_pMinimap->Update();
+}
 
 
 void GameManager::Initialize(GameManager* inst)

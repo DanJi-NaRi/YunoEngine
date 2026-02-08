@@ -26,8 +26,24 @@ bool MinimapTile::Create(const std::wstring& name, uint32_t id, Float2 sizePx, X
 }
 
 bool MinimapTile::Update(float dTime) {
-    Image::Update(dTime);
 
+    if(YunoEngine::GetInput()->IsKeyDown('X')) {
+        m_data.m_teamId = TileTeamData::Default;
+    }
+    if (YunoEngine::GetInput()->IsKeyDown('C')) {
+        m_data.m_teamId = TileTeamData::Red;
+    }
+    if (YunoEngine::GetInput()->IsKeyDown('V')) {
+        m_data.m_teamId = TileTeamData::Blue;
+    }
+    switch (m_data.m_teamId) {
+    default:
+    case TileTeamData::Default: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_non.png"); break;
+    case TileTeamData::Red: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_red.png"); break;
+    case TileTeamData::Blue: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_blue.png"); break;
+    }
+
+    Image::Update(dTime);
 
     return true;
 }

@@ -10,6 +10,8 @@
 #include "CardRangeManager.h"
 #include "CardQueue.h"
 
+class Minimap;
+
 class ISceneManager;
 class ObjectManager;
 namespace yuno::game
@@ -181,6 +183,7 @@ private:
     std::queue<BattleResult> m_turnPkts;
     std::queue<ObstacleResult> m_obstaclePkts;
 
+    Minimap* m_pMinimap = nullptr; // 미니맵
 public:
     void PushBattlePacket(const BattleResult _BattleResult);
     BattleResult PopBattlePacket();
@@ -189,4 +192,7 @@ public:
     void PushObstaclePacket(const ObstacleResult& obstacleResult);
     ObstacleResult PopObstaclePacket();
     bool IsEmptyObstaclePacket();
+
+    void SetMinimap(Minimap* minimap);
+    void MinimapUpdate(const ObstacleResult& obstacleResult);
 };

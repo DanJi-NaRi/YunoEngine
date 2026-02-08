@@ -7,6 +7,8 @@
 #include "MinimapTile.h"
 #include "Grid.h"
 
+#include "BattlePackets.h"
+
 #include "IInput.h"
 #include "UIFactory.h"
 
@@ -77,7 +79,6 @@ bool Minimap::Update(float dTime)
 {
     Image::Update(dTime);
 
-
     return true;
 }
 
@@ -94,6 +95,30 @@ bool Minimap::Submit(float dTime)
 //    //auto pLine = m_manager->CreateObject<UnitGridLine>(L"DebugGridLine", XMFLOAT3(x, y + 0.01f, z));
 //    //pLine->SetScale({ m_cellSizeX, 1, m_cellSizeZ });
 //    //m_gridBox->Attach(pLine);
+//}
+
+void Minimap::UpdateMinimap(const ObstacleResult& obstacleResult)
+{
+    if (m_pTiles.empty()) return;
+
+    for (auto& unitState : obstacleResult.unitState) {
+        int index = unitState.targetTileID - 1; // id와 해당하는 현재 타일
+        
+        if (!m_pTiles[index]) continue; // 해당 위치에 타일이 있으면
+        auto& tile = m_pTiles[index];
+        auto& data = tile->GetTileData();
+
+        data.isPlayerTile = (data.unitId != 0); // 플레이어 유닛 여부 (0 : 없음)
+        data.unitId = unitState.slotId; // 플레이어의 유닛
+        data.m_teamId = (TileTeamData)unitState.pId; // 플레이어 팀/존재 여부 (0 = 없음 1 = 빨강 2 = 파랑)
+    }
+}
+
+
+//{
+//    int index = data.targetTileID - 1;   // 0-based로 변환
+//    int x = index % m_grid.col;
+//    int y = index / m_grid.col;
 //}
 
 //void Minimap::GridSetup()

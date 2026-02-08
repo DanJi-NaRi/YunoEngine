@@ -103,14 +103,6 @@ void CardSelectionPanel::CreateChild() {
 bool CardSelectionPanel::Update(float dTime)
 {
     Image::Update(dTime);
-
-    if (m_pInput->IsKeyPressed('Z')) {
-
-        if(m_CardSlots.back()->GetPivot() == PivotFromUIDirection(UIDirection::RightTop)) { m_CardSlots.back()->SetPivot(UIDirection::LeftTop); }
-        else if(m_CardSlots.back()->GetPivot() == PivotFromUIDirection(UIDirection::LeftTop)) { m_CardSlots.back()->SetPivot(UIDirection::RightTop); }
-
-        std::cout << m_CardSlots.back()->GetPos().x << std::endl;
-    }
     
     if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50 * dTime; }
     if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50 * dTime; }
