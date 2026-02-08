@@ -25,12 +25,18 @@ struct BattleResult
     std::vector<std::array<UnitState, 4>> order;
 };
 
-
+enum class ObstacleType : uint8_t
+{
+    None,
+    Vertical_Razer,
+    Horizon_Razer,
+    Collapse
+};
 
 struct ObstacleResult
 {
     // 다음 라운드에 발동할 장애물 경고 정보
-    uint8_t obstacleID = 0;
+    ObstacleType obstacleID = ObstacleType::None;
     std::vector<uint8_t> tileIDs;
 
     // 이전 라운드에서 경고된 장애물이 발동된 결과 스냅샷
