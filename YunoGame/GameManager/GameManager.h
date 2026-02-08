@@ -67,6 +67,7 @@ public:
     int GetSlotiIdx() { return m_PID; };
 
     void SetMyPick(int index, PieceType type);
+    void ResetMyPicks();
     bool HasTwoPicks() const;
     PieceType GetMyPiece(int idx) { return m_myPick[idx]; };
 

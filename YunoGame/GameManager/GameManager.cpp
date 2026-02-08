@@ -124,6 +124,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::Title:
     {
         m_state = CurrentSceneState::Title;
+        ResetMyPicks();
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
@@ -172,6 +173,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::GameStart:
     {
         m_state = CurrentSceneState::GameStart;
+        ResetMyPicks();
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
@@ -484,6 +486,15 @@ void GameManager::SetMyPick(int index, PieceType type)
     m_myPick[index] = type;
     m_lastPickedPiece = type;
 }
+
+void GameManager::ResetMyPicks()
+{
+    m_myPick[0] = PieceType::None;
+    m_myPick[1] = PieceType::None;
+    m_lastPickedPiece = PieceType::None;
+    m_isReady = false;
+}
+
 
 bool GameManager::HasTwoPicks() const
 {
