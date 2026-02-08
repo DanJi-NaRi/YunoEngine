@@ -2,6 +2,7 @@
 
 #include "RenderTypes.h"
 //#include "YunoConstantBuffers.h"
+#include <vector>
 
 class YunoMaterial
 {
@@ -17,6 +18,8 @@ public:
     TextureHandle ao = 0;
     TextureHandle emissive = 0;
     TextureHandle opacity = 0;
+
+    std::vector<TextureHandle> custom;
 
     bool isAlphaBlend = false;
 };

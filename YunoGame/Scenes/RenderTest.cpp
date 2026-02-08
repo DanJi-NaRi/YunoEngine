@@ -77,12 +77,8 @@ bool RenderTest::OnCreateScene()
         }
     }
 
-    //auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 500, 500 }, XMFLOAT3{ 100, 100, 0 }, UIDirection::LeftTop);
-    //sheet->SetSpriteSheet(L"../Assets/Effects/Coin/EF_Coin1P.png", 10, 10, 100, 50.f, true);
-    //m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
-    //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
-
-    
+    auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 500, 500 }, XMFLOAT3{ 100, 100, 0 }, UIDirection::Center);
+    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 10, 6, 60, 24.f, true);
 
     PassOption po;
 
@@ -91,29 +87,38 @@ bool RenderTest::OnCreateScene()
     //map->SetScale(XMFLOAT3(1, 1, 1));
     //m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx");
     //Building* tile;
-    gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"blaster" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Blaster/Blaster.fbx");
+    po.shader = ShaderId::PBR_AniDissolve;
+    gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"blaster" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Blaster/Blaster.fbx", po);
     gun->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
     gun->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+    gun->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+    gun->SetDissolveColor(XMFLOAT3(1, 1, 1));
 
     axe = m_objectManager->CreateObjectFromFile<AnimTest>(L"axe", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Impactor/Impactor.fbx");
     axe->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
-    axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
+    axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack2.fbx");
     //axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Untitled.fbx");
 
     chakram01 = m_objectManager->CreateObjectFromFile<AnimTest>(L"chakram01", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
     chakram01->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
+    chakram01->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_01.fbx");
 
     chakram02 = m_objectManager->CreateObjectFromFile<AnimTest>(L"chakram02", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
     chakram02->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
+    chakram02->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_02.fbx");
 
     blade = m_objectManager->CreateObjectFromFile<AnimTest>(L"blade", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Cleaver/Cleaver.fbx");
-    blade->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
+    blade->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Cleaver_idle.fbx");
+    blade->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Cleaver_attack.fbx");
 
     breacher = m_objectManager->CreateObjectFromFile<AnimTest>(L"breacher", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Breacher/Breacher.fbx");
-    breacher->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/drill_idle.fbx");
+    breacher->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Breacher_idle.fbx");
+    breacher->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Breacher_attack.fbx");
+    //breacher->SetScale({ 2, 2, 2 });
 
     scythe = m_objectManager->CreateObjectFromFile<AnimTest>(L"scythe", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx");
     scythe->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
+    scythe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/scythe_attack.fbx");
 
     
 
@@ -155,6 +160,31 @@ bool RenderTest::OnCreateScene()
     for (int i = 0; i < 6; i++)
     {
         auto razer = m_objectManager->CreateObjectFromFile<Building>(L"razer", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Razer/Razer.fbx");
+    }
+
+    ed.framecount = 30;
+    ed.cols = 5;
+    ed.rows = 6;
+    ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_2.png";
+
+    EffectDesc ed2{};
+    ed2.shaderid = ShaderId::EffectBase;
+    ed2.billboard = BillboardMode::None;
+    ed2.lifetime = 1.5f;
+    ed2.framecount = 25;
+    ed2.cols = 12;
+    ed2.rows = 10;
+    ed2.emissive = 30.0f;
+    ed2.color = { 1, 0, 0, 1 };
+    ed2.rot = { XM_PIDIV2, 0, 0 };
+    ed2.isLoop = true;
+    ed2.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_1.png";
+    for (auto i = 0; i < 5; i++)
+    {
+        auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_Floor1", XMFLOAT3(0, 1, 0));
+        warning->BuildInternalEffectMaterial(ed);
+        //warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_Floor2", XMFLOAT3(0, 1, 0));
+        //warning->BuildInternalEffectMaterial(ed2);
     }
    
     /////////////////////////////////////////////////////////////////////////////////
@@ -206,8 +236,6 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Razer/EF_Rager_White.png";
     m_effectManager->RegisterEffect(ed);
 
-    ed.isLoop = false;
-
     ed.id = EffectID::BlasterAttack;
     ed.lifetime = 1.2f;
     ed.framecount = 30;
@@ -231,6 +259,7 @@ bool RenderTest::OnCreateScene()
     ed.rot = { XM_PIDIV2, 0, 0 };
     m_effectManager->RegisterEffect(ed);
 
+    ed.isLoop = true;
     ed.id = EffectID::DrillAttack1;
     ed.framecount = 30;
     ed.lifetime = 1.2f;
@@ -241,6 +270,7 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Drill/EF_Drill.png";
     m_effectManager->RegisterEffect(ed);
 
+    ed.isLoop = false;
     ed.id = EffectID::Buff;
     ed.framecount = 25;
     ed.lifetime = 1.2f;
@@ -263,6 +293,18 @@ bool RenderTest::OnCreateScene()
     ed.emissive = 10.0f;
     ed.color = { 1, 0, 0, 1 };
     ed.texPath = L"../Assets/Effects/Hit/EF_Hits.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::Target;
+    ed.framecount = 30;
+    ed.lifetime = 1.2f;
+    ed.cols = 6;
+    ed.rows = 5;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { XM_PIDIV2, 0, 0 };
+    ed.emissive = 30.0f;
+    ed.color = { 0, 0, 1, 1 };
+    ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::Target;
@@ -301,7 +343,7 @@ void RenderTest::Update(float dt)
     if (YunoEngine::GetInput()->IsKeyPressed('1'))
     {
         auto eff = m_effectManager->Spawn(EffectID::DrillAttack1, { 0.1f, 0.25f, 0.1f }, { 1.f, 1.f, 1.f }, {1, 0, 0});
-        breacher->AttachChildBone(eff, 3);
+        breacher->AttachChildBone(eff, 1);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('2'))
     {

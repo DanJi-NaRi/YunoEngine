@@ -65,11 +65,14 @@ struct Update_Data
     DirectX::XMFLOAT4 baseColor = { 1, 1, 1, 1 };
     DirectX::XMFLOAT4 emissiveColor = { 1, 1, 1, 1 };
     XMFLOAT3 worldPos = { 0, 0, 0 }; //반투명 오브젝트 정렬용
+    XMFLOAT3 dissolveColor = { 0, 0, 0 }; //디졸브 테두리 색
     float roughRatio = 1.0f;
     float metalRatio = 1.0f;
     float shadowBias = 0.0001f;
     float opacity = 1.0f;
     float emissive = 1.0f;
+    float dissolveAmount = 0.0f;
+    float dissolveEdgeWidth = 0.0f;
     /////// 위젯 ///////
     XMFLOAT2 widgetSize = { 0, 0 }; //★
     float widgetValueFloat;  // 자유 사용 빈공간 ★
@@ -115,8 +118,7 @@ struct RenderItem
     bool isEffect;
     bool isEmissive = false;
     bool haveAnim = false;
-    bool castShadow = true; //그림자맵에 그릴 오브젝트
-    bool receiveShadow = true; //그림자가 적용될 오브젝트(파티클, 반투명 오브젝트 제외용)
+    bool isDissolve = false;
     bool isWidget = false;  // 위젯만 갱신(b6) // ★
 };
 
@@ -181,6 +183,7 @@ enum class ShaderId : uint8_t
     UIGauge,
     UISpriteSheet,
     EffectBase,
+    PBR_AniDissolve,
 
     //Shadow
     ShadowPass,

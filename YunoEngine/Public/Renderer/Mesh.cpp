@@ -83,6 +83,24 @@ void Mesh::SetEmissiveColor(const XMFLOAT4& color)
     m_renderItem.Constant.emissiveColor = color;
 }
 
+void Mesh::SetDissolveAmount(float amount)
+{
+    if (!m_renderItem.isDissolve) m_renderItem.isDissolve = true;
+    m_renderItem.Constant.dissolveAmount = amount;
+}
+
+void Mesh::SetDissolveWidth(float width)
+{
+    if (!m_renderItem.isDissolve) m_renderItem.isDissolve = true;
+    m_renderItem.Constant.dissolveEdgeWidth = width;
+}
+
+void Mesh::SetDissolveColor(const XMFLOAT3& col)
+{
+    if (!m_renderItem.isDissolve) m_renderItem.isDissolve = true;
+    m_renderItem.Constant.dissolveColor = col;
+}
+
 void Mesh::CheckOption()
 {
     const auto& renderer = YunoEngine::GetRenderer();
@@ -129,6 +147,9 @@ void Mesh::SetTexture(TextureUse use, const std::wstring& filepath)
     case TextureUse::ORM:
         material.orm = handle;
         m_Orm = handle;
+        break;
+    case TextureUse::Custom:
+        material.custom.push_back(handle);
         break;
     }
 }

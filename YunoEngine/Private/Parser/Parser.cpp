@@ -191,6 +191,9 @@ void CreateBoneNameSet(const aiScene* scene, std::unordered_map<std::string, UIN
             {
                 aiBone* bone = mesh->mBones[j];
                 std::string name = bone->mName.C_Str();
+
+                if(name.find("_end") != std::string::npos)
+                    continue;
                 
                 std::string Arm = scene->mRootNode->FindNode(bone->mName)->mParent->mName.C_Str();
 

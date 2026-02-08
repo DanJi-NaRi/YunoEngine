@@ -26,6 +26,7 @@ enum class EffectID : uint32_t
     PeacePosAlly,
     PeacePosEnemy,
     Warning,
+    ScytheAttack,
 
     Count
 };

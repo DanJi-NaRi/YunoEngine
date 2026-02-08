@@ -235,6 +235,7 @@ private:
     YunoConstantBuffer<CBLight_All> m_cbLight;
     YunoConstantBuffer<CBEffect> m_cbEffect;
     YunoConstantBuffer<CBWidget> m_cbWidget;
+    YunoConstantBuffer<CBDissolve> m_cbDissolve;
 
     CBLight_All m_LightInfo;
 

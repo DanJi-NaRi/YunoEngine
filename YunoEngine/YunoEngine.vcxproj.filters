@@ -566,6 +566,9 @@
     <FxCompile Include="..\Assets\Shaders\UI_SpriteAnim.hlsl">
       <Filter>Shaders\UI</Filter>
     </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PBR_Animation_Dissolve.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\ConstantBuffers.hlsli">

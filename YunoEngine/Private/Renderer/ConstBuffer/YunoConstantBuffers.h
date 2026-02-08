@@ -23,10 +23,12 @@ struct CBPerObject_Material
 {
     XMFLOAT4 baseColor;
     XMFLOAT4 emissiveColor;
+    
     float roughRatio;
     float metalRatio;
     float shadowBias;
     float opacity;
+
     float emissive;
     float padding[3] = { 0, 0, 0 };
 };
@@ -89,6 +91,15 @@ struct CBWidget
     XMFLOAT2 widgetSize; //x : width, y : height
     float widgetValueFloat; // 자율 용도 밸류
     int   widgetValueInt;   // 자율 용도 밸류
+};
+
+struct CBDissolve
+{
+    XMFLOAT3 dissolveColor;
+    float dissolveAmount;
+
+    float edgeWidth;
+    float padding[3] = { 0, 0, 0 };
 };
 
 template<typename T>
