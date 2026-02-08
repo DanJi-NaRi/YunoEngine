@@ -258,9 +258,6 @@
     <ClCompile Include="Game\Object\UnitGridLine.cpp">
       <Filter>Game\Object\Grid</Filter>
     </ClCompile>
-    <ClCompile Include="Game\UI\WidgetGridBox.cpp">
-      <Filter>Game\Object\Grid</Filter>
-    </ClCompile>
     <ClCompile Include="Game\UI\WidgetGridLine.cpp">
       <Filter>Game\Object\Grid</Filter>
     </ClCompile>
@@ -269,9 +266,6 @@
     </ClCompile>
     <ClCompile Include="Game\Object\UnitTile.cpp">
       <Filter>Game\Object\Tile</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\UI\WidgetGridSystem.cpp">
-      <Filter>System\GridSystem</Filter>
     </ClCompile>
     <ClCompile Include="Game\Object\UnitGridSystem.cpp">
       <Filter>System\GridSystem</Filter>
@@ -317,6 +311,10 @@
     </ClCompile>
     <ClCompile Include="SceneChangeButton.cpp" />
     <ClCompile Include="CardConfirmArea.cpp" />
+    <ClCompile Include="Game\UI\DirSelectButton.cpp" />
+    <ClCompile Include="Minimap.cpp" />
+    <ClCompile Include="MinimapTile.cpp" />
+    <ClCompile Include="Game\UI\TextureImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -412,9 +410,6 @@
     <ClInclude Include="Game\Object\UnitGridLine.h">
       <Filter>Game\Object\Grid</Filter>
     </ClInclude>
-    <ClInclude Include="Game\UI\WidgetGridBox.h">
-      <Filter>Game\Object\Grid</Filter>
-    </ClInclude>
     <ClInclude Include="Game\UI\WidgetGridLine.h">
       <Filter>Game\Object\Grid</Filter>
     </ClInclude>
@@ -428,9 +423,6 @@
       <Filter>System\GridSystem</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\UnitGridSystem.h">
-      <Filter>System\GridSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\UI\WidgetGridSystem.h">
       <Filter>System\GridSystem</Filter>
     </ClInclude>
     <ClInclude Include="System\MinimapQueue.h">
@@ -525,6 +517,10 @@
     <ClInclude Include="utilityClass.h">
       <Filter>System\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Game\UI\DirSelectButton.h" />
+    <ClInclude Include="Minimap.h" />
+    <ClInclude Include="MinimapTile.h" />
+    <ClInclude Include="Game\UI\TextureImage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

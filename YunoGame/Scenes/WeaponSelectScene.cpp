@@ -8,6 +8,7 @@
 //#include "ObjectManager.h"
 #include "UIManager.h"
 #include "CursurSystem.h"
+#include "iwindow.h"
 
 #include "GameManager.h"
 
@@ -18,17 +19,19 @@
 
 bool WeaponSelectScene::OnCreateScene()
 {
-    //std::cout << "[WeaponSelectScene] OnCreate\n";
+    auto iwindow = YunoEngine::GetWindow();
+    float ClientW = static_cast<float>(iwindow->GetClientWidth());
+    float ClientH = static_cast<float>(iwindow->GetClientHeight());
 
-    // 디렉션 라이트 생성
-    //m_objectManager->CreateDirLight();
-    // 직교투영 필요한 씬만 ㄱㄱ
     m_uiManager->SetOrthoFlag(true);
     m_pCursurSys = m_uiManager->GetCursurStstem();
 
 
-    CreateWidget<TitleImage>(L"Title", g_defWidgetSize, XMFLOAT3(0, 0, 0), XMFLOAT3(0.5f, 0.5f, 0.5f),UIDirection::LeftTop);
+    //CreateWidget<TitleImage>(L"Title", g_defWidgetSize, XMFLOAT3(0, 0, 0), XMFLOAT3(0.5f, 0.5f, 0.5f),UIDirection::LeftTop);
+    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background.png", Float2(ClientW, ClientH), XMFLOAT3(0, 0, 0));
 
+    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/WEAPON_SELECT/Weaponselect_background_1player.png", Float2(ClientW, ClientH), XMFLOAT3(0, 0, 0));
+    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/WEAPON_SELECT/Weaponselect_background_2player.png", Float2(ClientW, ClientH), XMFLOAT3(0, 0, 0));
 
     // 선택창 UI
     {

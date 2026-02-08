@@ -23,19 +23,15 @@
 
 bool Title::OnCreateScene()
 {
-    auto iwindow = YunoEngine::GetWindow();
+
 
     m_uiManager->SetOrthoFlag(true);
-
-
-
-
-
-    m_titleImage = CreateWidget<TitleImage>(L"Title", g_defWidgetSize, XMFLOAT3(0, 0, 0));
-    m_titleImage->SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
-
+    auto iwindow = YunoEngine::GetWindow();
     float ClientW = static_cast<float>(iwindow->GetClientWidth());
     float ClientH = static_cast<float>(iwindow->GetClientHeight());
+
+
+    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background.png", Float2(ClientW, ClientH), XMFLOAT3(0, 0, 0));
 
     m_startBtn = CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538, 105), XMFLOAT3(ClientW/2, ClientH/2, 0), UIDirection::Center);       // 나중에 1920 1080 <-> 960 540 정상화되면 /2 ㄱㄱ
     m_startBtn->SetTargetScene(CurrentSceneState::GameStart);

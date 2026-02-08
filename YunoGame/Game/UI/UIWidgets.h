@@ -34,6 +34,7 @@ Gauge, // ProgressBar의 확정 자식
 #include "Emoji.h"
 #include "Minimap.h"
 #include "MinimapTile.h"
+#include "TextureImage.h"
 //////////////////////////////
 
 
