@@ -74,28 +74,28 @@ void CardSelectionPanel::CreateChild() {
 
     //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(604, 874), XMFLOAT3(-1000, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1000, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit0.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(604, 874), XMFLOAT3(-800, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-800, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit1.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(604, 874), XMFLOAT3(-600, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(205, 297), XMFLOAT3(-600, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit2.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(604, 874), XMFLOAT3(-400, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(205, 297), XMFLOAT3(-400, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit3.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(604, 874), XMFLOAT3(-1000, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(205, 297), XMFLOAT3(-1000, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit4.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(604, 874), XMFLOAT3(-800, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-800, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit5.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C6", Float2(604, 874), XMFLOAT3(-600, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C6", Float2(205, 297), XMFLOAT3(-600, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit6.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C7", Float2(604, 874), XMFLOAT3(-400, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C7", Float2(205, 297), XMFLOAT3(-400, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit7.png");
 }
 
