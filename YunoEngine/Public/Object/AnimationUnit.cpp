@@ -61,50 +61,64 @@ void AnimationUnit::AddAnimationClip(const std::string& name, const std::wstring
 
 void AnimationUnit::AttachChildBone(Unit* child, int idx)
 {
+    if (!child || !m_animator)
+        return;
+
     if (m_animator->GetBoneCount() <= idx || 0 > idx)
         return;
 
     Attach(child);
 
+    auto prev = m_ChildToIdx.find(child);
+    if (prev != m_ChildToIdx.end() && prev->second != idx)
+    {
+        auto& prevChilds = m_BoneChilds[prev->second];
+        for (auto it = prevChilds.begin(); it != prevChilds.end(); ++it)
+        {
+            if (*it == child)
+            {
+                prevChilds.erase(it);
+                break;
+            }
+        }
+    }
+
     auto it = m_BoneChilds.find(idx);
     if (it == m_BoneChilds.end())
     {
-        std::vector<Unit*> childs;
-        
-        m_BoneChilds[idx] = childs;
-        m_BoneChilds[idx].push_back(child); 
-        m_ChildToIdx.emplace(child, idx); //나중에 자식이 연결된 인덱스 찾기용
+        m_BoneChilds[idx] = std::vector<Unit*>();
+        m_BoneChilds[idx].push_back(child);
     }
     else
     {
-        it->second.push_back(child);
-        m_ChildToIdx.emplace(child, idx);
+        bool exists = false;
+        for (Unit* registeredChild : it->second)
+        {
+            if (registeredChild == child)
+            {
+                exists = true;
+                break;
+            }
+        }
+
+        if (!exists)
+            it->second.push_back(child);
     }
+    m_ChildToIdx[child] = idx; //나중에 자식이 연결된 인덱스 찾기용
+
 }
 
 void AnimationUnit::AttachChildBone(Unit* child, const std::string& bonename)
 {
+    if (!child || !m_animator)
+        return;
+
     auto idx = m_animator->FindIndex(bonename);
 
     if (m_animator->GetBoneCount() <= idx || 0 > idx)
         return;
 
-    Attach(child);
-
-    auto it = m_BoneChilds.find(idx);
-    if (it == m_BoneChilds.end())
-    {
-        std::vector<Unit*> childs;
-
-        m_BoneChilds[idx] = childs;
-        m_BoneChilds[idx].push_back(child);
-        m_ChildToIdx.emplace(child, idx);
-    }
-    else
-    {
-        it->second.push_back(child);
-        m_ChildToIdx.emplace(child, idx);
-    }
+    AttachChildBone(child, idx);
 }
 
 void AnimationUnit::DettachChild(uint32_t id)
@@ -140,6 +154,9 @@ void AnimationUnit::ClearChild()
 
 XMMATRIX AnimationUnit::GetAttachMatrixForChild(Unit* child)
 {
+    if (!m_animator)
+        return GetWorldMatrix();
+
     auto it = m_ChildToIdx.find(child);
     if (it == m_ChildToIdx.end())
         return GetWorldMatrix();
@@ -154,7 +171,8 @@ XMMATRIX AnimationUnit::GetAttachMatrixForChild(Unit* child)
     XMVECTOR trans;
     XMMatrixDecompose(&scale, &rot, &trans, boneGlobal);
 
-    return XMMatrixScalingFromVector(scale) * XMMatrixTranslationFromVector(trans) * GetWorldMatrix();
+    //XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_mScale)) *
+    return boneGlobal * XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_mScale)) * GetWorldMatrix();
 }
 
 void AnimationUnit::SetLoop(const std::string& name, bool isLoop)

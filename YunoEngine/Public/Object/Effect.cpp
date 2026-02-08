@@ -81,7 +81,7 @@ void Effect::UpdateWorldMatrix()
     if (m_Parent)
     {
         XMMATRIX invScale = XMMatrixInverse(nullptr, m_Parent->GetScaleMatrix());
-        mTM = S * R * T * invScale * m_Parent->GetAttachMatrixForChild(this);
+        mTM = S * R * T * m_Parent->GetAttachMatrixForChild(this);
     }
     else
         mTM = S * R * T;

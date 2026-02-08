@@ -96,7 +96,7 @@ bool RenderTest::OnCreateScene()
 
     axe = m_objectManager->CreateObjectFromFile<AnimTest>(L"axe", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Impactor/Impactor.fbx");
     axe->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
-    axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack2.fbx");
+    axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
     //axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Untitled.fbx");
 
     chakram01 = m_objectManager->CreateObjectFromFile<AnimTest>(L"chakram01", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
@@ -217,7 +217,7 @@ bool RenderTest::OnCreateScene()
     chakram01->Attach(eff);
     eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
     blade->Attach(eff);
-    eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 0.5f, 0.5f, 0.5f }, { 1, 0, 0 });
     breacher->Attach(eff);
     eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
     scythe->Attach(eff);
@@ -241,10 +241,11 @@ bool RenderTest::OnCreateScene()
     ed.framecount = 30;
     ed.cols = 5;
     ed.rows = 5;
-    ed.billboard = BillboardMode::Beam;
+    ed.billboard = BillboardMode::None;
     ed.texPath = L"../Assets/Effects/Blaster/EF_Shot.png";
     ed.emissive = 50.0f;
-    ed.color = { 1, 0, 0, 1 };
+    ed.color = { 0, 0.5f, 1, 1 };
+    ed.rot = { 0, -XM_PIDIV2, -XM_PIDIV2 };
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::AxAttack;
@@ -259,18 +260,17 @@ bool RenderTest::OnCreateScene()
     ed.rot = { XM_PIDIV2, 0, 0 };
     m_effectManager->RegisterEffect(ed);
 
-    ed.isLoop = true;
     ed.id = EffectID::DrillAttack1;
     ed.framecount = 30;
     ed.lifetime = 1.2f;
     ed.cols = 6;
     ed.rows = 5;
-    ed.billboard = BillboardMode::Beam;
-    ed.rot = { 0, 0, 0 };
+    ed.billboard = BillboardMode::None;
+    ed.rot = { 0, -XM_PIDIV2, -XM_PIDIV2 };
+    //ed.rot = { 0, 0, 0 };
     ed.texPath = L"../Assets/Effects/Drill/EF_Drill.png";
     m_effectManager->RegisterEffect(ed);
 
-    ed.isLoop = false;
     ed.id = EffectID::Buff;
     ed.framecount = 25;
     ed.lifetime = 1.2f;
@@ -319,6 +319,18 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
     m_effectManager->RegisterEffect(ed);
 
+    ed.id = EffectID::ScytheAttack;
+    ed.framecount = 18;
+    ed.lifetime = 1.2f;
+    ed.cols = 3;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { 0, 0, 0 };
+    ed.emissive = 30.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_1.png";
+    m_effectManager->RegisterEffect(ed);
+
     return true;
 }
 
@@ -342,7 +354,7 @@ void RenderTest::Update(float dt)
 {
     if (YunoEngine::GetInput()->IsKeyPressed('1'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::DrillAttack1, { 0.1f, 0.25f, 0.1f }, { 1.f, 1.f, 1.f }, {1, 0, 0});
+        auto eff = m_effectManager->Spawn(EffectID::DrillAttack1, { 0.05f, 2.0f, 0.0f }, { 1.f, 1.f, 1.f }, {1, 0, 0});
         breacher->AttachChildBone(eff, 1);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('2'))
@@ -363,6 +375,11 @@ void RenderTest::Update(float dt)
         eff = m_effectManager->Spawn(EffectID::Target, { 1.07f, 0.05f, 1.19f }, { 1.f, 1.f, 1.f });
         eff = m_effectManager->Spawn(EffectID::Target, { 2.14f, 0.05f, 1.19f }, { 1.f, 1.f, 1.f });
     }
+    if (YunoEngine::GetInput()->IsKeyPressed('5'))
+    {
+        auto eff = m_effectManager->Spawn(EffectID::ScytheAttack, { 0.0f, 0.5f, 0 }, { 1.f, 1.f, 1.f });
+        scythe->AttachChildBone(eff, 1);
+    }
     if (YunoEngine::GetInput()->IsKeyPressed('F'))
     {
         auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 2.38f }, { 11.f, 1.f, 1.f }, { 0, 1, 0 });
@@ -371,12 +388,12 @@ void RenderTest::Update(float dt)
     }
     if (YunoEngine::GetInput()->IsKeyPressed('G'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::BlasterAttack, { 0.f, 0.f, 0.15f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
-        gun->AttachChildBone(eff, 3);
+        auto eff = m_effectManager->Spawn(EffectID::BlasterAttack, { 0.f, -0.05f, -0.05f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
+        gun->AttachChildBone(eff, 2);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('H'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::AxAttack, { -0.15f, 0.1f, 0.f }, { 1.f, 1.f, 1.f });
+        auto eff = m_effectManager->Spawn(EffectID::AxAttack, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f });
         axe->Attach(eff);
     }
     
