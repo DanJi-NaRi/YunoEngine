@@ -33,13 +33,17 @@ bool WeaponSelectScene::OnCreateScene()
     CreateWidget<TextureImage>(L"P1", L"../Assets/UI/WEAPON_SELECT/Weaponselect_background_1player.png", XMFLOAT3(0, 0, 0));
     CreateWidget<TextureImage>(L"P2", L"../Assets/UI/WEAPON_SELECT/Weaponselect_background_2player.png", XMFLOAT3(0, 0, 0));
 
+    CreateWidget<TextureImage>(L"WeaponSelect", L"../Assets/UI/WEAPON_SELECT/Weaponselect_background.png", XMFLOAT3(0, 0, 0));
+    CreateWidget<TextureImage>(L"CardBackground", L"../Assets/UI/WEAPON_SELECT/card_background.png", XMFLOAT3(0, 0, 0));
+
+    CreateWidget<TextureImage>(L"WeaponName", L"../Assets/UI/WEAPON_SELECT/Weapon_name_blaster.png", XMFLOAT3(ClientW/2, 255, 0), UIDirection::Center);
+
     CreateWidget<TextureImage>(L"S1", L"../Assets/UI/WEAPON_SELECT/Before_select_1.png", XMFLOAT3(0, 200, 0));
     CreateWidget<TextureImage>(L"S2", L"../Assets/UI/WEAPON_SELECT/Before_select_2.png", XMFLOAT3(0, 600, 0));
     CreateWidget<TextureImage>(L"S3", L"../Assets/UI/WEAPON_SELECT/Before_select_3.png", XMFLOAT3(ClientW, 200, 0), UIDirection::RightTop);
     CreateWidget<TextureImage>(L"S4", L"../Assets/UI/WEAPON_SELECT/Before_select_4.png", XMFLOAT3(ClientW, 600, 0), UIDirection::RightTop);
 
-    CreateWidget<TextureImage>(L"WeaponSelect", L"../Assets/UI/WEAPON_SELECT/Weaponselect_background.png", XMFLOAT3(0, 0, 0));
-    CreateWidget<TextureImage>(L"CardBackground", L"../Assets/UI/WEAPON_SELECT/card_background.png", XMFLOAT3(0, 0, 0));
+
     CreateWidget<WeaponButton>(L"W1Btn", Float2(287, 490), XMFLOAT3(574, 925, 0), UIDirection::Bottom)->SetCursurTexture(L"../Assets/UI/WEAPON_SELECT/Info_BLASTER_mouseout.png", L"../Assets/UI/WEAPON_SELECT/Info_BLASTER_mouseover.png");
     CreateWidget<WeaponButton>(L"W2Btn", Float2(287, 490), XMFLOAT3(717, 925, 0), UIDirection::Bottom)->SetCursurTexture(L"../Assets/UI/WEAPON_SELECT/Info_CHAKRAM_mouseout.png", L"../Assets/UI/WEAPON_SELECT/Info_CHAKRAM_mouseover.png");
     CreateWidget<WeaponButton>(L"W3Btn", Float2(287, 490), XMFLOAT3(860, 925, 0), UIDirection::Bottom)->SetCursurTexture(L"../Assets/UI/WEAPON_SELECT/Info_BREACHER_mouseout.png", L"../Assets/UI/WEAPON_SELECT/Info_BREACHER_mouseover.png");
@@ -47,7 +51,6 @@ bool WeaponSelectScene::OnCreateScene()
     CreateWidget<WeaponButton>(L"W5Btn", Float2(287, 490), XMFLOAT3(1146, 925, 0), UIDirection::Bottom)->SetCursurTexture(L"../Assets/UI/WEAPON_SELECT/Info_IMPACTOR_mouseout.png", L"../Assets/UI/WEAPON_SELECT/Info_IMPACTOR_mouseover.png");
     CreateWidget<WeaponButton>(L"W6Btn", Float2(287, 490), XMFLOAT3(1289, 925, 0), UIDirection::Bottom)->SetCursurTexture(L"../Assets/UI/WEAPON_SELECT/Info_CLEAVER_mouseout.png", L"../Assets/UI/WEAPON_SELECT/Info_CLEAVER_mouseover.png");
     
-    //CreateWidget<TextureImage>(L"Title", L"../Assets/UI/WEAPON_SELECT/Weaponselect_background_2player.png", XMFLOAT3(0, 0, 0));
 
     // 선택창 UI
     //{
