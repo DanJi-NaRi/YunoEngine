@@ -333,7 +333,8 @@ public:
     void          SetLayer(WidgetLayer layer) { m_layer = layer; }
     void          SetTextureSize(TextureHandle& texHandle);
     void          SetTextureSize(std::wstring path);
-
+    void          SetUseAspectComp(bool useAspectComp) { m_useAspectComp = useAspectComp; }
+    
     void          MirrorScaleX() { m_vScale.x *= -1; }
     void          MirrorScaleY() { m_vScale.y *= -1; }
 

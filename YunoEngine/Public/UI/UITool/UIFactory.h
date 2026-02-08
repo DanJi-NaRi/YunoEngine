@@ -115,8 +115,8 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     //pChild->SetLayer(pParent->GetLayer());
     pChild->CreateChild(); // 자식 생성
     
-    
     //pChild->SetPivot(pParent->GetPivot());
+    pChild->SetUseAspectComp(false);
 
     assert(pChild);
     if (!pChild) return nullptr;
@@ -133,7 +133,7 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     pParent->Attach(pChild);
     //pChild->SetLayer(pParent->GetLayer());
     pChild->CreateChild(); // 자식 생성
-
+    pChild->SetUseAspectComp(false);
 
     //pChild->SetPivot(pParent->GetPivot());
 
@@ -152,7 +152,7 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     pParent->Attach(pChild);
     //pChild->SetLayer(pParent->GetLayer());
     pChild->CreateChild(); // 자식 생성
-
+    pChild->SetUseAspectComp(false);
 
     //pChild->SetPivot(pParent->GetPivot());
 
@@ -171,7 +171,7 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     pParent->Attach(pChild);
     //pChild->SetLayer(pParent->GetLayer());
     pChild->CreateChild(); // 자식 생성
-
+    pChild->SetUseAspectComp(false);
 
     //pChild->SetPivot(pParent->GetPivot());
 
@@ -190,7 +190,7 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     pParent->Attach(pChild);
     //pChild->SetLayer(pParent->GetLayer());
     pChild->CreateChild(); // 자식 생성
-
+    pChild->SetUseAspectComp(false);
 
     //pChild->SetPivot(pParent->GetPivot());
 
@@ -209,7 +209,7 @@ T* UIFactory::CreateChild(const std::wstring& name, Float2 sizePx, DirectX::XMFL
     pParent->Attach(pChild);
     pChild->SetLayer(layer);
     pChild->CreateChild(); // 자식 생성
-
+    pChild->SetUseAspectComp(false);
 
     //pChild->SetPivot(pParent->GetPivot());
 
