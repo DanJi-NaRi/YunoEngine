@@ -5,7 +5,44 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 #include "GameManager.h"
-#include "UserImage.h"
+#include "TextureImage.h"
+
+namespace
+{
+    std::wstring GetPieceNameLower(PieceType pieceType)
+    {
+        switch (pieceType)
+        {
+        case PieceType::Blaster:
+            return L"blaster";
+        case PieceType::Breacher:
+            return L"breacher";
+        case PieceType::Impactor:
+            return L"impactor";
+        case PieceType::Chakram:
+            return L"chakram";
+        case PieceType::Scythe:
+            return L"scythe";
+        case PieceType::Cleaver:
+            return L"cleaver";
+        case PieceType::None:
+        default:
+            return L"";
+        }
+    }
+
+    std::wstring GetSelectedSlotTexturePath(PieceType pieceType, int slotTextureIndex)
+    {
+        const std::wstring pieceName = GetPieceNameLower(pieceType);
+        if (pieceName.empty())
+            return L"";
+
+        if (slotTextureIndex < 1 || slotTextureIndex > 4)
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/selected_" + pieceName + L"_" + std::to_wstring(slotTextureIndex) + L".png";
+    }
+}
 
 WeaponButton::WeaponButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
@@ -76,18 +113,18 @@ bool WeaponButton::LMBPressedEvent()
         return true;
 
 
-    UserImage* slotImage0 = nullptr;
-    UserImage* slotImage1 = nullptr;
+    TextureImage* slotImage0 = nullptr;
+    TextureImage* slotImage1 = nullptr;
 
     if (myIdx == 1)
     {
-        slotImage0 = dynamic_cast<UserImage*>(m_pUserImage0);
-        slotImage1 = dynamic_cast<UserImage*>(m_pUserImage1);
+        slotImage0 = dynamic_cast<TextureImage*>(m_pUserImage0);
+        slotImage1 = dynamic_cast<TextureImage*>(m_pUserImage1);
     }
     else
     {
-        slotImage0 = dynamic_cast<UserImage*>(m_pUserImage2);
-        slotImage1 = dynamic_cast<UserImage*>(m_pUserImage3);
+        slotImage0 = dynamic_cast<TextureImage*>(m_pUserImage2);
+        slotImage1 = dynamic_cast<TextureImage*>(m_pUserImage3);
     }
 
     if (!slotImage0 || !slotImage1)
@@ -95,15 +132,15 @@ bool WeaponButton::LMBPressedEvent()
 
 
 
-    UserImage* targetImage = nullptr;
+    TextureImage* targetImage = nullptr;
     int pickIndex = 0;
 
-    if (slotImage0->GetPieceType() == PieceType::None)
+    if (GameManager::Get().GetMyPiece(0) == PieceType::None)
     {
         targetImage = slotImage0;
         pickIndex = 0;
     }
-    else if (slotImage1->GetPieceType() == PieceType::None)
+    else if (GameManager::Get().GetMyPiece(1) == PieceType::None)
     {
         targetImage = slotImage1;
         pickIndex = 1;
@@ -114,8 +151,11 @@ bool WeaponButton::LMBPressedEvent()
         pickIndex = 0;
     }
 
-    targetImage->SetPieceType(m_pieceType);
-    targetImage->ChangeMaterial(static_cast<int>(m_pieceType));
+    const int slotTextureIndex = (myIdx == 1 ? 1 : 3) + pickIndex;
+    const std::wstring slotTexturePath = GetSelectedSlotTexturePath(m_pieceType, slotTextureIndex);
+    if (!slotTexturePath.empty())
+        targetImage->ChangeTexture(slotTexturePath);
+
 
     GameManager::Get().SetMyPick(pickIndex, m_pieceType);
 

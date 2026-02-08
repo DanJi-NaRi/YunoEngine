@@ -30,6 +30,8 @@ void ReadyButton::Clear()
 
 bool ReadyButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
+    sizePx.x /= 2;
+    sizePx.y /= 2;
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     m_bindkey = 0; // 0인 경우, 안쓴다는 뜻

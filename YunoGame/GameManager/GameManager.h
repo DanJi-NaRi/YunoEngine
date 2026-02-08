@@ -129,6 +129,8 @@ private:
     CurrentSceneState m_state = CurrentSceneState::Title;
 
     PieceType m_myPick[2] = { PieceType::None, PieceType::None };
+    PieceType m_lastPickedPiece = PieceType::None;
+
 
     int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽
 

@@ -6,6 +6,8 @@
 
 class CursurSystem;
 class SceneChangeButton;
+class WeaponButton;
+class ReadyButton;
 
 class WeaponSelectScene final : public SceneBase
 {
@@ -33,14 +35,14 @@ private:
     Widget* m_pUserImage3 = nullptr;
 
     //std::array<Widget*, 6> m_pWeaponBtns;
-    Widget* m_PWeaponBtn_Blaster    = nullptr;
-    Widget* m_PWeaponBtn_Breacher   = nullptr;
-    Widget* m_PWeaponBtn_Impactor   = nullptr;
-    Widget* m_PWeaponBtn_Chakram    = nullptr;
-    Widget* m_PWeaponBtn_Scythe     = nullptr;
-    Widget* m_PWeaponBtn_Cleaver    = nullptr;
+    WeaponButton* m_PWeaponBtn_Blaster    = nullptr;
+    WeaponButton* m_PWeaponBtn_Breacher   = nullptr;
+    WeaponButton* m_PWeaponBtn_Impactor   = nullptr;
+    WeaponButton* m_PWeaponBtn_Chakram    = nullptr;
+    WeaponButton* m_PWeaponBtn_Scythe     = nullptr;
+    WeaponButton* m_PWeaponBtn_Cleaver    = nullptr;
 
-    Widget* m_pReadyBtn = nullptr;
+    ReadyButton* m_pReadyBtn = nullptr;
     SceneChangeButton* m_pExitBtn  = nullptr;
 
     WeaponSelectScene_InputContext m_weaponCtx;
