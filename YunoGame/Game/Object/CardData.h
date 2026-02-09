@@ -19,7 +19,6 @@ enum class PieceType : uint8_t { // 비트마스크로도 활용 가능
     Impactor,
     Cleaver,
     Count,
-
 };
 
 enum Dir : uint8_t {

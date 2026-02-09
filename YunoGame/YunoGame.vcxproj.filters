@@ -106,9 +106,6 @@
     <Filter Include="System\GridSystem\Queue_test">
       <UniqueIdentifier>{a112416b-9bd3-4b1e-b689-f66c726ce9b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\UI\Image\CardTable">
-      <UniqueIdentifier>{8dae683b-fb3e-4c62-9d9c-597c2549a80b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="System\GameManager">
       <UniqueIdentifier>{896c13df-476e-425f-9d5c-54609a012060}</UniqueIdentifier>
     </Filter>
@@ -234,15 +231,6 @@
     <ClCompile Include="Scenes\PhaseScene.cpp">
       <Filter>Scenes\3.Phase</Filter>
     </ClCompile>
-    <ClCompile Include="Game\UI\CardTable.cpp">
-      <Filter>Game\UI\Image\CardTable</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\UI\CardConfirmPanel.cpp">
-      <Filter>Game\UI\Image\CardTable</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\UI\CardSelectionPanel.cpp">
-      <Filter>Game\UI\Image\CardTable</Filter>
-    </ClCompile>
     <ClCompile Include="Game\UI\CardCancelButton.cpp">
       <Filter>Game\UI\Button</Filter>
     </ClCompile>
@@ -327,9 +315,26 @@
     <ClCompile Include="CountdownScene.cpp">
       <Filter>Scenes\4.CountDown</Filter>
     </ClCompile>
+
     <ClCompile Include="ShowCardDeck.cpp">
       <Filter>Game\UI\ShowCardDeck</Filter>
     </ClCompile>
+
+    <ClCompile Include="WeaponNameImage.cpp" />
+    <ClCompile Include="Game\UI\CardConfirmPanel.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\CardSelectionPanel.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\CardTable.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="PhaseStaminaBar.cpp">
+      <Filter>Game\UI\ProgressBar</Filter>
+    </ClCompile>
+    <ClCompile Include="PhaseWeaponSelectButton.cpp" />
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -461,15 +466,6 @@
     <ClInclude Include="System\PhaseScene_InputContext.h">
       <Filter>System\UIContext</Filter>
     </ClInclude>
-    <ClInclude Include="Game\UI\CardTable.h">
-      <Filter>Game\UI\Image\CardTable</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\UI\CardConfirmPanel.h">
-      <Filter>Game\UI\Image\CardTable</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\UI\CardSelectionPanel.h">
-      <Filter>Game\UI\Image\CardTable</Filter>
-    </ClInclude>
     <ClInclude Include="Game\UI\CardCancelButton.h">
       <Filter>Game\UI\Button</Filter>
     </ClInclude>
@@ -545,6 +541,22 @@
     <ClInclude Include="ShowCardDeck.h">
       <Filter>Game\UI\ShowCardDeck</Filter>
     </ClInclude>
+
+    <ClInclude Include="WeaponNameImage.h" />
+    <ClInclude Include="Game\UI\CardConfirmPanel.h">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\CardSelectionPanel.h">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\CardTable.h">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseStaminaBar.h">
+      <Filter>Game\UI\ProgressBar</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseWeaponSelectButton.h" />
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

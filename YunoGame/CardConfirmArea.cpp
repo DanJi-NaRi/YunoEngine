@@ -65,8 +65,9 @@ bool CardConfirmArea::Event(float dTime)
     assert(m_snapPoint.pSnapOwner);
     m_pCard = dynamic_cast<Card*>(m_snapPoint.pSnapOwner);
 
-    if(m_pCard)
+    if (m_pCard)
         this->ChangeTexture(m_pCard->GetTexturePath());
+        
     // 이벤트 공간
     
     return true;

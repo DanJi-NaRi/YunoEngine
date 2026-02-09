@@ -79,6 +79,7 @@ enum class WidgetClass : int {
     CardTable, // 미사용
     Minimap,
     MinimapTile,
+    DirSelectButton,
 
     // 카드 컨펌
     CardConfirmPanel,
@@ -328,14 +329,14 @@ public:
     void          SetScaleBK(XMFLOAT3 vScaleBk) { m_vScaleBk = vScaleBk; }
     void          SetPivot(Float2 pivot)        { assert(PivotMinMax(pivot)); m_pivot = pivot; m_transformDirty = true; }
     void          SetPivot(UIDirection dir)     { m_pivot = PivotFromUIDirection(dir); m_transformDirty = true;}
-    virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
     void          SetCanvasSize(Float3 sizeXY)   { m_canvasSize = sizeXY; m_transformDirty = true;}
     void          SetIsRoot(bool isRoot) { m_isRoot = isRoot; }
     void          SetLayer(WidgetLayer layer) { m_layer = layer; }
     void          SetTextureSize(TextureHandle& texHandle);
     void          SetTextureSize(std::wstring path);
     void          SetUseAspectComp(bool useAspectComp) { m_useAspectComp = useAspectComp; }
-    
+    void          SetVisible(Visibility visible) { m_visible = visible; }
+
     void          MirrorScaleX() { m_vScale.x *= -1; }
     void          MirrorScaleY() { m_vScale.y *= -1; }
 
@@ -360,11 +361,18 @@ public:
     const Float2                 GetPivot() { return m_pivot; }
     bool                         GetIsRoot() { return m_isRoot; }
     WidgetLayer                  GetLayer() { return m_layer; }
-    bool                         HasMeshNode() const { return m_MeshNode.get() != nullptr; }
     const Float2                 GetTextureSize(int num) const { m_textureSize; }
     std::wstring                 GetTexturePath() { return m_texturePath; }
     std::wstring                 GetTexturePathBk() { return m_texturePathBk; }
    
+    virtual bool                 IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
+    bool                         IsVisible(){ return (m_visible == Visibility::Visible); }
+    bool                         IsHidden() { return (m_visible == Visibility::Hidden); }
+    bool                         IsCollapsed() { return (m_visible == Visibility::Collapsed); }
+    Visibility                   GetVisible() { return m_visible; }
+
+
+    bool                         HasMeshNode() const { return m_MeshNode.get() != nullptr; }
 
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음

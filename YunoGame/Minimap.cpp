@@ -7,6 +7,8 @@
 #include "MinimapTile.h"
 #include "Grid.h"
 
+#include "BattlePackets.h"
+
 #include "IInput.h"
 #include "UIFactory.h"
 
@@ -77,7 +79,6 @@ bool Minimap::Update(float dTime)
 {
     Image::Update(dTime);
 
-
     return true;
 }
 
@@ -94,6 +95,15 @@ bool Minimap::Submit(float dTime)
 //    //auto pLine = m_manager->CreateObject<UnitGridLine>(L"DebugGridLine", XMFLOAT3(x, y + 0.01f, z));
 //    //pLine->SetScale({ m_cellSizeX, 1, m_cellSizeZ });
 //    //m_gridBox->Attach(pLine);
+//}
+
+void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {}
+
+
+//{
+//    int index = data.targetTileID - 1;   // 0-based로 변환
+//    int x = index % m_grid.col;
+//    int y = index / m_grid.col;
 //}
 
 //void Minimap::GridSetup()

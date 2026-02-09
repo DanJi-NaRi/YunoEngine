@@ -3,6 +3,8 @@
 
 #include "Card.h"
 #include "CardSlot.h"
+#include "WeaponNameImage.h"
+#include "PhaseStaminaBar.h"
 
 #include "IInput.h"
 #include "UIFactory.h"
@@ -18,6 +20,10 @@ CardSelectionPanel::~CardSelectionPanel()
 }
 
 void CardSelectionPanel::Clear()
+{
+}
+
+void CardSelectionPanel::UpdatePanel(const ObstacleResult& obstacleResult)
 {
 }
 
@@ -74,43 +80,34 @@ void CardSelectionPanel::CreateChild() {
 
     //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1000, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_pPhaseStaminaBar = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar", Float2(1083, 34), XMFLOAT3(-580, -400, 0), UIDirection::Center, this);
+
+    m_pWeaponIMG = m_uiFactory.CreateChild<WeaponNameImage>(m_name + L"_WeaponName", Float2(56, 259), XMFLOAT3(-1400, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1350, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit0.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-800, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-1050, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit1.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(205, 297), XMFLOAT3(-600, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(205, 297), XMFLOAT3(-750, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit2.png");
 
     m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(205, 297), XMFLOAT3(-400, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit3.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(205, 297), XMFLOAT3(-1000, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(205, 297), XMFLOAT3(-200, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit4.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-800, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-0, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
     m_Cards.back()->ChangeTexture(L"../Assets/Test/unit5.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C6", Float2(205, 297), XMFLOAT3(-600, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
-    m_Cards.back()->ChangeTexture(L"../Assets/Test/unit6.png");
-
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C7", Float2(205, 297), XMFLOAT3(-400, -180, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
-    m_Cards.back()->ChangeTexture(L"../Assets/Test/unit7.png");
 }
 
 
 bool CardSelectionPanel::Update(float dTime)
 {
     Image::Update(dTime);
-
-    if (m_pInput->IsKeyPressed('Z')) {
-
-        if(m_CardSlots.back()->GetPivot() == PivotFromUIDirection(UIDirection::RightTop)) { m_CardSlots.back()->SetPivot(UIDirection::LeftTop); }
-        else if(m_CardSlots.back()->GetPivot() == PivotFromUIDirection(UIDirection::LeftTop)) { m_CardSlots.back()->SetPivot(UIDirection::RightTop); }
-
-        std::cout << m_CardSlots.back()->GetPos().x << std::endl;
-    }
     
     if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50 * dTime; }
     if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50 * dTime; }

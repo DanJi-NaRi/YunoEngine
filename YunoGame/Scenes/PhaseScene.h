@@ -5,6 +5,11 @@
 #include "IGridSystem.h"
 //class PhaseScene_InputContext;
 
+class Minimap;
+class CardConfirmPanel;
+class CardSelectionPanel;
+
+
 class PhaseScene final : public SceneBase
 {
 public:
@@ -27,5 +32,8 @@ private:
 
 private:
     PhaseScene_InputContext m_uiCtx;
-    std::unique_ptr<IGridSystem> m_minimap;
+    //std::unique_ptr<IGridSystem> m_minimap;
+    Minimap* m_pMinimap = nullptr;
+    CardConfirmPanel* m_pConfirmPanel = nullptr;
+    CardSelectionPanel* m_pSelectionPanel = nullptr;
 };
