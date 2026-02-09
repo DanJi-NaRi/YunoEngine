@@ -191,7 +191,6 @@ private:
     const std::vector<int> GetRangeTileIDs(const Int2 unitCell, const std::vector<RangeOffset>& ranges, Direction dir);
 
     bool CheckNotDying(const GamePiece pieceType);
-    void CheckHealth(const UnitState& us, PieceInfo& pieceInfo);
 
     std::wstring GetWeaponFileName(int weaponID);           // 테스트용
     std::wstring GetTileFileName(int tile);

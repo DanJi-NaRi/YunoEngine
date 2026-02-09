@@ -277,7 +277,7 @@ bool UnitPiece::CreateMaterial()
 
 bool UnitPiece::CheckDead(float dt)
 {
-    if (!isDead && isHitting)  return false; // 
+    if (!isDead)  return false;
 
     if (m_animator)
     {
@@ -310,10 +310,9 @@ void UnitPiece::CheckMyQ()
         }
         case CommandType::Hit:
         {
-            //SetFlashColor({0,0,0,1},1,0.3f);
             PlayGridQ::Insert(PlayGridQ::Hit_S(m_who));
-            if (tp.hit.whichPiece != GamePiece::None)
-                PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece));
+            //if (tp.hit.whichPiece != GamePiece::None)       // 조건문 빼고 무조건 보내는 걸로
+            PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece));
             break;
         }
         }
@@ -446,10 +445,10 @@ void UnitPiece::UpdateHit(float dt)
             m_animator->SetLoop("idle", true);
             isHitting = false;
 
-            // 피격 애니메이션 끝나면 system에게 기물 생사여부 체크하도록 함.
-            PGridCmd cmd{ CommandType::Hit };
-            cmd.hit.whichPiece = GamePiece::None;
-            m_Q.push(cmd);
+            //// 피격 애니메이션 끝나면 system에게 기물 생사여부 체크하도록 함.
+            //PGridCmd cmd{ CommandType::Hit };
+            //cmd.hit.whichPiece = GamePiece::None;
+            //m_Q.push(cmd);
         }
     }
 }
@@ -571,7 +570,7 @@ void UnitPiece::PlayAttack()
     isAttacking = true;
 }
 
-void UnitPiece::PlayHit(Float4 color, int count, float blinkTime)
+void UnitPiece::PlayHit()
 {
     //SetFlashColor(color, count, blinkTime);
     if (m_animator == nullptr) return;

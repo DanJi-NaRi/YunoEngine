@@ -36,7 +36,7 @@ public:
     void AppearDissolve(float dissolveTime);
     void DisappearDissolve(float dissolveTime);
     void PlayAttack();
-    void PlayHit(Float4 color, int count, float blinkTime);
+    void PlayHit();
     void PlayDead(float disappearDisolveDuration);
 
     void SetTmpColor(Float4 color);

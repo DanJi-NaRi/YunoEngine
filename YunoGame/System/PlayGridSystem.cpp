@@ -322,9 +322,32 @@ void PlayGridSystem::CheckMyQ()
             if (it == m_pieces.end()) break;
 
             auto& pieceInfo = it->second;
-            int uid = GetUnitID(pieceType);
+            auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
 
-            CheckHealth(m_UnitStates[uid], pieceInfo);
+            int uid = GetUnitID(pieceType);
+            if (static_cast<int>(m_UnitStates[uid].hp) <= 0)
+            {
+                pPiece->PlayDead(disappearDisolveDuration);
+
+                for (uint32_t subId : pieceInfo.subIds)
+                {
+                    auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                    if (pSubPiece != nullptr)
+                        pSubPiece->PlayDead(disappearDisolveDuration);
+                }
+            }
+            else
+            {
+                pPiece->PlayHit();
+
+                for (uint32_t subId : pieceInfo.subIds)
+                {
+                    auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                    if (pSubPiece != nullptr)
+                        pSubPiece->PlayHit();
+                }
+            }
+
             std::cout << static_cast<int>(pieceType) << ". health: " << static_cast<int>(m_UnitStates[uid].hp) << std::endl;
             break;
         }
@@ -344,6 +367,11 @@ void PlayGridSystem::CheckMyQ()
             }
 
             m_pieces.erase(it);
+
+            // 해당 타일 상태 초기화
+            int unitID = GetUnitID(pieceType);
+            int tileID = m_UnitStates[unitID].targetTileID;
+            m_tiles[tileID] = TileState{};
 
             // m_pieces가 전부 사라졌는지 체크
             if (m_pieces.size() == 0)
@@ -574,31 +602,33 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
             if (pPiece == nullptr) continue;
 
-            // 피격 애니메이션 대신 번쩍이는 걸로 임시 대체
-            pPiece->PlayHit(as.m_hitColor, as.m_flashCount, as.m_flashInterval);
-            for (auto& subId : pieceInfo.subIds)
+            // 죽었는지 체크. 죽었으면 죽는 애니메이션 재생
+            int unitID = GetUnitID(it->first);
+            if (m_UnitStates[unitID].hp == 0)
             {
-                auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                pSub->PlayHit(as.m_hitColor, as.m_flashCount, as.m_flashInterval);
+                pPiece->PlayDead(disappearDisolveDuration);
+                for (auto& subId : pieceInfo.subIds)
+                {
+                    auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                    pSub->PlayDead(disappearDisolveDuration);
+                }
             }
+            else // 살았다면 피격 애니메이션 재생
+            {
+                pPiece->PlayHit();
+                for (auto& subId : pieceInfo.subIds)
+                {
+                    auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                    pSub->PlayHit();
+                }
+            }
+            std::cout << "[PlayGridSystem::UpdateAttackSequence]\nHitter hp: " << static_cast<int>(m_UnitStates[GetUnitID(pieces[i])].hp) << std::endl;
         }
         as.phaseStarted = false;
         break;
     }
     case AttackPhase::Over:
-    {
-        // 죽었는지 체크
-        const auto& pieces = as.hitPieces;
-        for (int i = 0; i < pieces.size(); i++)
-        {
-            std::cout << "[Attack Sequence]\nHitter hp: " << static_cast<int>(m_UnitStates[GetUnitID(pieces[i])].hp) << std::endl;
-
-            auto it = m_pieces.find(pieces[i]);
-            if (it == m_pieces.end()) continue;
-
-            m_playQ->Hit_S(pieces[i]);
-        }
-        
+    {   
         as = {};
         m_attackActive = false;
         return;
@@ -744,11 +774,11 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
                 auto& pieceInfo = pieceIt->second;
                 auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
                 // 피격 애니메이션 대신 번쩍이는 걸로 임시 대체
-                pPiece->PlayHit(os.hitColor, os.hitFlashCount, os.hitFlashInterval);
+                pPiece->PlayHit();
                 for (auto& subId : pieceInfo.subIds)
                 {
                     auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                    pSub->PlayHit(os.hitColor, os.hitFlashCount, os.hitFlashInterval);
+                    pSub->PlayHit();
                 }
             }
         }
@@ -1095,6 +1125,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
         {
             std::cout << "[PlayGridSystem]::Enemy_Collison\n";
 
+            CommandType cmd = CommandType::Hit;
             // 부딪힌 기물 타입 확인
             GamePiece existWho = GamePiece::None;
             bool isIn = m_grids[(int)m_nowG]->InBounds(colC.x, colC.y);
@@ -1106,7 +1137,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
 
             // 충돌지점까지 이동 후 원래 자리로 되돌아감
             pPiece->InsertQ(PlayGridQ::Move_P(fdir, colW.x, m_wy, colW.y));              // 충돌 위치까지 이동 후
-            pPiece->InsertQ(PlayGridQ::Hit_P(existWho));                                 // 생사 여부 확인
+            pPiece->InsertQ(PlayGridQ::Hit_P(existWho));                                 // 이동하는 애 죽었는지 부딪힌 애 죽었는지
             pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, wx, m_wy, wz, 1));        // 제자리로 돌아감
         }
         else                                                // 아군과 충돌
@@ -1383,30 +1414,6 @@ bool PlayGridSystem::CheckNotDying(const GamePiece pieceType)
         return false;
     }
     return true;
-}
-
-
-void PlayGridSystem::CheckHealth(const UnitState& us, PieceInfo& pieceInfo)
-{
-    if (static_cast<int>(us.hp ) <= 0)
-    {
-        // 해당 기물 렌더X
-        auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
-
-        pPiece->PlayDead(disappearDisolveDuration);
-
-        for (uint32_t subId : pieceInfo.subIds)
-        {
-            auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-            if (pSubPiece != nullptr)
-                pSubPiece->PlayDead(disappearDisolveDuration);
-        }
-
-        // 해당 타일 정보 초기화
-        //int tileID = m_tilesIDs[us.targetTileID];
-        //m_tiles[tileID] = TileState{};
-        m_tiles[us.targetTileID] = TileState{};
-    }
 }
 
 void PlayGridSystem::ChangeTileTO(int cx, int cz, const TileOccupy to)
