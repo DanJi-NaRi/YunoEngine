@@ -40,6 +40,9 @@ bool ReadyButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, X
 }
 
 bool ReadyButton::Update(float dTime) {
+
+    if (GameManager::Get().GetSceneState() == CurrentSceneState::StandBy|| GameManager::Get().GetSceneState() == CurrentSceneState::CountDown)
+        ChangeTexture(L"../Assets/UI/WEAPON_SELECT/Go_mouseover.png");
     Button::Update(dTime);
 
 
@@ -82,6 +85,12 @@ bool ReadyButton::LMBPressedEvent()
     {
         return false;
     }
+    
+    if (gm.GetSceneState() == CurrentSceneState::StandBy || gm.GetSceneState() == CurrentSceneState::CountDown)
+    {
+        std::cout << "already StandBy or CountDown Scene" << std::endl;
+        return false;
+    }
 
 
     const bool isReady = gm.ToggleReady();
@@ -104,6 +113,7 @@ bool ReadyButton::LMBPressedEvent()
 
     // 패킷 보내기
     gm.SendPacket(std::move(bytes));
+    gm.SetSceneState(CurrentSceneState::StandBy);
 
     return true;
 }

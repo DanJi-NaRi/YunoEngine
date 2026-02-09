@@ -127,6 +127,7 @@ public:
     bool IsCountdownActive() const;
     bool IsCountdownFinished() const;
     int    GetCountdownNumber() const;
+    int GetCountDownSlotUnitId(int slotIndex, int unitIndex) const;
 private:
     static GameManager* s_instance;
 

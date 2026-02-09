@@ -216,6 +216,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="SpeechBubble.cpp" />
     <ClCompile Include="StaminaBar.cpp" />
     <ClCompile Include="StaminaGauge.cpp" />
+    <ClCompile Include="StandByScene.cpp" />
     <ClCompile Include="System\BattlePackets.cpp" />
     <ClCompile Include="System\CardManager.cpp" />
     <ClCompile Include="System\CardRangeManager.cpp" />
@@ -312,6 +313,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="SpeechBubble.h" />
     <ClInclude Include="StaminaBar.h" />
     <ClInclude Include="StaminaGauge.h" />
+    <ClInclude Include="StandByScene.h" />
     <ClInclude Include="System\BattlePackets.h" />
     <ClInclude Include="System\CardManager.h" />
     <ClInclude Include="Game\Object\CardQueue.h" />
