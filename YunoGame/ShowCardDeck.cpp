@@ -55,6 +55,9 @@ bool ShowCardButton::IdleEvent()
 
 bool ShowCardButton::HoveredEvent()
 {
+    if (!m_isTooltipEnabled)
+        return true;
+
     if (m_pTooltipImage)
     {
         if (!m_tooltipTexturePath.empty())
@@ -84,10 +87,28 @@ void ShowCardButton::SetTooltipTexturePath(const std::wstring& tooltipTexturePat
 
 }
 
+void ShowCardButton::SetTooltipEnabled(bool isEnabled)
+{
+    m_isTooltipEnabled = isEnabled;
+
+    if (!m_isTooltipEnabled && m_pTooltipImage)
+        m_pTooltipImage->SetScale(XMFLOAT3(0.f, 0.f, 1.f));
+}
+
+
 bool ShowCardButton::CreateMaterial()
 {
     return Widget::CreateMaterial(L"../Assets/UI/CARD/Card_back.png");
 }
+
+
+
+
+
+
+
+
+
 
 ShowCardDeck::ShowCardDeck(UIFactory& uiFactory) : Image(uiFactory)
 {
@@ -116,6 +137,7 @@ bool ShowCardDeck::Submit(float dTime)
 void ShowCardDeck::SetWeaponCards(PieceType pieceType)
 {
     const std::wstring lowerName = ToLowerPieceName(pieceType);
+    const bool canShowTooltip = !lowerName.empty();
     if (lowerName.empty())
         return;
 
@@ -123,6 +145,10 @@ void ShowCardDeck::SetWeaponCards(PieceType pieceType)
     for (int i = 0; i < static_cast<int>(m_cardButtons.size()); ++i)
     {
         if (!m_cardButtons[i])
+            continue;
+        m_cardButtons[i]->SetTooltipEnabled(canShowTooltip);
+
+        if (!canShowTooltip)
             continue;
 
         //m_cardButtons[i]->ChangeTexture(L"../Assets/UI/CARD/card_" + lowerName + L"_" + std::to_wstring(i + 1) + L".png"); 
@@ -192,6 +218,7 @@ void ShowCardDeck::BuildCards()
         }
 
         m_cardButtons[i]->SetTooltipTexturePath(L"../Assets/UI/TOOLTIP/tooltip_blaster_" + std::to_wstring(i + 1) + L".png");
+        m_cardButtons[i]->SetTooltipEnabled(false);
     }
 
     m_isBuilt = true;

@@ -20,6 +20,7 @@ public:
 
     void SetTooltipImage(TextureImage* tooltipImage);
     void SetTooltipTexturePath(const std::wstring& tooltipTexturePath);
+    void SetTooltipEnabled(bool isEnabled);
 
 private:
     bool CreateMaterial() override;
@@ -27,6 +28,7 @@ private:
 private:
     TextureImage* m_pTooltipImage = nullptr;
     std::wstring m_tooltipTexturePath;
+    bool m_isTooltipEnabled = false;
 };
 
 class ShowCardDeck final : public Image
