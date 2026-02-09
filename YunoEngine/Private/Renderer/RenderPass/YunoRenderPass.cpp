@@ -48,7 +48,7 @@ bool YunoRenderPass::Create(ID3D11Device* device, const YunoRenderPassDesc& desc
         rd.FrontCounterClockwise = FALSE;
         rd.DepthClipEnable = TRUE;
         rd.MultisampleEnable = TRUE;
-        rd.AntialiasedLineEnable = FALSE;
+        rd.AntialiasedLineEnable = TRUE;
 
         Microsoft::WRL::ComPtr<ID3D11RasterizerState> rs;
         const HRESULT hr = device->CreateRasterizerState(&rd, &rs);
