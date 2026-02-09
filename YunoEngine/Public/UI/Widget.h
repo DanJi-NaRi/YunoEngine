@@ -71,6 +71,7 @@ enum class WidgetClass : int {
     ExitButton,
     WeaponButton,
     CountdownImage,
+
     //////////////////////////////
     // 카드 선택 페이즈 씬
     Card,

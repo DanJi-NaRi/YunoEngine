@@ -77,12 +77,9 @@ bool RenderTest::OnCreateScene()
         }
     }
 
-    //auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 500, 500 }, XMFLOAT3{ 100, 100, 0 }, UIDirection::LeftTop);
-    //sheet->SetSpriteSheet(L"../Assets/Effects/Coin/EF_Coin1P.png", 10, 10, 100, 50.f, true);
-    //m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 50.0f);
-    //m_objectManager->CreateObject<Quad>(L"TitlePlane", XMFLOAT3(0, 0, 0));
-
-    
+    auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::Center);
+    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 8, 12, 90, 24.f, true);
+    //sheet->SetSpriteSheet(L"../Assets/Textures/white.png", 1, 1, 1, 24.f, true);
 
     PassOption po;
 
@@ -91,9 +88,12 @@ bool RenderTest::OnCreateScene()
     //map->SetScale(XMFLOAT3(1, 1, 1));
     //m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx");
     //Building* tile;
-    gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"blaster" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Blaster/Blaster.fbx");
+    po.shader = ShaderId::PBR_AniDissolve;
+    gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"blaster" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Blaster/Blaster.fbx", po);
     gun->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
     gun->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+    gun->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+    gun->SetDissolveColor(XMFLOAT3(1, 1, 1));
 
     axe = m_objectManager->CreateObjectFromFile<AnimTest>(L"axe", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Impactor/Impactor.fbx");
     axe->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
@@ -102,18 +102,24 @@ bool RenderTest::OnCreateScene()
 
     chakram01 = m_objectManager->CreateObjectFromFile<AnimTest>(L"chakram01", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
     chakram01->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
+    chakram01->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_01.fbx");
 
     chakram02 = m_objectManager->CreateObjectFromFile<AnimTest>(L"chakram02", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
     chakram02->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
+    chakram02->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_02.fbx");
 
     blade = m_objectManager->CreateObjectFromFile<AnimTest>(L"blade", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Cleaver/Cleaver.fbx");
-    blade->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
+    blade->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Cleaver_idle.fbx");
+    blade->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Cleaver_attack.fbx");
 
     breacher = m_objectManager->CreateObjectFromFile<AnimTest>(L"breacher", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Breacher/Breacher.fbx");
-    breacher->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/drill_idle.fbx");
+    breacher->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Breacher_idle.fbx");
+    breacher->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Breacher_attack.fbx");
+    //breacher->SetScale({ 2, 2, 2 });
 
     scythe = m_objectManager->CreateObjectFromFile<AnimTest>(L"scythe", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx");
     scythe->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
+    scythe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/scythe_attack.fbx");
 
     
 
@@ -156,6 +162,31 @@ bool RenderTest::OnCreateScene()
     {
         auto razer = m_objectManager->CreateObjectFromFile<Building>(L"razer", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Razer/Razer.fbx");
     }
+
+    ed.framecount = 30;
+    ed.cols = 5;
+    ed.rows = 6;
+    ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_2.png";
+
+    EffectDesc ed2{};
+    ed2.shaderid = ShaderId::EffectBase;
+    ed2.billboard = BillboardMode::None;
+    ed2.lifetime = 1.5f;
+    ed2.framecount = 25;
+    ed2.cols = 12;
+    ed2.rows = 10;
+    ed2.emissive = 30.0f;
+    ed2.color = { 1, 0, 0, 1 };
+    ed2.rot = { XM_PIDIV2, 0, 0 };
+    ed2.isLoop = true;
+    ed2.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_1.png";
+    for (auto i = 0; i < 5; i++)
+    {
+        auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_Floor1", XMFLOAT3(0, 1, 0));
+        warning->BuildInternalEffectMaterial(ed);
+        //warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_Floor2", XMFLOAT3(0, 1, 0));
+        //warning->BuildInternalEffectMaterial(ed2);
+    }
    
     /////////////////////////////////////////////////////////////////////////////////
     // 이펙트 등록
@@ -187,7 +218,7 @@ bool RenderTest::OnCreateScene()
     chakram01->Attach(eff);
     eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
     blade->Attach(eff);
-    eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 0.5f, 0.5f, 0.5f }, { 1, 0, 0 });
     breacher->Attach(eff);
     eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
     scythe->Attach(eff);
@@ -206,17 +237,16 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Razer/EF_Rager_White.png";
     m_effectManager->RegisterEffect(ed);
 
-    ed.isLoop = false;
-
     ed.id = EffectID::BlasterAttack;
     ed.lifetime = 1.2f;
     ed.framecount = 30;
     ed.cols = 5;
     ed.rows = 5;
-    ed.billboard = BillboardMode::Beam;
+    ed.billboard = BillboardMode::None;
     ed.texPath = L"../Assets/Effects/Blaster/EF_Shot.png";
     ed.emissive = 50.0f;
-    ed.color = { 1, 0, 0, 1 };
+    ed.color = { 0, 0.5f, 1, 1 };
+    ed.rot = { 0, -XM_PIDIV2, -XM_PIDIV2 };
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::AxAttack;
@@ -236,8 +266,9 @@ bool RenderTest::OnCreateScene()
     ed.lifetime = 1.2f;
     ed.cols = 6;
     ed.rows = 5;
-    ed.billboard = BillboardMode::Beam;
-    ed.rot = { 0, 0, 0 };
+    ed.billboard = BillboardMode::None;
+    ed.rot = { 0, -XM_PIDIV2, -XM_PIDIV2 };
+    //ed.rot = { 0, 0, 0 };
     ed.texPath = L"../Assets/Effects/Drill/EF_Drill.png";
     m_effectManager->RegisterEffect(ed);
 
@@ -277,6 +308,32 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
     m_effectManager->RegisterEffect(ed);
 
+    ed.id = EffectID::Target;
+    ed.framecount = 30;
+    ed.lifetime = 1.2f;
+    ed.cols = 6;
+    ed.rows = 5;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { XM_PIDIV2, 0, 0 };
+    ed.emissive = 30.0f;
+    ed.color = { 0, 0, 1, 1 };
+    ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.isLoop = true;
+    ed.id = EffectID::ScytheAttack;
+    ed.framecount = 18;
+    ed.lifetime = 1.2f;
+    ed.cols = 3;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { 0, XM_PIDIV2, XMConvertToRadians(160) };
+    ed.emissive = 30.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_1.png";
+    m_effectManager->RegisterEffect(ed);
+    ed.isLoop = false;
+
     return true;
 }
 
@@ -300,8 +357,8 @@ void RenderTest::Update(float dt)
 {
     if (YunoEngine::GetInput()->IsKeyPressed('1'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::DrillAttack1, { 0.1f, 0.25f, 0.1f }, { 1.f, 1.f, 1.f }, {1, 0, 0});
-        breacher->AttachChildBone(eff, 3);
+        auto eff = m_effectManager->Spawn(EffectID::DrillAttack1, { 0.05f, 2.0f, 0.0f }, { 1.f, 1.f, 1.f }, {1, 0, 0});
+        breacher->AttachChildBone(eff, 1);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('2'))
     {
@@ -321,6 +378,11 @@ void RenderTest::Update(float dt)
         eff = m_effectManager->Spawn(EffectID::Target, { 1.07f, 0.05f, 1.19f }, { 1.f, 1.f, 1.f });
         eff = m_effectManager->Spawn(EffectID::Target, { 2.14f, 0.05f, 1.19f }, { 1.f, 1.f, 1.f });
     }
+    if (YunoEngine::GetInput()->IsKeyPressed('5'))
+    {
+        auto eff = m_effectManager->Spawn(EffectID::ScytheAttack, { 0.0f, 0.5f, 0 }, { 1.f, 1.f, 1.f });
+        scythe->AttachChildBone(eff, 1);
+    }
     if (YunoEngine::GetInput()->IsKeyPressed('F'))
     {
         auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 2.38f }, { 11.f, 1.f, 1.f }, { 0, 1, 0 });
@@ -329,12 +391,12 @@ void RenderTest::Update(float dt)
     }
     if (YunoEngine::GetInput()->IsKeyPressed('G'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::BlasterAttack, { 0.f, 0.f, 0.15f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
-        gun->AttachChildBone(eff, 3);
+        auto eff = m_effectManager->Spawn(EffectID::BlasterAttack, { 0.f, -0.05f, -0.05f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
+        gun->AttachChildBone(eff, 2);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('H'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::AxAttack, { -0.15f, 0.1f, 0.f }, { 1.f, 1.f, 1.f });
+        auto eff = m_effectManager->Spawn(EffectID::AxAttack, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f });
         axe->Attach(eff);
     }
     

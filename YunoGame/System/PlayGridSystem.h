@@ -157,6 +157,7 @@ private:
     void CheckMyQ();
     void CheckPacket(float dt);
     void CheckOver();
+    void ApplyObstacleResult(const ObstacleResult& obstacle);   // 장애물 패킷 적용하는 함수
 
     void UpdateSequence(float dt);
     void UpdateAttackSequence(float dt);
@@ -214,9 +215,11 @@ private:
 
 private:
     // 시간 관련
+
     float moveDuration = 2.5f;      // 이동
     float buffDuration = 2.f;       // 버프
     float attackDuration = 3.f;     // 공격
+
 
     int tileFlashCount = 3;
     float tileFlashInterval = 0.3f;
@@ -236,6 +239,10 @@ private:
     float warnDuration = 5.f;
     
         // 패킷
+    float pktOffset = 0.5f;
+    float attackPktTime = attackAndMoveDuration + pktOffset;
+    float utilityPktTime = moveDuration + attackAndMoveDuration + buffDuration + pktOffset;
+    
     float pktOffset = 0.5f;
     float attackPktTime = attackAndMoveDuration + pktOffset;
     float utilityPktTime = moveDuration + attackAndMoveDuration + buffDuration + pktOffset;

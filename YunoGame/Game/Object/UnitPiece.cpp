@@ -192,7 +192,9 @@ bool UnitPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 bool UnitPiece::Update(float dTime)
 {
     // 죽은 상태인지 먼저 확인
+
     if(CheckDead(dTime))   return true;
+
 
     UpdateRot(dTime);
     UpdateMove(dTime);

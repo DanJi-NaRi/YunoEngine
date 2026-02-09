@@ -100,9 +100,11 @@ namespace yuno::server
                     m_server.Broadcast(std::move(bytes));
                 }
 
+
                 std::cout << "[Server] Disconnected sid=" << sid
                     << " ec=" << ec.message()
                     << " -> slot cleared\n";
+
 
                 if (m_roundController.GetRoundStarted())
                 {

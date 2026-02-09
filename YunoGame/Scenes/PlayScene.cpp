@@ -6,6 +6,7 @@
 
 #include "ObjectManager.h"
 #include "GameManager.h"
+#include "EffectManager.h"
 #include "YunoLight.h"
 #include "YunoCamera.h"
 #include "IInput.h"
@@ -18,6 +19,8 @@
 #include "Dwarf.h"
 #include "Emoji.h"
 #include "PlayQueue.h"
+#include "EffectUnit.h"
+
 bool PlayScene::OnCreateScene()
 {
     //std::cout << "[PlayScene] OnCreate\n";
@@ -43,7 +46,7 @@ bool PlayScene::OnCreateScene()
     PassOption po;
 
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
-    map->SetRot({ 0, XMConvertToRadians(90.f), 0 });
+    map->SetRot({ 0, XM_PIDIV2, 0 });
 
     // 플레이 그리드 시스템 생성
     m_playGrid = std::make_unique<PlayGridSystem>(m_objectManager.get());
@@ -52,7 +55,188 @@ bool PlayScene::OnCreateScene()
     // 디렉션 라이트 생성
     m_objectManager->CreateDirLight();
 
+
+    EffectDesc ed{};
+    ed.id = EffectID::Warning;
+    ed.shaderid = ShaderId::EffectBase;
+    ed.billboard = BillboardMode::None;
+    ed.lifetime = 1.5f;
+    ed.framecount = 25;
+    ed.cols = 5;
+    ed.rows = 5;
+    ed.emissive = 30.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.rot = { 0, 0, 0 };
+    ed.isLoop = true;
+    ed.texPath = L"../Assets/Effects/Warning/EF_WARNING.png";
+
+    for (auto i = 0; i < 5; i++)
+    {
+        auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning", XMFLOAT3(0, 1, 0));
+        warning->BuildInternalEffectMaterial(ed);
+    }
+
+    ed.framecount = 25;
+    ed.cols = 5;
+    ed.rows = 5;
+    ed.texPath = L"../Assets/Effects/Warning/EF_WARNING_2.png";
+    for (auto i = 0; i < 5; i++)
+    {
+        auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_2", XMFLOAT3(0, 1, 0));
+        warning->BuildInternalEffectMaterial(ed);
+    }
+
+    po = {};
+    po.raster = RasterPreset::CullNone;
+
+    for (auto i = 0; i < 5; i++)
+    {
+        auto Holo = m_objectManager->CreateObjectFromFile<Building>(L"Holo_01_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H/HOLD.fbx", po);
+        auto Holo2 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_02_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_2/HOLD.fbx", po);
+    }
+
+    for (int i = 0; i < 6; i++)
+    {
+        auto razer = m_objectManager->CreateObjectFromFile<Building>(L"razer", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Razer/Razer.fbx");
+    }
+
+    RegisterEffect();
+
     return true;
+}
+
+void PlayScene::RegisterEffect()
+{
+    EffectDesc ed{};
+    ed.id = EffectID::PeacePosAlly;
+    ed.shaderid = ShaderId::EffectBase;
+    ed.billboard = BillboardMode::None;
+    ed.lifetime = 1.5f;
+    ed.framecount = 60;
+    ed.cols = 8;
+    ed.rows = 8;
+    ed.emissive = 30.0f;
+    ed.color = { 0, 0, 1, 1 };
+    ed.rot = { XM_PIDIV2, 0, 0 };
+    ed.isLoop = true;
+    ed.texPath = L"../Assets/Effects/Pos/EF_Player_Blue.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::PeacePosEnemy;
+    ed.color = { 1, 0, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Pos/EF_Player_Red.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::Razer;
+    ed.shaderid = ShaderId::EffectBase;
+    ed.billboard = BillboardMode::Beam;
+    ed.lifetime = 1.1f;
+    ed.framecount = 30;
+    ed.cols = 6;
+    ed.rows = 5;
+    ed.emissive = 50.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.rot = { 0, 0, 0 };
+    ed.isLoop = false;
+    ed.texPath = L"../Assets/Effects/Razer/EF_Rager_White.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::BlasterAttack;
+    ed.lifetime = 1.2f;
+    ed.framecount = 30;
+    ed.cols = 5;
+    ed.rows = 5;
+    ed.billboard = BillboardMode::None;
+    ed.texPath = L"../Assets/Effects/Blaster/EF_Shot.png";
+    ed.emissive = 50.0f;
+    ed.color = { 0, 0.5f, 1, 1 };
+    ed.rot = { 0, -XM_PIDIV2, -XM_PIDIV2 };
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::AxAttack;
+    ed.lifetime = 0.8f;
+    ed.framecount = 12;
+    ed.cols = 4;
+    ed.rows = 3;
+    ed.billboard = BillboardMode::None;
+    ed.texPath = L"../Assets/Effects/Ax/EF_LongSword.png";
+    ed.emissive = 50.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.rot = { XM_PIDIV2, 0, 0 };
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::DrillAttack1;
+    ed.framecount = 30;
+    ed.lifetime = 1.2f;
+    ed.cols = 6;
+    ed.rows = 5;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { 0, -XM_PIDIV2, -XM_PIDIV2 };
+    //ed.rot = { 0, 0, 0 };
+    ed.texPath = L"../Assets/Effects/Drill/EF_Drill.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::Buff;
+    ed.framecount = 25;
+    ed.lifetime = 1.2f;
+    ed.cols = 5;
+    ed.rows = 5;
+    ed.billboard = BillboardMode::ScreenAligned;
+    ed.rot = { 0, 0, 0 };
+    ed.emissive = 50.0f;
+    ed.color = { 0, 1, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Buff/EF_Buff.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::Hit;
+    ed.framecount = 25;
+    ed.lifetime = 1.2f;
+    ed.cols = 5;
+    ed.rows = 5;
+    ed.billboard = BillboardMode::ScreenAligned;
+    ed.rot = { 0, 0, 0 };
+    ed.emissive = 10.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Hit/EF_Hits.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::Target;
+    ed.framecount = 30;
+    ed.lifetime = 1.2f;
+    ed.cols = 6;
+    ed.rows = 5;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { XM_PIDIV2, 0, 0 };
+    ed.emissive = 30.0f;
+    ed.color = { 0, 0, 1, 1 };
+    ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::Target;
+    ed.framecount = 30;
+    ed.lifetime = 1.2f;
+    ed.cols = 6;
+    ed.rows = 5;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { XM_PIDIV2, 0, 0 };
+    ed.emissive = 30.0f;
+    ed.color = { 0, 0, 1, 1 };
+    ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.isLoop = true;
+    ed.id = EffectID::ScytheAttack;
+    ed.framecount = 18;
+    ed.lifetime = 1.2f;
+    ed.cols = 3;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { 0, XM_PIDIV2, XMConvertToRadians(160) };
+    ed.emissive = 30.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_1.png";
+    m_effectManager->RegisterEffect(ed);
+    ed.isLoop = false;
 }
 
 void PlayScene::OnDestroyScene()
@@ -229,6 +413,8 @@ void PlayScene::ShowEmoteImage(uint8_t pid, uint8_t emoteId)
     emoji->ChangeMaterial(emoteId);
     m_emojis.push_back({ emoji, 2.0f });
 }
+
+
 
 void PlayScene::Update(float dt)
 {

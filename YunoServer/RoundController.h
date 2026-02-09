@@ -25,7 +25,9 @@ namespace yuno::server
         void EndGame();
         void OnPlayerSelectedCard(int playerIdx);
         void ResetMatchState();
+
         void EndGameByDisconnect(uint8_t winnerPID);
+
         
         bool GetRoundStarted() { return m_roundStarted; };
         bool IsMatchLocked() const { return m_matchLocked; }

@@ -14,6 +14,7 @@
 
 // 여러 오브젝트들 ;; 
 #include "UIWidgets.h"
+#include "SpriteSheet.h"
 
 // 사용법
 // 컨트롤 + H 누르면 이름 변경 나옴
@@ -31,6 +32,10 @@ bool Title::OnCreateScene()
     float ClientH = static_cast<float>(iwindow->GetClientHeight());
 
 
+
+    auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::Center);
+    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 8, 12, 90, 24.f, true);
+
     CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background.png", XMFLOAT3(0, 0, 0));
 
     m_startBtn = CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538, 105), XMFLOAT3(ClientW/2, ClientH/2, 0), UIDirection::Center);       // 나중에 1920 1080 <-> 960 540 정상화되면 /2 ㄱㄱ
@@ -38,6 +43,7 @@ bool Title::OnCreateScene()
     m_startBtn->SetCursurTexture(L"../Assets/UI/TITLE/start_mouseout.png", L"../Assets/UI/TITLE/start_mouseover.png");
 
     CreateWidget<ExitButton>(L"ExitBtn", Float2(1538, 105), XMFLOAT3(ClientW/2, ClientH/2+150, 0), UIDirection::Center)->SetCursurTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
+
     return true;
 }
 

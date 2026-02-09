@@ -69,6 +69,7 @@ bool YunoRenderer::Initialize(IWindow* window)
     if (!m_cbLight.Create(m_device.Get())) return false;
     if (!m_cbEffect.Create(m_device.Get())) return false;
     if (!m_cbWidget.Create(m_device.Get())) return false;
+    if (!m_cbDissolve.Create(m_device.Get())) return false;
     if (!CreatePPCB()) return false;
 
 
@@ -118,6 +119,7 @@ bool YunoRenderer::CreateShaders()
     if (!LoadShader(ShaderId::PBRBase, "../Assets/Shaders/PBR_Base.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::PBR_AniDissolve, "../Assets/Shaders/PBR_Animation_Dissolve.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UIDebug, "../Assets/Shaders/UI_Debug.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UIGauge, "../Assets/Shaders/UI_Gauge.hlsl", "VSMain", "PSMain")) return false;
@@ -518,9 +520,6 @@ void YunoRenderer::DrawShadowMap()
 
     for (const RenderItem& item : m_renderQueue)
     {
-        if (!item.castShadow)
-            continue;
-
         if (item.meshHandle == 0 || item.meshHandle > m_meshes.size())
             continue;
 
@@ -2547,9 +2546,24 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
 
         m_cbWidget.Update(m_context.Get(), cbWidget);
 
-        ID3D11Buffer* cbEffectBuffers[] = { m_cbWidget.Get() };
-        m_context->VSSetConstantBuffers(6, 1, cbEffectBuffers);
-        m_context->PSSetConstantBuffers(6, 1, cbEffectBuffers);
+        ID3D11Buffer* cbWidgetBuffers[] = { m_cbWidget.Get() };
+        m_context->VSSetConstantBuffers(6, 1, cbWidgetBuffers);
+        m_context->PSSetConstantBuffers(6, 1, cbWidgetBuffers);
+    }
+
+    //CBDissolve
+    if (item.isDissolve)
+    {
+        CBDissolve cbDissolve{};
+        cbDissolve.dissolveColor = item.Constant.dissolveColor;
+        cbDissolve.dissolveAmount = item.Constant.dissolveAmount;
+        cbDissolve.edgeWidth = item.Constant.dissolveEdgeWidth;
+
+        m_cbDissolve.Update(m_context.Get(), cbDissolve);
+
+        ID3D11Buffer* cbDissolveBuffers[] = { m_cbDissolve.Get() };
+        m_context->VSSetConstantBuffers(7, 1, cbDissolveBuffers);
+        m_context->PSSetConstantBuffers(7, 1, cbDissolveBuffers);
     }
 }
 
@@ -2673,21 +2687,30 @@ void YunoRenderer::BindTextures(const YunoMaterial& material)
     TextureHandle hRoughness = (material.roughness != 0) ? material.roughness : m_texBlack;
     TextureHandle hAO = (material.ao != 0) ? material.ao : m_texBlack;
 
-    ID3D11ShaderResourceView* srvs[9] =
+    std::vector<ID3D11ShaderResourceView*> srvs;
+
+    srvs.push_back(ResolveSRV(hAlbedo));
+    srvs.push_back(ResolveSRV(hNormal));
+    srvs.push_back(ResolveSRV(hOrm));
+    srvs.push_back(ResolveSRV(hMetallic));
+    srvs.push_back(ResolveSRV(hRoughness));
+    srvs.push_back(ResolveSRV(hAO));
+    srvs.push_back(ResolveSRV(hEmissive));
+    srvs.push_back(ResolveSRV(hOpacity));
+    srvs.push_back(m_ShadowMap.dssrv.Get());
+
+    //커스텀 텍스쳐는 공용 인클루드 텍스쳐 X
+    //각 셰이더 내부에서 각자 바인딩으로 register번호 맞춤(t9번부터)
+    if (!material.custom.empty())
     {
-        ResolveSRV(hAlbedo),
-        ResolveSRV(hNormal),
-        ResolveSRV(hOrm),
-        ResolveSRV(hMetallic),
-        ResolveSRV(hRoughness),
-        ResolveSRV(hAO),
-        ResolveSRV(hEmissive),
-        ResolveSRV(hOpacity),
-        m_ShadowMap.dssrv.Get()
-    };
+        for (auto& tex : material.custom)
+        {
+            srvs.push_back(ResolveSRV(tex));
+        }
+    }
 
     // 혹시라도 ResolveSRV가 nullptr이면 안전하게 nullptr 바인딩(디버그에서 보이게)
-    m_context->PSSetShaderResources(0, 9, srvs);
+    m_context->PSSetShaderResources(0, srvs.size(), srvs.data());
 }
 
 // ------------------------------------------------------------

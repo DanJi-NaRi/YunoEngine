@@ -608,7 +608,9 @@ namespace yuno::game
                     std::cout << "\n";
 
                     ObstacleResult out{};
+
                     out.obstacleID = static_cast<ObstacleType>(o.obstacleID);
+
                     out.tileIDs = o.tileIDs;
 
                     for (int i = 0; i < static_cast<int>(out.unitState.size()); ++i)

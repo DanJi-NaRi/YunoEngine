@@ -280,6 +280,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CardConfirmArea.h" />
+
     <ClInclude Include="CountdownImage.h" />
     <ClInclude Include="CountdownScene.h" />
     <ClInclude Include="Game\UI\DirSelectButton.h" />

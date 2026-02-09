@@ -30,6 +30,7 @@ enum class TextureUse
     AO = 4,
     ORM = 5,    // AO, Metallic, Roughness
     Mask = 6,
+    Custom = 7,
 
     MAX
 };
@@ -66,6 +67,10 @@ public:
 
     void SetEmissiveColor(const XMFLOAT4& color);
     void SetEmissivePow(float pow) { m_renderItem.Constant.emissive = pow; }
+
+    void SetDissolveAmount(float amount);
+    void SetDissolveWidth(float width/*0 ~ 0.2*/);
+    void SetDissolveColor(const XMFLOAT3& col);
 
     void CheckOption();
 

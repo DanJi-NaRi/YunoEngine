@@ -199,13 +199,17 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
              L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
          pChakram1->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
+
          pChakram1->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_01.fbx");
+
          pPiece->Attach(pChakram1);
 
          auto pChakram2 = m_manager->CreateObjectFromFile<UnitPiece>(
              L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
          pChakram2->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
+
          pChakram2->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_02.fbx");
+
          pPiece->Attach(pChakram2);
 
          pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
@@ -232,7 +236,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      {
      case 1:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
-         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
          break;
      case 3:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Breacher_idle.fbx");
@@ -241,6 +245,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      case 4:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/scythe_attack.fbx");
+
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
          break;
      case 5:
@@ -251,6 +256,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      case 6:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Cleaver_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Cleaver_attack.fbx");
+
          break;
      }
      pPiece->SetWho(gp);
@@ -365,6 +371,7 @@ void PlayGridSystem::CheckPacket(float dt)
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
     }
+    
 
     // 장애물까지 발동하고 CheckOver
     if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing)
@@ -382,7 +389,16 @@ void PlayGridSystem::CheckPacket(float dt)
             isProcessing = false;
             m_currTime -= m_pktTime;
             std::cout << "Packet Time is Over\n";
+
+
         }
+    }
+
+    // 장애물까지 발동하고 CheckOver
+    if (!mng.IsEmptyObstaclePacket()&& mng.IsEmptyBattlePacket()&& !isProcessing)
+    {
+        const auto obstaclePkt = mng.PopObstaclePacket();
+        ApplyObstacleResult(obstaclePkt);
     }
 
     // 라운드 끝났는지 체크
@@ -1211,6 +1227,7 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
     bool hasTriggerSnapshot = false;
     Float4 warnColor{ 1.0f, 0.0f, 0.0f, 1.f };
 
+
     // ObstacleSequence 정보 기입
     auto& os = m_obstacleSequence;
     m_obstacleActive = true;
@@ -1225,11 +1242,13 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
         if (cur.pId == 0 || cur.slotId == 0)
             continue;
 
+
         std::cout
             << "  [Trigger] unit[" << i << "]"
             << " hp " << int(prev.hp) << "->" << int(cur.hp)
             << " tile " << int(prev.targetTileID) << "->" << int(cur.targetTileID)
             << "\n";
+
 
         int unitID = GetUnitID(cur.pId, cur.slotId);
         if (m_UnitStates[unitID].hp == 0)

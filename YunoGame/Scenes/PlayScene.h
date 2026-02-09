@@ -38,7 +38,11 @@ private:
     void HandleDirectionInput();
     void EndTurn();
 
-    void ShowEmoteImage(uint8_t pid, uint8_t emoteId);
+
+    void ShowEmoteImage(uint8_t pid, uint8_t emoteId); //YDM TEST IMOTE
+
+    void RegisterEffect();
+
 private:
     std::unique_ptr<IGridSystem> m_playGrid;
     Game_InputContext m_gameCtx;
