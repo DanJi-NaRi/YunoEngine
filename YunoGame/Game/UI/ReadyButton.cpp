@@ -40,6 +40,9 @@ bool ReadyButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, X
 }
 
 bool ReadyButton::Update(float dTime) {
+
+    if (GameManager::Get().GetSceneState() == CurrentSceneState::StandBy)
+        ChangeTexture(L"../Assets/UI/WEAPON_SELECT/Go_mouseover.png");
     Button::Update(dTime);
 
 

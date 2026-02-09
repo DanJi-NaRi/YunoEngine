@@ -73,6 +73,14 @@ namespace
     
         return L"../Assets/UI/CARD/card_" + pieceName + L"_3.png";
     }
+    
+    std::wstring GetBeforeSelectTexturePath(int slotTextureIndex)
+    {
+        if (slotTextureIndex < 1 || slotTextureIndex > 4)
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/Before_select_" + std::to_wstring(slotTextureIndex) + L".png";
+    }
 }
 
 WeaponButton::WeaponButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
@@ -124,6 +132,7 @@ bool WeaponButton::IdleEvent()
 // 커서가 위에 올라있을 때
 bool WeaponButton::HoveredEvent()
 {
+    if (m_isSelected) return false;
     //std::cout << "HoveredEvent" << std::endl;
     return true;
 }
@@ -140,10 +149,17 @@ bool WeaponButton::LMBPressedEvent()
 {
     std::cout << "OnCLick" << std::endl;
 
+
+    GameManager& gm = GameManager::Get();
+    //if (gm.GetMyPiece(0) != PieceType::None && gm.GetMyPiece(1) != PieceType::None) return false;
+
+    m_isSelected = !m_isSelected;
+    m_useHoverEvent = !m_isSelected;
+
     if (auto* showCardDeck = dynamic_cast<ShowCardDeck*>(m_pShowCardDeck))
         showCardDeck->SetWeaponCards(m_pieceType);
 
-    const int myIdx = GameManager::Get().GetSlotiIdx();
+    const int myIdx = gm.GetSlotiIdx();
     if (myIdx != 1 && myIdx != 2)
         return true;
 
@@ -166,34 +182,65 @@ bool WeaponButton::LMBPressedEvent()
         return true;
 
 
+    const PieceType pick0 = gm.GetMyPiece(0);
+    const PieceType pick1 = gm.GetMyPiece(1);
+
+    const int slotTextureBase = (myIdx == 1) ? 1 : 3;
+
+    TextureImage* weaponImage0 = (myIdx == 1)
+        ? dynamic_cast<TextureImage*>(m_pWeaponImage0)
+        : dynamic_cast<TextureImage*>(m_pWeaponImage2);
+    TextureImage* weaponImage1 = (myIdx == 1)
+        ? dynamic_cast<TextureImage*>(m_pWeaponImage1)
+        : dynamic_cast<TextureImage*>(m_pWeaponImage3);
+
+    auto clearPick = [&](int pickIndex)
+        {
+            TextureImage* clearSlotImage = (pickIndex == 0) ? slotImage0 : slotImage1;
+            TextureImage* clearWeaponImage = (pickIndex == 0) ? weaponImage0 : weaponImage1;
+
+            const std::wstring beforeSelectTexture = GetBeforeSelectTexturePath(slotTextureBase + pickIndex);
+            if (clearSlotImage && !beforeSelectTexture.empty())
+                clearSlotImage->ChangeTexture(beforeSelectTexture);
+
+            if (clearWeaponImage)
+                clearWeaponImage->SetScale(XMFLOAT3(0.f, 0.f, 1.f));
+
+            gm.SetMyPick(pickIndex, PieceType::None);
+        };
+
+    if (pick0 == m_pieceType)
+    {
+        clearPick(0);
+        return true;
+    }
+
+    if (pick1 == m_pieceType)
+    {
+        clearPick(1);
+        return true;
+    }
+
+    if (pick0 != PieceType::None && pick1 != PieceType::None)
+    {
+        return true;
+    }
 
     TextureImage* targetImage = nullptr;
     TextureImage* targetWeaponImage = nullptr;
     int pickIndex = 0;
 
-    if (GameManager::Get().GetMyPiece(0) == PieceType::None)
+    if (pick0 == PieceType::None)
     {
         targetImage = slotImage0;
-        targetWeaponImage = (myIdx == 1)
-            ? dynamic_cast<TextureImage*>(m_pWeaponImage0)
-            : dynamic_cast<TextureImage*>(m_pWeaponImage2);
+        targetWeaponImage = weaponImage0;
         pickIndex = 0;
     }
-    else if (GameManager::Get().GetMyPiece(1) == PieceType::None)
+    else if (pick1 == PieceType::None)
     {
         targetImage = slotImage1;
-        targetWeaponImage = (myIdx == 1)
-            ? dynamic_cast<TextureImage*>(m_pWeaponImage1)
-            : dynamic_cast<TextureImage*>(m_pWeaponImage3);
+        targetWeaponImage = weaponImage1;
         pickIndex = 1;
-    }
-    else
-    {
-        targetImage = slotImage0;
-        targetWeaponImage = (myIdx == 1)
-            ? dynamic_cast<TextureImage*>(m_pWeaponImage0)
-            : dynamic_cast<TextureImage*>(m_pWeaponImage2);
-        pickIndex = 0;
     }
 
     const int slotTextureIndex = (myIdx == 1 ? 1 : 3) + pickIndex;
@@ -236,7 +283,8 @@ bool WeaponButton::LMBPressedEvent()
     //}
 
 
-    GameManager::Get().SetMyPick(pickIndex, m_pieceType);
+    gm.SetMyPick(pickIndex, m_pieceType);
+
 
     return true;
 }
@@ -281,33 +329,33 @@ bool WeaponButton::KeyReleasedEvent(uint32_t key)
 bool WeaponButton::SetPieceType(PieceType pieceType)
 {
     m_pieceType = pieceType; 
-    std::wstring texturePath = L"../Assets/Test/X.png";
-    switch (m_pieceType)
-    {
-    case PieceType::Blaster:
-        texturePath = L"../Assets/Test/unit1.png";
-        break;
-    case PieceType::Breacher:
-        texturePath = L"../Assets/Test/unit2.png";
-        break;
-    case PieceType::Impactor:
-        texturePath = L"../Assets/Test/unit3.png";
-        break;
-    case PieceType::Chakram:
-        texturePath = L"../Assets/Test/unit4.png";
-        break;
-    case PieceType::Scythe:
-        texturePath = L"../Assets/Test/unit5.png";
-        break;
-    case PieceType::Cleaver:
-        texturePath = L"../Assets/Test/unit6.png";
-        break;
-    case PieceType::None:
-    default:
-        break;
-    }
-
-    ChangeTexture(texturePath);
+    //std::wstring texturePath = L"../Assets/Test/X.png";
+    //switch (m_pieceType)
+    //{
+    //case PieceType::Blaster:
+    //    texturePath = L"../Assets/Test/unit1.png";
+    //    break;
+    //case PieceType::Breacher:
+    //    texturePath = L"../Assets/Test/unit2.png";
+    //    break;
+    //case PieceType::Impactor:
+    //    texturePath = L"../Assets/Test/unit3.png";
+    //    break;
+    //case PieceType::Chakram:
+    //    texturePath = L"../Assets/Test/unit4.png";
+    //    break;
+    //case PieceType::Scythe:
+    //    texturePath = L"../Assets/Test/unit5.png";
+    //    break;
+    //case PieceType::Cleaver:
+    //    texturePath = L"../Assets/Test/unit6.png";
+    //    break;
+    //case PieceType::None:
+    //default:
+    //    break;
+    //}
+    //
+    //ChangeTexture(texturePath);
     //m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
 
 

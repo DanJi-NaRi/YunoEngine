@@ -200,6 +200,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
             });
         
         GameManager::Get().SendPacket(std::move(bytes));
+
         
         break;
     }
