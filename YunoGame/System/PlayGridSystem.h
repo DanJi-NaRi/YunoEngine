@@ -157,7 +157,6 @@ private:
     void CheckMyQ();
     void CheckPacket(float dt);
     void CheckOver();
-    void ApplyObstacleResult(const ObstacleResult& obstacle);   // 장애물 패킷 적용하는 함수
 
     void UpdateSequence(float dt);
     void UpdateAttackSequence(float dt);
@@ -243,9 +242,6 @@ private:
     float attackPktTime = attackAndMoveDuration + pktOffset;
     float utilityPktTime = moveDuration + attackAndMoveDuration + buffDuration + pktOffset;
     
-    float pktOffset = 0.5f;
-    float attackPktTime = attackAndMoveDuration + pktOffset;
-    float utilityPktTime = moveDuration + attackAndMoveDuration + buffDuration + pktOffset;
     
     // 공격 처리
     bool m_attackActive = false;
