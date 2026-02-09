@@ -62,8 +62,6 @@ public:
     uint32_t    GetBindKey() const { return m_bindkey; }
     bool        IsBindkey() const { return (m_bindkey != 0); }
 
-    void        SetBindKey(uint32_t bindkey) { m_bindkey = bindkey; }
-    
     void        SetUseHoverPath(bool use) { m_useHoverPath = use; }
     bool        IsUseHoverPath() { return m_useHoverPath; }
 
