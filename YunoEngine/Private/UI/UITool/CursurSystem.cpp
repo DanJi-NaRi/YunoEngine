@@ -73,6 +73,10 @@ bool CursurSystem::FindSnapWidget()
 
         if (!IsIntersect(m_focusedWidget->GetRect(), ExpandRect(point->snapRange, point->snapPadding))) continue; // 범위 안에 있지 않으면 continue
 
+        if (!slot->IsEnabled()) { // 슬롯 사용 태그가 꺼져있으면
+            std::cout << "Faild!! this Slot is disabled!! (m_useSlot == false)" << std::endl;
+            continue;
+        }
 
         if (point->IsSnapped()) { // 슬롯이 이미 스냅되어있으면
             std::cout << "Faild!! already Intersect!!" << std::endl;

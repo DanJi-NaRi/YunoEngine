@@ -1,7 +1,6 @@
 #pragma once
 
 #include "SceneState.h"
-#include "CardData.h"
 #include "C2S_BattlePackets.h"
 #include "S2C_CardPackets.h"
 #include "BattlePackets.h"
@@ -9,6 +8,10 @@
 #include "CardManager.h"
 #include "CardRangeManager.h"
 #include "CardQueue.h"
+
+class Minimap;
+class CardConfirmPanel;
+class CardSelectionPanel;
 
 class ISceneManager;
 class ObjectManager;
@@ -25,8 +28,8 @@ struct ClientCardInfo //UI에 적용하기 위한 데이터 저장
 {
     //uint8_t slotID;         // 0 1 2 3 
     //uint8_t weaponID;       // 어떤 무기인지 (1~6) //UnitSlot
-    uint32_t runtimeID;
-    uint32_t dataID;
+    uint32_t runtimeID;       
+    uint32_t dataID;           
 };
 struct UnitHand
 {
@@ -181,6 +184,10 @@ private:
     std::queue<BattleResult> m_turnPkts;
     std::queue<ObstacleResult> m_obstaclePkts;
 
+    Minimap* m_pMinimap = nullptr; // 미니맵
+    CardConfirmPanel* m_pConfirmPanel = nullptr;
+    CardSelectionPanel* m_pSelectionPanel = nullptr;
+
 public:
     void PushBattlePacket(const BattleResult _BattleResult);
     BattleResult PopBattlePacket();
@@ -189,4 +196,12 @@ public:
     void PushObstaclePacket(const ObstacleResult& obstacleResult);
     ObstacleResult PopObstaclePacket();
     bool IsEmptyObstaclePacket();
+
+    void SetMinimap(Minimap* minimap);
+    void SetConfirmPanel(CardConfirmPanel* pConfirmPanel);
+    void SetSelectionPanel(CardSelectionPanel* pSelectionPanel);
+
+   
+    void UpdatePanels(const ObstacleResult& obstacleResult);
+    //void UpdateSelectionPanel(const UnitHand& playerInfo);
 };

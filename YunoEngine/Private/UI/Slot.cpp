@@ -7,6 +7,7 @@
 Slot::Slot(UIFactory& uiFactory) : Widget(uiFactory)
 {
     m_snapPoint.useSnap = true;
+    m_isEnabled = true;
 }
 
 Slot::~Slot()

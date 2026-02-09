@@ -24,6 +24,11 @@
 #include "C2S_MatchEnter.h"
 #include "C2S_MatchLeave.h"
 #include "C2S_Emote.h"
+
+#include "Minimap.h" // 미니맵
+#include "CardConfirmPanel.h"   // 카드 컨펌 패널
+#include "CardSelectionPanel.h" // 카드 선택 패널
+
 GameManager* GameManager::s_instance = nullptr;
 
 
@@ -85,6 +90,30 @@ ObstacleResult GameManager::PopObstaclePacket()
 bool GameManager::IsEmptyObstaclePacket()
 {
     return m_obstaclePkts.empty();
+}
+
+void GameManager::SetConfirmPanel(CardConfirmPanel* pConfirmPanel)
+{
+}
+
+void GameManager::SetSelectionPanel(CardSelectionPanel* pSelectionPanel)
+{
+    
+}
+
+void GameManager::SetMinimap(Minimap* pMinimap)
+{
+    m_pMinimap = pMinimap;
+}
+
+void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
+{
+    assert(m_pMinimap);
+    if (m_pMinimap) m_pMinimap->UpdatePanel(obstacleResult);
+
+    //assert(m_pSelectionPanel);
+    //if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(obstacleResult);
+
 }
 
 
@@ -221,7 +250,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
 
-        //sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+        sm->RequestPush(std::make_unique<PhaseScene>(), sp);
 
         break;
     }

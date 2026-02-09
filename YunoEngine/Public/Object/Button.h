@@ -30,7 +30,7 @@ public:
 
     std::wstring GetHoveredTexturePath() { return m_hoverdTexturePath; }
 
-    void SetCursurTexture(std::wstring idlePath, std::wstring hoverdPath);
+    void SetHoverTexture(std::wstring idlePath, std::wstring hoverdPath);
 
     void SetIdleTexture(std::wstring path);
     void SetHoverdTexture(std::wstring path);
@@ -48,14 +48,19 @@ public:
     
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::Button; }
+    std::function<void()>& GetEventLMB() { return m_eventLMB; } // LeftPress기준
+    std::function<void()>& GetEventRMB() { return m_eventRMB; } // RightPress기준
 
     DragProvider* GetDragProvider() { return m_pDrag.get(); } // 없으면 nullptr 반환
 
-    ButtonState GetButtonState() const { return m_btnState; }
     void        SetButtonState(ButtonState state) { m_btnState = state; }
+    void        SetBindKey(uint32_t bindkey) { m_bindkey = bindkey; }
+    void        SetEventLMB(std::function<void()> event) { m_eventLMB = std::move(event); }
+    void        SetEventRMB(std::function<void()> event) { m_eventRMB = std::move(event); }
+
+    ButtonState GetButtonState() const { return m_btnState; }
     uint32_t    GetBindKey() const { return m_bindkey; }
     bool        IsBindkey() const { return (m_bindkey != 0); }
-    void        SetBindKey(uint32_t bindkey) { m_bindkey = bindkey; }
 
     void        Clear();
 protected:
@@ -67,6 +72,8 @@ protected:
     std::wstring m_hoverdTexturePath; // 커서를 올렸을 때, 바뀌는 텍스처
     std::wstring m_PressedTexturePath; // 클릭했을 때, 바뀌는 텍스처 // 사용 안 함
 
+    std::function<void()> m_eventLMB = nullptr; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용
+    std::function<void()> m_eventRMB = nullptr; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용
 private:
     //bool CreateMesh() override;      // 메시 생성 (한 번만)
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };    // 머테리얼 생성 (한 번만)

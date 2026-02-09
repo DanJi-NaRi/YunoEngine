@@ -198,15 +198,20 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\UI\WidgetGridLine.cpp" />
     <ClCompile Include="Minimap.cpp" />
     <ClCompile Include="MinimapTile.cpp" />
+    <ClCompile Include="PhaseWeaponSelectButton.cpp" />
     <ClCompile Include="PlayerIcon.cpp" />
     <ClCompile Include="Emoji.cpp" />
     <ClCompile Include="Game\UI\CardCancelButton.cpp" />
     <ClCompile Include="Game\UI\CardConfirmButton.cpp" />
     <ClCompile Include="Game\UI\CardConfirmPanel.cpp" />
-    <ClCompile Include="Game\UI\CardSelectionPanel.cpp" />
+    <ClCompile Include="Game\UI\CardSelectionPanel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="HealthGauge.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="SceneChangeButton.cpp" />
+    <ClCompile Include="PhaseStaminaBar.cpp" />
     <ClCompile Include="SpeechBubble.cpp" />
     <ClCompile Include="StaminaBar.cpp" />
     <ClCompile Include="StaminaGauge.cpp" />
@@ -229,7 +234,10 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\UI\UserImage.cpp" />
     <ClCompile Include="Game\Object\Grid.cpp" />
     <ClCompile Include="System\MinimapQueue.cpp" />
-    <ClCompile Include="GameManager\GameManager.cpp" />
+    <ClCompile Include="GameManager\GameManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Game\UI\Card.cpp" />
     <ClCompile Include="Game\UI\CardTable.cpp" />
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
@@ -277,10 +285,10 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\Object\UnitTile.cpp" />
     <ClCompile Include="Game\UI\WidgetPiece.cpp" />
     <ClCompile Include="Game\UI\WidgetTile.cpp" />
+    <ClCompile Include="WeaponNameImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CardConfirmArea.h" />
-
     <ClInclude Include="CountdownImage.h" />
     <ClInclude Include="CountdownScene.h" />
     <ClInclude Include="Game\UI\DirSelectButton.h" />
@@ -288,6 +296,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\WidgetGridLine.h" />
     <ClInclude Include="Minimap.h" />
     <ClInclude Include="MinimapTile.h" />
+    <ClInclude Include="PhaseWeaponSelectButton.h" />
     <ClInclude Include="PlayerIcon.h" />
     <ClInclude Include="Emoji.h" />
     <ClInclude Include="Game\UI\CardCancelButton.h" />
@@ -297,6 +306,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="HealthGauge.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="SceneChangeButton.h" />
+    <ClInclude Include="PhaseStaminaBar.h" />
     <ClInclude Include="SpeechBubble.h" />
     <ClInclude Include="StaminaBar.h" />
     <ClInclude Include="StaminaGauge.h" />
@@ -374,6 +384,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="TitleScene_InputContext.h" />
     <ClInclude Include="UI_InputContext.h" />
     <ClInclude Include="utilityClass.h" />
+    <ClInclude Include="WeaponNameImage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

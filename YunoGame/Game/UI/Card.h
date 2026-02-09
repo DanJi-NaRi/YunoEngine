@@ -26,6 +26,7 @@ public:
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::Card; }
 
     void SetCardID(int id) { m_cardID = id; }
+    int  GetCardID() { return m_cardID; }
 protected:
     int m_cardID = -1;
 };

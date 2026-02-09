@@ -230,6 +230,8 @@ bool Widget::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOA
     m_pTextures = YunoEngine::GetTextureManager();
     m_pInput = YunoEngine::GetInput();
 
+    m_visible = Visibility::Visible;
+
     m_id = id;
     m_name = name;
 

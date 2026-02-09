@@ -26,8 +26,15 @@ bool MinimapTile::Create(const std::wstring& name, uint32_t id, Float2 sizePx, X
 }
 
 bool MinimapTile::Update(float dTime) {
-    Image::Update(dTime);
 
+    switch (m_data.m_teamId) {
+    default:
+    case TileTeamData::Default: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_non.png"); break;
+    case TileTeamData::Red: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_red.png"); break;
+    case TileTeamData::Blue: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_blue.png"); break;
+    }
+
+    Image::Update(dTime);
 
     return true;
 }
