@@ -160,7 +160,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         m_matchPlayerCount = 0;
         ResetMyPicks();
         SceneTransitionOptions opt{};
-        opt.immediate = false;
+        opt.immediate = true;
         sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
         auto bytes = yuno::net::PacketBuilder::Build(
             yuno::net::PacketType::C2S_MatchLeave,
@@ -562,7 +562,8 @@ void GameManager::Tick(float dt)
             m_countdownFinished = true;
             m_countdownRemaining = 0.0f;
     
-            SetSceneState(CurrentSceneState::RoundStart);
+            // 여기 말고 CountDownScene에서 호출함
+            //SetSceneState(CurrentSceneState::RoundStart);
         }
     }
 }

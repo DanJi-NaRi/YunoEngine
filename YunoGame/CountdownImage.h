@@ -22,8 +22,8 @@ protected:
     {
         Widget::CreateMaterial(L"../Assets/UI/WEAPON_SELECT/3.png");
 
-        m_size.x = m_pTextures->GetTextureWH(m_Albedo).first;
-        m_size.y = m_pTextures->GetTextureWH(m_Albedo).second;
+        m_size.x = m_pTextures->GetTextureWH(m_Albedo).first/2;
+        m_size.y = m_pTextures->GetTextureWH(m_Albedo).second/2;
         return true;
     };    // 머테리얼 생성 (한 번만)
 

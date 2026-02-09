@@ -48,7 +48,6 @@ bool CountdownImage::ChangeMaterial(int num)
 
 bool CountdownImage::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    sizePx /= 2;
     Image::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     return true;
