@@ -77,8 +77,9 @@ bool RenderTest::OnCreateScene()
         }
     }
 
-    auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 500, 500 }, XMFLOAT3{ 100, 100, 0 }, UIDirection::Center);
-    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 10, 6, 60, 24.f, true);
+    auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::Center);
+    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 8, 12, 90, 24.f, true);
+    //sheet->SetSpriteSheet(L"../Assets/Textures/white.png", 1, 1, 1, 24.f, true);
 
     PassOption po;
 
@@ -96,7 +97,7 @@ bool RenderTest::OnCreateScene()
 
     axe = m_objectManager->CreateObjectFromFile<AnimTest>(L"axe", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Impactor/Impactor.fbx");
     axe->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
-    axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack2.fbx");
+    axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
     //axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Untitled.fbx");
 
     chakram01 = m_objectManager->CreateObjectFromFile<AnimTest>(L"chakram01", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
@@ -260,7 +261,6 @@ bool RenderTest::OnCreateScene()
     ed.rot = { XM_PIDIV2, 0, 0 };
     m_effectManager->RegisterEffect(ed);
 
-    ed.isLoop = true;
     ed.id = EffectID::DrillAttack1;
     ed.framecount = 30;
     ed.lifetime = 1.2f;
@@ -272,7 +272,6 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Drill/EF_Drill.png";
     m_effectManager->RegisterEffect(ed);
 
-    ed.isLoop = false;
     ed.id = EffectID::Buff;
     ed.framecount = 25;
     ed.lifetime = 1.2f;
@@ -321,17 +320,19 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
     m_effectManager->RegisterEffect(ed);
 
+    ed.isLoop = true;
     ed.id = EffectID::ScytheAttack;
     ed.framecount = 18;
     ed.lifetime = 1.2f;
     ed.cols = 3;
     ed.rows = 6;
     ed.billboard = BillboardMode::None;
-    ed.rot = { 0, 0, 0 };
+    ed.rot = { 0, XM_PIDIV2, XMConvertToRadians(160) };
     ed.emissive = 30.0f;
     ed.color = { 1, 0, 0, 1 };
     ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_1.png";
     m_effectManager->RegisterEffect(ed);
+    ed.isLoop = false;
 
     return true;
 }

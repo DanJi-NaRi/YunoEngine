@@ -12,6 +12,7 @@
 
 // 여러 오브젝트들 ;; 
 #include "UIWidgets.h"
+#include "SpriteSheet.h"
 
 // 사용법
 // 컨트롤 + H 누르면 이름 변경 나옴
@@ -36,6 +37,9 @@ bool Title::OnCreateScene()
 
     m_titleImage = CreateWidget<TitleImage>(L"Title", g_defWidgetSize, XMFLOAT3(0, 0, 0));
     m_titleImage->SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
+
+    auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::Center);
+    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 8, 12, 90, 24.f, true);
 
 
     m_startBtn = CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538,105), XMFLOAT3(0, 500, 0));
