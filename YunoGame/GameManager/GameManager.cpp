@@ -152,10 +152,15 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
         m_state = CurrentSceneState::CountDown;
         std::cout << "3...2...1...Battle Start!!!!!" << std::endl;  
-        SceneTransitionOptions opt{};
-        opt.immediate = false; // 보통 false가 자연스러움
+        //SceneTransitionOptions opt{};
+        //opt.immediate = false; // 보통 false가 자연스러움
+        //sm->RequestReplaceRoot(std::make_unique<CountdownScene>(), opt);
 
-        sm->RequestReplaceRoot(std::make_unique<CountdownScene>(), opt);
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = false;
+
+        sm->RequestPush(std::make_unique<CountdownScene>(), sp);
 
         break;
     }
