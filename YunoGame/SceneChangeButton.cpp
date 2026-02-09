@@ -33,6 +33,7 @@ void SceneChangeButton::Clear()
 
 bool SceneChangeButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
+    sizePx /= 2;
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     m_bindkey = 0; // 0인 경우, 안쓴다는 뜻
@@ -94,37 +95,8 @@ bool SceneChangeButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool SceneChangeButton::LMBPressedEvent()
 {
-    std::cout << "(LMB)PressedEvent" << std::endl;
-    //GameManager::Get().SetSceneState(m_targetScene);
-    IInput* input = YunoEngine::GetInput();
-    ISceneManager* sm = YunoEngine::GetSceneManager();
-
-    uint32_t UID = ReadUserIdFromEnv();
-    using namespace yuno::net;
-    yuno::net::packets::C2S_MatchEnter pkt{};
-    pkt.userId = UID;
-
-    if (pkt.userId == 0)
-    {
-        std::cout << "[GameApp] MatchEnter aborted: invalid userId\n";
-        return false; // 또는 UI 메시지 띄우고 종료
-    }
-    std::cout << "Env Id : " << pkt.userId << std::endl;
-
-    auto bytes = PacketBuilder::Build(
-        PacketType::C2S_MatchEnter,
-        [&](ByteWriter& w)
-        {
-            pkt.Serialize(w);
-        });
-
-    GameManager::Get().SendPacket(std::move(bytes));
-
-    //SceneTransitionOptions opt{};
-    //opt.immediate = true;
-    //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
-    //sm->RequestPush(std::make_unique<PlayScene>());
-
+    GameManager::Get().SetSceneState(m_targetScene);
+    
     return true;
 }
 

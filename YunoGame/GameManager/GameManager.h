@@ -67,6 +67,7 @@ public:
     int GetSlotiIdx() { return m_PID; };
 
     void SetMyPick(int index, PieceType type);
+    void ResetMyPicks();
     bool HasTwoPicks() const;
     PieceType GetMyPiece(int idx) { return m_myPick[idx]; };
 
@@ -120,6 +121,9 @@ public:
     const CardEffectData* GetCardEffectData(uint32_t runtimeID);
     const RangeData* GetRangeData(uint32_t runtimeID);
 
+    bool IsCountdownActive() const;
+    bool IsCountdownFinished() const;
+    int    GetCountdownNumber() const;
 private:
     static GameManager* s_instance;
 
@@ -129,6 +133,8 @@ private:
     CurrentSceneState m_state = CurrentSceneState::Title;
 
     PieceType m_myPick[2] = { PieceType::None, PieceType::None };
+    PieceType m_lastPickedPiece = PieceType::None;
+
 
     int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽
 
@@ -143,6 +149,7 @@ private:
     std::queue<PendingEmote> m_pendingEmotes;
 
     bool m_countdownActive = false;
+    bool m_countdownFinished = false;
     float m_countdownRemaining = 0.0f;
 
     int m_S1U1 = 0;

@@ -34,6 +34,11 @@ namespace yuno::server
         return m_server.FindSession(sessionId);
     }
 
+    void YunoServerNetwork::OnDisconnected(std::uint64_t sessionId)
+    {
+        //MatchManager::Get().OnPlayerDisconnected(sid);
+    }
+
     YunoServerNetwork::YunoServerNetwork()
         : m_io()
         , m_server(m_io)
@@ -96,10 +101,20 @@ namespace yuno::server
                 }
 
 
-
                 std::cout << "[Server] Disconnected sid=" << sid
                     << " ec=" << ec.message()
                     << " -> slot cleared\n";
+
+
+                if (m_roundController.GetRoundStarted())
+                {
+                    //  승자 결정
+                    uint8_t loserPID = static_cast<uint8_t>(idx + 1);
+                    uint8_t winnerPID = (loserPID == 1) ? 2 : 1;
+                    
+                    // 게임 강제종료 호출
+                    m_roundController.EndGameByDisconnect(winnerPID);
+                }
             });
     }
 
@@ -208,6 +223,9 @@ namespace yuno::server
                 const std::uint8_t* body,
                 std::uint32_t bodyLen)
             {
+                if (m_roundController.IsMatchLocked())
+                    return;
+
                 yuno::net::ByteReader r(body, bodyLen);
                 const auto pkt = yuno::net::packets::C2S_MatchEnter::Deserialize(r);
 

@@ -11,7 +11,7 @@
 #include "S2C_RoundStart.h"
 #include "S2C_CardPackets.h"
 #include "S2C_EndGame.h"
-
+#include "S2C_EndGame_Disconnect.h"
 #include <iostream>
 
 namespace yuno::server
@@ -93,7 +93,8 @@ namespace yuno::server
             SendInitialCards(); // 1회 초기화
             SendCountDown(); // 1회 초기화
             m_cardsInitialized = true;
-
+            m_matchLocked = true;
+            m_match.ClearReadyAndUnits();
 
         }
 
@@ -325,8 +326,29 @@ namespace yuno::server
 
     }
 
+    void RoundController::EndGameByDisconnect(uint8_t winnerPID)
+    {
+        std::cout << "[Round] Match ended by disconnect. winner="
+            << int(winnerPID) << "\n";
+
+        yuno::net::packets::S2C_EndGame_Disconnect pkt{};
+        pkt.winnerPID = winnerPID;
+
+        auto bytes = yuno::net::PacketBuilder::Build(
+            yuno::net::PacketType::S2C_EndGame_Disconnect,
+            [&](yuno::net::ByteWriter& w)
+            {
+                pkt.Serialize(w);
+            });
+
+        m_network.Broadcast(std::move(bytes));
+
+        ResetMatchState();
+    }
+
     void RoundController::ResetMatchState()
     {
+        m_matchLocked = false;
         m_roundStarted = false;
         m_cardsInitialized = false;
         m_waitingRoundStartReady = false;

@@ -10,6 +10,8 @@
 #include "GameManager.h"
 #include "UIManager.h"
 
+#include"IWindow.h"
+
 // 여러 오브젝트들 ;; 
 #include "UIWidgets.h"
 #include "SpriteSheet.h"
@@ -22,31 +24,26 @@
 
 bool Title::OnCreateScene()
 {
-    //std::cout << "[Title] OnCreate\n";
 
-    // 디렉션 라이트 생성
-    //m_objectManager->CreateDirLight();
-    // 직교투영 필요한 씬만 ㄱㄱ
+
     m_uiManager->SetOrthoFlag(true);
+    auto iwindow = YunoEngine::GetWindow();
+    float ClientW = static_cast<float>(iwindow->GetClientWidth());
+    float ClientH = static_cast<float>(iwindow->GetClientHeight());
 
-    // Sample Object 생성 예시
-    //m_objectManager->CreateObject<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0));
 
-    // FBX 파일로부터 오브젝트 생성 예시
-    //m_objectManager->CreateObjectFromFile<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
-
-    m_titleImage = CreateWidget<TitleImage>(L"Title", g_defWidgetSize, XMFLOAT3(0, 0, 0));
-    m_titleImage->SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
 
     auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::Center);
     sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 8, 12, 90, 24.f, true);
 
+    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background.png", XMFLOAT3(0, 0, 0));
 
-    m_startBtn = CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538,105), XMFLOAT3(0, 500, 0));
-    m_startBtn->SetTargetScene(CurrentSceneState::GameStart);
+    m_startBtn = CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538, 105), XMFLOAT3(ClientW/2, ClientH/2, 0), UIDirection::Center);       // 나중에 1920 1080 <-> 960 540 정상화되면 /2 ㄱㄱ
+    m_startBtn->SetTargetScene(CurrentSceneState::RequstEnter);
     m_startBtn->SetCursurTexture(L"../Assets/UI/TITLE/start_mouseout.png", L"../Assets/UI/TITLE/start_mouseover.png");
 
-    CreateWidget<ExitButton>(L"ExitBtn", Float2(1538, 105), XMFLOAT3(0, 800, 0))->SetCursurTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
+    CreateWidget<ExitButton>(L"ExitBtn", Float2(1538, 105), XMFLOAT3(ClientW/2, ClientH/2+150, 0), UIDirection::Center)->SetCursurTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
+
     return true;
 }
 

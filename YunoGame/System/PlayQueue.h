@@ -18,8 +18,6 @@ struct PGridCmd
             int cx, cz;
             bool isCollided;
             bool isEnemy;
-            int damageMe;
-            int damageU;
         } mv_s;  // Move
 
         struct
@@ -31,21 +29,12 @@ struct PGridCmd
 
         struct
         {
-            GamePiece attackPiece;
-            int damage;
-            uint8_t tileIDs[35];
-        } atk_s;            // Attack
-
-        struct
-        {
             GamePiece whichPiece;
         } die_s, over_s;    // Dead, Turn_Over
 
         struct
         {
             GamePiece whichPiece;
-            int damage1;
-            int damage2;
         } hit;     // Hit
 
     };
@@ -72,7 +61,6 @@ public:
     static PGridCmd Move_S(GamePiece pieceType, int oldcx, int oldcz, int cx, int cz, bool isCollided = false, bool isEnemy = false, int damageMe = 0, int damageU = 0);
     static PGridCmd Move_P(Direction dir, float wx, float wy, float wz, float speed = 1, bool isDone = false);
 
-    static PGridCmd Attack_S_TST(GamePiece pieceType, int damagae, const std::vector<int>& tileIDs);
     static PGridCmd Hit_S(GamePiece pieceType);
     static PGridCmd Hit_P(GamePiece pieceType = GamePiece::None);
 

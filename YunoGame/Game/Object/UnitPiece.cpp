@@ -191,103 +191,18 @@ bool UnitPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool UnitPiece::Update(float dTime)
 {
-    CheckAttack();
-
     // 죽은 상태인지 먼저 확인
-    if (isDead && m_deadTime != -1)
-    {
-        m_deadTime += dTime;
-        if (m_deadTime >= m_deathDelay)
-        {
-            PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
-            m_deadTime = -1;
-        }
-        return true;
-    }
 
-    // 회전 중이면 회전 처리
-    if (isRotating)
-    {
-        m_rotTime += dTime * m_rotSpeed;
-        if (m_rotTime >= 1.f)
-        {
-            m_yaw = m_targetYaw;
-            m_rotTime = 0.f;
-            isRotating = false;
-        }
-        else
-        {
-            m_yaw = m_startYaw * (1 - m_rotTime) + m_targetYaw * m_rotTime;
-        }
-    }
+    if(CheckDead(dTime))   return true;
 
-    // 이동 중이면 이동 처리
-    if (isMoving)
-    {
-        if (dTime >= 1.f) return true;
-        m_moveTime += dTime / m_Dist * m_speed * m_fixSpeed;
 
-        if (m_moveTime >= 1.f)
-        {
-            XMStoreFloat3(&this->m_vPos, m_Target);
-            if (m_animator)
-            {
-                UINT currentFrame = m_animator->GetCurFrame();
-                if (currentFrame >= 28) // 일단 낫일 경우에는
-                {
-                    m_animator->Change("idle");
-                    m_animator->SetLoop("idle", true);      // 여기서 터지면 idle 애니메이션이 없는 것임으로 생성단계에 클립을 넣어야함!
-                    isMoving = false;
-                    m_moveTime = 0.f;
-                }
-            }
-            else
-            {
-                isMoving = false;
-                m_moveTime = 0.f;
-            }
-
-            if (m_AnimDone)
-            {
-                PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Turn_Over, m_who));
-                //ClearQ();
-                m_AnimDone = false;
-            }
-        }
-        else
-        {
-            XMVECTOR res = XMVectorLerp(m_Start, m_Target, m_moveTime);
-            XMStoreFloat3(&this->m_vPos, res);
-        }
-    }
-
+    UpdateRot(dTime);
+    UpdateMove(dTime);
     UpdateFlash(dTime);
+    UpdateAttack(dTime);
+    UpdateHit(dTime);
 
-    // 애니메이션이 끝나면 하나씩 빼가게 하기
-    while (!m_Q.empty() && !isMoving && !isRotating)
-    {
-        auto tp = m_Q.front();
-        m_Q.pop();
-        switch (tp.cmdType)
-        {
-        case CommandType::Move:
-        {
-            auto [wx, wy, wz, dir, speed] = tp.mv_p;
-            SetTarget({ wx, wy, wz }, speed);
-            SetDir(dir);
-            m_AnimDone = tp.isDone;        // 슬롯 턴 종료 메세지 보내라
-            break;
-        }
-        case CommandType::Hit:
-        {
-            SetFlashColor({0,0,0,1},1,0.3f);
-            PlayGridQ::Insert(PlayGridQ::Hit_S(m_who));
-            if (tp.hit.whichPiece != GamePiece::None)
-                PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece));
-            break;
-        }
-        }
-    }
+    CheckMyQ();
 
     UpdateMatrix();
     AnimationUpdate(dTime);
@@ -349,6 +264,51 @@ bool UnitPiece::CreateMaterial()
     return true;
 }
 
+bool UnitPiece::CheckDead(float dt)
+{
+    if (isDead && m_deadTime != -1)
+    {
+        m_deadTime += dt;
+        if (m_deadTime >= m_deathDelay)
+        {
+            PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
+            m_deadTime = -1;
+        }
+        return true;
+    }
+    else
+        return false;
+}
+
+void UnitPiece::CheckMyQ()
+{
+    // 애니메이션이 끝나면 하나씩 빼가게 하기
+    while (!m_Q.empty() && !isMoving && !isRotating)
+    {
+        auto tp = m_Q.front();
+        m_Q.pop();
+        switch (tp.cmdType)
+        {
+        case CommandType::Move:
+        {
+            auto [wx, wy, wz, dir, speed] = tp.mv_p;
+            SetTarget({ wx, wy, wz }, speed);
+            SetDir(dir);
+            m_AnimDone = tp.isDone;        // 슬롯 턴 종료 메세지 보내라
+            break;
+        }
+        case CommandType::Hit:
+        {
+            //SetFlashColor({0,0,0,1},1,0.3f);
+            PlayGridQ::Insert(PlayGridQ::Hit_S(m_who));
+            if (tp.hit.whichPiece != GamePiece::None)
+                PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece));
+            break;
+        }
+        }
+    }
+}
+
 
 bool UnitPiece::UpdateMatrix()
 {
@@ -369,6 +329,65 @@ bool UnitPiece::UpdateMatrix()
     XMStoreFloat4x4(&this->m_mWorld, mTM);
 
     return true;
+}
+
+void UnitPiece::UpdateRot(float dt)
+{
+    if (!isRotating)    return;
+    
+    m_rotTime += dt * m_rotSpeed;
+    if (m_rotTime >= 1.f)
+    {
+        m_yaw = m_targetYaw;
+        m_rotTime = 0.f;
+        isRotating = false;
+    }
+    else
+    {
+        m_yaw = m_startYaw * (1 - m_rotTime) + m_targetYaw * m_rotTime;
+    }
+    
+}
+
+void UnitPiece::UpdateMove(float dt)
+{
+    if (!isMoving)   return;
+
+    if (dt >= 1.f) return;
+    m_moveTime += dt / m_Dist * m_speed * m_fixSpeed;
+
+    if (m_moveTime >= 1.f)
+    {
+        XMStoreFloat3(&this->m_vPos, m_Target);
+        if (m_animator)
+        {
+            UINT currentFrame = m_animator->GetCurFrame();
+            if (currentFrame >= 28) // 일단 낫일 경우에는
+            {
+                m_animator->Change("idle");
+                m_animator->SetLoop("idle", true);      // 여기서 터지면 idle 애니메이션이 없는 것임으로 생성단계에 클립을 넣어야함!
+                isMoving = false;
+                m_moveTime = 0.f;
+            }
+        }
+        else
+        {
+            isMoving = false;
+            m_moveTime = 0.f;
+        }
+
+        if (m_AnimDone)
+        {
+            PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Turn_Over, m_who));
+            //ClearQ();
+            m_AnimDone = false;
+        }
+    }
+    else
+    {
+        XMVECTOR res = XMVectorLerp(m_Start, m_Target, m_moveTime);
+        XMStoreFloat3(&this->m_vPos, res);
+    } 
 }
 
 void UnitPiece::UpdateFlash(float dt)
@@ -403,7 +422,22 @@ void UnitPiece::UpdateFlash(float dt)
     }
 }
 
-void UnitPiece::CheckAttack()
+void UnitPiece::UpdateHit(float dt)
+{
+    if (!isHitting)  return;
+
+    // 일단 종료 조건문을 isFlashing으로 설정. 피격 애니메이션 들어오면 바꾸기.
+    if(isFlashing)  return;
+     
+    // 피격 애니메이션 끝나면 system에게 기물 생사여부 체크하도록 함.
+    PGridCmd cmd{ CommandType::Hit };
+    cmd.hit.whichPiece = GamePiece::None;
+    m_Q.push(cmd);
+
+    isHitting = false;
+}
+
+void UnitPiece::UpdateAttack(float dt)
 {
     if (!isAttacking) return;
 
@@ -479,6 +513,13 @@ void UnitPiece::PlayAttack()
     if (!isChanged) return;
     m_animator->SetLoop("attack", false);
     isAttacking = true;
+}
+
+void UnitPiece::PlayHit(Float4 color, int count, float blinkTime)
+{
+    isHitting = true;
+
+    SetFlashColor(color, count, blinkTime);
 }
 
 
