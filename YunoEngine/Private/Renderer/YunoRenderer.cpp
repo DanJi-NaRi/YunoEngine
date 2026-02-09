@@ -125,6 +125,7 @@ bool YunoRenderer::CreateShaders()
     if (!LoadShader(ShaderId::UIGauge, "../Assets/Shaders/UI_Gauge.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::UISpriteSheet, "../Assets/Shaders/UI_SpriteAnim.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::EffectBase, "../Assets/Shaders/EffectBase.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::EffectWithTexMap, "../Assets/Shaders/EffectWithTexMap.hlsl", "VSMain", "PSMain")) return false;
 
     if (!CreatePPShader()) return false;
 

@@ -184,6 +184,7 @@ enum class ShaderId : uint8_t
     UIGauge,
     UISpriteSheet,
     EffectBase,
+    EffectWithTexMap,
     PBR_AniDissolve,
 
     //Shadow

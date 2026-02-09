@@ -48,14 +48,6 @@ bool PlayScene::OnCreateScene()
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
     map->SetRot({ 0, XM_PIDIV2, 0 });
 
-    // 플레이 그리드 시스템 생성
-    m_playGrid = std::make_unique<PlayGridSystem>(m_objectManager.get());
-    m_playGrid->CreateObject(0, 0, 0);
-    
-    // 디렉션 라이트 생성
-    m_objectManager->CreateDirLight();
-
-
     EffectDesc ed{};
     ed.id = EffectID::Warning;
     ed.shaderid = ShaderId::EffectBase;
@@ -80,7 +72,7 @@ bool PlayScene::OnCreateScene()
     ed.cols = 5;
     ed.rows = 5;
     ed.texPath = L"../Assets/Effects/Warning/EF_WARNING_2.png";
-    for (auto i = 0; i < 5; i++)
+    for (auto i = 0; i < 4; i++)
     {
         auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_2", XMFLOAT3(0, 1, 0));
         warning->BuildInternalEffectMaterial(ed);
@@ -88,17 +80,33 @@ bool PlayScene::OnCreateScene()
 
     po = {};
     po.raster = RasterPreset::CullNone;
-
+    po.blend = BlendPreset::AlphaBlend;
+    po.shader = ShaderId::EffectWithTexMap;
+    
     for (auto i = 0; i < 5; i++)
     {
         auto Holo = m_objectManager->CreateObjectFromFile<Building>(L"Holo_01_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H/HOLD.fbx", po);
+        Holo->SetRot({ -XM_PIDIV2, 0, 0 });
         auto Holo2 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_02_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_2/HOLD.fbx", po);
+        Holo2->SetRot({ -XM_PIDIV2, 0, 0 });
+    }
+
+    for (auto i = 0; i < 8; i++)
+    {
+        auto Holo3 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_03_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_3/VS.fbx", po);
     }
 
     for (int i = 0; i < 6; i++)
     {
         auto razer = m_objectManager->CreateObjectFromFile<Building>(L"razer", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Razer/Razer.fbx");
     }
+
+    // 플레이 그리드 시스템 생성
+    m_playGrid = std::make_unique<PlayGridSystem>(m_objectManager.get());
+    m_playGrid->CreateObject(0, 0, 0);
+    
+    // 디렉션 라이트 생성
+    m_objectManager->CreateDirLight();
 
     RegisterEffect();
 
@@ -154,7 +162,7 @@ void PlayScene::RegisterEffect()
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::AxAttack;
-    ed.lifetime = 0.8f;
+    ed.lifetime = 0.4f;
     ed.framecount = 12;
     ed.cols = 4;
     ed.rows = 3;
@@ -163,6 +171,18 @@ void PlayScene::RegisterEffect()
     ed.emissive = 50.0f;
     ed.color = { 1, 0, 0, 1 };
     ed.rot = { XM_PIDIV2, 0, 0 };
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::AxAttack2;
+    ed.lifetime = 0.5f;
+    ed.framecount = 30;
+    ed.cols = 6;
+    ed.rows = 5;
+    ed.billboard = BillboardMode::None;
+    ed.texPath = L"../Assets/Effects/Ax/EF_Fragment.png";
+    ed.emissive = 50.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.rot = { 0, XM_PIDIV2, 0 };
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::DrillAttack1;
@@ -224,19 +244,29 @@ void PlayScene::RegisterEffect()
     ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
     m_effectManager->RegisterEffect(ed);
 
-    ed.isLoop = true;
     ed.id = EffectID::ScytheAttack;
     ed.framecount = 18;
-    ed.lifetime = 1.2f;
+    ed.lifetime = 0.8f;
     ed.cols = 3;
     ed.rows = 6;
     ed.billboard = BillboardMode::None;
-    ed.rot = { 0, XM_PIDIV2, XMConvertToRadians(160) };
+    ed.rot = { 0, XM_PIDIV2, XMConvertToRadians(275) };
     ed.emissive = 30.0f;
     ed.color = { 1, 0, 0, 1 };
     ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_1.png";
     m_effectManager->RegisterEffect(ed);
-    ed.isLoop = false;
+
+    ed.id = EffectID::ScytheAttack2;
+    ed.framecount = 30;
+    ed.lifetime = 0.8f;
+    ed.cols = 5;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { 0, XM_PIDIV2, -XMConvertToRadians(275) };
+    ed.emissive = 30.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_2.png";
+    m_effectManager->RegisterEffect(ed);
 }
 
 void PlayScene::OnDestroyScene()
