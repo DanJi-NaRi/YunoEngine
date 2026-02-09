@@ -594,6 +594,8 @@ void GameManager::ResetMyPicks()
     m_myPick[1] = PieceType::None;
     m_lastPickedPiece = PieceType::None;
     m_isReady = false;
+    m_p1Ready = false;
+    m_p2Ready = false;
 }
 
 
@@ -605,7 +607,33 @@ bool GameManager::HasTwoPicks() const
 bool GameManager::ToggleReady()
 {
     m_isReady = !m_isReady;
+
+    if (m_PID == 1)
+        m_p1Ready = m_isReady;
+    else if (m_PID == 2)
+        m_p2Ready = m_isReady;
+
     return m_isReady;
+}
+
+void GameManager::SetReadyStates(bool p1Ready, bool p2Ready)
+{
+    m_p1Ready = p1Ready;
+    m_p2Ready = p2Ready;
+
+    if (m_PID == 1)
+        m_isReady = m_p1Ready;
+    else if (m_PID == 2)
+        m_isReady = m_p2Ready;
+}
+
+bool GameManager::IsOpponentReady() const
+{
+    if (m_PID == 1)
+        return m_p2Ready;
+    if (m_PID == 2)
+        return m_p1Ready;
+    return false;
 }
 
 void GameManager::SubmitTurn(

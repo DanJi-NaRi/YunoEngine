@@ -79,6 +79,8 @@ public:
 
     bool ToggleReady();
     bool IsReady() const { return m_isReady; }
+    void SetReadyStates(bool p1Ready, bool p2Ready);
+    bool IsOpponentReady() const;
 
     void SubmitTurn(const std::vector<CardPlayCommand>& runtimeIDs);
 
@@ -147,6 +149,8 @@ private:
     int m_matchPlayerCount = 0;
 
     bool m_isReady = false;
+    bool m_p1Ready = false;
+    bool m_p2Ready = false;
 
     UnitHand m_myHands[2];                                                             //UI 카드 선택용
     UnitHand m_enemyHands[2];                                                       //UI 보여주기용
