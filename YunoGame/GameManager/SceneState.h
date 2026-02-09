@@ -5,6 +5,7 @@
     enum class CurrentSceneState : std::uint8_t
     {
         Title = 0,      // 타이틀 화면
+        Option,
         RequstEnter,    // 입장 요청
         GameStart,      // 무기 선택 화면 (양 쪽 다 무기를 골라야 RountStart로 넘어감)
         CountDown,

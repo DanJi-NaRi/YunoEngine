@@ -11,6 +11,7 @@
 #include "PlayScene.h"
 #include "PhaseScene.h"
 #include "CountdownScene.h"
+#include "OptionScene.h"
 
 #include "YunoClientNetwork.h"
 
@@ -200,6 +201,17 @@ void GameManager::SetSceneState(CurrentSceneState state)
         
         GameManager::Get().SendPacket(std::move(bytes));
         
+        break;
+    }
+    case CurrentSceneState::Option:
+    {
+        m_state = CurrentSceneState::Option;
+
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = true;
+
+        sm->RequestPush(std::make_unique<OptionScene>(), sp);
         break;
     }
     case CurrentSceneState::GameStart:

@@ -198,7 +198,11 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\UI\WidgetGridLine.cpp" />
     <ClCompile Include="Minimap.cpp" />
     <ClCompile Include="MinimapTile.cpp" />
+
     <ClCompile Include="PhaseWeaponSelectButton.cpp" />
+
+    <ClCompile Include="OptionScene.cpp" />
+
     <ClCompile Include="PlayerIcon.cpp" />
     <ClCompile Include="Emoji.cpp" />
     <ClCompile Include="Game\UI\CardCancelButton.cpp" />
@@ -297,7 +301,13 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\WidgetGridLine.h" />
     <ClInclude Include="Minimap.h" />
     <ClInclude Include="MinimapTile.h" />
+
     <ClInclude Include="PhaseWeaponSelectButton.h" />
+
+    <ClInclude Include="OptionButton.h" />
+    <ClInclude Include="OptionScene.h" />
+    <ClInclude Include="OptionScene_InputContext.h" />
+
     <ClInclude Include="PlayerIcon.h" />
     <ClInclude Include="Emoji.h" />
     <ClInclude Include="Game\UI\CardCancelButton.h" />
@@ -387,6 +397,9 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="UI_InputContext.h" />
     <ClInclude Include="utilityClass.h" />
     <ClInclude Include="WeaponNameImage.h" />
+
+    <ClInclude Include="VolumeTrackButton.h" />
+
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

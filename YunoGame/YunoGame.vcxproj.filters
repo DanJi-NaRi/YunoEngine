@@ -133,8 +133,12 @@
     <Filter Include="Scenes\4.CountDown">
       <UniqueIdentifier>{1cd19b8f-620e-4094-b97d-223746adf8f0}</UniqueIdentifier>
     </Filter>
+
     <Filter Include="Game\UI\ShowCardDeck">
       <UniqueIdentifier>{b25e06be-5434-4535-aa8d-9370820ff338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\5.Option">
+      <UniqueIdentifier>{11e92317-00d7-47e4-ad50-8ced256142ea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -315,7 +319,6 @@
     <ClCompile Include="CountdownScene.cpp">
       <Filter>Scenes\4.CountDown</Filter>
     </ClCompile>
-
     <ClCompile Include="ShowCardDeck.cpp">
       <Filter>Game\UI\ShowCardDeck</Filter>
     </ClCompile>
@@ -334,6 +337,11 @@
       <Filter>Game\UI\ProgressBar</Filter>
     </ClCompile>
     <ClCompile Include="PhaseWeaponSelectButton.cpp" />
+
+
+    <ClCompile Include="OptionScene.cpp">
+      <Filter>Scenes\5.Option</Filter>
+    </ClCompile>
 
   </ItemGroup>
   <ItemGroup>
@@ -557,6 +565,18 @@
     </ClInclude>
     <ClInclude Include="PhaseWeaponSelectButton.h" />
 
+    <ClInclude Include="OptionScene.h">
+      <Filter>Scenes\5.Option</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeTrackButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">
