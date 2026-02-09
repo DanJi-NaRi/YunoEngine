@@ -63,7 +63,13 @@ struct CBPostProcess
     float threshold = 1.0f;
 
     float exposure = 1.0f;
-    float padding[3]{ 0, 0, 0 };
+    float colorSaturation = 1.0f;
+    float colorContrast = 1.0f;
+    float colorGamma = 1.0f;
+
+    float temperature;
+    float tint;
+    float padding[2] = { 0, 0 };
 };
 
 struct CBBloom
@@ -71,6 +77,13 @@ struct CBBloom
     XMFLOAT4 bloomweights; //x : w0(1/2), y : w1(1/4), z : w2(1/8), w : w3(1/16)
     float bloomIntensity = 1.0f;
     XMFLOAT3 padding;
+};
+
+struct CBPostProcessCG
+{
+    XMFLOAT4 lift;      //그림자
+    XMFLOAT4 Gamma; //중간톤
+    XMFLOAT4 Gain;  //하이라이트
 };
 
 struct CBShadow

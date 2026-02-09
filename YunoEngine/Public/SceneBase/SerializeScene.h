@@ -182,6 +182,11 @@ struct PostProcessDesc
     float threshold = 1.01f;
     float bloomIntensity = 0.1f;
     float exposure = 1.3f;
+    float colorSaturation = 1.0f;
+    float colorContrast = 1.0f;
+    float colorGamma = 1.0f;
+    float temparature = 6500.f;
+    float tint = 0.0f;
 };
 
 struct SceneDesc

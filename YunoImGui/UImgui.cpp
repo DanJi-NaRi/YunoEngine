@@ -379,4 +379,33 @@ namespace UI
     {
         return ImGui::DragInt(label, v, speed, v_min, v_max, fmt);
     }
+
+    bool DragIntEditable(const char* label, int* v, int speed, int v_min, int v_max)
+    {
+        static bool edit = false;
+
+        if (!edit)
+        {
+            bool changed = ImGui::DragInt(label, v, speed, v_min, v_max);
+
+            if (ImGui::IsItemHovered() &&
+                ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+            {
+                edit = true;
+            }
+
+            return changed;
+        }
+        else
+        {
+            bool changed = ImGui::InputInt(label, v);
+
+            if (ImGui::IsItemDeactivatedAfterEdit())
+            {
+                edit = false;
+            }
+
+            return changed;
+        }
+    }
 }

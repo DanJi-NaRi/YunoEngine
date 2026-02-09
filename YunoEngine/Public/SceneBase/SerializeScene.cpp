@@ -266,7 +266,12 @@ namespace nlohmann
         { "optionflag",  d.ppFlag },
         { "threshold",  d.threshold },
         { "bloomIntensity",  d.bloomIntensity },
-        { "exposure",  d.exposure }
+        { "exposure",  d.exposure },
+        { "colorSaturation",  d.colorSaturation },
+        { "colorContrast",  d.colorContrast },
+        { "colorGamma",  d.colorGamma },
+        { "temparature",  d.temparature },
+        { "tint",  d.tint }
         };
     }
 
@@ -276,6 +281,11 @@ namespace nlohmann
         j.at("threshold").get_to(d.threshold);
         j.at("bloomIntensity").get_to(d.bloomIntensity);
         j.at("exposure").get_to(d.exposure);
+        if (j.contains("colorSaturation")) j.at("colorSaturation").get_to(d.colorSaturation);
+        if (j.contains("colorContrast")) j.at("colorContrast").get_to(d.colorContrast);
+        if (j.contains("colorGamma")) j.at("colorGamma").get_to(d.colorGamma);
+        if (j.contains("temparature")) j.at("temparature").get_to(d.temparature);
+        if (j.contains("tint")) j.at("tint").get_to(d.tint);
     }
 
     inline void to_json(json& j, const SceneDesc& s)

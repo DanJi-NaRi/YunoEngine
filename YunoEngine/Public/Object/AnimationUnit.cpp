@@ -185,6 +185,34 @@ void AnimationUnit::SetLoop(UINT id, bool isLoop)
     m_animator->SetLoop(id, isLoop);
 }
 
+bool AnimationUnit::RegisterFrameEvent(const std::string& clipName, UINT frame, Animator::AnimationEventCallback event)
+{
+    if (!m_animator)
+        return false;
+    return m_animator->RegisterFrameEvent(clipName, frame, event);
+}
+
+bool AnimationUnit::RegisterFrameEvent(UINT clipId, UINT frame, Animator::AnimationEventCallback event)
+{
+    if (!m_animator)
+        return false;
+    return m_animator->RegisterFrameEvent(clipId, frame, event);
+}
+
+bool AnimationUnit::ClearFrameEvents(const std::string& clipName)
+{
+    if (!m_animator)
+        return false;
+    return m_animator->ClearFrameEvents(clipName);
+}
+
+bool AnimationUnit::ClearFrameEvents(UINT clipID)
+{
+    if (!m_animator)
+        return false;
+    return m_animator->ClearFrameEvents(clipID);
+}
+
 #ifdef _DEBUG
 void AnimationUnit::Serialize()
 {
