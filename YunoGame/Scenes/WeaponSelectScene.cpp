@@ -359,7 +359,9 @@ void WeaponSelectScene::ApplyCountDownUnits()
 
 void WeaponSelectScene::Update(float dt)
 {
-    if (GameManager::Get().IsCountdownActive())
+    GameManager& gm = GameManager::Get();
+
+    if (gm.GetSceneState() == CurrentSceneState::CountDown || gm.IsCountdownActive())
     {
         ApplyCountDownUnits();
     }
