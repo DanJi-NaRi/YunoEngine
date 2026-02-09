@@ -56,7 +56,12 @@ bool ShowCardButton::IdleEvent()
 bool ShowCardButton::HoveredEvent()
 {
     if (m_pTooltipImage)
+    {
+        if (!m_tooltipTexturePath.empty())
+            m_pTooltipImage->ChangeTexture(m_tooltipTexturePath);
+
         m_pTooltipImage->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
+    }
     return true;
 }
 
@@ -68,6 +73,14 @@ bool ShowCardButton::LMBPressedEvent()
 void ShowCardButton::SetTooltipImage(TextureImage* tooltipImage)
 {
     m_pTooltipImage = tooltipImage;
+}
+
+void ShowCardButton::SetTooltipTexturePath(const std::wstring& tooltipTexturePath)
+{
+    m_tooltipTexturePath = tooltipTexturePath;
+
+    if (m_pTooltipImage && !m_tooltipTexturePath.empty())
+        m_pTooltipImage->ChangeTexture(m_tooltipTexturePath);
 }
 
 bool ShowCardButton::CreateMaterial()
@@ -114,9 +127,14 @@ void ShowCardDeck::SetWeaponCards(PieceType pieceType)
         m_cardButtons[i]->ChangeTexture(path);
     }
 
-    if (m_pTooltipImage)
+
+    for (int i = 0; i < static_cast<int>(m_cardButtons.size()); ++i)
     {
-        m_pTooltipImage->ChangeTexture(L"../Assets/UI/TOOLTIP/tooltip_" + lowerName + L"_1.png");
+        if (!m_cardButtons[i])
+            continue;
+
+        m_cardButtons[i]->ChangeTexture(L"../Assets/UI/CARD/card_" + lowerName + L"_" + std::to_wstring(i + 1) + L".png");
+        m_cardButtons[i]->SetTooltipTexturePath(L"../Assets/UI/TOOLTIP/tooltip_" + lowerName + L"_" + std::to_wstring(i + 1) + L".png");
     }
 }
 
@@ -137,22 +155,29 @@ void ShowCardDeck::BuildCards()
         const int col = i % 8;
 
         XMFLOAT3 cardPos(centerX + kStartOffsetX + (col * kCardGap), startY + (row * 148.5f + row * kStartOffsetY), 0.f);
-        if (col > 2) cardPos.x += 38.0f;
+        if (col > 2)
+            cardPos.x += 38.0f;
+
         m_cardButtons[i] = m_uiFactory.CreateChild<ShowCardButton>(L"ShowCard_" + std::to_wstring(i + 1), Float2(205, 297), cardPos, UIDirection::LeftTop, this);
+        if (!m_cardButtons[i])
+            continue;
 
-        if (m_cardButtons[i])
-            m_cardButtons[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
+        m_cardButtons[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
+
+        const float tooltipOffsetX =  80.f;
+        const XMFLOAT3 tooltipPos(cardPos.x + tooltipOffsetX, cardPos.y, -1.f);
+
+        auto* tooltipImage = m_uiFactory.CreateChild<TextureImage>(
+            L"tooltip_" + std::to_wstring(i + 1), Float2(360, 462), tooltipPos, UIDirection::LeftTop, this);
+
+        if (tooltipImage)
+        {
+            tooltipImage->SetScale(XMFLOAT3(0.f, 0.f, 1.f));
+            m_cardButtons[i]->SetTooltipImage(tooltipImage);
+        }
+
+        m_cardButtons[i]->SetTooltipTexturePath(L"../Assets/UI/TOOLTIP/tooltip_blaster_" + std::to_wstring(i + 1) + L".png");
     }
-
-    m_pTooltipImage = m_uiFactory.CreateChild<TextureImage>(L"tooltip_blaster_1", Float2(360, 462), XMFLOAT3(500, 500, 0.f), UIDirection::Center, this);
-    if (m_pTooltipImage)
-    {
-        m_pTooltipImage->ChangeTexture(L"../Assets/UI/TOOLTIP/tooltip_blaster_1.png");
-        m_pTooltipImage->SetScale(XMFLOAT3(0.f, 0.f, 1.f));
-    }
-
-    if (m_cardButtons[0])
-        m_cardButtons[0]->SetTooltipImage(m_pTooltipImage);
 
     m_isBuilt = true;
 }

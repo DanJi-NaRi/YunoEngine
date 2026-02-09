@@ -19,12 +19,14 @@ public:
     bool LMBPressedEvent() override;
 
     void SetTooltipImage(TextureImage* tooltipImage);
+    void SetTooltipTexturePath(const std::wstring& tooltipTexturePath);
 
 private:
     bool CreateMaterial() override;
 
 private:
     TextureImage* m_pTooltipImage = nullptr;
+    std::wstring m_tooltipTexturePath;
 };
 
 class ShowCardDeck final : public Image
@@ -48,5 +50,6 @@ private:
 private:
     bool m_isBuilt = false;
     std::array<ShowCardButton*, 16> m_cardButtons{};
+    std::array<TextureImage*, 16> m_pTooltipImages{};
     TextureImage* m_pTooltipImage = nullptr;
 };

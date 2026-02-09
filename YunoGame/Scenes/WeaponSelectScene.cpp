@@ -77,7 +77,7 @@ bool WeaponSelectScene::OnCreateScene()
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetWeaponImages(m_pWeaponImage0, m_pWeaponImage1, m_pWeaponImage2, m_pWeaponImage3);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetWeaponPreviewImages(m_pWeaponNameImage, m_pWeaponCardImage);
-    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Blaster)->SetShowCardDeck(m_showCardDeck);
+    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetShowCardDeck(m_showCardDeck);
 
 
 
@@ -117,7 +117,7 @@ bool WeaponSelectScene::OnCreateScene()
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetWeaponImages(m_pWeaponImage0, m_pWeaponImage1, m_pWeaponImage2, m_pWeaponImage3);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetWeaponPreviewImages(m_pWeaponNameImage, m_pWeaponCardImage);
-    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Impactor)->SetShowCardDeck(m_showCardDeck);
+    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetShowCardDeck(m_showCardDeck);
 
 
 
