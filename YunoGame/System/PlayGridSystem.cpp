@@ -187,7 +187,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          TileOccupy{ TileOccuType::Ally_Occupied, (w.slotId == 1) ? TileWho::Ally1 : TileWho::Ally2 } :
          TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
 
-     GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
+     GamePiece gp = GetGamePiece(w.pId, w.pId);
      PieceInfo pieceInfo{};
      PassOption po;
      po.shader = ShaderId::PBR_AniDissolve;
@@ -207,6 +207,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram1->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pChakram1->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram1->AppearDissolve(appearDisolveDuration);
+         pChakram1->SetWho(gp);
 
          pPiece->Attach(pChakram1);
 
@@ -220,6 +221,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram2->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pChakram2->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram2->AppearDissolve(appearDisolveDuration);
+         pChakram2->SetWho(gp);
 
          pPiece->Attach(pChakram2);
 

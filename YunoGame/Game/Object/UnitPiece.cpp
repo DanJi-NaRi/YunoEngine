@@ -305,12 +305,12 @@ void UnitPiece::CheckMyQ()
         }
         case CommandType::MoveHit:
         {
-            //if (tp.hit_p.amIdead)
-            //    PlayDead(tp.hit_p.disappearDissolveDuration);
-            //else
-            //    PlayHit();
+            if (tp.hit_p.amIdead)
+                PlayDead(tp.hit_p.disappearDissolveDuration);
+            else
+                PlayHit();
 
-            //PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece));
+            PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece));
             break;
         }
         case CommandType::Attack:
@@ -650,7 +650,7 @@ float UnitPiece::linearGraph(float x)
 
 void UnitPiece::ClearQ()
 {
-    if (!m_Q.empty())
+    while (!m_Q.empty())
     {
         m_Q.pop();
     }

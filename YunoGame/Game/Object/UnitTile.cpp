@@ -197,6 +197,17 @@ bool UnitTile::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool UnitTile::Update(float dTime)
 {
+    if (isTriggering)
+    {
+        bool isPlaying = m_animator->isPlaying();
+        if (!isPlaying && m_state != ObstacleType::Collapse && !isFlashing)
+        {
+            m_animator->Change("idle");
+            m_animator->SetLoop("idle", true);
+            m_state = ObstacleType::None;
+            isTriggering = false;
+        }
+    }
 
     if (isWarning)
     {
@@ -208,18 +219,6 @@ bool UnitTile::Update(float dTime)
             m_animator->SetLoop("idle", true);
             m_state = ObstacleType::None;
             isWarning = false;
-        }
-    }
-
-    if (isTriggering)
-    {
-        bool isPlaying = m_animator->isPlaying();
-        if (!isPlaying && m_state != ObstacleType::Collapse && !isFlashing)
-        {
-            m_animator->Change("idle");
-            m_animator->SetLoop("idle", true);
-            m_state = ObstacleType::None;
-            isTriggering = false;
         }
     }
 
