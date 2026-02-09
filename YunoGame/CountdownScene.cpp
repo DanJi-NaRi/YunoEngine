@@ -81,6 +81,15 @@ void CountdownScene::Update(float dt)
             m_lastNumber = num;
             ShowOrUpdateCountdownImage(num);
         }
+        else // 카운트 다운 끝난 경우 
+        {
+            CountdownImage* img = nullptr;
+            img = static_cast<CountdownImage*>(
+                m_uiManager->FindWidget(m_countdownWidgetID)
+                );
+
+            img->ChangeMaterial(num);
+        }
     }
 }
 

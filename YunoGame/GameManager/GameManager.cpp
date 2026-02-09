@@ -259,7 +259,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         //if (m_state == CurrentSceneState::RoundStart) return;
         m_state = CurrentSceneState::RoundStart;
         SceneTransitionOptions opt{};
-        opt.immediate = true;
+        opt.immediate = false;
 
         sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
 

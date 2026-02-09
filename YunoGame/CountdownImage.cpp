@@ -35,6 +35,9 @@ bool CountdownImage::ChangeMaterial(int num)
     case 1:
         texturePath = L"../Assets/UI/WEAPON_SELECT/1.png";
         break;
+    case 0:
+        texturePath = L"../Assets/UI/WEAPON_SELECT/4_V.png";
+        break;
     default:
         return false;
     }
@@ -45,6 +48,7 @@ bool CountdownImage::ChangeMaterial(int num)
 
 bool CountdownImage::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
+    sizePx /= 2;
     Image::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     return true;
