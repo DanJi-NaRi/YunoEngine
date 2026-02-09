@@ -327,24 +327,24 @@ void PlayGridSystem::CheckMyQ()
             int uid = GetUnitID(pieceType);
             if (static_cast<int>(m_UnitStates[uid].hp) <= 0)
             {
-                pPiece->PlayDead(disappearDisolveDuration);
+                pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
 
                 for (uint32_t subId : pieceInfo.subIds)
                 {
                     auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
                     if (pSubPiece != nullptr)
-                        pSubPiece->PlayDead(disappearDisolveDuration);
+                        pSubPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
                 }
             }
             else
             {
-                pPiece->PlayHit();
+                pPiece->InsertQ(PlayGridQ::Hit_P());
 
                 for (uint32_t subId : pieceInfo.subIds)
                 {
                     auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
                     if (pSubPiece != nullptr)
-                        pSubPiece->PlayHit();
+                        pSubPiece->InsertQ(PlayGridQ::Hit_P());
                 }
             }
 
@@ -552,16 +552,13 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             break;
         }
 
-        // 애니메이션 대신 반짝이는 걸로 잠시 대체
-        pPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
-        pPiece->PlayAttack();
+        pPiece->InsertQ({ CommandType::Attack });
         for (uint32_t subId : pieceInfo.subIds)
         {
             auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
             if (pSubPiece != nullptr)
             {
-                pSubPiece->PlayAttack();
-                pSubPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
+                pSubPiece->InsertQ({ CommandType::Attack });
             }
         }
         as.phaseStarted = false;
@@ -606,20 +603,20 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             int unitID = GetUnitID(it->first);
             if (m_UnitStates[unitID].hp == 0)
             {
-                pPiece->PlayDead(disappearDisolveDuration);
+                pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
                 for (auto& subId : pieceInfo.subIds)
                 {
                     auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                    pSub->PlayDead(disappearDisolveDuration);
+                    pSub->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
                 }
             }
             else // 살았다면 피격 애니메이션 재생
             {
-                pPiece->PlayHit();
+                pPiece->InsertQ(PlayGridQ::Hit_P());
                 for (auto& subId : pieceInfo.subIds)
                 {
                     auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                    pSub->PlayHit();
+                    pSub->InsertQ(PlayGridQ::Hit_P());
                 }
             }
             std::cout << "[PlayGridSystem::UpdateAttackSequence]\nHitter hp: " << static_cast<int>(m_UnitStates[GetUnitID(pieces[i])].hp) << std::endl;
@@ -773,12 +770,11 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
                 if (pieceIt == m_pieces.end())   continue;
                 auto& pieceInfo = pieceIt->second;
                 auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
-                // 피격 애니메이션 대신 번쩍이는 걸로 임시 대체
-                pPiece->PlayHit();
+                pPiece->InsertQ(PlayGridQ::Hit_P());
                 for (auto& subId : pieceInfo.subIds)
                 {
                     auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                    pSub->PlayHit();
+                    pSub->InsertQ(PlayGridQ::Hit_P());
                 }
             }
         }
@@ -1137,7 +1133,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
 
             // 충돌지점까지 이동 후 원래 자리로 되돌아감
             pPiece->InsertQ(PlayGridQ::Move_P(fdir, colW.x, m_wy, colW.y));              // 충돌 위치까지 이동 후
-            pPiece->InsertQ(PlayGridQ::Hit_P(existWho));                                 // 이동하는 애 죽었는지 부딪힌 애 죽었는지
+            pPiece->InsertQ(PlayGridQ::MoveHit_P(existWho));                                 // 이동하는 애 죽었는지 부딪힌 애 죽었는지
             pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, wx, m_wy, wz, 1));        // 제자리로 돌아감
         }
         else                                                // 아군과 충돌
@@ -1264,14 +1260,14 @@ void PlayGridSystem::CheckOver()
         if (pPiece != nullptr)
         {
             // 라운드 종료 시 남아있는 기물도 일괄 제거
-            pPiece->PlayDead(disappearDisolveDuration);
+            pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
         }
 
         for (auto sid : pieceinfo.subIds)
         {
             auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(sid));
             if (pSub != nullptr)
-                pSub->PlayDead(disappearDisolveDuration);
+                pSub->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
         }
     }
     isRoundOver = true;

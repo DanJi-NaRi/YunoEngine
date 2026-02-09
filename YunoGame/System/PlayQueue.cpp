@@ -50,11 +50,25 @@ PGridCmd PlayGridQ::Hit_S(GamePiece pieceType)
     return cmd;
 }
 
-PGridCmd PlayGridQ::Hit_P(GamePiece pieceType)
+PGridCmd PlayGridQ::Hit_P()
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Hit;
+    return cmd;
+}
+
+PGridCmd PlayGridQ::MoveHit_P(GamePiece pieceType)
+{
+    PGridCmd cmd;
+    cmd.cmdType = CommandType::MoveHit;
     cmd.hit.whichPiece = pieceType;
+    return cmd;
+}
+
+PGridCmd PlayGridQ::Dead_P(float disappearDissolveDuration)
+{
+    PGridCmd cmd;
+    cmd.dead_p.disappearDissolveDuration = disappearDissolveDuration;
     return cmd;
 }
 

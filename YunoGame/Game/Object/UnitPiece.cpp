@@ -294,7 +294,7 @@ bool UnitPiece::CheckDead(float dt)
 void UnitPiece::CheckMyQ()
 {
     // 애니메이션이 끝나면 하나씩 빼가게 하기
-    while (!m_Q.empty() && !isMoving && !isRotating)
+    while (!m_Q.empty() && !isMoving && !isRotating && !isHitting && !isAttacking && !isDead)
     {
         auto tp = m_Q.front();
         m_Q.pop();
@@ -303,16 +303,31 @@ void UnitPiece::CheckMyQ()
         case CommandType::Move:
         {
             auto [wx, wy, wz, dir, speed] = tp.mv_p;
-            SetTarget({ wx, wy, wz }, speed);
+            PlayMove({ wx, wy, wz }, speed);
             SetDir(dir);
             m_AnimDone = tp.isDone;        // 슬롯 턴 종료 메세지 보내라
             break;
         }
-        case CommandType::Hit:
+        case CommandType::MoveHit:
         {
             PlayGridQ::Insert(PlayGridQ::Hit_S(m_who));
             //if (tp.hit.whichPiece != GamePiece::None)       // 조건문 빼고 무조건 보내는 걸로
             PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece));
+            break;
+        }
+        case CommandType::Attack:
+        {
+            PlayAttack();
+            break;
+        }
+        case CommandType::Hit:
+        {
+            PlayHit();
+            break;
+        }
+        case CommandType::Dead:
+        {
+            PlayDead(tp.dead_p.disappearDissolveDuration);
             break;
         }
         }
@@ -369,29 +384,14 @@ void UnitPiece::UpdateMove(float dt)
     if (m_moveTime >= 1.f)
     {
         XMStoreFloat3(&this->m_vPos, m_Target);
+        
         if (m_animator)
         {
-            UINT currentFrame = m_animator->GetCurFrame();
-            if (currentFrame >= 28) // 일단 낫일 경우 기준
-            {
-                m_animator->Change("idle");
-                m_animator->SetLoop("idle", true);      // 여기서 터지면 idle 애니메이션이 없는 것임으로 생성단계에 클립을 넣어야함!
-                isMoving = false;
-                m_moveTime = 0.f;
-            }
+            m_animator->Change("idle");
+            m_animator->SetLoop("idle", true);      // 여기서 터지면 idle 애니메이션이 없는 것임으로 생성단계에 클립을 넣어야함!
         }
-        else
-        {
-            isMoving = false;
-            m_moveTime = 0.f;
-        }
-
-        if (m_AnimDone)
-        {
-            PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Turn_Over, m_who));
-            //ClearQ();
-            m_AnimDone = false;
-        }
+        isMoving = false;
+        m_moveTime = 0.f;
     }
     else
     {
@@ -581,7 +581,7 @@ void UnitPiece::PlayHit()
 }
 
 
-void UnitPiece::SetTarget(XMFLOAT3 targetPos, float speed)
+void UnitPiece::PlayMove(XMFLOAT3 targetPos, float speed)
 {
     if (isMoving) return;
 
@@ -621,21 +621,6 @@ void UnitPiece::PlayDead(float disappearDisolveDuration)
 void UnitPiece::SetTmpColor(Float4 color)
 {
     m_vtmpColor = color;
-}
-
-
-void UnitPiece::SendDone()
-{
-
-}
-
-
-void UnitPiece::ClearQ()
-{
-    while (!m_Q.empty())
-    {
-        m_Q.pop();
-    }
 }
 
 Float4 UnitPiece::GetLerpColor(float dt)

@@ -34,6 +34,11 @@ struct PGridCmd
 
         struct
         {
+            float disappearDissolveDuration;
+        } dead_p;
+
+        struct
+        {
             GamePiece whichPiece;
         } hit;     // Hit
 
@@ -62,7 +67,10 @@ public:
     static PGridCmd Move_P(Direction dir, float wx, float wy, float wz, float speed = 1, bool isDone = false);
 
     static PGridCmd Hit_S(GamePiece pieceType);
-    static PGridCmd Hit_P(GamePiece pieceType = GamePiece::None);
+    static PGridCmd Hit_P();
+    static PGridCmd MoveHit_P(GamePiece pieceType = GamePiece::None);
+
+    static PGridCmd Dead_P(float disappearDissolveDuration);
 
     static PGridCmd Cmd_S(CommandType cmdType, GamePiece pieceType);
 

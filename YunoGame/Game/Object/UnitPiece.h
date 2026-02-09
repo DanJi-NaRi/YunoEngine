@@ -35,15 +35,14 @@ public:
     void SetFlashColor(Float4 color, int count, float blinkTime);
     void AppearDissolve(float dissolveTime);
     void DisappearDissolve(float dissolveTime);
+
+    void SetTmpColor(Float4 color);
+
+private:
+    void PlayMove(XMFLOAT3 targetPos, float speed);
     void PlayAttack();
     void PlayHit();
     void PlayDead(float disappearDisolveDuration);
-
-    void SetTmpColor(Float4 color);
-private:
-    void SetTarget(XMFLOAT3 targetPos, float speed);
-    void SendDone();
-    void ClearQ();
 
     Float4 GetLerpColor(float dt);
     float QuadraticGraph(float x);
