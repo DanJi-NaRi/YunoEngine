@@ -204,7 +204,10 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\UI\CardCancelButton.cpp" />
     <ClCompile Include="Game\UI\CardConfirmButton.cpp" />
     <ClCompile Include="Game\UI\CardConfirmPanel.cpp" />
-    <ClCompile Include="Game\UI\CardSelectionPanel.cpp" />
+    <ClCompile Include="Game\UI\CardSelectionPanel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="HealthGauge.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="SceneChangeButton.cpp" />
@@ -231,7 +234,10 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\UI\UserImage.cpp" />
     <ClCompile Include="Game\Object\Grid.cpp" />
     <ClCompile Include="System\MinimapQueue.cpp" />
-    <ClCompile Include="GameManager\GameManager.cpp" />
+    <ClCompile Include="GameManager\GameManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Game\UI\Card.cpp" />
     <ClCompile Include="Game\UI\CardTable.cpp" />
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">

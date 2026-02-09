@@ -12,10 +12,6 @@
 #include "PhaseScene.h"
 #include "CountdownScene.h"
 
-#include "Minimap.h" // 미니맵
-#include "CardConfirmPanel.h"   // 카드 컨펌 패널
-#include "CardSelectionPanel.h" // 카드 선택 패널
-
 #include "YunoClientNetwork.h"
 
 #include "utilityClass.h"
@@ -28,6 +24,11 @@
 #include "C2S_MatchEnter.h"
 #include "C2S_MatchLeave.h"
 #include "C2S_Emote.h"
+
+#include "Minimap.h" // 미니맵
+#include "CardConfirmPanel.h"   // 카드 컨펌 패널
+#include "CardSelectionPanel.h" // 카드 선택 패널
+
 GameManager* GameManager::s_instance = nullptr;
 
 
@@ -107,9 +108,10 @@ void GameManager::SetMinimap(Minimap* pMinimap)
 
 void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
 {
-    assert(m_pMinimap && m_pSelectionPanel);
-
+    assert(m_pMinimap);
     if (m_pMinimap) m_pMinimap->UpdatePanel(obstacleResult);
+
+    assert(m_pSelectionPanel);
     if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(obstacleResult);
 
 }

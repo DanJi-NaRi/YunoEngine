@@ -25,7 +25,6 @@ void CardSelectionPanel::Clear()
 
 void CardSelectionPanel::UpdatePanel(const ObstacleResult& obstacleResult)
 {
-
 }
 
 bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
