@@ -94,9 +94,6 @@
     <Filter Include="Scenes\999.RenderTest">
       <UniqueIdentifier>{901ca8d6-4b9c-4f90-bdac-f4eacc332766}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scenes\1.WeaponSelect\0.Title">
-      <UniqueIdentifier>{27fecdf2-c2ce-454b-8699-682c736c1721}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Object\Grid">
       <UniqueIdentifier>{dc752127-1245-4da2-baf2-ab459ec897db}</UniqueIdentifier>
     </Filter>
@@ -135,6 +132,9 @@
     </Filter>
     <Filter Include="Game\UI\ShowCardDeck">
       <UniqueIdentifier>{b25e06be-5434-4535-aa8d-9370820ff338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\0.Title">
+      <UniqueIdentifier>{27fecdf2-c2ce-454b-8699-682c736c1721}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -178,7 +178,7 @@
       <Filter>Game\UI\Slot</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\TitleScene.cpp">
-      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+      <Filter>Scenes\0.Title</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\WeaponSelectScene.cpp">
       <Filter>Scenes\1.WeaponSelect</Filter>
@@ -196,7 +196,7 @@
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\Title.cpp">
-      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+      <Filter>Scenes\0.Title</Filter>
     </ClCompile>
     <ClCompile Include="Game\UI\Card.cpp">
       <Filter>Card</Filter>
@@ -315,11 +315,9 @@
     <ClCompile Include="CountdownScene.cpp">
       <Filter>Scenes\4.CountDown</Filter>
     </ClCompile>
-
     <ClCompile Include="ShowCardDeck.cpp">
       <Filter>Game\UI\ShowCardDeck</Filter>
     </ClCompile>
-
     <ClCompile Include="WeaponNameImage.cpp" />
     <ClCompile Include="Game\UI\CardConfirmPanel.cpp">
       <Filter>Game\UI\Image\Panel</Filter>
@@ -334,7 +332,9 @@
       <Filter>Game\UI\ProgressBar</Filter>
     </ClCompile>
     <ClCompile Include="PhaseWeaponSelectButton.cpp" />
-
+    <ClCompile Include="StandByScene.cpp">
+      <Filter>Scenes\1.WeaponSelect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -392,7 +392,7 @@
       <Filter>Game\UI\Slot</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\TitleScene.h">
-      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+      <Filter>Scenes\0.Title</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\WeaponSelectScene.h">
       <Filter>Scenes\1.WeaponSelect</Filter>
@@ -413,7 +413,7 @@
       <Filter>System\UIContext</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\Title.h">
-      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+      <Filter>Scenes\0.Title</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\CardQueue.h">
       <Filter>Card</Filter>
@@ -541,7 +541,6 @@
     <ClInclude Include="ShowCardDeck.h">
       <Filter>Game\UI\ShowCardDeck</Filter>
     </ClInclude>
-
     <ClInclude Include="WeaponNameImage.h" />
     <ClInclude Include="Game\UI\CardConfirmPanel.h">
       <Filter>Game\UI\Image\Panel</Filter>
@@ -556,7 +555,9 @@
       <Filter>Game\UI\ProgressBar</Filter>
     </ClInclude>
     <ClInclude Include="PhaseWeaponSelectButton.h" />
-
+    <ClInclude Include="StandByScene.h">
+      <Filter>Scenes\1.WeaponSelect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

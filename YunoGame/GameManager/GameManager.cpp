@@ -10,6 +10,7 @@
 #include "WeaponSelectScene.h"
 #include "PlayScene.h"
 #include "PhaseScene.h"
+#include "StandByScene.h"
 #include "CountdownScene.h"
 
 #include "YunoClientNetwork.h"
@@ -209,10 +210,20 @@ void GameManager::SetSceneState(CurrentSceneState state)
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
-        
-
 
         // 씬에 관련된 데이터들을 같이 넘길거야
+        break;
+    }
+    case CurrentSceneState::StandBy:
+    {
+        if (m_state == CurrentSceneState::StandBy) return;
+        m_state = CurrentSceneState::StandBy;
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = false;
+    
+        sm->RequestPush(std::make_unique<StandByScene>(), sp);
+
         break;
     }
     case CurrentSceneState::CountDown:

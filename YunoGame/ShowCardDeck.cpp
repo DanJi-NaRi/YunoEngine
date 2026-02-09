@@ -195,7 +195,7 @@ void ShowCardDeck::BuildCards()
         const int row = slot / 8;
         const int col = slot % 8;
 
-        XMFLOAT3 cardPos(centerX + kStartOffsetX + (col * kCardGap), startY + (row * 148.5f + row * kStartOffsetY), 0.f);
+        XMFLOAT3 cardPos(centerX + kStartOffsetX + (col * kCardGap), startY + (row * 148.5f + row * kStartOffsetY), -0.001f);
         if (col > 2)
             cardPos.x += 38.0f;
 
@@ -206,7 +206,7 @@ void ShowCardDeck::BuildCards()
         //m_cardButtons[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
 
         const float tooltipOffsetX = 80.f;
-        const XMFLOAT3 tooltipPos(cardPos.x + tooltipOffsetX, cardPos.y, -1.f);
+        const XMFLOAT3 tooltipPos(cardPos.x + tooltipOffsetX, cardPos.y, -0.002f);
 
         auto* tooltipImage = m_uiFactory.CreateChild<TextureImage>(
             L"tooltip_" + std::to_wstring(i + 1), Float2(360, 462), tooltipPos, UIDirection::LeftTop, this);

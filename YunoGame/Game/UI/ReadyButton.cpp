@@ -82,6 +82,12 @@ bool ReadyButton::LMBPressedEvent()
     {
         return false;
     }
+    
+    if (gm.GetSceneState() == CurrentSceneState::StandBy) 
+    {
+        std::cout << "already StandBy Scene" << std::endl;
+        return false;
+    }
 
 
     const bool isReady = gm.ToggleReady();
@@ -104,6 +110,7 @@ bool ReadyButton::LMBPressedEvent()
 
     // 패킷 보내기
     gm.SendPacket(std::move(bytes));
+    gm.SetSceneState(CurrentSceneState::StandBy);
 
     return true;
 }

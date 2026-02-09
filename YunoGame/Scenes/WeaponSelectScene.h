@@ -57,6 +57,8 @@ private:
 
     ReadyButton* m_pReadyBtn = nullptr;
 
+
+
     UINT m_countdownWidgetID = 0;
     int  m_lastCountdownNumber = -1;
 
