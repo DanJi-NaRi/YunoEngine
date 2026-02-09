@@ -27,7 +27,7 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::ReadyButton; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Test/BtnOn.png"); };    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/WEAPON_SELECT/Go_mouseout.png"); };    // 머테리얼 생성 (한 번만)
 protected:
     bool m_isReady = false;
 };

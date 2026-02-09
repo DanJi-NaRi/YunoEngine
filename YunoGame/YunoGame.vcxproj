@@ -194,6 +194,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="CountdownImage.cpp" />
     <ClCompile Include="CountdownScene.cpp" />
     <ClCompile Include="Game\UI\DirSelectButton.cpp" />
+    <ClCompile Include="Game\UI\TextureImage.cpp" />
     <ClCompile Include="Game\UI\WidgetGridLine.cpp" />
     <ClCompile Include="Minimap.cpp" />
     <ClCompile Include="MinimapTile.cpp" />
@@ -282,6 +283,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="CountdownImage.h" />
     <ClInclude Include="CountdownScene.h" />
     <ClInclude Include="Game\UI\DirSelectButton.h" />
+    <ClInclude Include="Game\UI\TextureImage.h" />
     <ClInclude Include="Game\UI\WidgetGridLine.h" />
     <ClInclude Include="Minimap.h" />
     <ClInclude Include="MinimapTile.h" />

@@ -123,7 +123,7 @@ bool Minimap::Submit(float dTime)
 //}
 void Minimap::GridSetup()
 {
-    const float pad = 5.0f;
+    const float pad = 4.0f;
     const float gridWidth = (m_grid.col * m_grid.cellSize.x) + (pad * (m_grid.col - 1));
     const float gridHeight = (m_grid.row * m_grid.cellSize.y) + (pad * (m_grid.row - 1));
 

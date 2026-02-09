@@ -75,7 +75,14 @@ public:
     T* CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, float rot, XMFLOAT3 scale, Float2 pivot);
     template<typename T>
     T* CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos, float rot, XMFLOAT3 scale, UIDirection pivot);
- 
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, Float2 sizePx, XMFLOAT3 pos);
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, Float2 sizePx, XMFLOAT3 pos, UIDirection pivot);
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos);
+    template<typename T>
+    T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos, UIDirection pivot);
 
     template<typename T>
     T* CreateWidget_Internal(const std::wstring& name, XMFLOAT3 pos);
@@ -284,6 +291,70 @@ T* UIManager::CreateWidget(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos
     m_widgetIDs++;
 
     return pWidget;
+}
+
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, const std::wstring& texturePath, Float2 sizePx, XMFLOAT3 pos)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name;
+
+    auto widget = std::make_unique<T>(*m_uiFactory);
+    CheckDedicateWidgetName(newname);
+
+    widget->SetTexturePath(texturePath);
+    widget->Create(newname, m_widgetIDs, sizePx, pos, 0, XMFLOAT3(1, 1, 1));
+
+    auto* pWidget = widget.get();
+
+    m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
+
+    return pWidget;
+}
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, const std::wstring& texturePath, Float2 sizePx, XMFLOAT3 pos, UIDirection pivot)
+{
+    static_assert(std::is_base_of_v<Widget, T>, "T must Derived Widget(UIObject, UIManager.h)");
+
+    std::wstring newname = name;
+
+    auto widget = std::make_unique<T>(*m_uiFactory);
+    CheckDedicateWidgetName(newname);
+
+    widget->SetTexturePath(texturePath);
+    widget->Create(newname, m_widgetIDs, sizePx, pos, 0, XMFLOAT3(1, 1, 1));
+    widget->SetPivot(pivot);
+
+    auto* pWidget = widget.get();
+
+    m_pendingCreateQ.emplace_back(std::move(widget));
+    m_widgetIDs++;
+
+    return pWidget;
+}
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos)
+{
+    const TextureHandle textureHandle = YunoEngine::GetTextureManager()->LoadTexture2D(texturePath.c_str());
+    const auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(textureHandle);
+    const Float2 sizePx = Float2(static_cast<float>(textureSize.first), static_cast<float>(textureSize.second));
+
+    return CreateWidget<T>(name, texturePath, sizePx, pos);
+}
+
+template<typename T>
+T* UIManager::CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos, UIDirection pivot)
+{
+    const TextureHandle textureHandle = YunoEngine::GetTextureManager()->LoadTexture2D(texturePath.c_str());
+    const auto textureSize = YunoEngine::GetTextureManager()->GetTextureWH(textureHandle);
+    const Float2 sizePx = Float2(static_cast<float>(textureSize.first), static_cast<float>(textureSize.second));
+
+    return CreateWidget<T>(name, texturePath, sizePx, pos, pivot);
 }
 
 // 테스트용

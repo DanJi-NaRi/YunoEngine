@@ -30,6 +30,7 @@ void ExitButton::Clear()
 
 bool ExitButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
+    sizePx /= 2;
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
     //SetCursurTexture(m_texturePathBk, L"../Assets/UI/Title/exit_mouseout.png");
 

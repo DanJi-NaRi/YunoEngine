@@ -14,11 +14,14 @@
 
 #include "YunoClientNetwork.h"
 
+#include "utilityClass.h"
+
 //패킷
 #include "PacketBuilder.h"
 #include "C2S_BattlePackets.h"
 #include "C2S_ReadySet.h"
 #include "C2S_CardPackets.h"
+#include "C2S_MatchEnter.h"
 #include "C2S_MatchLeave.h"
 #include "C2S_Emote.h"
 GameManager* GameManager::s_instance = nullptr;
@@ -124,6 +127,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::Title:
     {
         m_state = CurrentSceneState::Title;
+        ResetMyPicks();
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
@@ -139,12 +143,46 @@ void GameManager::SetSceneState(CurrentSceneState state)
 
         break;
     }
+    case CurrentSceneState::RequstEnter:
+    {
+        m_state = CurrentSceneState::RequstEnter;
+        IInput* input = YunoEngine::GetInput();
+        ISceneManager* sm = YunoEngine::GetSceneManager();
+        
+        uint32_t UID = ReadUserIdFromEnv();
+        using namespace yuno::net;
+        yuno::net::packets::C2S_MatchEnter pkt{};
+        pkt.userId = UID;
+        
+        if (pkt.userId == 0)
+        {
+            std::cout << "[GameApp] MatchEnter aborted: invalid userId\n";
+            m_state = CurrentSceneState::Title;
+            return; // 또는 UI 메시지 띄우고 종료
+        }
+        std::cout << "Env Id : " << pkt.userId << std::endl;
+        
+        auto bytes = PacketBuilder::Build(
+            PacketType::C2S_MatchEnter,
+            [&](ByteWriter& w)
+            {
+                pkt.Serialize(w);
+            });
+        
+        GameManager::Get().SendPacket(std::move(bytes));
+        
+        break;
+    }
     case CurrentSceneState::GameStart:
     {
         m_state = CurrentSceneState::GameStart;
+        ResetMyPicks();
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
+        
+
+
         // 씬에 관련된 데이터들을 같이 넘길거야
         break;
     }
@@ -478,7 +516,17 @@ void GameManager::SetMyPick(int index, PieceType type)
         return;
 
     m_myPick[index] = type;
+    m_lastPickedPiece = type;
 }
+
+void GameManager::ResetMyPicks()
+{
+    m_myPick[0] = PieceType::None;
+    m_myPick[1] = PieceType::None;
+    m_lastPickedPiece = PieceType::None;
+    m_isReady = false;
+}
+
 
 bool GameManager::HasTwoPicks() const
 {

@@ -317,6 +317,7 @@
     <ClCompile Include="Game\UI\DirSelectButton.cpp" />
     <ClCompile Include="Minimap.cpp" />
     <ClCompile Include="MinimapTile.cpp" />
+    <ClCompile Include="Game\UI\TextureImage.cpp" />
     <ClCompile Include="CountdownImage.cpp">
       <Filter>Game\UI\Image</Filter>
     </ClCompile>
@@ -528,12 +529,14 @@
     <ClInclude Include="Game\UI\DirSelectButton.h" />
     <ClInclude Include="Minimap.h" />
     <ClInclude Include="MinimapTile.h" />
+    <ClInclude Include="Game\UI\TextureImage.h" />
     <ClInclude Include="CountdownImage.h">
       <Filter>Game\UI\Image</Filter>
     </ClInclude>
     <ClInclude Include="CountdownScene.h">
       <Filter>Scenes\4.CountDown</Filter>
     </ClInclude>
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">
