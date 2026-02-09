@@ -44,7 +44,7 @@ private:
     Widget* m_pWeaponNameImage = nullptr;
     Widget* m_pWeaponCardImage = nullptr;
 
-    std::unique_ptr<ShowCardDeck> m_showCardDeck;
+    ShowCardDeck* m_showCardDeck = nullptr;
 
     WeaponButton* m_PWeaponBtn_Blaster    = nullptr;
     WeaponButton* m_PWeaponBtn_Breacher   = nullptr;

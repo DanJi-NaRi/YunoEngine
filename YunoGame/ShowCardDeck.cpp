@@ -1,80 +1,163 @@
 #include "pch.h"
 
 #include "ShowCardDeck.h"
+#include "UIFactory.h"
 
-
-
-bool ShowCard::Create(SceneBase& scene, const std::wstring& name, XMFLOAT3 position, const std::wstring& texturePath, bool enableTooltip)
+namespace
 {
-    m_pCardButton = scene.CreateWidget<ShowCardButton>(name + L"_Btn", Float2(115, 161), position, UIDirection::Center);
-    if (!m_pCardButton)
-        return false;
-
-    m_pCardButton->ChangeTexture(texturePath);
-
-    if (enableTooltip)
+    std::wstring ToLowerPieceName(PieceType pieceType)
     {
-        m_pTooltipImage = scene.CreateWidget<TextureImage>(name + L"_Tooltip", L"../Assets/UI/WEAPON_SELECT/Info_BLASTER_mouseover.png", XMFLOAT3(position.x, position.y - 190.f, 0.f), UIDirection::Center);
-        if (m_pTooltipImage)
+        switch (pieceType)
         {
-            m_pTooltipImage->SetScale(XMFLOAT3(0.f, 0.f, 1.f));
-            m_pCardButton->SetTooltipImage(m_pTooltipImage);
+        case PieceType::Blaster: return L"blaster";
+        case PieceType::Breacher: return L"breacher";
+        case PieceType::Impactor: return L"impactor";
+        case PieceType::Chakram: return L"chakram";
+        case PieceType::Scythe: return L"scythe";
+        case PieceType::Cleaver: return L"cleaver";
+        default: return L"";
         }
     }
 
+    std::wstring ToUpperPieceName(PieceType pieceType)
+    {
+        switch (pieceType)
+        {
+        case PieceType::Blaster: return L"BLASTER";
+        case PieceType::Breacher: return L"BREACHER";
+        case PieceType::Impactor: return L"IMPACTOR";
+        case PieceType::Chakram: return L"CHAKRAM";
+        case PieceType::Scythe: return L"SCYTHE";
+        case PieceType::Cleaver: return L"CLEAVER";
+        default: return L"";
+        }
+    }
+}
+
+ShowCardButton::ShowCardButton(UIFactory& uiFactory) : Button(uiFactory)
+{
+}
+
+bool ShowCardButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
+{
+    sizePx /= 2;
+    Button::Create(name, id, sizePx, vPos, rotZ, vScale);
+    m_bindkey = 0;
     return true;
 }
 
-void ShowCard::SetCardTexture(const std::wstring& texturePath)
-{
-    if (m_pCardButton)
-        m_pCardButton->ChangeTexture(texturePath);
-}
-
-void ShowCard::SetTooltipTexture(const std::wstring& texturePath)
+bool ShowCardButton::IdleEvent()
 {
     if (m_pTooltipImage)
-        m_pTooltipImage->ChangeTexture(texturePath);
+        m_pTooltipImage->SetScale(XMFLOAT3(0.f, 0.f, 1.f));
+    return true;
 }
 
-
-
-
-
-// ----------------------ShowCardDeck----------------------
-
-bool ShowCardDeck::Create(SceneBase& scene, float centerX, float startY)
+bool ShowCardButton::HoveredEvent()
 {
-    constexpr float kCardGap = 118.f;
-    constexpr float kStartOffsetX = -3.5f * kCardGap;
+    if (m_pTooltipImage)
+        m_pTooltipImage->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
+    return true;
+}
 
-    for (int i = 0; i < static_cast<int>(m_cards.size()); ++i)
-    {
-        const int row = i / 8;
-        const int col = i % 8;
+bool ShowCardButton::LMBPressedEvent()
+{
+    return true;
+}
 
-        const XMFLOAT3 cardPos(centerX + kStartOffsetX + (col * kCardGap), startY + (row * 176.f), 0.f);
-        const bool isFirstCard = (i == 0);
+void ShowCardButton::SetTooltipImage(TextureImage* tooltipImage)
+{
+    m_pTooltipImage = tooltipImage;
+}
 
-        if (!m_cards[i].Create(scene, L"ShowCard_" + std::to_wstring(i + 1), cardPos, L"../Assets/UI/CARD/Card_back.png", isFirstCard))
-            return false;
-    }
+bool ShowCardButton::CreateMaterial()
+{
+    return Widget::CreateMaterial(L"../Assets/UI/CARD/Card_back.png");
+}
 
+ShowCardDeck::ShowCardDeck(UIFactory& uiFactory) : Image(uiFactory)
+{
+}
+
+bool ShowCardDeck::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
+{
+    Image::Create(name, id, sizePx, vPos, rotZ, vScale);
+    BuildCards();
+    SetWeaponCards(PieceType::Blaster);
+    return true;
+}
+
+bool ShowCardDeck::Update(float dTime)
+{
+    Image::Update(dTime);
+    return true;
+}
+
+bool ShowCardDeck::Submit(float dTime)
+{
+    Image::Submit(dTime);
     return true;
 }
 
 void ShowCardDeck::SetWeaponCards(PieceType pieceType)
 {
     const std::wstring lowerName = ToLowerPieceName(pieceType);
-    const std::wstring upperName = ToUpperPieceName(pieceType);
     if (lowerName.empty())
         return;
 
-    for (int i = 0; i < static_cast<int>(m_cards.size()); ++i)
+    for (int i = 0; i < static_cast<int>(m_cardButtons.size()); ++i)
     {
+        if (!m_cardButtons[i])
+            continue;
+
         const std::wstring path = L"../Assets/UI/CARD/card_" + lowerName + L"_" + std::to_wstring(i + 1) + L".png";
-        m_cards[i].SetCardTexture(path);
+        m_cardButtons[i]->ChangeTexture(path);
     }
 
-    m_cards[0].SetTooltipTexture(L"../Assets/UI/WEAPON_SELECT/Info_" + upperName + L"_mouseover.png");
+    if (m_pTooltipImage)
+    {
+        m_pTooltipImage->ChangeTexture(L"../Assets/UI/TOOLTIP/tooltip" + lowerName + L"_1.png");
+    }
+}
+
+void ShowCardDeck::BuildCards()
+{
+    if (m_isBuilt)
+        return;
+
+    const float centerX = m_uiFactory.GetClientWidth() / 2.f;
+    constexpr float startY = 313.0f;
+    constexpr float kCardGap = 102.5f;
+    constexpr float kStartOffsetX = -4.0f * kCardGap;
+    constexpr float kStartOffsetY = 10.0f;
+
+    for (int i = 0; i < static_cast<int>(m_cardButtons.size()); ++i)
+    {
+        const int row = i / 8;
+        const int col = i % 8;
+
+        XMFLOAT3 cardPos(centerX + kStartOffsetX + (col * kCardGap), startY + (row * 148.5f + row * kStartOffsetY), 0.f);
+        if (col > 2) cardPos.x += 38.0f;
+        m_cardButtons[i] = m_uiFactory.CreateChild<ShowCardButton>(L"ShowCard_" + std::to_wstring(i + 1), Float2(205, 297), cardPos, UIDirection::LeftTop, this);
+
+        if (m_cardButtons[i])
+            m_cardButtons[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
+    }
+
+    m_pTooltipImage = m_uiFactory.CreateChild<TextureImage>(L"tooltip_blaster_1", Float2(360, 462), XMFLOAT3(0, 0, 0.f), UIDirection::Center, this);
+    if (m_pTooltipImage)
+    {
+        m_pTooltipImage->ChangeTexture(L"../Assets/UI/TOOLTIP/tooltip_blaster_1.png");
+        m_pTooltipImage->SetScale(XMFLOAT3(0.f, 0.f, 1.f));
+    }
+
+    if (m_cardButtons[0])
+        m_cardButtons[0]->SetTooltipImage(m_pTooltipImage);
+
+    m_isBuilt = true;
+}
+
+bool ShowCardDeck::CreateMaterial()
+{
+    return Widget::CreateMaterial(L"../Assets/Textures/black.png");
 }

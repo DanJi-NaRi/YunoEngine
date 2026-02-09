@@ -1,106 +1,52 @@
 #pragma once
 
 #include <array>
-#include <string>
 
-#include "SceneBase.h"
+#include "Image.h"
 #include "Button.h"
 #include "TextureImage.h"
 #include "CardData.h"
 
-namespace
-{
-    inline std::wstring ToLowerPieceName(PieceType pieceType)
-    {
-        switch (pieceType)
-        {
-        case PieceType::Blaster: return L"blaster";
-        case PieceType::Breacher: return L"breacher";
-        case PieceType::Impactor: return L"impactor";
-        case PieceType::Chakram: return L"chakram";
-        case PieceType::Scythe: return L"scythe";
-        case PieceType::Cleaver: return L"cleaver";
-        default: return L"";
-        }
-    }
-
-    inline std::wstring ToUpperPieceName(PieceType pieceType)
-    {
-        switch (pieceType)
-        {
-        case PieceType::Blaster: return L"BLASTER";
-        case PieceType::Breacher: return L"BREACHER";
-        case PieceType::Impactor: return L"IMPACTOR";
-        case PieceType::Chakram: return L"CHAKRAM";
-        case PieceType::Scythe: return L"SCYTHE";
-        case PieceType::Cleaver: return L"CLEAVER";
-        default: return L"";
-        }
-    }
-}
-
 class ShowCardButton final : public Button
 {
 public:
-    explicit ShowCardButton(UIFactory& uiFactory) : Button(uiFactory) {}
+    explicit ShowCardButton(UIFactory& uiFactory);
 
-    bool Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale) override
-    {
-        Button::Create(name, id, sizePx, vPos, rotZ, vScale);
-        m_bindkey = 0;
-        return true;
-    }
+    bool Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale) override;
 
-    bool IdleEvent() override
-    {
-        if (m_pTooltipImage)
-            m_pTooltipImage->SetScale(XMFLOAT3(0.f, 0.f, 1.f));
-        return true;
-    }
+    bool IdleEvent() override;
+    bool HoveredEvent() override;
+    bool LMBPressedEvent() override;
 
-    bool HoveredEvent() override
-    {
-        if (m_pTooltipImage)
-            m_pTooltipImage->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
-        return true;
-    }
-
-    bool LMBPressedEvent() override { return true; }
-
-    void SetTooltipImage(TextureImage* tooltipImage) { m_pTooltipImage = tooltipImage; }
+    void SetTooltipImage(TextureImage* tooltipImage);
 
 private:
-    bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/CARD/Card_back.png"); }
+    bool CreateMaterial() override;
 
 private:
     TextureImage* m_pTooltipImage = nullptr;
 };
 
-class ShowCard
+class ShowCardDeck final : public Image
 {
 public:
-    bool Create(SceneBase& scene, const std::wstring& name, XMFLOAT3 position, const std::wstring& texturePath, bool enableTooltip);
+    explicit ShowCardDeck(UIFactory& uiFactory);
 
+    bool Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale) override;
+    bool Update(float dTime = 0) override;
+    bool Submit(float dTime = 0) override;
 
-    void SetCardTexture(const std::wstring& texturePath);
-
-
-    void SetTooltipTexture(const std::wstring& texturePath);
-
-
-private:
-    ShowCardButton* m_pCardButton = nullptr;
-    TextureImage* m_pTooltipImage = nullptr;
-};
-
-class ShowCardDeck
-{
-public:
-    bool Create(SceneBase& scene, float centerX, float startY);
+    WidgetType GetWidgetType() override { return WidgetType::Image; }
+    WidgetClass GetWidgetClass() override { return WidgetClass::Image; }
 
     void SetWeaponCards(PieceType pieceType);
 
+private:
+    void BuildCards();
+    bool CreateMaterial() override;
 
 private:
-    std::array<ShowCard, 16> m_cards;
+    bool m_isBuilt = false;
+    std::array<ShowCardButton*, 16> m_cardButtons{};
+    TextureImage* m_pTooltipImage = nullptr;
 };

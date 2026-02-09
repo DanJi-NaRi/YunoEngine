@@ -228,8 +228,9 @@ bool WeaponButton::LMBPressedEvent()
 
     if (m_pShowCardDeck)
     {
-        m_pShowCardDeck->SetWeaponCards(m_pieceType);
+        dynamic_cast<ShowCardDeck*>(m_pShowCardDeck)->SetWeaponCards(m_pieceType);
     }
+
 
     GameManager::Get().SetMyPick(pickIndex, m_pieceType);
 
