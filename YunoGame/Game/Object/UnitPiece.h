@@ -48,6 +48,8 @@ private:
     float QuadraticGraph(float x);
     float linearGraph(float x);
 
+    void ClearQ();
+
 private:
     bool m_AnimDone = false;
 
@@ -96,6 +98,7 @@ private:
 
     // 죽음 체크
     bool isDead = false;
+    bool isDeadQueued = false;
 
     GamePiece m_who = GamePiece::None;
 

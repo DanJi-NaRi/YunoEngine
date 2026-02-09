@@ -203,10 +203,6 @@ bool UnitPiece::Update(float dTime)
     AnimTest::UpdateDissolve(dTime);
     if(CheckDead(dTime))   return true;
 
-    float curFrame = 0.f;
-    if (m_animator)
-        curFrame = m_animator->GetCurFrame();
-
     UpdateRot(dTime);
     UpdateMove(dTime);
     UpdateFlash(dTime);
@@ -278,23 +274,23 @@ bool UnitPiece::CreateMaterial()
 bool UnitPiece::CheckDead(float dt)
 {
     if (!isDead)  return false;
+    if (isDeadQueued) return true;
 
-    if (m_animator)
-    {
-        bool isPlaying = m_animator->isPlaying();
-        if (!isPlaying)
-        {
-            // 죽는 애니메이션 끝나면 system에게 기물을 지우도록 함.
-            PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
-        }
-    }
-        return true;
+    // 죽는 애니메이션이 끝난 뒤에만 시스템에 삭제를 요청한다.
+    if (m_animator && m_animator->isPlaying())
+        return false;
+
+    PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
+    isDeadQueued = true;
+    return true;
 }
 
 void UnitPiece::CheckMyQ()
 {
+    if (isDead) return;
+
     // 애니메이션이 끝나면 하나씩 빼가게 하기
-    while (!m_Q.empty() && !isMoving && !isRotating && !isHitting && !isAttacking && !isDead)
+    while (!m_Q.empty() && !isMoving && !isRotating && !isHitting && !isAttacking)
     {
         auto tp = m_Q.front();
         m_Q.pop();
@@ -304,15 +300,17 @@ void UnitPiece::CheckMyQ()
         {
             auto [wx, wy, wz, dir, speed] = tp.mv_p;
             PlayMove({ wx, wy, wz }, speed);
-            SetDir(dir);
-            m_AnimDone = tp.isDone;        // 슬롯 턴 종료 메세지 보내라
+            SetDir(dir, true, 4.f);
             break;
         }
         case CommandType::MoveHit:
         {
-            PlayGridQ::Insert(PlayGridQ::Hit_S(m_who));
-            //if (tp.hit.whichPiece != GamePiece::None)       // 조건문 빼고 무조건 보내는 걸로
-            PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece));
+            //if (tp.hit_p.amIdead)
+            //    PlayDead(tp.hit_p.disappearDissolveDuration);
+            //else
+            //    PlayHit();
+
+            //PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece));
             break;
         }
         case CommandType::Attack:
@@ -378,7 +376,6 @@ void UnitPiece::UpdateMove(float dt)
 {
     if (!isMoving)   return;
 
-    if (dt >= 1.f) return;
     m_moveTime += dt / m_Dist * m_speed * m_fixSpeed;
 
     if (m_moveTime >= 1.f)
@@ -608,6 +605,14 @@ void UnitPiece::PlayMove(XMFLOAT3 targetPos, float speed)
 void UnitPiece::PlayDead(float disappearDisolveDuration)
 {
     isDead = true;
+    isDeadQueued = false;
+
+    // 죽음 직후 기존 행동 큐를 정리해 후속 이동/피격 명령이 덮어쓰지 않게 한다.
+    ClearQ();
+    isMoving = false;
+    isRotating = false;
+    isAttacking = false;
+    isHitting = false;
 
     DisappearDissolve(disappearDisolveDuration);
 
@@ -615,7 +620,6 @@ void UnitPiece::PlayDead(float disappearDisolveDuration)
     bool isChanged = m_animator->Change("dead");
     if (!isChanged) return;
     m_animator->SetLoop("dead", false);
-    isHitting = true;
 }
 
 void UnitPiece::SetTmpColor(Float4 color)
@@ -642,4 +646,12 @@ float UnitPiece::linearGraph(float x)
 {
     float result = m_linearSlope * x;
     return result;
+}
+
+void UnitPiece::ClearQ()
+{
+    if (!m_Q.empty())
+    {
+        m_Q.pop();
+    }
 }

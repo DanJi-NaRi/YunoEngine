@@ -316,7 +316,7 @@ void PlayGridSystem::CheckMyQ()
         {
         case CommandType::Hit:
         {
-            const GamePiece pieceType = cmd.hit.whichPiece;
+            const GamePiece pieceType = cmd.hit_s.whichPiece;
 
             auto it = m_pieces.find(pieceType);
             if (it == m_pieces.end()) break;
@@ -1122,6 +1122,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
             std::cout << "[PlayGridSystem]::Enemy_Collison\n";
 
             CommandType cmd = CommandType::Hit;
+            bool amIdead = (m_UnitStates[GetUnitID(pieceType)].hp == 0) ? true : false;
             // 부딪힌 기물 타입 확인
             GamePiece existWho = GamePiece::None;
             bool isIn = m_grids[(int)m_nowG]->InBounds(colC.x, colC.y);
@@ -1133,7 +1134,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
 
             // 충돌지점까지 이동 후 원래 자리로 되돌아감
             pPiece->InsertQ(PlayGridQ::Move_P(fdir, colW.x, m_wy, colW.y));              // 충돌 위치까지 이동 후
-            pPiece->InsertQ(PlayGridQ::MoveHit_P(existWho));                                 // 이동하는 애 죽었는지 부딪힌 애 죽었는지
+            pPiece->InsertQ(PlayGridQ::MoveHit_P(existWho, amIdead, disappearDisolveDuration));                                 // 이동하는 애 죽었는지 부딪힌 애 죽었는지
             pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, wx, m_wy, wz, 1));        // 제자리로 돌아감
         }
         else                                                // 아군과 충돌
