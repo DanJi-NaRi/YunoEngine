@@ -201,6 +201,10 @@ bool RenderTest::OnCreateScene()
         warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_Floor2", XMFLOAT3(0, 1, 0));
         warning->BuildInternalEffectMaterial(ed2);
     }*/
+
+    po = {};
+    po.shader = ShaderId::PBRBase;
+    m_objectManager->CreateObjectFromFile<Building>(L"scythe", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx", po);
    
     /////////////////////////////////////////////////////////////////////////////////
     // 이펙트 등록
@@ -348,7 +352,7 @@ bool RenderTest::OnCreateScene()
 
     ed.id = EffectID::ScytheAttack;
     ed.framecount = 18;
-    ed.lifetime = 0.8f;
+    ed.lifetime = 0.4f;
     ed.cols = 3;
     ed.rows = 6;
     ed.billboard = BillboardMode::None;
@@ -360,7 +364,7 @@ bool RenderTest::OnCreateScene()
 
     ed.id = EffectID::ScytheAttack2;
     ed.framecount = 30;
-    ed.lifetime = 0.8f;
+    ed.lifetime = 0.4f;
     ed.cols = 5;
     ed.rows = 6;
     ed.billboard = BillboardMode::None;
@@ -369,6 +373,11 @@ bool RenderTest::OnCreateScene()
     ed.color = { 1, 0, 0, 1 };
     ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_2.png";
     m_effectManager->RegisterEffect(ed);
+
+    breacher->RegisterFrameEvent(1, 21, [this]() {
+        auto eff = m_effectManager->Spawn(EffectID::DrillAttack1, { 0.05f, 1.1f, 0.0f }, { 3.f, 3.f, 1.f }, { 1, 0, 0 });
+        breacher->AttachChildBone(eff, 1);
+        });
 
     return true;
 }

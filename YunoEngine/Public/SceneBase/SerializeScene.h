@@ -185,6 +185,8 @@ struct PostProcessDesc
     float colorSaturation = 1.0f;
     float colorContrast = 1.0f;
     float colorGamma = 1.0f;
+    float temparature = 6500.f;
+    float tint = 0.0f;
 };
 
 struct SceneDesc

@@ -1,5 +1,6 @@
 #pragma once
 #include "BoneNode.h"
+#include <functional>
 
 
 struct AnimationClip
@@ -15,6 +16,9 @@ struct AnimationClip
 
 class Animator
 {
+public:
+    using AnimationEventCallback = std::function<void()>;
+
 private:
     std::unique_ptr<BoneNode> m_RootBone;
 
@@ -40,6 +44,8 @@ private:
 
     float CurTickTime = 0;
 
+    std::unordered_map<UINT, std::unordered_map<UINT, std::vector<AnimationEventCallback>>> m_FrameEvents;
+
     bool isPlay = true;
 
     //애니메이션 블랜딩 관련
@@ -48,6 +54,8 @@ private:
     float blendDuration = 0.001f;
     float PrevTickTime = 0;
     AnimationClip* m_prevAnim;
+
+    void DispatchFrameEvents(UINT clipID, float prevTickTime, float curTickTime, bool looped);
 public:
     Animator();
     virtual ~Animator();
@@ -79,6 +87,11 @@ public:
 
     bool Change(UINT id, float duration = 0.5f);
     bool Change(const std::string& name, float duration = 0.5f);
+
+    bool RegisterFrameEvent(const std::string& clipName, UINT frame, AnimationEventCallback callback);
+    bool RegisterFrameEvent(UINT clipID, UINT frame, AnimationEventCallback callback);
+    bool ClearFrameEvents(const std::string& clipName);
+    bool ClearFrameEvents(UINT clipID);
 
     void Serialize();
 

@@ -459,9 +459,11 @@ bool YunoRenderer::CreateShadowMap(uint32_t width, uint32_t height)
     if (FAILED(m_device->CreateShaderResourceView(m_ShadowMap.dstex.Get(), &srvDesc, m_ShadowMap.dssrv.GetAddressOf())))
         return false;
 
-    m_shadowCamera.position = XMFLOAT3(0, 20, -5);
+    m_shadowCamera.position = XMFLOAT3(0, 60, -10);
     m_shadowCamera.target = XMFLOAT3(0, 0, -0.01f);
     m_shadowCamera.up = XMFLOAT3(0, 1, 0);
+    m_shadowCamera.nearZ = 0.1f;
+    m_shadowCamera.farZ = 1000;
 
     return true;
 }
@@ -2088,6 +2090,8 @@ void YunoRenderer::SetPostProcessOption(const PostProcessDesc& opt)
     m_ColorSaturation = opt.colorSaturation;
     m_ColorContrast = opt.colorContrast;
     m_ColorGamma = opt.colorGamma;
+    m_Temparature = opt.temparature;
+    m_TInt = opt.tint;
 
     SetPP_Pass();
 }
@@ -2102,6 +2106,8 @@ PostProcessDesc YunoRenderer::GetPostProcessOption()
     pd.colorSaturation = m_ColorSaturation;
     pd.colorContrast = m_ColorContrast;
     pd.colorGamma = m_ColorGamma;
+    pd.temparature = m_Temparature;
+    pd.tint = m_TInt;
 
     return pd;
 }

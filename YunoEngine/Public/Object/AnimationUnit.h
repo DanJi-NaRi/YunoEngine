@@ -31,6 +31,11 @@ public:
     void SetLoop(const std::string& name, bool isLoop);
     void SetLoop(UINT id, bool isLoop);
 
+    bool RegisterFrameEvent(const std::string& cilpName, UINT frame, Animator::AnimationEventCallback event);
+    bool RegisterFrameEvent(UINT clipId, UINT frame, Animator::AnimationEventCallback event);
+    bool ClearFrameEvents(const std::string& clipName);
+    bool ClearFrameEvents(UINT clipID);
+
 #ifdef _DEBUG
     virtual void Serialize() override;
 #endif

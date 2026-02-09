@@ -269,7 +269,9 @@ namespace nlohmann
         { "exposure",  d.exposure },
         { "colorSaturation",  d.colorSaturation },
         { "colorContrast",  d.colorContrast },
-        { "colorGamma",  d.colorGamma }
+        { "colorGamma",  d.colorGamma },
+        { "temparature",  d.temparature },
+        { "tint",  d.tint }
         };
     }
 
@@ -282,6 +284,8 @@ namespace nlohmann
         if (j.contains("colorSaturation")) j.at("colorSaturation").get_to(d.colorSaturation);
         if (j.contains("colorContrast")) j.at("colorContrast").get_to(d.colorContrast);
         if (j.contains("colorGamma")) j.at("colorGamma").get_to(d.colorGamma);
+        if (j.contains("temparature")) j.at("temparature").get_to(d.temparature);
+        if (j.contains("tint")) j.at("tint").get_to(d.tint);
     }
 
     inline void to_json(json& j, const SceneDesc& s)
