@@ -26,6 +26,7 @@ protected:
     bool OnCreateScene() override;
     void OnDestroyScene() override;
 
+    void HandleCountdownUI(float dt);
 private:
 
     //std::array<Widget*, 4> m_pUserImages;
@@ -43,6 +44,7 @@ private:
     Widget* m_pWeaponCardImage = nullptr;
 
     //std::array<Widget*, 6> m_pWeaponBtns;
+
     WeaponButton* m_PWeaponBtn_Blaster    = nullptr;
     WeaponButton* m_PWeaponBtn_Breacher   = nullptr;
     WeaponButton* m_PWeaponBtn_Impactor   = nullptr;
@@ -51,6 +53,11 @@ private:
     WeaponButton* m_PWeaponBtn_Cleaver    = nullptr;
 
     ReadyButton* m_pReadyBtn = nullptr;
+
+    UINT m_countdownWidgetID = 0;
+    int  m_lastCountdownNumber = -1;
+
+
     SceneChangeButton* m_pExitBtn  = nullptr;
 
     WeaponSelectScene_InputContext m_weaponCtx;

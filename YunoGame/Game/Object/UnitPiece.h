@@ -17,16 +17,23 @@ private:
     bool CreateMesh() override;      // 메시 생성 (한 번만)
     bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
 
-    bool UpdateMatrix();
-    void UpdateFlash(float dt);
+    bool CheckDead(float dt);
+    void CheckMyQ();
 
-    void CheckAttack();
+    bool UpdateMatrix();
+    void UpdateRot(float dt);
+    void UpdateMove(float dt);
+    void UpdateFlash(float dt);
+    void UpdateAttack(float dt);
+    void UpdateHit(float dt);
+
 public:
     void InsertQ(PGridCmd targetPos);
     void SetWho(GamePiece type);
     void SetDir(Direction dir, bool isAnim = true, float speed = 2.f);
     void SetFlashColor(Float4 color, int count, float blinkTime);
     void PlayAttack();
+    void PlayHit(Float4 color, int count, float blinkTime);
     void SetDead();
 
     void SetTmpColor(Float4 color);
@@ -43,6 +50,9 @@ private:
 
     // 공격
     bool isAttacking = false;
+
+    // 피격
+    bool isHitting = false;
 
     // 반짝
     Float4 m_vtmpColor{ 1, 1, 1, 1 };

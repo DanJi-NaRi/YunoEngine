@@ -198,6 +198,31 @@ bool UnitTile::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 bool UnitTile::Update(float dTime)
 {
 
+    if (isWarning)
+    {
+        bool isPlaying = m_animator->isPlaying();
+        if (!isPlaying && !isFlashing)
+        {
+            // +경고 표시 이펙트 해제하기
+            m_animator->Change("idle");
+            m_animator->SetLoop("idle", true);
+            m_state = ObstacleType::None;
+            isWarning = false;
+        }
+    }
+
+    if (isTriggering)
+    {
+        bool isPlaying = m_animator->isPlaying();
+        if (!isPlaying && m_state != ObstacleType::Collapse && !isFlashing)
+        {
+            m_animator->Change("idle");
+            m_animator->SetLoop("idle", true);
+            m_state = ObstacleType::None;
+            isTriggering = false;
+        }
+    }
+
     UpdateFlash(dTime);
 
     AnimationUnit::Update(dTime);
@@ -296,6 +321,64 @@ void UnitTile::SetFlashColor(Float4 color, int count, float blinkTime)
     m_count = count;
     m_blinkTime = blinkTime;
     isFlashing = true;
+}
+
+void UnitTile::PlayWarning(ObstacleType obstacleType, Float4 color, int count, float blinkTime)
+{
+    SetFlashColor(color, count, blinkTime);
+
+    if (!m_animator || m_state == ObstacleType::Collapse)
+        return;
+
+    isWarning = true;
+
+    switch (obstacleType)
+    {
+    case ObstacleType::Vertical_Razer:
+    case ObstacleType::Horizon_Razer:
+    {
+        // 이펙트 넣기
+        break;
+    }
+    case ObstacleType::Collapse:
+    {
+        bool isChanged = m_animator->Change("wave", 0);
+        if(isChanged)
+            m_animator->SetLoop("wave", false);
+        break;
+    }
+    }
+
+    m_state = obstacleType;
+}
+
+void UnitTile::PlayTrigger(ObstacleType obstacleType, Float4 color, int count, float blinkTime)
+{
+    SetFlashColor(color, count, blinkTime);
+
+    if (!m_animator)
+        return;
+
+    isTriggering = true;
+
+    switch (obstacleType)
+    {
+    case ObstacleType::Vertical_Razer:
+    case ObstacleType::Horizon_Razer:
+    {
+        // 이펙트 넣기
+        break;
+    }
+    case ObstacleType::Collapse:
+    {
+        bool isChanged = m_animator->Change("crash", 0);
+        if (isChanged)
+            m_animator->SetLoop("crash", false);
+        break;
+    }
+    }
+
+    m_state = obstacleType;
 }
 
 Float4 UnitTile::GetLerpColor(float dt)

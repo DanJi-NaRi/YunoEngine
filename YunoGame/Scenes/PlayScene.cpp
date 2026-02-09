@@ -16,8 +16,7 @@
 #include "Triangle.h"
 #include "Quad.h"
 #include "Dwarf.h"
-#include "Emoji.h" // test YDM
-#include "TitleImage.h"
+#include "Emoji.h"
 #include "PlayQueue.h"
 bool PlayScene::OnCreateScene()
 {
@@ -52,8 +51,6 @@ bool PlayScene::OnCreateScene()
     
     // 디렉션 라이트 생성
     m_objectManager->CreateDirLight();
-
-
 
     return true;
 }
@@ -229,8 +226,8 @@ void PlayScene::ShowEmoteImage(uint8_t pid, uint8_t emoteId)
     );
 
     emoji->SetLayer(WidgetLayer::HUD);
-
     emoji->ChangeMaterial(emoteId);
+    m_emojis.push_back({ emoji, 2.0f });
 }
 
 void PlayScene::Update(float dt)
@@ -245,6 +242,22 @@ void PlayScene::Update(float dt)
     while (GameManager::Get().PopEmote(emote))
     {
         ShowEmoteImage(emote.pid, emote.emoteId);
+    }
+    //이모지 수명 관리
+    for (auto it = m_emojis.begin(); it != m_emojis.end(); )
+    {
+        it->remainTime -= dt;
+
+        if (it->remainTime <= 0.f)
+        {
+            // UI 매니저에서 제거
+            m_uiManager->DestroyWidget(it->widget->GetID());
+            it = m_emojis.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
     }
 }
 

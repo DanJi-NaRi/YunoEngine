@@ -22,6 +22,7 @@
 #include "S2C_CardPackets.h"
 #include "S2C_EndGame.h"
 #include "S2C_Emote.h"
+#include "S2C_EndGame_Disconnect.h"
 namespace yuno::game
 {
     YunoClientNetwork::YunoClientNetwork()
@@ -607,7 +608,7 @@ namespace yuno::game
                     std::cout << "\n";
 
                     ObstacleResult out{};
-                    out.obstacleID = o.obstacleID;
+                    out.obstacleID = static_cast<ObstacleType>(o.obstacleID);
                     out.tileIDs = o.tileIDs;
 
                     for (int i = 0; i < static_cast<int>(out.unitState.size()); ++i)
@@ -636,5 +637,17 @@ namespace yuno::game
                 }
             }
         );//S2C_ObstacleResult Packet End
+
+        //S2C_EndGame_Disconnect Packet Start
+        Dispatcher().RegisterRaw(
+            PacketType::S2C_EndGame_Disconnect,
+            [this](const NetPeer&, const PacketHeader&, const uint8_t* body, uint32_t len)
+            {
+                ByteReader r(body, len);
+                auto pkt = yuno::net::packets::S2C_EndGame_Disconnect::Deserialize(r);
+
+                std::cout << "winnerPID : " <<  static_cast<int>(pkt.winnerPID) << std::endl;
+            }
+        ); //S2C_EndGame_Disconnect Packet End
     }
 }

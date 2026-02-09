@@ -199,13 +199,13 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
              L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
          pChakram1->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
-         //pChakram1->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_01.fbx");
+         pChakram1->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_01.fbx");
          pPiece->Attach(pChakram1);
 
          auto pChakram2 = m_manager->CreateObjectFromFile<UnitPiece>(
              L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
          pChakram2->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
-         //pChakram2->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_02.fbx");
+         pChakram2->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_02.fbx");
          pPiece->Attach(pChakram2);
 
          pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
@@ -232,23 +232,25 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      {
      case 1:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
-         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
          break;
      case 3:
-         pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/drill_idle.fbx");
-         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Breacher_attack.fbx");
+         pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Breacher_idle.fbx");
+         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Breacher_attack.fbx");
          break;
      case 4:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
+         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/scythe_attack.fbx");
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
          break;
      case 5:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
+         // 본이름에 문제잇는 듯 현승아 봐주라~!
          //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
          break;
      case 6:
-         pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blade_idle.fbx");
-         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Cleaver_attack.fbx");
+         pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Cleaver_idle.fbx");
+         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Cleaver_attack.fbx");
          break;
      }
      pPiece->SetWho(gp);
@@ -363,7 +365,13 @@ void PlayGridSystem::CheckPacket(float dt)
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
     }
-    
+
+    // 장애물까지 발동하고 CheckOver
+    if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing)
+    {
+        const auto obstaclePkt = mng.PopObstaclePacket();
+        ApplyObstacleResult(obstaclePkt);
+    }
 
     // 지금 처리 중인 패킷 시간 체크
     if (isProcessing)
@@ -374,16 +382,7 @@ void PlayGridSystem::CheckPacket(float dt)
             isProcessing = false;
             m_currTime -= m_pktTime;
             std::cout << "Packet Time is Over\n";
-
-
         }
-    }
-
-    // 장애물까지 발동하고 CheckOver
-    if (!mng.IsEmptyObstaclePacket()&& mng.IsEmptyBattlePacket()&& !isProcessing)
-    {
-        const auto obstaclePkt = mng.PopObstaclePacket();
-        ApplyObstacleResult(obstaclePkt);
     }
 
     // 라운드 끝났는지 체크
@@ -400,6 +399,7 @@ void PlayGridSystem::UpdateSequence(float dt)
 {
     UpdateAttackSequence(dt);
     UpdateUtilitySequence(dt);
+    UpdateObstacleSequence(dt);
 }
 
 void PlayGridSystem::UpdateAttackSequence(float dt)
@@ -532,13 +532,12 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
             if (pPiece == nullptr) continue;
 
-            // 애니메이션 대신 반짝이는 걸로 잠시 대체
-            pPiece->SetFlashColor(as.m_hitColor, as.m_flashCount, as.m_flashInterval);
-            for (uint32_t subId : pieceInfo.subIds)
+            // 피격 애니메이션 대신 번쩍이는 걸로 임시 대체
+            pPiece->PlayHit(as.m_hitColor, as.m_flashCount, as.m_flashInterval);
+            for (auto& subId : pieceInfo.subIds)
             {
-                auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
-                if (pSubPiece != nullptr)
-                    pSubPiece->SetFlashColor(as.m_hitColor, as.m_flashCount, as.m_flashInterval);
+                auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                pSub->PlayHit(as.m_hitColor, as.m_flashCount, as.m_flashInterval);
             }
         }
         as.phaseStarted = false;
@@ -555,15 +554,12 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             auto it = m_pieces.find(pieces[i]);
             if (it == m_pieces.end()) continue;
 
-            auto& pieceinfo = it->second;
-
-            int id = GetUnitID(pieces[i]);
-            CheckHealth(m_UnitStates[id], pieceinfo);
+            m_playQ->Hit_S(pieces[i]);
         }
         
         as = {};
         m_attackActive = false;
-        break;
+        return;
     }
     }
 
@@ -660,11 +656,96 @@ void PlayGridSystem::UpdateUtilitySequence(float dt)
         }
         us.hittersMove.clear();
         m_utilitySequence = {};
-        break;
+        return;
     }
     }
 
     us.elapsed += dt;
+}
+
+void PlayGridSystem::UpdateObstacleSequence(float dt)
+{
+    if (!m_obstacleActive)   return;
+    
+    auto& os = m_obstacleSequence;
+
+    switch (os.obstaclePhase)
+    {
+    case ObstaclePhase::Trigger:
+    {
+        if (os.elapsed >= os.m_triggerDuration || os.hitTileIDs.size() == 0)
+        {
+            os.obstaclePhase = ObstaclePhase::Warning;
+            os.phaseStarted = true;
+            os.elapsed = 0;
+            break;
+        }
+        if (!os.phaseStarted)    break;
+        
+        // 타일
+        for (const auto& tileID : os.hitTileIDs)
+        {
+            auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
+            pTile->PlayTrigger(os.attackType, os.hitColor, os.hitFlashCount, os.hitFlashInterval);
+        }
+
+        // 기물
+        if (os.hitPieces.size() != 0)
+        {
+            for (auto& piece : os.hitPieces)
+            {
+                auto pieceIt = m_pieces.find(piece);
+                if (pieceIt == m_pieces.end())   continue;
+                auto& pieceInfo = pieceIt->second;
+                auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
+                // 피격 애니메이션 대신 번쩍이는 걸로 임시 대체
+                pPiece->PlayHit(os.hitColor, os.hitFlashCount, os.hitFlashInterval);
+                for (auto& subId : pieceInfo.subIds)
+                {
+                    auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                    pSub->PlayHit(os.hitColor, os.hitFlashCount, os.hitFlashInterval);
+                }
+            }
+        }
+
+        std::cout << "[PlayGridSystem] Obstacle is triggered\n";
+
+        os.phaseStarted = false;
+
+        break;
+    }
+    case ObstaclePhase::Warning:
+    {
+        if (os.elapsed >= os.m_warningDuration || os.warningTileIDs.size() == 0)
+        {
+            os.obstaclePhase = ObstaclePhase::Over;
+            os.elapsed = 0;
+            break;
+        }
+        if (!os.phaseStarted)    break;
+
+        // 타일
+        for (const auto& tileID : os.warningTileIDs)
+        {
+            auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
+            pTile->PlayWarning(os.attackType, os.warnColor, os.warnFlashCount, os.warnFlashInterval);
+        }
+
+        std::cout << "[PlayGridSystem] Warning Next Obstacle\n";
+
+        os.phaseStarted = false;
+
+        break;
+    }
+    case ObstaclePhase::Over:
+    {
+        os = {};
+        m_obstacleActive = false;
+        return;
+    }
+    }
+
+    os.elapsed += dt;
 }
 
 void PlayGridSystem::ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, uint32_t runCardID, Direction dir)
@@ -1130,6 +1211,12 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
     bool hasTriggerSnapshot = false;
     Float4 warnColor{ 1.0f, 0.0f, 0.0f, 1.f };
 
+    // ObstacleSequence 정보 기입
+    auto& os = m_obstacleSequence;
+    m_obstacleActive = true;
+    os.phaseStarted = true;
+    os.obstaclePhase = ObstaclePhase::Trigger;
+
     for (int i = 0; i < static_cast<int>(m_UnitStates.size()); ++i)
     {
         const auto& prev = m_UnitStates[i];
@@ -1138,57 +1225,84 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
         if (cur.pId == 0 || cur.slotId == 0)
             continue;
 
-        hasTriggerSnapshot = true;
-
-
         std::cout
             << "  [Trigger] unit[" << i << "]"
             << " hp " << int(prev.hp) << "->" << int(cur.hp)
             << " tile " << int(prev.targetTileID) << "->" << int(cur.targetTileID)
             << "\n";
 
-        GamePiece pieceType = GetGamePiece(cur.pId, cur.slotId);
-        auto pieceIt = m_pieces.find(pieceType);
-        if (pieceIt == m_pieces.end())
+        int unitID = GetUnitID(cur.pId, cur.slotId);
+        if (m_UnitStates[unitID].hp == 0)
             continue;
 
-        // 장애물 발동해서 피 깎였으면 여기서 색 바꿔줌
+        GamePiece piece = GetGamePiece(cur.pId, cur.slotId);
+        
         if (prev.hp != cur.hp)
         {
-            auto* pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceIt->second.id));
-            if (pPiece)
-                pPiece->SetFlashColor(warnColor, 5, tileFlashInterval*3.3f);
-        
-            for (uint32_t subId : pieceIt->second.subIds)
-            {
-                auto* pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                if (pSubPiece)
-                    pSubPiece->SetFlashColor(warnColor, 5, tileFlashInterval*3.3f);
-            }
+            os.hitPieces.push_back(piece);
+            hasTriggerSnapshot = true;
         }
 
-        if (prev.hp > cur.hp)
-            CheckHealth(cur, pieceIt->second);
+
+        //// 장애물 발동해서 피 깎였으면 여기서 색 바꿔줌
+        //if (prev.hp != cur.hp)
+        //{
+        //    auto* pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceIt->second.id));
+        //    if (pPiece)
+        //        pPiece->SetFlashColor(warnColor, 5, tileFlashInterval*3.3f);
+        //
+        //    for (uint32_t subId : pieceIt->second.subIds)
+        //    {
+        //        auto* pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+        //        if (pSubPiece)
+        //            pSubPiece->SetFlashColor(warnColor, 5, tileFlashInterval*3.3f);
+        //    }
+        //}
+
+        //if (prev.hp > cur.hp)
+        //    CheckHealth(cur, pieceIt->second);
     }
+
+    // ObstacleSequence 장애물 발동 정보 기입
+    os.hitColor = warnColor;
+    os.hitFlashCount = hitFlashCount;
+    os.hitFlashInterval = hitFlashInterval;
+    os.m_triggerDuration = triggerDuration;
+    os.attackType = m_obstacleTile.obstacleID;
+    os.hitTileIDs = m_obstacleTile.tileIDs;
 
     if (hasTriggerSnapshot) // 누군가 맞은 애 있으면 obstacle 패킷에서 받은 스냅샷으로 현재 유닛 상태 변경
-        m_UnitStates = obstacle.unitState;
-
-
-    // 다음 장애물 경고
-
-    if (obstacle.obstacleID == 2) warnColor = { 0.0f, 1.0f, 0.0f, 1.f };
-    else if (obstacle.obstacleID == 3) warnColor = { 0.0f, 0.0f, 1.0f, 1.f };
-
-    for (auto tileId : obstacle.tileIDs)
     {
-        if (tileId == 0 || tileId >= m_tilesIDs.size())
-            continue;
-
-        auto* pTile = static_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileId]));
-        if (pTile)
-            pTile->SetFlashColor(warnColor, 5, tileFlashInterval*3.3f);
+        m_UnitStates = obstacle.unitState;
     }
+
+
+    // 다음 장애물 경고    // 이펙트 넣기★
+    if (obstacle.obstacleID == ObstacleType::Horizon_Razer || obstacle.obstacleID == ObstacleType::Vertical_Razer) 
+        warnColor = { 0.0f, 1.0f, 0.0f, 1.f };
+    else if (obstacle.obstacleID == ObstacleType::Collapse) 
+        warnColor = { 0.0f, 0.0f, 1.0f, 1.f };
+
+    //for (auto tileId : obstacle.tileIDs)
+    //{
+    //    if (tileId == 0 || tileId >= m_tilesIDs.size())
+    //        continue;
+
+    //    auto* pTile = static_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileId]));
+    //    if (pTile)
+    //        pTile->SetFlashColor(warnColor, 5, tileFlashInterval*3.3f);
+    //}
+    // ObstacleSequence 경고 정보 기입
+    os.warnColor = warnColor;
+    os.warnFlashCount = warnFlashCount;
+    os.warnFlashInterval = warnFlashInterval;
+    os.m_warningDuration = warnDuration;
+    os.warningType = obstacle.obstacleID;
+    os.warningTileIDs = obstacle.tileIDs;
+
+    // 장애물 정보 갱신
+    m_obstacleTile.obstacleID = obstacle.obstacleID;
+    m_obstacleTile.tileIDs = obstacle.tileIDs;
 }
 
 bool PlayGridSystem::CheckNotDying(const GamePiece pieceType)
@@ -1438,7 +1552,7 @@ void PlayGridSystem::SetTileInitState(UnitTile*& pTile, int floornum)
 
     wchar_t wave[256];
     swprintf_s(wave, L"../Assets/fbx/Tile/Tile_Anim/Floor%d_Wave_Anim.fbx", floornum);
-    pTile->AddAnimationClip("crash", wave);
+    pTile->AddAnimationClip("wave", wave);
 }
 
 
