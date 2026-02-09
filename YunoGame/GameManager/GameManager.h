@@ -68,6 +68,9 @@ public:
 
     void SetSlotIdx(int idx) { m_PID = idx; };
     int GetSlotiIdx() { return m_PID; };
+    void SetMatchPlayerCount(int count) { m_matchPlayerCount = count; }
+    int GetMatchPlayerCount() const { return m_matchPlayerCount; }
+    bool HasOpponentInMatchRoom() const { return m_matchPlayerCount >= 2; }
 
     void SetMyPick(int index, PieceType type);
     void ResetMyPicks();
@@ -141,6 +144,7 @@ private:
 
 
     int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽
+    int m_matchPlayerCount = 0;
 
     bool m_isReady = false;
 

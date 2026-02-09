@@ -157,6 +157,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::Title:
     {
         m_state = CurrentSceneState::Title;
+        m_matchPlayerCount = 0;
         ResetMyPicks();
         SceneTransitionOptions opt{};
         opt.immediate = false;

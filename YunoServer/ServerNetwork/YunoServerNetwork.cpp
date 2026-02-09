@@ -256,19 +256,30 @@ namespace yuno::server
                 }
                 else                                            // 빈 자리 존재
                 {
-                    yuno::net::packets::S2C_EnterOK ok{};
-                    ok.slotIndex = static_cast<std::uint8_t>(slotIdx+1);
-                    ok.playerCount = m_match.GetOccupiedCount();
+                    const auto& slots = m_match.Slots();
+                    const std::uint8_t playerCount = m_match.GetOccupiedCount();
+                    for (std::size_t i = 0; i < slots.size(); ++i)
+                    {
+                        if (!slots[i].occupied)
+                            continue;
 
-                    auto bytes = yuno::net::PacketBuilder::Build(
-                        yuno::net::PacketType::S2C_EnterOK,
-                        [&](yuno::net::ByteWriter& w)
-                        {
-                            ok.Serialize(w);
-                        });
+                        auto targetSession = m_server.FindSession(slots[i].sessionId);
+                        if (!targetSession)
+                            continue;
 
-                    session->Send(std::move(bytes));
-                    
+                        yuno::net::packets::S2C_EnterOK ok{};
+                        ok.slotIndex = static_cast<std::uint8_t>(i + 1);
+                        ok.playerCount = playerCount;
+
+                        auto bytes = yuno::net::PacketBuilder::Build(
+                            yuno::net::PacketType::S2C_EnterOK,
+                            [&](yuno::net::ByteWriter& w)
+                            {
+                                ok.Serialize(w);
+                            });
+
+                        targetSession->Send(std::move(bytes));
+                    }
                 }
             }
         ); // Enter Packet End
@@ -289,9 +300,33 @@ namespace yuno::server
                 const int idx = m_match.FindSlotBySessionId(peer.sId);
                 if (idx >= 0)
                 {
-                    const auto& slots = m_match.Slots();
-                    const auto uid = slots[static_cast<std::size_t>(idx)].userId;
+                    const auto& matchSlots = m_match.Slots();
+                    const auto uid = matchSlots[static_cast<std::size_t>(idx)].userId;
                     m_match.LeaveByUserId(uid);
+                    const auto& slots = m_match.Slots();
+                    const std::uint8_t playerCount = m_match.GetOccupiedCount();
+                    for (std::size_t i = 0; i < slots.size(); ++i)
+                    {
+                        if (!slots[i].occupied)
+                            continue;
+
+                        auto targetSession = m_server.FindSession(slots[i].sessionId);
+                        if (!targetSession)
+                            continue;
+
+                        yuno::net::packets::S2C_EnterOK ok{};
+                        ok.slotIndex = static_cast<std::uint8_t>(i + 1);
+                        ok.playerCount = playerCount;
+
+                        auto bytes = yuno::net::PacketBuilder::Build(
+                            yuno::net::PacketType::S2C_EnterOK,
+                            [&](yuno::net::ByteWriter& w)
+                            {
+                                ok.Serialize(w);
+                            });
+
+                        targetSession->Send(std::move(bytes));
+                    }
                 }
             }
         );// Leave Packet End

@@ -229,6 +229,39 @@ void WeaponSelectScene::ApplyReadyStateVisuals()
     if (!myReady1.empty()) myUserSlot1->ChangeTexture(myReady1);
 }
 
+void WeaponSelectScene::ApplyOpponentPresenceVisuals()
+{
+    GameManager& gm = GameManager::Get();
+
+    const int mySlot = gm.GetSlotiIdx();
+    if (mySlot != 1 && mySlot != 2)
+        return;
+
+    TextureImage* enemyUserSlot0 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pUserImage2)
+        : dynamic_cast<TextureImage*>(m_pUserImage0);
+    TextureImage* enemyUserSlot1 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pUserImage3)
+        : dynamic_cast<TextureImage*>(m_pUserImage1);
+
+    if (!enemyUserSlot0 || !enemyUserSlot1)
+        return;
+
+    const int enemySlot = (mySlot == 1) ? 2 : 1;
+    const int enemySlotTextureBase = (enemySlot == 1) ? 1 : 3;
+
+    const std::wstring opponentStateTexture0 = gm.HasOpponentInMatchRoom()
+        ? L"../Assets/UI/WEAPON_SELECT/selecting_" + std::to_wstring(enemySlotTextureBase) + L".png"
+        : L"../Assets/UI/WEAPON_SELECT/non_select_" + std::to_wstring(enemySlotTextureBase) + L".png";
+    const std::wstring opponentStateTexture1 = gm.HasOpponentInMatchRoom()
+        ? L"../Assets/UI/WEAPON_SELECT/selecting_" + std::to_wstring(enemySlotTextureBase + 1) + L".png"
+        : L"../Assets/UI/WEAPON_SELECT/non_select_" + std::to_wstring(enemySlotTextureBase + 1) + L".png";
+
+    enemyUserSlot0->ChangeTexture(opponentStateTexture0);
+    enemyUserSlot1->ChangeTexture(opponentStateTexture1);
+}
+
+
 void WeaponSelectScene::ApplyCountDownUnits()
 {
     GameManager& gm = GameManager::Get();
@@ -332,6 +365,7 @@ void WeaponSelectScene::Update(float dt)
     }
     else
     {
+        ApplyOpponentPresenceVisuals();
         ApplyReadyStateVisuals();
     }
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ

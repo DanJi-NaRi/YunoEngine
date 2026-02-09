@@ -109,7 +109,7 @@ bool WeaponButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, 
 }
 
 bool WeaponButton::Update(float dTime) {
-    if (GameManager::Get().GetSceneState() == CurrentSceneState::StandBy) m_useHoverEvent = false;
+    if (GameManager::Get().GetSceneState() == CurrentSceneState::StandBy|| GameManager::Get().GetSceneState() == CurrentSceneState::CountDown) m_useHoverEvent = false;
     Button::Update(dTime);
 
     return true;
@@ -152,6 +152,35 @@ bool WeaponButton::LMBPressedEvent()
 
     GameManager& gm = GameManager::Get();
 
+    auto updatePreviewImages = [&]()
+        {
+            if (gm.GetSceneState() == CurrentSceneState::StandBy || gm.GetSceneState() == CurrentSceneState::CountDown) return false;
+            if (auto* showCardDeck = dynamic_cast<ShowCardDeck*>(m_pShowCardDeck))
+                showCardDeck->SetWeaponCards(m_pieceType);
+
+            TextureImage* weaponNameImage = dynamic_cast<TextureImage*>(m_pWeaponNameImage);
+            if (weaponNameImage)
+            {
+                const std::wstring weaponNameTexturePath = GetWeaponNameTexturePath(m_pieceType);
+                if (!weaponNameTexturePath.empty())
+                {
+                    weaponNameImage->ChangeTexture(weaponNameTexturePath);
+                }
+            }
+
+            TextureImage* weaponCardImage = dynamic_cast<TextureImage*>(m_pWeaponCardImage);
+            if (weaponCardImage)
+            {
+                const std::wstring weaponCardTexturePath = GetWeaponCardTexturePath(m_pieceType);
+                if (!weaponCardTexturePath.empty())
+                {
+                    weaponCardImage->ChangeTexture(weaponCardTexturePath);
+                }
+            }
+        };
+
+    updatePreviewImages();
+
     const PieceType pick0 = gm.GetMyPiece(0);
     const PieceType pick1 = gm.GetMyPiece(1);
     const bool isAlreadyPicked = (pick0 == m_pieceType) || (pick1 == m_pieceType);
@@ -165,8 +194,8 @@ bool WeaponButton::LMBPressedEvent()
     m_isSelected = !m_isSelected;
     m_useHoverEvent = !m_isSelected;
 
-    if (auto* showCardDeck = dynamic_cast<ShowCardDeck*>(m_pShowCardDeck))
-        showCardDeck->SetWeaponCards(m_pieceType);
+    //if (auto* showCardDeck = dynamic_cast<ShowCardDeck*>(m_pShowCardDeck))
+    //    showCardDeck->SetWeaponCards(m_pieceType);
 
     const int myIdx = gm.GetSlotiIdx();
     if (myIdx != 1 && myIdx != 2)
@@ -265,30 +294,16 @@ bool WeaponButton::LMBPressedEvent()
         targetWeaponImage->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
     }
 
-    TextureImage* weaponNameImage = dynamic_cast<TextureImage*>(m_pWeaponNameImage);
-    if (weaponNameImage)
-    {
-        const std::wstring weaponNameTexturePath = GetWeaponNameTexturePath(m_pieceType);
-        if (!weaponNameTexturePath.empty())
-        {
-            weaponNameImage->ChangeTexture(weaponNameTexturePath);
-        }
-    }
-
-    ///TextureImage* weaponCardImage = dynamic_cast<TextureImage*>(m_pWeaponCardImage);
-    ///if (weaponCardImage)
-    ///{
-    ///    const std::wstring weaponCardTexturePath = GetWeaponCardTexturePath(m_pieceType);
-    ///    if (!weaponCardTexturePath.empty())
-    ///    {
-    ///        weaponCardImage->ChangeTexture(weaponCardTexturePath);
-    ///    }
-    ///}
-
-    //if (m_pShowCardDeck)
+    //TextureImage* weaponNameImage = dynamic_cast<TextureImage*>(m_pWeaponNameImage);
+    //if (weaponNameImage)
     //{
-    //    dynamic_cast<ShowCardDeck*>(m_pShowCardDeck)->SetWeaponCards(m_pieceType);
+    //    const std::wstring weaponNameTexturePath = GetWeaponNameTexturePath(m_pieceType);
+    //    if (!weaponNameTexturePath.empty())
+    //    {
+    //        weaponNameImage->ChangeTexture(weaponNameTexturePath);
+    //    }
     //}
+
 
 
     gm.SetMyPick(pickIndex, m_pieceType);

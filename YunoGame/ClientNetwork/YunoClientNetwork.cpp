@@ -170,8 +170,18 @@ namespace yuno::game
 
                 std::cout << "Slot Idx : " << static_cast<int>(pkt.slotIndex) << ", Player Count : " << static_cast<int>(pkt.playerCount) << std::endl;
 
-                GameManager::Get().SetSlotIdx(pkt.slotIndex);
-                GameManager::Get().SetSceneState(CurrentSceneState::GameStart);
+                GameManager& gm = GameManager::Get();
+                gm.SetMatchPlayerCount(pkt.playerCount);
+
+                if (gm.GetSlotiIdx() == 0)
+                {
+                    gm.SetSlotIdx(pkt.slotIndex);
+                }
+
+                if (gm.GetSceneState() == CurrentSceneState::RequstEnter)
+                {
+                    gm.SetSceneState(CurrentSceneState::GameStart);
+                }
             });// EnterOK Packet End
 
         // ReadyState Packet Start

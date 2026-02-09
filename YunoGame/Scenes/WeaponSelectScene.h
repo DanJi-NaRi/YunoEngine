@@ -29,6 +29,7 @@ protected:
 
     void HandleCountdownUI(float dt);
     void ApplyCountDownUnits();
+    void ApplyOpponentPresenceVisuals();
     void ApplyReadyStateVisuals();
 private:
 
