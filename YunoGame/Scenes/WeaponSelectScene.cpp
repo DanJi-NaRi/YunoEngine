@@ -52,6 +52,14 @@ namespace
 
         return L"../Assets/UI/WEAPON_SELECT/weapon_" + std::to_wstring(slotTextureIndex) + L"_" + pieceName + L".png";
     }
+
+    std::wstring GetReadySlotTexturePath(int slotTextureIndex)
+    {
+        if (slotTextureIndex < 1 || slotTextureIndex > 4)
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/Ready_" + std::to_wstring(slotTextureIndex) + L".png";
+    }
 }
 
 bool WeaponSelectScene::OnCreateScene()
@@ -188,6 +196,36 @@ void WeaponSelectScene::OnExit()
     //std::cout << "[WeaponSelectScene] OnExit\n"; 
 }
 
+void WeaponSelectScene::ApplyReadyStateVisuals()
+{
+    GameManager& gm = GameManager::Get();
+
+    const int mySlot = gm.GetSlotiIdx();
+    if (mySlot != 1 && mySlot != 2)
+        return;
+
+    if (!gm.IsReady())
+        return;
+
+    TextureImage* myUserSlot0 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pUserImage0)
+        : dynamic_cast<TextureImage*>(m_pUserImage2);
+    TextureImage* myUserSlot1 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pUserImage1)
+        : dynamic_cast<TextureImage*>(m_pUserImage3);
+
+    if (!myUserSlot0 || !myUserSlot1)
+        return;
+
+    const int mySlotTextureBase = (mySlot == 1) ? 1 : 3;
+
+    const std::wstring myReady0 = GetReadySlotTexturePath(mySlotTextureBase);
+    const std::wstring myReady1 = GetReadySlotTexturePath(mySlotTextureBase + 1);
+
+    if (!myReady0.empty()) myUserSlot0->ChangeTexture(myReady0);
+    if (!myReady1.empty()) myUserSlot1->ChangeTexture(myReady1);
+}
+
 void WeaponSelectScene::ApplyCountDownUnits()
 {
     GameManager& gm = GameManager::Get();
@@ -244,19 +282,41 @@ void WeaponSelectScene::ApplyCountDownUnits()
     const std::wstring mySelected1 = GetSelectedSlotTexturePath(myUnit1, mySlotTextureBase + 1);
     const std::wstring myWeapon0 = GetWeaponSlotTexturePath(myUnit0, mySlotTextureBase);
     const std::wstring myWeapon1 = GetWeaponSlotTexturePath(myUnit1, mySlotTextureBase + 1);
+    const std::wstring myReady0 = GetReadySlotTexturePath(mySlotTextureBase);
+    const std::wstring myReady1 = GetReadySlotTexturePath(mySlotTextureBase + 1);
+
+
 
     const std::wstring enemySelected0 = GetSelectedSlotTexturePath(enemyUnit0, enemySlotTextureBase);
     const std::wstring enemySelected1 = GetSelectedSlotTexturePath(enemyUnit1, enemySlotTextureBase + 1);
     const std::wstring enemyWeapon0 = GetWeaponSlotTexturePath(enemyUnit0, enemySlotTextureBase);
     const std::wstring enemyWeapon1 = GetWeaponSlotTexturePath(enemyUnit1, enemySlotTextureBase + 1);
+    const std::wstring enemyReady0 = GetReadySlotTexturePath(enemySlotTextureBase);
+    const std::wstring enemyReady1 = GetReadySlotTexturePath(enemySlotTextureBase + 1);
 
-    if (!mySelected0.empty()) myUserSlot0->ChangeTexture(mySelected0);
-    if (!mySelected1.empty()) myUserSlot1->ChangeTexture(mySelected1);
+    const bool myIsReady = gm.IsReady();
+
+    if (myIsReady)
+    {
+        if (!myReady0.empty()) myUserSlot0->ChangeTexture(myReady0);
+        if (!myReady1.empty()) myUserSlot1->ChangeTexture(myReady1);
+    }
+    else
+    {
+        if (!mySelected0.empty()) myUserSlot0->ChangeTexture(mySelected0);
+        if (!mySelected1.empty()) myUserSlot1->ChangeTexture(mySelected1);
+    }
+
     if (!myWeapon0.empty()) { myWeaponSlot0->ChangeTexture(myWeapon0); myWeaponSlot0->SetScale(XMFLOAT3(1.f, 1.f, 1.f)); }
     if (!myWeapon1.empty()) { myWeaponSlot1->ChangeTexture(myWeapon1); myWeaponSlot1->SetScale(XMFLOAT3(1.f, 1.f, 1.f)); }
 
-    if (!enemySelected0.empty()) enemyUserSlot0->ChangeTexture(enemySelected0);
-    if (!enemySelected1.empty()) enemyUserSlot1->ChangeTexture(enemySelected1);
+
+
+    if (!enemyReady0.empty() && enemyUnit0 != PieceType::None) enemyUserSlot0->ChangeTexture(enemyReady0);
+    else if (!enemySelected0.empty()) enemyUserSlot0->ChangeTexture(enemySelected0);
+
+    if (!enemyReady1.empty() && enemyUnit1 != PieceType::None) enemyUserSlot1->ChangeTexture(enemyReady1);
+    else if (!enemySelected1.empty()) enemyUserSlot1->ChangeTexture(enemySelected1);
     if (!enemyWeapon0.empty()) { enemyWeaponSlot0->ChangeTexture(enemyWeapon0); enemyWeaponSlot0->SetScale(XMFLOAT3(1.f, 1.f, 1.f)); }
     if (!enemyWeapon1.empty()) { enemyWeaponSlot1->ChangeTexture(enemyWeapon1); enemyWeaponSlot1->SetScale(XMFLOAT3(1.f, 1.f, 1.f)); }
 }
@@ -266,6 +326,10 @@ void WeaponSelectScene::Update(float dt)
     if (GameManager::Get().IsCountdownActive())
     {
         ApplyCountDownUnits();
+    }
+    else
+    {
+        ApplyReadyStateVisuals();
     }
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);

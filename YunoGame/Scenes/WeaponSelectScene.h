@@ -29,6 +29,7 @@ protected:
 
     void HandleCountdownUI(float dt);
     void ApplyCountDownUnits();
+    void ApplyReadyStateVisuals();
 private:
 
     //std::array<Widget*, 4> m_pUserImages;
