@@ -166,6 +166,9 @@ bool UnitPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Unit::Create(name, id, vPos);
 
+    // 오브젝트 처음에는 안보이게 설정
+    m_dissolveAmount = 1.f;
+
     //if (!m_pInput || !m_pRenderer || !m_pTextures)
     //    return false;
     //if (!CreateMesh())
@@ -191,10 +194,14 @@ bool UnitPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool UnitPiece::Update(float dTime)
 {
-    // 죽은 상태인지 먼저 확인
-
+    // 디졸브 후 죽은 상태인지 먼저 확인
+    UpdateDissolve(dTime);
+    AnimTest::UpdateDissolve(dTime);
     if(CheckDead(dTime))   return true;
 
+    float curFrame = 0.f;
+    if (m_animator)
+        curFrame = m_animator->GetCurFrame();
 
     UpdateRot(dTime);
     UpdateMove(dTime);
@@ -398,7 +405,7 @@ void UnitPiece::UpdateFlash(float dt)
         m_flashTime += dt;
 
         // 0에서 시작해 1까지 올라갔다 다시 내려오는 부드러운 곡선
-        float btw0_1 = Graph(m_flashTime);
+        float btw0_1 = QuadraticGraph(m_flashTime);
 
         // btw0_1을 기반으로 색상 보간
         Float4 fc = GetLerpColor(btw0_1);
@@ -435,6 +442,24 @@ void UnitPiece::UpdateHit(float dt)
     m_Q.push(cmd);
 
     isHitting = false;
+}
+
+void UnitPiece::UpdateDissolve(float dt)
+{
+    if (!isDissolving) return;
+
+    m_dissolveTime += dt;
+
+    if (m_dissolveTime >= m_dissolveDuration)
+    {
+        m_dissolveAmount = m_startDissolveAmount + linearGraph(m_dissolveDuration);
+        m_dissolveTime = 0.f;
+        isDissolving = false;
+    }
+    else
+    {
+        m_dissolveAmount = m_startDissolveAmount + linearGraph(m_dissolveTime);
+    }
 }
 
 void UnitPiece::UpdateAttack(float dt)
@@ -506,6 +531,22 @@ void UnitPiece::SetFlashColor(Float4 color, int count, float blinkTime)
     isFlashing = true;
 }
 
+void UnitPiece::AppearDissolve(float dissolveTime)
+{
+    m_linearSlope = -(1.f / dissolveTime);
+    m_dissolveDuration = dissolveTime;
+    m_startDissolveAmount = m_dissolveAmount;
+    isDissolving = true;
+}
+
+void UnitPiece::DisappearDissolve(float dissolveTime)
+{
+    m_linearSlope = 1.f / dissolveTime;
+    m_dissolveDuration = dissolveTime;
+    m_startDissolveAmount = m_dissolveAmount;
+    isDissolving = true;
+}
+
 void UnitPiece::PlayAttack()
 {
     if (m_animator == nullptr) return;
@@ -547,9 +588,10 @@ void UnitPiece::SetTarget(XMFLOAT3 targetPos, float speed)
 }
 
 
-void UnitPiece::SetDead()
+void UnitPiece::SetDead(float disappearDisolveDuration)
 {
     isDead = true;
+    DisappearDissolve(disappearDisolveDuration);
 }
 
 void UnitPiece::SetTmpColor(Float4 color)
@@ -581,9 +623,14 @@ Float4 UnitPiece::GetLerpColor(float dt)
     return { r, g, b, a };
 }
 
-float UnitPiece::Graph(float x)
+float UnitPiece::QuadraticGraph(float x)
 {
     float result = -(2.f / m_blinkTime * x - 1.f) * (2.f / m_blinkTime * x - 1.f) + 1.f;
+    return result;
+}
 
+float UnitPiece::linearGraph(float x)
+{
+    float result = m_linearSlope * x;
     return result;
 }

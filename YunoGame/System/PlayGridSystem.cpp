@@ -189,7 +189,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
 
      GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
      PieceInfo pieceInfo{};
-
+     PassOption po;
+     po.shader = ShaderId::PBR_AniDissolve;
      UnitPiece* pPiece = nullptr;
      if (w.weaponId == 2)
      {
@@ -197,18 +198,22 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
              L"Weapon", XMFLOAT3(px, m_wy, pz));
 
          auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
-             L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
+             L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx", po);
          pChakram1->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
-
          pChakram1->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_01.fbx");
+         pChakram1->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Chakram_move_01.fbx");
+         pChakram1->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pChakram1->SetDissolveColor(XMFLOAT3(1, 1, 1));
 
          pPiece->Attach(pChakram1);
 
          auto pChakram2 = m_manager->CreateObjectFromFile<UnitPiece>(
-             L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
+             L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx", po);
          pChakram2->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
-
          pChakram2->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_02.fbx");
+         pChakram2->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Chakram_move_02.fbx");
+         pChakram2->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pChakram2->SetDissolveColor(XMFLOAT3(1, 1, 1));
 
          pPiece->Attach(pChakram2);
 
@@ -221,7 +226,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      else
      {
          std::wstring fileName = GetWeaponFileName(w.weaponId);
-         pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
+         pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName, po);
          pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
      }
 
@@ -234,33 +239,56 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
 
      switch (w.weaponId)
      {
+
      case 1:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
-         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Blaster_move.fbx");
+         pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
+
          break;
      case 3:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Breacher_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Breacher_attack.fbx");
+         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Breacher_move.fbx");
+         pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
      case 4:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/scythe_attack.fbx");
-
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
+         pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
      case 5:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
+         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Impactor_move.fbx");
          // 본이름에 문제잇는 듯 현승아 봐주라~!
-         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
+         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
+         pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
      case 6:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Cleaver_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Cleaver_attack.fbx");
+         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Cleaver_move.fbx");
+         pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
 
          break;
      }
      pPiece->SetWho(gp);
      pPiece->SetDir(dir, false);
+
+     // 디졸브 나타남
+     pPiece->AppearDissolve(appearDisolveDuration);
+     for (auto& subID : pieceInfo.subIds)
+     {
+         auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subID));
+         pSub->AppearDissolve(appearDisolveDuration);
+     }
 
      // 기물 정보 등록
      m_pieces.emplace(gp, pieceInfo);
@@ -371,12 +399,13 @@ void PlayGridSystem::CheckPacket(float dt)
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
     }
-    
 
     // 장애물까지 발동하고 CheckOver
     if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing)
     {
         const auto obstaclePkt = mng.PopObstaclePacket();
+        m_pktTime = obstaclePktDuration;
+        isProcessing = true;
         ApplyObstacleResult(obstaclePkt);
     }
 
@@ -389,20 +418,10 @@ void PlayGridSystem::CheckPacket(float dt)
             isProcessing = false;
             m_currTime -= m_pktTime;
             std::cout << "Packet Time is Over\n";
-
-
+            // 라운드 끝났는지 체크
+            CheckOver();
         }
     }
-
-    // 장애물까지 발동하고 CheckOver
-    if (!mng.IsEmptyObstaclePacket()&& mng.IsEmptyBattlePacket()&& !isProcessing)
-    {
-        const auto obstaclePkt = mng.PopObstaclePacket();
-        ApplyObstacleResult(obstaclePkt);
-    }
-
-    // 라운드 끝났는지 체크
-    CheckOver();
 
 }
 
@@ -538,8 +557,6 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         const auto& pieces = as.hitPieces;
         for (int i = 0; i < pieces.size(); i++)
         {
-            if (!CheckNotDying(pieces[i])) continue;
-
             auto it = m_pieces.find(pieces[i]);
             if (it == m_pieces.end()) continue;
 
@@ -1199,11 +1216,11 @@ void PlayGridSystem::CheckOver()
             auto& pieceinfo = it->second;
             auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceinfo.id));
             // 일단 사라지게 하기 위해 dead로 처리
-            pPiece->SetDead();  
+            pPiece->SetDead(disappearDisolveDuration);  
             for (auto sid : pieceinfo.subIds)
             {
                 auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(sid));
-                pSub->SetDead();
+                pSub->SetDead(disappearDisolveDuration);
             }
         }
     }
@@ -1283,12 +1300,20 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
     }
 
     // ObstacleSequence 장애물 발동 정보 기입
-    os.hitColor = warnColor;
-    os.hitFlashCount = hitFlashCount;
-    os.hitFlashInterval = hitFlashInterval;
-    os.m_triggerDuration = triggerDuration;
-    os.attackType = m_obstacleTile.obstacleID;
-    os.hitTileIDs = m_obstacleTile.tileIDs;
+    if (m_obstacleTile.tileIDs.size() == 0)
+    {
+        os.obstaclePhase = ObstaclePhase::Warning;
+        m_pktTime -= triggerDuration;
+    }
+    else
+    {
+        os.hitColor = warnColor;
+        os.hitFlashCount = hitFlashCount;
+        os.hitFlashInterval = hitFlashInterval;
+        os.m_triggerDuration = triggerDuration;
+        os.attackType = m_obstacleTile.obstacleID;
+        os.hitTileIDs = m_obstacleTile.tileIDs;
+    }
 
     if (hasTriggerSnapshot) // 누군가 맞은 애 있으면 obstacle 패킷에서 받은 스냅샷으로 현재 유닛 상태 변경
     {
@@ -1349,13 +1374,13 @@ void PlayGridSystem::CheckHealth(const UnitState& us, PieceInfo& pieceInfo)
         // 해당 기물 렌더X
         auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
 
-        pPiece->SetDead();
+        pPiece->SetDead(disappearDisolveDuration);
 
         for (uint32_t subId : pieceInfo.subIds)
         {
             auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
             if (pSubPiece != nullptr)
-                pSubPiece->SetDead();
+                pSubPiece->SetDead(disappearDisolveDuration);
         }
 
         // 해당 타일 정보 초기화

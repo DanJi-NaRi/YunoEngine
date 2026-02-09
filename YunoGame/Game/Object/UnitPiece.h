@@ -1,8 +1,8 @@
 #pragma once
-#include "AnimationUnit.h"
+#include "AnimTest.h"
 #include "PieceHelper.h"
 
-class UnitPiece : public AnimationUnit
+class UnitPiece : public AnimTest
 {
 public:
     explicit UnitPiece();
@@ -26,15 +26,18 @@ private:
     void UpdateFlash(float dt);
     void UpdateAttack(float dt);
     void UpdateHit(float dt);
+    void UpdateDissolve(float dt);
 
 public:
     void InsertQ(PGridCmd targetPos);
     void SetWho(GamePiece type);
     void SetDir(Direction dir, bool isAnim = true, float speed = 2.f);
+    void SetDead(float disappearDisolveDuration);
     void SetFlashColor(Float4 color, int count, float blinkTime);
+    void AppearDissolve(float dissolveTime);
+    void DisappearDissolve(float dissolveTime);
     void PlayAttack();
     void PlayHit(Float4 color, int count, float blinkTime);
-    void SetDead();
 
     void SetTmpColor(Float4 color);
 private:
@@ -43,10 +46,20 @@ private:
     void ClearQ();
 
     Float4 GetLerpColor(float dt);
-    float Graph(float x);
+    float QuadraticGraph(float x);
+    float linearGraph(float x);
 
 private:
     bool m_AnimDone = false;
+
+    // 그래프
+    float m_linearSlope = 0.f;
+
+    // 디졸브
+    bool isDissolving = false;
+    float m_dissolveTime = 0.f;
+    float m_dissolveDuration = 0.f;
+    float m_startDissolveAmount = 0.f;
 
     // 공격
     bool isAttacking = false;
