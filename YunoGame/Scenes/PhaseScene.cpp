@@ -45,8 +45,10 @@ bool PhaseScene::OnCreateScene()
 
     CreateWidget<CardConfirmPanel>(L"CardConformPanel", Float2(1566, 578), XMFLOAT3(0, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftBottom);
     
+    CreateWidget<Minimap>(L"CardConformPanel", Float2(730, 616), XMFLOAT3(clientX*0.5f, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::Bottom);
+    
     //std::cout << clientX << " : " << clientY << std::endl;
-    CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(1513, 578), XMFLOAT3(clientX - 100, clientY - 50, 0), XMFLOAT3(1, 1, 1),  UIDirection::RightBottom);
+    CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(1513, 578), XMFLOAT3(clientX, clientY, 0), XMFLOAT3(1, 1, 1),  UIDirection::RightBottom);
 
 
 
@@ -67,12 +69,16 @@ bool PhaseScene::OnCreateScene()
 
     //m_objectManager->CreateWidget<Image>(L"tst", XMFLOAT3(0, 0, 0));
 
+
+
     auto* a = CreateWidget<Letterbox>(L"LetterBoxA", Float2(50, 50), XMFLOAT3(0, 0, 0) );
     a->SetRole(Letterbox::Role::BarA);
     auto* b = CreateWidget<Letterbox>(L"LetterBoxB", Float2(50, 50), XMFLOAT3(0, 0, 0));
     b->SetRole(Letterbox::Role::BarB);
     //m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
     //m_minimap->CreateObject(1000, 900, 0);
+
+    m_uiManager->AllParentsSetScale(0.5f); // 일괄 사이즈 조정
 
     return true;
 }

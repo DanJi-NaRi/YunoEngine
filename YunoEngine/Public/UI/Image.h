@@ -15,10 +15,10 @@ class Image : public Widget {
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::Image; }
+
 private:
 
     bool CreateMesh() override;      // 메시 생성 (한 번만)
-
     bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
     //void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 };

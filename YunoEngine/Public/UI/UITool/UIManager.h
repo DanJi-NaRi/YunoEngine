@@ -106,9 +106,16 @@ public:
 
     std::vector<WidgetDesc> BuildWidgetDesc();
     void ApplyWidgetFromDesc(const std::vector<WidgetDesc>& wds);
+
+    void AllParentsSetScale(Float3 scale); // 모든 부모 SetScale
+    void AllParentsSetScale(float scale);
+
 private:
+
     void CheckDedicateWidgetName(std::wstring& name);
 
+
+   
 
     // 프레임 상수버퍼 관리
 private:

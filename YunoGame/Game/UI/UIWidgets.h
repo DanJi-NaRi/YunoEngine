@@ -14,6 +14,12 @@ Gauge, // ProgressBar의 확정 자식
 
 
 //////////////////////////////
+// 디버그용 클래스
+#include "WidgetGridLine.h" // 디버그 그리드 생성
+
+//////////////////////////////
+
+//////////////////////////////
 // Image 클래스
 #include "Image.h"
 
@@ -26,6 +32,7 @@ Gauge, // ProgressBar의 확정 자식
 #include "PlayerIcon.h"
 #include "TitleImage.h"
 #include "Emoji.h"
+#include "Minimap.h"
 //////////////////////////////
 
 

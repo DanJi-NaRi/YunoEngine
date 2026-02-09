@@ -492,6 +492,33 @@ void UIManager::CheckDedicateWidgetName(std::wstring & name)
         name += std::to_wstring(count);
 }
 
+void UIManager::AllParentsSetScale(float scale)
+{
+    if (m_pendingCreateQ.empty()) return;
+
+    // Transform 업데이트 - 루트만
+    for (auto& widget : m_pendingCreateQ) {
+        if (widget.get()->GetWidgetClass() == WidgetClass::LetterBox) continue;
+            
+        if (widget->GetIsRoot()) widget->SetScale(XMFLOAT3(scale, scale, scale));
+    }
+            
+}
+
+
+void UIManager::AllParentsSetScale(Float3 scale)
+{
+    if (m_pendingCreateQ.empty()) return;
+
+    // Transform 업데이트 - 루트만
+    for (auto& widget : m_pendingCreateQ) {
+        if (widget.get()->GetWidgetClass() == WidgetClass::LetterBox) continue;
+
+        if (widget->GetIsRoot()) widget->SetScale(scale.ToXM());
+    }
+}
+
+
 void UIManager::FrameDataUpdate()
 {
 
@@ -505,3 +532,4 @@ void UIManager::FrameDataSubmit()
 
     renderer->BindConstantBuffers_Camera(dirData);
 }
+

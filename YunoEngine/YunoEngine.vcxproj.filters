@@ -137,6 +137,9 @@
     <Filter Include="Shaders\UI">
       <UniqueIdentifier>{311bdcd1-2fb9-465e-a36d-096cc06a11c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\UI\UtilWIdget">
+      <UniqueIdentifier>{58b29e9d-f497-41cc-8819-8f7f0b3bf9e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -287,6 +290,7 @@
     <ClCompile Include="Public\Object\EffectUnit.cpp">
       <Filter>Public\Object\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Private\UI\WidgetGridLine.cpp" />
   </ItemGroup>
   <!-- ===== Header files ===== -->
   <ItemGroup>
@@ -506,6 +510,7 @@
     <ClInclude Include="Public\Object\EffectUnit.h">
       <Filter>Public\Object\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="Public\UI\WidgetGridLine.h" />
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
   <ItemGroup>

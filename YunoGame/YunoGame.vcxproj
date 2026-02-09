@@ -191,6 +191,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CardConfirmArea.cpp" />
+    <ClCompile Include="Game\UI\WidgetGridLine.cpp" />
     <ClCompile Include="Minimap.cpp" />
     <ClCompile Include="PlayerIcon.cpp" />
     <ClCompile Include="Emoji.cpp" />
@@ -269,14 +270,12 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="Game\Object\UnitGridSystem.cpp" />
     <ClCompile Include="Game\Object\UnitPiece.cpp" />
     <ClCompile Include="Game\Object\UnitTile.cpp" />
-    <ClCompile Include="Game\UI\WidgetGridBox.cpp" />
-    <ClCompile Include="Game\UI\WidgetGridLine.cpp" />
-    <ClCompile Include="Game\UI\WidgetGridSystem.cpp" />
     <ClCompile Include="Game\UI\WidgetPiece.cpp" />
     <ClCompile Include="Game\UI\WidgetTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CardConfirmArea.h" />
+    <ClInclude Include="Game\UI\WidgetGridLine.h" />
     <ClInclude Include="Minimap.h" />
     <ClInclude Include="PlayerIcon.h" />
     <ClInclude Include="Emoji.h" />
@@ -359,9 +358,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\Object\UnitPiece.h" />
     <ClInclude Include="Game\Object\UnitTile.h" />
     <ClInclude Include="System\WeaponSelectScene_InputContext.h" />
-    <ClInclude Include="Game\UI\WidgetGridBox.h" />
-    <ClInclude Include="Game\UI\WidgetGridLine.h" />
-    <ClInclude Include="Game\UI\WidgetGridSystem.h" />
     <ClInclude Include="Game\UI\WidgetPiece.h" />
     <ClInclude Include="Game\UI\WidgetTile.h" />
     <ClInclude Include="TitleScene_InputContext.h" />
