@@ -324,6 +324,7 @@
     <ClCompile Include="CountdownScene.cpp">
       <Filter>Scenes\4.CountDown</Filter>
     </ClCompile>
+    <ClCompile Include="WeaponNameImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -536,7 +537,7 @@
     <ClInclude Include="CountdownScene.h">
       <Filter>Scenes\4.CountDown</Filter>
     </ClInclude>
-
+    <ClInclude Include="WeaponNameImage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

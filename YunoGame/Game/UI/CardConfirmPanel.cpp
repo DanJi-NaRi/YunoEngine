@@ -85,7 +85,8 @@ void CardConfirmPanel::CreateChild() {
     m_cardConfirmButton = m_uiFactory.CreateChild<CardConfirmButton>(m_name + L"_CardConfirmButton", Float2(367, 69), XMFLOAT3(0, -100, 0), UIDirection::LeftTop, this);
     
     m_cardCancelButton = m_uiFactory.CreateChild<CardCancelButton>(m_name + L"_CardCancelButton", Float2(367, 69), XMFLOAT3(700, -100, 0), UIDirection::LeftTop, this);
-    for (auto* slot : m_setCardSlots) m_cardCancelButton->AddSlot(slot);
+    m_cardCancelButton->SetEventLMB([this]() { this->ClearSlot(); });
+
 }
 
 bool CardConfirmPanel::Update(float dTime)

@@ -360,8 +360,18 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
 
         switch (state) {
         case ButtonState::Pressed:  
-            if(mouseButton == 0) Btn->LMBPressedEvent();
-            else if(mouseButton == 1) Btn->RMBPressedEvent();
+            if (mouseButton == 0) {
+                const auto& event = Btn->GetEventLMB();
+                if (event) event(); // 등록해둔 함수가 있으면 함수 실행
+
+                Btn->LMBPressedEvent();
+            }
+            else if (mouseButton == 1) {
+                const auto& event = Btn->GetEventRMB();
+                if (event) event(); // 등록해둔 함수가 있으면 함수 실행
+
+                Btn->RMBPressedEvent();
+            }
             return true;
         case ButtonState::Down:     
             Btn->DownEvent();     

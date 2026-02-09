@@ -3,7 +3,7 @@
 
 class Card;
 class CardSlot;
-
+class WeaponNameImage;
 
 class CardSelectionPanel : public Image
 {
@@ -30,8 +30,8 @@ protected:
     // 세팅된 카드 / 스냅 위치 정보
     std::vector<Card*> m_Cards;                   // 꺼내갈 카드
     std::vector<CardSlot*> m_CardSlots;          // 카드 세팅할 슬롯 위젯
-
-
+    
+    WeaponNameImage* m_pWeaponIMG = nullptr;
     //std::unique_ptr<Minimap> m_miniMap;           // 미니맵 // 스폰 포지션 따로 받기?
 };
 

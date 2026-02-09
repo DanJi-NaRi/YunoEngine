@@ -77,11 +77,11 @@ bool CardCancelButton::HoveredEvent()
 bool CardCancelButton::LMBPressedEvent()
 {
     //std::cout << "(LMB)CardCancelButton Pressed" << std::endl;
-    if (!m_slots.empty()) {
-        for (auto* slot : m_slots) {
-            slot->CleanSetup();
-        }
-    }
+    //if (!m_slots.empty()) {
+    //    for (auto* slot : m_slots) {
+    //        slot->CleanSetup();
+    //    }
+    //}
     return true;
 }
 
