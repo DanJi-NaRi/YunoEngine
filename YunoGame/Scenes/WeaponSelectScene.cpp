@@ -41,7 +41,7 @@ bool WeaponSelectScene::OnCreateScene()
     m_pWeaponNameImage = CreateWidget<TextureImage>(L"WeaponName", L"../Assets/UI/WEAPON_SELECT/Weapon_name_select.png", XMFLOAT3(ClientW / 2, 255, 0), UIDirection::Center);
     //m_pWeaponCardImage = CreateWidget<TextureImage>(L"WeaponCard", L"../Assets/UI/CARD/Card_back.png", XMFLOAT3(ClientW / 2, 400, 0), UIDirection::Center);
     
-    m_showCardDeck = CreateWidget<ShowCardDeck>(L"ShowCardDeck", Float2(0.f, 0.f), XMFLOAT3(0.f, 0.f, 0.f));
+
 
 
     m_pUserImage0 = CreateWidget<TextureImage>(L"S1", L"../Assets/UI/WEAPON_SELECT/Before_select_1.png", XMFLOAT3(0, 200, 0));
@@ -59,7 +59,7 @@ bool WeaponSelectScene::OnCreateScene()
     m_pWeaponImage2->SetScale(XMFLOAT3(0.f, 0.f, 1.f));
     m_pWeaponImage3->SetScale(XMFLOAT3(0.f, 0.f, 1.f));
 
-
+    m_showCardDeck = CreateWidget<ShowCardDeck>(L"ShowCardDeck", Float2(0.f, 0.f), XMFLOAT3(0.f, 0.f, 0.f));
 
     m_PWeaponBtn_Blaster = CreateWidget<WeaponButton>(L"W1Btn", Float2(287, 490), XMFLOAT3(574, 925, 0), UIDirection::Bottom);
     dynamic_cast<WeaponButton*>(m_PWeaponBtn_Blaster)->SetCursurTexture(L"../Assets/UI/WEAPON_SELECT/Info_BLASTER_mouseout.png", L"../Assets/UI/WEAPON_SELECT/Info_BLASTER_mouseover.png");

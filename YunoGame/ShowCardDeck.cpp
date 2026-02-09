@@ -116,7 +116,7 @@ void ShowCardDeck::SetWeaponCards(PieceType pieceType)
 
     if (m_pTooltipImage)
     {
-        m_pTooltipImage->ChangeTexture(L"../Assets/UI/TOOLTIP/tooltip" + lowerName + L"_1.png");
+        m_pTooltipImage->ChangeTexture(L"../Assets/UI/TOOLTIP/tooltip_" + lowerName + L"_1.png");
     }
 }
 
@@ -144,7 +144,7 @@ void ShowCardDeck::BuildCards()
             m_cardButtons[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
     }
 
-    m_pTooltipImage = m_uiFactory.CreateChild<TextureImage>(L"tooltip_blaster_1", Float2(360, 462), XMFLOAT3(0, 0, 0.f), UIDirection::Center, this);
+    m_pTooltipImage = m_uiFactory.CreateChild<TextureImage>(L"tooltip_blaster_1", Float2(360, 462), XMFLOAT3(500, 500, 0.f), UIDirection::Center, this);
     if (m_pTooltipImage)
     {
         m_pTooltipImage->ChangeTexture(L"../Assets/UI/TOOLTIP/tooltip_blaster_1.png");
