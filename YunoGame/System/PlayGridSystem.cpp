@@ -1197,7 +1197,6 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
         std::cout
             << "  [Trigger] unit[" << i << "]"
             << " hp " << int(prev.hp) << "->" << int(cur.hp)
-            << " stamina " << int(prev.stamina) << "->" << int(cur.stamina)
             << " tile " << int(prev.targetTileID) << "->" << int(cur.targetTileID)
             << "\n";
 
@@ -1207,7 +1206,7 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
             continue;
 
         // 장애물 발동해서 피 깎였으면 여기서 색 바꿔줌
-        if (prev.hp != cur.hp || prev.stamina != cur.stamina)
+        if (prev.hp != cur.hp)
         {
             auto* pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceIt->second.id));
             if (pPiece)
