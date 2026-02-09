@@ -28,6 +28,7 @@ protected:
     void OnDestroyScene() override;
 
     void HandleCountdownUI(float dt);
+    void ApplyCountDownUnits();
 private:
 
     //std::array<Widget*, 4> m_pUserImages;

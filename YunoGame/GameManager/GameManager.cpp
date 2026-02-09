@@ -493,6 +493,23 @@ int GameManager::GetCountdownNumber() const
     return static_cast<int>(std::ceil(m_countdownRemaining));
 }
 
+int GameManager::GetCountDownSlotUnitId(int slotIndex, int unitIndex) const
+{
+    if (unitIndex < 0 || unitIndex > 1)
+        return 0;
+
+    switch (slotIndex)
+    {
+    case 1:
+        return (unitIndex == 0) ? m_S1U1 : m_S1U2;
+    case 2:
+        return (unitIndex == 0) ? m_S2U1 : m_S2U2;
+    default:
+        return 0;
+    }
+}
+
+
 void GameManager::StartCountDown(int countTime, int S1U1, int S1U2, int S2U1, int S2U2)
 {
     if (m_state == CurrentSceneState::CountDown)
