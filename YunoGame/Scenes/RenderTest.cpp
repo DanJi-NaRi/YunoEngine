@@ -96,7 +96,7 @@ bool RenderTest::OnCreateScene()
 
     axe = m_objectManager->CreateObjectFromFile<AnimTest>(L"axe", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Impactor/Impactor.fbx");
     axe->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
-    axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
+    axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack2.fbx");
     //axe->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Untitled.fbx");
 
     chakram01 = m_objectManager->CreateObjectFromFile<AnimTest>(L"chakram01", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
@@ -260,6 +260,7 @@ bool RenderTest::OnCreateScene()
     ed.rot = { XM_PIDIV2, 0, 0 };
     m_effectManager->RegisterEffect(ed);
 
+    ed.isLoop = true;
     ed.id = EffectID::DrillAttack1;
     ed.framecount = 30;
     ed.lifetime = 1.2f;
@@ -271,6 +272,7 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Drill/EF_Drill.png";
     m_effectManager->RegisterEffect(ed);
 
+    ed.isLoop = false;
     ed.id = EffectID::Buff;
     ed.framecount = 25;
     ed.lifetime = 1.2f;
