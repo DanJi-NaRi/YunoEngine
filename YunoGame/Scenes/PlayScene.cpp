@@ -44,6 +44,7 @@ bool PlayScene::OnCreateScene()
     }
 
     PassOption po;
+    po.shader = ShaderId::NoneShadowPBRBase;
 
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
     map->SetRot({ 0, XM_PIDIV2, 0 });
@@ -72,7 +73,7 @@ bool PlayScene::OnCreateScene()
     ed.cols = 5;
     ed.rows = 5;
     ed.texPath = L"../Assets/Effects/Warning/EF_WARNING_2.png";
-    for (auto i = 0; i < 4; i++)
+    for (auto i = 0; i < 5; i++)
     {
         auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_2", XMFLOAT3(0, 1, 0));
         warning->BuildInternalEffectMaterial(ed);
@@ -91,7 +92,7 @@ bool PlayScene::OnCreateScene()
         Holo2->SetRot({ -XM_PIDIV2, 0, 0 });
     }
 
-    for (auto i = 0; i < 8; i++)
+    for (auto i = 0; i < 10; i++)
     {
         auto Holo3 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_03_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_3/VS.fbx", po);
     }

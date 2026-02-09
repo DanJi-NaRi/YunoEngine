@@ -117,6 +117,7 @@ bool YunoRenderer::CreateShaders()
     // 여기서 쉐이더들 초기화 쭉 하면 됨
     if (!LoadShader(ShaderId::Basic, "../Assets/Shaders/BasicColor.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PBRBase, "../Assets/Shaders/PBR_Base.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::NoneShadowPBRBase, "../Assets/Shaders/NoneShadowPBR_Base.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PBR_AniDissolve, "../Assets/Shaders/PBR_Animation_Dissolve.hlsl", "VSMain", "PSMain")) return false;
@@ -764,6 +765,7 @@ bool YunoRenderer::CreatePPShader()
     if (!LoadShader(ShaderId::PP_BlurH, "../Assets/Shaders/PP_BlurHorizon.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PP_BlurV, "../Assets/Shaders/PP_BlurVertical.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PP_Combine, "../Assets/Shaders/PP_Combine.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShader(ShaderId::PP_ColorGrading, "../Assets/Shaders/PP_ColorGrading.hlsl", "VSMain", "PSMain")) return false;
     if (!LoadShader(ShaderId::PP_ToneMap, "../Assets/Shaders/PP_ToneMap.hlsl", "VSMain", "PSMain")) return false;
 
     return true;
@@ -835,6 +837,18 @@ bool YunoRenderer::CreatePPMaterial()
     else
         return false;
 
+    //ColorGrading
+    md.passKey.vs = ShaderId::PP_ColorGrading;
+    md.passKey.ps = ShaderId::PP_ColorGrading;
+    h = CreateMaterial(md);
+    if (h)
+    {
+        m_PPMaterials.emplace(PostProcessFlag::ColorGrading, h);
+        m_ppColorGradingMat = h;
+    }
+    else
+        return false;
+
     //ToneMapping
     md.passKey.vs = ShaderId::PP_ToneMap;
     md.passKey.ps = ShaderId::PP_ToneMap;
@@ -860,7 +874,8 @@ void YunoRenderer::SetPP_Pass()
     if (m_PPFlag == 0)
     {
         m_PPFlag = PostProcessFlag::Default
-                            | PostProcessFlag::Bloom;
+                            | PostProcessFlag::Bloom
+                            | PostProcessFlag::ColorGrading;
     }
 
     m_ppChain.clear();
@@ -902,6 +917,8 @@ void YunoRenderer::PostProcess()
     auto input = PostProcessScene();
     if(m_PPFlag & PostProcessFlag::Bloom)
         input = PostProcessBloom(input);
+    if (m_PPFlag & PostProcessFlag::ColorGrading)
+        input = PostProcessColorGrading(input);
     PostProcessFinal(input);
 }
 
@@ -1129,6 +1146,38 @@ void YunoRenderer::BindBloomCombine(ID3D11ShaderResourceView* input)
     m_context->Draw(3, 0);
 }
 
+ID3D11ShaderResourceView* YunoRenderer::PostProcessColorGrading(ID3D11ShaderResourceView* input)
+{
+    if (m_ppColorGradingMat <= 0 || m_ppColorGradingMat > m_materials.size())
+        return input;
+
+    auto& dst = NextPostRT();
+    UnBindAllSRV();
+    BindRT(dst.rtv.Get());
+    SetViewPort();
+
+    const YunoMaterial& material = m_materials[m_ppColorGradingMat - 1];
+    RenderPassHandle passHandle = material.pass;
+    if (passHandle == 0 || passHandle > m_passes.size())
+        return input;
+
+    CBPostProcess cbpp{};
+    cbpp.colorSaturation = m_ColorSaturation;
+    cbpp.colorContrast = m_ColorContrast;
+    cbpp.colorGamma = m_ColorGamma;
+    cbpp.temperature = static_cast<float>(m_Temparature);
+    cbpp.tint = m_TInt;
+    m_ppCB.Update(m_context.Get(), cbpp);
+    auto cb = m_ppCB.Get();
+    m_context->PSSetConstantBuffers(0, 1, &cb);
+
+    m_passes[passHandle - 1]->Bind(m_context.Get());
+    m_context->PSSetShaderResources(0, 1, &input);
+    m_context->Draw(3, 0);
+
+    m_postIndex++;
+    return dst.srv.Get();
+}
 
 void YunoRenderer::PostProcessFinal(ID3D11ShaderResourceView* input)
 {
@@ -1148,6 +1197,9 @@ void YunoRenderer::PostProcessFinal(ID3D11ShaderResourceView* input)
 
     CBPostProcess cbpp{};
     cbpp.exposure = m_Exposure;
+    cbpp.colorSaturation = m_ColorSaturation;
+    cbpp.colorContrast = m_ColorContrast;
+    cbpp.colorGamma = m_ColorGamma;
     m_ppCB.Update(m_context.Get(), cbpp);
     auto cb = m_ppCB.Get();
     m_context->PSSetConstantBuffers(0, 1, &cb);
@@ -2026,13 +2078,16 @@ std::pair<int, int> YunoRenderer::GetTextureSize(TextureHandle handle) const
 
 void YunoRenderer::SetPostProcessOption(const PostProcessDesc& opt)
 {
-    if(m_PPFlag = 0)
+    if(m_PPFlag == 0)
         m_PPFlag = PostProcessFlag::Default;
     m_PPFlag |= opt.ppFlag;
 
     m_Threshold = opt.threshold;
     m_BloomIntensity = opt.bloomIntensity;
     m_Exposure = opt.exposure;
+    m_ColorSaturation = opt.colorSaturation;
+    m_ColorContrast = opt.colorContrast;
+    m_ColorGamma = opt.colorGamma;
 
     SetPP_Pass();
 }
@@ -2044,6 +2099,9 @@ PostProcessDesc YunoRenderer::GetPostProcessOption()
     pd.bloomIntensity = m_BloomIntensity;
     pd.exposure = m_Exposure;
     pd.ppFlag = m_PPFlag;
+    pd.colorSaturation = m_ColorSaturation;
+    pd.colorContrast = m_ColorContrast;
+    pd.colorGamma = m_ColorGamma;
 
     return pd;
 }
@@ -2051,6 +2109,9 @@ PostProcessDesc YunoRenderer::GetPostProcessOption()
 void YunoRenderer::ResetPostProcessOption()
 {
     m_PPFlag = PostProcessFlag::Default;
+    m_ColorSaturation = 1.0f;
+    m_ColorContrast = 1.0f;
+    m_ColorGamma = 1.0f;
 
     SetPP_Pass();
 }
@@ -2963,6 +3024,15 @@ void YunoRenderer::RegisterDrawUI()
             {
                 UI::DragFloatEditable("Threshold", &m_Threshold, 0.001f, 0.0f, 5.0f);
                 UI::DragFloatEditable("BloomIntensity", &m_BloomIntensity, 0.001f, 0.0f, 5.0f);
+            }
+
+            if (UI::CollapsingHeader("ColorGrading"))
+            {
+                UI::DragFloatEditable("Saturation", &m_ColorSaturation, 0.001f, 0.0f, 3.0f);
+                UI::DragFloatEditable("Contrast", &m_ColorContrast, 0.001f, 0.0f, 3.0f);
+                UI::DragFloatEditable("Gamma", &m_ColorGamma, 0.001f, 0.1f, 3.0f);
+                UI::DragIntEditable("Temparature", &m_Temparature, 10, 2000, 10000);
+                UI::DragFloatEditable("TINT", &m_TInt, 0.001f, -1.0f, 1.0f);
             }
 
             if (UI::CollapsingHeader("ToneMapping"))

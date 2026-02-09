@@ -82,6 +82,7 @@ bool RenderTest::OnCreateScene()
     //sheet->SetSpriteSheet(L"../Assets/Textures/white.png", 1, 1, 1, 24.f, true);
 
     PassOption po;
+    po.shader = ShaderId::NoneShadowPBRBase;
 
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
     map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));

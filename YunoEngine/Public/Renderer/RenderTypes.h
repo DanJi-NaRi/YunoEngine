@@ -175,6 +175,7 @@ enum class ShaderId : uint8_t
 {
     Basic = 0,
     PBRBase,
+    NoneShadowPBRBase,
     BasicAnimation,
     PBRAnimation,
     Unlit,
@@ -199,6 +200,7 @@ enum class ShaderId : uint8_t
     PP_BlurV, 
     PP_Combine, 
     PP_ToneMap, 
+    PP_ColorGrading,
 
     //Debug
     DebugGrid,
