@@ -168,6 +168,10 @@ bool UnitPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
     // 오브젝트 처음에는 안보이게 설정
     m_dissolveAmount = 1.f;
+    for (auto& mesh : m_Meshs)
+    {
+        mesh->SetDissolveAmount(m_dissolveAmount);
+    }
 
     //if (!m_pInput || !m_pRenderer || !m_pTextures)
     //    return false;
@@ -273,18 +277,18 @@ bool UnitPiece::CreateMaterial()
 
 bool UnitPiece::CheckDead(float dt)
 {
-    if (isDead && m_deadTime != -1)
+    if (!isDead && isHitting)  return false; // 
+
+    if (m_animator)
     {
-        m_deadTime += dt;
-        if (m_deadTime >= m_deathDelay)
+        bool isPlaying = m_animator->isPlaying();
+        if (!isPlaying)
         {
+            // 죽는 애니메이션 끝나면 system에게 기물을 지우도록 함.
             PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
-            m_deadTime = -1;
         }
-        return true;
     }
-    else
-        return false;
+        return true;
 }
 
 void UnitPiece::CheckMyQ()
@@ -369,7 +373,7 @@ void UnitPiece::UpdateMove(float dt)
         if (m_animator)
         {
             UINT currentFrame = m_animator->GetCurFrame();
-            if (currentFrame >= 28) // 일단 낫일 경우에는
+            if (currentFrame >= 28) // 일단 낫일 경우 기준
             {
                 m_animator->Change("idle");
                 m_animator->SetLoop("idle", true);      // 여기서 터지면 idle 애니메이션이 없는 것임으로 생성단계에 클립을 넣어야함!
@@ -433,15 +437,21 @@ void UnitPiece::UpdateHit(float dt)
 {
     if (!isHitting)  return;
 
-    // 일단 종료 조건문을 isFlashing으로 설정. 피격 애니메이션 들어오면 바꾸기.
-    if(isFlashing)  return;
-     
-    // 피격 애니메이션 끝나면 system에게 기물 생사여부 체크하도록 함.
-    PGridCmd cmd{ CommandType::Hit };
-    cmd.hit.whichPiece = GamePiece::None;
-    m_Q.push(cmd);
+    if (m_animator)
+    {
+        bool isPlaying = m_animator->isPlaying();
+        if (!isPlaying)
+        {
+            m_animator->Change("idle");
+            m_animator->SetLoop("idle", true);
+            isHitting = false;
 
-    isHitting = false;
+            // 피격 애니메이션 끝나면 system에게 기물 생사여부 체크하도록 함.
+            PGridCmd cmd{ CommandType::Hit };
+            cmd.hit.whichPiece = GamePiece::None;
+            m_Q.push(cmd);
+        }
+    }
 }
 
 void UnitPiece::UpdateDissolve(float dt)
@@ -459,6 +469,11 @@ void UnitPiece::UpdateDissolve(float dt)
     else
     {
         m_dissolveAmount = m_startDissolveAmount + linearGraph(m_dissolveTime);
+    }
+
+    for (auto& mesh : m_Meshs)
+    {
+        mesh->SetDissolveAmount(m_dissolveAmount);
     }
 }
 
@@ -558,9 +573,12 @@ void UnitPiece::PlayAttack()
 
 void UnitPiece::PlayHit(Float4 color, int count, float blinkTime)
 {
+    //SetFlashColor(color, count, blinkTime);
+    if (m_animator == nullptr) return;
+    bool isChanged = m_animator->Change("hit");
+    if (!isChanged) return;
+    m_animator->SetLoop("hit", false);
     isHitting = true;
-
-    SetFlashColor(color, count, blinkTime);
 }
 
 
@@ -588,10 +606,17 @@ void UnitPiece::SetTarget(XMFLOAT3 targetPos, float speed)
 }
 
 
-void UnitPiece::SetDead(float disappearDisolveDuration)
+void UnitPiece::PlayDead(float disappearDisolveDuration)
 {
     isDead = true;
+
     DisappearDissolve(disappearDisolveDuration);
+
+    if (m_animator == nullptr) return;
+    bool isChanged = m_animator->Change("dead");
+    if (!isChanged) return;
+    m_animator->SetLoop("dead", false);
+    isHitting = true;
 }
 
 void UnitPiece::SetTmpColor(Float4 color)

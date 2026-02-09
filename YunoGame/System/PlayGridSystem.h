@@ -234,16 +234,17 @@ private:
 
     float triggerDuration = 5.f;
     float warnDuration = 5.f;
+
+        // 기물 디졸브
+    float appearDisolveDuration = 1.5f;
+    float disappearDisolveDuration = 1.25f;
     
         // 패킷. 일단 하드코딩..서버랑 맞춰야해ㅠㅠㅠ
-    float pktOffset = 0.5f;
+    float pktOffset = disappearDisolveDuration;
     float attackPktTime = attackAndMoveDuration + pktOffset;
     float utilityPktTime = moveDuration + attackAndMoveDuration + buffDuration + pktOffset;
     float obstaclePktDuration = triggerDuration + warnDuration + pktOffset;
 
-        // 기물 디졸브
-    float appearDisolveDuration = 10.f;
-    float disappearDisolveDuration = 4.f;
     
     // 공격 처리
     bool m_attackActive = false;

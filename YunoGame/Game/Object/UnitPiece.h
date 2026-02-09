@@ -32,12 +32,12 @@ public:
     void InsertQ(PGridCmd targetPos);
     void SetWho(GamePiece type);
     void SetDir(Direction dir, bool isAnim = true, float speed = 2.f);
-    void SetDead(float disappearDisolveDuration);
     void SetFlashColor(Float4 color, int count, float blinkTime);
     void AppearDissolve(float dissolveTime);
     void DisappearDissolve(float dissolveTime);
     void PlayAttack();
     void PlayHit(Float4 color, int count, float blinkTime);
+    void PlayDead(float disappearDisolveDuration);
 
     void SetTmpColor(Float4 color);
 private:
@@ -97,8 +97,6 @@ private:
 
     // 죽음 체크
     bool isDead = false;
-    float m_deadTime = 0.f;
-    float m_deathDelay = 1.f;
 
     GamePiece m_who = GamePiece::None;
 

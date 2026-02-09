@@ -111,8 +111,8 @@ void PlayGridSystem::CreateObject(float x, float y, float z)
 
     // 그리드 생성 시, factory 초기화 필요
     // 복수 그리드 생성 시 해당 그리드 정보로 factory 초기화 후, [x y z] 간격 설정하여 CreateGridLine() 호출해주기
-    m_gridFactory->Init(m_grids[(int)m_nowG]->m_row, m_grids[(int)m_nowG]->m_column);
-    CreateGridLine(x, y, z);
+    //m_gridFactory->Init(m_grids[(int)m_nowG]->m_row, m_grids[(int)m_nowG]->m_column);
+    //CreateGridLine(x, y, z);
 
     CreateTileAndPiece(x, y, z);
 }
@@ -202,8 +202,11 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram1->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
          pChakram1->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_01.fbx");
          pChakram1->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Chakram_move_01.fbx");
+         pChakram1->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Chakram_dead_01.fbx");
+         pChakram1->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Chakram_hit_01.fbx");
          pChakram1->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pChakram1->SetDissolveColor(XMFLOAT3(1, 1, 1));
+         pChakram1->AppearDissolve(appearDisolveDuration);
 
          pPiece->Attach(pChakram1);
 
@@ -212,8 +215,11 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram2->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
          pChakram2->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_02.fbx");
          pChakram2->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Chakram_move_02.fbx");
+         pChakram2->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Chakram_dead_02.fbx");
+         pChakram2->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Chakram_hit_02.fbx");
          pChakram2->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pChakram2->SetDissolveColor(XMFLOAT3(1, 1, 1));
+         pChakram2->AppearDissolve(appearDisolveDuration);
 
          pPiece->Attach(pChakram2);
 
@@ -244,6 +250,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Blaster_move.fbx");
+         pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Blaster_dead.fbx");
+         pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Blaster_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
 
@@ -252,6 +260,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Breacher_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Breacher_attack.fbx");
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Breacher_move.fbx");
+         pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Breacher_dead.fbx");
+         pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Breacher_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
@@ -259,14 +269,17 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/scythe_attack.fbx");
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
+         pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Scythe_dead.fbx");
+         pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Scythe_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
      case 5:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Impactor_move.fbx");
-         // 본이름에 문제잇는 듯 현승아 봐주라~!
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
+         pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Impactor_dead.fbx");
+         pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Impactor_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
@@ -274,9 +287,10 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Cleaver_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Cleaver_attack.fbx");
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Cleaver_move.fbx");
+         pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Cleaver_dead.fbx");
+         pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Cleaver_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
-
          break;
      }
      pPiece->SetWho(gp);
@@ -284,11 +298,6 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
 
      // 디졸브 나타남
      pPiece->AppearDissolve(appearDisolveDuration);
-     for (auto& subID : pieceInfo.subIds)
-     {
-         auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subID));
-         pSub->AppearDissolve(appearDisolveDuration);
-     }
 
      // 기물 정보 등록
      m_pieces.emplace(gp, pieceInfo);
@@ -401,7 +410,7 @@ void PlayGridSystem::CheckPacket(float dt)
     }
 
     // 장애물까지 발동하고 CheckOver
-    if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing)
+    if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing && !isRoundOver)
     {
         const auto obstaclePkt = mng.PopObstaclePacket();
         m_pktTime = obstaclePktDuration;
@@ -720,6 +729,9 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
         {
             auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
             pTile->PlayTrigger(os.attackType, os.hitColor, os.hitFlashCount, os.hitFlashInterval);
+            auto [cx, cz] = GetCellByID(tileID);
+            if(os.attackType == ObstacleType::Collapse)
+                ChangeTileTO(cx, cz, TileOccupy{ TileOccuType::Collapesed, TileWho::None });
         }
 
         // 기물
@@ -1177,30 +1189,32 @@ void PlayGridSystem::CheckOver()
 {
     if (isRoundOver) return;
 
-    bool deadPlayer[2];
-    bool deadUnits[4];
-    memset(deadPlayer, false, sizeof(bool) * 2);
-    memset(deadUnits, false, sizeof(bool) * 4);
-
+    bool deadUnitsByPlayer[4]{}; // [P1-S1, P1-S2, P2-S1, P2-S2]
     for (int i = 0; i < 4; i++)
     {
-        if (m_UnitStates[i].hp == 0)
-            deadUnits[(int)i] = true;
+        deadUnitsByPlayer[i] = (m_UnitStates[i].hp == 0);
     }
 
-    // 팀 단위로 사망 판정 (Ally1/Ally2, Enemy1/Enemy2)
-    deadPlayer[0] = deadUnits[0] && deadUnits[1];
-    deadPlayer[1] = deadUnits[2] && deadUnits[3];
+    const bool myIsP1 = (m_pID == 1);
+
+    bool deadUnits[4]{}; // [Ally1, Ally2, Enemy1, Enemy2] (클라 로컬 관점)
+    deadUnits[(int)GamePiece::Ally1] = myIsP1 ? deadUnitsByPlayer[0] : deadUnitsByPlayer[2];
+    deadUnits[(int)GamePiece::Ally2] = myIsP1 ? deadUnitsByPlayer[1] : deadUnitsByPlayer[3];
+    deadUnits[(int)GamePiece::Enemy1] = myIsP1 ? deadUnitsByPlayer[2] : deadUnitsByPlayer[0];
+    deadUnits[(int)GamePiece::Enemy2] = myIsP1 ? deadUnitsByPlayer[3] : deadUnitsByPlayer[1];
+
+    const bool allyDead = deadUnits[(int)GamePiece::Ally1] && deadUnits[(int)GamePiece::Ally2];
+    const bool enemyDead = deadUnits[(int)GamePiece::Enemy1] && deadUnits[(int)GamePiece::Enemy2];
     
-    if (deadPlayer[0] && deadPlayer[1]) // 무승부
+    if (allyDead && enemyDead)          // 무승부
     {
         std::cout << "This Round Result : Draw\n";
     }
-    else if (deadPlayer[0])             // Lose
+    else if (allyDead)                  // Lose
     {
         std::cout << "This Round Result : Lose\n";
     }
-    else if (deadPlayer[1])              // Win
+    else if (enemyDead)                 // Win
     {
         std::cout << "This Round Result : Win\n";
     }
@@ -1209,19 +1223,24 @@ void PlayGridSystem::CheckOver()
 
     for (GamePiece i = GamePiece::Ally1; i < GamePiece::MAX; ++i)
     {
-        if (!deadUnits[(int)i])
+        if (deadUnits[(int)i]) continue;
+
+        auto it = m_pieces.find(i);
+        if (it == m_pieces.end()) continue;
+
+        auto& pieceinfo = it->second;
+        auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceinfo.id));
+        if (pPiece != nullptr)
         {
-            auto it = m_pieces.find(i);
-            if (it == m_pieces.end())    continue;
-            auto& pieceinfo = it->second;
-            auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceinfo.id));
-            // 일단 사라지게 하기 위해 dead로 처리
-            pPiece->SetDead(disappearDisolveDuration);  
-            for (auto sid : pieceinfo.subIds)
-            {
-                auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(sid));
-                pSub->SetDead(disappearDisolveDuration);
-            }
+            // 라운드 종료 시 남아있는 기물도 일괄 제거
+            pPiece->PlayDead(disappearDisolveDuration);
+        }
+
+        for (auto sid : pieceinfo.subIds)
+        {
+            auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(sid));
+            if (pSub != nullptr)
+                pSub->PlayDead(disappearDisolveDuration);
         }
     }
     isRoundOver = true;
@@ -1374,13 +1393,13 @@ void PlayGridSystem::CheckHealth(const UnitState& us, PieceInfo& pieceInfo)
         // 해당 기물 렌더X
         auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
 
-        pPiece->SetDead(disappearDisolveDuration);
+        pPiece->PlayDead(disappearDisolveDuration);
 
         for (uint32_t subId : pieceInfo.subIds)
         {
             auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
             if (pSubPiece != nullptr)
-                pSubPiece->SetDead(disappearDisolveDuration);
+                pSubPiece->PlayDead(disappearDisolveDuration);
         }
 
         // 해당 타일 정보 초기화
