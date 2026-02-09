@@ -44,6 +44,7 @@ namespace yuno::server
         void Broadcast(std::vector<std::uint8_t>&& bytes);
 
         std::shared_ptr<yuno::net::TcpSession> FindSession(std::uint64_t sessionId);
+        void OnDisconnected(std::uint64_t sessionId);
         // 핸들러 등록
     public:
         void RegisterMatchPacketHandler();

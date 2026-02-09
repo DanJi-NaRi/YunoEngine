@@ -51,6 +51,8 @@ namespace yuno::server
         bool SetReadyBySessionId(std::uint64_t sid, bool isReady);
 
         void InitBattleState();//battlestate 초기화
+
+        void ClearReadyAndUnits();
     private:
         std::array<MatchSlot, kMaxSlots> m_slots{};
     };

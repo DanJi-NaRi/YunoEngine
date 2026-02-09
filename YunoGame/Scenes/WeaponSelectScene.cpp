@@ -15,7 +15,6 @@
 //#include "Building.h"
 #include "UIWidgets.h"
 
-
 bool WeaponSelectScene::OnCreateScene()
 {
     //std::cout << "[WeaponSelectScene] OnCreate\n";

@@ -24,6 +24,7 @@ protected:
     bool OnCreateScene() override;
     void OnDestroyScene() override;
 
+    void HandleCountdownUI(float dt);
 private:
 
     //std::array<Widget*, 4> m_pUserImages;
@@ -39,6 +40,9 @@ private:
     Widget* m_PWeaponBtn_Chakram    = nullptr;
     Widget* m_PWeaponBtn_Scythe     = nullptr;
     Widget* m_PWeaponBtn_Cleaver    = nullptr;
+
+    UINT m_countdownWidgetID = 0;
+    int  m_lastCountdownNumber = -1;
 
     Widget* m_pReadyBtn = nullptr;
     SceneChangeButton* m_pExitBtn  = nullptr;

@@ -120,6 +120,9 @@ public:
     const CardEffectData* GetCardEffectData(uint32_t runtimeID);
     const RangeData* GetRangeData(uint32_t runtimeID);
 
+    bool IsCountdownActive() const;
+    bool IsCountdownFinished() const;
+    int    GetCountdownNumber() const;
 private:
     static GameManager* s_instance;
 
@@ -143,6 +146,7 @@ private:
     std::queue<PendingEmote> m_pendingEmotes;
 
     bool m_countdownActive = false;
+    bool m_countdownFinished = false;
     float m_countdownRemaining = 0.0f;
 
     int m_S1U1 = 0;
