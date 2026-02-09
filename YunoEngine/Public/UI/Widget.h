@@ -70,13 +70,14 @@ enum class WidgetClass : int {
     ReadyButton,
     ExitButton,
     WeaponButton,
-
+    
     //////////////////////////////
     // 카드 선택 페이즈 씬
     Card,
     CardSlot,
     CardTable, // 미사용
     Minimap,
+    MinimapTile,
 
     // 카드 컨펌
     CardConfirmPanel,
@@ -368,6 +369,7 @@ public:
     virtual bool CreateMesh();
 
     virtual bool CreateMaterial(std::wstring path, MaterialDesc* pDesc = nullptr);
+    virtual bool CreateMaterialDebug(std::wstring path, MaterialDesc* pDesc = nullptr);
 
     template <typename Path, typename... Paths>
     bool CreateMaterials(Path&& path, Paths&&... paths) // wstring_view 타입일 것

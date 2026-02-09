@@ -55,16 +55,28 @@ bool Grid::InBounds(int cx, int cz)
 
 /////
 
-GridXY::GridXY(int row, int column, float cellSizeX, float cellSizeZ)
+GridXY::GridXY(int row, int column, float cellSizeX, float cellSizeY)
 {
     row = row;
     column = column;
     halfCells.x = std::floorf(column / 2.f);
     halfCells.y = std::floorf(row / 2.f);
     cellSize.x = cellSizeX;
-    cellSize.y = cellSizeZ;
+    cellSize.y = cellSizeY;
     inv.x = 1.f / cellSizeX;
-    inv.y = 1.f / cellSizeZ;
+    inv.y = 1.f / cellSizeY;
+}
+
+void GridXY::SetGridXY(int row, int column, float cellSizeX, float cellSizeY)
+{
+    this->row = row;
+    this->col = column;
+    halfCells.x = std::floorf(column / 2.f);
+    halfCells.y = std::floorf(row / 2.f);
+    cellSize.x = cellSizeX;
+    cellSize.y = cellSizeY;
+    inv.x = 1.f / cellSizeX;
+    inv.y = 1.f / cellSizeY;
 }
 
 
@@ -94,5 +106,5 @@ Float2 GridXY::CellToWorld(int cx, int cy)
 
 bool GridXY::InBounds(int cx, int cy)
 {
-    return (0 <= cx && cx < column) && (0 <= cy && cy < row);
+    return (0 <= cx && cx < col) && (0 <= cy && cy < row);
 }

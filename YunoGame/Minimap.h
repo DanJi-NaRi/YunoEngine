@@ -4,6 +4,7 @@
 #include <memory>
 
 class GridFactory;
+class MinimapTile;
 
 //디버그
 class WidgetGridLine;
@@ -31,13 +32,7 @@ public:
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/window_popup_minimap.png"); };  // 머테리얼 생성
 protected:                             // 그리드 라인 오브젝트 생성
 
-    ///////////////////////////////////
-    // 좌표계
-    //Int2 WorldToCell(float x, float z);       // 월드(x, z) -> 셀 좌표
-    //Float2 CellToWorld(int cx, int cz);         // 셀 좌표 -> 월드 중심(x, z)
-    //Float2 CellToUIWorld(int cx, int cz);         // 셀 좌표 -> 월드 중심(x, z)
-    //bool InBounds(int cx, int cz);          // 해당 셀 좌표가 그리드 내부 좌표인지
-    ///////////////////////////////////
+    void GridSetup(); // 기본 그리드 셋업 (타일 생성 등..)
 
     int GetID(int cx, int cz);
     Int2 GetCellByID(int tileID);
@@ -45,8 +40,12 @@ protected:                             // 그리드 라인 오브젝트 생성
 protected:
     // Grid // 기준 : XY
     GridXY m_grid;
-
+    std::vector<MinimapTile*> m_pTiles;
     WidgetGridLine* m_pGridLine = nullptr;
+
+    //std::vector<TileState> m_tiles;                         // 타일 상태
+    //std::vector<uint32_t> m_tilesIDs;                       // 타일 오브젝트 아이디
+    //std::unordered_map<GamePiece, PieceInfo> m_pieces;      // 기물 정보
 
 
     //WidgetGridBox* m_gridBox = nullptr;

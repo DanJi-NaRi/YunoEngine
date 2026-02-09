@@ -157,6 +157,44 @@ bool Widget::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
     return true;
 }
 
+bool Widget::CreateMaterialDebug(std::wstring path, MaterialDesc* pDesc)
+{
+    m_Albedo = m_pTextures->LoadTexture2D(path.c_str());
+    m_texturePath = path;
+    m_texturePathBk = path;
+
+    //SetTextureSize(m_Albedo);
+
+    MaterialDesc md{};
+    if (pDesc) {
+        md = *pDesc;
+    }
+    else {
+        md.passKey.vs = ShaderId::UIDebug;
+        md.passKey.ps = ShaderId::UIDebug;
+        md.passKey.vertexFlags = VSF_Pos;
+
+        md.passKey.blend = BlendPreset::AlphaBlend;
+        md.passKey.raster = RasterPreset::CullNone;
+        md.passKey.depth = DepthPreset::Off;
+
+        md.albedo = m_Albedo;
+        //md.albedo = 0;
+        md.normal = 0;
+        md.orm = 0;
+
+        md.metal = 0;
+        md.rough = 0;
+        md.ao = 0;
+    }
+
+    // 첫번째 머테리얼 생성
+    m_defaultMaterial = m_pRenderer->CreateMaterial(md);
+    if (m_defaultMaterial == 0) return false;
+
+    return true;
+}
+
 //bool Widget::AddMaterial(const std::wstring& path, MaterialDesc& desc)
 //{
 //    MaterialDesc d = desc;
@@ -205,7 +243,7 @@ bool Widget::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOA
 
     //if (!CreateMesh())
     //    return false;
-    if (GetWidgetType() != WidgetType::Text)
+    if (GetWidgetType() != WidgetType::Text || GetWidgetClass() != WidgetClass::WidgetGridLine)
     {
         m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
         if (m_defaultMesh == 0)return false;

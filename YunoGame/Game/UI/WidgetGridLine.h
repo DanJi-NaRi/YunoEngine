@@ -18,8 +18,8 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Debug; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::WidgetGridLine; }
 
-    bool CreateMesh();      // 메시 생성 (한 번만)
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L""); };    // 머테리얼 생성 // 알베도 없음
+    bool CreateMesh() override; // 메시 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterialDebug(L""); };    // 머테리얼 생성 // 알베도 없음
 protected:
     // 라인 그리기용 버텍스
     std::vector<VERTEX_Pos> m_lineVtx;

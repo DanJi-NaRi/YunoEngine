@@ -193,6 +193,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="CardConfirmArea.cpp" />
     <ClCompile Include="Game\UI\WidgetGridLine.cpp" />
     <ClCompile Include="Minimap.cpp" />
+    <ClCompile Include="MinimapTile.cpp" />
     <ClCompile Include="PlayerIcon.cpp" />
     <ClCompile Include="Emoji.cpp" />
     <ClCompile Include="Game\UI\CardCancelButton.cpp" />
@@ -277,6 +278,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="CardConfirmArea.h" />
     <ClInclude Include="Game\UI\WidgetGridLine.h" />
     <ClInclude Include="Minimap.h" />
+    <ClInclude Include="MinimapTile.h" />
     <ClInclude Include="PlayerIcon.h" />
     <ClInclude Include="Emoji.h" />
     <ClInclude Include="Game\UI\CardCancelButton.h" />
