@@ -538,8 +538,6 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         const auto& pieces = as.hitPieces;
         for (int i = 0; i < pieces.size(); i++)
         {
-            if (!CheckNotDying(pieces[i])) continue;
-
             auto it = m_pieces.find(pieces[i]);
             if (it == m_pieces.end()) continue;
 

@@ -257,7 +257,9 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
         ////////////////// 마우스 입력 검사 단계 //////////////////
 
         if (!widget->IsCursorOverWidget(mouseXY)) { // 커서가 위젯 위에 있는지 체크
-            Btn->ChangeTexture(Btn->GetTexturePathBk());
+            
+            if(Btn->IsUseHoverPath())Btn->ChangeTexture(Btn->GetTexturePathBk());
+            
             Btn->IdleEvent();
             //std::cout << "Idle!!" << std::endl;
             Btn = nullptr;
@@ -294,7 +296,8 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
         //}
         else {
             Btn->SetButtonState(ButtonState::Hovered);
-            Btn->ChangeTexture(Btn->GetHoveredTexturePath());
+            const auto& hoverdPath = Btn->GetHoveredTexturePath();
+            if(hoverdPath != L"00000" && Btn->IsUseHoverPath()) Btn->ChangeTexture(Btn->GetHoveredTexturePath());
             Btn->HoveredEvent();
             //std::cout << "Hovered!!" << std::endl;
         }

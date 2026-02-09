@@ -104,6 +104,7 @@ void Button::SetHoverTexture(std::wstring idlePath, std::wstring hoverdPath)
 {
     SetIdleTexture(idlePath);
     SetHoverdTexture(hoverdPath);
+    m_useHoverPath = true;
 }
 
 void Button::SetIdleTexture(std::wstring path) 

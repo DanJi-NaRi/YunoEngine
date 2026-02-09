@@ -211,6 +211,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="HealthGauge.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="SceneChangeButton.cpp" />
+    <ClCompile Include="ShowCardDeck.cpp" />
     <ClCompile Include="PhaseStaminaBar.cpp" />
     <ClCompile Include="SpeechBubble.cpp" />
     <ClCompile Include="StaminaBar.cpp" />
@@ -306,6 +307,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="HealthGauge.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="SceneChangeButton.h" />
+    <ClInclude Include="ShowCardDeck.h" />
     <ClInclude Include="PhaseStaminaBar.h" />
     <ClInclude Include="SpeechBubble.h" />
     <ClInclude Include="StaminaBar.h" />
