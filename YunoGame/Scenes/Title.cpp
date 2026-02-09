@@ -30,10 +30,10 @@ bool Title::OnCreateScene()
     float ClientH = static_cast<float>(iwindow->GetClientHeight());
 
     const int baseXOffset = 100;
-    const int baseYOffset = 200;   // 첫 버튼이 기준에서 얼마나 내려오는지
+    const int baseYOffset = 100;   // 첫 버튼이 기준에서 얼마나 내려오는지
     const int buttonGap = 100;   // 버튼 사이 간격
 
-    const float centerX = ClientW / 2 + baseXOffset;
+    const float centerX = ClientW / 2;
     const float centerY = ClientH / 2;
 
     auto makeButtonPos = [&](int index)
@@ -57,13 +57,13 @@ bool Title::OnCreateScene()
 
     m_optionBtn = CreateWidget<SceneChangeButton>(L"optionBtn", Float2(1538, 105), makeButtonPos(1), UIDirection::Center);       // 나중에 1920 1080 <-> 960 540 정상화되면 /2 ㄱㄱ
     m_optionBtn->SetTargetScene(CurrentSceneState::Option);
-    m_optionBtn->SetCursurTexture(L"../Assets/UI/TITLE/option_mouseout.png", L"../Assets/UI/TITLE/option_mouseover.png");
+    m_optionBtn->SetHoverTexture(L"../Assets/UI/TITLE/option_mouseout.png", L"../Assets/UI/TITLE/option_mouseover.png");
 
     m_guideBtn = CreateWidget<SceneChangeButton>(L"guideBtn", Float2(1538, 105), makeButtonPos(2), UIDirection::Center);       // 나중에 1920 1080 <-> 960 540 정상화되면 /2 ㄱㄱ
-    m_guideBtn->SetTargetScene(CurrentSceneState::RequstEnter);
-    m_guideBtn->SetCursurTexture(L"../Assets/UI/TITLE/guide_mouseout.png", L"../Assets/UI/TITLE/guide_mouseover.png");
+    m_guideBtn->SetTargetScene(CurrentSceneState::Guide);
+    m_guideBtn->SetHoverTexture(L"../Assets/UI/TITLE/guide_mouseout.png", L"../Assets/UI/TITLE/guide_mouseover.png");
 
-    CreateWidget<ExitButton>(L"ExitBtn", Float2(1538, 105), makeButtonPos(3), UIDirection::Center)->SetCursurTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
+    CreateWidget<ExitButton>(L"ExitBtn", Float2(1538, 105), makeButtonPos(3), UIDirection::Center)->SetHoverTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
 
 
     return true;

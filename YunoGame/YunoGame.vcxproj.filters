@@ -133,12 +133,14 @@
     <Filter Include="Scenes\4.CountDown">
       <UniqueIdentifier>{1cd19b8f-620e-4094-b97d-223746adf8f0}</UniqueIdentifier>
     </Filter>
-
     <Filter Include="Game\UI\ShowCardDeck">
       <UniqueIdentifier>{b25e06be-5434-4535-aa8d-9370820ff338}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scenes\5.Option">
       <UniqueIdentifier>{11e92317-00d7-47e4-ad50-8ced256142ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\6.Guid">
+      <UniqueIdentifier>{8d4213e8-1bb3-4d8a-bff9-d35cdcf837e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -322,7 +324,6 @@
     <ClCompile Include="ShowCardDeck.cpp">
       <Filter>Game\UI\ShowCardDeck</Filter>
     </ClCompile>
-
     <ClCompile Include="WeaponNameImage.cpp" />
     <ClCompile Include="Game\UI\CardConfirmPanel.cpp">
       <Filter>Game\UI\Image\Panel</Filter>
@@ -337,12 +338,18 @@
       <Filter>Game\UI\ProgressBar</Filter>
     </ClCompile>
     <ClCompile Include="PhaseWeaponSelectButton.cpp" />
-
-
     <ClCompile Include="OptionScene.cpp">
       <Filter>Scenes\5.Option</Filter>
     </ClCompile>
-
+    <ClCompile Include="Game\UI\VolumePanel.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\VolumeTrackButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="GuideScene.cpp">
+      <Filter>Scenes\6.Guid</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -549,7 +556,6 @@
     <ClInclude Include="ShowCardDeck.h">
       <Filter>Game\UI\ShowCardDeck</Filter>
     </ClInclude>
-
     <ClInclude Include="WeaponNameImage.h" />
     <ClInclude Include="Game\UI\CardConfirmPanel.h">
       <Filter>Game\UI\Image\Panel</Filter>
@@ -564,7 +570,6 @@
       <Filter>Game\UI\ProgressBar</Filter>
     </ClInclude>
     <ClInclude Include="PhaseWeaponSelectButton.h" />
-
     <ClInclude Include="OptionScene.h">
       <Filter>Scenes\5.Option</Filter>
     </ClInclude>
@@ -574,8 +579,17 @@
     <ClInclude Include="OptionScene_InputContext.h">
       <Filter>System\UIContext</Filter>
     </ClInclude>
-    <ClInclude Include="VolumeTrackButton.h">
+    <ClInclude Include="Game\UI\VolumePanel.h">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\VolumeTrackButton.h">
       <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="GuideScene.h">
+      <Filter>Scenes\6.Guid</Filter>
+    </ClInclude>
+    <ClInclude Include="GuideScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 #pragma once
 // 루트 클래스
 #include "Widget.h"
-
+//#include "LogicWidget.h"
 /*
 중간 클래스 구조도
 Image,
@@ -51,6 +51,7 @@ Gauge, // ProgressBar의 확정 자식
 #include "CardConfirmButton.h"
 #include "CardCancelButton.h"
 #include "SceneChangeButton.h"
+#include "OptionButton.h"
 //////////////////////////////
 
 

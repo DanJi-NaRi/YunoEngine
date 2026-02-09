@@ -2,8 +2,9 @@
 
 #include "SceneBase.h"
 #include "OptionScene_InputContext.h"
-#include "OptionButton.h"
-#include "VolumeTrackButton.h"
+
+class SceneChangeButton;
+class OptionButton;
 
 enum class OptionUIState
 {
@@ -37,10 +38,6 @@ private:
     // 상태
     void ChangeUIState(OptionUIState state);
 
-    // 볼륨
-    void SetVolume(int level);
-    void UpdateVolumeByMouse(int mouseX);
-
 private:
     OptionScene_InputContext m_uiCtx;
 
@@ -54,14 +51,10 @@ private:
     OptionButton* m_creditBtn = nullptr;
 
     // Volume
-    Widget* m_volumeRoot = nullptr;
-    VolumeTrackButton* m_volumeTrack = nullptr;
-    std::vector<Widget*> m_volumeSteps;
-    int m_volumeLevel = 10;
-
+    std::array<Widget*, 3> m_volumePanels{ nullptr, nullptr, nullptr };
     // Credit
     Widget* m_creditRoot = nullptr;
 
-    // Common
-    OptionButton* m_backBtn = nullptr;
+    // Back
+    SceneChangeButton* m_backBtn = nullptr;
 };

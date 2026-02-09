@@ -11,7 +11,7 @@
 #include "ImGuiManager.h"
 #include "UImgui.h"
 #include "YunoCamera.h"
-
+#include "IInput.h"
 
 SceneEntry::~SceneEntry() = default;
 PendingOp::~PendingOp() = default;
@@ -359,6 +359,18 @@ void YunoSceneManager::Update(float dt)
 
 
     ApplyPending(m_pendingNow);
+
+    IScene* blockInputScene = nullptr;
+    for (int i = (int)m_stack.size() - 1; i >= 0; --i)
+    {
+        if (m_stack[i].policy.blockInputBelow)
+        {
+            blockInputScene = m_stack[i].scene.get();
+            break;
+        }
+    }
+
+    YunoEngine::GetInput()->SetInputBlockScene(blockInputScene);
 
     if (m_stack.empty())
         return;

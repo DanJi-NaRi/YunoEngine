@@ -2,11 +2,12 @@
 #include "OptionScene.h"
 
 #include "YunoEngine.h"
+#include "GameManager.h"
 #include "UIManager.h"
 #include "IWindow.h"
 #include "UIWidgets.h"
-#include "GameManager.h"
-
+#include "OptionButton.h"
+#include "VolumePanel.h"
 
 bool OptionScene::OnCreateScene()
 {
@@ -21,7 +22,7 @@ bool OptionScene::OnCreateScene()
 
     CreateMainUI();
     CreateVolumeUI();
-    //CreateCreditUI();
+    CreateCreditUI();
 
     ChangeUIState(OptionUIState::Main);
 
@@ -30,7 +31,7 @@ bool OptionScene::OnCreateScene()
 
 void OptionScene::CreateMainUI()
 {
-    const float baseX = ClientW / 2 - 125.f;
+    const float baseX = (ClientW - 630) / 2;
     const float baseY = ClientH / 2;
 
     auto makePos = [&](int index)
@@ -42,7 +43,7 @@ void OptionScene::CreateMainUI()
             );
         };
 
-    // Volume 버튼
+    // Volume 버튼//TODO :: 위치 확인
     m_volumeBtn = CreateWidget<OptionButton>(
         L"VolumeBtn",
         Float2(212, 45),
@@ -50,7 +51,7 @@ void OptionScene::CreateMainUI()
         UIDirection::Center
     );
 
-    m_volumeBtn->SetCursurTexture(
+    m_volumeBtn->SetHoverTexture(
         L"../Assets/UI/TITLE/volume_mouseout.png",
         L"../Assets/UI/TITLE/volume_mouseover.png"
     );
@@ -68,7 +69,7 @@ void OptionScene::CreateMainUI()
         UIDirection::Center
     );
 
-    m_creditBtn->SetCursurTexture(
+    m_creditBtn->SetHoverTexture(
         L"../Assets/UI/TITLE/credit_mouseout.png",
         L"../Assets/UI/TITLE/credit_mouseover.png"
     );
@@ -77,83 +78,64 @@ void OptionScene::CreateMainUI()
         {
             ChangeUIState(OptionUIState::Credit);
         });
+
+    //Back//TODO :: 위치 확인
+    m_backBtn = CreateWidget<SceneChangeButton>(
+        L"BackBtn",
+        Float2(450, 90),
+        XMFLOAT3(ClientW / 2 + 308, ClientH / 2 + 350, 0),
+        UIDirection::Center
+    );
+    m_backBtn->SetTargetScene(CurrentSceneState::Title);
+    m_backBtn->SetHoverTexture(
+        L"../Assets/UI/TITLE/back_mouseout.png",
+        L"../Assets/UI/TITLE/back_mouseover.png"
+    );
 }
 
 void OptionScene::CreateVolumeUI()
 {
-    m_volumeRoot = CreateWidget<Widget>(
-        L"VolumeRoot",
-        Float2(600, 200),
-        XMFLOAT3(ClientW / 2, ClientH / 2, 0)
-    );
-    m_volumeRoot->SetPivot(UIDirection::Center);
-    m_volumeRoot->
+    const float centerX = ClientW / 2.f + 320;
+    const float centerY = ClientH / 2.f - 50;
 
-    // === Track (입력 전용) ===
-    m_volumeTrack = CreateWidget<VolumeTrackButton>(
-        L"VolumeTrack",
-        Float2(20 * 22.f, 40),
-        XMFLOAT3(0, 0, 0)
-    );
-    m_volumeTrack->Attach(m_volumeRoot);
-
-    // === Steps ===
-    constexpr int kSteps = 20;
-    constexpr float gap = 22.f;
-    float startX = -((kSteps - 1) * gap) * 0.5f;
-
-    for (int i = 0; i < kSteps; ++i)
+    constexpr float gapY = 110.f;   // 게이지 간 간격
+    //TODO :: 위치 확인
+    for (int i = 0; i < 3; ++i)
     {
-        auto* img = CreateWidget<Widget>(
-            L"VolumeStep",
-            Float2(20, 40),
-            XMFLOAT3(startX + gap * i, 0, 0)
+        m_volumePanels[i] = CreateWidget<VolumePanel>(
+            L"VolumePanel",
+            Float2(600, 200),
+            XMFLOAT3(
+                centerX,
+                centerY + gapY - i * gapY,
+                0.f
+            )
         );
-        img->ChangeTexture(L"../Assets/UI/TITLE/volume_unfill.png");
-        img->Attach(m_volumeRoot);
-        m_volumeSteps.push_back(img);
+        m_volumePanels[i]->ChangeTexture(L"../Assets/UI/TITLE/volume_fill_full.png");
+        m_volumePanels[i]->SetPivot(UIDirection::Center);
+        m_volumePanels[i]->SetVisible(Visibility::Hidden);
     }
-
-    //Back
-    m_backBtn = CreateWidget<OptionButton>(
-        L"BackBtn",
-        Float2(120, 40),
-        XMFLOAT3(ClientW / 2, ClientH / 2 + 150, 0),
-        UIDirection::Center
-    );
-    m_backBtn->SetCursurTexture(
-        L"../Assets/UI/TITLE/back_mouseout.png",
-        L"../Assets/UI/TITLE/back_mouseover.png"
-    );
-    //m_backBtn->SetVisible(false);
-
-    m_backBtn->SetOnClick([this]()
-        {
-            ChangeUIState(OptionUIState::Main);
-        });
-
-    //SetVolume(m_volumeLevel);
 }
 
 void OptionScene::CreateCreditUI()
 {
-    m_creditRoot = CreateWidget<TextureImage>(
+    m_creditRoot = CreateWidget<TextureImage>(//TODO :: 위치 확인
         L"CreditPanel",
         L"../Assets/UI/TITLE/option_credit.png",
-        XMFLOAT3(ClientW / 2, ClientH / 2, 0),
+        XMFLOAT3(ClientW / 2, ClientH / 2 + 100, 0),
         UIDirection::Center
     );
-    //m_creditRoot->SetVisible(false);
+    m_creditRoot->SetVisible(Visibility::Hidden);
 }
+
 
 void OptionScene::ChangeUIState(OptionUIState state)
 {
-    // 전부 숨김
-    /*m_volumeBtn->SetVisible(false);
-    m_creditBtn->SetVisible(false);
-    m_volumeRoot->SetVisible(false);
-    m_creditRoot->SetVisible(false);
-    m_backBtn->SetVisible(false);*/
+    // 숨김
+    m_creditRoot->SetVisible(Visibility::Hidden);
+
+    for (auto* panel : m_volumePanels)
+        panel->SetVisible(Visibility::Hidden);
 
     m_uiState = state;
 
@@ -161,50 +143,22 @@ void OptionScene::ChangeUIState(OptionUIState state)
     {
     case OptionUIState::Main:
         std::cout << "\nMain\n";
-        /*m_volumeBtn->SetVisible(true);
-        m_creditBtn->SetVisible(true);*/
+        m_volumeBtn->SetVisible(Visibility::Visible);
+        m_creditBtn->SetVisible(Visibility::Visible);
         break;
 
     case OptionUIState::Volume:
         std::cout << "\nVolume\n";
-        /*m_volumeRoot->SetVisible(true);
-        m_backBtn->SetVisible(true);*/
+        for (auto* panel : m_volumePanels)
+            panel->SetVisible(Visibility::Visible);
         break;
 
     case OptionUIState::Credit:
         std::cout << "\nCredit\n";
-        /*m_creditRoot->SetVisible(true);
-        m_backBtn->SetVisible(true);*/
+        m_creditRoot->SetVisible(Visibility::Visible);
         break;
     }
 }
-
-//void OptionScene::UpdateVolumeByMouse(int mouseX)
-//{
-//    RECT rc = m_volumeTrack->GetRect();
-//    float t = float(mouseX - rc.left) / float(rc.right - rc.left);
-//    t = std::clamp(t, 0.f, 1.f);
-//
-//    int level = int(std::round(t * 20.f));
-//    SetVolume(level);
-//}
-//
-//void OptionScene::SetVolume(int level)
-//{
-//    m_volumeLevel = std::clamp(level, 0, 20);
-//
-//    for (int i = 0; i < 20; ++i)
-//    {
-//        m_volumeSteps[i]->ChangeTexture(
-//            i < m_volumeLevel
-//            ? L"../Assets/UI/TITLE/volume_fill.png"
-//            : L"../Assets/UI/TITLE/volume_unfill.png"
-//        );
-//    }
-//
-//    //사운드 적용
-//    //GameManager::Get().SetMasterVolume(m_volumeLevel / 20.f);
-//}
 
 void OptionScene::OnDestroyScene()
 {
@@ -224,21 +178,6 @@ void OptionScene::Update(float dt)
 {
     SceneBase::Update(dt);
 
-    if (!m_volumeTrack) return;
-
-    //auto* drag = m_volumeTrack->GetDragProvider();
-    //if (!drag) return;
-
-    //if (drag->IsNowDragging())
-    //{
-    //    // 마우스 X 기준으로 볼륨 갱신
-    //    POINT pt{
-    //        (LONG)YunoEngine::GetInput()->GetMouseX(),
-    //        (LONG)YunoEngine::GetInput()->GetMouseY()
-    //    };
-
-    //    //UpdateVolumeByMouse(pt.x);
-    //}
 }
 
 void OptionScene::SubmitObj()

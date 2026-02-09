@@ -36,4 +36,6 @@ public:
     // 인풋을 사용할 컨텍스트
     virtual void AddContext(IInputContext* context, IScene* scene) = 0;
     virtual void RemoveContext(IInputContext* context) = 0;
+
+    virtual void SetInputBlockScene(IScene* scene) = 0;
 };
