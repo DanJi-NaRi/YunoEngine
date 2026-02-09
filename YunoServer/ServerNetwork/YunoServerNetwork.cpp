@@ -104,7 +104,7 @@ namespace yuno::server
                     << " ec=" << ec.message()
                     << " -> slot cleared\n";
 
-                if (m_roundController.GetRoundStarted() || !g_battleState.matchEnded)
+                if (m_roundController.GetRoundStarted())
                 {
                     //  승자 결정
                     uint8_t loserPID = static_cast<uint8_t>(idx + 1);
