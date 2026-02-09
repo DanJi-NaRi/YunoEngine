@@ -222,8 +222,12 @@ void GameManager::SetSceneState(CurrentSceneState state)
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
-    
+
         sm->RequestPush(std::make_unique<StandByScene>(), sp);
+
+        //SceneTransitionOptions opt{};
+        //opt.immediate = false;
+        //sm->RequestReplaceRoot(std::make_unique<StandByScene>(), opt);
 
         break;
     }
@@ -235,10 +239,15 @@ void GameManager::SetSceneState(CurrentSceneState state)
         //opt.immediate = false; // 보통 false가 자연스러움
         //sm->RequestReplaceRoot(std::make_unique<CountdownScene>(), opt);
 
+
+        SceneTransitionOptions opt;
+        opt.immediate = true;
+
+        sm->RequestPop(opt);
+
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
-
         sm->RequestPush(std::make_unique<CountdownScene>(), sp);
 
         break;

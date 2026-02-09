@@ -2,6 +2,7 @@
 
 #include "ShowCardDeck.h"
 #include "UIFactory.h"
+#include "GameManager.h"
 
 namespace
 {
@@ -43,6 +44,15 @@ bool ShowCardButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx
     sizePx /= 2;
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
     m_bindkey = 0;
+    return true;
+}
+
+bool ShowCardButton::Update(float dTime) {
+
+    if (GameManager::Get().GetSceneState() == CurrentSceneState::StandBy) m_useHoverEvent = false;
+
+    Button::Update(dTime);
+
     return true;
 }
 

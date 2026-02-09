@@ -109,8 +109,8 @@ bool WeaponButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, 
 }
 
 bool WeaponButton::Update(float dTime) {
+    if (GameManager::Get().GetSceneState() == CurrentSceneState::StandBy) m_useHoverEvent = false;
     Button::Update(dTime);
-
 
     return true;
 }
@@ -151,7 +151,16 @@ bool WeaponButton::LMBPressedEvent()
 
 
     GameManager& gm = GameManager::Get();
-    //if (gm.GetMyPiece(0) != PieceType::None && gm.GetMyPiece(1) != PieceType::None) return false;
+
+    const PieceType pick0 = gm.GetMyPiece(0);
+    const PieceType pick1 = gm.GetMyPiece(1);
+    const bool isAlreadyPicked = (pick0 == m_pieceType) || (pick1 == m_pieceType);
+    const bool isSelectionFull = (pick0 != PieceType::None) && (pick1 != PieceType::None);
+
+    if (isSelectionFull && !isAlreadyPicked)
+    {
+        return true;
+    }
 
     m_isSelected = !m_isSelected;
     m_useHoverEvent = !m_isSelected;
@@ -182,8 +191,7 @@ bool WeaponButton::LMBPressedEvent()
         return true;
 
 
-    const PieceType pick0 = gm.GetMyPiece(0);
-    const PieceType pick1 = gm.GetMyPiece(1);
+
 
     const int slotTextureBase = (myIdx == 1) ? 1 : 3;
 
@@ -284,6 +292,8 @@ bool WeaponButton::LMBPressedEvent()
 
 
     gm.SetMyPick(pickIndex, m_pieceType);
+
+    
 
 
     return true;

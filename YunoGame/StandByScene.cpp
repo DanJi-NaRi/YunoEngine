@@ -30,7 +30,7 @@ bool StandByScene::OnCreateScene()
 
     m_uiManager->SetOrthoFlag(true);
 
-
+    CreateWidget<TextureImage>(L"StandByBackGround", L"../Assets/UI/WEAPON_SELECT/black_background.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
     m_pStandByBackImage = CreateWidget<TextureImage>(L"StandByBackGround", L"../Assets/UI/WEAPON_SELECT/waiting_background.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
     m_pStandByImage = CreateWidget<TextureImage>(L"StandByImage", L"../Assets/UI/WEAPON_SELECT/waiting_1.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
     

@@ -41,7 +41,7 @@ bool ReadyButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, X
 
 bool ReadyButton::Update(float dTime) {
 
-    if (GameManager::Get().GetSceneState() == CurrentSceneState::StandBy)
+    if (GameManager::Get().GetSceneState() == CurrentSceneState::StandBy|| GameManager::Get().GetSceneState() == CurrentSceneState::CountDown)
         ChangeTexture(L"../Assets/UI/WEAPON_SELECT/Go_mouseover.png");
     Button::Update(dTime);
 
@@ -86,9 +86,9 @@ bool ReadyButton::LMBPressedEvent()
         return false;
     }
     
-    if (gm.GetSceneState() == CurrentSceneState::StandBy) 
+    if (gm.GetSceneState() == CurrentSceneState::StandBy || gm.GetSceneState() == CurrentSceneState::CountDown)
     {
-        std::cout << "already StandBy Scene" << std::endl;
+        std::cout << "already StandBy or CountDown Scene" << std::endl;
         return false;
     }
 
