@@ -441,6 +441,34 @@ Float2 UIManager::GetCanvasSize() // 개선사항 : 멤버에 this라던가 위�
 }
 // 아직 캔버스 개념이 없으므로 클라이언트가 곧 캔버스임. (단일 캔버스 느낌..)
 
+UICanvasMapping UIManager::GetCanvasMapping()
+{
+    UICanvasMapping mapping{};
+    mapping.origin = g_DefaultClientXY;
+    mapping.canvas = GetCanvasSize();
+
+    if (mapping.origin.x <= 0.0f || mapping.origin.y <= 0.0f ||
+        mapping.canvas.x <= 0.0f || mapping.canvas.y <= 0.0f) {
+        mapping.canvasScale = Float2(1.0f, 1.0f);
+        mapping.letterboxOffset = Float2(0.0f, 0.0f);
+        mapping.valid = false;
+        return mapping;
+    }
+
+    const float sx = mapping.canvas.x / mapping.origin.x;
+    const float sy = mapping.canvas.y / mapping.origin.y;
+    const float s = (sx < sy) ? sx : sy;
+
+    const Float2 fitted = Float2(mapping.origin.x * s, mapping.origin.y * s);
+    mapping.canvasScale = Float2(s, s);
+    mapping.letterboxOffset = Float2(
+        (mapping.canvas.x - fitted.x) * 0.5f,
+        (mapping.canvas.y - fitted.y) * 0.5f
+    );
+    mapping.valid = true;
+    return mapping;
+}
+
 
 std::vector<WidgetDesc> UIManager::BuildWidgetDesc()
 {
@@ -500,7 +528,8 @@ void UIManager::AllParentsSetScale(float scale)
     for (auto& widget : m_pendingCreateQ) {
         if (widget.get()->GetWidgetClass() == WidgetClass::LetterBox) continue;
 
-        if (widget->GetIsRoot()) widget->SetScale(XMFLOAT3(scale, scale, scale));
+        if (widget->GetIsRoot()) 
+            widget->SetScale(XMFLOAT3(scale, scale, scale));
     }
             
 }

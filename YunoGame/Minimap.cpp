@@ -37,7 +37,7 @@ bool Minimap::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLO
 
     this->SetLayer(WidgetLayer::Panels);
 
-    m_grid.SetGridXY(g_MinimapRow, g_MinimapCol, 80, 80);
+    m_grid.SetGridXY(g_MinimapRow, g_MinimapCol, 92, 92);           // 이거도 다름
     //m_grid.col = g_MinimapRow;
     //m_grid.row = g_MinimapCol;
     //m_grid.cellSize = Float2(90, 90);
@@ -59,13 +59,13 @@ void Minimap::CreateChild() {
 
     const float centerYOffset = -GetSize().y * 0.5f;
 
-    m_pGridLine = m_uiFactory.CreateChild<WidgetGridLine>(
-        m_name + L"_DebugWidgetGridLine",
-        Float2(m_grid.cellSize.x, m_grid.cellSize.y),
-        XMFLOAT3(0.0f, centerYOffset, 0.0f),
-        UIDirection::Center,
-        this
-    );
+    //m_pGridLine = m_uiFactory.CreateChild<WidgetGridLine>(
+    //    m_name + L"_DebugWidgetGridLine",
+    //    Float2(m_grid.cellSize.x, m_grid.cellSize.y),
+    //    XMFLOAT3(0.0f, centerYOffset, 0.0f),
+    //    UIDirection::Center,
+    //    this
+    //);
 
 
     GridSetup();
@@ -123,7 +123,7 @@ bool Minimap::Submit(float dTime)
 //}
 void Minimap::GridSetup()
 {
-    const float pad = 0.0f;
+    const float pad = 5.0f;
     const float gridWidth = (m_grid.col * m_grid.cellSize.x) + (pad * (m_grid.col - 1));
     const float gridHeight = (m_grid.row * m_grid.cellSize.y) + (pad * (m_grid.row - 1));
 
