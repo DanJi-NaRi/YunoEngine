@@ -204,6 +204,7 @@ bool UnitTile::Update(float dTime)
         {
             m_animator->Change("idle");
             m_animator->SetLoop("idle", true);
+            m_animator->Play();
             m_state = ObstacleType::None;
             isTriggering = false;
         }
@@ -344,6 +345,7 @@ void UnitTile::PlayWarning(ObstacleType obstacleType, Float4 color, int count, f
         bool isChanged = m_animator->Change("wave", 0);
         if(isChanged)
             m_animator->SetLoop("wave", false);
+        m_animator->Play();
         break;
     }
     }
@@ -373,6 +375,7 @@ void UnitTile::PlayTrigger(ObstacleType obstacleType, Float4 color, int count, f
         bool isChanged = m_animator->Change("crash", 0);
         if (isChanged)
             m_animator->SetLoop("crash", false);
+        m_animator->Play();
         break;
     }
     }

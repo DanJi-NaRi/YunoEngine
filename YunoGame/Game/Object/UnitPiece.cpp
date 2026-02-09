@@ -386,6 +386,7 @@ void UnitPiece::UpdateMove(float dt)
         {
             m_animator->Change("idle");
             m_animator->SetLoop("idle", true);      // 여기서 터지면 idle 애니메이션이 없는 것임으로 생성단계에 클립을 넣어야함!
+            m_animator->Play();
         }
         isMoving = false;
         m_moveTime = 0.f;
@@ -440,6 +441,7 @@ void UnitPiece::UpdateHit(float dt)
         {
             m_animator->Change("idle");
             m_animator->SetLoop("idle", true);
+            m_animator->Play();
             isHitting = false;
 
             //// 피격 애니메이션 끝나면 system에게 기물 생사여부 체크하도록 함.
@@ -564,6 +566,7 @@ void UnitPiece::PlayAttack()
     bool isChanged = m_animator->Change("attack");
     if (!isChanged) return;
     m_animator->SetLoop("attack", false);
+    m_animator->Play();
     isAttacking = true;
 }
 
@@ -574,6 +577,7 @@ void UnitPiece::PlayHit()
     bool isChanged = m_animator->Change("hit");
     if (!isChanged) return;
     m_animator->SetLoop("hit", false);
+    m_animator->Play();
     isHitting = true;
 }
 
@@ -593,6 +597,7 @@ void UnitPiece::PlayMove(XMFLOAT3 targetPos, float speed)
         bool isChanged = m_animator->Change("move");
         if (isChanged)
             m_animator->SetLoop("move", true);
+        m_animator->Play();
     }
 
     if (m_Dist == 0)
@@ -620,6 +625,7 @@ void UnitPiece::PlayDead(float disappearDisolveDuration)
     bool isChanged = m_animator->Change("dead");
     if (!isChanged) return;
     m_animator->SetLoop("dead", false);
+    m_animator->Play();
 }
 
 void UnitPiece::SetTmpColor(Float4 color)

@@ -70,6 +70,7 @@ PGridCmd PlayGridQ::MoveHit_P(GamePiece pieceType, bool amIdead, float disappear
 PGridCmd PlayGridQ::Dead_P(float disappearDissolveDuration)
 {
     PGridCmd cmd;
+    cmd.cmdType = CommandType::Dead;
     cmd.dead_p.disappearDissolveDuration = disappearDissolveDuration;
     return cmd;
 }

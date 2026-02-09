@@ -181,13 +181,15 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      cx = cellPos.x;     cy = cellPos.y;
 
      auto [px, pz] = m_grids[(int)m_nowG]->CellToWorld(cx, cy);
+     GamePiece gp = GetGamePiece(w.pId, w.slotId);
 
      // 타일 상태 갱신
-     m_tiles[w.currentTile].to = (team == Team::Ally) ?
-         TileOccupy{ TileOccuType::Ally_Occupied, (w.slotId == 1) ? TileWho::Ally1 : TileWho::Ally2 } :
-         TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
+     m_tiles[w.currentTile].to =
+         (gp == GamePiece::Ally1) ? TileOccupy{ TileOccuType::Ally_Occupied, TileWho::Ally1 } :
+         (gp == GamePiece::Ally2) ? TileOccupy{ TileOccuType::Ally_Occupied, TileWho::Ally2 } :
+         (gp == GamePiece::Enemy1) ? TileOccupy{ TileOccuType::Enemy_Occupied, TileWho::Enemy1 } :
+         TileOccupy{ TileOccuType::Enemy_Occupied, TileWho::Enemy2 };
 
-     GamePiece gp = GetGamePiece(w.pId, w.pId);
      PieceInfo pieceInfo{};
      PassOption po;
      po.shader = ShaderId::PBR_AniDissolve;
@@ -771,12 +773,26 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
                 auto pieceIt = m_pieces.find(piece);
                 if (pieceIt == m_pieces.end())   continue;
                 auto& pieceInfo = pieceIt->second;
+
+                int unitID = GetUnitID(piece);
                 auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
-                pPiece->InsertQ(PlayGridQ::Hit_P());
-                for (auto& subId : pieceInfo.subIds)
+                if (m_UnitStates[unitID].hp == 0)
                 {
-                    auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                    pSub->InsertQ(PlayGridQ::Hit_P());
+                    pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+                    for (auto& subId : pieceInfo.subIds)
+                    {
+                        auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                        pSub->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+                    }
+                }
+                else
+                {
+                    pPiece->InsertQ(PlayGridQ::Hit_P());
+                    for (auto& subId : pieceInfo.subIds)
+                    {
+                        auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                        pSub->InsertQ(PlayGridQ::Hit_P());
+                    }
                 }
             }
         }
@@ -1088,7 +1104,9 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
     if (!CheckNotDying(pieceType)) return;
 
     // 이동 후, 상태 수정을 위해 참조로 받음
-    PieceInfo& pieceInfo = m_pieces[pieceType];
+    auto pieceIt = m_pieces.find(pieceType);
+    if (pieceIt == m_pieces.end())   return;
+    PieceInfo& pieceInfo = pieceIt->second;
 
     // 아이디로 오브젝트 포인터 받아오기
     UnitPiece* pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));

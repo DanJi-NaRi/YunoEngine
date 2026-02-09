@@ -235,7 +235,7 @@ private:
     float warnDuration = 5.f;
 
         // 기물 디졸브
-    float appearDisolveDuration = 1.5f;
+    float appearDisolveDuration = 1.f;
     float disappearDisolveDuration = 1.25f;
     
         // 패킷. 일단 하드코딩..서버랑 맞춰야해ㅠㅠㅠ
