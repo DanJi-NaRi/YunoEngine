@@ -8,6 +8,7 @@ class CursurSystem;
 class SceneChangeButton;
 class WeaponButton;
 class ReadyButton;
+class ShowCardDeck;
 
 class WeaponSelectScene final : public SceneBase
 {
@@ -43,7 +44,7 @@ private:
     Widget* m_pWeaponNameImage = nullptr;
     Widget* m_pWeaponCardImage = nullptr;
 
-    //std::array<Widget*, 6> m_pWeaponBtns;
+    std::unique_ptr<ShowCardDeck> m_showCardDeck;
 
     WeaponButton* m_PWeaponBtn_Blaster    = nullptr;
     WeaponButton* m_PWeaponBtn_Breacher   = nullptr;

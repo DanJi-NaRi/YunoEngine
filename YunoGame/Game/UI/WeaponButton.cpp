@@ -6,6 +6,7 @@
 #include "IInput.h"
 #include "GameManager.h"
 #include "TextureImage.h"
+#include "ShowCardDeck.h"
 
 namespace
 {
@@ -225,6 +226,11 @@ bool WeaponButton::LMBPressedEvent()
         }
     }
 
+    if (m_pShowCardDeck)
+    {
+        m_pShowCardDeck->SetWeaponCards(m_pieceType);
+    }
+
     GameManager::Get().SetMyPick(pickIndex, m_pieceType);
 
     return true;
@@ -323,4 +329,9 @@ void WeaponButton::SetWeaponPreviewImages(Widget* weaponNameImage, Widget* weapo
 {
     m_pWeaponNameImage = weaponNameImage;
     m_pWeaponCardImage = weaponCardImage;
+}
+
+void WeaponButton::SetShowCardDeck(ShowCardDeck* showCardDeck)
+{
+    m_pShowCardDeck = showCardDeck;
 }

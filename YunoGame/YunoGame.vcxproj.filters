@@ -136,6 +136,9 @@
     <Filter Include="Scenes\4.CountDown">
       <UniqueIdentifier>{1cd19b8f-620e-4094-b97d-223746adf8f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\UI\ShowCardDeck">
+      <UniqueIdentifier>{b25e06be-5434-4535-aa8d-9370820ff338}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -323,6 +326,9 @@
     </ClCompile>
     <ClCompile Include="CountdownScene.cpp">
       <Filter>Scenes\4.CountDown</Filter>
+    </ClCompile>
+    <ClCompile Include="ShowCardDeck.cpp">
+      <Filter>Game\UI\ShowCardDeck</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -536,7 +542,9 @@
     <ClInclude Include="CountdownScene.h">
       <Filter>Scenes\4.CountDown</Filter>
     </ClInclude>
-
+    <ClInclude Include="ShowCardDeck.h">
+      <Filter>Game\UI\ShowCardDeck</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

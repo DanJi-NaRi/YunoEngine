@@ -207,6 +207,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="HealthGauge.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="SceneChangeButton.cpp" />
+    <ClCompile Include="ShowCardDeck.cpp" />
     <ClCompile Include="SpeechBubble.cpp" />
     <ClCompile Include="StaminaBar.cpp" />
     <ClCompile Include="StaminaGauge.cpp" />
@@ -280,7 +281,6 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CardConfirmArea.h" />
-
     <ClInclude Include="CountdownImage.h" />
     <ClInclude Include="CountdownScene.h" />
     <ClInclude Include="Game\UI\DirSelectButton.h" />
@@ -297,6 +297,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="HealthGauge.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="SceneChangeButton.h" />
+    <ClInclude Include="ShowCardDeck.h" />
     <ClInclude Include="SpeechBubble.h" />
     <ClInclude Include="StaminaBar.h" />
     <ClInclude Include="StaminaGauge.h" />
