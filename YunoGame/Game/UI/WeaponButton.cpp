@@ -16,14 +16,14 @@ namespace
         {
         case PieceType::Blaster:
             return L"blaster";
-        case PieceType::Breacher:
-            return L"breacher";
-        case PieceType::Impactor:
-            return L"impactor";
         case PieceType::Chakram:
             return L"chakram";
+        case PieceType::Breacher:
+            return L"breacher";
         case PieceType::Scythe:
             return L"scythe";
+        case PieceType::Impactor:
+            return L"impactor";
         case PieceType::Cleaver:
             return L"cleaver";
         case PieceType::None:
@@ -139,6 +139,10 @@ bool WeaponButton::HoveredEvent()
 bool WeaponButton::LMBPressedEvent()
 {
     std::cout << "OnCLick" << std::endl;
+
+    if (auto* showCardDeck = dynamic_cast<ShowCardDeck*>(m_pShowCardDeck))
+        showCardDeck->SetWeaponCards(m_pieceType);
+
     const int myIdx = GameManager::Get().GetSlotiIdx();
     if (myIdx != 1 && myIdx != 2)
         return true;
@@ -216,20 +220,20 @@ bool WeaponButton::LMBPressedEvent()
         }
     }
 
-    TextureImage* weaponCardImage = dynamic_cast<TextureImage*>(m_pWeaponCardImage);
-    if (weaponCardImage)
-    {
-        const std::wstring weaponCardTexturePath = GetWeaponCardTexturePath(m_pieceType);
-        if (!weaponCardTexturePath.empty())
-        {
-            weaponCardImage->ChangeTexture(weaponCardTexturePath);
-        }
-    }
+    ///TextureImage* weaponCardImage = dynamic_cast<TextureImage*>(m_pWeaponCardImage);
+    ///if (weaponCardImage)
+    ///{
+    ///    const std::wstring weaponCardTexturePath = GetWeaponCardTexturePath(m_pieceType);
+    ///    if (!weaponCardTexturePath.empty())
+    ///    {
+    ///        weaponCardImage->ChangeTexture(weaponCardTexturePath);
+    ///    }
+    ///}
 
-    if (m_pShowCardDeck)
-    {
-        dynamic_cast<ShowCardDeck*>(m_pShowCardDeck)->SetWeaponCards(m_pieceType);
-    }
+    //if (m_pShowCardDeck)
+    //{
+    //    dynamic_cast<ShowCardDeck*>(m_pShowCardDeck)->SetWeaponCards(m_pieceType);
+    //}
 
 
     GameManager::Get().SetMyPick(pickIndex, m_pieceType);

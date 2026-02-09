@@ -13,10 +13,10 @@ enum class CardType : uint8_t {
 enum class PieceType : uint8_t { // 비트마스크로도 활용 가능
     None,
     Blaster, // 1 부터 시작
-    Breacher,
-    Impactor,
     Chakram,
+    Breacher,
     Scythe,
+    Impactor,
     Cleaver,
     Count,
 

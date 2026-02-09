@@ -28,7 +28,7 @@ public:
     
     void ButtonUpdate(float dTime = 0);
 
-    std::wstring GetHoveredTexturePath() { return m_hoverdTexturePath; }
+    const std::wstring& GetHoveredTexturePath() { return m_hoverdTexturePath; }
 
     void SetCursurTexture(std::wstring idlePath, std::wstring hoverdPath);
 
@@ -56,6 +56,9 @@ public:
     uint32_t    GetBindKey() const { return m_bindkey; }
     bool        IsBindkey() const { return (m_bindkey != 0); }
     void        SetBindKey(uint32_t bindkey) { m_bindkey = bindkey; }
+    
+    void        SetUseHoverPath(bool use) { m_useHoverPath = use; }
+    bool        IsUseHoverPath() { return m_useHoverPath; }
 
     void        Clear();
 protected:
@@ -64,8 +67,9 @@ protected:
     uint32_t m_bindkey = 0;
     std::unique_ptr<DragProvider> m_pDrag = nullptr; // 드래그 기능 공급자. 기본은 null이니 파생해서 초기화 때 채워줄 것.
 
-    std::wstring m_hoverdTexturePath; // 커서를 올렸을 때, 바뀌는 텍스처
-    std::wstring m_PressedTexturePath; // 클릭했을 때, 바뀌는 텍스처 // 사용 안 함
+    std::wstring m_hoverdTexturePath = L"000000"; // 커서를 올렸을 때, 바뀌는 텍스처
+    std::wstring m_PressedTexturePath = L"000000"; // 클릭했을 때, 바뀌는 텍스처 // 사용 안 함
+    bool m_useHoverPath = false;
 
 private:
     //bool CreateMesh() override;      // 메시 생성 (한 번만)
