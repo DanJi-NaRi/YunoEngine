@@ -96,7 +96,7 @@ bool ShowCardDeck::Create(const std::wstring& name, uint32_t id, Float2 sizePx, 
 {
     Image::Create(name, id, sizePx, vPos, rotZ, vScale);
     BuildCards();
-    SetWeaponCards(PieceType::Blaster);
+    SetWeaponCards(PieceType::None);
     return true;
 }
 
@@ -117,15 +117,6 @@ void ShowCardDeck::SetWeaponCards(PieceType pieceType)
     const std::wstring lowerName = ToLowerPieceName(pieceType);
     if (lowerName.empty())
         return;
-
-    for (int i = 0; i < static_cast<int>(m_cardButtons.size()); ++i)
-    {
-        if (!m_cardButtons[i])
-            continue;
-
-        const std::wstring path = L"../Assets/UI/CARD/card_" + lowerName + L"_" + std::to_wstring(i + 1) + L".png";
-        m_cardButtons[i]->ChangeTexture(path);
-    }
 
 
     for (int i = 0; i < static_cast<int>(m_cardButtons.size()); ++i)
