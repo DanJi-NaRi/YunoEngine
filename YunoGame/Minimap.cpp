@@ -97,22 +97,7 @@ bool Minimap::Submit(float dTime)
 //    //m_gridBox->Attach(pLine);
 //}
 
-void Minimap::UpdateMinimap(const ObstacleResult& obstacleResult)
-{
-    if (m_pTiles.empty()) return;
-
-    for (auto& unitState : obstacleResult.unitState) {
-        int index = unitState.targetTileID - 1; // id와 해당하는 현재 타일
-        
-        if (!m_pTiles[index]) continue; // 해당 위치에 타일이 있으면
-        auto& tile = m_pTiles[index];
-        auto& data = tile->GetTileData();
-
-        data.isPlayerTile = (data.unitId != 0); // 플레이어 유닛 여부 (0 : 없음)
-        data.unitId = unitState.slotId; // 플레이어의 유닛
-        data.m_teamId = (TileTeamData)unitState.pId; // 플레이어 팀/존재 여부 (0 = 없음 1 = 빨강 2 = 파랑)
-    }
-}
+void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {}
 
 
 //{

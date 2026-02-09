@@ -100,7 +100,7 @@ void Button::ButtonUpdate(float dTime) // 버튼 상태 갱신
     }
 }
 
-void Button::SetCursurTexture(std::wstring idlePath, std::wstring hoverdPath)
+void Button::SetHoverTexture(std::wstring idlePath, std::wstring hoverdPath)
 {
     SetIdleTexture(idlePath);
     SetHoverdTexture(hoverdPath);

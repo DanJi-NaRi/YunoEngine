@@ -30,7 +30,7 @@ public:
 
     std::wstring GetHoveredTexturePath() { return m_hoverdTexturePath; }
 
-    void SetCursurTexture(std::wstring idlePath, std::wstring hoverdPath);
+    void SetHoverTexture(std::wstring idlePath, std::wstring hoverdPath);
 
     void SetIdleTexture(std::wstring path);
     void SetHoverdTexture(std::wstring path);

@@ -35,10 +35,11 @@ bool UIScene::OnCreateScene()
 
     const auto clientX = g_DefaultClientXY.x;
     const auto clientY = g_DefaultClientXY.y;
-    /*CreateWidget<PlayerIcon>(L"tstPlayerIconL", Float2(217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
+
+    CreateWidget<PlayerIcon>(L"tstPlayerIconL", Float2(217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
     
-    auto* IconR = CreateWidget<PlayerIcon>(L"tstPlayerIconR", Float2(-217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
-    IconR->MirrorScaleX();*/
+    //auto* IconR = CreateWidget<PlayerIcon>(L"tstPlayerIconR", Float2(-217, 188), XMFLOAT3(700, 500, 0), UIDirection::Center);
+    //IconR->MirrorScaleX();
 
 
     CreateWidget<Minimap>(L"Minimap", Float2(730, 616), XMFLOAT3(clientX * 0.5f, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::Bottom);
@@ -47,6 +48,8 @@ bool UIScene::OnCreateScene()
     a->SetRole(Letterbox::Role::BarA);
     auto* b = CreateWidget<Letterbox>(L"LetterBoxB", Float2(50, 50), XMFLOAT3(0, 0, 0));
     b->SetRole(Letterbox::Role::BarB);
+
+    m_uiManager->AllParentsSetScale(0.5f);
 
     return true;
 }

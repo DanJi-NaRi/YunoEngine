@@ -634,7 +634,7 @@ namespace yuno::game
                             << " isEvent=" << int(out.unitState[i].isEvent)
                             << "\n";
                     }
-                    gm.MinimapUpdate(out);
+                    gm.UpdatePanels(out);
                     gm.PushObstaclePacket(out);
                 }
             }

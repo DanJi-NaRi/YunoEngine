@@ -32,9 +32,11 @@ bool ExitButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XM
 {
     sizePx /= 2;
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
-    //SetCursurTexture(m_texturePathBk, L"../Assets/UI/Title/exit_mouseout.png");
+    //SetHoverTexture(m_texturePathBk, L"../Assets/UI/Title/exit_mouseout.png");
 
     m_bindkey = 0; // 0인 경우, 안쓴다는 뜻
+
+    SetHoverTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
 
     return true;
 }

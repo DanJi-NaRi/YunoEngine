@@ -105,11 +105,15 @@ void GameManager::SetMinimap(Minimap* pMinimap)
     m_pMinimap = pMinimap;
 }
 
-void GameManager::MinimapUpdate(const ObstacleResult& obstacleResult)
+void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
 {
-    if (!m_pMinimap) return;
-    m_pMinimap->UpdateMinimap(obstacleResult);
+    assert(m_pMinimap && m_pSelectionPanel);
+
+    if (m_pMinimap) m_pMinimap->UpdatePanel(obstacleResult);
+    if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(obstacleResult);
+
 }
+
 
 
 void GameManager::Initialize(GameManager* inst)

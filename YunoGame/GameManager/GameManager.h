@@ -202,5 +202,6 @@ public:
     void SetSelectionPanel(CardSelectionPanel* pSelectionPanel);
 
    
-    void MinimapUpdate(const ObstacleResult& obstacleResult);
+    void UpdatePanels(const ObstacleResult& obstacleResult);
+    //void UpdateSelectionPanel(const UnitHand& playerInfo);
 };

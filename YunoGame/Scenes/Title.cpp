@@ -40,9 +40,9 @@ bool Title::OnCreateScene()
 
     m_startBtn = CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538, 105), XMFLOAT3(ClientW/2, ClientH/2, 0), UIDirection::Center);       // 나중에 1920 1080 <-> 960 540 정상화되면 /2 ㄱㄱ
     m_startBtn->SetTargetScene(CurrentSceneState::RequstEnter);
-    m_startBtn->SetCursurTexture(L"../Assets/UI/TITLE/start_mouseout.png", L"../Assets/UI/TITLE/start_mouseover.png");
+    m_startBtn->SetHoverTexture(L"../Assets/UI/TITLE/start_mouseout.png", L"../Assets/UI/TITLE/start_mouseover.png");
 
-    CreateWidget<ExitButton>(L"ExitBtn", Float2(1538, 105), XMFLOAT3(ClientW/2, ClientH/2+150, 0), UIDirection::Center)->SetCursurTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
+    CreateWidget<ExitButton>(L"ExitBtn", Float2(1538, 105), XMFLOAT3(ClientW/2, ClientH/2+150, 0), UIDirection::Center);
 
     return true;
 }

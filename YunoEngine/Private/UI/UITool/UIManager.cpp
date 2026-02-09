@@ -51,7 +51,10 @@ void UIManager::Update(float dTime)
 
     // 로직 업데이트
     for (auto& widget : m_widgets)
-        widget->Update(dTime);
+    {
+        if(!widget->IsCollapsed()) widget->Update(dTime);  
+    }
+        
 
     // Transform 업데이트 - 루트만
     for (auto& widget : m_widgets)
@@ -95,6 +98,8 @@ void UIManager::LayerSubmit(float dTime)
             // 사실상 이제 생성 순서만으로 이미 정렬이 되어있어, 
             // 부모->자식 사이에 이물 Widget이 낄 수 없는 상태->체이닝 필요없음
             // 체이닝을 다시 살리게 되면, 레이어가 2순위가 됨
+
+            if (!widget->IsVisible()) continue;
 
             //if (widget->GetIsRoot()) 
                 widget->Submit(dTime);

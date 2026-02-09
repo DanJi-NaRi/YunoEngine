@@ -4,6 +4,7 @@
 #include "Card.h"
 #include "CardSlot.h"
 #include "WeaponNameImage.h"
+#include "PhaseStaminaBar.h"
 
 #include "IInput.h"
 #include "UIFactory.h"
@@ -20,6 +21,11 @@ CardSelectionPanel::~CardSelectionPanel()
 
 void CardSelectionPanel::Clear()
 {
+}
+
+void CardSelectionPanel::UpdatePanel(const ObstacleResult& obstacleResult)
+{
+
 }
 
 bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
@@ -74,6 +80,8 @@ void CardSelectionPanel::CreateChild() {
     //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S2", Float2(100, 135), XMFLOAT3(-265, -180, 0), UIDirection::RightTop, this));
 
     //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));
+
+    m_pPhaseStaminaBar = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar", Float2(1083, 34), XMFLOAT3(-580, -400, 0), UIDirection::Center, this);
 
     m_pWeaponIMG = m_uiFactory.CreateChild<WeaponNameImage>(m_name + L"_WeaponName", Float2(56, 259), XMFLOAT3(-1400, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
 

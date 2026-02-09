@@ -33,7 +33,7 @@ public:
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/window_popup_minimap.png"); };  // 머테리얼 생성
 
-    void UpdateMinimap(const ObstacleResult& obstacleResult);
+    void UpdatePanel(const ObstacleResult& obstacleResult);
 
 protected:                             // 그리드 라인 오브젝트 생성
 
