@@ -111,8 +111,8 @@ void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
     assert(m_pMinimap);
     if (m_pMinimap) m_pMinimap->UpdatePanel(obstacleResult);
 
-    assert(m_pSelectionPanel);
-    if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(obstacleResult);
+    //assert(m_pSelectionPanel);
+    //if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(obstacleResult);
 
 }
 
