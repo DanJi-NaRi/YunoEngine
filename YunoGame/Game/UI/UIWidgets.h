@@ -52,6 +52,7 @@ Gauge, // ProgressBar의 확정 자식
 #include "CardCancelButton.h"
 #include "SceneChangeButton.h"
 #include "OptionButton.h"
+#include "PopButton.h"
 //////////////////////////////
 
 

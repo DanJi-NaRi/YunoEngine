@@ -34,10 +34,6 @@ bool PopButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMF
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
     //SetHoverTexture(m_texturePathBk, L"../Assets/UI/Title/exit_mouseout.png");
 
-    m_bindkey = 0; // 0인 경우, 안쓴다는 뜻
-
-    SetHoverTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
-
     return true;
 }
 
@@ -81,7 +77,10 @@ bool PopButton::LMBPressedEvent()
 {
     //std::cout << "(LMB)PressedEvent" << std::endl;
     // 게임 끄기
-    PostQuitMessage(0);
+
+    YunoEngine::GetSceneManager()->RequestPop();
+
+
     return true;
 }
 

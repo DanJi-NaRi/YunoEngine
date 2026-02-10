@@ -6,6 +6,9 @@
 #include "ObjectTypeRegistry.h"
 #include "ObjectManager.h"
 
+#ifdef _DEBUG
+#include "UImgui.h"
+#endif
 //오브젝트 타입.h
 
 namespace {
@@ -105,6 +108,8 @@ bool Unit::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3
 
 bool Unit::Update(float dTime)
 {
+    if (!Enable) return true;
+
     XMMATRIX mScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
     XMMATRIX mRot = XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
     XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z);
@@ -126,6 +131,8 @@ bool Unit::Update(float dTime)
 
 bool Unit::Submit(float dTime)
 {
+    if (!Enable) return true;
+
     if (!m_MeshNode) return true;
     m_MeshNode->Submit(m_mWorld, m_vPos);
 
@@ -283,6 +290,21 @@ XMMATRIX Unit::GetAttachMatrixForChild(Unit* child)
     return GetWorldMatrix();
 }
 
+void Unit::SetEnable(bool enabled)
+{
+    if (Enable == enabled)
+        return;
+
+    Enable = enabled;
+
+    if (Enable)
+    {
+        Update();
+    }
+
+    OnEnableChanged(Enable);
+}
+
 UnitDesc Unit::GetDesc()
 {
     UnitDesc d;
@@ -318,6 +340,12 @@ UnitDesc Unit::GetDesc()
 #ifdef _DEBUG
 void Unit::Serialize()
 {
+    bool enabled = IsEnabled();
+    if (UI::Checkbox("Enable", &enabled))
+    {
+        SetEnable(enabled);
+    }
+    
     int i = 0;
     for (auto& mesh : m_Meshs)
     {

@@ -5,6 +5,7 @@
 
 class SceneChangeButton;
 class OptionButton;
+class PopButton;
 
 enum class OptionUIState
 {
@@ -62,5 +63,5 @@ private:
     Widget* m_creditRoot = nullptr;
 
     // Back
-    SceneChangeButton* m_backBtn = nullptr;
+    PopButton* m_backBtn = nullptr;
 };

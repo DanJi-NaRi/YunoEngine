@@ -29,6 +29,7 @@ void AnimationUnit::AnimationUpdate(float dTime)
 
 bool AnimationUnit::Update(float dTime)
 {
+    if (!Enable) return true;
     AnimationUpdate(dTime);
 
     Unit::Update(dTime);
@@ -38,6 +39,7 @@ bool AnimationUnit::Update(float dTime)
 
 bool AnimationUnit::Submit(float dTime)
 {
+    if (!Enable) return true;
     if (!m_MeshNode) return true;
 
     m_MeshNode->Submit(m_mWorld, m_vPos);
