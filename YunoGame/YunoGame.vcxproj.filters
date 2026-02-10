@@ -145,6 +145,9 @@
     <Filter Include="Scenes\7.Esc">
       <UniqueIdentifier>{2195f01a-0188-40b4-aa06-872eec5ebde6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes\8.Result">
+      <UniqueIdentifier>{817f270b-a241-48bf-a3c7-22908ae614f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -366,6 +369,9 @@
     </ClCompile>
     <ClCompile Include="CheckPanel.cpp">
       <Filter>Game\UI\Image\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultScene.cpp">
+      <Filter>Scenes\8.Result</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -622,6 +628,12 @@
     </ClInclude>
     <ClInclude Include="CheckPanel.h">
       <Filter>Game\UI\Image\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultScene.h">
+      <Filter>Scenes\8.Result</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultScene_inputContext.h">
+      <Filter>System\UIContext</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
