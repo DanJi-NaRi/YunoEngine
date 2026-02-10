@@ -327,19 +327,10 @@ void UnitPiece::CheckMyQ()
             PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece));
             break;
         }
-        case CommandType::RollBack:
-        {
-            PlayRollBack();
-            break;
-        }
         case CommandType::Attack:
         {
-            PlayAttack();
-            break;
-        }
-        case CommandType::Roll:
-        {
-            PlayRoll();
+            PlayRollBack();
+            //PlayAttack();
             break;
         }
         case CommandType::Hit:
@@ -364,9 +355,10 @@ void UnitPiece::CheckMyQ()
 
 bool UnitPiece::UpdateMatrix()
 {
+
     XMMATRIX mScale = XMMatrixScaling(m_vScale.x,m_vScale.y, m_vScale.z);
-    XMMATRIX mRot = XMMatrixRotationRollPitchYaw(0, m_yaw, m_curRotOffset);
-    XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z + m_moveOffset);
+    XMMATRIX mRot = (ignoreRot)? XMMatrixIdentity() : XMMatrixRotationRollPitchYaw(0, m_yaw, m_curRotOffset);
+    XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z + m_curMoveOffset);
 
     XMMATRIX mTM;
 
@@ -539,11 +531,14 @@ void UnitPiece::UpdateRollingOrBack(float dt)
             m_curRotOffset = 0;
             m_rollTime = 0;
             isRollingBack = false;
+            
+            PlayAttack();
+            isRolling = true;
         }
     }
-    else if (isRolling)
+    else if (isRolling && !isAttacking)
     {
-        m_rollTime += dt;
+        m_rollTime += dt * m_rollorbackSpeed;
 
         m_curMoveOffset = GetLerp(m_rollTime, 0, m_moveOffset);
         m_curRotOffset = GetLerp(m_rollTime, 0, m_rotOffset);
@@ -577,6 +572,11 @@ void UnitPiece::SetMoveRotOffset(float moveOffset, float rotOffset)
 {
     m_moveOffset = moveOffset;
     m_rotOffset = rotOffset;
+}
+
+void UnitPiece::SetIgnoreRot(bool ignore)
+{
+    ignoreRot = ignore;
 }
 
 float UnitPiece::GetMoveOffset()
@@ -823,7 +823,6 @@ void UnitPiece::PlayHit()
     isHitting = true;
 }
 
-
 void UnitPiece::PlayMove(XMFLOAT3 targetPos, float second)
 {
     if (isMoving) return;
@@ -848,13 +847,17 @@ void UnitPiece::PlayMove(XMFLOAT3 targetPos, float second)
     isMoving = true;
 }
 
-void UnitPiece::PlayRollBack()
+void UnitPiece::PlayRollBack(float seconds)
 {
+    //m_rollorbackSpeed = 1.f / seconds;
     isRollingBack = true;
+
+    isRolling = false;
 }
 
-void UnitPiece::PlayRoll()
+void UnitPiece::PlayRoll(float seconds)
 {
+    m_rollorbackSpeed = 1.f / seconds;
     isRolling = true;
 }
 

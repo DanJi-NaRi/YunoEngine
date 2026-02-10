@@ -57,8 +57,9 @@ void PlayGridSystem::InitRound()
 {
     const auto wData = GameManager::Get().GetWeaponData();
     GameManager::Get().ResetWeaponData();
-    for (const auto& w : wData)
+    for (int i = 0; i < wData.size(); i++)
     {
+        const auto& w = wData[i];
         int unitId = GetUnitID(w.pId, w.slotId);
         auto& us = m_UnitStates[unitId];
     
@@ -96,8 +97,9 @@ void PlayGridSystem::InitRound()
         int usID = GetUnitID(w.pId, w.slotId);
         m_UnitStates[usID] = {
             (uint8_t)w.pId, (uint8_t)w.slotId, (uint8_t)w.hp,
-            (uint8_t)w.stamina, (uint8_t)w.currentTile, 0, (uint8_t)w.weaponId
+            (uint8_t)w.stamina, (uint8_t)w.currentTile, 0
         };
+        m_weaponIDs[i] = w.weaponId;
     }  
     isRoundOver = false;
 }
@@ -164,15 +166,17 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     Team team = Team::Undefined;
     Direction dir;
     m_pID = GameManager::Get().GetSlotiIdx();   // 나 몇번째 플레이어니?
-    for (const auto& w : wData)
+    for (int i = 0; i < wData.size(); i++)
     {
+        const auto& w = wData[i];
         CreatePiece(w);
 
         int usID = GetUnitID(w.pId, w.slotId);
         m_UnitStates[usID] = {
             (uint8_t)w.pId, (uint8_t)w.slotId, (uint8_t)w.hp,
-            (uint8_t)w.stamina, (uint8_t)w.currentTile, 0, (uint8_t)w.weaponId
+            (uint8_t)w.stamina, (uint8_t)w.currentTile, 0
         };
+        m_weaponIDs[i] = w.weaponId;
     }
 }
 
@@ -206,6 +210,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      {
          pPiece = m_manager->CreateObject<UnitPiece>(
              L"Weapon", XMFLOAT3(px, m_wy, pz));
+         pPiece->SetMoveRotOffset(0, 0);
+         pPiece->SetIgnoreRot(true);
 
          auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
              L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx", po);
@@ -218,7 +224,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram1->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram1->AppearDissolve(appearDisolveDuration);
          pChakram1->SetWho(gp, team, w.weaponId, 1);
-         pChakram1->SetMoveRotOffset(0, 0);
+         pChakram1->SetDir(dir, false);
+         //pChakram1->SetMoveRotOffset(0, 0);
 
          pPiece->Attach(pChakram1);
 
@@ -233,7 +240,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram2->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram2->AppearDissolve(appearDisolveDuration);
          pChakram2->SetWho(gp, team, w.weaponId, 2);
-         pChakram2->SetMoveRotOffset(0, 0);
+         pChakram2->SetDir(dir, false);
+         //pChakram2->SetMoveRotOffset(0, 0);
 
          pPiece->Attach(pChakram2);
 
@@ -327,7 +335,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      ed.isLoop = true;
      ed.texPath = (pieceInfo.team == Team::Ally) ? L"../Assets/Effects/Pos/EF_Player_Blue.png" : L"../Assets/Effects/Pos/EF_Player_Red.png";
      m_effectManager->RegisterEffect(ed);
-     auto pEffect = m_manager->CreateObject<EffectUnit>(L"PeacePosAlly", XMFLOAT3(0, 0.01f, -pPiece->GetMoveOffset()));
+     auto pEffect = m_manager->CreateObject<EffectUnit>(L"PeacePosAlly", XMFLOAT3(0, 0.01f, 0));
      pEffect->BuildInternalEffectMaterial(ed);
      pEffect->IgnoreRotation(1, 1, 1);
      pEffect->IgnoreScale(1, 1, 1);
@@ -557,14 +565,13 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         }
 
 
-        pPiece->SetDir(as.dir, true, 0.34f);
-        pPiece->InsertQ({ CommandType::RollBack });
+        pPiece->SetDir(as.dir, true, attackRotDuration);
         for (uint32_t subId : pieceInfo.subIds)
         {
             auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
             if (pSubPiece != nullptr)
             {
-                pSubPiece->InsertQ({ CommandType::RollBack });
+                pSubPiece->SetDir(as.dir, true, attackRotDuration);
             }
         }
 
@@ -607,16 +614,14 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             break;
         }
 
-        pPiece->InsertQ({ CommandType::Attack });
-        pPiece->InsertQ({ CommandType::Roll });
+        if(pieceInfo.subIds.size() == 0)    // 서브 유닛이 없는 경우에만
+            pPiece->InsertQ({ CommandType::Attack });
         for (uint32_t subId : pieceInfo.subIds)
         {
             auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
             if (pSubPiece != nullptr)
             {
-                pSubPiece->InsertQ({ CommandType::RollBack });
                 pSubPiece->InsertQ({ CommandType::Attack });
-                pSubPiece->InsertQ({ CommandType::Roll });
             }
         }
         as.phaseStarted = false;
@@ -1208,9 +1213,15 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
 
             // 충돌지점까지 이동 후 원래 자리로 되돌아감
             pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
-            pPiece->InsertQ(PlayGridQ::Move_P(colW.x, m_wy, colW.y));              // 충돌 위치까지 이동 후
+            pPiece->InsertQ(PlayGridQ::Move_P(colW.x, m_wy, colW.y));       // 충돌 위치까지 이동 후
             pPiece->InsertQ(PlayGridQ::MoveHit_P(existWho, amIdead, disappearDisolveDuration));                                 // 이동하는 애 죽었는지 부딪힌 애 죽었는지
-            pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));        // 제자리로 돌아감
+            pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));            // 제자리로 돌아감
+            for (auto& subID : pieceInfo.subIds)
+            {
+                auto sub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subID));
+                if (sub == nullptr) continue;
+                sub->InsertQ(PlayGridQ::Rot_P(fdir));
+            }
         }
         else                                                // 아군과 충돌
         {
@@ -1220,6 +1231,12 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
             pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
             pPiece->InsertQ(PlayGridQ::Move_P(colW.x, m_wy, colW.y));
             pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));
+            for (auto& subID : pieceInfo.subIds)
+            {
+                auto sub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subID));
+                if (sub == nullptr) continue;
+                sub->InsertQ(PlayGridQ::Rot_P(fdir));
+            }
         }
     }
     else                                                                                // 비어있는 자리
@@ -1360,7 +1377,7 @@ void PlayGridSystem::ReflectWeaponData()
     {
         datas[i].pId = m_UnitStates[i].pId;
         datas[i].slotId = m_UnitStates[i].slotId;
-        datas[i].weaponId = m_UnitStates[i].weaponId;
+        datas[i].weaponId = m_weaponIDs[i];
         datas[i].hp = m_UnitStates[i].hp;
         datas[i].stamina = m_UnitStates[i].stamina;
         datas[i].currentTile = m_UnitStates[i].targetTileID;

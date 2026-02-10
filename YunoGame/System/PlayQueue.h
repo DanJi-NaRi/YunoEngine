@@ -13,6 +13,10 @@ struct PGridCmd
     {
         struct
         {
+            float seconds;
+        } wait_p, rollback_p, roll_p;
+        struct
+        {
             Direction dir;
         } rot_p;
 
@@ -75,5 +79,6 @@ public:
     static PGridCmd Disappear_P(float disappearDissolveDuration);
 
     static PGridCmd Cmd_S(CommandType cmdType, GamePiece pieceType);
+    static PGridCmd TimeCmd_P(CommandType cmdType, float seconds);
 
 };

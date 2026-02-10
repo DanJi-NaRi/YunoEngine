@@ -10,8 +10,6 @@ struct UnitState
     uint8_t stamina = 0;
     uint8_t targetTileID = 0;
     uint8_t isEvent = 0;         // 0이면 충돌x, 1이면 충돌o
-    
-    uint8_t weaponId = 0;
 };
 
 struct BattleResult

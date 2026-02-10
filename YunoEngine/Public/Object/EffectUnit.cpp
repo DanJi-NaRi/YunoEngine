@@ -134,10 +134,10 @@ void EffectUnit::UpdateWorldMatrix()
 
         XMMATRIX pScaleTM = GetIgnoreScaleTM(scaleTMs);
         XMMATRIX pRotTM = GetIgnoreRotTM(rotTMs);
-        XMMATRIX pTransTM = m_Parent->GetTransMatrix();
 
-        //XMMATRIX invScale = XMMatrixInverse(nullptr, m_Parent->GetScaleMatrix());
-        //mTM = S * R * T * m_Parent->GetAttachMatrixForChild(this);
+        auto pPos = m_Parent->GetPos();
+        XMMATRIX pTransTM = XMMatrixTranslation(pPos.x, pPos.y, pPos.z);
+
         mTM = S * R * T * pScaleTM * pRotTM * pTransTM;
     }
     else
@@ -205,6 +205,7 @@ XMMATRIX EffectUnit::GetIgnoreScaleTM(XMMATRIX3 scaleTMs)
 
     return res;
 }
+
 
 #ifdef _DEBUG
 void EffectUnit::Serialize()

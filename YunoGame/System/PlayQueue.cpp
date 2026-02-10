@@ -90,4 +90,12 @@ PGridCmd PlayGridQ::Cmd_S(CommandType cmdType, GamePiece pieceType)
     return cmd;
 }
 
+PGridCmd PlayGridQ::TimeCmd_P(CommandType cmdType, float seconds)
+{
+    PGridCmd cmd;
+    cmd.cmdType = cmdType;
+    cmd.wait_p.seconds = seconds;
+    return cmd;
+}
+
 std::queue<PGridCmd> PlayGridQ::pieceQue;

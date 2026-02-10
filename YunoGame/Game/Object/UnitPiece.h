@@ -34,6 +34,7 @@ public:
     void InsertQ(PGridCmd targetPos);
     void SetWho(GamePiece type, Team team, uint8_t weaponID, uint8_t subID = 0);
     void SetMoveRotOffset(float moveOffset, float rotOffset);
+    void SetIgnoreRot(bool ignore);
     float GetMoveOffset();
     void SetDir(Direction dir, bool isAnim = true, float second = 1.f);
     void SetFlashColor(Float4 color, int count, float blinkTime);
@@ -44,8 +45,8 @@ public:
 
 private:
     void PlayMove(XMFLOAT3 targetPos, float speed);
-    void PlayRollBack();
-    void PlayRoll();
+    void PlayRollBack(float seconds = 0);
+    void PlayRoll(float seconds);
     void PlayAttack();
     void PlayHit();
     void PlayDead(float disappearDisolveDuration);
@@ -73,7 +74,7 @@ private:
     bool isAttacking = false;
     bool isRollingBack = false;
     bool isRolling = false;
-    bool m_rollTime = 0.f;
+    float m_rollTime = 0.f;
     float m_rollorbackSpeed = 4.f;
 
     // 피격
@@ -108,6 +109,7 @@ private:
     float m_startYaw = 0;
     float m_targetYaw = 0;
     bool isRotating = false;
+    bool ignoreRot = false;
 
     // 죽음 체크
     bool isDead = false;
