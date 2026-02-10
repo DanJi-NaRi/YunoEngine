@@ -32,9 +32,11 @@ public:
 
 protected:
     int m_pID; // 플레이어 ID (Team)
-    GameManager& m_gameManger;
-    std::array<const UnitHand*, 2> m_hands; // 본인 핸드
-    const CardManager* m_cardManager = nullptr;
-    const CardRangeManager* m_rangeManager = nullptr;
+    GameManager& m_gameManager;
+    CardManager& m_cardManager;
+    CardRangeManager& m_rangeManager;
+    std::array<UnitHand, 2>& myHands;
+    std::array<UnitHand, 2>& enemyHands;
+
 };
 

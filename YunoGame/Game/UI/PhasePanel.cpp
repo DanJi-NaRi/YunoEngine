@@ -7,11 +7,17 @@
 #include "IInput.h"
 #include "UIFactory.h"
 
-PhasePanel::PhasePanel(UIFactory& uiFactory) : Image(uiFactory), m_gameManger(GameManager::Get())
+PhasePanel::PhasePanel(UIFactory& uiFactory)
+    : Image(uiFactory)
+    , m_gameManager(GameManager::Get())
+    , m_cardManager(m_gameManager.GetCardBasicManager())
+    , m_rangeManager(m_gameManager.GetCardRangeManager())
+    , myHands(m_gameManager.GetMyHands())
+    , enemyHands(m_gameManager.GetEnemyHands())
+    , m_pID(m_gameManager.GetSlotiIdx())
 {
     Clear();
 }
-
 PhasePanel::~PhasePanel()
 {
     Clear();
