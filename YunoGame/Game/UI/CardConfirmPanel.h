@@ -1,5 +1,5 @@
 #pragma once
-#include "Image.h"
+#include "PhasePanel.h"
 
 class Card;
 class CardSlot;
@@ -7,8 +7,7 @@ class CardConfirmButton;
 class CardCancelButton;
 class CardConfirmArea;
 
-
-class CardConfirmPanel : public Image
+class CardConfirmPanel : public PhasePanel
 {
 public:
     CardConfirmPanel(UIFactory& uiFactory);
@@ -22,14 +21,24 @@ public:
     //void LoadDeck(); void DataSend(); // 외부 서비스로 분리
     //void CardDrag();    // 카드 드래그
 
+    virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardConfirmPanel; }
+
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/window_popup_battlesetup.png"); };    // 머테리얼 생성 (한 번만)
+
+    virtual void SetUpPanel() override;
+
+    void UpdatePanel(const BattleResult& battleResult);
+    void UpdatePanel(const ObstacleResult& obstacleResult);
+
     void UpdateCardSlot();
     void ClearSlot();
 
-    virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
-    virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardTable; }
-
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/window_popup_battlesetup.png"); };    // 머테리얼 생성 (한 번만)
 protected:
+
+    int* m_pID = nullptr; // 플레이어 ID (Team)
+    
+
     int m_openSlot; // 드래그 앤 드랍이 가능한 현재 카드 슬롯 번호
     // 세팅된 카드 / 스냅 위치 정보
     //std::queue<Card*> m_setCards;                   // 세팅한 카드 // 슬롯 4개로 할 것 // m_setCardSlots[i]->GetCard;와 동일

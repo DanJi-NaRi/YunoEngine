@@ -6,10 +6,13 @@
 #include "WeaponNameImage.h"
 #include "PhaseStaminaBar.h"
 
+#include "BattlePackets.h"
+#include "GameManager.h"
+
 #include "IInput.h"
 #include "UIFactory.h"
 
-CardSelectionPanel::CardSelectionPanel(UIFactory& uiFactory) : Image(uiFactory)
+CardSelectionPanel::CardSelectionPanel(UIFactory& uiFactory) : PhasePanel(uiFactory)
 {
     Clear();
 }
@@ -23,13 +26,9 @@ void CardSelectionPanel::Clear()
 {
 }
 
-void CardSelectionPanel::UpdatePanel(const ObstacleResult& obstacleResult)
-{
-}
-
 bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Image::Create(name, id, sizePx, vPos, rotZ, vScale);
+    PhasePanel::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     if (!m_pInput || !m_pRenderer || !m_pTextures)
         return false;
@@ -60,7 +59,7 @@ bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, Float2 si
 
 bool CardSelectionPanel::Start()
 {
-    Image::Start();
+    PhasePanel::Start();
 
     return true;
 }
@@ -69,45 +68,50 @@ void CardSelectionPanel::CreateChild() {
     // 고정 하위 위젯 생성
     this->SetLayer(WidgetLayer::Panels);
 
-   // m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S0", Float2(100, 135), XMFLOAT3(-25, -180, 0), UIDirection::LeftTop, this));
+    // 스태미나 바
+    {
+        m_pPhaseStaminaBars[0] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_0", Float2(1083, 34), XMFLOAT3(-580, -400, 0), UIDirection::Center, this);
 
-    //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S1", Float2(100, 135), XMFLOAT3(-25, -180, 0), UIDirection::RightTop, this));
-    //std::cout << m_CardSlots.back()->GetPos().x << std::endl;
-
-    //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S1", Float2(100, 135),  XMFLOAT3(-145, -180, 0), UIDirection::RightTop, this));
-
-    //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S2", Float2(100, 135), XMFLOAT3(-265, -180, 0), UIDirection::RightTop, this));
-
-    //m_CardSlots.push_back(m_uiFactory.CreateChild<CardSlot>(m_name + L"_S3", Float2(100, 135), XMFLOAT3(-390, -180, 0), UIDirection::RightTop, this));
-
-    m_pPhaseStaminaBar = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar", Float2(1083, 34), XMFLOAT3(-580, -400, 0), UIDirection::Center, this);
+        m_pPhaseStaminaBars[1] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_1", Float2(1083, 34), XMFLOAT3(-580, -350, 0), UIDirection::Center, this);
+    }
 
     m_pWeaponIMG = m_uiFactory.CreateChild<WeaponNameImage>(m_name + L"_WeaponName", Float2(56, 259), XMFLOAT3(-1400, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1350, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
-    m_Cards.back()->ChangeTexture(L"../Assets/Test/unit0.png");
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-1050, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
-    m_Cards.back()->ChangeTexture(L"../Assets/Test/unit1.png");
+    // 카드
+    {
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1350, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.back()->ChangeTexture(L"../Assets/Test/unit0.png");
+        m_pCards.back()->SetCardID(1);
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(205, 297), XMFLOAT3(-750, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
-    m_Cards.back()->ChangeTexture(L"../Assets/Test/unit2.png");
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-1050, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.back()->ChangeTexture(L"../Assets/Test/unit1.png");
+        m_pCards.back()->SetCardID(2);
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(205, 297), XMFLOAT3(-400, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
-    m_Cards.back()->ChangeTexture(L"../Assets/Test/unit3.png");
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(205, 297), XMFLOAT3(-750, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.back()->ChangeTexture(L"../Assets/Test/unit2.png");
+        m_pCards.back()->SetCardID(3);
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(205, 297), XMFLOAT3(-200, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
-    m_Cards.back()->ChangeTexture(L"../Assets/Test/unit4.png");
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(205, 297), XMFLOAT3(-400, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.back()->ChangeTexture(L"../Assets/Test/unit3.png");
+        m_pCards.back()->SetCardID(4);
 
-    m_Cards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-0, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
-    m_Cards.back()->ChangeTexture(L"../Assets/Test/unit5.png");
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(205, 297), XMFLOAT3(-200, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.back()->ChangeTexture(L"../Assets/Test/unit4.png");
+        m_pCards.back()->SetCardID(5);
+
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-0, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.back()->ChangeTexture(L"../Assets/Test/unit5.png");
+        m_pCards.back()->SetCardID(6);
+    }
+
 
 }
 
 
 bool CardSelectionPanel::Update(float dTime)
 {
-    Image::Update(dTime);
+    PhasePanel::Update(dTime);
     
     if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50 * dTime; }
     if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50 * dTime; }
@@ -117,7 +121,25 @@ bool CardSelectionPanel::Update(float dTime)
 
 bool CardSelectionPanel::Submit(float dTime)
 {
-    Image::Submit(dTime);
+    PhasePanel::Submit(dTime);
     return false;
 }
 
+void CardSelectionPanel::SetUpPanel()
+{
+    const auto& FirstCard = m_hands[0]->cards;
+    
+    for (int i = 0; i < m_pCards.size(); ++i) {
+        auto id = FirstCard[0].dataID;
+        m_pCards[i]->SetCardID(id);
+        m_pCards[i]->ChangeTexture(m_cardManager->GetCardTexturePath(id));
+    }
+}
+
+void CardSelectionPanel::UpdatePanel(const BattleResult& battleResult)
+{
+    
+}
+void CardSelectionPanel::UpdatePanel(const ObstacleResult& obstacleResult)
+{
+}

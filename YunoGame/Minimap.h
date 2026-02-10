@@ -1,19 +1,18 @@
 #pragma once
-#include "Image.h"
+#include "PhasePanel.h"
 #include "Grid.h"
 #include <memory>
 
-class GridFactory;
-class MinimapTile;
-
-struct ObstacleResult;
 
 //디버그
 class WidgetGridLine;
+class MinimapTile;
 
+struct UnitHand;
+struct BattleResult;
+struct ObstacleResult;
 
-
-class Minimap : public Image
+class Minimap : public PhasePanel
 {
 public:
     // Widget
@@ -33,20 +32,23 @@ public:
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/window_popup_minimap.png"); };  // 머테리얼 생성
 
-    void UpdatePanel(const ObstacleResult& obstacleResult);
+    virtual void SetUpPanel() override;
+
+    void UpdatePanel(const BattleResult& battleResult) override;
+    void UpdatePanel(const ObstacleResult& obstacleResult) override;
+
+    int GetTileID(int cx, int cz);
+    Int2 GetCellByID(int tileID);
 
 protected:                             // 그리드 라인 오브젝트 생성
 
-   
-
-    void GridSetup(); // 기본 그리드 셋업 (타일 생성 등..)
-
-    int GetID(int cx, int cz);
-    Int2 GetCellByID(int tileID);
-
-    
+    void SetupGrid(); // 기본 그리드 셋업 (타일 생성 등..)
+    void UpdateGrid();
+    void ClearGrid();
 
 protected:
+    const int* m_pID = nullptr; // 플레이어 ID (Team)
+
     // Grid // 기준 : XY
     GridXY m_grid;
     std::vector<MinimapTile*> m_pTiles;

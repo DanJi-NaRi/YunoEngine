@@ -25,7 +25,7 @@ Gauge, // ProgressBar의 확정 자식
 
 // Image 파생 클래스
 #include "Letterbox.h"
-#include "CardTable.h"
+#include "PhasePanel.h"
 #include "CardSelectionPanel.h"
 #include "CardConfirmPanel.h"
 #include "UserImage.h"

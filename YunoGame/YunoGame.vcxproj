@@ -240,7 +240,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Game\UI\Card.cpp" />
-    <ClCompile Include="Game\UI\CardTable.cpp" />
+    <ClCompile Include="Game\UI\PhasePanel.cpp" />
     <ClCompile Include="ClientNetwork\YunoClientNetwork.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -331,7 +331,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="System\MinimapQueue.h" />
     <ClInclude Include="GameManager\GameManager.h" />
     <ClInclude Include="Game\UI\Card.h" />
-    <ClInclude Include="Game\UI\CardTable.h" />
+    <ClInclude Include="Game\UI\PhasePanel.h" />
     <ClInclude Include="ClientNetwork\YunoClientNetwork.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>

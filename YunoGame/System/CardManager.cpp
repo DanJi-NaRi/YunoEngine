@@ -65,7 +65,7 @@ bool CardManager::LoadFromCSV(const std::string& path)
         // -------------------------
         CardData card;
         card.m_cardID = std::stoi(cols[0]);
-        card.m_name = cols[1];
+        card.m_name = cols[1]; // 무조건 바꾸기
         card.m_allowedUnits = std::stoul(cols[2]);
         card.m_Rarity = std::stoi(cols[3]);
         card.m_type = static_cast<CardType>(std::stoi(cols[4]));
@@ -78,7 +78,7 @@ bool CardManager::LoadFromCSV(const std::string& path)
 
         card.m_effectId = 0;
         card.m_soundId = 0;
-        card.m_explainText = "";
+        card.m_explainText = L"";
 
 
         m_cardData[card.m_cardID] = card;
@@ -159,5 +159,11 @@ const CardEffectData* CardManager::GetEffectData(int cardID) const
 {
     auto it = m_effectData.find(cardID);
     return (it != m_effectData.end()) ? &it->second : nullptr;
+}
+
+const std::wstring CardManager::GetCardTexturePath(int cardID) const
+{
+    std::wstring cardPath = L"../Assets/UI/Card/"; //+GetCardData(cardID).m_name;
+    return cardPath;
 }
 

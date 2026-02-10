@@ -25,7 +25,7 @@ public:
     virtual bool KeyReleasedEvent(uint32_t key = 0) override;   // 바인딩한 키 뗐을 때
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
-    virtual WidgetClass GetWidgetClass() override { return WidgetClass::ExitButton; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::PhaseWeaponSelectButton; }
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Test/PhaseStaminaBar_Noting_mouseout.png"); }    // 머테리얼 생성 (한 번만)
 

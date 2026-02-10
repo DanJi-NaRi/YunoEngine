@@ -7,10 +7,14 @@
 #include "CardConfirmButton.h"
 #include "CardCancelButton.h"
 
+#include "BattlePackets.h"
+
 #include "IInput.h"
 #include "UIFactory.h"
 
-CardConfirmPanel::CardConfirmPanel(UIFactory& uiFactory) : Image(uiFactory)
+
+
+CardConfirmPanel::CardConfirmPanel(UIFactory& uiFactory) : PhasePanel(uiFactory)
 {
     Clear();
 }
@@ -28,7 +32,7 @@ void CardConfirmPanel::Clear()
 
 bool CardConfirmPanel::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Image::Create(name, id, sizePx, vPos, rotZ, vScale);
+    PhasePanel::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     if (!m_pInput || !m_pRenderer || !m_pTextures)
         return false;
@@ -61,7 +65,7 @@ bool CardConfirmPanel::Create(const std::wstring& name, uint32_t id, Float2 size
 
 bool CardConfirmPanel::Start()
 {
-    Image::Start();
+    PhasePanel::Start();
 
     return true;
 }
@@ -91,7 +95,7 @@ void CardConfirmPanel::CreateChild() {
 
 bool CardConfirmPanel::Update(float dTime)
 {
-    Image::Update(dTime);
+    PhasePanel::Update(dTime);
     UpdateCardSlot();
 
     return true;
@@ -99,7 +103,7 @@ bool CardConfirmPanel::Update(float dTime)
 
 bool CardConfirmPanel::Submit(float dTime)
 {
-    Image::Submit(dTime);
+    PhasePanel::Submit(dTime);
     return false;
 }
 
@@ -130,4 +134,16 @@ void CardConfirmPanel::ClearSlot() {
         m_setCardSlots[i]->SetIsEnabled(false);
         m_setCardSlots[i]->CleanSetup();
     }
+}
+
+void CardConfirmPanel::SetUpPanel()
+{
+}
+
+void CardConfirmPanel::UpdatePanel(const BattleResult& battleResult)
+{
+}
+
+void CardConfirmPanel::UpdatePanel(const ObstacleResult& obstacleResult)
+{
 }

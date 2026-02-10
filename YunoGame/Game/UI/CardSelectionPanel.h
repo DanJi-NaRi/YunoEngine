@@ -1,13 +1,16 @@
 #pragma once
-#include "Image.h"
+#include "PhasePanel.h"
 
 class Card;
 class CardSlot;
 class WeaponNameImage;
 class PhaseStaminaBar;
-class ObstacleResult;
 
-class CardSelectionPanel : public Image
+struct UnitHand;
+struct BattleResult;
+struct ObstacleResult;
+
+class CardSelectionPanel : public PhasePanel
 {
 public:
     CardSelectionPanel(UIFactory& uiFactory);
@@ -18,25 +21,30 @@ public:
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();
-    //void LoadDeck(); void DataSend(); // 외부 서비스로 분리
-    //void CardDrag();    // 카드 드래그
+
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/tap_all_click.png"); };    // 머테리얼 생성 (한 번만)
+
+    virtual void SetUpPanel() override;
+
+    void UpdatePanel(const BattleResult& battleResult) override;
+    void UpdatePanel(const ObstacleResult& obstacleResult) override;
+
+    void SetID(int* pID) { m_pID = pID; }
+    const int GetID() { return *m_pID; }
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardSelectionPanel; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/tap_all_click.png"); };    // 머테리얼 생성 (한 번만)
-
-    void UpdatePanel(const ObstacleResult& obstacleResult);
 protected:
     // 덱 정보
-    std::vector<std::unique_ptr<Card>> m_deck;      // 카드 덱 // 그리드 시스템 이용할수도??
+    int* m_pID = nullptr; // 플레이어 ID (Team)
 
     // 세팅된 카드 / 스냅 위치 정보
-    std::vector<Card*> m_Cards;                   // 꺼내갈 카드
-    std::vector<CardSlot*> m_CardSlots;           // 카드 세팅할 슬롯 위젯
-    int CardPage;                                 // 표기할 카드 페이지
+    std::vector<Card*> m_pCards;                   // 꺼내갈 카드
+    std::vector<CardSlot*> m_pCardSlots;           // 카드 세팅할 슬롯 위젯
+    int m_cardPage;                                 // 표기할 카드 페이지
     
-    PhaseStaminaBar* m_pPhaseStaminaBar = nullptr;
+    std::array<PhaseStaminaBar*, 2> m_pPhaseStaminaBars;
     WeaponNameImage* m_pWeaponIMG = nullptr;
     //std::unique_ptr<Minimap> m_miniMap;           // 미니맵 // 스폰 포지션 따로 받기?
 };
