@@ -117,7 +117,7 @@ bool PhaseWeaponSelectButton::KeyReleasedEvent(uint32_t key)
 
 void PhaseWeaponSelectButton::ChangeWeaponImage(int id)
 {
-    switch (id+1) {
+    switch (id) {
     case (int)PieceType::Blaster:   
         SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/blaster_mouseout.png",
                          L"../Assets/UI/PLAY/PhaseScene/blaster_mouseover.png");

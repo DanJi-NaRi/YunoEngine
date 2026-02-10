@@ -174,6 +174,8 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
             (uint8_t)w.stamina, (uint8_t)w.currentTile, 0, (uint8_t)w.weaponId
         };
     }
+
+    ReflectWeaponData();
 }
 
 void PlayGridSystem::CreatePiece(const Wdata& w)

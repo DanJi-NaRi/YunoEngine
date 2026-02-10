@@ -121,9 +121,6 @@ bool CardSelectionPanel::Start()
 bool CardSelectionPanel::Update(float dTime)
 {
     PhasePanel::Update(dTime);
-    
-    if (m_pInput->IsKeyDown(VK_OEM_6)) { m_vPos.x += 50 * dTime; }
-    if (m_pInput->IsKeyDown(VK_OEM_4)) { m_vPos.x -= 50 * dTime; }
 
     return true;
 }
@@ -177,6 +174,7 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
     const int maxPage = GetMaxPage(slot);
 
     page = std::clamp(page, 0, maxPage);
+    m_curPage = page;
 
     const int startIdx = page * CardSlotSize;
 

@@ -55,10 +55,21 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
 
 void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
 {
-    m_myUIWeapons[0] = wdatas[0];
-    m_myUIWeapons[1] = wdatas[1];
-    m_enemyUIWeapons[0] = wdatas[2];
-    m_enemyUIWeapons[1] = wdatas[3];
+
+    for (int i = 0; i < 3; i+=2) 
+    {
+        if ((i / 2)+1 == m_PID)     // 내가 1P임
+        {
+            m_myUIWeapons[0] = wdatas[i];
+            m_myUIWeapons[1] = wdatas[i+1];
+        }
+        else                        // 내가 2P임 
+        {
+            m_enemyUIWeapons[0] = wdatas[i];
+            m_enemyUIWeapons[1] = wdatas[i + 1];
+        }
+        std::cout << std::endl;
+    }
 }
 
 

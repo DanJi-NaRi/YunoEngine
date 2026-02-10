@@ -265,8 +265,13 @@ namespace yuno::server
         std::cout << "[Round] StartTurn #" << g_battleState.turnNumber << "\n";
 
         // 두 플레이어가 선택한 카드 결과
-        pkt.addedCards[0] = g_battleState.players[0].handCards.back();
-        pkt.addedCards[1] = g_battleState.players[1].handCards.back();
+
+        if (g_battleState.turnNumber != 1)
+        {
+            pkt.addedCards[0] = g_battleState.players[0].handCards.back();
+            pkt.addedCards[1] = g_battleState.players[1].handCards.back();
+        }
+
 
         auto bytes = yuno::net::PacketBuilder::Build(
             yuno::net::PacketType::S2C_StartTurn,
