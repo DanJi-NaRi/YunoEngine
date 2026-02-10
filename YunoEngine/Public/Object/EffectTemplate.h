@@ -29,6 +29,8 @@ enum class EffectID : uint32_t
     Warning,
     ScytheAttack,
     ScytheAttack2,
+    ChakramAttack1,
+    ChakramAttack2,
 
     Count
 };

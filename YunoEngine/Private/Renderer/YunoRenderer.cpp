@@ -2544,7 +2544,7 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
             i++;
         }
     }
-    
+
     XMStoreFloat4x4(&cbPerObject_matrix.mWorld, XMMatrixTranspose(W));
     XMStoreFloat4x4(&cbPerObject_matrix.mWVP, XMMatrixTranspose(WVP));
     XMStoreFloat4x4(&cbPerObject_matrix.mWInvT, (XMMatrixInverse(nullptr, W)));

@@ -10,7 +10,7 @@ struct YunoCamera
     XMFLOAT3 up{ 0, 1,  0.0f };
 
     float fovY = XM_PIDIV4; 
-    float aspect = 1.0f;
+    float aspect = 1920 / 1080;
     float nearZ = 0.1f;
     float farZ = 1000.0f;
 

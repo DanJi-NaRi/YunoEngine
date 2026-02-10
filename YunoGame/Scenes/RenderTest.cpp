@@ -81,17 +81,6 @@ bool RenderTest::OnCreateScene()
     //auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::Center);
     //sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 8, 12, 90, 24.f, true);
     //sheet->SetSpriteSheet(L"../Assets/Textures/white.png", 1, 1, 1, 24.f, true);
-    auto iwindow = YunoEngine::GetWindow();
-    float ClientW = static_cast<float>(iwindow->GetClientWidth());
-    float ClientH = static_cast<float>(iwindow->GetClientHeight());
-
-    CreateWidget<TextureImage>(L"weapon", L"../Assets/UI/WEAPON_SELECT/black_background.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
-    CreateWidget<TextureImage>(L"StandByBackGround", L"../Assets/UI/WEAPON_SELECT/black_background.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
-    CreateWidget<TextureImage>(L"StandByBackGround", L"../Assets/UI/WEAPON_SELECT/waiting_background.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
-    CreateWidget<TextureImage>(L"StandByImage", L"../Assets/UI/WEAPON_SELECT/selected_chakram_1.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
-    CreateWidget<TextureImage>(L"StandByImage", L"../Assets/UI/WEAPON_SELECT/selected_chakram_2.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
-    CreateWidget<TextureImage>(L"StandByImage", L"../Assets/UI/WEAPON_SELECT/selected_chakram_3.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
-    
 
     PassOption po; 
     po.shader = ShaderId::NoneShadowPBRBase;
@@ -105,6 +94,7 @@ bool RenderTest::OnCreateScene()
     gun = m_objectManager->CreateObjectFromFile<AnimTest>(L"blaster" , XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Blaster/Blaster.fbx", po);
     gun->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
     gun->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+    gun->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Blaster_hit.fbx");
     gun->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
     gun->SetDissolveColor(XMFLOAT3(1, 1, 1));
 
@@ -386,9 +376,54 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_2.png";
     m_effectManager->RegisterEffect(ed);
 
+    ed.id = EffectID::ChakramAttack1;
+    ed.framecount = 18;
+    ed.lifetime = 0.4f;
+    ed.cols = 3;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { 0, XM_PIDIV2, -XMConvertToRadians(40) };
+    ed.emissive = 30.0f;
+    ed.color = { 0, 1, 1, 1 };
+    ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_1.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::ChakramAttack2;
+    ed.framecount = 30;
+    ed.lifetime = 0.4f;
+    ed.cols = 5;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { 0, XM_PIDIV2, XMConvertToRadians(150) };
+    ed.emissive = 30.0f;
+    ed.color = { 0, 1, 1, 1 };
+    ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_2.png";
+    m_effectManager->RegisterEffect(ed);
+
+    //드릴
     breacher->RegisterFrameEvent(1, 21, [this]() {
         auto eff = m_effectManager->Spawn(EffectID::DrillAttack1, { 0.05f, 1.1f, 0.0f }, { 3.f, 3.f, 1.f }, { 1, 0, 0 });
         breacher->AttachChildBone(eff, 1);
+        });
+    //차크람1
+    chakram01->RegisterFrameEvent(1, 9, [this]() {
+        auto eff = m_effectManager->Spawn(EffectID::ChakramAttack1, { 0.0f, 1.1f, 0.2f }, { 2.f, 2.f, 1.f });
+        chakram01->AttachChildBone(eff, 1);
+        eff = m_effectManager->Spawn(EffectID::ChakramAttack2, { 0.0f, 1.0f, 0.2f }, { 1.f, 1.f, 1.f });
+        chakram01->AttachChildBone(eff, 1);
+        });
+    chakram01->RegisterFrameEvent(1, 34, [this]() {
+        auto eff = m_effectManager->Spawn(EffectID::ChakramAttack1, { 0.0f, 1.1f, 0.2f }, { 2.f, 2.f, 1.f });
+        chakram01->AttachChildBone(eff, 1);
+        eff = m_effectManager->Spawn(EffectID::ChakramAttack2, { 0.0f, 1.0f, 0.2f }, { 1.f, 1.f, 1.f });
+        chakram01->AttachChildBone(eff, 1);
+        });
+    //차크람2
+    chakram02->RegisterFrameEvent(1, 22, [this]() {
+        auto eff = m_effectManager->Spawn(EffectID::ChakramAttack1, { 0.0f, 1.1f, 0.2f }, { 2.f, 2.f, 1.f });
+        chakram02->AttachChildBone(eff, 1);
+        eff = m_effectManager->Spawn(EffectID::ChakramAttack2, { 0.0f, 1.0f, 0.2f }, { 1.f, 1.f, 1.f });
+        chakram02->AttachChildBone(eff, 1);
         });
 
     return true;
@@ -441,6 +476,17 @@ void RenderTest::Update(float dt)
         scythe->AttachChildBone(eff, 1);
         eff = m_effectManager->Spawn(EffectID::ScytheAttack2, { 0.0f, 1.0f, -0.45f }, { 1.f, 1.f, 1.f });
         scythe->AttachChildBone(eff, 1);
+    }
+    if (YunoEngine::GetInput()->IsKeyPressed('6'))
+    {
+        auto eff = m_effectManager->Spawn(EffectID::ChakramAttack1, { 0.0f, 1.1f, 0.2f }, { 2.f, 2.f, 1.f });
+        chakram01->AttachChildBone(eff, 1);
+        eff = m_effectManager->Spawn(EffectID::ChakramAttack2, { 0.0f, 1.0f, 0.2f }, { 1.f, 1.f, 1.f });
+        chakram01->AttachChildBone(eff, 1);
+        eff = m_effectManager->Spawn(EffectID::ChakramAttack1, { 0.0f, 1.1f, 0.2f }, { 2.f, 2.f, 1.f });
+        chakram02->AttachChildBone(eff, 1);
+        eff = m_effectManager->Spawn(EffectID::ChakramAttack2, { 0.0f, 1.0f, 0.2f }, { 1.f, 1.f, 1.f });
+        chakram02->AttachChildBone(eff, 1);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('F'))
     {
