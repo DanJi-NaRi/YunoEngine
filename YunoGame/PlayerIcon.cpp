@@ -59,8 +59,8 @@ bool PlayerIcon::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XM
 
 
 void PlayerIcon::CreateChild() {
-    m_bars.push_back(m_uiFactory.CreateChild<HealthBar>(m_name + L"_HealthBar", Float2(1083, 34), XMFLOAT3(600, -24, 0), UIDirection::Center, WidgetLayer::HUD, this));
-    m_bars.push_back(m_uiFactory.CreateChild<StaminaBar>(m_name + L"_StaminaBar", Float2(1083, 34), XMFLOAT3(610, 24, 0), UIDirection::Center, WidgetLayer::HUD, this));
+    m_bars.push_back(m_uiFactory.CreateChild<HealthBar>(m_name + L"_HealthBar", Float2(542, 17), XMFLOAT3(300, -24, 0), UIDirection::Center, WidgetLayer::HUD, this));
+    m_bars.push_back(m_uiFactory.CreateChild<StaminaBar>(m_name + L"_StaminaBar", Float2(542, 17), XMFLOAT3(310, 0, 0), UIDirection::Center, WidgetLayer::HUD, this));
 }
 
 bool PlayerIcon::Start()

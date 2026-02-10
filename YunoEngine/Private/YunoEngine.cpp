@@ -103,7 +103,7 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     ImGuiManager::RegisterDraw([this]()
         {
             auto& camera = m_renderer->GetCamera();
-            UI::DrawDebugHUD(&camera.position.x, camera.GetForward().m128_f32);
+            //UI::DrawDebugHUD(&camera.position.x, camera.GetForward().m128_f32);
 
             float fovYDeg = camera.GetFovYDegrees();
             float aspect = camera.GetAspect();

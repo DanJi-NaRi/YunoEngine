@@ -25,7 +25,7 @@ bool HealthBar::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMF
 void HealthBar::CreateChild()
 {
     //m_pGauge = m_uiFactory;
-    m_pGauge = m_uiFactory.CreateChild<HealthGauge>(m_name + L"_Gauge0", Float2(1077, 28), XMFLOAT3(0, 0.6f, 0), UIDirection::Center, this);
+    m_pGauge = m_uiFactory.CreateChild<HealthGauge>(m_name + L"_Gauge0", Float2(538, 14), XMFLOAT3(0, 0.6f, 0), UIDirection::Center, this);
     m_pGauge->SetFillDirection(FillDirection::LeftToRight);
 }
 

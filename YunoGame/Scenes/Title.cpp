@@ -52,10 +52,17 @@ bool Title::OnCreateScene()
         };
 
 
-    auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::Center);
-    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 8, 12, 90, 24.f, true);
+    auto sheet = CreateWidget<SpriteSheet>(L"background", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::LeftTop);
+    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_MainFrame.png", 5, 7, 34, 24.f, true);
 
+    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background_Opacity.png", XMFLOAT3(0, 0, 0));
     CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background.png", XMFLOAT3(0, 0, 0));
+    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background_fog.png", XMFLOAT3(0, 0, 0));
+    
+    sheet = CreateWidget<SpriteSheet>(L"logo", Float2{ 1024, 1024 }, XMFLOAT3{ 960, 540, 0 }, UIDirection::Center);
+    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_MainVS.png", 13, 12, 150, 24.f, true);
+
+    //CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background.png", XMFLOAT3(0, 0, 0));
 
     m_startBtn = CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538, 105), makeButtonPos(0), UIDirection::Center);       // 나중에 1920 1080 <-> 960 540 정상화되면 /2 ㄱㄱ
     m_startBtn->SetTargetScene(CurrentSceneState::RequstEnter);
