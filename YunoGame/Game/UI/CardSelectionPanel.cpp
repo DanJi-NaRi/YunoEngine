@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CardSelectionPanel.h"
 
+#include "Button.h"
 #include "Card.h"
 #include "CardSlot.h"
 #include "WeaponNameImage.h"
@@ -32,6 +33,9 @@ bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, Float2 si
     PhasePanel::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     m_anchor = UIDirection::LeftTop;
+    
+    m_curPage = 0;
+    m_curSlot = 0;
 
     Backup();
 
@@ -48,16 +52,29 @@ void CardSelectionPanel::CreateChild() {
     // 스태미나 바
     {
         m_pPhaseStaminaBars[0] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_0", Float2(1083, 34), XMFLOAT3(-650, -450, 0), UIDirection::Center, this);
-        m_pPhaseStaminaBars[0]->GetWeponSelectButton()->ChangeWeaponImage(m_weapons[0].weaponId);
-        m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_weapons[0].weaponId); }); // 0번 슬롯 CardPage 0번으로 이동
-        //m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); }); // 0번 슬롯 CardPage 0번으로 이동
+        //m_pPhaseStaminaBars[0]->GetWeponSelectButton()->ChangeWeaponImage(m_weapons[0].weaponId);
+        //m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_weapons[0].weaponId); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
+        //m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
         
         m_pPhaseStaminaBars[1] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_1", Float2(1083, 34), XMFLOAT3(-650, -400, 0), UIDirection::Center, this);
-        m_pPhaseStaminaBars[1]->GetWeponSelectButton()->ChangeWeaponImage(m_weapons[1].weaponId);
-        m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_weapons[1].weaponId); }); // 0번 슬롯 CardPage 0번으로 이동
-        //m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); }); // 0번 슬롯 CardPage 0번으로 이동
+        //m_pPhaseStaminaBars[1]->GetWeponSelectButton()->ChangeWeaponImage(m_weapons[1].weaponId);
+        //m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_weapons[1].weaponId); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
+        //m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
+        
     }
     
+    // 페이지 버튼
+    {
+        m_pPageUpButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(205, 297), XMFLOAT3(-200, -350, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+        assert(m_pPageUpButton);
+        m_pPageUpButton->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/direction_mouseout.png", L"../Assets/UI/PLAY/PhaseScene/direction_mouseover.png");
+        m_pPageUpButton->SetEventLMB([this]() { this->PageUp(m_curSlot); });
+
+        m_pPageDownButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(205, 297), XMFLOAT3(-200, -150, 0), 90, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+        assert(m_pPageDownButton);
+        m_pPageDownButton->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/direction_mouseout.png", L"../Assets/UI/PLAY/PhaseScene/direction_mouseover.png");
+        m_pPageDownButton->SetEventLMB([this]() { this->PageDown(m_curSlot); });
+    }
 
     // 카드
     {
@@ -87,6 +104,7 @@ void CardSelectionPanel::CreateChild() {
     }
 
 
+
 }
 
 bool CardSelectionPanel::Start()
@@ -95,7 +113,7 @@ bool CardSelectionPanel::Start()
 
     ViewCardPage(0, 0); // 0번 슬롯, 0번 페이지
 
-    m_pWeaponIMG->ChangeWeaponImage(m_weapons[1].weaponId);
+    //m_pWeaponIMG->ChangeWeaponImage(m_weapons[1].weaponId);
     return true;
 }
 
@@ -121,6 +139,7 @@ void CardSelectionPanel::UpdatePanel(const BattleResult& battleResult)
 }
 void CardSelectionPanel::UpdatePanel(const ObstacleResult& obstacleResult)
 {
+    
 }
 
 void CardSelectionPanel::ViewCardPage(int slot, int page)
@@ -139,15 +158,28 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
     constexpr int CardSlotSize = 6; // 한 페이지 당 카드 갯수
     const int total = static_cast<int>(cards.size()); // 카드 총 사이즈
 
-    // total==0이면 maxPage=-1 (페이지가 "없다"는 의미)
-    const int maxPage = (total == 0) ? -1 : (total - 1) / CardSlotSize;
+    const int viewCount = std::min(CardSlotSize, static_cast<int>(m_pCards.size()));
 
-    if (page < 0) page = 0;
-    if (maxPage >= 0 && page > maxPage) page = maxPage;
+    if (total == 0)
+    {
+        m_curPage = 0;
+        for (int i = 0; i < viewCount; ++i)
+        {
+            m_pCards[i]->SetCardID(0);
+            m_pCards[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
+        }
+        return;
+    }
+
+
+    // total==0이면 maxPage=-1 (페이지가 "없다"는 의미)
+    const int maxPage = GetMaxPage(slot);
+
+    page = std::clamp(page, 0, maxPage);
 
     const int startIdx = page * CardSlotSize;
 
-    const int viewCount = std::min(CardSlotSize, static_cast<int>(m_pCards.size()));
+    
     for (int i = 0; i < viewCount; ++i)
     {
         const int idx = startIdx + i;
@@ -165,4 +197,32 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
             m_pCards[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         }
     }
+}
+
+void CardSelectionPanel::PageUp(int slot)
+{
+    const int maxPage = GetMaxPage(slot);
+    if (maxPage < 0) { m_curPage = 0; ViewCardPage(slot, 0); return; }
+
+    m_curPage = std::clamp(m_curPage - 1, 0, maxPage);
+    ViewCardPage(slot, m_curPage);
+}
+
+void CardSelectionPanel::PageDown(int slot)
+{
+    const int maxPage = GetMaxPage(slot);
+    if (maxPage < 0) { m_curPage = 0; ViewCardPage(slot, 0); return; }
+
+    m_curPage = std::clamp(m_curPage + 1, 0, maxPage);
+    ViewCardPage(slot, m_curPage);
+}
+
+const int CardSelectionPanel::GetMaxPage(int slot)
+{
+    const auto& cards = m_myHands[slot].cards;
+
+    constexpr int CardSlotSize = 6; // 한 페이지 당 카드 갯수
+    const int total = static_cast<int>(cards.size()); // 카드 총 사이즈
+    // total==0이면 maxPage=-1 (페이지가 "없다"는 의미)
+    return (total == 0) ? -1 : (total - 1) / CardSlotSize;
 }

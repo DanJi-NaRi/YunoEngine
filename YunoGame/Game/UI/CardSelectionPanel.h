@@ -1,6 +1,7 @@
 #pragma once
 #include "PhasePanel.h"
 
+class Button;
 class Card;
 class CardSlot;
 class WeaponNameImage;
@@ -35,6 +36,10 @@ public:
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardSelectionPanel; }
 
     void ViewCardPage(int slot, int page); // 몇 번째 무기 페이지인지 
+    void PageUp(int slot);
+    void PageDown(int slot);
+
+    const int GetMaxPage(int slot);
 
 protected:
     // 덱 정보
@@ -43,8 +48,10 @@ protected:
     // 세팅된 카드 / 스냅 위치 정보
     std::vector<Card*> m_pCards;                   // 꺼내갈 카드
     std::vector<CardSlot*> m_pCardSlots;           // 카드 세팅할 슬롯 위젯
-    int m_cardPage;                                 // 표기할 카드 페이지
-    
+    int m_curPage;                                 // 표기할 카드 페이지
+    int m_curSlot;                                 // 현재 보고있는 슬롯
+    Button* m_pPageUpButton = nullptr;
+    Button* m_pPageDownButton = nullptr;
     std::array<PhaseStaminaBar*, 2> m_pPhaseStaminaBars;
     WeaponNameImage* m_pWeaponIMG = nullptr;
     //std::unique_ptr<Minimap> m_miniMap;           // 미니맵 // 스폰 포지션 따로 받기?

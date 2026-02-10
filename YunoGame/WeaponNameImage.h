@@ -19,7 +19,7 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::PhasePanel; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Test/Weapon_Noting.png"); };    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"./Assets/UI/PLAY/PhaseScene/Inventory_test_inventory_non.png"); };    // 머테리얼 생성 (한 번만)
 
     void ChangeWeaponImage(int id);
     void ChangeWeaponImage(PieceType type);

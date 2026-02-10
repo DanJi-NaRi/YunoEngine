@@ -85,6 +85,8 @@ public:
 
     void SubmitTurn(const std::vector<CardPlayCommand>& runtimeIDs);
 
+    const int GetPID() { return m_PID; }
+
     //void RoundInit(yuno::net::packets::S2C_Error data);
 
 // 카드 관련 변수와 함수
