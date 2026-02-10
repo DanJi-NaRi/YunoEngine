@@ -530,6 +530,11 @@ void UnitPiece::SetMoveRotOffset(float moveOffset, float rotOffset)
     m_rotOffset = rotOffset;
 }
 
+float UnitPiece::GetMoveOffset()
+{
+    return m_moveOffset;
+}
+
 
 void UnitPiece::SetDir(Direction dir, bool isAnim, float speed)
 {

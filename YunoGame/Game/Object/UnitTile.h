@@ -35,9 +35,9 @@ private:
 
     // 반짝
     Float4 m_flashColor{ 1, 1, 1, 1 };// 알람 색깔
-    float m_flashTime = 0;           // 현재 누적 시간
-    float m_blinkTime = 0.5f;        // 한 번 반짝이는 시간
-    int m_count = 0;                 // 몇번 번쩍일 건지
+    float m_flashTime = 0;            // 현재 누적 시간
+    float m_blinkTime = 0.5f;         // 한 번 반짝이는 시간
+    int m_count = 0;                  // 몇번 번쩍일 건지
     bool isFlashing = false;
 
     bool isDone = false;

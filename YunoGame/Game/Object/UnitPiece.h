@@ -32,6 +32,7 @@ public:
     void InsertQ(PGridCmd targetPos);
     void SetWho(GamePiece type);
     void SetMoveRotOffset(float moveOffset, float rotOffset);
+    float GetMoveOffset();
     void SetDir(Direction dir, bool isAnim = true, float speed = 2.f);
     void SetFlashColor(Float4 color, int count, float blinkTime);
     void AppearDissolve(float dissolveTime);

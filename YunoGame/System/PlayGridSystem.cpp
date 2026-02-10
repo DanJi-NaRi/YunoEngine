@@ -279,6 +279,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pPiece->SetScale(XMFLOAT3(2, 2, 2));
+         pPiece->SetMoveRotOffset(-0.25f, 0);
          break;
      case 4:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
@@ -310,6 +311,28 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      }
      pPiece->SetWho(gp);
      pPiece->SetDir(dir, false);
+
+     // 기물 따라다니는 바닥 이펙트
+     EffectDesc ed{};
+     ed.id = (pieceInfo.team == Team::Ally) ? EffectID::PeacePosAlly : EffectID::PeacePosEnemy;
+     ed.shaderid = ShaderId::EffectBase;
+     ed.billboard = BillboardMode::None;
+     ed.lifetime = 1.5f;
+     ed.framecount = 60;
+     ed.cols = 8;
+     ed.rows = 8;
+     ed.emissive = 30.0f;
+     ed.color = (pieceInfo.team == Team::Ally)? XMFLOAT4{ 0, 0, 1, 1 } : XMFLOAT4{ 1, 0, 0, 1 };
+     ed.rot = { XM_PIDIV2, 0, 0 };
+     ed.isLoop = true;
+     ed.texPath = (pieceInfo.team == Team::Ally) ? L"../Assets/Effects/Pos/EF_Player_Blue.png" : L"../Assets/Effects/Pos/EF_Player_Red.png";
+     m_effectManager->RegisterEffect(ed);
+     auto pEffect = m_manager->CreateObject<EffectUnit>(L"PeacePosAlly", XMFLOAT3(0, 0.01f, -pPiece->GetMoveOffset()));
+     pEffect->BuildInternalEffectMaterial(ed);
+     pEffect->IgnoreRotation(1, 1, 1);
+     pEffect->IgnoreScale(1, 1, 1);
+     pieceInfo.effectIds.push_back(pEffect->GetID());
+     pPiece->Attach(pEffect);
 
      // 디졸브 나타남
      pPiece->AppearDissolve(appearDisolveDuration);
@@ -350,6 +373,7 @@ void PlayGridSystem::CheckMyQ()
                     if (pSubPiece != nullptr)
                         pSubPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
                 }
+
             }
             else
             {
@@ -379,6 +403,11 @@ void PlayGridSystem::CheckMyQ()
             for (uint32_t subId : pieceInfo.subIds)
             {
                 m_manager->DestroyObject(subId);
+            }
+
+            for (uint32_t effectId : pieceInfo.effectIds)
+            {
+                m_manager->DestroyObject(effectId);
             }
 
             m_pieces.erase(it);
