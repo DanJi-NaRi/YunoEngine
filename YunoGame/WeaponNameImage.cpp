@@ -85,7 +85,7 @@ void WeaponNameImage::ChangeWeaponImage(int id)
     case (int)PieceType::Scythe:    ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_scythe.png"); break;
     case (int)PieceType::Impactor:  ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_impactor.png"); break;
     case (int)PieceType::Cleaver:   ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_cleaver.png"); break;
-    default: ChangeTexture(L"./Assets/UI/PLAY/PhaseScene/Inventory_test_inventory_non.png"); break;
+    default: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/test_inventory_non.png"); break;
     }
 }
 
