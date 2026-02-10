@@ -131,7 +131,7 @@ void GameManager::Initialize(GameManager* inst)
 
 void GameManager::Init()
 {
-    m_cardBasicMng.LoadFromCSV("../Assets/CardData/CardData.csv");
+    m_cardBasicMng.LoadFromCSV("../Assets/CardData/Carddata.csv");
     m_cardRangeMng.LoadFromCSV("../Assets/CardData/CardRange.csv");
 }
 

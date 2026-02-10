@@ -27,6 +27,7 @@ enum class CommandType : uint8_t
     Move,
     Attack,
     Hit,
+    MoveHit,
     Dead,
 
     IncreaseAttackPhase,
