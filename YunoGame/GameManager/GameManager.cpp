@@ -324,6 +324,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::SubmitCard:
     {
+        m_state = CurrentSceneState::SubmitCard;
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
