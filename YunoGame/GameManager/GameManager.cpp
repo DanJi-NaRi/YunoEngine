@@ -325,7 +325,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
 
-        sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+        //sm->RequestPush(std::make_unique<PhaseScene>(), sp);
 
         break;
     }
