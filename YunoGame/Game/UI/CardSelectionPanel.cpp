@@ -66,14 +66,15 @@ void CardSelectionPanel::CreateChild() {
     
     // 페이지 버튼
     {
-        m_pPageUpButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(205, 297), XMFLOAT3(-200, -350, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+        m_pPageUpButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(74, 66), XMFLOAT3(-100, -350, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
         assert(m_pPageUpButton);
-        m_pPageUpButton->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/direction_mouseout.png", L"../Assets/UI/PLAY/PhaseScene/direction_mouseover.png");
+        m_pPageUpButton->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseout.png", L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseover.png");
         m_pPageUpButton->SetEventLMB([this]() { this->PageUp(m_curSlot); });
 
-        m_pPageDownButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(205, 297), XMFLOAT3(-200, -150, 0), 90, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+        m_pPageDownButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(74, 66), XMFLOAT3(-100, -150, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
         assert(m_pPageDownButton);
-        m_pPageDownButton->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/direction_mouseout.png", L"../Assets/UI/PLAY/PhaseScene/direction_mouseover.png");
+        m_pPageDownButton->MirrorScaleY();
+        m_pPageDownButton->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseout.png", L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseover.png");
         m_pPageDownButton->SetEventLMB([this]() { this->PageDown(m_curSlot); });
     }
 
