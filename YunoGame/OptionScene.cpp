@@ -31,7 +31,7 @@ bool OptionScene::OnCreateScene()
 
 void OptionScene::CreateMainUI()
 {
-    const float baseX = (ClientW - 630) / 2;
+    const float baseX = ((ClientW - 630) / 2) - 2;
     const float baseY = ClientH / 2;
 
     auto makePos = [&](int index)
@@ -46,7 +46,7 @@ void OptionScene::CreateMainUI()
     // Volume 버튼//TODO :: 위치 확인
     m_volumeBtn = CreateWidget<OptionButton>(
         L"VolumeBtn",
-        Float2(212, 45),
+        Float2(208.5f, 45),
         makePos(0),
         UIDirection::Center
     );
@@ -64,7 +64,7 @@ void OptionScene::CreateMainUI()
     // Credit 버튼
     m_creditBtn = CreateWidget<OptionButton>(
         L"CreditBtn",
-        Float2(212, 45),
+        Float2(208.5f, 45),
         makePos(1),
         UIDirection::Center
     );
@@ -82,8 +82,8 @@ void OptionScene::CreateMainUI()
     //Back//TODO :: 위치 확인
     m_backBtn = CreateWidget<SceneChangeButton>(
         L"BackBtn",
-        Float2(450, 90),
-        XMFLOAT3(ClientW / 2 + 308, ClientH / 2 + 350, 0),
+        Float2(416, 90),
+        XMFLOAT3(ClientW / 2 + 315, ClientH / 2 + 350, 0),
         UIDirection::Center
     );
     m_backBtn->SetTargetScene(CurrentSceneState::Title);

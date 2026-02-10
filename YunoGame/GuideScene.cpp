@@ -31,7 +31,7 @@ bool GuideScene::OnCreateScene()
 
 void GuideScene::CreateMainUI()
 {//TODO::위치 잡아줘
-    const float baseX = (ClientW-630) / 2;
+    const float baseX = ((ClientW-630) / 2)-2;
     const float baseY = ClientH / 2;
 
     auto makePos = [&](int index)
@@ -45,7 +45,7 @@ void GuideScene::CreateMainUI()
 
     m_keywordBtn = CreateWidget<OptionButton>(
         L"KeywordBtn",
-        Float2(212, 45),
+        Float2(208.5f, 45),
         makePos(0),
         UIDirection::Center
     );
@@ -60,7 +60,7 @@ void GuideScene::CreateMainUI()
 
     m_cardTypeBtn = CreateWidget<OptionButton>(
         L"CardTypeBtn",
-        Float2(212, 45),
+        Float2(208.5f, 45),
         makePos(1),
         UIDirection::Center
     );
@@ -75,7 +75,7 @@ void GuideScene::CreateMainUI()
 
     m_turnBtn = CreateWidget<OptionButton>(
         L"TurnBtn",
-        Float2(212, 45),
+        Float2(208.5f, 45),
         makePos(2),
         UIDirection::Center
     );
@@ -91,7 +91,7 @@ void GuideScene::CreateMainUI()
 
     m_coinTossBtn = CreateWidget<OptionButton>(
         L"CoinTossBtn",
-        Float2(212, 45),
+        Float2(208.5f, 45),
         makePos(3),
         UIDirection::Center
     );
@@ -108,8 +108,8 @@ void GuideScene::CreateMainUI()
     //Back//TODO::위치
     m_backBtn = CreateWidget<SceneChangeButton>(
         L"BackBtn",
-        Float2(450, 90),
-        XMFLOAT3(ClientW / 2 + 308, ClientH / 2 + 350, 0),
+        Float2(416, 90),
+        XMFLOAT3(ClientW / 2 + 315, ClientH / 2 + 350, 0),
         UIDirection::Center
     );
     m_backBtn->SetTargetScene(CurrentSceneState::Title);
