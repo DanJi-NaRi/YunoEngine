@@ -24,6 +24,7 @@
 #include "Text.h"
 #include "SpriteSheet.h"
 #include "EffectUnit.h"
+#include "TextureImage.h"
 
 
 // 사용법
@@ -80,8 +81,19 @@ bool RenderTest::OnCreateScene()
     //auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::Center);
     //sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 8, 12, 90, 24.f, true);
     //sheet->SetSpriteSheet(L"../Assets/Textures/white.png", 1, 1, 1, 24.f, true);
+    auto iwindow = YunoEngine::GetWindow();
+    float ClientW = static_cast<float>(iwindow->GetClientWidth());
+    float ClientH = static_cast<float>(iwindow->GetClientHeight());
 
-    PassOption po;
+    CreateWidget<TextureImage>(L"weapon", L"../Assets/UI/WEAPON_SELECT/black_background.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
+    CreateWidget<TextureImage>(L"StandByBackGround", L"../Assets/UI/WEAPON_SELECT/black_background.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
+    CreateWidget<TextureImage>(L"StandByBackGround", L"../Assets/UI/WEAPON_SELECT/waiting_background.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
+    CreateWidget<TextureImage>(L"StandByImage", L"../Assets/UI/WEAPON_SELECT/selected_chakram_1.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
+    CreateWidget<TextureImage>(L"StandByImage", L"../Assets/UI/WEAPON_SELECT/selected_chakram_2.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
+    CreateWidget<TextureImage>(L"StandByImage", L"../Assets/UI/WEAPON_SELECT/selected_chakram_3.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
+    
+
+    PassOption po; 
     po.shader = ShaderId::NoneShadowPBRBase;
 
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
