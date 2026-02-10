@@ -6,9 +6,8 @@
 
 #include "IInput.h"
 #include "UIFactory.h"
-#include "GameManager.h"
 
-PhasePanel::PhasePanel(UIFactory& uiFactory) : Image(uiFactory)
+PhasePanel::PhasePanel(UIFactory& uiFactory) : Image(uiFactory), m_gameManger(GameManager::Get())
 {
     Clear();
 }
@@ -25,6 +24,7 @@ void PhasePanel::Clear()
 bool PhasePanel::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
     Image::Create(name, id, sizePx, vPos, rotZ, vScale);
+
 
     return true;
 }

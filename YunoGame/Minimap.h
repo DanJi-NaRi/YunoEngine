@@ -8,10 +8,6 @@
 class WidgetGridLine;
 class MinimapTile;
 
-struct UnitHand;
-struct BattleResult;
-struct ObstacleResult;
-
 class Minimap : public PhasePanel
 {
 public:
@@ -32,7 +28,6 @@ public:
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/window_popup_minimap.png"); };  // 머테리얼 생성
 
-    virtual void SetUpPanel() override;
 
     void UpdatePanel(const BattleResult& battleResult) override;
     void UpdatePanel(const ObstacleResult& obstacleResult) override;
@@ -53,17 +48,5 @@ protected:
     GridXY m_grid;
     std::vector<MinimapTile*> m_pTiles;
     WidgetGridLine* m_pGridLine = nullptr;
-
-    //ObstacleResult* m_pUnitData = nullptr; // 모든 유닛 정보 담겨있는 패킷
-
-    //std::vector<TileState> m_tiles;                         // 타일 상태
-    //std::vector<uint32_t> m_tilesIDs;                       // 타일 오브젝트 아이디
-    //std::unordered_map<GamePiece, PieceInfo> m_pieces;      // 기물 정보
-
-
-    //WidgetGridBox* m_gridBox = nullptr;
-    //std::vector<std::unique_ptr<Grid>> m_grids;
-
-    //std::unique_ptr<GridFactory> m_gridFactory;
 };
 

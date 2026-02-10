@@ -61,6 +61,15 @@ bool CardSelectionPanel::Start()
 {
     PhasePanel::Start();
 
+
+    const auto& FirstCard = m_hands[0]->cards;
+
+    for (int i = 0; i < m_pCards.size(); ++i) {
+        auto id = FirstCard[0].dataID;
+        m_pCards[i]->SetCardID(id);
+        m_pCards[i]->ChangeTexture(m_cardManager->GetCardTexturePath(id));
+    }
+
     return true;
 }
 
@@ -123,17 +132,6 @@ bool CardSelectionPanel::Submit(float dTime)
 {
     PhasePanel::Submit(dTime);
     return false;
-}
-
-void CardSelectionPanel::SetUpPanel()
-{
-    const auto& FirstCard = m_hands[0]->cards;
-    
-    for (int i = 0; i < m_pCards.size(); ++i) {
-        auto id = FirstCard[0].dataID;
-        m_pCards[i]->SetCardID(id);
-        m_pCards[i]->ChangeTexture(m_cardManager->GetCardTexturePath(id));
-    }
 }
 
 void CardSelectionPanel::UpdatePanel(const BattleResult& battleResult)

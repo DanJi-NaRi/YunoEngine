@@ -24,7 +24,6 @@ public:
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/tap_all_click.png"); };    // 머테리얼 생성 (한 번만)
 
-    virtual void SetUpPanel() override;
 
     void UpdatePanel(const BattleResult& battleResult) override;
     void UpdatePanel(const ObstacleResult& obstacleResult) override;

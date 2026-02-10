@@ -98,11 +98,6 @@ bool Minimap::Submit(float dTime)
 //}
 
 
-void Minimap::SetUpPanel()
-{
-
-}
-
 void Minimap::UpdatePanel(const BattleResult& battleResult) {
 
     for (const auto& pieceInfo : battleResult.order) {
