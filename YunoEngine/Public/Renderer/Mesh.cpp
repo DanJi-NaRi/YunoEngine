@@ -116,7 +116,7 @@ void Mesh::SetTexture(TextureUse use, const std::wstring& filepath)
 
     TextureHandle handle;
     
-    if(filepath.find(L"Albedo") != std::wstring::npos)
+    if(TextureUse::Albedo == use)
         handle = renderer->CreateColorTexture2DFromFile(filepath.c_str());
     else
         handle = renderer->CreateDataTexture2DFromFile(filepath.c_str());
