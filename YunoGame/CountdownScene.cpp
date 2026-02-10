@@ -106,13 +106,13 @@ void CountdownScene::StartVsSlide()
 
 void CountdownScene::UpdateVsSlide(float dt)
 {
-    m_vsElapsed += dt;
+    m_vsElapsed += dt*2;
     const float t = std::clamp(m_vsElapsed / kVsSlideDuration, 0.0f, 1.0f);
 
     auto canvas = m_uiManager->GetCanvasSize();
-    const float centerY = canvas.y * 0.5f;
-    const float centerX = canvas.x * 0.5f;
-    constexpr float halfWidth = 256.0f;
+    const float centerY = canvas.y / 2;
+    const float centerX = canvas.x / 2;
+    constexpr float halfWidth = 0;
 
     const float leftStartX = -halfWidth;
     const float rightStartX = canvas.x + halfWidth;
