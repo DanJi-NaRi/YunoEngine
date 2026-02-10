@@ -42,6 +42,7 @@ public:
     // 호버링(HOVERING) 메세지 발생 함수
     void MouseTrack(HWND hWnd, BOOL bOn = TRUE);
 
+    void SetInputBlockScene(IScene* scene) override;
 private:
     void SortContextsIfDirty();
     void ApplyToState(const InputEvent& evt);
@@ -53,4 +54,6 @@ private:
 
     std::vector<IInputContext*> m_contexts;
     bool m_contextOrderDirty = false;
+
+    IScene* m_blockBelowScene = nullptr;
 };

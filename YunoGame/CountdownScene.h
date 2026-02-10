@@ -19,8 +19,28 @@ protected:
     void OnDestroyScene() override;
 
 private:
+    enum class VsPhase : uint8_t
+    {
+        Countdown,
+        VsSlide,
+        Finished
+    };
+
+
     void ShowOrUpdateCountdownImage(int num);
+    void StartVsSlide();
+    void UpdateVsSlide(float dt);
+    void ClearVsWidgets();
+
+
 
     UINT m_countdownWidgetID = UINT_MAX;
+    UINT m_leftVsWidgetID = UINT_MAX;
+    UINT m_rightVsWidgetID = UINT_MAX;
+
     int  m_lastNumber = -1;
+
+    float m_vsElapsed = 0.0f;
+    VsPhase m_phase = VsPhase::Countdown;
+    bool m_roundStartRequested = false;
 };

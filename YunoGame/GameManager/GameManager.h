@@ -69,6 +69,9 @@ public:
 
     void SetSlotIdx(int idx) { m_PID = idx; };
     int GetSlotiIdx() { return m_PID; };
+    void SetMatchPlayerCount(int count) { m_matchPlayerCount = count; }
+    int GetMatchPlayerCount() const { return m_matchPlayerCount; }
+    bool HasOpponentInMatchRoom() const { return m_matchPlayerCount >= 2; }
 
     void SetMyPick(int index, PieceType type);
     void ResetMyPicks();
@@ -77,6 +80,8 @@ public:
 
     bool ToggleReady();
     bool IsReady() const { return m_isReady; }
+    void SetReadyStates(bool p1Ready, bool p2Ready);
+    bool IsOpponentReady() const;
 
     void SubmitTurn(const std::vector<CardPlayCommand>& runtimeIDs);
 
@@ -130,6 +135,7 @@ public:
     bool IsCountdownActive() const;
     bool IsCountdownFinished() const;
     int    GetCountdownNumber() const;
+    int GetCountDownSlotUnitId(int slotIndex, int unitIndex) const;
 private:
     static GameManager* s_instance;
 
@@ -142,9 +148,13 @@ private:
     PieceType m_lastPickedPiece = PieceType::None;
 
 
-    int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽 // 플레이어 번호
+    int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽
+    int m_matchPlayerCount = 0;
+
 
     bool m_isReady = false;
+    bool m_p1Ready = false;
+    bool m_p2Ready = false;
 
     std::array<UnitHand,2> m_myHands;                                                          //UI 카드 선택용
     std::array<UnitHand,2> m_enemyHands;                                                       //UI 보여주기용

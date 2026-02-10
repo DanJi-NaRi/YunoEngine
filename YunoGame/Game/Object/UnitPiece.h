@@ -1,8 +1,8 @@
 #pragma once
-#include "AnimationUnit.h"
+#include "AnimTest.h"
 #include "PieceHelper.h"
 
-class UnitPiece : public AnimationUnit
+class UnitPiece : public AnimTest
 {
 public:
     explicit UnitPiece();
@@ -26,27 +26,41 @@ private:
     void UpdateFlash(float dt);
     void UpdateAttack(float dt);
     void UpdateHit(float dt);
+    void UpdateDissolve(float dt);
 
 public:
     void InsertQ(PGridCmd targetPos);
     void SetWho(GamePiece type);
     void SetDir(Direction dir, bool isAnim = true, float speed = 2.f);
     void SetFlashColor(Float4 color, int count, float blinkTime);
-    void PlayAttack();
-    void PlayHit(Float4 color, int count, float blinkTime);
-    void SetDead();
+    void AppearDissolve(float dissolveTime);
+    void DisappearDissolve(float dissolveTime);
 
     void SetTmpColor(Float4 color);
+
 private:
-    void SetTarget(XMFLOAT3 targetPos, float speed);
-    void SendDone();
-    void ClearQ();
+    void PlayMove(XMFLOAT3 targetPos, float speed);
+    void PlayAttack();
+    void PlayHit();
+    void PlayDead(float disappearDisolveDuration);
 
     Float4 GetLerpColor(float dt);
-    float Graph(float x);
+    float QuadraticGraph(float x);
+    float linearGraph(float x);
+
+    void ClearQ();
 
 private:
     bool m_AnimDone = false;
+
+    // 그래프
+    float m_linearSlope = 0.f;
+
+    // 디졸브
+    bool isDissolving = false;
+    float m_dissolveTime = 0.f;
+    float m_dissolveDuration = 0.f;
+    float m_startDissolveAmount = 0.f;
 
     // 공격
     bool isAttacking = false;
@@ -84,8 +98,7 @@ private:
 
     // 죽음 체크
     bool isDead = false;
-    float m_deadTime = 0.f;
-    float m_deathDelay = 1.f;
+    bool isDeadQueued = false;
 
     GamePiece m_who = GamePiece::None;
 

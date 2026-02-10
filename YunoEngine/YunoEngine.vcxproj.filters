@@ -569,7 +569,6 @@
     <FxCompile Include="..\Assets\Shaders\UI_SpriteAnim.hlsl">
       <Filter>Shaders\UI</Filter>
     </FxCompile>
-
     <FxCompile Include="..\Assets\Shaders\PBR_Animation_Dissolve.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
@@ -578,6 +577,15 @@
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\PBR_Animation_Dissolve.hlsl">
       <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\EffectWithTexMap.hlsl">
+      <Filter>Shaders\effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\NoneShadowPBR_Base.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_ColorGrading.hlsl">
+      <Filter>Shaders\postprocess</Filter>
     </FxCompile>
 
   </ItemGroup>

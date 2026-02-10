@@ -94,9 +94,6 @@
     <Filter Include="Scenes\999.RenderTest">
       <UniqueIdentifier>{901ca8d6-4b9c-4f90-bdac-f4eacc332766}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scenes\1.WeaponSelect\0.Title">
-      <UniqueIdentifier>{27fecdf2-c2ce-454b-8699-682c736c1721}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Object\Grid">
       <UniqueIdentifier>{dc752127-1245-4da2-baf2-ab459ec897db}</UniqueIdentifier>
     </Filter>
@@ -135,6 +132,15 @@
     </Filter>
     <Filter Include="Game\UI\ShowCardDeck">
       <UniqueIdentifier>{b25e06be-5434-4535-aa8d-9370820ff338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\5.Option">
+      <UniqueIdentifier>{11e92317-00d7-47e4-ad50-8ced256142ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\6.Guid">
+      <UniqueIdentifier>{8d4213e8-1bb3-4d8a-bff9-d35cdcf837e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\0.Title">
+      <UniqueIdentifier>{27fecdf2-c2ce-454b-8699-682c736c1721}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -178,7 +184,7 @@
       <Filter>Game\UI\Slot</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\TitleScene.cpp">
-      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+      <Filter>Scenes\0.Title</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\WeaponSelectScene.cpp">
       <Filter>Scenes\1.WeaponSelect</Filter>
@@ -196,7 +202,7 @@
       <Filter>Game\UI\Button\ButtonTemplate</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\Title.cpp">
-      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+      <Filter>Scenes\0.Title</Filter>
     </ClCompile>
     <ClCompile Include="Game\UI\Card.cpp">
       <Filter>Card</Filter>
@@ -331,8 +337,26 @@
       <Filter>Game\UI\ProgressBar</Filter>
     </ClCompile>
     <ClCompile Include="PhaseWeaponSelectButton.cpp" />
+
     <ClCompile Include="Minimap.cpp">
       <Filter>Game\UI\Image\Panel</Filter>
+    </ClCompile>
+
+    <ClCompile Include="OptionScene.cpp">
+      <Filter>Scenes\5.Option</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\VolumePanel.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\VolumeTrackButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="GuideScene.cpp">
+      <Filter>Scenes\6.Guid</Filter>
+    </ClCompile>
+
+    <ClCompile Include="StandByScene.cpp">
+      <Filter>Scenes\1.WeaponSelect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -391,7 +415,7 @@
       <Filter>Game\UI\Slot</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\TitleScene.h">
-      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+      <Filter>Scenes\0.Title</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\WeaponSelectScene.h">
       <Filter>Scenes\1.WeaponSelect</Filter>
@@ -412,7 +436,7 @@
       <Filter>System\UIContext</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\Title.h">
-      <Filter>Scenes\1.WeaponSelect\0.Title</Filter>
+      <Filter>Scenes\0.Title</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\CardQueue.h">
       <Filter>Card</Filter>
@@ -553,9 +577,37 @@
       <Filter>Game\UI\ProgressBar</Filter>
     </ClInclude>
     <ClInclude Include="PhaseWeaponSelectButton.h" />
+
     <ClInclude Include="Minimap.h">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClInclude>
+
+
+    <ClInclude Include="OptionScene.h">
+      <Filter>Scenes\5.Option</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\VolumePanel.h">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\VolumeTrackButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="GuideScene.h">
+      <Filter>Scenes\6.Guid</Filter>
+    </ClInclude>
+    <ClInclude Include="GuideScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="StandByScene.h">
+      <Filter>Scenes\1.WeaponSelect</Filter>
+    </ClInclude>
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

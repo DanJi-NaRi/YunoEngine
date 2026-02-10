@@ -10,7 +10,10 @@
 #include "WeaponSelectScene.h"
 #include "PlayScene.h"
 #include "PhaseScene.h"
+#include "StandByScene.h"
 #include "CountdownScene.h"
+#include "OptionScene.h"
+#include "GuideScene.h"
 
 #include "YunoClientNetwork.h"
 
@@ -158,7 +161,7 @@ void GameManager::Initialize(GameManager* inst)
 
 void GameManager::Init()
 {
-    m_cardBasicMng.LoadFromCSV("../Assets/CardData/CardData.csv");
+    m_cardBasicMng.LoadFromCSV("../Assets/CardData/Carddata.csv");
     m_cardRangeMng.LoadFromCSV("../Assets/CardData/CardRange.csv");
 }
 
@@ -186,9 +189,10 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::Title:
     {
         m_state = CurrentSceneState::Title;
+        m_matchPlayerCount = 0;
         ResetMyPicks();
         SceneTransitionOptions opt{};
-        opt.immediate = false;
+        opt.immediate = true;
         sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
         auto bytes = yuno::net::PacketBuilder::Build(
             yuno::net::PacketType::C2S_MatchLeave,
@@ -229,7 +233,32 @@ void GameManager::SetSceneState(CurrentSceneState state)
             });
         
         GameManager::Get().SendPacket(std::move(bytes));
+
         
+        break;
+    }
+    case CurrentSceneState::Option:
+    {
+        m_state = CurrentSceneState::Option;
+
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = true;
+        sp.blockInputBelow = true;
+
+        sm->RequestPush(std::make_unique<OptionScene>(), sp);
+        break;
+    }
+    case CurrentSceneState::Guide:
+    {
+        m_state = CurrentSceneState::Guide;
+
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = true;
+        sp.blockInputBelow = true;
+
+        sm->RequestPush(std::make_unique<GuideScene>(), sp);
         break;
     }
     case CurrentSceneState::GameStart:
@@ -239,10 +268,24 @@ void GameManager::SetSceneState(CurrentSceneState state)
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
-        
-
 
         // 씬에 관련된 데이터들을 같이 넘길거야
+        break;
+    }
+    case CurrentSceneState::StandBy:
+    {
+        if (m_state == CurrentSceneState::StandBy) return;
+        m_state = CurrentSceneState::StandBy;
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = false;
+
+        sm->RequestPush(std::make_unique<StandByScene>(), sp);
+
+        //SceneTransitionOptions opt{};
+        //opt.immediate = false;
+        //sm->RequestReplaceRoot(std::make_unique<StandByScene>(), opt);
+
         break;
     }
     case CurrentSceneState::CountDown:
@@ -253,10 +296,15 @@ void GameManager::SetSceneState(CurrentSceneState state)
         //opt.immediate = false; // 보통 false가 자연스러움
         //sm->RequestReplaceRoot(std::make_unique<CountdownScene>(), opt);
 
+
+        SceneTransitionOptions opt;
+        opt.immediate = true;
+
+        sm->RequestPop(opt);
+
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
-
         sm->RequestPush(std::make_unique<CountdownScene>(), sp);
 
         break;
@@ -267,7 +315,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         //if (m_state == CurrentSceneState::RoundStart) return;
         m_state = CurrentSceneState::RoundStart;
         SceneTransitionOptions opt{};
-        opt.immediate = true;
+        opt.immediate = false;
 
         sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
 
@@ -523,6 +571,23 @@ int GameManager::GetCountdownNumber() const
     return static_cast<int>(std::ceil(m_countdownRemaining));
 }
 
+int GameManager::GetCountDownSlotUnitId(int slotIndex, int unitIndex) const
+{
+    if (unitIndex < 0 || unitIndex > 1)
+        return 0;
+
+    switch (slotIndex)
+    {
+    case 1:
+        return (unitIndex == 0) ? m_S1U1 : m_S1U2;
+    case 2:
+        return (unitIndex == 0) ? m_S2U1 : m_S2U2;
+    default:
+        return 0;
+    }
+}
+
+
 void GameManager::StartCountDown(int countTime, int S1U1, int S1U2, int S2U1, int S2U2)
 {
     if (m_state == CurrentSceneState::CountDown)
@@ -553,7 +618,8 @@ void GameManager::Tick(float dt)
             m_countdownFinished = true;
             m_countdownRemaining = 0.0f;
     
-            SetSceneState(CurrentSceneState::RoundStart);
+            // 여기 말고 CountDownScene에서 호출함
+            //SetSceneState(CurrentSceneState::RoundStart);
         }
     }
 }
@@ -584,6 +650,8 @@ void GameManager::ResetMyPicks()
     m_myPick[1] = PieceType::None;
     m_lastPickedPiece = PieceType::None;
     m_isReady = false;
+    m_p1Ready = false;
+    m_p2Ready = false;
 }
 
 
@@ -595,7 +663,33 @@ bool GameManager::HasTwoPicks() const
 bool GameManager::ToggleReady()
 {
     m_isReady = !m_isReady;
+
+    if (m_PID == 1)
+        m_p1Ready = m_isReady;
+    else if (m_PID == 2)
+        m_p2Ready = m_isReady;
+
     return m_isReady;
+}
+
+void GameManager::SetReadyStates(bool p1Ready, bool p2Ready)
+{
+    m_p1Ready = p1Ready;
+    m_p2Ready = p2Ready;
+
+    if (m_PID == 1)
+        m_isReady = m_p1Ready;
+    else if (m_PID == 2)
+        m_isReady = m_p2Ready;
+}
+
+bool GameManager::IsOpponentReady() const
+{
+    if (m_PID == 1)
+        return m_p2Ready;
+    if (m_PID == 2)
+        return m_p1Ready;
+    return false;
 }
 
 void GameManager::SubmitTurn(

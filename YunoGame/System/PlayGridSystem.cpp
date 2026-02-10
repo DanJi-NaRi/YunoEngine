@@ -111,8 +111,8 @@ void PlayGridSystem::CreateObject(float x, float y, float z)
 
     // 그리드 생성 시, factory 초기화 필요
     // 복수 그리드 생성 시 해당 그리드 정보로 factory 초기화 후, [x y z] 간격 설정하여 CreateGridLine() 호출해주기
-    m_gridFactory->Init(m_grids[(int)m_nowG]->m_row, m_grids[(int)m_nowG]->m_column);
-    CreateGridLine(x, y, z);
+    //m_gridFactory->Init(m_grids[(int)m_nowG]->m_row, m_grids[(int)m_nowG]->m_column);
+    //CreateGridLine(x, y, z);
 
     CreateTileAndPiece(x, y, z);
 }
@@ -181,15 +181,18 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      cx = cellPos.x;     cy = cellPos.y;
 
      auto [px, pz] = m_grids[(int)m_nowG]->CellToWorld(cx, cy);
+     GamePiece gp = GetGamePiece(w.pId, w.slotId);
 
      // 타일 상태 갱신
-     m_tiles[w.currentTile].to = (team == Team::Ally) ?
-         TileOccupy{ TileOccuType::Ally_Occupied, (w.slotId == 1) ? TileWho::Ally1 : TileWho::Ally2 } :
-         TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
+     m_tiles[w.currentTile].to =
+         (gp == GamePiece::Ally1) ? TileOccupy{ TileOccuType::Ally_Occupied, TileWho::Ally1 } :
+         (gp == GamePiece::Ally2) ? TileOccupy{ TileOccuType::Ally_Occupied, TileWho::Ally2 } :
+         (gp == GamePiece::Enemy1) ? TileOccupy{ TileOccuType::Enemy_Occupied, TileWho::Enemy1 } :
+         TileOccupy{ TileOccuType::Enemy_Occupied, TileWho::Enemy2 };
 
-     GamePiece gp = (GamePiece)m_tiles[w.currentTile].to.who;
      PieceInfo pieceInfo{};
-
+     PassOption po;
+     po.shader = ShaderId::PBR_AniDissolve;
      UnitPiece* pPiece = nullptr;
      if (w.weaponId == 2)
      {
@@ -197,18 +200,30 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
              L"Weapon", XMFLOAT3(px, m_wy, pz));
 
          auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
-             L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx");
+             L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx", po);
          pChakram1->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_01_idle.fbx");
-
          pChakram1->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_01.fbx");
+         pChakram1->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Chakram_move_01.fbx");
+         pChakram1->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Chakram_dead_01.fbx");
+         pChakram1->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Chakram_hit_01.fbx");
+         pChakram1->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pChakram1->SetDissolveColor(XMFLOAT3(1, 1, 1));
+         pChakram1->AppearDissolve(appearDisolveDuration);
+         pChakram1->SetWho(gp);
 
          pPiece->Attach(pChakram1);
 
          auto pChakram2 = m_manager->CreateObjectFromFile<UnitPiece>(
-             L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx");
+             L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx", po);
          pChakram2->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/chakram_02_idle.fbx");
-
          pChakram2->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_02.fbx");
+         pChakram2->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Chakram_move_02.fbx");
+         pChakram2->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Chakram_dead_02.fbx");
+         pChakram2->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Chakram_hit_02.fbx");
+         pChakram2->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pChakram2->SetDissolveColor(XMFLOAT3(1, 1, 1));
+         pChakram2->AppearDissolve(appearDisolveDuration);
+         pChakram2->SetWho(gp);
 
          pPiece->Attach(pChakram2);
 
@@ -221,7 +236,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      else
      {
          std::wstring fileName = GetWeaponFileName(w.weaponId);
-         pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName);
+         pPiece = m_manager->CreateObjectFromFile<UnitPiece>(L"Weapon", XMFLOAT3(px, m_wy, pz), fileName, po);
          pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
      }
 
@@ -234,33 +249,59 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
 
      switch (w.weaponId)
      {
+
      case 1:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/blaster_idle.fbx");
-         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
+         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Blaster_move.fbx");
+         pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Blaster_dead.fbx");
+         pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Blaster_hit.fbx");
+         pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
+
          break;
      case 3:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Breacher_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Breacher_attack.fbx");
+         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Breacher_move.fbx");
+         pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Breacher_dead.fbx");
+         pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Breacher_hit.fbx");
+         pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
      case 4:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/scythe_attack.fbx");
-
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
+         pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Scythe_dead.fbx");
+         pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Scythe_hit.fbx");
+         pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
      case 5:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
-         // 본이름에 문제잇는 듯 현승아 봐주라~!
-         //pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
+         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Impactor_move.fbx");
+         pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
+         pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Impactor_dead.fbx");
+         pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Impactor_hit.fbx");
+         pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
      case 6:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Cleaver_idle.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Cleaver_attack.fbx");
-
+         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Cleaver_move.fbx");
+         pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Cleaver_dead.fbx");
+         pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Cleaver_hit.fbx");
+         pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
+         pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
      }
      pPiece->SetWho(gp);
      pPiece->SetDir(dir, false);
+
+     // 디졸브 나타남
+     pPiece->AppearDissolve(appearDisolveDuration);
 
      // 기물 정보 등록
      m_pieces.emplace(gp, pieceInfo);
@@ -279,15 +320,38 @@ void PlayGridSystem::CheckMyQ()
         {
         case CommandType::Hit:
         {
-            const GamePiece pieceType = cmd.hit.whichPiece;
+            const GamePiece pieceType = cmd.hit_s.whichPiece;
 
             auto it = m_pieces.find(pieceType);
             if (it == m_pieces.end()) break;
 
             auto& pieceInfo = it->second;
-            int uid = GetUnitID(pieceType);
+            auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
 
-            CheckHealth(m_UnitStates[uid], pieceInfo);
+            int uid = GetUnitID(pieceType);
+            if (static_cast<int>(m_UnitStates[uid].hp) <= 0)
+            {
+                pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+
+                for (uint32_t subId : pieceInfo.subIds)
+                {
+                    auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                    if (pSubPiece != nullptr)
+                        pSubPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+                }
+            }
+            else
+            {
+                pPiece->InsertQ(PlayGridQ::Hit_P());
+
+                for (uint32_t subId : pieceInfo.subIds)
+                {
+                    auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                    if (pSubPiece != nullptr)
+                        pSubPiece->InsertQ(PlayGridQ::Hit_P());
+                }
+            }
+
             std::cout << static_cast<int>(pieceType) << ". health: " << static_cast<int>(m_UnitStates[uid].hp) << std::endl;
             break;
         }
@@ -307,6 +371,11 @@ void PlayGridSystem::CheckMyQ()
             }
 
             m_pieces.erase(it);
+
+            // 해당 타일 상태 초기화
+            int unitID = GetUnitID(pieceType);
+            int tileID = m_UnitStates[unitID].targetTileID;
+            m_tiles[tileID] = TileState{};
 
             // m_pieces가 전부 사라졌는지 체크
             if (m_pieces.size() == 0)
@@ -371,12 +440,13 @@ void PlayGridSystem::CheckPacket(float dt)
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
     }
-    
 
     // 장애물까지 발동하고 CheckOver
-    if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing)
+    if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing && !isRoundOver)
     {
         const auto obstaclePkt = mng.PopObstaclePacket();
+        m_pktTime = obstaclePktDuration;
+        isProcessing = true;
         ApplyObstacleResult(obstaclePkt);
     }
 
@@ -389,20 +459,10 @@ void PlayGridSystem::CheckPacket(float dt)
             isProcessing = false;
             m_currTime -= m_pktTime;
             std::cout << "Packet Time is Over\n";
-
-
+            // 라운드 끝났는지 체크
+            CheckOver();
         }
     }
-
-    // 장애물까지 발동하고 CheckOver
-    if (!mng.IsEmptyObstaclePacket()&& mng.IsEmptyBattlePacket()&& !isProcessing)
-    {
-        const auto obstaclePkt = mng.PopObstaclePacket();
-        ApplyObstacleResult(obstaclePkt);
-    }
-
-    // 라운드 끝났는지 체크
-    CheckOver();
 
 }
 
@@ -496,16 +556,13 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             break;
         }
 
-        // 애니메이션 대신 반짝이는 걸로 잠시 대체
-        pPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
-        pPiece->PlayAttack();
+        pPiece->InsertQ({ CommandType::Attack });
         for (uint32_t subId : pieceInfo.subIds)
         {
             auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
             if (pSubPiece != nullptr)
             {
-                pSubPiece->PlayAttack();
-                pSubPiece->SetFlashColor(as.m_attackColor, as.m_flashCount, as.m_flashInterval);
+                pSubPiece->InsertQ({ CommandType::Attack });
             }
         }
         as.phaseStarted = false;
@@ -546,31 +603,33 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
             if (pPiece == nullptr) continue;
 
-            // 피격 애니메이션 대신 번쩍이는 걸로 임시 대체
-            pPiece->PlayHit(as.m_hitColor, as.m_flashCount, as.m_flashInterval);
-            for (auto& subId : pieceInfo.subIds)
+            // 죽었는지 체크. 죽었으면 죽는 애니메이션 재생
+            int unitID = GetUnitID(it->first);
+            if (m_UnitStates[unitID].hp == 0)
             {
-                auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                pSub->PlayHit(as.m_hitColor, as.m_flashCount, as.m_flashInterval);
+                pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+                for (auto& subId : pieceInfo.subIds)
+                {
+                    auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                    pSub->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+                }
             }
+            else // 살았다면 피격 애니메이션 재생
+            {
+                pPiece->InsertQ(PlayGridQ::Hit_P());
+                for (auto& subId : pieceInfo.subIds)
+                {
+                    auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                    pSub->InsertQ(PlayGridQ::Hit_P());
+                }
+            }
+            std::cout << "[PlayGridSystem::UpdateAttackSequence]\nHitter hp: " << static_cast<int>(m_UnitStates[GetUnitID(pieces[i])].hp) << std::endl;
         }
         as.phaseStarted = false;
         break;
     }
     case AttackPhase::Over:
-    {
-        // 죽었는지 체크
-        const auto& pieces = as.hitPieces;
-        for (int i = 0; i < pieces.size(); i++)
-        {
-            std::cout << "[Attack Sequence]\nHitter hp: " << static_cast<int>(m_UnitStates[GetUnitID(pieces[i])].hp) << std::endl;
-
-            auto it = m_pieces.find(pieces[i]);
-            if (it == m_pieces.end()) continue;
-
-            m_playQ->Hit_S(pieces[i]);
-        }
-        
+    {   
         as = {};
         m_attackActive = false;
         return;
@@ -701,6 +760,9 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
         {
             auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
             pTile->PlayTrigger(os.attackType, os.hitColor, os.hitFlashCount, os.hitFlashInterval);
+            auto [cx, cz] = GetCellByID(tileID);
+            if(os.attackType == ObstacleType::Collapse)
+                ChangeTileTO(cx, cz, TileOccupy{ TileOccuType::Collapesed, TileWho::None });
         }
 
         // 기물
@@ -711,13 +773,26 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
                 auto pieceIt = m_pieces.find(piece);
                 if (pieceIt == m_pieces.end())   continue;
                 auto& pieceInfo = pieceIt->second;
+
+                int unitID = GetUnitID(piece);
                 auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
-                // 피격 애니메이션 대신 번쩍이는 걸로 임시 대체
-                pPiece->PlayHit(os.hitColor, os.hitFlashCount, os.hitFlashInterval);
-                for (auto& subId : pieceInfo.subIds)
+                if (m_UnitStates[unitID].hp == 0)
                 {
-                    auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                    pSub->PlayHit(os.hitColor, os.hitFlashCount, os.hitFlashInterval);
+                    pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+                    for (auto& subId : pieceInfo.subIds)
+                    {
+                        auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                        pSub->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+                    }
+                }
+                else
+                {
+                    pPiece->InsertQ(PlayGridQ::Hit_P());
+                    for (auto& subId : pieceInfo.subIds)
+                    {
+                        auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
+                        pSub->InsertQ(PlayGridQ::Hit_P());
+                    }
                 }
             }
         }
@@ -1029,7 +1104,9 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
     if (!CheckNotDying(pieceType)) return;
 
     // 이동 후, 상태 수정을 위해 참조로 받음
-    PieceInfo& pieceInfo = m_pieces[pieceType];
+    auto pieceIt = m_pieces.find(pieceType);
+    if (pieceIt == m_pieces.end())   return;
+    PieceInfo& pieceInfo = pieceIt->second;
 
     // 아이디로 오브젝트 포인터 받아오기
     UnitPiece* pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
@@ -1064,6 +1141,8 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
         {
             std::cout << "[PlayGridSystem]::Enemy_Collison\n";
 
+            CommandType cmd = CommandType::Hit;
+            bool amIdead = (m_UnitStates[GetUnitID(pieceType)].hp == 0) ? true : false;
             // 부딪힌 기물 타입 확인
             GamePiece existWho = GamePiece::None;
             bool isIn = m_grids[(int)m_nowG]->InBounds(colC.x, colC.y);
@@ -1075,7 +1154,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
 
             // 충돌지점까지 이동 후 원래 자리로 되돌아감
             pPiece->InsertQ(PlayGridQ::Move_P(fdir, colW.x, m_wy, colW.y));              // 충돌 위치까지 이동 후
-            pPiece->InsertQ(PlayGridQ::Hit_P(existWho));                                 // 생사 여부 확인
+            pPiece->InsertQ(PlayGridQ::MoveHit_P(existWho, amIdead, disappearDisolveDuration));                                 // 이동하는 애 죽었는지 부딪힌 애 죽었는지
             pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, wx, m_wy, wz, 1));        // 제자리로 돌아감
         }
         else                                                // 아군과 충돌
@@ -1158,30 +1237,32 @@ void PlayGridSystem::CheckOver()
 {
     if (isRoundOver) return;
 
-    bool deadPlayer[2];
-    bool deadUnits[4];
-    memset(deadPlayer, false, sizeof(bool) * 2);
-    memset(deadUnits, false, sizeof(bool) * 4);
-
+    bool deadUnitsByPlayer[4]{}; // [P1-S1, P1-S2, P2-S1, P2-S2]
     for (int i = 0; i < 4; i++)
     {
-        if (m_UnitStates[i].hp == 0)
-            deadUnits[(int)i] = true;
+        deadUnitsByPlayer[i] = (m_UnitStates[i].hp == 0);
     }
 
-    // 팀 단위로 사망 판정 (Ally1/Ally2, Enemy1/Enemy2)
-    deadPlayer[0] = deadUnits[0] && deadUnits[1];
-    deadPlayer[1] = deadUnits[2] && deadUnits[3];
+    const bool myIsP1 = (m_pID == 1);
+
+    bool deadUnits[4]{}; // [Ally1, Ally2, Enemy1, Enemy2] (클라 로컬 관점)
+    deadUnits[(int)GamePiece::Ally1] = myIsP1 ? deadUnitsByPlayer[0] : deadUnitsByPlayer[2];
+    deadUnits[(int)GamePiece::Ally2] = myIsP1 ? deadUnitsByPlayer[1] : deadUnitsByPlayer[3];
+    deadUnits[(int)GamePiece::Enemy1] = myIsP1 ? deadUnitsByPlayer[2] : deadUnitsByPlayer[0];
+    deadUnits[(int)GamePiece::Enemy2] = myIsP1 ? deadUnitsByPlayer[3] : deadUnitsByPlayer[1];
+
+    const bool allyDead = deadUnits[(int)GamePiece::Ally1] && deadUnits[(int)GamePiece::Ally2];
+    const bool enemyDead = deadUnits[(int)GamePiece::Enemy1] && deadUnits[(int)GamePiece::Enemy2];
     
-    if (deadPlayer[0] && deadPlayer[1]) // 무승부
+    if (allyDead && enemyDead)          // 무승부
     {
         std::cout << "This Round Result : Draw\n";
     }
-    else if (deadPlayer[0])             // Lose
+    else if (allyDead)                  // Lose
     {
         std::cout << "This Round Result : Lose\n";
     }
-    else if (deadPlayer[1])              // Win
+    else if (enemyDead)                 // Win
     {
         std::cout << "This Round Result : Win\n";
     }
@@ -1190,19 +1271,24 @@ void PlayGridSystem::CheckOver()
 
     for (GamePiece i = GamePiece::Ally1; i < GamePiece::MAX; ++i)
     {
-        if (!deadUnits[(int)i])
+        if (deadUnits[(int)i]) continue;
+
+        auto it = m_pieces.find(i);
+        if (it == m_pieces.end()) continue;
+
+        auto& pieceinfo = it->second;
+        auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceinfo.id));
+        if (pPiece != nullptr)
         {
-            auto it = m_pieces.find(i);
-            if (it == m_pieces.end())    continue;
-            auto& pieceinfo = it->second;
-            auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceinfo.id));
-            // 일단 사라지게 하기 위해 dead로 처리
-            pPiece->SetDead();  
-            for (auto sid : pieceinfo.subIds)
-            {
-                auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(sid));
-                pSub->SetDead();
-            }
+            // 라운드 종료 시 남아있는 기물도 일괄 제거
+            pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+        }
+
+        for (auto sid : pieceinfo.subIds)
+        {
+            auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(sid));
+            if (pSub != nullptr)
+                pSub->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
         }
     }
     isRoundOver = true;
@@ -1281,12 +1367,20 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
     }
 
     // ObstacleSequence 장애물 발동 정보 기입
-    os.hitColor = warnColor;
-    os.hitFlashCount = hitFlashCount;
-    os.hitFlashInterval = hitFlashInterval;
-    os.m_triggerDuration = triggerDuration;
-    os.attackType = m_obstacleTile.obstacleID;
-    os.hitTileIDs = m_obstacleTile.tileIDs;
+    if (m_obstacleTile.tileIDs.size() == 0)
+    {
+        os.obstaclePhase = ObstaclePhase::Warning;
+        m_pktTime -= triggerDuration;
+    }
+    else
+    {
+        os.hitColor = warnColor;
+        os.hitFlashCount = hitFlashCount;
+        os.hitFlashInterval = hitFlashInterval;
+        os.m_triggerDuration = triggerDuration;
+        os.attackType = m_obstacleTile.obstacleID;
+        os.hitTileIDs = m_obstacleTile.tileIDs;
+    }
 
     if (hasTriggerSnapshot) // 누군가 맞은 애 있으면 obstacle 패킷에서 받은 스냅샷으로 현재 유닛 상태 변경
     {
@@ -1337,30 +1431,6 @@ bool PlayGridSystem::CheckNotDying(const GamePiece pieceType)
         return false;
     }
     return true;
-}
-
-
-void PlayGridSystem::CheckHealth(const UnitState& us, PieceInfo& pieceInfo)
-{
-    if (static_cast<int>(us.hp ) <= 0)
-    {
-        // 해당 기물 렌더X
-        auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
-
-        pPiece->SetDead();
-
-        for (uint32_t subId : pieceInfo.subIds)
-        {
-            auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-            if (pSubPiece != nullptr)
-                pSubPiece->SetDead();
-        }
-
-        // 해당 타일 정보 초기화
-        //int tileID = m_tilesIDs[us.targetTileID];
-        //m_tiles[tileID] = TileState{};
-        m_tiles[us.targetTileID] = TileState{};
-    }
 }
 
 void PlayGridSystem::ChangeTileTO(int cx, int cz, const TileOccupy to)

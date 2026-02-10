@@ -77,11 +77,12 @@ bool RenderTest::OnCreateScene()
         }
     }
 
-    auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::Center);
-    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 8, 12, 90, 24.f, true);
+    //auto sheet = CreateWidget<SpriteSheet>(L"sheet", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::Center);
+    //sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_Main.png", 8, 12, 90, 24.f, true);
     //sheet->SetSpriteSheet(L"../Assets/Textures/white.png", 1, 1, 1, 24.f, true);
 
     PassOption po;
+    po.shader = ShaderId::NoneShadowPBRBase;
 
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
     map->SetRot(XMFLOAT3(0, XMConvertToRadians(90), 0));
@@ -155,8 +156,21 @@ bool RenderTest::OnCreateScene()
 
     po = {};
     po.raster = RasterPreset::CullNone;
-    auto Holo = m_objectManager->CreateObjectFromFile<Building>(L"Holo_01", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H/HOLD.fbx", po);
-    auto Holo2 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_02", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_2/HOLD.fbx", po);
+    po.blend = BlendPreset::AlphaBlend;
+    po.shader = ShaderId::EffectWithTexMap;
+
+    for (auto i = 0; i < 5; i++)
+    {
+        auto Holo = m_objectManager->CreateObjectFromFile<Building>(L"Holo_01_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H/HOLD.fbx", po);
+        Holo->SetRot({ -XM_PIDIV2, 0, 0 });
+        auto Holo2 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_02_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_2/HOLD.fbx", po);
+        Holo2->SetRot({ -XM_PIDIV2, 0, 0 });
+    }
+
+    for (auto i = 0; i < 10; i++)
+    {
+        auto Holo3 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_03_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_3/VS.fbx", po);
+    }
 
     for (int i = 0; i < 6; i++)
     {
@@ -171,8 +185,8 @@ bool RenderTest::OnCreateScene()
     EffectDesc ed2{};
     ed2.shaderid = ShaderId::EffectBase;
     ed2.billboard = BillboardMode::None;
-    ed2.lifetime = 1.5f;
-    ed2.framecount = 25;
+    ed2.lifetime = 2.4f;
+    ed2.framecount = 120;
     ed2.cols = 12;
     ed2.rows = 10;
     ed2.emissive = 30.0f;
@@ -180,13 +194,17 @@ bool RenderTest::OnCreateScene()
     ed2.rot = { XM_PIDIV2, 0, 0 };
     ed2.isLoop = true;
     ed2.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_1.png";
-    for (auto i = 0; i < 5; i++)
+    /*for (auto i = 0; i < 5; i++)
     {
         auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_Floor1", XMFLOAT3(0, 1, 0));
         warning->BuildInternalEffectMaterial(ed);
-        //warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_Floor2", XMFLOAT3(0, 1, 0));
-        //warning->BuildInternalEffectMaterial(ed2);
-    }
+        warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_Floor2", XMFLOAT3(0, 1, 0));
+        warning->BuildInternalEffectMaterial(ed2);
+    }*/
+
+    po = {};
+    po.shader = ShaderId::PBRBase;
+    m_objectManager->CreateObjectFromFile<Building>(L"scythe", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Scythe/Scythe.fbx", po);
    
     /////////////////////////////////////////////////////////////////////////////////
     // 이펙트 등록
@@ -250,7 +268,7 @@ bool RenderTest::OnCreateScene()
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::AxAttack;
-    ed.lifetime = 0.8f;
+    ed.lifetime = 0.4f;
     ed.framecount = 12;
     ed.cols = 4;
     ed.rows = 3;
@@ -259,6 +277,18 @@ bool RenderTest::OnCreateScene()
     ed.emissive = 50.0f;
     ed.color = { 1, 0, 0, 1 };
     ed.rot = { XM_PIDIV2, 0, 0 };
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::AxAttack2;
+    ed.lifetime = 0.5f;
+    ed.framecount = 30;
+    ed.cols = 6;
+    ed.rows = 5;
+    ed.billboard = BillboardMode::None;
+    ed.texPath = L"../Assets/Effects/Ax/EF_Fragment.png";
+    ed.emissive = 50.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.rot = { 0, XM_PIDIV2, 0 };
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::DrillAttack1;
@@ -320,19 +350,34 @@ bool RenderTest::OnCreateScene()
     ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
     m_effectManager->RegisterEffect(ed);
 
-    ed.isLoop = true;
     ed.id = EffectID::ScytheAttack;
     ed.framecount = 18;
-    ed.lifetime = 1.2f;
+    ed.lifetime = 0.4f;
     ed.cols = 3;
     ed.rows = 6;
     ed.billboard = BillboardMode::None;
-    ed.rot = { 0, XM_PIDIV2, XMConvertToRadians(160) };
+    ed.rot = { 0, XM_PIDIV2, XMConvertToRadians(275) };
     ed.emissive = 30.0f;
     ed.color = { 1, 0, 0, 1 };
     ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_1.png";
     m_effectManager->RegisterEffect(ed);
-    ed.isLoop = false;
+
+    ed.id = EffectID::ScytheAttack2;
+    ed.framecount = 30;
+    ed.lifetime = 0.4f;
+    ed.cols = 5;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { 0, XM_PIDIV2, -XMConvertToRadians(275) };
+    ed.emissive = 30.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_2.png";
+    m_effectManager->RegisterEffect(ed);
+
+    breacher->RegisterFrameEvent(1, 21, [this]() {
+        auto eff = m_effectManager->Spawn(EffectID::DrillAttack1, { 0.05f, 1.1f, 0.0f }, { 3.f, 3.f, 1.f }, { 1, 0, 0 });
+        breacher->AttachChildBone(eff, 1);
+        });
 
     return true;
 }
@@ -357,7 +402,7 @@ void RenderTest::Update(float dt)
 {
     if (YunoEngine::GetInput()->IsKeyPressed('1'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::DrillAttack1, { 0.05f, 2.0f, 0.0f }, { 1.f, 1.f, 1.f }, {1, 0, 0});
+        auto eff = m_effectManager->Spawn(EffectID::DrillAttack1, { 0.05f, 1.1f, 0.0f }, { 3.f, 3.f, 1.f }, {1, 0, 0});
         breacher->AttachChildBone(eff, 1);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('2'))
@@ -380,7 +425,9 @@ void RenderTest::Update(float dt)
     }
     if (YunoEngine::GetInput()->IsKeyPressed('5'))
     {
-        auto eff = m_effectManager->Spawn(EffectID::ScytheAttack, { 0.0f, 0.5f, 0 }, { 1.f, 1.f, 1.f });
+        auto eff = m_effectManager->Spawn(EffectID::ScytheAttack, { 0.0f, 1.1f, -0.4f }, { 2.f, 2.f, 1.f });
+        scythe->AttachChildBone(eff, 1);
+        eff = m_effectManager->Spawn(EffectID::ScytheAttack2, { 0.0f, 1.0f, -0.45f }, { 1.f, 1.f, 1.f });
         scythe->AttachChildBone(eff, 1);
     }
     if (YunoEngine::GetInput()->IsKeyPressed('F'))
@@ -398,6 +445,15 @@ void RenderTest::Update(float dt)
     {
         auto eff = m_effectManager->Spawn(EffectID::AxAttack, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f });
         axe->Attach(eff);
+        eff = m_effectManager->Spawn(EffectID::AxAttack2, { 0.0f, 0.4f, 0.f }, { 1.f, 1.f, 1.f });
+        axe->Attach(eff);
+    }
+    if (YunoEngine::GetInput()->IsKeyPressed('J'))
+    {
+        auto eff = m_effectManager->Spawn(EffectID::AxAttack, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f });
+        blade->Attach(eff);
+        eff = m_effectManager->Spawn(EffectID::AxAttack2, { 0.0f, 0.4f, 0.f }, { 1.f, 1.f, 1.f });
+        blade->Attach(eff);
     }
     
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ

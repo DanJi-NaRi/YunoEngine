@@ -20,6 +20,7 @@ enum class EffectID : uint32_t
     Razer,
     BlasterAttack,
     AxAttack,
+    AxAttack2,
     Buff,
     DrillAttack1,
     DrillAttack2,
@@ -27,6 +28,7 @@ enum class EffectID : uint32_t
     PeacePosEnemy,
     Warning,
     ScytheAttack,
+    ScytheAttack2,
 
     Count
 };

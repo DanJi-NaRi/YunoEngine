@@ -69,6 +69,18 @@ bool AnimTest::Update(float dTime)
     return true;
 }
 
+void AnimTest::UpdateDissolve(float dt)
+{
+    if (m_dissolveAmount >= 0.0f && m_dissolveAmount <= 0.2f)
+    {
+        m_dissolveWidth = std::min(0.2f, m_dissolveAmount);
+        for (auto& mesh : m_Meshs)
+        {
+            mesh->SetDissolveWidth(m_dissolveWidth);
+        }
+    }
+}
+
 #ifdef _DEBUG
 void AnimTest::Serialize()
 {

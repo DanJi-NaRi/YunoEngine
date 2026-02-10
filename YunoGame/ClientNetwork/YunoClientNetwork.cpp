@@ -170,8 +170,18 @@ namespace yuno::game
 
                 std::cout << "Slot Idx : " << static_cast<int>(pkt.slotIndex) << ", Player Count : " << static_cast<int>(pkt.playerCount) << std::endl;
 
-                GameManager::Get().SetSlotIdx(pkt.slotIndex);
-                GameManager::Get().SetSceneState(CurrentSceneState::GameStart);
+                GameManager& gm = GameManager::Get();
+                gm.SetMatchPlayerCount(pkt.playerCount);
+
+                if (gm.GetSlotiIdx() == 0)
+                {
+                    gm.SetSlotIdx(pkt.slotIndex);
+                }
+
+                if (gm.GetSceneState() == CurrentSceneState::RequstEnter)
+                {
+                    gm.SetSceneState(CurrentSceneState::GameStart);
+                }
             });// EnterOK Packet End
 
         // ReadyState Packet Start
@@ -185,13 +195,16 @@ namespace yuno::game
                 const bool p1Ready = (pkt.p1_isReady != 0);
                 const bool p2Ready = (pkt.p2_isReady != 0);
 
+                GameManager& gm = GameManager::Get();
+                gm.SetReadyStates(p1Ready, p2Ready);
+
                 if (!(p1Ready && p2Ready))
                 {
                     return;
                 }
                     
 
-                GameManager& gm = GameManager::Get();
+
                 const std::uint32_t weapon1 = static_cast<std::uint32_t>(gm.GetMyPiece(0));
                 const std::uint32_t weapon2 = static_cast<std::uint32_t>(gm.GetMyPiece(1));
                 if (weapon1 == 0 || weapon2 == 0) 
@@ -229,8 +242,8 @@ namespace yuno::game
                 GameManager& gm = GameManager::Get();
 
                 std::cout << "game state : " << static_cast<int>(gm.GetSceneState()) << std::endl;
-                // 현재 씬이 게임 스타트 상태 즉 WeaponSelectScene일때만 패킷 동작
-                if (gm.GetSceneState() == CurrentSceneState::GameStart) {
+                // 현재 씬이 StandBy 상태 즉 WeaponSelectScene일때만 패킷 동작
+                if (gm.GetSceneState() == CurrentSceneState::StandBy) {
                     gm.StartCountDown(
                         countTime,
                         pkt.slot1_UnitId1, pkt.slot1_UnitId2,

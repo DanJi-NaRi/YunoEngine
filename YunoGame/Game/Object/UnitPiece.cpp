@@ -166,6 +166,13 @@ bool UnitPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 {
     Unit::Create(name, id, vPos);
 
+    // 오브젝트 처음에는 안보이게 설정
+    m_dissolveAmount = 1.f;
+    for (auto& mesh : m_Meshs)
+    {
+        mesh->SetDissolveAmount(m_dissolveAmount);
+    }
+
     //if (!m_pInput || !m_pRenderer || !m_pTextures)
     //    return false;
     //if (!CreateMesh())
@@ -191,10 +198,10 @@ bool UnitPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool UnitPiece::Update(float dTime)
 {
-    // 죽은 상태인지 먼저 확인
-
+    // 디졸브 후 죽은 상태인지 먼저 확인
+    UpdateDissolve(dTime);
+    AnimTest::UpdateDissolve(dTime);
     if(CheckDead(dTime))   return true;
-
 
     UpdateRot(dTime);
     UpdateMove(dTime);
@@ -266,24 +273,24 @@ bool UnitPiece::CreateMaterial()
 
 bool UnitPiece::CheckDead(float dt)
 {
-    if (isDead && m_deadTime != -1)
-    {
-        m_deadTime += dt;
-        if (m_deadTime >= m_deathDelay)
-        {
-            PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
-            m_deadTime = -1;
-        }
-        return true;
-    }
-    else
+    if (!isDead)  return false;
+    if (isDeadQueued) return true;
+
+    // 죽는 애니메이션이 끝난 뒤에만 시스템에 삭제를 요청한다.
+    if (m_animator && m_animator->isPlaying())
         return false;
+
+    PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
+    isDeadQueued = true;
+    return true;
 }
 
 void UnitPiece::CheckMyQ()
 {
+    if (isDead) return;
+
     // 애니메이션이 끝나면 하나씩 빼가게 하기
-    while (!m_Q.empty() && !isMoving && !isRotating)
+    while (!m_Q.empty() && !isMoving && !isRotating && !isHitting && !isAttacking)
     {
         auto tp = m_Q.front();
         m_Q.pop();
@@ -292,17 +299,33 @@ void UnitPiece::CheckMyQ()
         case CommandType::Move:
         {
             auto [wx, wy, wz, dir, speed] = tp.mv_p;
-            SetTarget({ wx, wy, wz }, speed);
-            SetDir(dir);
-            m_AnimDone = tp.isDone;        // 슬롯 턴 종료 메세지 보내라
+            PlayMove({ wx, wy, wz }, speed);
+            SetDir(dir, true, 4.f);
+            break;
+        }
+        case CommandType::MoveHit:
+        {
+            if (tp.hit_p.amIdead)
+                PlayDead(tp.hit_p.disappearDissolveDuration);
+            else
+                PlayHit();
+
+            PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece));
+            break;
+        }
+        case CommandType::Attack:
+        {
+            PlayAttack();
             break;
         }
         case CommandType::Hit:
         {
-            //SetFlashColor({0,0,0,1},1,0.3f);
-            PlayGridQ::Insert(PlayGridQ::Hit_S(m_who));
-            if (tp.hit.whichPiece != GamePiece::None)
-                PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit.whichPiece));
+            PlayHit();
+            break;
+        }
+        case CommandType::Dead:
+        {
+            PlayDead(tp.dead_p.disappearDissolveDuration);
             break;
         }
         }
@@ -353,35 +376,20 @@ void UnitPiece::UpdateMove(float dt)
 {
     if (!isMoving)   return;
 
-    if (dt >= 1.f) return;
     m_moveTime += dt / m_Dist * m_speed * m_fixSpeed;
 
     if (m_moveTime >= 1.f)
     {
         XMStoreFloat3(&this->m_vPos, m_Target);
+        
         if (m_animator)
         {
-            UINT currentFrame = m_animator->GetCurFrame();
-            if (currentFrame >= 28) // 일단 낫일 경우에는
-            {
-                m_animator->Change("idle");
-                m_animator->SetLoop("idle", true);      // 여기서 터지면 idle 애니메이션이 없는 것임으로 생성단계에 클립을 넣어야함!
-                isMoving = false;
-                m_moveTime = 0.f;
-            }
+            m_animator->Change("idle");
+            m_animator->SetLoop("idle", true);      // 여기서 터지면 idle 애니메이션이 없는 것임으로 생성단계에 클립을 넣어야함!
+            m_animator->Play();
         }
-        else
-        {
-            isMoving = false;
-            m_moveTime = 0.f;
-        }
-
-        if (m_AnimDone)
-        {
-            PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Turn_Over, m_who));
-            //ClearQ();
-            m_AnimDone = false;
-        }
+        isMoving = false;
+        m_moveTime = 0.f;
     }
     else
     {
@@ -398,7 +406,7 @@ void UnitPiece::UpdateFlash(float dt)
         m_flashTime += dt;
 
         // 0에서 시작해 1까지 올라갔다 다시 내려오는 부드러운 곡선
-        float btw0_1 = Graph(m_flashTime);
+        float btw0_1 = QuadraticGraph(m_flashTime);
 
         // btw0_1을 기반으로 색상 보간
         Float4 fc = GetLerpColor(btw0_1);
@@ -426,15 +434,45 @@ void UnitPiece::UpdateHit(float dt)
 {
     if (!isHitting)  return;
 
-    // 일단 종료 조건문을 isFlashing으로 설정. 피격 애니메이션 들어오면 바꾸기.
-    if(isFlashing)  return;
-     
-    // 피격 애니메이션 끝나면 system에게 기물 생사여부 체크하도록 함.
-    PGridCmd cmd{ CommandType::Hit };
-    cmd.hit.whichPiece = GamePiece::None;
-    m_Q.push(cmd);
+    if (m_animator)
+    {
+        bool isPlaying = m_animator->isPlaying();
+        if (!isPlaying)
+        {
+            m_animator->Change("idle");
+            m_animator->SetLoop("idle", true);
+            m_animator->Play();
+            isHitting = false;
 
-    isHitting = false;
+            //// 피격 애니메이션 끝나면 system에게 기물 생사여부 체크하도록 함.
+            //PGridCmd cmd{ CommandType::Hit };
+            //cmd.hit.whichPiece = GamePiece::None;
+            //m_Q.push(cmd);
+        }
+    }
+}
+
+void UnitPiece::UpdateDissolve(float dt)
+{
+    if (!isDissolving) return;
+
+    m_dissolveTime += dt;
+
+    if (m_dissolveTime >= m_dissolveDuration)
+    {
+        m_dissolveAmount = m_startDissolveAmount + linearGraph(m_dissolveDuration);
+        m_dissolveTime = 0.f;
+        isDissolving = false;
+    }
+    else
+    {
+        m_dissolveAmount = m_startDissolveAmount + linearGraph(m_dissolveTime);
+    }
+
+    for (auto& mesh : m_Meshs)
+    {
+        mesh->SetDissolveAmount(m_dissolveAmount);
+    }
 }
 
 void UnitPiece::UpdateAttack(float dt)
@@ -506,24 +544,45 @@ void UnitPiece::SetFlashColor(Float4 color, int count, float blinkTime)
     isFlashing = true;
 }
 
+void UnitPiece::AppearDissolve(float dissolveTime)
+{
+    m_linearSlope = -(1.f / dissolveTime);
+    m_dissolveDuration = dissolveTime;
+    m_startDissolveAmount = m_dissolveAmount;
+    isDissolving = true;
+}
+
+void UnitPiece::DisappearDissolve(float dissolveTime)
+{
+    m_linearSlope = 1.f / dissolveTime;
+    m_dissolveDuration = dissolveTime;
+    m_startDissolveAmount = m_dissolveAmount;
+    isDissolving = true;
+}
+
 void UnitPiece::PlayAttack()
 {
     if (m_animator == nullptr) return;
     bool isChanged = m_animator->Change("attack");
     if (!isChanged) return;
     m_animator->SetLoop("attack", false);
+    m_animator->Play();
     isAttacking = true;
 }
 
-void UnitPiece::PlayHit(Float4 color, int count, float blinkTime)
+void UnitPiece::PlayHit()
 {
+    //SetFlashColor(color, count, blinkTime);
+    if (m_animator == nullptr) return;
+    bool isChanged = m_animator->Change("hit");
+    if (!isChanged) return;
+    m_animator->SetLoop("hit", false);
+    m_animator->Play();
     isHitting = true;
-
-    SetFlashColor(color, count, blinkTime);
 }
 
 
-void UnitPiece::SetTarget(XMFLOAT3 targetPos, float speed)
+void UnitPiece::PlayMove(XMFLOAT3 targetPos, float speed)
 {
     if (isMoving) return;
 
@@ -538,6 +597,7 @@ void UnitPiece::SetTarget(XMFLOAT3 targetPos, float speed)
         bool isChanged = m_animator->Change("move");
         if (isChanged)
             m_animator->SetLoop("move", true);
+        m_animator->Play();
     }
 
     if (m_Dist == 0)
@@ -547,29 +607,30 @@ void UnitPiece::SetTarget(XMFLOAT3 targetPos, float speed)
 }
 
 
-void UnitPiece::SetDead()
+void UnitPiece::PlayDead(float disappearDisolveDuration)
 {
     isDead = true;
+    isDeadQueued = false;
+
+    // 죽음 직후 기존 행동 큐를 정리해 후속 이동/피격 명령이 덮어쓰지 않게 한다.
+    ClearQ();
+    isMoving = false;
+    isRotating = false;
+    isAttacking = false;
+    isHitting = false;
+
+    DisappearDissolve(disappearDisolveDuration);
+
+    if (m_animator == nullptr) return;
+    bool isChanged = m_animator->Change("dead");
+    if (!isChanged) return;
+    m_animator->SetLoop("dead", false);
+    m_animator->Play();
 }
 
 void UnitPiece::SetTmpColor(Float4 color)
 {
     m_vtmpColor = color;
-}
-
-
-void UnitPiece::SendDone()
-{
-
-}
-
-
-void UnitPiece::ClearQ()
-{
-    while (!m_Q.empty())
-    {
-        m_Q.pop();
-    }
 }
 
 Float4 UnitPiece::GetLerpColor(float dt)
@@ -581,9 +642,22 @@ Float4 UnitPiece::GetLerpColor(float dt)
     return { r, g, b, a };
 }
 
-float UnitPiece::Graph(float x)
+float UnitPiece::QuadraticGraph(float x)
 {
     float result = -(2.f / m_blinkTime * x - 1.f) * (2.f / m_blinkTime * x - 1.f) + 1.f;
-
     return result;
+}
+
+float UnitPiece::linearGraph(float x)
+{
+    float result = m_linearSlope * x;
+    return result;
+}
+
+void UnitPiece::ClearQ()
+{
+    while (!m_Q.empty())
+    {
+        m_Q.pop();
+    }
 }

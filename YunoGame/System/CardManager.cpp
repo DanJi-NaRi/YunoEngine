@@ -28,6 +28,29 @@ static void RemoveBOM(std::string& s)
         s.erase(0, 3);
     }
 }
+
+//string -> wstring
+static std::wstring Utf8ToWString(const std::string& str)
+{
+    if (str.empty())
+        return L"";
+
+    int size_needed = MultiByteToWideChar(
+        CP_UTF8, 0,
+        str.c_str(), (int)str.size(),
+        nullptr, 0
+    );
+
+    std::wstring wstr(size_needed, 0);
+    MultiByteToWideChar(
+        CP_UTF8, 0,
+        str.c_str(), (int)str.size(),
+        &wstr[0], size_needed
+    );
+
+    return wstr;
+}
+
 //CSV 로드 함수
 bool CardManager::LoadFromCSV(const std::string& path)
 {
@@ -65,7 +88,9 @@ bool CardManager::LoadFromCSV(const std::string& path)
         // -------------------------
         CardData card;
         card.m_cardID = std::stoi(cols[0]);
-        card.m_name = cols[1]; // 무조건 바꾸기
+
+        card.m_name = Utf8ToWString(cols[1]);
+
         card.m_allowedUnits = std::stoul(cols[2]);
         card.m_Rarity = std::stoi(cols[3]);
         card.m_type = static_cast<CardType>(std::stoi(cols[4]));

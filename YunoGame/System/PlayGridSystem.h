@@ -191,7 +191,6 @@ private:
     const std::vector<int> GetRangeTileIDs(const Int2 unitCell, const std::vector<RangeOffset>& ranges, Direction dir);
 
     bool CheckNotDying(const GamePiece pieceType);
-    void CheckHealth(const UnitState& us, PieceInfo& pieceInfo);
 
     std::wstring GetWeaponFileName(int weaponID);           // 테스트용
     std::wstring GetTileFileName(int tile);
@@ -214,11 +213,9 @@ private:
 
 private:
     // 시간 관련
-
     float moveDuration = 2.5f;      // 이동
     float buffDuration = 2.f;       // 버프
     float attackDuration = 3.f;     // 공격
-
 
     int tileFlashCount = 3;
     float tileFlashInterval = 0.3f;
@@ -236,12 +233,17 @@ private:
 
     float triggerDuration = 5.f;
     float warnDuration = 5.f;
+
+        // 기물 디졸브
+    float appearDisolveDuration = 1.f;
+    float disappearDisolveDuration = 1.25f;
     
-        // 패킷
-    float pktOffset = 0.5f;
+        // 패킷. 일단 하드코딩..서버랑 맞춰야해ㅠㅠㅠ
+    float pktOffset = disappearDisolveDuration;
     float attackPktTime = attackAndMoveDuration + pktOffset;
     float utilityPktTime = moveDuration + attackAndMoveDuration + buffDuration + pktOffset;
-    
+    float obstaclePktDuration = triggerDuration + warnDuration + pktOffset;
+
     
     // 공격 처리
     bool m_attackActive = false;

@@ -55,6 +55,8 @@ namespace UI
 
     bool DragInt(const char* label, int* v, int speed, int v_min, int v_max, const char* fmt = "%d");
 
+    bool DragIntEditable(const char* label, int* v, int speed, int v_min, int v_max);
+
     bool Selectable(const char* label, bool selected);
 
     void NextLine(); // 줄바꿈

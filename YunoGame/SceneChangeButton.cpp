@@ -53,6 +53,9 @@ bool SceneChangeButton::Start()
 }
 
 bool SceneChangeButton::Update(float dTime) {
+
+    if (GameManager::Get().GetSceneState() == CurrentSceneState::CountDown) { m_useHoverEvent = false; return false; }
+
     Button::Update(dTime);
     return true;
 }
@@ -95,6 +98,7 @@ bool SceneChangeButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool SceneChangeButton::LMBPressedEvent()
 {
+    if (GameManager::Get().GetSceneState() == CurrentSceneState::CountDown) { return false; }
     GameManager::Get().SetSceneState(m_targetScene);
     
     return true;

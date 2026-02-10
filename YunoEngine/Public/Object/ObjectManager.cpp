@@ -233,7 +233,11 @@ void ObjectManager::ApplyUnitFromDesc(const std::vector<UnitDesc>& uds)
     for (auto& d : uds)
     {
         Unit* o = FindObject(d.ID);
-        if (!o || o->GetName() != d.name) return;
+        if (!o || o->GetName() != d.name)
+            o = FindObject(d.name);
+
+        if (!o)
+            continue;
 
         XMFLOAT3 radRot = { XMConvertToRadians(d.transform.rotation.x), XMConvertToRadians(d.transform.rotation.y), XMConvertToRadians(d.transform.rotation.z) };
 
@@ -294,6 +298,39 @@ void ObjectManager::CheckDedicateObjectName(std::wstring& name)
 
     if (count)
         name += std::to_wstring(count);
+}
+
+bool ObjectManager::IsObjectIDTaken(UINT id) const
+{
+    if (id == 0)
+        return true;
+
+    if (m_objMap.find(id) != m_objMap.end())
+        return true;
+
+    for (const auto& pending : m_pendingCreateQ)
+    {
+        if (pending && pending->GetID() == id)
+            return true;
+    }
+
+    return false;
+}
+
+UINT ObjectManager::AllocateObjectID(UINT preferredID)
+{
+    if (preferredID != 0 && !IsObjectIDTaken(preferredID))
+    {
+        if (preferredID >= m_objectIDs)
+            m_objectIDs = preferredID + 1;
+
+        return preferredID;
+    }
+
+    while (IsObjectIDTaken(m_objectIDs))
+        ++m_objectIDs;
+
+    return m_objectIDs++;
 }
 
 void ObjectManager::FrameDataUpdate()

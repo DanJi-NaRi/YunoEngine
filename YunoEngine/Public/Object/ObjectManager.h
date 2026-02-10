@@ -119,6 +119,8 @@ public:
     void ApplyPointLightsFromDesc(const std::vector<PointLightDesc>& pds);
 private:
     void CheckDedicateObjectName(std::wstring& name);
+    bool IsObjectIDTaken(UINT id) const;
+    UINT AllocateObjectID(UINT preferredID = 0);
 
 
     // 프레임 상수버퍼 관리
@@ -166,7 +168,7 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, UINT id)
 {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
-    UINT newID = m_objectIDs++;
+    UINT newID = AllocateObjectID(id);
 
     std::wstring newname = name;
 
@@ -187,7 +189,7 @@ template<typename T>//파싱없이 메쉬 생성해서 렌더할 오브젝트, �
 T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, PassOption opt, UINT id) {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
-    UINT newID = m_objectIDs++;
+    UINT newID = AllocateObjectID(id);
 
     std::wstring newname = name;
     
@@ -209,7 +211,7 @@ T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, c
 {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
-    UINT newID = m_objectIDs++;
+    UINT newID = AllocateObjectID(id);
 
     auto mesh = CreateMeshNode(filepath, opt);
 
