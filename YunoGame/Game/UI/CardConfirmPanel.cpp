@@ -89,8 +89,9 @@ void CardConfirmPanel::CreateChild() {
 
     m_cardConfirmButton = m_uiFactory.CreateChild<CardConfirmButton>(m_name + L"_CardConfirmButton", Float2(367, 69), XMFLOAT3(0, -100, 0), UIDirection::LeftTop, this);
     m_cardConfirmButton->SetEventLMB([this]() {
-        if (m_gameManager.IsCardQueueEmpty()) return;
+        if (!m_gameManager.IsCardQueueFull()) return;
         m_gameManager.SubmitTurn(m_gameManager.GetCardQueue());
+        this->m_cardConfirmButton->SetIsClicked(true);
         });
 
 
@@ -102,6 +103,14 @@ void CardConfirmPanel::CreateChild() {
 bool CardConfirmPanel::Update(float dTime)
 {
     PhasePanel::Update(dTime);
+
+    const CurrentSceneState currentState = m_gameManager.GetSceneState();
+
+    if (currentState == CurrentSceneState::AutoBattle && m_cardConfirmButton->GetIsClicked())
+    {
+        ClearSlot();
+    }
+
     UpdateCardSlot();
 
     return true;
@@ -126,6 +135,7 @@ void CardConfirmPanel::ClearSlot() {
     m_openSlot = 0;
     m_dirChoice = false;
     m_gameManager.ClearCardQueue();
+    m_cardConfirmButton->SetIsClicked(false);
 
     if (m_pSelectionPanel)
         m_pSelectionPanel->ClearSelectedCard();
