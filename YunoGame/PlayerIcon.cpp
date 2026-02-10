@@ -8,6 +8,7 @@
 
 #include "IInput.h"
 #include "UIFactory.h"
+#include "Gauge.h"
 
 PlayerIcon::PlayerIcon(UIFactory& uiFactory) : Image(uiFactory)
 {
@@ -22,6 +23,24 @@ PlayerIcon::~PlayerIcon()
 void PlayerIcon::Clear()
 {
     m_bars.clear();
+}
+
+void PlayerIcon::SetPlayer(int pNum)
+{
+    playerNum = pNum;
+    switch (pNum)
+    {
+    case 1:
+        for (auto& bar : m_bars)
+            bar->SetFillDirect(FillDirection::RightToLeft);
+        break;
+    case 2:
+        for (auto& bar : m_bars)
+            bar->SetFillDirect(FillDirection::LeftToRight);
+        break;
+    default:
+        break;
+    }
 }
 
 bool PlayerIcon::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)

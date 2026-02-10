@@ -20,10 +20,13 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::PlayerIcon; }
 
+    void SetPlayer(int pNum);
+
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/Bar_playericon.png"); };    // 머테리얼 생성 (한 번만)
 protected:
 
     std::vector<ProgressBar*> m_bars;
     Image* m_playerImage;
+    int playerNum = -1;
 };
 

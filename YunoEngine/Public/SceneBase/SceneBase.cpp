@@ -335,22 +335,16 @@ void SceneBase::DrawObjectList()
         if (!m_uiManager)
             return;
 
-        const uint32_t widgetcount = m_uiManager->GetWidgetCount();
-
         auto& widgetlist = m_uiManager->GetWidgetlist();
 
         for (auto [id, widget] : widgetlist)
         {
             Widget* obj = widget;
 
-            bool selected = false; //  EditorState에서 가져오게 될 것
+            if (obj->GetParent())
+                continue;
 
-            std::string name = WStringToString(obj->GetName());
-
-            if (UI::Selectable(name.c_str(), selected))
-            {
-                SelectWidget(obj);
-            }
+            DrawWidgetNode(obj);
         }
     }
 

@@ -43,18 +43,24 @@ bool PlayHUDScene::OnCreateScene()
     CreateWidget<TextureImage>(L"RoundCount", L"../Assets/UI/PLAY/3player_yet.png", XMFLOAT3(0, 0, 0));
     CreateWidget<TextureImage>(L"RoundCount", L"../Assets/UI/PLAY/3player_yet.png", XMFLOAT3(0, 0, 0));
 
-    CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
-    CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
-    CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
-    CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
+    auto icon = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
+    icon->SetPlayer(1);
+    icon = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
+    icon->SetPlayer(1);
+    icon = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
+    icon->SetPlayer(1);
+    icon = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
+    icon->SetPlayer(1);
 
     auto imojibox = CreateWidget<TextureImage>(L"ImojiBox", L"../Assets/UI/PLAY/ImojiBox.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
     imojibox->Attach(CreateWidget<TextureImage>(L"Imoji", L"../Assets/UI/PLAY/Imoji_zZZ_mouseout.png", XMFLOAT3(0, 0, 0), UIDirection::Center));
     imojibox->Attach(CreateWidget<TextureImage>(L"Imoji", L"../Assets/UI/PLAY/Imoji_JiantAngry_mouseout.png", XMFLOAT3(0, 0, 0), UIDirection::Center));
     imojibox->Attach(CreateWidget<TextureImage>(L"Imoji", L"../Assets/UI/PLAY/Imoji_EZ_mouseout.png", XMFLOAT3(0, 0, 0), UIDirection::Center));
 
-    
-    //CreateWidget<StaminaBar>(L"StaminaBar", L"../Assets/UI/PLAY/Bar_base.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
+    imojibox = CreateWidget<TextureImage>(L"ImojiBubble", L"../Assets/UI/PLAY/SpeechBubble.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
+    imojibox->Attach(CreateWidget<TextureImage>(L"Imoji", L"../Assets/UI/PLAY/Imoji_zZZ_mouseout.png", XMFLOAT3(0, 0, 0), UIDirection::Center));
+    imojibox = CreateWidget<TextureImage>(L"ImojiBubble", L"../Assets/UI/PLAY/SpeechBubble.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
+    imojibox->Attach(CreateWidget<TextureImage>(L"Imoji", L"../Assets/UI/PLAY/Imoji_zZZ_mouseout.png", XMFLOAT3(0, 0, 0), UIDirection::Center));
 
     return true;
 }
@@ -75,10 +81,48 @@ void PlayHUDScene::OnExit()
     //std::cout << "[PlayHUDScene] OnExit\n"; 
 }
 
+void PlayHUDScene::ShowEmoteImage(uint8_t pid, uint8_t emoteId)
+{
+    std::cout << "[PlayScene] ShowEmoteImage pid=" << int(pid)
+        << " emoteId=" << int(emoteId) << "\n";
+
+    auto* emoji = CreateWidget<Emoji>(
+        L"Emoji",
+        Float2{ 64, 64 },
+        (pid == 1) ? XMFLOAT3{ 300, 200, 0 } : XMFLOAT3{ 800, 200, 0 }
+    );
+
+    emoji->SetLayer(WidgetLayer::HUD);
+    emoji->ChangeMaterial(emoteId);
+    m_emojis.push_back({ emoji, 2.0f });
+}
+
 void PlayHUDScene::Update(float dt)
 {
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);
+
+    PendingEmote emote;
+    while (GameManager::Get().PopEmote(emote))
+    {
+        ShowEmoteImage(emote.pid, emote.emoteId);
+    }
+    //이모지 수명 관리
+    for (auto it = m_emojis.begin(); it != m_emojis.end(); )
+    {
+        it->remainTime -= dt;
+
+        if (it->remainTime <= 0.f)
+        {
+            // UI 매니저에서 제거
+            m_uiManager->DestroyWidget(it->widget->GetID());
+            it = m_emojis.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 }
 
 void PlayHUDScene::SubmitObj()

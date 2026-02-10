@@ -45,6 +45,10 @@ public:
     bool IsFillHorizontal() const;
     bool IsFillVertical() const;
 
+#ifdef _DEBUG
+    virtual void Serialize() override;
+#endif
+
 protected:
     float m_value; // 0.0f ~ 100.0f 백분율
     Float2 m_gaugeMax; // 최대 게이지 사이즈 = (프로그래스 바 사이즈 - margin)
