@@ -42,7 +42,7 @@ struct CardData // 카드 정보
 {
 public:
     int m_cardID;                   // 카드 고유 ID
-    std::string m_name;         // 카드 이름
+    std::wstring m_name;         // 카드 이름
     int m_Rarity;       // 카드 희귀도
     CardType m_type;           // 카드 타입
 

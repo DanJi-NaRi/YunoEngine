@@ -587,6 +587,7 @@
     <FxCompile Include="..\Assets\Shaders\PP_ColorGrading.hlsl">
       <Filter>Shaders\postprocess</Filter>
     </FxCompile>
+
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\ConstantBuffers.hlsli">

@@ -100,6 +100,11 @@ void YunoInputSystem::MouseTrack(HWND hWnd, BOOL bOn)
     TrackMouseEvent(&ev);
 }
 
+void YunoInputSystem::SetInputBlockScene(IScene* scene)
+{
+    m_blockBelowScene = scene;
+}
+
 void YunoInputSystem::SortContextsIfDirty()
 {
     if (!m_contextOrderDirty) return;
@@ -125,21 +130,24 @@ void YunoInputSystem::Dispatch()
         InputEvent evt = m_events.front();
         m_events.pop_front();
 
-        // 컨텍스트 우선순위 순으로 전달
+        // Dispatch 시작 시 차단 기준 고정
+        IScene* blockScene = m_blockBelowScene;
+
         for (IInputContext* ctx : m_contexts)
         {
             if (!ctx) continue;
 
-            const bool consumed = ctx->OnInputEvent(evt);
-            m_contexts;
+            auto* base = static_cast<InputContextBase*>(ctx);
+            IScene* ownerScene = base->GetScene();
 
-            if (/*consumed ||*/ evt.consumed)
-            {
-                // 상위 컨텍스트에서 이벤트 소모되면 하위 컨텍스트로 안내려감
-                // 이거 조금 바꾸면 모든 레이어에서도 소모 가능하긴 함
-                // 특정 레이어에서만 소모하게 하는거도 컨텍스트 바꾸면 되긴할듯?
+            // 차단 기준 아래는 절대 전달 안 함
+            if (blockScene && ownerScene != blockScene)
+                continue;
+
+            ctx->OnInputEvent(evt);
+
+            if (evt.consumed)
                 break;
-            }
         }
     }
 }

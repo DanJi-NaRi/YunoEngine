@@ -2,6 +2,7 @@
 #include "ISceneManager.h"
 
 class IScene;
+class IInput;
 
 struct SceneView
 {

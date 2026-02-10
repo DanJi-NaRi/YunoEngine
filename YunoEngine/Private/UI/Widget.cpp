@@ -230,6 +230,7 @@ bool Widget::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOA
     m_pTextures = YunoEngine::GetTextureManager();
     m_pInput = YunoEngine::GetInput();
 
+    m_selfVisible = Visibility::Visible;
     m_visible = Visibility::Visible;
 
     m_id = id;
@@ -245,7 +246,11 @@ bool Widget::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOA
 
     //if (!CreateMesh())
     //    return false;
-    if (GetWidgetType() != WidgetType::Text || GetWidgetClass() != WidgetClass::WidgetGridLine)
+    if (GetWidgetType() == WidgetType::Logic)
+    {
+        // 아무것도 안 함 (Mesh / Material / MeshNode 생성 X)
+    }
+    else if (GetWidgetType() != WidgetType::Text || GetWidgetClass() != WidgetClass::WidgetGridLine)
     {
         m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
         if (m_defaultMesh == 0)return false;
@@ -459,6 +464,7 @@ void Widget::Backup()
 bool Widget::Submit(float dTime)
 {
     if (!m_MeshNode) return true;
+    if (m_visible != Visibility::Visible) return true;
 
     m_renderItem.Constant.widgetSize = m_size.ToXM(); // 사이즈 등록
 
@@ -593,6 +599,33 @@ void Widget::SetMesh(std::unique_ptr<MeshNode>&& mesh)
 //    m_renderItem.materialHandle = m_materials[num];
 //    return true;
 //}
+void Widget::UpdateEffectiveVisibility()
+{
+    if (m_Parent)
+    {
+        if (m_Parent->m_visible != Visibility::Visible)
+            m_visible = m_Parent->m_visible;
+        else
+            m_visible = m_selfVisible;
+    }
+    else
+    {
+        m_visible = m_selfVisible;
+    }
+
+    // 자식에게 전파
+    for (auto& [id, child] : m_Childs)
+    {
+        if (child)
+            child->UpdateEffectiveVisibility();
+    }
+}
+
+void Widget::SetVisible(Visibility visible)
+{
+    m_selfVisible = visible;
+    UpdateEffectiveVisibility();
+}
 
 void Widget::Attach(Widget* widget) // this가 부모, 파라미터로 자식
 {
@@ -608,6 +641,8 @@ void Widget::Attach(Widget* widget) // this가 부모, 파라미터로 자식
     widget->SetLayer(this->m_layer); // 초회차 1번 부모 레이어 따라감
     widget->m_Parent = this;
     widget->SetIsRoot(false);   // 부모 아님을 인증
+    widget->m_transformDirty = true;
+    widget->UpdateEffectiveVisibility();
 }
 
 void Widget::DettachParent()

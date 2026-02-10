@@ -38,14 +38,17 @@ enum class WidgetType : int { // 자신 / 부모 클래스 타입
     Gauge,
     SpriteSheet,
     Debug,
+    Logic,
     //Slider,
     Count,
+    
 };
 
 enum class WidgetClass : int {
     //////////////////////////////
     // 기본
     Widget,
+    //LogicWidget,
     Image,
     Button,
     Text,
@@ -55,6 +58,11 @@ enum class WidgetClass : int {
     SpriteSheet,
     LetterBox,
 
+    //////////////////////////////
+    //Option
+    OptionButton,
+    VolumePanel,
+    VolumeTrackButton,
     //////////////////////////////
     //Debug (부모없음 예외임)
     WidgetGridLine,
@@ -241,7 +249,8 @@ protected:
 
     bool m_mirrorX = false;
 
-    Visibility m_visible;       // 보이기 여부 // 아직 미사용
+    Visibility m_selfVisible; // 내가 원하는 상태
+    Visibility m_visible; // 최종 상태 (렌더/입력용)// 보이기 여부 // 아직 미사용
 
     std::wstring m_inputString; // 텍스트 입력 내용 // 아직 미사용
 
@@ -335,8 +344,8 @@ public:
     void          SetTextureSize(TextureHandle& texHandle);
     void          SetTextureSize(std::wstring path);
     void          SetUseAspectComp(bool useAspectComp) { m_useAspectComp = useAspectComp; }
-    void          SetVisible(Visibility visible) { m_visible = visible; }
-
+    void          SetVisible(Visibility visible);
+    void          UpdateEffectiveVisibility();
     void          MirrorScaleX() { m_vScale.x *= -1; }
     void          MirrorScaleY() { m_vScale.y *= -1; }
 
