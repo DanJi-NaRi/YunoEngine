@@ -106,13 +106,12 @@ void GuideScene::CreateMainUI()
         });
 
     //Back//TODO::위치
-    m_backBtn = CreateWidget<SceneChangeButton>(
+    m_backBtn = CreateWidget<PopButton>(
         L"BackBtn",
         Float2(416, 90),
         XMFLOAT3(ClientW / 2 + 315, ClientH / 2 + 350, 0),
         UIDirection::Center
     );
-    m_backBtn->SetTargetScene(CurrentSceneState::Title);
     m_backBtn->SetHoverTexture(
         L"../Assets/UI/TITLE/back_mouseout.png",
         L"../Assets/UI/TITLE/back_mouseover.png"
