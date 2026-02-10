@@ -20,7 +20,6 @@ PhaseWeaponSelectButton::~PhaseWeaponSelectButton()
 
 void PhaseWeaponSelectButton::Clear()
 {
-    m_weaponID = 0;
 }
 
 bool PhaseWeaponSelectButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
@@ -76,7 +75,6 @@ bool PhaseWeaponSelectButton::LMBPressedEvent()
 {
     //std::cout << "(LMB)PressedEvent" << std::endl;
     // 게임 끄기
-    PostQuitMessage(0);
     return true;
 }
 
@@ -117,9 +115,9 @@ bool PhaseWeaponSelectButton::KeyReleasedEvent(uint32_t key)
     return true;
 }
 
-void PhaseWeaponSelectButton::ChangeWeaponImage()
+void PhaseWeaponSelectButton::ChangeWeaponImage(int id)
 {
-    switch (m_weaponID) {
+    switch (id+1) {
     case (int)PieceType::Blaster:   
         SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/blaster_mouseout.png",
                          L"../Assets/UI/PLAY/PhaseScene/blaster_mouseover.png");
@@ -149,14 +147,4 @@ void PhaseWeaponSelectButton::ChangeWeaponImage()
                          L"../Assets/Test/PhaseStaminaBar_Noting_mouseover.png");
         break;
     }
-}
-
-void PhaseWeaponSelectButton::SetPieceType(int type)
-{
-    m_weaponID = type; this->ChangeWeaponImage();
-}
-
-void PhaseWeaponSelectButton::SetPieceType(PieceType type)
-{
-    m_weaponID = (int)type; this->ChangeWeaponImage();
 }

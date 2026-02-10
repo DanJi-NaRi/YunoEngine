@@ -139,6 +139,21 @@ public:
 
     bool IsBattleOngoing() const { return m_isBattleOngoing; }
     void SetBattleOngoing(bool v) { m_isBattleOngoing = v; }
+
+    // 패널 사용 게터
+    std::vector<Wdata>& GetWeapons() { return m_weapons; }
+
+    // Card managers
+    CardManager& GetCardBasicManager() { return m_cardBasicMng; }
+    CardRangeManager& GetCardRangeManager() { return m_cardRangeMng; }
+
+    // Picks
+    PieceType& GetMyPick(size_t idx) { return m_myPick[idx]; } // idx: 0~1
+
+    // Hands
+    std::array<UnitHand, 2>& GetMyHands() { return m_myHands; }
+    std::array<UnitHand, 2>& GetEnemyHands() { return m_enemyHands; }
+
 private:
     static GameManager* s_instance;
 
@@ -186,6 +201,7 @@ private:
     // m_weapons에 데이터 담는 함수 만들기
     // m_weapons에 데이터 가져오는 함수 만들기
     std::vector<Wdata> m_weapons;
+    std::array<Wdata, 4> m_uiWeapons;
 
 public:
     bool IsEmptyWeaponData();
@@ -195,6 +211,10 @@ public:
         return m_weapons;
     }
 
+    void SetUIWeaponData(const std::array<Wdata, 4>& wdatas);
+    std::array<Wdata, 4> GetUIWeaponData() {
+        return m_uiWeapons;
+    }
 
     // 매 턴 매 슬롯 카드 하나 진행할 때마다 받아옴
 private:

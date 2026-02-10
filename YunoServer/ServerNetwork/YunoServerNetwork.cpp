@@ -82,6 +82,7 @@ namespace yuno::server
                     << " ec=" << ec.message()
                     << " -> slot cleared\n";
 
+
                 if (m_roundController.GetRoundStarted())
                 {
                     //  승자 결정
@@ -91,6 +92,7 @@ namespace yuno::server
                     // 게임 강제종료 호출
                     m_roundController.EndGameByDisconnect(winnerPID);
                 }
+
 
                 if (idx >= 0)
                 {
@@ -114,6 +116,9 @@ namespace yuno::server
 
                     m_server.Broadcast(std::move(bytes));
                 }
+
+
+
             });
     }
 

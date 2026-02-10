@@ -18,7 +18,6 @@ WeaponNameImage::~WeaponNameImage()
 
 void WeaponNameImage::Clear()
 {
-    m_weaponID = 0;
 }
 
 bool WeaponNameImage::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
@@ -77,25 +76,21 @@ bool WeaponNameImage::Submit(float dTime)
     return true;
 }
 
-void WeaponNameImage::ChangeWeaponImage()
+void WeaponNameImage::ChangeWeaponImage(int id)
 {
-    switch (m_weaponID) {
+    switch (id + 1) {
     case (int)PieceType::Blaster:   ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_blaster.png"); break;
     case (int)PieceType::Chakram:   ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_chakram.png"); break;
     case (int)PieceType::Breacher:  ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_breacher.png"); break;
     case (int)PieceType::Scythe:    ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_scythe.png"); break;
     case (int)PieceType::Impactor:  ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_impactor.png"); break;
     case (int)PieceType::Cleaver:   ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_cleaver.png"); break;
-    default: ChangeTexture(L"../Assets/Test/Weapon_Noting.png"); break;
+    default: ChangeTexture(L"./Assets/UI/PLAY/PhaseScene/Inventory_test_inventory_non.png"); break;
     }
 }
 
-void WeaponNameImage::SetPieceType(int type)
+void WeaponNameImage::ChangeWeaponImage(PieceType type)
 {
-    m_weaponID = type; ChangeWeaponImage();
+    ChangeWeaponImage((int)type);
 }
 
-void WeaponNameImage::SetPieceType(PieceType type)
-{
-    m_weaponID = (int)type; ChangeWeaponImage();
-}

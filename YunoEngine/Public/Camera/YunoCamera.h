@@ -1,5 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
+#include <algorithm>
+#include <cmath>
 #include "IWindow.h"
 using namespace DirectX;
 
@@ -10,11 +12,15 @@ struct YunoCamera
     XMFLOAT3 up{ 0, 1,  0.0f };
 
     float fovY = XM_PIDIV4; 
-    float aspect = 1.0f;
+    float aspect = 1920 / 1080;
     float nearZ = 0.1f;
     float farZ = 1000.0f;
 
     bool useOrtho = false;
+
+    static constexpr float kMinFovY = XMConvertToRadians(1.0f);
+    static constexpr float kMaxFovY = XMConvertToRadians(179.0f);
+    static constexpr float kMinAspect = 0.0001f;
 
     XMVECTOR GetForward()
     {
@@ -65,6 +71,15 @@ struct YunoCamera
     }
 
     void SetOrthoFlag(bool useOrtho) { this->useOrtho = useOrtho; } // 투영 활용 플래그 Set 함수.
+
+    void SetFovYRadians(float newFovY) { fovY = std::clamp(newFovY, kMinFovY, kMaxFovY); }
+    float GetFovYRadians() const { return fovY; }
+
+    void SetFovYDegrees(float newFovYDegrees) { SetFovYRadians(XMConvertToRadians(newFovYDegrees)); }
+    float GetFovYDegrees() const { return XMConvertToDegrees(fovY); }
+
+    void SetAspect(float newAspect) { aspect = newAspect < kMinAspect ? kMinAspect : newAspect; }
+    float GetAspect() { return aspect; }
 
     const XMFLOAT3& const Position() { return position; }
 };

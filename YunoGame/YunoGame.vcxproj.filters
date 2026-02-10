@@ -337,11 +337,9 @@
       <Filter>Game\UI\ProgressBar</Filter>
     </ClCompile>
     <ClCompile Include="PhaseWeaponSelectButton.cpp" />
-
     <ClCompile Include="Minimap.cpp">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClCompile>
-
     <ClCompile Include="OptionScene.cpp">
       <Filter>Scenes\5.Option</Filter>
     </ClCompile>
@@ -354,9 +352,11 @@
     <ClCompile Include="GuideScene.cpp">
       <Filter>Scenes\6.Guid</Filter>
     </ClCompile>
-
     <ClCompile Include="StandByScene.cpp">
       <Filter>Scenes\1.WeaponSelect</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\UI\PopButton.cpp">
+      <Filter>Game\UI\Button</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -577,12 +577,9 @@
       <Filter>Game\UI\ProgressBar</Filter>
     </ClInclude>
     <ClInclude Include="PhaseWeaponSelectButton.h" />
-
     <ClInclude Include="Minimap.h">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClInclude>
-
-
     <ClInclude Include="OptionScene.h">
       <Filter>Scenes\5.Option</Filter>
     </ClInclude>
@@ -607,7 +604,7 @@
     <ClInclude Include="StandByScene.h">
       <Filter>Scenes\1.WeaponSelect</Filter>
     </ClInclude>
-
+    <ClInclude Include="Game\UI\PopButton.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

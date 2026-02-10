@@ -152,7 +152,7 @@ bool PlayerCardController::UseCard(PlayerBattleState& player, uint32_t runtimeID
     const auto& card =
         m_cardDB.GetCardData(it->dataID);
 
-    if (card.m_useId == 0)
+    if (card.m_useId != 0)
     {
         // 소모 카드 -> 손패에서 제거
         player.handCards.erase(it);

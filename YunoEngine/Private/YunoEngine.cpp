@@ -102,7 +102,21 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
 
     ImGuiManager::RegisterDraw([this]()
         {
-            UI::DrawDebugHUD(&m_renderer->GetCamera().position.x, m_renderer->GetCamera().GetForward().m128_f32);
+            auto& camera = m_renderer->GetCamera();
+            UI::DrawDebugHUD(&camera.position.x, camera.GetForward().m128_f32);
+
+            float fovYDeg = camera.GetFovYDegrees();
+            float aspect = camera.GetAspect();
+            const int changedMask = UI::DrawCameraFovController(&fovYDeg, &aspect);
+
+            if(changedMask & 2)
+            {
+                camera.SetAspect(aspect);
+            }
+            else if (changedMask & 1)
+            {
+                camera.SetFovYDegrees(fovYDeg);
+            }
         }
     );
 #endif
