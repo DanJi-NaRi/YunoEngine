@@ -358,6 +358,9 @@
     <ClCompile Include="Game\UI\PopButton.cpp">
       <Filter>Game\UI\Button</Filter>
     </ClCompile>
+    <ClCompile Include="Scenes\PlayHUDScene.cpp">
+      <Filter>Scenes\2.Play</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -604,7 +607,12 @@
     <ClInclude Include="StandByScene.h">
       <Filter>Scenes\1.WeaponSelect</Filter>
     </ClInclude>
-    <ClInclude Include="Game\UI\PopButton.h" />
+    <ClInclude Include="Scenes\PlayHUDScene.h">
+      <Filter>Scenes\2.Play</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\UI\PopButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">
