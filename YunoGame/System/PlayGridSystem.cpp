@@ -210,6 +210,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram1->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram1->AppearDissolve(appearDisolveDuration);
          pChakram1->SetWho(gp);
+         pChakram1->SetMoveRotOffset(0, 0);
 
          pPiece->Attach(pChakram1);
 
@@ -224,6 +225,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram2->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram2->AppearDissolve(appearDisolveDuration);
          pChakram2->SetWho(gp);
+         pChakram2->SetMoveRotOffset(0, 0);
 
          pPiece->Attach(pChakram2);
 
@@ -268,6 +270,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Breacher_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
+         pPiece->SetScale(XMFLOAT3(2, 2, 2));
          break;
      case 4:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
@@ -1153,17 +1156,19 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
             }
 
             // 충돌지점까지 이동 후 원래 자리로 되돌아감
-            pPiece->InsertQ(PlayGridQ::Move_P(fdir, colW.x, m_wy, colW.y));              // 충돌 위치까지 이동 후
+            pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
+            pPiece->InsertQ(PlayGridQ::Move_P(colW.x, m_wy, colW.y));              // 충돌 위치까지 이동 후
             pPiece->InsertQ(PlayGridQ::MoveHit_P(existWho, amIdead, disappearDisolveDuration));                                 // 이동하는 애 죽었는지 부딪힌 애 죽었는지
-            pPiece->InsertQ(PlayGridQ::Move_P(Direction::Same, wx, m_wy, wz, 1));        // 제자리로 돌아감
+            pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));        // 제자리로 돌아감
         }
         else                                                // 아군과 충돌
         {
             std::cout << "[PlayGridSystem]::Ally_Collison\n";
 
             // 충돌지점까지 이동 후 원래 자리로 되돌아감
-            pPiece->InsertQ(PlayGridQ::Move_P(fdir, colW.x, m_wy, colW.y));
-            pPiece->InsertQ(PlayGridQ::Move_P(fdir, wx, m_wy, wz, 1));
+            pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
+            pPiece->InsertQ(PlayGridQ::Move_P(colW.x, m_wy, colW.y));
+            pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));
         }
     }
     else                                                                                // 비어있는 자리
@@ -1171,7 +1176,8 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
         std::cout << "[PlayGridSystem]::Unoccupied\n";
         
         // 기물 이동
-        pPiece->InsertQ(PlayGridQ::Move_P(fdir, wx, m_wy, wz, 1));
+        pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
+        pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));
     }
     
     // 타일 상태 변경
@@ -1281,14 +1287,14 @@ void PlayGridSystem::CheckOver()
         if (pPiece != nullptr)
         {
             // 라운드 종료 시 남아있는 기물도 일괄 제거
-            pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+            pPiece->InsertQ(PlayGridQ::Disappear_P(disappearDisolveDuration));
         }
 
         for (auto sid : pieceinfo.subIds)
         {
             auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(sid));
             if (pSub != nullptr)
-                pSub->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+                pSub->InsertQ(PlayGridQ::Disappear_P(disappearDisolveDuration));
         }
     }
     isRoundOver = true;

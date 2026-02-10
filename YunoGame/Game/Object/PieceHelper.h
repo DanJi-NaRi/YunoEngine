@@ -24,11 +24,13 @@ enum class Team : uint8_t
 
 enum class CommandType : uint8_t
 {
+    Rotate,
     Move,
     Attack,
     Hit,
     MoveHit,
     Dead,
+    Disappear,
 
     IncreaseAttackPhase,
 

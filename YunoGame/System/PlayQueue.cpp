@@ -24,21 +24,20 @@ const PGridCmd PlayGridQ::Pop()
     return res;
 }
 
-
-PGridCmd PlayGridQ::Move_S(GamePiece pieceType, int oldcx, int oldcz, int cx, int cz, bool isCollided, bool isEnemy, int damageMe, int damageU)
+PGridCmd PlayGridQ::Rot_P(Direction dir)
 {
     PGridCmd cmd;
-    cmd.cmdType = CommandType::Move;
-    cmd.mv_s = { pieceType, oldcx, oldcz, cx, cz, isCollided, isEnemy};
+    cmd.cmdType = CommandType::Rotate;
+    cmd.rot_p.dir = dir;
     return cmd;
 }
 
-PGridCmd PlayGridQ::Move_P(Direction dir, float wx, float wy, float wz, float speed, bool isDone)
+PGridCmd PlayGridQ::Move_P(float wx, float wy, float wz, float speed, bool isDone)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Move;
     cmd.isDone = isDone;
-    cmd.mv_p = { wx, wy, wz, dir, speed };
+    cmd.mv_p = { wx, wy, wz, speed };
     return cmd;
 }
 
@@ -72,6 +71,14 @@ PGridCmd PlayGridQ::Dead_P(float disappearDissolveDuration)
     PGridCmd cmd;
     cmd.cmdType = CommandType::Dead;
     cmd.dead_p.disappearDissolveDuration = disappearDissolveDuration;
+    return cmd;
+}
+
+PGridCmd PlayGridQ::Disappear_P(float disappearDissolveDuration)
+{
+    PGridCmd cmd;
+    cmd.cmdType = CommandType::Disappear;
+    cmd.disappear_p.disappearDissolveDuration = disappearDissolveDuration;
     return cmd;
 }
 
