@@ -87,6 +87,7 @@ public:
 
     const int GetPID() { return m_PID; }
 
+    void SendSurrender();//항복 패킷 보내기
     //void RoundInit(yuno::net::packets::S2C_Error data);
 
 // 카드 관련 변수와 함수
