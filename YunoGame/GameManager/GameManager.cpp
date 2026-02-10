@@ -247,7 +247,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::Guide:
     {
-        m_state = CurrentSceneState::Guide;
 
         ScenePolicy sp;
         sp.blockRenderBelow = false;
