@@ -33,5 +33,6 @@ public:
 
 protected:
     Card* m_pCard = nullptr; // 해당 슬롯에 등록된 카드
+
 };
 

@@ -84,7 +84,9 @@ enum class WidgetClass : int {
     // 카드 선택 페이즈 씬
     Card,
     CardSlot,
-    CardTable, // 미사용
+    PhasePanel,
+
+    //미니맵
     Minimap,
     MinimapTile,
     DirSelectButton,
@@ -97,9 +99,12 @@ enum class WidgetClass : int {
 
     // 카드 선택
     CardSelectionPanel,
+    PhaseWeaponSelectButton,
+    PhaseStaminaBar,
 
     //////////////////////////////
     // 전투 씬
+    PlayerIcon,
     BarPanel,
     PieceImage,
     HealthBar,

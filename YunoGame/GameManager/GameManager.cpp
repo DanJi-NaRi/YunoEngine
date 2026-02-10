@@ -97,11 +97,12 @@ bool GameManager::IsEmptyObstaclePacket()
 
 void GameManager::SetConfirmPanel(CardConfirmPanel* pConfirmPanel)
 {
+    m_pConfirmPanel = pConfirmPanel;
 }
 
 void GameManager::SetSelectionPanel(CardSelectionPanel* pSelectionPanel)
 {
-    
+    m_pSelectionPanel = pSelectionPanel;
 }
 
 void GameManager::SetMinimap(Minimap* pMinimap)
@@ -109,14 +110,43 @@ void GameManager::SetMinimap(Minimap* pMinimap)
     m_pMinimap = pMinimap;
 }
 
+void GameManager::SetUpPanels()
+{
+
+    assert(m_pMinimap);
+    if (m_pMinimap) m_pMinimap->SetupPanel(m_PID, &m_myHands[0], &m_myHands[1], m_cardBasicMng, m_cardRangeMng);
+
+    assert(m_pSelectionPanel);
+    if (m_pSelectionPanel) m_pSelectionPanel-> SetupPanel(m_PID, &m_myHands[0], &m_myHands[1], m_cardBasicMng, m_cardRangeMng);
+
+    assert(m_pConfirmPanel);
+    if (m_pConfirmPanel) m_pConfirmPanel->SetupPanel(m_PID, &m_myHands[0], &m_myHands[1], m_cardBasicMng, m_cardRangeMng);
+}
+
+void GameManager::UpdatePanels(const BattleResult& battleResult)
+{
+    // 전투 시 실시간 갱신
+    assert(m_pMinimap);
+    if (m_pMinimap) m_pMinimap->UpdatePanel(battleResult);
+
+    assert(m_pSelectionPanel);
+    if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(battleResult);
+
+    assert(m_pConfirmPanel);
+    if (m_pConfirmPanel) m_pConfirmPanel->UpdatePanel(battleResult);
+}
+
 void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
 {
+    // 전투 종료 후
     assert(m_pMinimap);
     if (m_pMinimap) m_pMinimap->UpdatePanel(obstacleResult);
 
-    //assert(m_pSelectionPanel);
-    //if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(obstacleResult);
+    assert(m_pSelectionPanel);
+    if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(obstacleResult);
 
+    assert(m_pConfirmPanel);
+    if (m_pConfirmPanel) m_pConfirmPanel->UpdatePanel(obstacleResult);
 }
 
 

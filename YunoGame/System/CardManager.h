@@ -10,6 +10,7 @@ public:
     const CardData& GetCardData(int cardID) const;
     const CardMoveData* GetMoveData(int cardID) const;
     const CardEffectData* GetEffectData(int cardID) const;
+    const std::wstring GetCardTexturePath(int cardID) const;
 
 private:
     std::unordered_map<int, CardData>       m_cardData;

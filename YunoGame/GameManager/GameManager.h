@@ -9,6 +9,7 @@
 #include "CardRangeManager.h"
 #include "CardQueue.h"
 
+
 class Minimap;
 class CardConfirmPanel;
 class CardSelectionPanel;
@@ -84,6 +85,8 @@ public:
 
     void SubmitTurn(const std::vector<CardPlayCommand>& runtimeIDs);
 
+    const int GetPID() { return m_PID; }
+
     //void RoundInit(yuno::net::packets::S2C_Error data);
 
 // 카드 관련 변수와 함수
@@ -148,12 +151,13 @@ private:
     int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽
     int m_matchPlayerCount = 0;
 
+
     bool m_isReady = false;
     bool m_p1Ready = false;
     bool m_p2Ready = false;
 
-    UnitHand m_myHands[2];                                                             //UI 카드 선택용
-    UnitHand m_enemyHands[2];                                                       //UI 보여주기용
+    std::array<UnitHand,2> m_myHands;                                                          //UI 카드 선택용
+    std::array<UnitHand,2> m_enemyHands;                                                       //UI 보여주기용
     std::unordered_map<uint32_t, uint32_t> m_CardRuntimeIDs;    //엑셀로드용
     std::vector<ClientCardInfo> m_drawCandidates;                         //추가 후보 카드 임시 저장소
     CardQueue m_cardQueue;
@@ -210,7 +214,8 @@ public:
     void SetConfirmPanel(CardConfirmPanel* pConfirmPanel);
     void SetSelectionPanel(CardSelectionPanel* pSelectionPanel);
 
-   
+    void SetUpPanels();
+    void UpdatePanels(const BattleResult& obstacleResult);
     void UpdatePanels(const ObstacleResult& obstacleResult);
     //void UpdateSelectionPanel(const UnitHand& playerInfo);
 };

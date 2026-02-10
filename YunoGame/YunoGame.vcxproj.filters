@@ -312,7 +312,6 @@
     <ClCompile Include="SceneChangeButton.cpp" />
     <ClCompile Include="CardConfirmArea.cpp" />
     <ClCompile Include="Game\UI\DirSelectButton.cpp" />
-    <ClCompile Include="Minimap.cpp" />
     <ClCompile Include="MinimapTile.cpp" />
     <ClCompile Include="Game\UI\TextureImage.cpp" />
     <ClCompile Include="CountdownImage.cpp">
@@ -331,13 +330,17 @@
     <ClCompile Include="Game\UI\CardSelectionPanel.cpp">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClCompile>
-    <ClCompile Include="Game\UI\CardTable.cpp">
+    <ClCompile Include="Game\UI\PhasePanel.cpp">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClCompile>
     <ClCompile Include="PhaseStaminaBar.cpp">
       <Filter>Game\UI\ProgressBar</Filter>
     </ClCompile>
     <ClCompile Include="PhaseWeaponSelectButton.cpp" />
+
+    <ClCompile Include="Minimap.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClCompile>
 
     <ClCompile Include="OptionScene.cpp">
       <Filter>Scenes\5.Option</Filter>
@@ -549,7 +552,6 @@
       <Filter>System\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Game\UI\DirSelectButton.h" />
-    <ClInclude Include="Minimap.h" />
     <ClInclude Include="MinimapTile.h" />
     <ClInclude Include="Game\UI\TextureImage.h" />
     <ClInclude Include="CountdownImage.h">
@@ -568,13 +570,18 @@
     <ClInclude Include="Game\UI\CardSelectionPanel.h">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClInclude>
-    <ClInclude Include="Game\UI\CardTable.h">
+    <ClInclude Include="Game\UI\PhasePanel.h">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClInclude>
     <ClInclude Include="PhaseStaminaBar.h">
       <Filter>Game\UI\ProgressBar</Filter>
     </ClInclude>
     <ClInclude Include="PhaseWeaponSelectButton.h" />
+
+    <ClInclude Include="Minimap.h">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClInclude>
+
 
     <ClInclude Include="OptionScene.h">
       <Filter>Scenes\5.Option</Filter>
@@ -600,6 +607,7 @@
     <ClInclude Include="StandByScene.h">
       <Filter>Scenes\1.WeaponSelect</Filter>
     </ClInclude>
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

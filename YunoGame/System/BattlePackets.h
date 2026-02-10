@@ -3,8 +3,8 @@
 // MK 추가
 struct UnitState
 {
-    uint8_t pId = 0;
-    uint8_t slotId = 0;
+    uint8_t pId = 0;    // 플레이어
+    uint8_t slotId = 0; // 유닛
 
     uint8_t hp = 0;
     uint8_t stamina = 0;

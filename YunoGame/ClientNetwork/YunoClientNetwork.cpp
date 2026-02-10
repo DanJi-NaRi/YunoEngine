@@ -398,7 +398,7 @@ namespace yuno::game
 
                 BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, pkt.dir, pkt.actionTime, order };
                 gm.PushBattlePacket(br);
-
+                gm.UpdatePanels(br);
                 gm.SetSceneState(CurrentSceneState::AutoBattle);
                 // MK 추가
                 // 게임 매니저 큐에 push.

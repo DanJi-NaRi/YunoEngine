@@ -17,7 +17,7 @@
 constexpr int g_MinimapRow = 5;
 constexpr int g_MinimapCol = 7;
 
-Minimap::Minimap(UIFactory& uiFactory) : Image(uiFactory)
+Minimap::Minimap(UIFactory& uiFactory) : PhasePanel(uiFactory)
 {
     Clear();
 }
@@ -35,7 +35,7 @@ void Minimap::Clear()
 
 bool Minimap::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Image::Create(name, id, sizePx, vPos, rotZ, vScale);
+    PhasePanel::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     this->SetLayer(WidgetLayer::Panels);
 
@@ -52,7 +52,7 @@ bool Minimap::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLO
 
 bool Minimap::Start()
 {
-    Image::Start();
+    PhasePanel::Start();
 
     return true;
 }
@@ -70,21 +70,21 @@ void Minimap::CreateChild() {
     //);
 
 
-    GridSetup();
+    SetupGrid();
 
 }
 
 
 bool Minimap::Update(float dTime)
 {
-    Image::Update(dTime);
+    PhasePanel::Update(dTime);
 
     return true;
 }
 
 bool Minimap::Submit(float dTime)
 {
-    Image::Submit(dTime);
+    PhasePanel::Submit(dTime);
     return false;
 }
 
@@ -97,7 +97,31 @@ bool Minimap::Submit(float dTime)
 //    //m_gridBox->Attach(pLine);
 //}
 
-void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {}
+
+void Minimap::SetUpPanel()
+{
+
+}
+
+void Minimap::UpdatePanel(const BattleResult& battleResult) {
+
+    for (const auto& pieceInfo : battleResult.order) {
+        /*const auto& info = pieceInfo.data();
+        TileData& tileData = m_pTiles[info->targetTileID]->GetTileData();
+        tileData.isPlayerTile = true;
+        tileData.teamID = info->pId;
+        tileData.unitID = info->slotId;*/
+    }
+}
+
+void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
+    for (const auto& pieceInfo : obstacleResult.unitState) {
+        /*TileData& tileData = m_pTiles[pieceInfo.pId]->GetTileData();
+        tileData.isPlayerTile = true;
+        tileData.teamID = pieceInfo.pId;
+        tileData.unitID = pieceInfo.slotId;*/
+    }
+}
 
 
 //{
@@ -131,7 +155,7 @@ void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {}
 //        y += m_grid.cellSize.y + pad;
 //    }
 //}
-void Minimap::GridSetup()
+void Minimap::SetupGrid()
 {
 
     const float pad = 4.0f;
@@ -160,11 +184,19 @@ void Minimap::GridSetup()
                     this
                 )
             );
+            m_pTiles.back()->SetTileId(m_pTiles.size());
         }
     }
 }
 
-int Minimap::GetID(int cx, int cz)
+void Minimap::ClearGrid()
+{
+    for (const auto& tile : m_pTiles) {
+        tile->ClearTileData(); // TileID 제외 초기화
+    }
+}
+
+int Minimap::GetTileID(int cx, int cz)
 {
     int id = (cz * m_grid.col + cx) + 1;
     return id;

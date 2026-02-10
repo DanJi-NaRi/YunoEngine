@@ -18,7 +18,7 @@ public:
     virtual void GuageUpdate(float dTime = 0);
 
     virtual WidgetType GetWidgetType() override { return WidgetType::ProgressBar; }
-    virtual WidgetClass GetWidgetClass() override { return WidgetClass::StaminaBar; }
+    virtual WidgetClass GetWidgetClass() override { return WidgetClass::PhaseStaminaBar; }
 
 private:
     bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/Bar_base.png"); }  // 머테리얼 생성 (한 번만)

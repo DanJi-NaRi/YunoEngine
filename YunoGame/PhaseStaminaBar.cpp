@@ -62,6 +62,4 @@ bool PhaseStaminaBar::Submit(float dTime)
 
 void PhaseStaminaBar::GuageUpdate(float dTime)
 {
-    if (m_pInput->IsKeyDown(VK_OEM_6)) { m_pGauge->AddValue(30 * dTime); }
-    if (m_pInput->IsKeyDown(VK_OEM_4)) { m_pGauge->SubValue(30 * dTime); }
 }

@@ -48,7 +48,7 @@ public:
     //virtual void ChangeSprite(int mtrlNum); // 이거 이미지 or 위젯이 들고 있어도 되는 거 아님??
 protected:
     // 아직까지 배열로 활용할진 모르겠으니 최소 형태로 한 뒤 추후 배열로 확대합시다.
-    // CardTable같은 상위 위젯에서, 해당 위젯을 여러 개 소유한 형태가 될 수도 있기 때문.
+    // PhasePanel같은 상위 위젯에서, 해당 위젯을 여러 개 소유한 형태가 될 수도 있기 때문.
 
     //std::vector<SnapPoint> m_snapPoint;    // 위젯이 배치할 구간이 있다면
     SnapPoint m_snapPoint;    // 위젯이 배치할 구간이 있다면
