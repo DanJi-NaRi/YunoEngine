@@ -92,11 +92,24 @@ void CardConfirmPanel::CreateChild() {
         if (!m_gameManager.IsCardQueueFull()) return;
         m_gameManager.SubmitTurn(m_gameManager.GetCardQueue());
         this->m_cardConfirmButton->SetIsClicked(true);
+        m_gameManager.SetSceneState(CurrentSceneState::BattleStandBy);
         });
 
 
     m_cardCancelButton = m_uiFactory.CreateChild<CardCancelButton>(m_name + L"_CardCancelButton", Float2(367, 69), XMFLOAT3(700, -100, 0), UIDirection::LeftTop, this);
-    m_cardCancelButton->SetEventLMB([this]() { this->ClearSlot(); });
+    m_cardCancelButton->SetEventLMB([this]() 
+        { 
+            if (m_gameManager.GetSceneState() == CurrentSceneState::BattleStandBy) return;
+            this->ClearSlot(); 
+            // 만들었는데 생각해보니까 우리 카드 제출 후 취소를 못하네?
+            //if (m_gameManager.GetSceneState() == CurrentSceneState::StandBy) 
+            //{
+            //    m_gameManager.RequestScenePop();        // StandBy씬이면 Pop하기
+            //    m_gameManager.SetState(CurrentSceneState::SubmitCard);
+            //}
+
+        }
+    );
 
 }
 

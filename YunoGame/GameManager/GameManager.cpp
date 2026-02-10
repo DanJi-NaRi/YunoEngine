@@ -357,6 +357,12 @@ void GameManager::SetSceneState(CurrentSceneState state)
 
         break;
     }
+    case CurrentSceneState::BattleStandBy:
+    {
+        m_state = CurrentSceneState::BattleStandBy;
+        // 여기에 뭐 대기중인 텍스쳐 띄워주는 씬 push 넣기
+        break;
+    }
     case CurrentSceneState::AutoBattle:
     {
         m_state = CurrentSceneState::AutoBattle;
@@ -609,6 +615,14 @@ int GameManager::GetCountDownSlotUnitId(int slotIndex, int unitIndex) const
     }
 }
 
+
+void GameManager::RequestScenePop()
+{
+    ISceneManager* sm = YunoEngine::GetSceneManager();
+    SceneTransitionOptions opt;
+    opt.immediate = true;
+    sm->RequestPop(opt);
+}
 
 void GameManager::StartCountDown(int countTime, int S1U1, int S1U2, int S2U1, int S2U2)
 {

@@ -14,6 +14,7 @@
         CountDown,
         RoundStart,     // 게임 초기화 단계 (기물 배치, 오브젝트 스폰, )
         SubmitCard,
+        BattleStandBy,  // 나는 카드 제출 후 대기중인 상태
         AutoBattle,
         RoundEnd,
         GameEnd,
