@@ -39,14 +39,14 @@ void CountdownScene::ShowOrUpdateCountdownImage(int num)
 
         img->SetLayer(WidgetLayer::HUD);
         m_countdownWidgetID = img->GetID();
-        std::cout << "A\n" << m_countdownWidgetID;
+        //std::cout << "A\n" << m_countdownWidgetID;
     }
     else
     {
         img = static_cast<CountdownImage*>(
             m_uiManager->FindWidget(m_countdownWidgetID)
             );
-        std::cout << "B\n";
+        //std::cout << "B\n";
     }        
 
     img->ChangeMaterial(num); // 3, 2, 1

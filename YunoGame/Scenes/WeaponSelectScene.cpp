@@ -15,7 +15,52 @@
 // 여러 오브젝트들 ;; 
 //#include "Building.h"
 #include "UIWidgets.h"
-#include "ShowCardDeck.h"
+
+
+
+namespace
+{
+    std::wstring GetPieceNameLower(PieceType pieceType)
+    {
+        switch (pieceType)
+        {
+        case PieceType::Blaster: return L"blaster";
+        case PieceType::Chakram: return L"chakram";
+        case PieceType::Breacher: return L"breacher";
+        case PieceType::Scythe: return L"scythe";
+        case PieceType::Impactor: return L"impactor";
+        case PieceType::Cleaver: return L"cleaver";
+        case PieceType::None:
+        default: return L"";
+        }
+    }
+
+    std::wstring GetSelectedSlotTexturePath(PieceType pieceType, int slotTextureIndex)
+    {
+        const std::wstring pieceName = GetPieceNameLower(pieceType);
+        if (pieceName.empty())
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/selected_" + pieceName + L"_" + std::to_wstring(slotTextureIndex) + L".png";
+    }
+
+    std::wstring GetWeaponSlotTexturePath(PieceType pieceType, int slotTextureIndex)
+    {
+        const std::wstring pieceName = GetPieceNameLower(pieceType);
+        if (pieceName.empty())
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/weapon_" + std::to_wstring(slotTextureIndex) + L"_" + pieceName + L".png";
+    }
+
+    std::wstring GetReadySlotTexturePath(int slotTextureIndex)
+    {
+        if (slotTextureIndex < 1 || slotTextureIndex > 4)
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/Ready_" + std::to_wstring(slotTextureIndex) + L".png";
+    }
+}
 
 bool WeaponSelectScene::OnCreateScene()
 {
@@ -130,44 +175,9 @@ bool WeaponSelectScene::OnCreateScene()
     m_pExitBtn->SetHoverTexture(L"../Assets/UI/WEAPON_SELECT/Exit_mouseout.png", L"../Assets/UI/WEAPON_SELECT/Exit_mouseover.png");
     m_pExitBtn->SetTargetScene(CurrentSceneState::Title);
 
-    // 선택창 UI
-    //{
-    //    m_pUserImage0 = CreateWidget<UserImage>(L"P1 U1", Float2(50, 50), XMFLOAT3(0, 0, 0));
-    //    m_pUserImage1 = CreateWidget<UserImage>(L"P1 U2", Float2(50, 50), XMFLOAT3(0, 150, 0));
-    //    m_pUserImage2 = CreateWidget<UserImage>(L"P2 U1", Float2(50, 50), XMFLOAT3(1000, 0, 0));
-    //    m_pUserImage3 = CreateWidget<UserImage>(L"P2 U2", Float2(50, 50), XMFLOAT3(1000, 150, 0));
-    //
-    //    // 그리드 기능 쓰기??
-    //    m_PWeaponBtn_Blaster = CreateWidget<WeaponButton>(L"Weapon_Blaster", Float2(50, 50), XMFLOAT3(250, 100, 0));
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Blaster)->SetPieceType(PieceType::Blaster);
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Blaster)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
-    //
-    //    m_PWeaponBtn_Impactor = CreateWidget<WeaponButton>(L"Weapon_Impactor", Float2(50, 50), XMFLOAT3(750, 100, 0));
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Impactor)->SetPieceType(PieceType::Impactor);
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Impactor)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
-    //
-    //    m_PWeaponBtn_Breacher = CreateWidget<WeaponButton>(L"Weapon_Breacher", Float2(50, 50), XMFLOAT3(500, 100, 0));
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Breacher)->SetPieceType(PieceType::Breacher);
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Breacher)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
-    //
-    //    m_PWeaponBtn_Chakram = CreateWidget<WeaponButton>(L"Weapon_Chakra", Float2(50, 50), XMFLOAT3(250, 300, 0));
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetPieceType(PieceType::Chakram);
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Chakram)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
-    //
-    //    m_PWeaponBtn_Scythe = CreateWidget<WeaponButton>(L"Weapon_Scythe", Float2(50, 50), XMFLOAT3(500, 300, 0));
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Scythe)->SetPieceType(PieceType::Scythe);
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Scythe)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
-    //
-    //    m_PWeaponBtn_Cleaver = CreateWidget<WeaponButton>(L"Weapon_Cleaver", Float2(50, 50), XMFLOAT3(750, 300, 0));
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetPieceType(PieceType::Cleaver);
-    //    dynamic_cast<WeaponButton*>(m_PWeaponBtn_Cleaver)->SetUserImages(m_pUserImage0, m_pUserImage1, m_pUserImage2, m_pUserImage3);
-    //
-    //    m_pReadyBtn = CreateWidget<ReadyButton>(L"ReadyButton", Float2(50, 50), XMFLOAT3(450, 500, 0));
-    //    m_pExitBtn = CreateWidget<SceneChangeButton>(L"ExitButton", Float2(50, 50), XMFLOAT3(750, 500, 0));
-    //    m_pExitBtn->SetTargetScene(CurrentSceneState::Title);
-    //
-    //
-    //}
+
+
+
 
     return true;
 }
@@ -189,8 +199,141 @@ void WeaponSelectScene::OnExit()
     //std::cout << "[WeaponSelectScene] OnExit\n"; 
 }
 
+void WeaponSelectScene::ApplyReadyStateVisuals()
+{
+    GameManager& gm = GameManager::Get();
+
+    const int mySlot = gm.GetSlotiIdx();
+    if (mySlot != 1 && mySlot != 2)
+        return;
+
+    if (!gm.IsReady())
+        return;
+
+    TextureImage* myUserSlot0 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pUserImage0)
+        : dynamic_cast<TextureImage*>(m_pUserImage2);
+    TextureImage* myUserSlot1 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pUserImage1)
+        : dynamic_cast<TextureImage*>(m_pUserImage3);
+
+    if (!myUserSlot0 || !myUserSlot1)
+        return;
+
+    const int mySlotTextureBase = (mySlot == 1) ? 1 : 3;
+
+    const std::wstring myReady0 = GetReadySlotTexturePath(mySlotTextureBase);
+    const std::wstring myReady1 = GetReadySlotTexturePath(mySlotTextureBase + 1);
+
+    if (!myReady0.empty()) myUserSlot0->ChangeTexture(myReady0);
+    if (!myReady1.empty()) myUserSlot1->ChangeTexture(myReady1);
+}
+
+void WeaponSelectScene::ApplyCountDownUnits()
+{
+    GameManager& gm = GameManager::Get();
+
+    const int mySlot = gm.GetSlotiIdx();
+    if (mySlot != 1 && mySlot != 2)
+        return;
+
+    TextureImage* myUserSlot0 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pUserImage0)
+        : dynamic_cast<TextureImage*>(m_pUserImage2);
+    TextureImage* myUserSlot1 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pUserImage1)
+        : dynamic_cast<TextureImage*>(m_pUserImage3);
+
+    TextureImage* myWeaponSlot0 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pWeaponImage0)
+        : dynamic_cast<TextureImage*>(m_pWeaponImage2);
+    TextureImage* myWeaponSlot1 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pWeaponImage1)
+        : dynamic_cast<TextureImage*>(m_pWeaponImage3);
+
+    TextureImage* enemyUserSlot0 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pUserImage2)
+        : dynamic_cast<TextureImage*>(m_pUserImage0);
+    TextureImage* enemyUserSlot1 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pUserImage3)
+        : dynamic_cast<TextureImage*>(m_pUserImage1);
+
+    TextureImage* enemyWeaponSlot0 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pWeaponImage2)
+        : dynamic_cast<TextureImage*>(m_pWeaponImage0);
+    TextureImage* enemyWeaponSlot1 = (mySlot == 1)
+        ? dynamic_cast<TextureImage*>(m_pWeaponImage3)
+        : dynamic_cast<TextureImage*>(m_pWeaponImage1);
+
+    if (!myUserSlot0 || !myUserSlot1 || !myWeaponSlot0 || !myWeaponSlot1 ||
+        !enemyUserSlot0 || !enemyUserSlot1 || !enemyWeaponSlot0 || !enemyWeaponSlot1)
+    {
+        return;
+    }
+
+    const int enemySlot = (mySlot == 1) ? 2 : 1;
+
+    const PieceType myUnit0 = static_cast<PieceType>(gm.GetCountDownSlotUnitId(mySlot, 0));
+    const PieceType myUnit1 = static_cast<PieceType>(gm.GetCountDownSlotUnitId(mySlot, 1));
+    const PieceType enemyUnit0 = static_cast<PieceType>(gm.GetCountDownSlotUnitId(enemySlot, 0));
+    const PieceType enemyUnit1 = static_cast<PieceType>(gm.GetCountDownSlotUnitId(enemySlot, 1));
+
+    const int mySlotTextureBase = (mySlot == 1) ? 1 : 3;
+    const int enemySlotTextureBase = (enemySlot == 1) ? 1 : 3;
+
+    const std::wstring mySelected0 = GetSelectedSlotTexturePath(myUnit0, mySlotTextureBase);
+    const std::wstring mySelected1 = GetSelectedSlotTexturePath(myUnit1, mySlotTextureBase + 1);
+    const std::wstring myWeapon0 = GetWeaponSlotTexturePath(myUnit0, mySlotTextureBase);
+    const std::wstring myWeapon1 = GetWeaponSlotTexturePath(myUnit1, mySlotTextureBase + 1);
+    const std::wstring myReady0 = GetReadySlotTexturePath(mySlotTextureBase);
+    const std::wstring myReady1 = GetReadySlotTexturePath(mySlotTextureBase + 1);
+
+
+
+    const std::wstring enemySelected0 = GetSelectedSlotTexturePath(enemyUnit0, enemySlotTextureBase);
+    const std::wstring enemySelected1 = GetSelectedSlotTexturePath(enemyUnit1, enemySlotTextureBase + 1);
+    const std::wstring enemyWeapon0 = GetWeaponSlotTexturePath(enemyUnit0, enemySlotTextureBase);
+    const std::wstring enemyWeapon1 = GetWeaponSlotTexturePath(enemyUnit1, enemySlotTextureBase + 1);
+    const std::wstring enemyReady0 = GetReadySlotTexturePath(enemySlotTextureBase);
+    const std::wstring enemyReady1 = GetReadySlotTexturePath(enemySlotTextureBase + 1);
+
+    const bool myIsReady = gm.IsReady();
+
+    if (myIsReady)
+    {
+        if (!myReady0.empty()) myUserSlot0->ChangeTexture(myReady0);
+        if (!myReady1.empty()) myUserSlot1->ChangeTexture(myReady1);
+    }
+    else
+    {
+        if (!mySelected0.empty()) myUserSlot0->ChangeTexture(mySelected0);
+        if (!mySelected1.empty()) myUserSlot1->ChangeTexture(mySelected1);
+    }
+
+    if (!myWeapon0.empty()) { myWeaponSlot0->ChangeTexture(myWeapon0); myWeaponSlot0->SetScale(XMFLOAT3(1.f, 1.f, 1.f)); }
+    if (!myWeapon1.empty()) { myWeaponSlot1->ChangeTexture(myWeapon1); myWeaponSlot1->SetScale(XMFLOAT3(1.f, 1.f, 1.f)); }
+
+
+
+    if (!enemyReady0.empty() && enemyUnit0 != PieceType::None) enemyUserSlot0->ChangeTexture(enemyReady0);
+    else if (!enemySelected0.empty()) enemyUserSlot0->ChangeTexture(enemySelected0);
+
+    if (!enemyReady1.empty() && enemyUnit1 != PieceType::None) enemyUserSlot1->ChangeTexture(enemyReady1);
+    else if (!enemySelected1.empty()) enemyUserSlot1->ChangeTexture(enemySelected1);
+    if (!enemyWeapon0.empty()) { enemyWeaponSlot0->ChangeTexture(enemyWeapon0); enemyWeaponSlot0->SetScale(XMFLOAT3(1.f, 1.f, 1.f)); }
+    if (!enemyWeapon1.empty()) { enemyWeaponSlot1->ChangeTexture(enemyWeapon1); enemyWeaponSlot1->SetScale(XMFLOAT3(1.f, 1.f, 1.f)); }
+}
+
 void WeaponSelectScene::Update(float dt)
 {
+    if (GameManager::Get().IsCountdownActive())
+    {
+        ApplyCountDownUnits();
+    }
+    else
+    {
+        ApplyReadyStateVisuals();
+    }
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);
 }

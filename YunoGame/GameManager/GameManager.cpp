@@ -10,6 +10,7 @@
 #include "WeaponSelectScene.h"
 #include "PlayScene.h"
 #include "PhaseScene.h"
+#include "StandByScene.h"
 #include "CountdownScene.h"
 #include "OptionScene.h"
 #include "GuideScene.h"
@@ -201,6 +202,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
             });
         
         GameManager::Get().SendPacket(std::move(bytes));
+
         
         break;
     }
@@ -235,10 +237,24 @@ void GameManager::SetSceneState(CurrentSceneState state)
         SceneTransitionOptions opt{};
         opt.immediate = false;
         sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
-        
-
 
         // 씬에 관련된 데이터들을 같이 넘길거야
+        break;
+    }
+    case CurrentSceneState::StandBy:
+    {
+        if (m_state == CurrentSceneState::StandBy) return;
+        m_state = CurrentSceneState::StandBy;
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = false;
+
+        sm->RequestPush(std::make_unique<StandByScene>(), sp);
+
+        //SceneTransitionOptions opt{};
+        //opt.immediate = false;
+        //sm->RequestReplaceRoot(std::make_unique<StandByScene>(), opt);
+
         break;
     }
     case CurrentSceneState::CountDown:
@@ -249,10 +265,15 @@ void GameManager::SetSceneState(CurrentSceneState state)
         //opt.immediate = false; // 보통 false가 자연스러움
         //sm->RequestReplaceRoot(std::make_unique<CountdownScene>(), opt);
 
+
+        SceneTransitionOptions opt;
+        opt.immediate = true;
+
+        sm->RequestPop(opt);
+
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
-
         sm->RequestPush(std::make_unique<CountdownScene>(), sp);
 
         break;
@@ -518,6 +539,23 @@ int GameManager::GetCountdownNumber() const
 
     return static_cast<int>(std::ceil(m_countdownRemaining));
 }
+
+int GameManager::GetCountDownSlotUnitId(int slotIndex, int unitIndex) const
+{
+    if (unitIndex < 0 || unitIndex > 1)
+        return 0;
+
+    switch (slotIndex)
+    {
+    case 1:
+        return (unitIndex == 0) ? m_S1U1 : m_S1U2;
+    case 2:
+        return (unitIndex == 0) ? m_S2U1 : m_S2U2;
+    default:
+        return 0;
+    }
+}
+
 
 void GameManager::StartCountDown(int countTime, int S1U1, int S1U2, int S2U1, int S2U2)
 {

@@ -64,6 +64,10 @@ public:
 
     void        SetUseHoverPath(bool use) { m_useHoverPath = use; }
     bool        IsUseHoverPath() { return m_useHoverPath; }
+    
+    void        SetUseHoverEvent(bool use) { m_useHoverEvent = use; }
+    bool        IsUseHoverEvent() { return m_useHoverEvent; }
+    
 
 
     void        Clear();
@@ -76,6 +80,7 @@ protected:
     std::wstring m_hoverdTexturePath = L"000000"; // 커서를 올렸을 때, 바뀌는 텍스처
     std::wstring m_PressedTexturePath = L"000000"; // 클릭했을 때, 바뀌는 텍스처 // 사용 안 함
     bool m_useHoverPath = false;
+    bool m_useHoverEvent = true;
 
     std::function<void()> m_eventLMB = nullptr; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용
     std::function<void()> m_eventRMB = nullptr; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용

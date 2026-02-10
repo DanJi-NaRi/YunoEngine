@@ -79,6 +79,49 @@ bool Animator::AddAnimationFromFile(const std::string& name, const std::wstring&
     return true;
 }
 
+void Animator::DispatchFrameEvents(UINT clipID, float prevTickTime, float curTickTime, bool looped)
+{
+    auto clipIt = m_AnimationClips.find(clipID);
+    if (clipIt == m_AnimationClips.end()) return;
+
+    auto eventIt = m_FrameEvents.find(clipID);
+    if (eventIt == m_FrameEvents.end()) return;
+
+    auto dispatchInRange = [&](UINT beginFrame, UINT endFrame)
+        {
+            for (UINT frame = beginFrame; frame <= endFrame; ++frame)
+            {
+                auto frameIt = eventIt->second.find(frame);
+                if (frameIt == eventIt->second.end())
+                    continue;
+
+                for (auto& callback : frameIt->second)
+                {
+                    if (callback)
+                        callback();
+                }
+            }
+        };
+
+    const UINT prevFrame = static_cast<UINT>(prevTickTime);
+    const UINT curFrame = static_cast<UINT>(curTickTime);
+    const UINT maxFrame = clipIt->second->duration > 0 ? clipIt->second->duration - 1 : 0;
+
+    if (looped)
+    {
+        if (prevFrame < maxFrame)
+            dispatchInRange(prevFrame + 1, maxFrame);
+        if (curFrame >= 0)
+            dispatchInRange(0, curFrame);
+    }
+    else
+    {
+        if (curFrame > prevFrame)
+            dispatchInRange(prevFrame + 1, curFrame);
+    }
+}
+
+
 void Animator::Update(float dTime)
 {
     if (!isPlay || !m_CurAnim) return;
@@ -90,16 +133,26 @@ void Animator::Update(float dTime)
     }
     else
     {
-        float TickTime = m_CurAnim->TickPerSec * dTime;
-        CurTickTime += TickTime;
+        const float prevTickTime = CurTickTime;
+        const float tickTime = m_CurAnim->TickPerSec * dTime;
+        CurTickTime += tickTime;
 
+        bool looped = false;
         if (CurTickTime >= m_CurAnim->duration)
         {
             if (m_CurAnim->isLoop)
+            {
                 CurTickTime = 0;
+                looped = true;
+            }
             else
+            {
+                CurTickTime = static_cast<float>(m_CurAnim->duration);
                 isPlay = false;
+            }
         }
+
+        DispatchFrameEvents(curAnim, prevTickTime, CurTickTime, looped);
 
         m_RootBone->SampleLocalPose(CurTickTime, m_CurAnim->channels, m_BlendBoneTM);
     }
@@ -260,6 +313,45 @@ bool Animator::Change(const std::string& name, float duration)
     blendAlpha = 0.0f;
 
     return true;
+}
+
+bool Animator::RegisterFrameEvent(const std::string& clipName, UINT frame, AnimationEventCallback callback)
+{
+    auto it = m_NameToID.find(clipName);
+    if (it == m_NameToID.end())
+        return false;
+
+    return RegisterFrameEvent(it->second, frame, std::move(callback));
+}
+
+bool Animator::RegisterFrameEvent(UINT clipID, UINT frame, AnimationEventCallback callback)
+{
+    if (!callback)
+        return false;
+
+    auto clipIt = m_AnimationClips.find(clipID);
+    if (clipIt == m_AnimationClips.end())
+        return false;
+
+    if (frame > clipIt->second->duration)
+        return false;
+
+    m_FrameEvents[clipID][frame].push_back(std::move(callback));
+    return true;
+}
+
+bool Animator::ClearFrameEvents(const std::string& clipName)
+{
+    auto it = m_NameToID.find(clipName);
+    if (it == m_NameToID.end())
+        return false;
+
+    return ClearFrameEvents(it->second);
+}
+
+bool Animator::ClearFrameEvents(UINT clipID)
+{
+    return m_FrameEvents.erase(clipID) > 0;
 }
 
 void Animator::Serialize()

@@ -28,6 +28,8 @@ protected:
     void OnDestroyScene() override;
 
     void HandleCountdownUI(float dt);
+    void ApplyCountDownUnits();
+    void ApplyReadyStateVisuals();
 private:
 
     //std::array<Widget*, 4> m_pUserImages;
@@ -54,6 +56,8 @@ private:
     WeaponButton* m_PWeaponBtn_Cleaver    = nullptr;
 
     ReadyButton* m_pReadyBtn = nullptr;
+
+
 
     UINT m_countdownWidgetID = 0;
     int  m_lastCountdownNumber = -1;

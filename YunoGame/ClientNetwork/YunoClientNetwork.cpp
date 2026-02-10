@@ -229,8 +229,8 @@ namespace yuno::game
                 GameManager& gm = GameManager::Get();
 
                 std::cout << "game state : " << static_cast<int>(gm.GetSceneState()) << std::endl;
-                // 현재 씬이 게임 스타트 상태 즉 WeaponSelectScene일때만 패킷 동작
-                if (gm.GetSceneState() == CurrentSceneState::GameStart) {
+                // 현재 씬이 StandBy 상태 즉 WeaponSelectScene일때만 패킷 동작
+                if (gm.GetSceneState() == CurrentSceneState::StandBy) {
                     gm.StartCountDown(
                         countTime,
                         pkt.slot1_UnitId1, pkt.slot1_UnitId2,
