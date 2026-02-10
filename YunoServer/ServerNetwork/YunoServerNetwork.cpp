@@ -10,6 +10,7 @@
 #include "C2S_BattlePackets.h"
 #include "C2S_CardPackets.h"
 #include "C2S_Emote.h"
+#include "C2S_Surrender.h"
 
 #include "S2C_Pong.h"
 #include "S2C_EnterOK.h"
@@ -77,6 +78,20 @@ namespace yuno::server
 
                 const int idx = m_match.FindSlotBySessionId(sid);
 
+                std::cout << "[Server] Disconnected sid=" << sid
+                    << " ec=" << ec.message()
+                    << " -> slot cleared\n";
+
+                if (m_roundController.GetRoundStarted())
+                {
+                    //  승자 결정
+                    uint8_t loserPID = static_cast<uint8_t>(idx + 1);
+                    uint8_t winnerPID = (loserPID == 1) ? 2 : 1;
+
+                    // 게임 강제종료 호출
+                    m_roundController.EndGameByDisconnect(winnerPID);
+                }
+
                 if (idx >= 0)
                 {
                     const auto& slots = m_match.Slots();
@@ -98,22 +113,6 @@ namespace yuno::server
                         });
 
                     m_server.Broadcast(std::move(bytes));
-                }
-
-
-                std::cout << "[Server] Disconnected sid=" << sid
-                    << " ec=" << ec.message()
-                    << " -> slot cleared\n";
-
-
-                if (m_roundController.GetRoundStarted())
-                {
-                    //  승자 결정
-                    uint8_t loserPID = static_cast<uint8_t>(idx + 1);
-                    uint8_t winnerPID = (loserPID == 1) ? 2 : 1;
-                    
-                    // 게임 강제종료 호출
-                    m_roundController.EndGameByDisconnect(winnerPID);
                 }
             });
     }
@@ -296,37 +295,53 @@ namespace yuno::server
                 (void)yuno::net::packets::C2S_MatchLeave::Deserialize(r);
 
                 std::cout << "Leave :" << peer.sId << std::endl;
-
+                bool isBattleOngoing = m_roundController.IsRoundStarted();
                 const int idx = m_match.FindSlotBySessionId(peer.sId);
-                if (idx >= 0)
+                
+                if (idx < 0)
+                    return;
+
+                const int leavePID = idx + 1;
+                const int winnerPID = (leavePID == 1) ? 2 : 1;
+
+                if (m_roundController.IsRoundStarted())
                 {
-                    const auto& matchSlots = m_match.Slots();
-                    const auto uid = matchSlots[static_cast<std::size_t>(idx)].userId;
-                    m_match.LeaveByUserId(uid);
-                    const auto& slots = m_match.Slots();
-                    const std::uint8_t playerCount = m_match.GetOccupiedCount();
-                    for (std::size_t i = 0; i < slots.size(); ++i)
+                    // 이미 끝난 게임이면 중복 처리 방지
+                    if (!g_battleState.matchEnded)
                     {
-                        if (!slots[i].occupied)
-                            continue;
+                        g_battleState.roundEnded = true;
+                        g_battleState.matchEnded = true;
 
-                        auto targetSession = m_server.FindSession(slots[i].sessionId);
-                        if (!targetSession)
-                            continue;
-
-                        yuno::net::packets::S2C_EnterOK ok{};
-                        ok.slotIndex = static_cast<std::uint8_t>(i + 1);
-                        ok.playerCount = playerCount;
-
-                        auto bytes = yuno::net::PacketBuilder::Build(
-                            yuno::net::PacketType::S2C_EnterOK,
-                            [&](yuno::net::ByteWriter& w)
-                            {
-                                ok.Serialize(w);
-                            });
-
-                        targetSession->Send(std::move(bytes));
+                        m_roundController.EndGameByDisconnect(winnerPID);
                     }
+                }
+
+                const auto& matchSlots = m_match.Slots();
+                const auto uid = matchSlots[static_cast<std::size_t>(idx)].userId;
+                m_match.LeaveByUserId(uid);
+                const auto& slots = m_match.Slots();
+                const std::uint8_t playerCount = m_match.GetOccupiedCount();
+                for (std::size_t i = 0; i < slots.size(); ++i)
+                {
+                    if (!slots[i].occupied)
+                        continue;
+
+                    auto targetSession = m_server.FindSession(slots[i].sessionId);
+                    if (!targetSession)
+                        continue;
+
+                    yuno::net::packets::S2C_EnterOK ok{};
+                    ok.slotIndex = static_cast<std::uint8_t>(i + 1);
+                    ok.playerCount = playerCount;
+
+                    auto bytes = yuno::net::PacketBuilder::Build(
+                        yuno::net::PacketType::S2C_EnterOK,
+                        [&](yuno::net::ByteWriter& w)
+                        {
+                            ok.Serialize(w);
+                        });
+
+                    targetSession->Send(std::move(bytes));
                 }
             }
         );// Leave Packet End
@@ -490,6 +505,7 @@ namespace yuno::server
             }
         ); // Select Card Packet End
 
+        // C2S_Emote Packet Start
         m_dispatcher.RegisterRaw(
             PacketType::C2S_Emote,
             [this](const NetPeer& peer,
@@ -529,7 +545,55 @@ namespace yuno::server
                 //    << " emoteId=" << int(pkt.emoteId)
                 //    << "\n";
             }
-        );
+        ); //C2S_Emote Packet End
+
+        // C2S_Emote Packet Start
+        m_dispatcher.RegisterRaw(
+            PacketType::C2S_Surrender,
+            [this](const NetPeer& peer,
+                const PacketHeader&,
+                const uint8_t* body,
+                uint32_t bodyLen)
+            {
+                if (g_battleState.roundEnded || g_battleState.matchEnded)
+                    return;
+
+                yuno::net::ByteReader r(body, bodyLen);
+                const auto pkt =
+                    yuno::net::packets::C2S_Surrender::Deserialize(r);
+
+                int slotIndex = m_match.FindSlotBySessionId(peer.sId);
+                if (slotIndex < 0 || slotIndex > 1)
+                    return;
+
+                int surrenderPID = slotIndex + 1;
+                int winnerPID = (surrenderPID == 1) ? 2 : 1;
+
+                g_battleState.roundEnded = true;
+                g_battleState.roundWinnerPID = winnerPID;
+                g_battleState.roundLoserPID = surrenderPID;
+
+                // 승자 라운드 승수 증가
+                g_battleState.roundWins[winnerPID - 1]++;
+
+                // 라운드 번호 증가
+                g_battleState.currentRound++;
+
+                //매치 종료 여부 체크
+                if (g_battleState.roundWins[0] >= g_battleState.winsToFinish)
+                {
+                    g_battleState.matchEnded = true;
+                    g_battleState.matchWinnerPID = 1;
+                }
+                else if (g_battleState.roundWins[1] >= g_battleState.winsToFinish)
+                {
+                    g_battleState.matchEnded = true;
+                    g_battleState.matchWinnerPID = 2;
+                }
+
+                m_roundController.EndRound();
+            }
+        ); //C2S_Emote Packet End
     }
 }
 

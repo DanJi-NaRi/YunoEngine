@@ -194,6 +194,7 @@ void GuideScene::ChangeUIState(GuideUIState state)
         m_turnBtn->SetVisible(Visibility::Visible);
         m_coinTossBtn->SetVisible(Visibility::Visible);
         m_keywordRoot->SetVisible(Visibility::Visible);
+        m_keywordBtn->SetSelected(true);
         break;
 
     case GuideUIState::Keyword:

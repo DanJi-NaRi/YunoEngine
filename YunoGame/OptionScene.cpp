@@ -91,6 +91,47 @@ void OptionScene::CreateMainUI()
         L"../Assets/UI/TITLE/back_mouseout.png",
         L"../Assets/UI/TITLE/back_mouseover.png"
     );
+
+    //서렌버튼
+    m_surrenderBtn = CreateWidget<OptionButton>(
+        L"SurrenderBtn",
+        Float2(208.5f, 45),
+        makePos(2),   // 위치는 조절
+        UIDirection::Center
+    );
+
+    m_surrenderBtn->SetHoverTexture(
+        L"../Assets/UI/TITLE/surrender_mouseout.png",
+        L"../Assets/UI/TITLE/surrender_mouseover.png"
+    );
+
+    m_surrenderBtn->SetOnClick([this]()
+        {
+            //SendSurrender();
+        });
+
+    m_surrenderBtn->SetVisible(Visibility::Collapsed);
+
+
+    // Leave 버튼
+    m_leaveBtn = CreateWidget<OptionButton>(
+        L"LeaveBtn",
+        Float2(208.5f, 45),
+        makePos(3),
+        UIDirection::Center
+    );
+
+    m_leaveBtn->SetHoverTexture(
+        L"../Assets/UI/TITLE/leave_mouseout.png",
+        L"../Assets/UI/TITLE/leave_mouseover.png"
+    );
+
+    m_leaveBtn->SetOnClick([this]()
+        {
+            //SendMatchLeave();
+        });
+
+    m_leaveBtn->SetVisible(Visibility::Collapsed);
 }
 
 void OptionScene::CreateVolumeUI()
@@ -154,6 +195,7 @@ void OptionScene::ChangeUIState(OptionUIState state)
         m_volumeBtn->SetVisible(Visibility::Visible);
         m_creditBtn->SetVisible(Visibility::Visible);
         m_volumeRoot->SetVisible(Visibility::Visible);
+        m_volumeBtn->SetSelected(true);
         for (auto* panel : m_volumePanels)
             panel->SetVisible(Visibility::Visible);
         break;
