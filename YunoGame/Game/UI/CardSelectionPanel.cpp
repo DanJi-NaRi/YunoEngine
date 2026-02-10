@@ -103,6 +103,15 @@ void CardSelectionPanel::CreateChild() {
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-300, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/Test/unit5.png");
         m_pCards.back()->SetCardID(6);
+
+        for (auto* card : m_pCards)
+        {
+            if (!card) continue;
+            card->SetEventLMB([this, card]() {
+                if (card->GetCardID() == 0) return;
+                m_pSelectedCard = card;
+                });
+        }
     }
 
 
@@ -186,9 +195,10 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
 
         if (idx < total)
         {
-            const auto id = cards[idx].dataID;
-            m_pCards[i]->SetCardID(id);
-            m_pCards[i]->ChangeTexture(m_cardManager.GetCardTexturePath(id));
+            const auto dataID = cards[idx].dataID;
+            const auto runtimeID = cards[idx].runtimeID;
+            m_pCards[i]->SetCardID(runtimeID);
+            m_pCards[i]->ChangeTexture(m_cardManager.GetCardTexturePath(dataID));
         }
         else
         {
