@@ -8,20 +8,17 @@ VolumeTrackButton::VolumeTrackButton(UIFactory& factory)
 }
 
 bool VolumeTrackButton::Update(float dt)
-{//TODO :: 위치 확인
+{
     Button::Update(dt);
 
     if (!m_pDrag || !m_pDrag->IsNowDragging())
         return true;
 
     RECT rc = GetRect();
-
     int mouseX = YunoEngine::GetInput()->GetMouseX();
 
     float t = float(mouseX - rc.left) / float(rc.right - rc.left);
     t = std::clamp(t, 0.f, 1.f);
-
-    std::cout << "[Track] t = " << t << "\n";
 
     if (OnValueChanged)
         OnValueChanged(t);

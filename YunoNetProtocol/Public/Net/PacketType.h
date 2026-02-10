@@ -23,6 +23,7 @@ namespace yuno::net
         C2S_SelectCard = 8, // 추가 카드 선택
         C2S_Emote = 9, // 선택이모트 보내기
         C2S_RoundStartReadyOK = 10,
+        C2S_Surrender = 11, //서렌패킷 라운드패배
         // S2C
         S2C_EnterOK = 128,  // 매치 진입 승인
         S2C_ReadyState = 129,  // 양측 준비 상태 동기화

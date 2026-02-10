@@ -137,6 +137,8 @@ public:
     int    GetCountdownNumber() const;
     int GetCountDownSlotUnitId(int slotIndex, int unitIndex) const;
 
+    bool IsBattleOngoing() const { return m_isBattleOngoing; }
+    void SetBattleOngoing(bool v) { m_isBattleOngoing = v; }
 
     // 패널 사용 게터
     std::vector<Wdata>& GetWeapons() { return m_weapons; }
@@ -167,6 +169,8 @@ private:
     int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽
     int m_matchPlayerCount = 0;
 
+    //클라에서 전투중인지 확인
+    bool m_isBattleOngoing = false;
 
     bool m_isReady = false;
     bool m_p1Ready = false;

@@ -31,15 +31,15 @@ void VolumePanel::CreateChild()
     // === Track (논리 레일, 안 그려짐) ===
     m_track = m_uiFactory.CreateChild<VolumeTrackButton>(
         L"VolumeTrack",
-        Float2(22.f * 20.f, 40.f),
-        XMFLOAT3(0, 0, 0),
+        Float2(totalWidth, stepH/2),
+        XMFLOAT3(totalWidth/2, stepH/2, 0),
         UIDirection::Center,
         this
     );
 
     m_track->OnValueChanged = [this](float t)
         {
-            int newLevel = int(std::round(t * 50.f));
+            int newLevel = int(std::round(t * (kSteps)));
             newLevel = std::clamp(newLevel, 0, kSteps);
 
             std::cout << "[Panel] Level = " << newLevel << "\n";
@@ -47,24 +47,25 @@ void VolumePanel::CreateChild()
             SetLevel(newLevel);
         };
 
-    // === Steps ===
+    //// === Steps ===
     //TODO :: 위치 확인
     for (int i = 0; i < kSteps; ++i)
     {
         float x = startX + pitch * i;
         x = std::round(x);
+    
         auto* step = m_uiFactory.CreateChild<TextureImage>(
             L"VolumeStep",
             Float2(stepW, stepH),
             XMFLOAT3(x, 0.f, 0.f),
-            UIDirection::Center,
+            UIDirection::LeftTop,
             this
         );
-
+    
         step->ChangeTexture(L"../Assets/UI/TITLE/volume_unfill.png");
         m_steps.push_back(step);
     }
-
+    
     SetLevel(m_level);
 }
 

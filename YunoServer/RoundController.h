@@ -29,8 +29,12 @@ namespace yuno::server
         void EndGameByDisconnect(uint8_t winnerPID);
 
         
-        bool GetRoundStarted() { return m_roundStarted; };
+        bool GetRoundStarted() { return m_roundStarted; }
         bool IsMatchLocked() const { return m_matchLocked; }
+
+        bool IsRoundStarted() { return m_roundStarted; }
+
+        void EndRound();
     private:
         void SendCountDown();
         void SendInitialCards();
@@ -38,7 +42,7 @@ namespace yuno::server
         void SendDrawCandidates();
 
         void StartTurn();
-        void EndRound();
+        
 
         MatchManager& m_match;
         ServerCardDealer& m_cardDealer;

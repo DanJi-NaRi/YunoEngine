@@ -105,6 +105,9 @@
     <ClInclude Include="Public\Net\S2CPackets\S2C_EndGame_Disconnect.h">
       <Filter>Public\Network\Packets</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Net\C2SPackets\C2S_Surrender.h">
+      <Filter>Public\Network\Packets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Net\ByteIO.cpp">
@@ -174,6 +177,9 @@
       <Filter>Private\Network\Packets</Filter>
     </ClCompile>
     <ClCompile Include="Private\Net\S2CPackets\S2C_EndGame_Disconnect.cpp">
+      <Filter>Private\Network\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Net\C2SPackets\C2S_Surrender.cpp">
       <Filter>Private\Network\Packets</Filter>
     </ClCompile>
   </ItemGroup>

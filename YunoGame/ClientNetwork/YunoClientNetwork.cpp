@@ -263,6 +263,8 @@ namespace yuno::game
 
                 GameManager& gm = GameManager::Get();
 
+                gm.SetBattleOngoing(true);
+
                 gm.ResetWeaponData();
 
                 for (const auto& u : pkt.units)
@@ -532,6 +534,8 @@ namespace yuno::game
                 std::cout << "=============================\n";
                 std::cout << "[Client] S2C_EndGame received\n";
 
+                GameManager::Get().SetBattleOngoing(false);
+
                 for (int i = 0; i < 2; ++i)
                 {
                     std::cout
@@ -664,6 +668,8 @@ namespace yuno::game
                 auto pkt = yuno::net::packets::S2C_EndGame_Disconnect::Deserialize(r);
 
                 std::cout << "winnerPID : " <<  static_cast<int>(pkt.winnerPID) << std::endl;
+
+                GameManager::Get().SetBattleOngoing(false);
             }
         ); //S2C_EndGame_Disconnect Packet End
     }

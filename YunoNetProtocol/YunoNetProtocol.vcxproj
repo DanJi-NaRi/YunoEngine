@@ -161,6 +161,7 @@
     <ClInclude Include="Public\Net\ByteIO.h" />
     <ClInclude Include="Public\Net\C2SPackets\C2S_ReadySet.h" />
     <ClInclude Include="Public\Net\C2SPackets\C2S_SubmitWeapon.h" />
+    <ClInclude Include="Public\Net\C2SPackets\C2S_Surrender.h" />
     <ClInclude Include="Public\Net\ErrorPackets\S2C_Error.h" />
     <ClInclude Include="Public\Net\NetPeer.h" />
     <ClInclude Include="Public\Net\PacketBuilder.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="Private\Net\C2SPackets\C2S_MatchLeave.cpp" />
     <ClCompile Include="Private\Net\C2SPackets\C2S_ReadySet.cpp" />
     <ClCompile Include="Private\Net\C2SPackets\C2S_SubmitWeapon.cpp" />
+    <ClCompile Include="Private\Net\C2SPackets\C2S_Surrender.cpp" />
     <ClCompile Include="Private\Net\ErrorPackets\S2C_Error.cpp" />
     <ClCompile Include="Private\Net\S2CPackets\S2C_BattlePackets.cpp" />
     <ClCompile Include="Private\Net\S2CPackets\S2C_CardPackets.cpp" />

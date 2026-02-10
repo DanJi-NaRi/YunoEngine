@@ -41,6 +41,8 @@ private:
 
     // 상태
     void ChangeUIState(GuideUIState state);
+    void ClearSelection();
+    void ClearRoot();
 private:
     GuideScene_InputContext m_uiCtx;
     GuideUIState m_uiState = GuideUIState::Main;
