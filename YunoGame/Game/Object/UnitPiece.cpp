@@ -201,7 +201,11 @@ bool UnitPiece::Update(float dTime)
     // 디졸브 후 죽은 상태인지 먼저 확인
     UpdateDissolve(dTime);
     AnimTest::UpdateDissolve(dTime);
-    if(CheckDead(dTime))   return true;
+    if (CheckDead(dTime))
+    {
+        AnimationUpdate(dTime);
+        return true;
+    }
 
     UpdateRot(dTime);
     UpdateMove(dTime);
@@ -276,12 +280,13 @@ bool UnitPiece::CheckDead(float dt)
     if (!isDead)  return false;
     if (isDeadQueued) return true;
 
-    // 죽는 애니메이션이 끝난 뒤에만 시스템에 삭제를 요청한다.
-    if (m_animator && m_animator->isPlaying())
-        return false;
+    // 다 사라지고 난 뒤에만 시스템에 삭제를 요청한다.
+    if (m_dissolveAmount == 1)
+    {
+        PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
+        isDeadQueued = true;
+    }
 
-    PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
-    isDeadQueued = true;
     return true;
 }
 
@@ -296,11 +301,16 @@ void UnitPiece::CheckMyQ()
         m_Q.pop();
         switch (tp.cmdType)
         {
+        case CommandType::Rotate:
+        {
+            SetDir(tp.rot_p.dir, true, 4.f);
+            break;
+        }
         case CommandType::Move:
         {
-            auto [wx, wy, wz, dir, speed] = tp.mv_p;
+            auto [wx, wy, wz, speed] = tp.mv_p;
             PlayMove({ wx, wy, wz }, speed);
-            SetDir(dir, true, 4.f);
+
             break;
         }
         case CommandType::MoveHit:
@@ -328,6 +338,11 @@ void UnitPiece::CheckMyQ()
             PlayDead(tp.dead_p.disappearDissolveDuration);
             break;
         }
+        case CommandType::Disappear:
+        {
+            DisappearDissolve(tp.disappear_p.disappearDissolveDuration);
+            break;
+        }
         }
     }
 }
@@ -335,9 +350,11 @@ void UnitPiece::CheckMyQ()
 
 bool UnitPiece::UpdateMatrix()
 {
+    m_curRotOffset = (m_dir == Direction::Right) ? -m_rotOffset : m_rotOffset;
+
     XMMATRIX mScale = XMMatrixScaling(m_vScale.x,m_vScale.y, m_vScale.z);
-    XMMATRIX mRot = XMMatrixRotationY(m_yaw);
-    XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z);
+    XMMATRIX mRot = XMMatrixRotationRollPitchYaw(0, m_yaw, m_curRotOffset);
+    XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z + m_moveOffset);
 
     XMMATRIX mTM;
 
@@ -507,6 +524,12 @@ void UnitPiece::SetWho(GamePiece type)
     m_who = type;
 }
 
+void UnitPiece::SetMoveRotOffset(float moveOffset, float rotOffset)
+{
+    m_moveOffset = moveOffset;
+    m_rotOffset = rotOffset;
+}
+
 
 void UnitPiece::SetDir(Direction dir, bool isAnim, float speed)
 {
@@ -558,6 +581,8 @@ void UnitPiece::DisappearDissolve(float dissolveTime)
     m_dissolveDuration = dissolveTime;
     m_startDissolveAmount = m_dissolveAmount;
     isDissolving = true;
+    isDead = true;
+    isDeadQueued = false;
 }
 
 void UnitPiece::PlayAttack()
@@ -609,9 +634,6 @@ void UnitPiece::PlayMove(XMFLOAT3 targetPos, float speed)
 
 void UnitPiece::PlayDead(float disappearDisolveDuration)
 {
-    isDead = true;
-    isDeadQueued = false;
-
     // 죽음 직후 기존 행동 큐를 정리해 후속 이동/피격 명령이 덮어쓰지 않게 한다.
     ClearQ();
     isMoving = false;

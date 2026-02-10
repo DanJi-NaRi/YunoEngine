@@ -53,6 +53,11 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
     m_weapons.push_back(data);
 }
 
+void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
+{
+    m_uiWeapons = wdatas;
+}
+
 
 // 배틀 전용 함수들
 void GameManager::PushBattlePacket(const BattleResult _BattleResult)
