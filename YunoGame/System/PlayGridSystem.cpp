@@ -217,7 +217,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram1->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pChakram1->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram1->AppearDissolve(appearDisolveDuration);
-         pChakram1->SetWho(gp);
+         pChakram1->SetWho(gp, team, w.weaponId, 1);
          pChakram1->SetMoveRotOffset(0, 0);
 
          pPiece->Attach(pChakram1);
@@ -232,7 +232,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram2->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pChakram2->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram2->AppearDissolve(appearDisolveDuration);
-         pChakram2->SetWho(gp);
+         pChakram2->SetWho(gp, team, w.weaponId, 2);
          pChakram2->SetMoveRotOffset(0, 0);
 
          pPiece->Attach(pChakram2);
@@ -292,8 +292,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          break;
      case 5:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
-         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Impactor_move.fbx");
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
+         pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Impactor_move.fbx");
          pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Impactor_dead.fbx");
          pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Impactor_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
@@ -309,7 +309,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
      }
-     pPiece->SetWho(gp);
+     pPiece->SetWho(gp, team, w.weaponId);
      pPiece->SetDir(dir, false);
 
      // 기물 따라다니는 바닥 이펙트
@@ -557,7 +557,16 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         }
 
 
-        pPiece->SetDir(as.dir, true, 3.0f);
+        pPiece->SetDir(as.dir, true, 0.34f);
+        pPiece->InsertQ({ CommandType::RollBack });
+        for (uint32_t subId : pieceInfo.subIds)
+        {
+            auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
+            if (pSubPiece != nullptr)
+            {
+                pSubPiece->InsertQ({ CommandType::RollBack });
+            }
+        }
 
         const auto& tiles = as.tileIDs;
         for (int i = 0; i < tiles.size(); i++)
@@ -599,12 +608,15 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         }
 
         pPiece->InsertQ({ CommandType::Attack });
+        pPiece->InsertQ({ CommandType::Roll });
         for (uint32_t subId : pieceInfo.subIds)
         {
             auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
             if (pSubPiece != nullptr)
             {
+                pSubPiece->InsertQ({ CommandType::RollBack });
                 pSubPiece->InsertQ({ CommandType::Attack });
+                pSubPiece->InsertQ({ CommandType::Roll });
             }
         }
         as.phaseStarted = false;

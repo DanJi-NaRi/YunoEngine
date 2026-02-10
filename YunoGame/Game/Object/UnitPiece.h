@@ -2,6 +2,7 @@
 #include "AnimTest.h"
 #include "PieceHelper.h"
 
+class EffectManager;
 class UnitPiece : public AnimTest
 {
 public:
@@ -25,15 +26,16 @@ private:
     void UpdateMove(float dt);
     void UpdateFlash(float dt);
     void UpdateAttack(float dt);
+    void UpdateRollingOrBack(float dt);
     void UpdateHit(float dt);
     void UpdateDissolve(float dt);
 
 public:
     void InsertQ(PGridCmd targetPos);
-    void SetWho(GamePiece type);
+    void SetWho(GamePiece type, Team team, uint8_t weaponID, uint8_t subID = 0);
     void SetMoveRotOffset(float moveOffset, float rotOffset);
     float GetMoveOffset();
-    void SetDir(Direction dir, bool isAnim = true, float speed = 2.f);
+    void SetDir(Direction dir, bool isAnim = true, float second = 1.f);
     void SetFlashColor(Float4 color, int count, float blinkTime);
     void AppearDissolve(float dissolveTime);
     void DisappearDissolve(float dissolveTime);
@@ -42,11 +44,14 @@ public:
 
 private:
     void PlayMove(XMFLOAT3 targetPos, float speed);
+    void PlayRollBack();
+    void PlayRoll();
     void PlayAttack();
     void PlayHit();
     void PlayDead(float disappearDisolveDuration);
 
     Float4 GetLerpColor(float dt);
+    float GetLerp(float dt, float start, float end);
     float QuadraticGraph(float x);
     float linearGraph(float x);
 
@@ -66,6 +71,10 @@ private:
 
     // 공격
     bool isAttacking = false;
+    bool isRollingBack = false;
+    bool isRolling = false;
+    bool m_rollTime = 0.f;
+    float m_rollorbackSpeed = 4.f;
 
     // 피격
     bool isHitting = false;
@@ -80,6 +89,7 @@ private:
 
     // 이동
     float m_moveOffset = -0.5f;
+    float m_curMoveOffset = 0.f;
     XMVECTOR m_Target{};
     XMVECTOR m_Start{};
     float m_Dist = 0;
@@ -103,8 +113,15 @@ private:
     bool isDead = false;
     bool isDeadQueued = false;
 
+    // 본인 기물 정보
     GamePiece m_who = GamePiece::None;
+    Team m_team = Team::Undefined;
+    uint8_t m_weaponID = 0;
+    uint8_t m_subID = 0;                // 차크람일 경우, 서브 아이디
+    uint8_t charkramID = 2;             // 챠크람 아이디
 
     // 큐
     std::queue<PGridCmd> m_Q;
+
+    //EffectManager* m_effectManager = nullptr;
 };

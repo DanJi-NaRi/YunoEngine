@@ -3,6 +3,7 @@
 #include "PlayQueue.h"
 #include "ObjectTypeRegistry.h"
 #include "ObjectManager.h"
+#include "EffectManager.h"
 #include "UnitPiece.h"
 
 float scaleAdjust = 0.2f;
@@ -210,6 +211,9 @@ bool UnitPiece::Update(float dTime)
     UpdateRot(dTime);
     UpdateMove(dTime);
     UpdateFlash(dTime);
+    m_curRotOffset = (isAttacking) ? 0.f : (m_dir == Direction::Right) ? -m_rotOffset : m_rotOffset;
+    m_curMoveOffset = (isAttacking) ? 0.f : m_moveOffset;
+    UpdateRollingOrBack(dTime);
     UpdateAttack(dTime);
     UpdateHit(dTime);
 
@@ -295,7 +299,7 @@ void UnitPiece::CheckMyQ()
     if (isDead) return;
 
     // 애니메이션이 끝나면 하나씩 빼가게 하기
-    while (!m_Q.empty() && !isMoving && !isRotating && !isHitting && !isAttacking)
+    while (!m_Q.empty() && !isMoving && !isRotating && !isHitting && !isAttacking && !isRollingBack && !isRolling)
     {
         auto tp = m_Q.front();
         m_Q.pop();
@@ -303,13 +307,13 @@ void UnitPiece::CheckMyQ()
         {
         case CommandType::Rotate:
         {
-            SetDir(tp.rot_p.dir, true, 4.f);
+            SetDir(tp.rot_p.dir, true, 0.5f);
             break;
         }
         case CommandType::Move:
         {
-            auto [wx, wy, wz, speed] = tp.mv_p;
-            PlayMove({ wx, wy, wz }, speed);
+            auto [wx, wy, wz, second] = tp.mv_p;
+            PlayMove({ wx, wy, wz }, second);
 
             break;
         }
@@ -323,9 +327,19 @@ void UnitPiece::CheckMyQ()
             PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece));
             break;
         }
+        case CommandType::RollBack:
+        {
+            PlayRollBack();
+            break;
+        }
         case CommandType::Attack:
         {
             PlayAttack();
+            break;
+        }
+        case CommandType::Roll:
+        {
+            PlayRoll();
             break;
         }
         case CommandType::Hit:
@@ -350,8 +364,6 @@ void UnitPiece::CheckMyQ()
 
 bool UnitPiece::UpdateMatrix()
 {
-    m_curRotOffset = (m_dir == Direction::Right) ? -m_rotOffset : m_rotOffset;
-
     XMMATRIX mScale = XMMatrixScaling(m_vScale.x,m_vScale.y, m_vScale.z);
     XMMATRIX mRot = XMMatrixRotationRollPitchYaw(0, m_yaw, m_curRotOffset);
     XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z + m_moveOffset);
@@ -512,6 +524,40 @@ void UnitPiece::UpdateAttack(float dt)
     }
 }
 
+void UnitPiece::UpdateRollingOrBack(float dt)
+{
+    if (isRollingBack)
+    {
+        m_rollTime += dt * m_rollorbackSpeed;
+
+        m_curMoveOffset = GetLerp(m_rollTime, m_moveOffset, 0);
+        m_curRotOffset = GetLerp(m_rollTime, m_rotOffset, 0);
+        
+        if (m_rollTime >= 1.f)
+        {
+            m_curMoveOffset = 0;
+            m_curRotOffset = 0;
+            m_rollTime = 0;
+            isRollingBack = false;
+        }
+    }
+    else if (isRolling)
+    {
+        m_rollTime += dt;
+
+        m_curMoveOffset = GetLerp(m_rollTime, 0, m_moveOffset);
+        m_curRotOffset = GetLerp(m_rollTime, 0, m_rotOffset);
+
+        if (m_rollTime >= 1.f)
+        {
+            m_curMoveOffset = m_moveOffset;
+            m_curRotOffset = m_rotOffset;
+            m_rollTime = 0;
+            isRolling = false;
+        }
+    }
+}
+
 
 void UnitPiece::InsertQ(PGridCmd cmd)
 {
@@ -519,9 +565,12 @@ void UnitPiece::InsertQ(PGridCmd cmd)
 }
 
 
-void UnitPiece::SetWho(GamePiece type)
+void UnitPiece::SetWho(GamePiece type, Team team, uint8_t weaponID, uint8_t subID)
 {
     m_who = type;
+    m_team = team;
+    m_weaponID = weaponID;
+    m_subID = subID;
 }
 
 void UnitPiece::SetMoveRotOffset(float moveOffset, float rotOffset)
@@ -536,7 +585,7 @@ float UnitPiece::GetMoveOffset()
 }
 
 
-void UnitPiece::SetDir(Direction dir, bool isAnim, float speed)
+void UnitPiece::SetDir(Direction dir, bool isAnim, float second)
 {
     switch (dir)
     {
@@ -559,7 +608,7 @@ void UnitPiece::SetDir(Direction dir, bool isAnim, float speed)
 
     m_startYaw = m_yaw;
     isRotating = isAnim;
-    m_rotSpeed = speed;
+    m_rotSpeed = 1 / second;
 
     m_yaw = (isAnim) ? m_yaw : m_targetYaw;
 }
@@ -597,6 +646,169 @@ void UnitPiece::PlayAttack()
     if (!isChanged) return;
     m_animator->SetLoop("attack", false);
     m_animator->Play();
+
+    // 이펙트
+    if (m_team == Team::Ally)       // 아군
+    {
+        switch (m_weaponID)
+        {
+        case 1:
+        {
+            RegisterFrameEvent(1, 36, [this]() {
+                auto eff = m_pEffectManager->Spawn(EffectID::BlasterAttack, { 0.f, -0.05f, -0.05f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
+                AttachChildBone(eff, 2);
+                });
+            break;
+        }
+        case 2:
+        {
+            if (m_subID == 1)
+            {
+                RegisterFrameEvent(1, 10, [this]() {
+                    auto eff = m_pEffectManager->Spawn(EffectID::ChakramAttack01_1, { 0.95f, 0.3f, -0.8f }, { 2.f, 2.f, 1.f });
+                    Attach(eff);
+                    eff = m_pEffectManager->Spawn(EffectID::ChakramAttack01_2, { 1.05f, 0.3f, -0.7f }, { 1.f, 1.f, 1.f });
+                    Attach(eff);
+                    });
+                RegisterFrameEvent(1, 35, [this]() {
+                    auto eff = m_pEffectManager->Spawn(EffectID::ChakramAttack01_1, { 0.95f, 0.3f, -0.8f }, { 2.f, 2.f, 1.f });
+                    Attach(eff);
+                    eff = m_pEffectManager->Spawn(EffectID::ChakramAttack01_2, { 1.05f, 0.3f, -0.7f }, { 1.f, 1.f, 1.f });
+                    Attach(eff);
+                    });
+            }
+            else if (m_subID == 2)
+            {
+                RegisterFrameEvent(1, 22, [this]() {
+                    auto eff = m_pEffectManager->Spawn(EffectID::ChakramAttack02_1, { -0.85f, 0.3f, -0.1f }, { 2.f, 2.f, 1.f });
+                    Attach(eff);
+                    eff = m_pEffectManager->Spawn(EffectID::ChakramAttack02_2, { -0.82f, 0.3f, -0.1f }, { 1.f, 1.f, 1.f });
+                    Attach(eff);
+                    });
+            }
+            break;
+        }
+        case 3:
+        {
+            RegisterFrameEvent(1, 21, [this]() {
+                auto eff = m_pEffectManager->Spawn(EffectID::DrillAttack1, { 0.05f, 1.1f, 0.0f }, { 3.f, 3.f, 1.f }, { 1, 0, 0 });
+                AttachChildBone(eff, 1);
+                });
+            break;
+        }
+        case 4:
+        {
+            RegisterFrameEvent(1, 30, [this]() {
+                auto eff = m_pEffectManager->Spawn(EffectID::ScytheAttack, { 0.0f, 1.1f, -0.4f }, { 2.f, 2.f, 1.f });
+                AttachChildBone(eff, 1);
+                eff = m_pEffectManager->Spawn(EffectID::ScytheAttack2, { 0.0f, 1.0f, -0.45f }, { 1.f, 1.f, 1.f });
+                AttachChildBone(eff, 1);
+                });
+            break;
+        }
+        case 5:
+        {
+            RegisterFrameEvent(1, 39, [this]() {
+                auto eff = m_pEffectManager->Spawn(EffectID::AxAttack, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f });
+                Attach(eff);
+                eff = m_pEffectManager->Spawn(EffectID::AxAttack2, { 0.0f, 0.4f, 0.f }, { 1.f, 1.f, 1.f });
+                Attach(eff);
+                });
+            break;
+        }
+        case 6:
+        {
+            RegisterFrameEvent(1, 25, [this]() {
+                auto eff = m_pEffectManager->Spawn(EffectID::AxAttack, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f });
+                Attach(eff);
+                eff = m_pEffectManager->Spawn(EffectID::AxAttack2, { 0.0f, 0.4f, 0.f }, { 1.f, 1.f, 1.f });
+                Attach(eff);
+                });
+            break;
+        }
+        }
+    }
+    else if(m_team == Team::Enemy)      // 적군
+    {
+        switch (m_weaponID)
+        {
+        case 1:
+        {
+            RegisterFrameEvent(1, 36, [this]() {
+                auto eff = m_pEffectManager->Spawn(EffectID::BlasterAttackEnemy, { 0.f, -0.05f, -0.05f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
+                AttachChildBone(eff, 2);
+                });
+            break;
+        }
+        case 2:
+        {
+            if (m_subID == 1)
+            {
+                RegisterFrameEvent(1, 10, [this]() {
+                    auto eff = m_pEffectManager->Spawn(EffectID::ChakramAttackEnemy01_1, { 0.95f, 0.3f, -0.8f }, { 2.f, 2.f, 1.f });
+                    Attach(eff);
+                    eff = m_pEffectManager->Spawn(EffectID::ChakramAttackEnemy01_2, { 1.05f, 0.3f, -0.7f }, { 1.f, 1.f, 1.f });
+                    Attach(eff);
+                    });
+                RegisterFrameEvent(1, 35, [this]() {
+                    auto eff = m_pEffectManager->Spawn(EffectID::ChakramAttackEnemy01_1, { 0.95f, 0.3f, -0.8f }, { 2.f, 2.f, 1.f });
+                    Attach(eff);
+                    eff = m_pEffectManager->Spawn(EffectID::ChakramAttackEnemy01_2, { 1.05f, 0.3f, -0.7f }, { 1.f, 1.f, 1.f });
+                    Attach(eff);
+                    });
+            }
+            else if (m_subID == 2)
+            {
+                RegisterFrameEvent(1, 22, [this]() {
+                    auto eff = m_pEffectManager->Spawn(EffectID::ChakramAttackEnemy02_1, { -0.85f, 0.3f, -0.1f }, { 2.f, 2.f, 1.f });
+                    Attach(eff);
+                    eff = m_pEffectManager->Spawn(EffectID::ChakramAttackEnemy02_2, { -0.82f, 0.3f, -0.1f }, { 1.f, 1.f, 1.f });
+                    Attach(eff);
+                    });
+            }
+            break;
+        }
+        case 3:
+        {
+            RegisterFrameEvent(1, 21, [this]() {
+                auto eff = m_pEffectManager->Spawn(EffectID::DrillAttackEnemy1, { 0.05f, 1.1f, 0.0f }, { 3.f, 3.f, 1.f }, { 1, 0, 0 });
+                AttachChildBone(eff, 1);
+                });
+            break;
+        }
+        case 4:
+        {
+            RegisterFrameEvent(1, 30, [this]() {
+                auto eff = m_pEffectManager->Spawn(EffectID::ScytheAttackEnemy, { 0.0f, 1.1f, -0.4f }, { 2.f, 2.f, 1.f });
+                AttachChildBone(eff, 1);
+                eff = m_pEffectManager->Spawn(EffectID::ScytheAttackEnemy2, { 0.0f, 1.0f, -0.45f }, { 1.f, 1.f, 1.f });
+                AttachChildBone(eff, 1);
+                });
+            break;
+        }
+        case 5:
+        {
+            RegisterFrameEvent(1, 39, [this]() {
+                auto eff = m_pEffectManager->Spawn(EffectID::AxAttackEnemy, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f });
+                Attach(eff);
+                eff = m_pEffectManager->Spawn(EffectID::AxAttackEnemy2, { 0.0f, 0.4f, 0.f }, { 1.f, 1.f, 1.f });
+                Attach(eff);
+                });
+            break;
+        }
+        case 6:
+        {
+            RegisterFrameEvent(1, 25, [this]() {
+                auto eff = m_pEffectManager->Spawn(EffectID::AxAttackEnemy, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f });
+                Attach(eff);
+                eff = m_pEffectManager->Spawn(EffectID::AxAttackEnemy2, { 0.0f, 0.4f, 0.f }, { 1.f, 1.f, 1.f });
+                Attach(eff);
+                });
+            break;
+        }
+        }
+    }
+
     isAttacking = true;
 }
 
@@ -612,11 +824,11 @@ void UnitPiece::PlayHit()
 }
 
 
-void UnitPiece::PlayMove(XMFLOAT3 targetPos, float speed)
+void UnitPiece::PlayMove(XMFLOAT3 targetPos, float second)
 {
     if (isMoving) return;
 
-    m_fixSpeed = speed;
+    m_fixSpeed = 1 / second;
     m_Target = XMLoadFloat3(&targetPos);
     m_Start = XMLoadFloat3(&this->m_vPos);
     XMVECTOR Dist = XMVectorAbs(XMVector3Length(m_Target - m_Start));
@@ -634,6 +846,16 @@ void UnitPiece::PlayMove(XMFLOAT3 targetPos, float speed)
         return;
 
     isMoving = true;
+}
+
+void UnitPiece::PlayRollBack()
+{
+    isRollingBack = true;
+}
+
+void UnitPiece::PlayRoll()
+{
+    isRolling = true;
 }
 
 
@@ -667,6 +889,11 @@ Float4 UnitPiece::GetLerpColor(float dt)
     float b = m_vtmpColor.z * (1 - dt) + m_flashColor.z * (dt);
     float a = m_vtmpColor.w * (1 - dt) + m_flashColor.w * (dt);
     return { r, g, b, a };
+}
+
+float UnitPiece::GetLerp(float dt, float start, float end)
+{
+    return (start * (1 - dt) + end * dt);
 }
 
 float UnitPiece::QuadraticGraph(float x)

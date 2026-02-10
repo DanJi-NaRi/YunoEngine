@@ -26,6 +26,8 @@ enum class CommandType : uint8_t
 {
     Rotate,
     Move,
+    RollBack,
+    Roll,
     Attack,
     Hit,
     MoveHit,

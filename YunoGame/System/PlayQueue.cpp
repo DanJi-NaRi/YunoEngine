@@ -32,12 +32,12 @@ PGridCmd PlayGridQ::Rot_P(Direction dir)
     return cmd;
 }
 
-PGridCmd PlayGridQ::Move_P(float wx, float wy, float wz, float speed, bool isDone)
+PGridCmd PlayGridQ::Move_P(float wx, float wy, float wz, float second, bool isDone)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Move;
     cmd.isDone = isDone;
-    cmd.mv_p = { wx, wy, wz, speed };
+    cmd.mv_p = { wx, wy, wz, second };
     return cmd;
 }
 

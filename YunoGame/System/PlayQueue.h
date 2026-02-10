@@ -19,7 +19,7 @@ struct PGridCmd
         struct
         {
             float wx, wy, wz;
-            float speed;
+            float second;
         } mv_p;  // Move
 
         struct
@@ -65,7 +65,7 @@ public:
 
 public:
     static PGridCmd Rot_P(Direction dir);
-    static PGridCmd Move_P(float wx, float wy, float wz, float speed = 1, bool isDone = false);
+    static PGridCmd Move_P(float wx, float wy, float wz, float second = 1, bool isDone = false);
 
     static PGridCmd Hit_S(GamePiece pieceType);
     static PGridCmd Hit_P();
