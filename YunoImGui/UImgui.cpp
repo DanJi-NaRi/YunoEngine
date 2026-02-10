@@ -181,6 +181,12 @@ namespace UI
         return ImGui::Button(label);
     }
 
+    bool Checkbox(const char* label, bool* v)
+    {
+        return ImGui::Checkbox(label, v);
+    }
+
+
     bool Selectable(const char* label, bool selected)
     {
         return ImGui::Selectable(label, selected);

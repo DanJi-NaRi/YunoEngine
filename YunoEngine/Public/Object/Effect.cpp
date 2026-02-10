@@ -335,6 +335,7 @@ void Effect::UpdateFrame()
 
 bool Effect::Update(float dt)
 {
+    if (!m_active) return true;
     m_age += dt;
 
     if (m_age >= m_lifetime)

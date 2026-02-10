@@ -6,6 +6,9 @@
 #include "ObjectTypeRegistry.h"
 #include "ObjectManager.h"
 
+#ifdef _DEBUG
+#include "UImgui.h"
+#endif
 //오브젝트 타입.h
 
 namespace {
@@ -287,6 +290,21 @@ XMMATRIX Unit::GetAttachMatrixForChild(Unit* child)
     return GetWorldMatrix();
 }
 
+void Unit::SetEnable(bool enabled)
+{
+    if (Enable == enabled)
+        return;
+
+    Enable = enabled;
+
+    if (Enable)
+    {
+        Update();
+    }
+
+    OnEnableChanged(Enable);
+}
+
 UnitDesc Unit::GetDesc()
 {
     UnitDesc d;
@@ -322,6 +340,12 @@ UnitDesc Unit::GetDesc()
 #ifdef _DEBUG
 void Unit::Serialize()
 {
+    bool enabled = IsEnabled();
+    if (UI::Checkbox("Enable", &enabled))
+    {
+        SetEnable(enabled);
+    }
+    
     int i = 0;
     for (auto& mesh : m_Meshs)
     {

@@ -81,8 +81,6 @@ bool GameApp::OnInit()
 
     m_clientNet.RegisterMatchPacketHandler();
 
-
-
     return true;
 }
 
