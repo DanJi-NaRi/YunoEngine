@@ -16,6 +16,8 @@ bool GuideScene::OnCreateScene()
     ClientW = (float)win->GetClientWidth();
     ClientH = (float)win->GetClientHeight();
 
+    //CreateWidget<TextureImage>(L"StandByBackGround", L"../Assets/UI/WEAPON_SELECT/black_background.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
+
     CreateWidget<TextureImage>(L"Option", L"../Assets/UI/TITLE/option.png", XMFLOAT3(0, 0, 0));
 
     CreateMainUI();

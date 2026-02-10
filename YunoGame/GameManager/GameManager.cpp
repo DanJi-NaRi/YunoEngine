@@ -261,7 +261,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::Guide:
     {
-        m_state = CurrentSceneState::Guide;
 
         ScenePolicy sp;
         sp.blockRenderBelow = false;
@@ -339,7 +338,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
 
-        sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+        //sm->RequestPush(std::make_unique<PhaseScene>(), sp);
 
         break;
     }

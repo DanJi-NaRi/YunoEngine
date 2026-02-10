@@ -19,6 +19,7 @@ namespace yuno::server
         uint8_t tileID = 0;             // 현재 좌표
         uint8_t hp = 0;                 //체력
         uint8_t stamina = 0;            //스테미나
+        uint8_t maxStamina = 0;         //최대 스테미나
 
         BuffState buffstat = {0,0,0};
 

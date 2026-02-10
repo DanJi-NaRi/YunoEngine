@@ -34,6 +34,7 @@ namespace yuno::net::packets
     void ObstacleState::Serialize(ByteWriter& w) const
     {
         w.WriteU8(obstacleID);
+        w.WriteU32LE(actionTime);
         w.WriteU8(static_cast<uint8_t>(tileIDs.size()));
 
         for (uint8_t tileId : tileIDs)
@@ -51,6 +52,7 @@ namespace yuno::net::packets
         ObstacleState o;
 
         o.obstacleID = r.ReadU8();
+        o.actionTime = r.ReadU32LE();
         uint8_t tileCount = r.ReadU8();
         o.tileIDs.reserve(tileCount);
 

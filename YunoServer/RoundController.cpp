@@ -266,6 +266,7 @@ namespace yuno::server
 
         // 두 플레이어가 선택한 카드 결과
 
+
         if (g_battleState.turnNumber != 1)
         {
             pkt.addedCards[0] = g_battleState.players[0].handCards.back();
