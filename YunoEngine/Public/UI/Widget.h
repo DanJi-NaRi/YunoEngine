@@ -256,6 +256,7 @@ protected:
     int m_zOrder;               // 아직 미사용
 
     bool m_mirrorX = false;
+    bool m_mirrorY = false;
 
     Visibility m_selfVisible; // 내가 원하는 상태
     Visibility m_visible; // 최종 상태 (렌더/입력용)// 보이기 여부 // 아직 미사용
@@ -354,8 +355,8 @@ public:
     void          SetUseAspectComp(bool useAspectComp) { m_useAspectComp = useAspectComp; }
     void          SetVisible(Visibility visible);
     void          UpdateEffectiveVisibility();
-    void          MirrorScaleX() { m_vScale.x *= -1; }
-    void          MirrorScaleY() { m_vScale.y *= -1; }
+    void          MirrorScaleX() { m_vScale.x *= -1; m_mirrorX = !m_mirrorX; }
+    void          MirrorScaleY() { m_vScale.y *= -1; m_mirrorY = !m_mirrorY; }
 
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }

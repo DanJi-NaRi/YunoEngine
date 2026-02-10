@@ -7,6 +7,15 @@ class CardSlot;
 class CardManager;
 class CardRangeManager;
 
+struct PlayerData {
+    PlayerData() = delete;
+    PlayerData(std::array<Wdata, 2>& weapons, std::array<UnitHand, 2>& hands)
+        : weapons(weapons), hands(hands) {
+    }
+    std::array<Wdata, 2>& weapons;
+    std::array<UnitHand, 2>& hands;
+};
+
 class PhasePanel : public Image
 {
 public:
@@ -32,12 +41,13 @@ public:
 
 protected:
 
+    // 매니저
     GameManager& m_gameManager;
     CardManager& m_cardManager;
     CardRangeManager& m_rangeManager;
-    std::vector<Wdata>& m_weapons;
-    std::array<UnitHand, 2>& m_myHands;
-    std::array<UnitHand, 2>& m_enemyHands;
+    // 플레이어 데이터
+    PlayerData m_player;
+    PlayerData m_enemy;
     int m_pID; // 플레이어 ID (Team)
 };
 

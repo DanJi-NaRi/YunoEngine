@@ -98,6 +98,7 @@ bool EffectUnit::BuildInternalEffectMaterial(const EffectDesc& desc)
 
 bool EffectUnit::Update(float dt)
 {
+    m_active = Enable;
     if (!m_active)
     {
         return true;
