@@ -85,8 +85,14 @@ bool SceneBase::OnCreate()
     {
         OnCreateScene();
 
-        YunoEngine::GetRenderer()->GetCamera().position = ToXM(sd.camPos);
-        YunoEngine::GetRenderer()->GetCamera().position = ToXM(sd.camLookAt);
+        auto& camera = YunoEngine::GetRenderer()->GetCamera();
+        camera.position = ToXM(sd.camera.position);
+        camera.target = ToXM(sd.camera.lookAt);
+        camera.up = ToXM(sd.camera.up);
+        camera.nearZ = sd.camera.nearZ;
+        camera.farZ = sd.camera.farZ;
+        camera.SetOrthoFlag(sd.camera.useOrtho);
+        camera.SetFovYRadians(sd.camera.fovYRadians);
 
         YunoEngine::GetRenderer()->SetPostProcessOption(sd.postprocess);
 
@@ -123,8 +129,15 @@ SceneDesc SceneBase::BuildSceneDesc()
     sd.sceneName = Utf8ToWString(GetDebugName());
     sd.widgets = m_uiManager->BuildWidgetDesc();
     sd.postprocess = YunoEngine::GetRenderer()->GetPostProcessOption();
-    sd.camPos = FromXM(YunoEngine::GetRenderer()->GetCamera().position);
-    sd.camLookAt = FromXM(YunoEngine::GetRenderer()->GetCamera().target);
+    auto& camera = YunoEngine::GetRenderer()->GetCamera();
+    sd.camera.position = FromXM(camera.position);
+    sd.camera.lookAt = FromXM(camera.target);
+    sd.camera.up = FromXM(camera.up);
+    sd.camera.nearZ = camera.nearZ;
+    sd.camera.farZ = camera.farZ;
+    sd.camera.fovYRadians = camera.GetFovYRadians();
+    sd.camera.useOrtho = camera.useOrtho;
+    sd.isOrtho = sd.camera.useOrtho;
 
     return sd;
 }

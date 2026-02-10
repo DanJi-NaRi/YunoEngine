@@ -288,6 +288,31 @@ namespace nlohmann
         if (j.contains("tint")) j.at("tint").get_to(d.tint);
     }
 
+    inline void to_json(json& j, const CameraDesc& c)
+    {
+        j = {
+            { "position", c.position },
+            { "lookAt", c.lookAt },
+            { "up", c.up },
+            { "fovYRadians", c.fovYRadians },
+            { "nearZ", c.nearZ },
+            { "farZ", c.farZ },
+            { "useOrtho", c.useOrtho }
+        };
+    }
+
+    inline void from_json(const json& j, CameraDesc& c)
+    {
+        if (j.contains("position")) j.at("position").get_to(c.position);
+        if (j.contains("lookAt")) j.at("lookAt").get_to(c.lookAt);
+        if (j.contains("up")) j.at("up").get_to(c.up);
+        if (j.contains("fovYRadians")) j.at("fovYRadians").get_to(c.fovYRadians);
+        if (j.contains("nearZ")) j.at("nearZ").get_to(c.nearZ);
+        if (j.contains("farZ")) j.at("farZ").get_to(c.farZ);
+        if (j.contains("useOrtho")) j.at("useOrtho").get_to(c.useOrtho);
+    }
+
+
     inline void to_json(json& j, const SceneDesc& s)
     {
         auto pls = ConvertToSave(s.pointLights);
@@ -300,10 +325,9 @@ namespace nlohmann
         j = {
             { "version",     s.version },
             { "scenename",     name },
-            { "isOrtho",     s.isOrtho },
+            { "isOrtho",     s.camera.useOrtho },
             { "postprocessOption",     s.postprocess },
-            { "CameraPosition",     s.camPos },
-            { "CameraLookAt",     s.camLookAt },
+            { "camera",     s.camera },
             { "units",       s.units },
             { "widgets",       s.widgets },
             { "pointLights", pls }
@@ -317,11 +341,20 @@ namespace nlohmann
     {
         j.at("version").get_to(s.version);
         s.sceneName = Utf8ToWString(j.at("scenename").get<std::string>());
-        j.at("isOrtho").get_to(s.isOrtho);
         j.at("postprocessOption").get_to(s.postprocess);
 
-        j.at("CameraPosition").get_to(s.camPos);
-        j.at("CameraLookAt").get_to(s.camLookAt);
+        if (j.contains("camera"))
+        {
+            j.at("camera").get_to(s.camera);
+        }
+        else
+        {
+            // Legacy scene schema fallback
+            if (j.contains("CameraPosition")) j.at("CameraPosition").get_to(s.camera.position);
+            if (j.contains("CameraLookAt")) j.at("CameraLookAt").get_to(s.camera.lookAt);
+            if (j.contains("isOrtho")) j.at("isOrtho").get_to(s.camera.useOrtho);
+        }
+        s.isOrtho = s.camera.useOrtho;
 
         j.at("units").get_to(s.units);
         j.at("widgets").get_to(s.widgets);

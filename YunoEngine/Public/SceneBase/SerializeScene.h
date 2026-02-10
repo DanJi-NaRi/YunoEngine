@@ -189,6 +189,18 @@ struct PostProcessDesc
     float tint = 0.0f;
 };
 
+struct CameraDesc
+{
+    Vec3Desc position{ 0, 10.0f, -20.0f };
+    Vec3Desc lookAt{ 0, 0, 0 };
+    Vec3Desc up{ 0, 1, 0 };
+
+    float fovYRadians = XM_PIDIV4;
+    float nearZ = 0.1f;
+    float farZ = 1000.0f;
+    bool useOrtho = false;
+};
+
 struct SceneDesc
 {
     int version = 1;
@@ -197,8 +209,7 @@ struct SceneDesc
 
     bool isOrtho;
 
-    Vec3Desc camPos;
-    Vec3Desc camLookAt;
+    CameraDesc camera;
 
     PostProcessDesc postprocess;
     std::vector<UnitDesc> units;
