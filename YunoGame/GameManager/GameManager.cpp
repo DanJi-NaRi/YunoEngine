@@ -55,7 +55,10 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
 
 void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
 {
-    m_uiWeapons = wdatas;
+    m_myUIWeapons[0] = wdatas[0];
+    m_myUIWeapons[1] = wdatas[1];
+    m_enemyUIWeapons[0] = wdatas[2];
+    m_enemyUIWeapons[1] = wdatas[3];
 }
 
 

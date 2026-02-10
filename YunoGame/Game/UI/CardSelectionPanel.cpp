@@ -51,14 +51,15 @@ void CardSelectionPanel::CreateChild() {
 
     // 스태미나 바
     {
+
         m_pPhaseStaminaBars[0] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_0", Float2(1083, 34), XMFLOAT3(-650, -450, 0), UIDirection::Center, this);
-        //m_pPhaseStaminaBars[0]->GetWeponSelectButton()->ChangeWeaponImage(m_weapons[0].weaponId);
-        //m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_weapons[0].weaponId); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
+        m_pPhaseStaminaBars[0]->GetWeponSelectButton()->ChangeWeaponImage(m_player.weapons[0].weaponId);
+        m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[0].weaponId); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
         //m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
         
         m_pPhaseStaminaBars[1] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_1", Float2(1083, 34), XMFLOAT3(-650, -400, 0), UIDirection::Center, this);
-        //m_pPhaseStaminaBars[1]->GetWeponSelectButton()->ChangeWeaponImage(m_weapons[1].weaponId);
-        //m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_weapons[1].weaponId); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
+        m_pPhaseStaminaBars[1]->GetWeponSelectButton()->ChangeWeaponImage(m_player.weapons[1].weaponId);
+        m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[1].weaponId); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
         //m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
         
     }
@@ -113,7 +114,7 @@ bool CardSelectionPanel::Start()
 
     ViewCardPage(0, 0); // 0번 슬롯, 0번 페이지
 
-    //m_pWeaponIMG->ChangeWeaponImage(m_weapons[1].weaponId);
+    m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[0].weaponId);
     return true;
 }
 
@@ -153,7 +154,7 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
     //    m_pCards[i]->ChangeTexture(m_cardManager.GetCardTexturePath(id));
     //}
 
-    const auto& cards = m_myHands[slot].cards;
+    const auto& cards = m_player.hands[slot].cards;
 
     constexpr int CardSlotSize = 6; // 한 페이지 당 카드 갯수
     const int total = static_cast<int>(cards.size()); // 카드 총 사이즈
@@ -219,7 +220,7 @@ void CardSelectionPanel::PageDown(int slot)
 
 const int CardSelectionPanel::GetMaxPage(int slot)
 {
-    const auto& cards = m_myHands[slot].cards;
+    const auto& cards = m_player.hands[slot].cards;
 
     constexpr int CardSlotSize = 6; // 한 페이지 당 카드 갯수
     const int total = static_cast<int>(cards.size()); // 카드 총 사이즈
