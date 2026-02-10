@@ -459,8 +459,8 @@ bool YunoRenderer::CreateShadowMap(uint32_t width, uint32_t height)
     if (FAILED(m_device->CreateShaderResourceView(m_ShadowMap.dstex.Get(), &srvDesc, m_ShadowMap.dssrv.GetAddressOf())))
         return false;
 
-    m_shadowCamera.position = XMFLOAT3(0, 50, -10);
-    m_shadowCamera.target = XMFLOAT3(0, 0, -0.01f);
+    m_shadowCamera.position = XMFLOAT3(0, 10, -3);
+    m_shadowCamera.target = XMFLOAT3(0, 0, 0);
     m_shadowCamera.up = XMFLOAT3(0, 1, 0);
     m_shadowCamera.nearZ = 0.1f;
     m_shadowCamera.farZ = 500;
@@ -474,7 +474,7 @@ void YunoRenderer::InitShadowPass()
     m_ShadowPassKey.ps = ShaderId::None;
     m_ShadowPassKey.vertexFlags = VSF_Pos;
     m_ShadowPassKey.blend = BlendPreset::Opaque;
-    m_ShadowPassKey.raster = RasterPreset::CullFront;
+    m_ShadowPassKey.raster = RasterPreset::CullBack;
     m_ShadowPassKey.depth = DepthPreset::ReadWrite;
 
     m_ShadowPass = GetOrCreatePass(m_ShadowPassKey);
@@ -483,7 +483,7 @@ void YunoRenderer::InitShadowPass()
     m_ShadowSkinPassKey.ps = ShaderId::None;
     m_ShadowSkinPassKey.vertexFlags = VSF_Pos | VSF_BoneIndex | VSF_BoneWeight;
     m_ShadowSkinPassKey.blend = BlendPreset::Opaque;
-    m_ShadowSkinPassKey.raster = RasterPreset::CullFront;
+    m_ShadowSkinPassKey.raster = RasterPreset::CullBack;
     m_ShadowSkinPassKey.depth = DepthPreset::ReadWrite;
 
     m_ShadowSkinPass = GetOrCreatePass(m_ShadowSkinPassKey);
@@ -497,7 +497,7 @@ void YunoRenderer::DrawShadowMap()
 
     //ViewProj Bind
     XMMATRIX LightView = m_shadowCamera.View();
-    XMMATRIX LightProj = m_shadowCamera.ProjShadowOrtho(100, 100);
+    XMMATRIX LightProj = m_shadowCamera.ProjShadowOrtho(30, 30);
 
     XMStoreFloat4x4(&m_shadowInfo.lightViewProj, XMMatrixTranspose(LightView * LightProj));
     m_shadowInfo.shadowBias = m_shadowBias;
