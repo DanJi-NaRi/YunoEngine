@@ -21,13 +21,8 @@ public:
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Test/Weapon_Noting.png"); };    // 머테리얼 생성 (한 번만)
 
-    void ChangeWeaponImage();
+    void ChangeWeaponImage(int id);
+    void ChangeWeaponImage(PieceType type);
     void ClearSlot();
-
-    void SetPieceType(int type); 
-    void SetPieceType(PieceType type);
-
-protected:
-    int m_weaponID;
 };
 

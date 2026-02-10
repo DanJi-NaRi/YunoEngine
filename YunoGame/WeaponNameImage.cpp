@@ -18,7 +18,6 @@ WeaponNameImage::~WeaponNameImage()
 
 void WeaponNameImage::Clear()
 {
-    m_weaponID = 0;
 }
 
 bool WeaponNameImage::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
@@ -77,9 +76,9 @@ bool WeaponNameImage::Submit(float dTime)
     return true;
 }
 
-void WeaponNameImage::ChangeWeaponImage()
+void WeaponNameImage::ChangeWeaponImage(int id)
 {
-    switch (m_weaponID) {
+    switch (id + 1) {
     case (int)PieceType::Blaster:   ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_blaster.png"); break;
     case (int)PieceType::Chakram:   ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_chakram.png"); break;
     case (int)PieceType::Breacher:  ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_breacher.png"); break;
@@ -90,12 +89,8 @@ void WeaponNameImage::ChangeWeaponImage()
     }
 }
 
-void WeaponNameImage::SetPieceType(int type)
+void WeaponNameImage::ChangeWeaponImage(PieceType type)
 {
-    m_weaponID = type; ChangeWeaponImage();
+    ChangeWeaponImage((int)type);
 }
 
-void WeaponNameImage::SetPieceType(PieceType type)
-{
-    m_weaponID = (int)type; ChangeWeaponImage();
-}

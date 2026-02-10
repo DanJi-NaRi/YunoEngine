@@ -12,8 +12,9 @@ PhasePanel::PhasePanel(UIFactory& uiFactory)
     , m_gameManager(GameManager::Get())
     , m_cardManager(m_gameManager.GetCardBasicManager())
     , m_rangeManager(m_gameManager.GetCardRangeManager())
-    , myHands(m_gameManager.GetMyHands())
-    , enemyHands(m_gameManager.GetEnemyHands())
+    , m_weapons(m_gameManager.GetWeapons())
+    , m_myHands(m_gameManager.GetMyHands())
+    , m_enemyHands(m_gameManager.GetEnemyHands())
     , m_pID(m_gameManager.GetSlotiIdx())
 {
     Clear();

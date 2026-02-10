@@ -35,8 +35,9 @@ protected:
     GameManager& m_gameManager;
     CardManager& m_cardManager;
     CardRangeManager& m_rangeManager;
-    std::array<UnitHand, 2>& myHands;
-    std::array<UnitHand, 2>& enemyHands;
+    std::vector<Wdata>& m_weapons;
+    std::array<UnitHand, 2>& m_myHands;
+    std::array<UnitHand, 2>& m_enemyHands;
     int m_pID; // 플레이어 ID (Team)
 };
 

@@ -34,6 +34,8 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Image; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardSelectionPanel; }
 
+    void ViewCardPage(int slot, int page); // 몇 번째 무기 페이지인지 
+
 protected:
     // 덱 정보
     int* m_pID = nullptr; // 플레이어 ID (Team)

@@ -188,7 +188,7 @@ const CardEffectData* CardManager::GetEffectData(int cardID) const
 
 const std::wstring CardManager::GetCardTexturePath(int cardID) const
 {
-    std::wstring cardPath = L"../Assets/UI/CARD/card_" + GetCardData(cardID).m_name;
+    std::wstring cardPath = L"../Assets/UI/CARD/card_" + GetCardData(cardID).m_name + L".png";
     return cardPath;
 }
 
