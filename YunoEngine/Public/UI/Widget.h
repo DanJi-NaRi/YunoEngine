@@ -381,6 +381,7 @@ public:
     const Float2                 GetTextureSize(int num) const { m_textureSize; }
     std::wstring                 GetTexturePath() { return m_texturePath; }
     std::wstring                 GetTexturePathBk() { return m_texturePathBk; }
+
    
     virtual bool                 IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
     bool                         IsVisible(){ return (m_visible == Visibility::Visible); }

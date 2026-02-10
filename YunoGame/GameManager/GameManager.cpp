@@ -53,6 +53,11 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
     m_weapons.push_back(data);
 }
 
+void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
+{
+    m_uiWeapons = wdatas;
+}
+
 
 // 배틀 전용 함수들
 void GameManager::PushBattlePacket(const BattleResult _BattleResult)
@@ -113,14 +118,6 @@ void GameManager::SetMinimap(Minimap* pMinimap)
 void GameManager::SetUpPanels()
 {
 
-    assert(m_pMinimap);
-    if (m_pMinimap) m_pMinimap->SetupPanel(m_PID, &m_myHands[0], &m_myHands[1], m_cardBasicMng, m_cardRangeMng);
-
-    assert(m_pSelectionPanel);
-    if (m_pSelectionPanel) m_pSelectionPanel-> SetupPanel(m_PID, &m_myHands[0], &m_myHands[1], m_cardBasicMng, m_cardRangeMng);
-
-    assert(m_pConfirmPanel);
-    if (m_pConfirmPanel) m_pConfirmPanel->SetupPanel(m_PID, &m_myHands[0], &m_myHands[1], m_cardBasicMng, m_cardRangeMng);
 }
 
 void GameManager::UpdatePanels(const BattleResult& battleResult)
@@ -348,9 +345,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     default:
         assert(false,"No state Scene");
-
-
-
     }
 }
 

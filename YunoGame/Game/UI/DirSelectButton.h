@@ -33,6 +33,9 @@ public:
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::DirSelectButton; }
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/direction_mouseout.png"); };    // 머테리얼 생성 (한 번만)
-protected:
 
+    void SetButtonDir();
+
+protected:
+    UIDirection m_dir;
 };

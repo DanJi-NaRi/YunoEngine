@@ -13,17 +13,12 @@ struct PGridCmd
     {
         struct
         {
-            GamePiece whichPiece;
-            int oldcx, oldcz;
-            int cx, cz;
-            bool isCollided;
-            bool isEnemy;
-        } mv_s;  // Move
+            Direction dir;
+        } rot_p;
 
         struct
         {
             float wx, wy, wz;
-            Direction dir;
             float speed;
         } mv_p;  // Move
 
@@ -35,7 +30,7 @@ struct PGridCmd
         struct
         {
             float disappearDissolveDuration;
-        } dead_p;
+        } dead_p, disappear_p;
 
         struct
         {
@@ -69,15 +64,15 @@ public:
     const PGridCmd Pop();
 
 public:
-
-    static PGridCmd Move_S(GamePiece pieceType, int oldcx, int oldcz, int cx, int cz, bool isCollided = false, bool isEnemy = false, int damageMe = 0, int damageU = 0);
-    static PGridCmd Move_P(Direction dir, float wx, float wy, float wz, float speed = 1, bool isDone = false);
+    static PGridCmd Rot_P(Direction dir);
+    static PGridCmd Move_P(float wx, float wy, float wz, float speed = 1, bool isDone = false);
 
     static PGridCmd Hit_S(GamePiece pieceType);
     static PGridCmd Hit_P();
     static PGridCmd MoveHit_P(GamePiece pieceType, bool amIdead, float disappearDissolveDuration = 0);
 
     static PGridCmd Dead_P(float disappearDissolveDuration);
+    static PGridCmd Disappear_P(float disappearDissolveDuration);
 
     static PGridCmd Cmd_S(CommandType cmdType, GamePiece pieceType);
 

@@ -6,13 +6,19 @@
 
 #include "IInput.h"
 #include "UIFactory.h"
-#include "GameManager.h"
 
-PhasePanel::PhasePanel(UIFactory& uiFactory) : Image(uiFactory)
+PhasePanel::PhasePanel(UIFactory& uiFactory)
+    : Image(uiFactory)
+    , m_gameManager(GameManager::Get())
+    , m_cardManager(m_gameManager.GetCardBasicManager())
+    , m_rangeManager(m_gameManager.GetCardRangeManager())
+    , m_weapons(m_gameManager.GetWeapons())
+    , m_myHands(m_gameManager.GetMyHands())
+    , m_enemyHands(m_gameManager.GetEnemyHands())
+    , m_pID(m_gameManager.GetSlotiIdx())
 {
     Clear();
 }
-
 PhasePanel::~PhasePanel()
 {
     Clear();
@@ -25,6 +31,7 @@ void PhasePanel::Clear()
 bool PhasePanel::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
     Image::Create(name, id, sizePx, vPos, rotZ, vScale);
+
 
     return true;
 }
