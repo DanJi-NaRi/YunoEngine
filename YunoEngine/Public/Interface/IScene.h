@@ -1,8 +1,26 @@
 #pragma once
 
+#include <string>
+
 class IRenderer;
 class SceneDesc;
 class UIManager;
+
+struct RuntimeSceneOverlayOptions
+{
+    // true면 현재 씬의 오브젝트/라이트를 전부 비우고 json 기준으로 재생성
+    bool replaceObjects = true;
+
+    // false면 카메라/후처리 적용을 건너뜀
+    bool applyCamera = true;
+    bool applyPostProcess = true;
+
+    // false면 라이트(Dir/Point) 적용을 건너뜀
+    bool applyLights = true;
+
+    // 현재 WidgetDesc는 타입 정보가 없어 기본값 false 권장
+    bool applyWidgets = false;
+};
 
 class IScene
 {
@@ -26,6 +44,11 @@ public:
     virtual UIManager* GetUIManager() = 0;
 
     virtual SceneDesc BuildSceneDesc() = 0;
+
+    // 런타임에 외부 씬 json을 현재 씬에 오버레이
+    virtual bool OverlaySceneFromFile(const std::wstring& filepath,
+        const RuntimeSceneOverlayOptions& options = {}) = 0;
+
 
     virtual const char* GetDebugName() const = 0;
 };
