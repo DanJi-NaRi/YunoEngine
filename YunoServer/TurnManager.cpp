@@ -461,11 +461,13 @@ namespace yuno::server
                 return false;
             };
 
-        auto addClamp = [](auto& value, int delta)
+        auto addClamp = [](auto& value, int delta, int maxLimit = -1)
             {
                 using T = std::decay_t<decltype(value)>;
                 int v = static_cast<int>(value) + delta;
-                int maxValue = static_cast<int>(std::numeric_limits<T>::max());
+                int maxValue = maxLimit >= 0
+                    ? maxLimit
+                    : static_cast<int>(std::numeric_limits<T>::max());
                 if (v < 0) v = 0;
                 if (v > maxValue) v = maxValue;
                 value = static_cast<T>(v);
@@ -726,7 +728,7 @@ namespace yuno::server
                         if (effectData->m_staminaRecover != 0)
                         {
                             std::cout << "--Stamana Recovery--" << std::endl;
-                            addClamp(unit.stamina, effectData->m_staminaRecover);
+                            addClamp(unit.stamina, effectData->m_staminaRecover, static_cast<int>(unit.maxStamina));
                         }
                         if (effectData->m_giveDamageBonus != 0)
                         {
@@ -1058,6 +1060,7 @@ namespace yuno::server
 
                 ObstacleState state{};
                 state.obstacleID = static_cast<uint8_t>(obstacle->obstacleType);
+                state.actionTime = 11250;       // ms임 -> 11.25초
                 state.tileIDs.reserve(obstacle->tileIds.size());
                 for (int tileId : obstacle->tileIds)
                 {
