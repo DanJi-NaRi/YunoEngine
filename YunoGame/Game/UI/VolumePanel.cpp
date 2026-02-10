@@ -31,7 +31,7 @@ void VolumePanel::CreateChild()
     // === Track (논리 레일, 안 그려짐) ===
     m_track = m_uiFactory.CreateChild<VolumeTrackButton>(
         L"VolumeTrack",
-        Float2(22.f * 20.f, 40.f),
+        Float2(totalWidth, stepH),
         XMFLOAT3(0, 0, 0),
         UIDirection::Center,
         this
@@ -39,8 +39,8 @@ void VolumePanel::CreateChild()
 
     m_track->OnValueChanged = [this](float t)
         {
-            int newLevel = int(std::round(t * 50.f));
-            newLevel = std::clamp(newLevel, 0, kSteps);
+            int newLevel = int(std::round(t * (kSteps - 1)));
+            newLevel = std::clamp(newLevel, 0, kSteps - 1);
 
             std::cout << "[Panel] Level = " << newLevel << "\n";
 
@@ -53,6 +53,7 @@ void VolumePanel::CreateChild()
     {
         float x = startX + pitch * i;
         x = std::round(x);
+
         auto* step = m_uiFactory.CreateChild<TextureImage>(
             L"VolumeStep",
             Float2(stepW, stepH),

@@ -37,7 +37,6 @@ private:
 
     // 상태
     void ChangeUIState(OptionUIState state);
-
 private:
     OptionScene_InputContext m_uiCtx;
 
@@ -52,6 +51,8 @@ private:
 
     // Volume
     std::array<Widget*, 3> m_volumePanels{ nullptr, nullptr, nullptr };
+    Widget* m_volumeRoot = nullptr;
+
     // Credit
     Widget* m_creditRoot = nullptr;
 

@@ -32,7 +32,7 @@ bool GuideScene::OnCreateScene()
 void GuideScene::CreateMainUI()
 {//TODO::위치 잡아줘
     const float baseX = ((ClientW-630) / 2)-2;
-    const float baseY = ClientH / 2;
+    const float baseY = ClientH / 2 - 80;
 
     auto makePos = [&](int index)
         {
@@ -124,10 +124,10 @@ void GuideScene::CreateKeywordUI()
     m_keywordRoot = CreateWidget<TextureImage>(
         L"KeywordPanel",
         L"../Assets/UI/TITLE/guide_cardkeyword.png",
-        XMFLOAT3(ClientW / 2, ClientH / 2, 0),
+        XMFLOAT3(ClientW / 2, ClientH / 2 -10, 0),
         UIDirection::Center
     );
-    m_keywordRoot->SetVisible(Visibility::Hidden);
+    m_keywordRoot->SetVisible(Visibility::Visible);
 }
 
 void GuideScene::CreateCardTypeUI()
@@ -135,7 +135,7 @@ void GuideScene::CreateCardTypeUI()
     m_cardTypeRoot = CreateWidget<TextureImage>(
         L"CardTypePanel",
         L"../Assets/UI/TITLE/guide_cardtype.png",
-        XMFLOAT3(ClientW / 2, ClientH / 2, 0),
+        XMFLOAT3(ClientW / 2, ClientH / 2 - 10, 0),
         UIDirection::Center
     );
     m_cardTypeRoot->SetVisible(Visibility::Hidden);
@@ -146,7 +146,7 @@ void GuideScene::CreateTurnUI()
     m_turnRoot = CreateWidget<TextureImage>(
         L"TurnPanel",
         L"../Assets/UI/TITLE/guide_turn.png",
-        XMFLOAT3(ClientW / 2, ClientH / 2, 0),
+        XMFLOAT3(ClientW / 2, ClientH / 2 - 10, 0),
         UIDirection::Center
     );
     m_turnRoot->SetVisible(Visibility::Hidden);
@@ -157,18 +157,32 @@ void GuideScene::CreateCoinTossUI()
     m_coinTossRoot = CreateWidget<TextureImage>(
         L"CoinTossPanel",
         L"../Assets/UI/TITLE/guide_cointoss.png",
-        XMFLOAT3(ClientW / 2, ClientH / 2, 0),
+        XMFLOAT3(ClientW / 2, ClientH / 2 - 10, 0),
         UIDirection::Center
     );
     m_coinTossRoot->SetVisible(Visibility::Hidden);
 }
 
-void GuideScene::ChangeUIState(GuideUIState state)
+void GuideScene::ClearSelection()
+{
+    m_keywordBtn->SetSelected(false);
+    m_cardTypeBtn->SetSelected(false);
+    m_turnBtn->SetSelected(false);
+    m_coinTossBtn->SetSelected(false);
+}
+
+void GuideScene::ClearRoot()
 {
     m_keywordRoot->SetVisible(Visibility::Hidden);
     m_cardTypeRoot->SetVisible(Visibility::Hidden);
     m_turnRoot->SetVisible(Visibility::Hidden);
     m_coinTossRoot->SetVisible(Visibility::Hidden);
+}
+
+void GuideScene::ChangeUIState(GuideUIState state)
+{
+    ClearSelection();
+    ClearRoot();    
 
     m_uiState = state;
 
@@ -179,18 +193,26 @@ void GuideScene::ChangeUIState(GuideUIState state)
         m_cardTypeBtn->SetVisible(Visibility::Visible);
         m_turnBtn->SetVisible(Visibility::Visible);
         m_coinTossBtn->SetVisible(Visibility::Visible);
+        m_keywordRoot->SetVisible(Visibility::Visible);
         break;
 
     case GuideUIState::Keyword:
+        m_keywordBtn->SetSelected(true);
         m_keywordRoot->SetVisible(Visibility::Visible);
         break;
+
     case GuideUIState::CardType:
+        m_cardTypeBtn->SetSelected(true);
         m_cardTypeRoot->SetVisible(Visibility::Visible);
         break;
+
     case GuideUIState::Turn:
+        m_turnBtn->SetSelected(true);
         m_turnRoot->SetVisible(Visibility::Visible);
         break;
+
     case GuideUIState::CoinToss:
+        m_coinTossBtn->SetSelected(true);
         m_coinTossRoot->SetVisible(Visibility::Visible);
         break;
     }

@@ -30,8 +30,8 @@ bool Title::OnCreateScene()
     float ClientH = static_cast<float>(iwindow->GetClientHeight());
 
     const int baseXOffset = 100;
-    const int baseYOffset = 100;   // 첫 버튼이 기준에서 얼마나 내려오는지
-    const int buttonGap = 100;   // 버튼 사이 간격
+    const int baseYOffset = 200;   // 첫 버튼이 기준에서 얼마나 내려오는지
+    const int buttonGap = 85;   // 버튼 사이 간격
 
     const float centerX = ClientW / 2;
     const float centerY = ClientH / 2;

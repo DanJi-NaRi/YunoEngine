@@ -32,7 +32,7 @@ bool OptionScene::OnCreateScene()
 void OptionScene::CreateMainUI()
 {
     const float baseX = ((ClientW - 630) / 2) - 2;
-    const float baseY = ClientH / 2;
+    const float baseY = ClientH / 2 - 80;
 
     auto makePos = [&](int index)
         {
@@ -96,7 +96,7 @@ void OptionScene::CreateMainUI()
 void OptionScene::CreateVolumeUI()
 {
     const float centerX = ClientW / 2.f + 320;
-    const float centerY = ClientH / 2.f - 50;
+    const float centerY = ClientH / 2.f - 130;
 
     constexpr float gapY = 110.f;   // 게이지 간 간격
     //TODO :: 위치 확인
@@ -113,48 +113,60 @@ void OptionScene::CreateVolumeUI()
         );
         m_volumePanels[i]->ChangeTexture(L"../Assets/UI/TITLE/volume_fill_full.png");
         m_volumePanels[i]->SetPivot(UIDirection::Center);
-        m_volumePanels[i]->SetVisible(Visibility::Hidden);
+        m_volumePanels[i]->SetVisible(Visibility::Visible);
     }
+    m_volumeRoot = CreateWidget<TextureImage>(//TODO :: 위치 확인
+        L"CreditPanel",
+        L"../Assets/UI/TITLE/option_volume.png",
+        XMFLOAT3(ClientW / 2, ClientH / 2 + 20, 0),
+        UIDirection::Center
+    );
+    m_volumeRoot->SetVisible(Visibility::Visible);
 }
 
 void OptionScene::CreateCreditUI()
 {
     m_creditRoot = CreateWidget<TextureImage>(//TODO :: 위치 확인
         L"CreditPanel",
-        L"../Assets/UI/TITLE/option_credit.png",
-        XMFLOAT3(ClientW / 2, ClientH / 2 + 100, 0),
+        L"../Assets/UI/TITLE/option_credit_ver2.png",
+        XMFLOAT3(ClientW / 2, ClientH / 2 + 20, 0),
         UIDirection::Center
     );
     m_creditRoot->SetVisible(Visibility::Hidden);
 }
 
-
 void OptionScene::ChangeUIState(OptionUIState state)
 {
     // 숨김
     m_creditRoot->SetVisible(Visibility::Hidden);
+    m_volumeRoot->SetVisible(Visibility::Hidden);
+    m_volumeBtn->SetSelected(false);
+    m_creditBtn->SetSelected(false);
 
     for (auto* panel : m_volumePanels)
-        panel->SetVisible(Visibility::Hidden);
+        panel->SetVisible(Visibility::Collapsed);
 
     m_uiState = state;
 
     switch (state)
     {
     case OptionUIState::Main:
-        std::cout << "\nMain\n";
         m_volumeBtn->SetVisible(Visibility::Visible);
         m_creditBtn->SetVisible(Visibility::Visible);
+        m_volumeRoot->SetVisible(Visibility::Visible);
+        for (auto* panel : m_volumePanels)
+            panel->SetVisible(Visibility::Visible);
         break;
 
     case OptionUIState::Volume:
-        std::cout << "\nVolume\n";
+        m_volumeBtn->SetSelected(true);
+        m_volumeRoot->SetVisible(Visibility::Visible);
         for (auto* panel : m_volumePanels)
             panel->SetVisible(Visibility::Visible);
         break;
 
     case OptionUIState::Credit:
-        std::cout << "\nCredit\n";
+        m_creditBtn->SetSelected(true);
         m_creditRoot->SetVisible(Visibility::Visible);
         break;
     }
