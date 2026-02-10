@@ -21,14 +21,6 @@ enum class PieceType : uint8_t { // 비트마스크로도 활용 가능
     Count,
 };
 
-enum Dir : uint8_t {
-    None,
-    North,
-    South,
-    East,
-    West,
-    Count,
-};
 
 using PieceMask = uint32_t;
 static constexpr PieceMask kAny = 0u;

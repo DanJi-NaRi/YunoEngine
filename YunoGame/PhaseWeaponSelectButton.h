@@ -27,7 +27,7 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::PhaseWeaponSelectButton; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Test/PhaseStaminaBar_Noting_mouseout.png"); }    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/test_non_mouseout.png"); }    // 머테리얼 생성 (한 번만)
 
     void ChangeWeaponImage(int id);
 

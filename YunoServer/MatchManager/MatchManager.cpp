@@ -168,36 +168,43 @@ namespace yuno::server
         case 1: // 블래스터
             unit.hp = 80;
             unit.stamina = 120;
+            unit.maxStamina = 120;
             break;
 
         case 2: // 차크람
             unit.hp = 90;
             unit.stamina = 110;
+            unit.maxStamina = 110;
             break;
 
         case 3: // 브리처  
             unit.hp = 100;
             unit.stamina = 100;
+            unit.maxStamina = 100;
             break;
 
         case 4: // 사이드
             unit.hp = 100;
             unit.stamina = 100;
+            unit.maxStamina = 100;
             break;
 
         case 5: // 임팩터
             unit.hp = 120;
             unit.stamina = 80;
+            unit.maxStamina = 80;
             break;             
 
         case 6: // 클리버
             unit.hp = 110;
             unit.stamina = 90;
+            unit.maxStamina = 90;
             break;
 
         default:
             unit.hp = 100;
             unit.stamina = 100;
+            unit.maxStamina = 100;
             break;
         }
     }

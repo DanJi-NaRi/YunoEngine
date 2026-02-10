@@ -83,6 +83,8 @@ protected:
     virtual void OnDestroyScene();
 
     virtual SceneDesc BuildSceneDesc() override;
+    bool OverlaySceneFromFile(const std::wstring& filepath,
+        const RuntimeSceneOverlayOptions& options = {}) override;
 
 protected:
     std::unique_ptr<ObjectManager> m_objectManager;

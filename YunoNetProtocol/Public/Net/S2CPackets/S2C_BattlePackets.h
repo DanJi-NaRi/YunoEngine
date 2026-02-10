@@ -28,7 +28,9 @@ namespace yuno::net::packets
     {
         // 다음 턴에 발동할 obstacle 경고에 대한 데이터
         uint8_t obstacleID;                 // 장애물 타입 ID (0~3) 0은 장애물 없음
+        uint32_t actionTime;               // 해당 장애물 액션 타임
         std::vector<uint8_t> tileIDs;     // 장애물이 점유하는 타일들ID (1~35)
+
 
         // 이전 턴에 받은 obstacleID, tileIDs가 적용된 결과
         std::array<UnitStateDelta, 4> unitState;

@@ -14,38 +14,6 @@ class ObjectManager
 {
 private:
     using CreateFn = std::function<std::unique_ptr<Unit>(ObjectManager&, const UnitDesc&)>;
-    struct MeshCacheKey
-    {
-        std::wstring filepath;
-        PassOption opt;
-
-        bool operator==(const MeshCacheKey& rhs) const
-        {
-            return filepath == rhs.filepath
-                && opt.shader == rhs.opt.shader
-                && opt.blend == rhs.opt.blend
-                && opt.raster == rhs.opt.raster
-                && opt.depth == rhs.opt.depth;
-        }
-    };
-
-    struct MeshCacheKeyHash
-    {
-        size_t operator()(const MeshCacheKey& key) const
-        {
-            size_t hash = std::hash<std::wstring>{}(key.filepath);
-            auto hashCombine = [&hash](size_t value)
-                {
-                    hash ^= value + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-                };
-
-            hashCombine(static_cast<size_t>(key.opt.shader));
-            hashCombine(static_cast<size_t>(key.opt.blend));
-            hashCombine(static_cast<size_t>(key.opt.raster));
-            hashCombine(static_cast<size_t>(key.opt.depth));
-            return hash;
-        }
-    };
 
     size_t m_objectCount;
     UINT m_objectIDs;
@@ -55,7 +23,6 @@ private:
 
     std::unordered_map<UINT, Unit*> m_objMap;
     std::unordered_map<std::wstring, UINT> m_nameToID;
-    std::unordered_map<MeshCacheKey, std::unique_ptr<MeshNode>, MeshCacheKeyHash> m_meshCache;
 
     std::vector<UINT> m_pendingDestoryQ;
     std::vector<std::unique_ptr<Unit>> m_pendingCreateQ;

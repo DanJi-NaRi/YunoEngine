@@ -112,18 +112,20 @@ void CardConfirmPanel::UpdateCardSlot()
     const int size = m_setCardSlots.size();
 
     if (m_openSlot >= size) return;
+
     if (!m_setCardSlots[m_openSlot]->GetCard()) return; // 현재 슬롯이 비어있으면 넘김
 
-    m_setCardSlots[m_openSlot]->SetIsEnabled(false);
+    if (!m_dirChoice)
+    {
+        // 현재 슬롯이 비어있지 않으면
+        m_setCardSlots[m_openSlot]->SetIsEnabled(false);
+        m_dirChoice = true;
+        // 선택창 띄우기
 
-    const int next = m_openSlot + 1;
-    if (next >= size) {
-        m_openSlot = size;
-        return;
     }
-
-    m_openSlot = next;
-    m_setCardSlots[m_openSlot]->SetIsEnabled(true);
+    else {
+        
+    }
 }
 
 void CardConfirmPanel::ClearSlot() {
