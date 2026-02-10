@@ -30,6 +30,7 @@ public:
 
 protected:
     int m_cardID = -1;
+
 };
 
 
