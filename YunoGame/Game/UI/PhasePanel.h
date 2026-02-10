@@ -31,12 +31,12 @@ public:
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/white.png"); };    // 머테리얼 생성 (한 번만)
 
 protected:
-    int m_pID; // 플레이어 ID (Team)
+
     GameManager& m_gameManager;
     CardManager& m_cardManager;
     CardRangeManager& m_rangeManager;
     std::array<UnitHand, 2>& myHands;
     std::array<UnitHand, 2>& enemyHands;
-
+    int m_pID; // 플레이어 ID (Team)
 };
 

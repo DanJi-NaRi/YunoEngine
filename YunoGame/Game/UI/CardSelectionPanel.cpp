@@ -30,26 +30,6 @@ bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, Float2 si
 {
     PhasePanel::Create(name, id, sizePx, vPos, rotZ, vScale);
 
-    if (!m_pInput || !m_pRenderer || !m_pTextures)
-        return false;
-    m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
-    if (m_defaultMesh == 0)return false;
-    if (!CreateMaterial())
-        return false;
-
-    m_MeshNode = std::make_unique<MeshNode>();
-
-    auto mesh = std::make_unique<Mesh>();
-    mesh->Create(m_defaultMesh, m_defaultMaterial, vPos, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
-    m_MeshNode->m_Meshs.push_back(std::move(mesh));
-
-    {
-        m_constant.baseColor = XMFLOAT4(1, 1, 1, 1);
-        m_constant.roughRatio = 1.0f;
-        m_constant.metalRatio = 1.0f;
-        m_constant.shadowBias = 0.005f;
-    }
-
     m_anchor = UIDirection::LeftTop;
 
     Backup();
@@ -60,7 +40,6 @@ bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, Float2 si
 bool CardSelectionPanel::Start()
 {
     PhasePanel::Start();
-
 
     const auto& FirstCard = myHands[0].cards;
 
@@ -90,7 +69,8 @@ void CardSelectionPanel::CreateChild() {
     // 카드
     {
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1350, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
-        m_pCards.back()->ChangeTexture(L"../Assets/Test/unit0.png");
+        //m_pCards.back()->ChangeTexture(L"../Assets/Test/unit0.png");
+        m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/card_blaster_1");
         m_pCards.back()->SetCardID(1);
 
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-1050, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
