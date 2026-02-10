@@ -78,7 +78,7 @@ bool WeaponNameImage::Submit(float dTime)
 
 void WeaponNameImage::ChangeWeaponImage(int id)
 {
-    switch (id + 1) {
+    switch (id) {
     case (int)PieceType::Blaster:   ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_blaster.png"); break;
     case (int)PieceType::Chakram:   ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_chakram.png"); break;
     case (int)PieceType::Breacher:  ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/Inventory_breacher.png"); break;

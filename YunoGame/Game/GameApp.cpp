@@ -73,6 +73,7 @@ bool GameApp::OnInit()
 
 
 
+
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
 
