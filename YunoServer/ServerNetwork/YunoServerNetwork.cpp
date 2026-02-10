@@ -85,12 +85,18 @@ namespace yuno::server
 
                 if (m_roundController.GetRoundStarted())
                 {
-                    //  승자 결정
+                    // 나간 쪽
                     uint8_t loserPID = static_cast<uint8_t>(idx + 1);
                     uint8_t winnerPID = (loserPID == 1) ? 2 : 1;
+                    
+                    const int winnerSlot = (idx == 0) ? 1 : 0;
+                    uint32_t winnerSessionId =
+                        m_match.Slots()[winnerSlot].sessionId;
 
-                    // 게임 강제종료 호출
-                    m_roundController.EndGameByDisconnect(winnerPID);
+                    m_roundController.EndGameByDisconnect(
+                        winnerPID,
+                        winnerSessionId
+                    );
                 }
 
 
@@ -317,7 +323,11 @@ namespace yuno::server
                         g_battleState.roundEnded = true;
                         g_battleState.matchEnded = true;
 
-                        m_roundController.EndGameByDisconnect(winnerPID);
+                        const int winnerSlot = (idx == 0) ? 1 : 0;
+                        uint32_t winnerSessionId =
+                            m_match.Slots()[winnerSlot].sessionId;
+
+                        m_roundController.EndGameByDisconnect(winnerPID, winnerSessionId);
                     }
                 }
 
@@ -552,7 +562,7 @@ namespace yuno::server
             }
         ); //C2S_Emote Packet End
 
-        // C2S_Emote Packet Start
+        // C2S_Surrender Packet Start
         m_dispatcher.RegisterRaw(
             PacketType::C2S_Surrender,
             [this](const NetPeer& peer,
@@ -598,7 +608,7 @@ namespace yuno::server
 
                 m_roundController.EndRound();
             }
-        ); //C2S_Emote Packet End
+        ); //C2S_Surrender Packet End
     }
 }
 

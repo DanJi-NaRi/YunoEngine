@@ -6,6 +6,7 @@
     {
         Title = 0,      // 타이틀 화면
         EscScene,
+        ResultScene,
         Option,
         Guide,
         RequstEnter,    // 입장 요청

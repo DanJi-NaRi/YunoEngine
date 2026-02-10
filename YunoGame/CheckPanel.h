@@ -29,8 +29,6 @@ public:
     void Hide();
 
 private:
-    std::vector<Widget*> m_steps;
-
     Widget* m_bg;
 
     OptionButton* m_yesBtn;

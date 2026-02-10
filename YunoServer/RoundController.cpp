@@ -326,7 +326,7 @@ namespace yuno::server
 
     }
 
-    void RoundController::EndGameByDisconnect(uint8_t winnerPID)
+    void RoundController::EndGameByDisconnect(uint8_t winnerPID, uint32_t winnerSessionId)
     {
         std::cout << "[Round] Match ended by disconnect. winner="
             << int(winnerPID) << "\n";

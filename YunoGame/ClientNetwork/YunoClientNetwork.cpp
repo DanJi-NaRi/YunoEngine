@@ -561,11 +561,14 @@ namespace yuno::game
                     std::cout << "[Result] Player 2 WIN\n";
                 }   
                 else
+                {
+                    winnerPID = -1;
                     std::cout << "[Result] DRAW\n";
-
+                }
                 std::cout << "=============================\n";
 
                 GameManager::Get().SetWinnerPID(winnerPID);
+                GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
             }
         );// S2C_EndGame Packet End
 
@@ -681,6 +684,7 @@ namespace yuno::game
 
                 GameManager::Get().SetBattleOngoing(false);
                 GameManager::Get().SetWinnerPID(pkt.winnerPID);
+                GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
             }
         ); //S2C_EndGame_Disconnect Packet End
     }

@@ -373,6 +373,9 @@
     <ClCompile Include="ResultScene.cpp">
       <Filter>Scenes\8.Result</Filter>
     </ClCompile>
+    <ClCompile Include="ResultPanel.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -634,6 +637,9 @@
     </ClInclude>
     <ClInclude Include="ResultScene_inputContext.h">
       <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultPanel.h">
+      <Filter>Game\UI\Image\Panel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
