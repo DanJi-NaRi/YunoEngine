@@ -39,8 +39,8 @@ protected:
     //std::queue<Card*> m_setCards;                   // 세팅한 카드 // 슬롯 4개로 할 것 // m_setCardSlots[i]->GetCard;와 동일
     //std::vector<CardSlot*> m_setCardSlots;          // 카드 세팅할 슬롯 위젯
     std::vector<CardConfirmArea*> m_setCardSlots;          // 카드 세팅할 슬롯 위젯
-    CardConfirmButton* m_cardConfirmButton;         // 카드 컨펌(선택 완료) 버튼
-    CardCancelButton* m_cardCancelButton;           // 카드 캔슬(선택 초기화) 버튼
+    CardConfirmButton* m_cardConfirmButton;         //
+    CardCancelButton* m_cardCancelButton;           // 카드 캔슬(선택 초기화 카드 컨펌(선택 완료) 버튼) 버튼
     
     //std::unique_ptr<Minimap> m_miniMap;           // 미니맵 // 스폰 포지션 따로 받기?
 };

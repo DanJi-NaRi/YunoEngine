@@ -321,9 +321,9 @@ void GameManager::SetSceneState(CurrentSceneState state)
         //sm->RequestReplaceRoot(std::make_unique<CountdownScene>(), opt);
 
 
+
         SceneTransitionOptions opt;
         opt.immediate = true;
-
         sm->RequestPop(opt);
 
         ScenePolicy sp;
@@ -353,7 +353,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
 
-        //sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+        sm->RequestPush(std::make_unique<PhaseScene>(), sp);
 
         break;
     }
