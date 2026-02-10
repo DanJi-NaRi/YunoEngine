@@ -113,6 +113,9 @@ enum class WidgetClass : int {
     StaminaGauge,
     //이모지
     Emoji,
+
+    // 씬 PopButton
+    PopButton
     //////////////////////////////
 };
 
