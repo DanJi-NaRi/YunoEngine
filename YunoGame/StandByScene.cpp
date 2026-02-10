@@ -71,9 +71,9 @@ void StandByScene::Update(float dt)
 
     if (m_pStandByImage && sum >= 0.5f) 
     {
-        m_pStandByImage->GetTexturePath() == L"../Assets/UI/WEAPON_SELECT/waiting_2.png" ?
-            m_pStandByImage->ChangeTexture(L"../Assets/UI/WEAPON_SELECT/waiting_1.png") :
-            m_pStandByImage->ChangeTexture(L"../Assets/UI/WEAPON_SELECT/waiting_2.png");
+        m_pStandByImage->GetTexturePath() == L"../Assets/UI/WEAPON_SELECT/waiting_1.png" ?
+            m_pStandByImage->ChangeTexture(L"../Assets/UI/WEAPON_SELECT/waiting_2.png") :
+            m_pStandByImage->ChangeTexture(L"../Assets/UI/WEAPON_SELECT/waiting_1.png");
         sum = 0;
     }
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ

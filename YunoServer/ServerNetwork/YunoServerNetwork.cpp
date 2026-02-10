@@ -77,6 +77,22 @@ namespace yuno::server
 
                 const int idx = m_match.FindSlotBySessionId(sid);
 
+                std::cout << "[Server] Disconnected sid=" << sid
+                    << " ec=" << ec.message()
+                    << " -> slot cleared\n";
+
+
+                if (m_roundController.GetRoundStarted())
+                {
+                    //  승자 결정
+                    uint8_t loserPID = static_cast<uint8_t>(idx + 1);
+                    uint8_t winnerPID = (loserPID == 1) ? 2 : 1;
+
+                    // 게임 강제종료 호출
+                    m_roundController.EndGameByDisconnect(winnerPID);
+                }
+
+
                 if (idx >= 0)
                 {
                     const auto& slots = m_match.Slots();
@@ -101,20 +117,7 @@ namespace yuno::server
                 }
 
 
-                std::cout << "[Server] Disconnected sid=" << sid
-                    << " ec=" << ec.message()
-                    << " -> slot cleared\n";
 
-
-                if (m_roundController.GetRoundStarted())
-                {
-                    //  승자 결정
-                    uint8_t loserPID = static_cast<uint8_t>(idx + 1);
-                    uint8_t winnerPID = (loserPID == 1) ? 2 : 1;
-                    
-                    // 게임 강제종료 호출
-                    m_roundController.EndGameByDisconnect(winnerPID);
-                }
             });
     }
 
