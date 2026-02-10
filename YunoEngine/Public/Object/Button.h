@@ -68,7 +68,11 @@ public:
     void        SetUseHoverEvent(bool use) { m_useHoverEvent = use; }
     bool        IsUseHoverEvent() { return m_useHoverEvent; }
     
+    void        SetUseLMB(bool use) { m_useLMB = use; }
+    bool        IsUseLMB() { return m_useLMB; }
 
+    void        SetUseRMB(bool use) { m_useRMB = use; }
+    bool        IsUseRMB() { return m_useRMB; }
 
     void        Clear();
 protected:
@@ -81,6 +85,8 @@ protected:
     std::wstring m_PressedTexturePath = L"000000"; // 클릭했을 때, 바뀌는 텍스처 // 사용 안 함
     bool m_useHoverPath = false;
     bool m_useHoverEvent = true;
+    bool m_useLMB = true;
+    bool m_useRMB = true;
 
     std::function<void()> m_eventLMB = nullptr; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용
     std::function<void()> m_eventRMB = nullptr; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용

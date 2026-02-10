@@ -6,6 +6,7 @@
 #include "CardConfirmArea.h"
 #include "CardConfirmButton.h"
 #include "CardCancelButton.h"
+#include "Minimap.h"
 
 #include "BattlePackets.h"
 
@@ -27,6 +28,7 @@ CardConfirmPanel::~CardConfirmPanel()
 void CardConfirmPanel::Clear()
 {
     m_openSlot = 0;
+    m_pMinimap = nullptr;
 }
 
 
@@ -109,6 +111,7 @@ bool CardConfirmPanel::Submit(float dTime)
 
 void CardConfirmPanel::UpdateCardSlot()
 {
+    assert(m_pMinimap); // 미니맵 할당되어야 함
     const int size = m_setCardSlots.size();
 
     if (m_openSlot >= size) return;
@@ -121,10 +124,12 @@ void CardConfirmPanel::UpdateCardSlot()
         m_setCardSlots[m_openSlot]->SetIsEnabled(false);
         m_dirChoice = true;
         // 선택창 띄우기
-
+        m_pMinimap->StartDirChoce(m_setCardSlots[m_openSlot]->GetCard()->GetSlotID()); // 미니맵 클릭 활성화
     }
     else {
-        
+        if (!m_pMinimap->GetButtonLock()) { // 선택이 완료되면 ButtonLock이 풀릴 것임
+            //m_setCardSlots[m_openSlot]->SetDirection(Direction::);
+        }
     }
 }
 

@@ -6,6 +6,7 @@ class CardSlot;
 class CardConfirmButton;
 class CardCancelButton;
 class CardConfirmArea;
+class Minimap;
 
 class CardConfirmPanel : public PhasePanel
 {
@@ -32,6 +33,8 @@ public:
     void UpdateCardSlot();
     void ClearSlot();
 
+    // 나중에 View 만들어서 대체하기
+    void SetMinimap(Minimap* pMinimap) { m_pMinimap = pMinimap; }
 protected:
     int m_openSlot; // 드래그 앤 드랍이 가능한 현재 카드 슬롯 번호
     bool m_dirChoice = false; // 현재 Dir 선택중인지
@@ -42,6 +45,6 @@ protected:
     CardConfirmButton* m_cardConfirmButton;         // 카드 컨펌(선택 완료) 버튼
     CardCancelButton* m_cardCancelButton;           // 카드 캔슬(선택 초기화) 버튼
     
-    //std::unique_ptr<Minimap> m_miniMap;           // 미니맵 // 스폰 포지션 따로 받기?
+    Minimap* m_pMinimap = nullptr;                  // 미니맵 
 };
 

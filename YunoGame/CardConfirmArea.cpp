@@ -63,7 +63,7 @@ void CardConfirmArea::CleanSetup()
 
 bool CardConfirmArea::Event(float dTime)
 {
-    std::cout << "EVENT!!!" << std::endl;
+    //std::cout << "EVENT!!!" << std::endl;
     assert(m_snapPoint.pSnapOwner);
     m_pCard = dynamic_cast<Card*>(m_snapPoint.pSnapOwner);
 

@@ -193,7 +193,8 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
         else
         {
             // 남는 슬롯은 카드 뒷면으로 채움
-            m_pCards[i]->SetCardID(0); // 의미 없는 값이면 0 등으로 정리 (필요 없으면 제거)
+            m_pCards[i]->SetCardID(0);    // 아이디 등록
+            m_pCards[i]->SetSlotID(slot); // 슬롯 순번 등록
             m_pCards[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         }
     }

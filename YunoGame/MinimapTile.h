@@ -9,8 +9,9 @@ enum class TileTeamData : uint8_t {
 
 struct TileData {
     bool isPlayerTile; // 플레이어가 있는지
-    uint8_t teamID;
-    uint8_t unitID;
+    uint8_t teamID; // 어느 팀인지
+    uint8_t unitID; // 어느 유닛인지
+    uint8_t slotID; // 몇 번 슬롯 무기인지
      // 타일 아이디
 };
 class MinimapTile : public Button

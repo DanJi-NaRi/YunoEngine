@@ -17,6 +17,7 @@ Card::~Card()
 
 void Card::Clear()
 {
+    m_slotID = 0;
 }
 
 bool Card::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
