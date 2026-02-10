@@ -6,6 +6,71 @@
 #include "YunoCamera.h"
 #include "ObjectTypeRegistry.h"
 
+namespace
+{
+    struct SharedMeshCacheKey
+    {
+        std::wstring filepath;
+        PassOption opt;
+
+        bool operator==(const SharedMeshCacheKey& rhs) const
+        {
+            return filepath == rhs.filepath
+                && opt.shader == rhs.opt.shader
+                && opt.blend == rhs.opt.blend
+                && opt.raster == rhs.opt.raster
+                && opt.depth == rhs.opt.depth;
+        }
+    };
+
+    struct SharedMeshCacheKeyHash
+    {
+        size_t operator()(const SharedMeshCacheKey& key) const
+        {
+            size_t hash = std::hash<std::wstring>{}(key.filepath);
+            auto hashCombine = [&hash](size_t value)
+                {
+                    hash ^= value + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+                };
+
+            hashCombine(static_cast<size_t>(key.opt.shader));
+            hashCombine(static_cast<size_t>(key.opt.blend));
+            hashCombine(static_cast<size_t>(key.opt.raster));
+            hashCombine(static_cast<size_t>(key.opt.depth));
+            return hash;
+        }
+    };
+
+    class SharedMeshNodeCache
+    {
+    public:
+        std::unique_ptr<MeshNode> GetOrLoad(const std::wstring& filepath, PassOption opt)
+        {
+            SharedMeshCacheKey key{ filepath, opt };
+            auto it = m_meshCache.find(key);
+            if (it != m_meshCache.end())
+                return it->second->Clone();
+
+            auto loaded = Parser::Instance().LoadFile(filepath, opt);
+            if (!loaded)
+                return nullptr;
+
+            auto instance = loaded->Clone();
+            m_meshCache.emplace(std::move(key), std::move(loaded));
+            return instance;
+        }
+
+        static SharedMeshNodeCache& Instance()
+        {
+            static SharedMeshNodeCache instance;
+            return instance;
+        }
+
+    private:
+        std::unordered_map<SharedMeshCacheKey, std::unique_ptr<MeshNode>, SharedMeshCacheKeyHash> m_meshCache;
+    };
+}
+
 
 void ObjectManager::CreateObjectFromDesc(const UnitDesc& desc)
 {
@@ -377,18 +442,5 @@ void ObjectManager::FrameDataSubmit()
 
 std::unique_ptr<MeshNode> ObjectManager::CreateMeshNode(const std::wstring& filepath, PassOption opt)
 {
-    //return Parser::Instance().LoadFile(filepath, opt);
-
-    MeshCacheKey key{ filepath, opt };
-    auto it = m_meshCache.find(key);
-    if (it != m_meshCache.end())
-        return it->second->Clone();
-
-    auto loaded = Parser::Instance().LoadFile(filepath, opt);
-    if (!loaded)
-        return nullptr;
-
-    auto instance = loaded->Clone();
-    m_meshCache.emplace(std::move(key), std::move(loaded));
-    return instance;
+    return SharedMeshNodeCache::Instance().GetOrLoad(filepath, opt);
 }

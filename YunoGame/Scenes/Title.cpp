@@ -15,6 +15,7 @@
 // 여러 오브젝트들 ;; 
 #include "UIWidgets.h"
 #include "SpriteSheet.h"
+#include "Building.h"
 
 // 사용법
 // 컨트롤 + H 누르면 이름 변경 나옴
@@ -28,6 +29,11 @@ bool Title::OnCreateScene()
     auto iwindow = YunoEngine::GetWindow();
     float ClientW = static_cast<float>(iwindow->GetClientWidth());
     float ClientH = static_cast<float>(iwindow->GetClientHeight());
+
+    PassOption po;
+    po.shader = ShaderId::NoneShadowPBRBase;
+
+    auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
 
     const int baseXOffset = 100;
     const int baseYOffset = 200;   // 첫 버튼이 기준에서 얼마나 내려오는지
