@@ -25,6 +25,9 @@ bool DirSelectButton::Create(const std::wstring& name, uint32_t id, Float2 sizeP
 {
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
 
+
+    SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/direction_mouseout.png", L"../Assets/UI/PLAY/PhaseScene/direction_mouseover.png");
+
     m_bindkey = 0; // 0인 경우, 안쓴다는 뜻
 
     return true;

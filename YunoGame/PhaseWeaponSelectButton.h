@@ -29,12 +29,8 @@ public:
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Test/PhaseStaminaBar_Noting_mouseout.png"); }    // 머테리얼 생성 (한 번만)
 
-    void ChangeWeaponImage();
-
-    void SetPieceType(int type);
-    void SetPieceType(PieceType type);
+    void ChangeWeaponImage(int id);
 
 
 protected:
-    int m_weaponID;
 };

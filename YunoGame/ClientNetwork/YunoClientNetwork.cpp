@@ -269,6 +269,8 @@ namespace yuno::game
                 {
                     gm.SetWeaponData(u.PID, u.slotID, u.WeaponID, u.hp, u.stamina, u.SpawnTileId);
                 }
+                
+                gm.SetUpPanels(); // 패널 초기화
 
                 auto wVector = gm.GetWeaponData();
 

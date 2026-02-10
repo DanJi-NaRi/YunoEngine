@@ -1,15 +1,11 @@
 #pragma once
 #include "Image.h"
-
+#include "GameManager.h"
 
 class Card;
 class CardSlot;
 class CardManager;
 class CardRangeManager;
-
-struct UnitHand;
-struct BattleResult;
-struct ObstacleResult;
 
 class PhasePanel : public Image
 {
@@ -28,32 +24,20 @@ public:
 
     virtual void UpdatePanel(const BattleResult& battleResult) {}
     virtual void UpdatePanel(const ObstacleResult& obstacleResult) {}
-    void SetupPanel(const int& pID, UnitHand* hand0, UnitHand* hand1, const CardManager& cardManger, const CardRangeManager& rangeManger)
-    {
-        m_pID = &pID;
-        m_hands[0] = hand0;
-        m_hands[1] = hand1;
-        m_cardManager = &cardManger;
-        m_rangeManager = &rangeManger;
-        SetUpPanel();
-    }
 
     //void SetUserID(int* pID) { m_pID = pID; }
     //const int GetUserID() { return *m_pID; }
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/white.png"); };    // 머테리얼 생성 (한 번만)
-    
-    virtual void SetUpPanel() = 0;
-
-protected:
-    
 
 protected:
 
-
-    const int* m_pID = nullptr; // 플레이어 ID (Team)
-    std::array<const UnitHand*, 2> m_hands; // 본인 핸드
-    const CardManager* m_cardManager = nullptr;
-    const CardRangeManager* m_rangeManager = nullptr;
+    GameManager& m_gameManager;
+    CardManager& m_cardManager;
+    CardRangeManager& m_rangeManager;
+    std::vector<Wdata>& m_weapons;
+    std::array<UnitHand, 2>& m_myHands;
+    std::array<UnitHand, 2>& m_enemyHands;
+    int m_pID; // 플레이어 ID (Team)
 };
 

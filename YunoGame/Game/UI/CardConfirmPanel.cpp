@@ -136,10 +136,6 @@ void CardConfirmPanel::ClearSlot() {
     }
 }
 
-void CardConfirmPanel::SetUpPanel()
-{
-}
-
 void CardConfirmPanel::UpdatePanel(const BattleResult& battleResult)
 {
 }
