@@ -208,8 +208,10 @@ int YunoEngine::Run()
         //            //else DrawDebugRect_Client(cs->GetRect());
         //        }
         //
-        //        if (auto* cs = dynamic_cast<Button*>(kv.second))
+        //        if (auto* cs = dynamic_cast<Widget*>(kv.second))
         //            DrawDebugRect_Client(cs->GetRect());
+        //        //if (auto* cs = dynamic_cast<Image*>(kv.second))
+        //        //    DrawDebugRect_Client(cs->GetRect());
         //    }
         //}
     

@@ -51,6 +51,7 @@ private:
 
     // Volume
     std::array<Widget*, 3> m_volumePanels{ nullptr, nullptr, nullptr };
+    //std::array<Widget*, 1> m_volumePanels{ nullptr};
     Widget* m_volumeRoot = nullptr;
 
     // Credit

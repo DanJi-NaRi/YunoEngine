@@ -32,13 +32,13 @@ bool OptionScene::OnCreateScene()
 void OptionScene::CreateMainUI()
 {
     const float baseX = ((ClientW - 630) / 2) - 2;
-    const float baseY = ClientH / 2 - 80;
+    const float baseY = ClientH / 2 - 95;
 
     auto makePos = [&](int index)
         {
             return XMFLOAT3(
                 baseX,
-                baseY - 200.f + index * 100.f,
+                baseY - 200.f + index * 115,
                 0.f
             );
         };
@@ -95,16 +95,16 @@ void OptionScene::CreateMainUI()
 
 void OptionScene::CreateVolumeUI()
 {
-    const float centerX = ClientW / 2.f + 320;
-    const float centerY = ClientH / 2.f - 130;
+    const float centerX = ClientW / 2.f + 100.0f;
+    const float centerY = ClientH / 2.f - 145.0f;
 
-    constexpr float gapY = 110.f;   // 게이지 간 간격
+    constexpr float gapY = 115;   // 게이지 간 간격
     //TODO :: 위치 확인
     for (int i = 0; i < 3; ++i)
     {
         m_volumePanels[i] = CreateWidget<VolumePanel>(
             L"VolumePanel",
-            Float2(600, 200),
+            Float2(600, 80),
             XMFLOAT3(
                 centerX,
                 centerY + gapY - i * gapY,
@@ -118,7 +118,7 @@ void OptionScene::CreateVolumeUI()
     m_volumeRoot = CreateWidget<TextureImage>(//TODO :: 위치 확인
         L"CreditPanel",
         L"../Assets/UI/TITLE/option_volume.png",
-        XMFLOAT3(ClientW / 2, ClientH / 2 + 20, 0),
+        XMFLOAT3(ClientW / 2, ClientH / 2 , 0),
         UIDirection::Center
     );
     m_volumeRoot->SetVisible(Visibility::Visible);

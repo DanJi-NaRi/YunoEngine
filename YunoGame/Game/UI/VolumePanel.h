@@ -33,7 +33,7 @@ private:
 
     float stepW = 16.f;
     float stepH = 39.f;
-    float gap = 6.f;
+    float gap = 3.f;
 
     // 실제 한 칸 이동 거리
     float pitch = stepW/2 + gap;
