@@ -138,10 +138,11 @@ struct ObstacleSequence
     std::vector<uint8_t> warningTileIDs;            // 다음 턴 피격될 타일들
 };
 
+class EffectManager;
 class PlayGridSystem : public UnitGridSystem
 {
 public:
-    PlayGridSystem(ObjectManager* objmng);                   // 씬에서 objmanager 받기
+    PlayGridSystem(ObjectManager* objmng, EffectManager* effectmng);                   // 씬에서 objmanager 받기
     virtual ~PlayGridSystem();
 
     void CreateObject(float x, float y, float z) override;                      
@@ -157,6 +158,7 @@ private:
     void CheckMyQ();
     void CheckPacket(float dt);
     void CheckOver();
+    void ReflectWeaponData();
 
     void UpdateSequence(float dt);
     void UpdateAttackSequence(float dt);
@@ -270,4 +272,6 @@ private:
     // grid를 여러 개 운용한다면
     //std::unordered_map<NG_P, std::vector<TileState>> m_tiles;    // 타일 상태
     //std::unordered_map<NG_P, std::vector<uint32_t>> m_tilesIDs;  // 타일 오브젝트 아이디
+    private:
+        EffectManager* m_effectManager = nullptr;
 };

@@ -46,8 +46,8 @@ struct PieceInfo
 
     int whichGrid = 0;              // 가변. 그리드가 한 개일 때는 0 고정.
 
-    PieceInfo() : id(-1), dir(Direction::Same), team(Team::Undefined) {}
-    PieceInfo(uint32_t _id, Direction _dir,  Team _team) 
+    PieceInfo() : id(-1), dir(Direction::Same), team(Team::Undefined){}
+    PieceInfo(uint32_t _id, Direction _dir,  Team _team)
         : id(_id), team(_team)
     {
         dir = (_dir == Direction::Same) ? dir : _dir;

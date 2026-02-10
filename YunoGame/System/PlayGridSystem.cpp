@@ -4,8 +4,10 @@
 #include "PlayQueue.h"
 
 #include "ObjectManager.h"
+#include "EffectManager.h"
 #include "GameManager.h"
 
+#include "EffectUnit.h"
 #include "Grid.h"
 #include "UnitGridBox.h"
 #include "UnitGridLine.h"
@@ -17,7 +19,7 @@
 #include "PlayGridSystem.h"
 
 
-PlayGridSystem::PlayGridSystem(ObjectManager* objmng) : UnitGridSystem(objmng)
+PlayGridSystem::PlayGridSystem(ObjectManager* objmng, EffectManager* effectmng) : UnitGridSystem(objmng), m_effectManager(effectmng)
 {
     m_playQ = std::make_unique<PlayGridQ>();
 
@@ -90,6 +92,12 @@ void PlayGridSystem::InitRound()
                 TileOccupy{ TileOccuType::Ally_Occupied, (w.slotId == 1) ? TileWho::Ally1 : TileWho::Ally2 } :
                 TileOccupy{ TileOccuType::Enemy_Occupied, (w.slotId == 1) ? TileWho::Enemy1 : TileWho::Enemy2 };
         }
+
+        int usID = GetUnitID(w.pId, w.slotId);
+        m_UnitStates[usID] = {
+            (uint8_t)w.pId, (uint8_t)w.slotId, (uint8_t)w.hp,
+            (uint8_t)w.stamina, (uint8_t)w.currentTile, 0, (uint8_t)w.weaponId
+        };
     }  
     isRoundOver = false;
 }
@@ -163,7 +171,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         int usID = GetUnitID(w.pId, w.slotId);
         m_UnitStates[usID] = {
             (uint8_t)w.pId, (uint8_t)w.slotId, (uint8_t)w.hp,
-            (uint8_t)w.stamina, (uint8_t)w.currentTile, 0
+            (uint8_t)w.stamina, (uint8_t)w.currentTile, 0, (uint8_t)w.weaponId
         };
     }
 }
@@ -462,6 +470,8 @@ void PlayGridSystem::CheckPacket(float dt)
             isProcessing = false;
             m_currTime -= m_pktTime;
             std::cout << "Packet Time is Over\n";
+            // ui weapon data에 현 유닛 상태 반영
+            ReflectWeaponData();
             // 라운드 끝났는지 체크
             CheckOver();
         }
@@ -1298,6 +1308,23 @@ void PlayGridSystem::CheckOver()
         }
     }
     isRoundOver = true;
+}
+
+void PlayGridSystem::ReflectWeaponData()
+{
+    auto& mng = GameManager::Get();
+
+    std::array<Wdata, 4> datas;
+    for (int i = 0; i < m_UnitStates.size(); i++)
+    {
+        datas[i].pId = m_UnitStates[i].pId;
+        datas[i].slotId = m_UnitStates[i].slotId;
+        datas[i].weaponId = m_UnitStates[i].weaponId;
+        datas[i].hp = m_UnitStates[i].hp;
+        datas[i].stamina = m_UnitStates[i].stamina;
+        datas[i].currentTile = m_UnitStates[i].targetTileID;
+    }
+    mng.SetUIWeaponData(datas);
 }
 
 void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
