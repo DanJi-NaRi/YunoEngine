@@ -35,6 +35,9 @@ bool CountdownImage::ChangeMaterial(int num)
     case 1:
         texturePath = L"../Assets/UI/WEAPON_SELECT/1.png";
         break;
+    case 0:
+        texturePath = L"../Assets/UI/WEAPON_SELECT/4_V.png";
+        break;
     default:
         return false;
     }

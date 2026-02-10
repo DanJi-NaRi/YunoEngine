@@ -68,6 +68,9 @@ public:
 
     void SetSlotIdx(int idx) { m_PID = idx; };
     int GetSlotiIdx() { return m_PID; };
+    void SetMatchPlayerCount(int count) { m_matchPlayerCount = count; }
+    int GetMatchPlayerCount() const { return m_matchPlayerCount; }
+    bool HasOpponentInMatchRoom() const { return m_matchPlayerCount >= 2; }
 
     void SetMyPick(int index, PieceType type);
     void ResetMyPicks();
@@ -76,6 +79,8 @@ public:
 
     bool ToggleReady();
     bool IsReady() const { return m_isReady; }
+    void SetReadyStates(bool p1Ready, bool p2Ready);
+    bool IsOpponentReady() const;
 
     void SubmitTurn(const std::vector<CardPlayCommand>& runtimeIDs);
 
@@ -141,8 +146,11 @@ private:
 
 
     int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽
+    int m_matchPlayerCount = 0;
 
     bool m_isReady = false;
+    bool m_p1Ready = false;
+    bool m_p2Ready = false;
 
     UnitHand m_myHands[2];                                                             //UI 카드 선택용
     UnitHand m_enemyHands[2];                                                       //UI 보여주기용
