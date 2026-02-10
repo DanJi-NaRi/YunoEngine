@@ -105,6 +105,8 @@ bool Unit::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3
 
 bool Unit::Update(float dTime)
 {
+    if (!Enable) return true;
+
     XMMATRIX mScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
     XMMATRIX mRot = XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
     XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z);
@@ -126,6 +128,8 @@ bool Unit::Update(float dTime)
 
 bool Unit::Submit(float dTime)
 {
+    if (!Enable) return true;
+
     if (!m_MeshNode) return true;
     m_MeshNode->Submit(m_mWorld, m_vPos);
 
