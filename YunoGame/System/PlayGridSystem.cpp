@@ -685,7 +685,16 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         {
             int id = tiles[i];
             auto pTile = static_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[id]));
-            pTile->SetFlashColor(as.m_tileEffectColor, as.m_flashCount, as.m_flashInterval);
+
+            Effect* eff;
+            if(as.attacker == GamePiece::Ally1 || as.attacker == GamePiece::Ally2)
+                eff = m_effectManager->Spawn(EffectID::Target, { 0, 0.01, 0 }, { 1, 1, 1 });
+            else
+                eff = m_effectManager->Spawn(EffectID::TargetEnemy, { 0, 0.01, 0 }, { 1, 1, 1 });
+
+            if(eff)
+                pTile->Attach(eff);
+            //pTile->SetFlashColor(as.m_tileEffectColor, as.m_flashCount, as.m_flashInterval);
         }
 
         // 기물 피격 애니메이션 시작
