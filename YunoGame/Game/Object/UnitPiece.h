@@ -4,7 +4,7 @@
 
 class EffectManager;
 
-enum class PieceAnim : uint8_t
+enum class PieceAnim : uint16_t
 {
     None = 0,
     Idle = 1 << 1,
@@ -15,9 +15,15 @@ enum class PieceAnim : uint8_t
     Attack = 1 << 6,
     Dissolve = 1 << 7,
     Flash = 1 << 8,
-    Dead = 1 << 9
+    Hit = 1 << 9,
+    Dead = 1 << 10,
+    DeadQueued = 1 << 11
 };
 bool HasThis_Anim(PieceAnim a, PieceAnim b);
+bool EqualThis_Anim(PieceAnim a, PieceAnim b);
+PieceAnim operator|(PieceAnim lhs, PieceAnim rhs);
+PieceAnim operator&(PieceAnim lhs, PieceAnim rhs);
+PieceAnim operator~(PieceAnim v);
 
 class UnitPiece : public AnimTest
 {
@@ -77,6 +83,12 @@ private:
     float QuadraticGraph(float x);
     float linearGraph(float x);
 
+    bool HasAnimState(PieceAnim state) const;
+    bool EqualAnimState(PieceAnim state) const;
+    void AddAnimState(PieceAnim state);
+    void RemoveAnimState(PieceAnim state);
+    void SetAnimState(PieceAnim state, bool enabled);
+
     void ClearQ();
 
 private:
@@ -87,20 +99,15 @@ private:
     float m_linearSlope = 0.f;
 
     // 디졸브
-    bool isDissolving = false;
     float m_dissolveTime = 0.f;
     float m_dissolveDuration = 0.f;
     float m_startDissolveAmount = 0.f;
 
     // 공격
-    bool isAttacking = false;
-    bool isRollingBack = false;
-    bool isRolling = false;
     float m_rollTime = 0.f;
     float m_rollorbackSpeed = 4.f;
 
     // 피격
-    bool isHitting = false;
 
     // 반짝
     Float4 m_vtmpColor{ 1, 1, 1, 1 };
@@ -108,7 +115,6 @@ private:
     float m_flashTime = 0;
     float m_blinkTime = 0.5f;
     int m_count = 0;
-    bool isFlashing = false;
 
     // 이동
     float m_moveOffset = -0.5f;
@@ -119,7 +125,6 @@ private:
     float m_speed = 10;
     float m_fixSpeed = 1;
     float m_moveTime = 0.f;
-    bool isMoving = false;
 
     // 회전
     float m_rotOffset = XMConvertToRadians(30.f);
@@ -130,12 +135,9 @@ private:
     float m_yaw = atan2(0, 1);
     float m_startYaw = 0;
     float m_targetYaw = 0;
-    bool isRotating = false;
     bool ignoreRot = false;
 
     // 죽음 체크
-    bool isDead = false;
-    bool isDeadQueued = false;
 
     // 본인 기물 정보
     GamePiece m_who = GamePiece::None;
