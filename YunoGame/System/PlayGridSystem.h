@@ -219,13 +219,17 @@ private:
     float buffDuration = 2.f;       // 버프
     float attackDuration = 3.f;     // 공격
 
+        // 공격
     int tileFlashCount = 3;
     float tileFlashInterval = 0.3f;
     float tileFlashDuration = tileFlashCount * tileFlashInterval;
-
+    float attackRotDuration = 0.25f;
+    float offsetDuration = 0.25f;
     float hitDuration = tileFlashDuration;    // 미정. 현재 tileFlashDuration과 동일.
+    float chakramAttackAnimDuration = 2.54f;  // ..ㅎㅎ
 
     float attackAndMoveDuration = attackDuration + tileFlashDuration + hitDuration;
+
 
         // 장애물
     int warnFlashCount = 5;
@@ -262,6 +266,7 @@ private:
     // 패킷 관련 변수
     int m_pID = 0;
     std::array<UnitState, 4> m_UnitStates;
+    std::array<uint8_t, 4> m_weaponIDs;
     ObstacleTile m_obstacleTile;            // 장애물 '발동' 타일 정보
 
     bool isRoundOver = false;

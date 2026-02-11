@@ -18,6 +18,11 @@ struct YunoTransform
     }
 };
 
+struct XMMATRIX3
+{
+    XMMATRIX x = XMMatrixIdentity(), y = XMMatrixIdentity(), z = XMMatrixIdentity();
+};
+
 struct Float2;
 struct Float3;
 struct Float4;
@@ -25,6 +30,8 @@ struct Float4;
 struct Int2;
 struct Int3;
 struct Int4;
+
+struct Bool3;
 
 struct Float2
 {
@@ -274,6 +281,11 @@ struct Int3
 struct Int4
 {
     int x, y, z, w;
+};
+
+struct Bool3
+{
+    bool x = false, y = false, z = false;
 };
 
 inline constexpr Float2 Clamp(Float2 v) noexcept {

@@ -117,24 +117,6 @@ bool PlayScene::OnCreateScene()
 void PlayScene::RegisterEffect()
 {
     EffectDesc ed{};
-    ed.id = EffectID::PeacePosAlly;
-    ed.shaderid = ShaderId::EffectBase;
-    ed.billboard = BillboardMode::None;
-    ed.lifetime = 1.5f;
-    ed.framecount = 60;
-    ed.cols = 8;
-    ed.rows = 8;
-    ed.emissive = 30.0f;
-    ed.color = { 0, 0, 1, 1 };
-    ed.rot = { XM_PIDIV2, 0, 0 };
-    ed.isLoop = true;
-    ed.texPath = L"../Assets/Effects/Pos/EF_Player_Blue.png";
-    m_effectManager->RegisterEffect(ed);
-
-    ed.id = EffectID::PeacePosEnemy;
-    ed.color = { 1, 0, 0, 1 };
-    ed.texPath = L"../Assets/Effects/Pos/EF_Player_Red.png";
-    m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::Razer;
     ed.shaderid = ShaderId::EffectBase;
@@ -161,6 +143,9 @@ void PlayScene::RegisterEffect()
     ed.color = { 0, 0.5f, 1, 1 };
     ed.rot = { 0, -XM_PIDIV2, -XM_PIDIV2 };
     m_effectManager->RegisterEffect(ed);
+    ed.id = EffectID::BlasterAttackEnemy;
+    ed.color = { 1, 0, 0, 1 };
+    m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::AxAttack;
     ed.lifetime = 0.4f;
@@ -170,8 +155,11 @@ void PlayScene::RegisterEffect()
     ed.billboard = BillboardMode::None;
     ed.texPath = L"../Assets/Effects/Ax/EF_LongSword.png";
     ed.emissive = 50.0f;
-    ed.color = { 1, 0, 0, 1 };
+    ed.color = { 0, 1, 1, 1 };
     ed.rot = { XM_PIDIV2, 0, 0 };
+    m_effectManager->RegisterEffect(ed);
+    ed.id = EffectID::AxAttackEnemy;
+    ed.color = { 1, 0, 0, 1 };
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::AxAttack2;
@@ -182,8 +170,11 @@ void PlayScene::RegisterEffect()
     ed.billboard = BillboardMode::None;
     ed.texPath = L"../Assets/Effects/Ax/EF_Fragment.png";
     ed.emissive = 50.0f;
-    ed.color = { 1, 0, 0, 1 };
+    ed.color = { 0, 1, 1, 1 };
     ed.rot = { 0, XM_PIDIV2, 0 };
+    m_effectManager->RegisterEffect(ed);
+    ed.id = EffectID::AxAttackEnemy2;
+    ed.color = { 1, 0, 0, 1 };
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::DrillAttack1;
@@ -193,8 +184,11 @@ void PlayScene::RegisterEffect()
     ed.rows = 5;
     ed.billboard = BillboardMode::None;
     ed.rot = { 0, -XM_PIDIV2, -XM_PIDIV2 };
-    //ed.rot = { 0, 0, 0 };
+    ed.color = { 0, 1, 1, 1 };
     ed.texPath = L"../Assets/Effects/Drill/EF_Drill.png";
+    m_effectManager->RegisterEffect(ed);
+    ed.id = EffectID::DrillAttackEnemy1;
+    ed.color = { 1, 0, 0, 1 };
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::Buff;
@@ -217,7 +211,7 @@ void PlayScene::RegisterEffect()
     ed.billboard = BillboardMode::ScreenAligned;
     ed.rot = { 0, 0, 0 };
     ed.emissive = 10.0f;
-    ed.color = { 1, 0, 0, 1 };
+    ed.color = { 1, 0.5f, 0, 1 };
     ed.texPath = L"../Assets/Effects/Hit/EF_Hits.png";
     m_effectManager->RegisterEffect(ed);
 
@@ -232,41 +226,100 @@ void PlayScene::RegisterEffect()
     ed.color = { 0, 0, 1, 1 };
     ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
     m_effectManager->RegisterEffect(ed);
-
-    ed.id = EffectID::Target;
-    ed.framecount = 30;
-    ed.lifetime = 1.2f;
-    ed.cols = 6;
-    ed.rows = 5;
-    ed.billboard = BillboardMode::None;
-    ed.rot = { XM_PIDIV2, 0, 0 };
-    ed.emissive = 30.0f;
-    ed.color = { 0, 0, 1, 1 };
-    ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
+    ed.id = EffectID::TargetEnemy;
+    ed.color = { 1, 0, 0, 1 };
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::ScytheAttack;
     ed.framecount = 18;
-    ed.lifetime = 0.8f;
+    ed.lifetime = 0.4f;
     ed.cols = 3;
     ed.rows = 6;
     ed.billboard = BillboardMode::None;
     ed.rot = { 0, XM_PIDIV2, XMConvertToRadians(275) };
     ed.emissive = 30.0f;
-    ed.color = { 1, 0, 0, 1 };
+    ed.color = { 0, 1, 1, 1 };
     ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_1.png";
+    m_effectManager->RegisterEffect(ed);
+    ed.id = EffectID::ScytheAttackEnemy;
+    ed.color = { 1, 0, 0, 1 };
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::ScytheAttack2;
     ed.framecount = 30;
-    ed.lifetime = 0.8f;
+    ed.lifetime = 0.4f;
     ed.cols = 5;
     ed.rows = 6;
     ed.billboard = BillboardMode::None;
     ed.rot = { 0, XM_PIDIV2, -XMConvertToRadians(275) };
     ed.emissive = 30.0f;
-    ed.color = { 1, 0, 0, 1 };
+    ed.color = { 0, 1, 1, 1 };
     ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_2.png";
+    m_effectManager->RegisterEffect(ed);
+    ed.id = EffectID::ScytheAttackEnemy2;
+    ed.color = { 1, 0, 0, 1 };
+    m_effectManager->RegisterEffect(ed);
+
+    //1번 차크람
+    ed.id = EffectID::ChakramAttack01_1;
+    ed.framecount = 18;
+    ed.lifetime = 0.4f;
+    ed.cols = 3;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { -XM_PIDIV2, XMConvertToRadians(120), XMConvertToRadians(40) };
+    ed.emissive = 30.0f;
+    ed.color = { 0, 1, 1, 1 };
+    ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_1.png";
+    m_effectManager->RegisterEffect(ed);
+    ed.id = EffectID::ChakramAttackEnemy01_1;
+    ed.color = { 1, 0, 0, 1 };
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::ChakramAttack01_2;
+    ed.framecount = 30;
+    ed.lifetime = 0.4f;
+    ed.cols = 5;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { XM_PIDIV2, XMConvertToRadians(120), XMConvertToRadians(150) };
+    ed.emissive = 30.0f;
+    ed.color = { 0, 1, 1, 1 };
+    ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_2.png";
+    m_effectManager->RegisterEffect(ed);
+    ed.id = EffectID::ChakramAttackEnemy01_2;
+    ed.color = { 1, 0, 0, 1 };
+    m_effectManager->RegisterEffect(ed);
+
+    //2번 차크람
+    ed.id = EffectID::ChakramAttack02_1;
+    ed.framecount = 18;
+    ed.lifetime = 0.4f;
+    ed.cols = 3;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { XM_PIDIV2, XMConvertToRadians(120), XMConvertToRadians(70) };
+    ed.emissive = 30.0f;
+    ed.color = { 0, 1, 1, 1 };
+    ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_1.png";
+    m_effectManager->RegisterEffect(ed);
+    ed.id = EffectID::ChakramAttackEnemy02_1;
+    ed.color = { 1, 0, 0, 1 };
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::ChakramAttack02_2;
+    ed.framecount = 30;
+    ed.lifetime = 0.4f;
+    ed.cols = 5;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { -XM_PIDIV2, XMConvertToRadians(120), XMConvertToRadians(110) };
+    ed.emissive = 30.0f;
+    ed.color = { 0, 1, 1, 1 };
+    ed.texPath = L"../Assets/Effects/Scythe/EF_Scythe_2.png";
+    m_effectManager->RegisterEffect(ed);
+    ed.id = EffectID::ChakramAttackEnemy02_2;
+    ed.color = { 1, 0, 0, 1 };
     m_effectManager->RegisterEffect(ed);
 }
 
