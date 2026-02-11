@@ -636,7 +636,7 @@ namespace yuno::server
                     m_runtime.RemoveCard(card.runtimeId);
                 };
 
-        auto applyCard = [&](const ResolvedCard& card)
+        auto applyCard = [&](const ResolvedCard& card, bool coinTossUsed)
             {
 				static int count = 0;
 
@@ -857,6 +857,7 @@ namespace yuno::server
                 pkt.dir = static_cast<uint8_t>(card.dir);
                 pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
                 pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
+                pkt.isCoinTossUsed = coinTossUsed ? 1 : 0;
                 pkt.actionTime = 3000;
                 if (cardData.m_type == CardType::Utility)
                 {
@@ -900,7 +901,7 @@ namespace yuno::server
 
         for (size_t i = 0; i < maxCount; ++i)
         {
-            bool coinTossUsed = false;
+            bool coinTossUsed = false;          //  코인 토스가 발생했는가
             bool aFirst = IsALess(slotCards[0][i], slotCards[1][i], coinTossUsed);
 
             if (coinTossUsed)
@@ -912,15 +913,15 @@ namespace yuno::server
 
             if (aFirst)
             {
-                applyCard(slotCards[0][i]);
+                applyCard(slotCards[0][i], coinTossUsed);
                 if (g_battleState.roundEnded) break;
-                applyCard(slotCards[1][i]);
+                applyCard(slotCards[1][i], false);
             }
             else
             {
-                applyCard(slotCards[1][i]);
+                applyCard(slotCards[1][i], coinTossUsed);
                 if (g_battleState.roundEnded) break;
-                applyCard(slotCards[0][i]);
+                applyCard(slotCards[0][i], false);
             }
 
             if (g_battleState.roundEnded)

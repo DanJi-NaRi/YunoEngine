@@ -250,6 +250,7 @@ namespace yuno::game
                         pkt.slot2_UnitId1, pkt.slot2_UnitId2
                     );
                 }
+                GameManager::Get().ResetRound();
 
             });// CountDown Packet End
         

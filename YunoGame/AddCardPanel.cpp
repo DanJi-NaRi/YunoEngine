@@ -138,7 +138,7 @@ void AddCardPanel::Hide()
 
 bool AddCardPanel::Update(float dt)
 {
-    return Widget::Update(dt);
+
     if (m_locked)
     {
         m_closeTimer += dt;
@@ -152,5 +152,6 @@ bool AddCardPanel::Update(float dt)
             m_selectedIndex = -1;
         }
     }
+    return Widget::Update(dt);
 }
 
