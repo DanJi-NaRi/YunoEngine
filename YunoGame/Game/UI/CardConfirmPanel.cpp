@@ -216,11 +216,11 @@ bool CardConfirmPanel::IsCardAlreadyQueuedInSlots(uint32_t runtimeID, const Card
         if (!queuedSlot || queuedSlot == ignoreSlot)
             continue;
 
-        Card* queuedCard = queuedSlot->GetCard();
-        if (!queuedCard)
+        const int queuedRuntimeID = queuedSlot->GetRuntimeCardID();
+        if (queuedRuntimeID <= 0)
             continue;
 
-        if (static_cast<uint32_t>(queuedCard->GetCardID()) == runtimeID)
+        if (static_cast<uint32_t>(queuedRuntimeID) == runtimeID)
             return true;
     }
 
@@ -274,10 +274,11 @@ void CardConfirmPanel::SubmitCurrentSelection()
     }
 
 
-    if (selectedCard->GetCardID() == 0)
+    const int selectedRuntimeIDRaw = slot->GetRuntimeCardID();
+    if (selectedRuntimeIDRaw <= 0)
         return;
 
-    const auto selectedRuntimeID = static_cast<uint32_t>(selectedCard->GetCardID());
+    const auto selectedRuntimeID = static_cast<uint32_t>(selectedRuntimeIDRaw);
 
     if (selectedRuntimeID == 0)
         return;
@@ -292,7 +293,7 @@ void CardConfirmPanel::SubmitCurrentSelection()
     }
 
 
-    const int selectedSlot = (selectedCard->GetSlotID() >= 0) ? selectedCard->GetSlotID() : m_pSelectionPanel->GetCurrentSlot();
+    const int selectedSlot = (slot->GetCardSlotID() >= 0) ? slot->GetCardSlotID() : m_pSelectionPanel->GetCurrentSlot();
 
 
     if (!HasEnoughStaminaForCard(selectedSlot, selectedRuntimeID))
@@ -341,8 +342,8 @@ bool CardConfirmPanel::BuildCardQueueFromSlots()
             return false;
         }
 
-        Card* card = slot->GetCard();
-        if (!card)
+        const int runtimeID = slot->GetRuntimeCardID();
+        if (runtimeID <= 0)
         {
             m_gameManager.ClearCardQueue();
             return false;
@@ -356,7 +357,7 @@ bool CardConfirmPanel::BuildCardQueueFromSlots()
         }
 
         CardPlayCommand cmd;
-        cmd.runtimeID = static_cast<uint32_t>(card->GetCardID());
+        cmd.runtimeID = static_cast<uint32_t>(runtimeID);
         cmd.dir = dir;
 
         if (!m_gameManager.PushCardCommand(cmd))
