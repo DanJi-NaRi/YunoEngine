@@ -46,6 +46,8 @@ public:
 
     void BindCardConfirmPanel(CardConfirmPanel* confirmPanel) { m_pConfirmPanel = confirmPanel; };
 
+    void PaintTile(std::array<MinimapTile*, 2>& myTiles); // 팀 기준의 타일 배열을 넣으면 됨
+
     bool GetButtonLock() { return m_buttonLock; } // SetButtonLock
     int GetTileID(int cx, int cy) const;
     int GetTileID(Int2 tileXY) const;

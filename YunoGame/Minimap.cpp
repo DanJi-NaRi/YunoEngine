@@ -119,9 +119,8 @@ void Minimap::Simulate()
     for (const auto& slot : slots) {
         if (!slot->GetCard()) continue;
         if (slot->GetDirection() == Direction::None) continue;
-
-        const auto cardID = slot->GetCard()->GetID();
-        const auto slotID = slot->GetCard()->GetSlotID();
+        const auto cardID = m_gameManager.GetCardDataID(slot->GetRuntimeCardID());
+        const auto slotID = slot->GetCardSlotID();
         const auto* moveData = m_cardManager.GetMoveData(cardID);
         if (!moveData) continue;
 
@@ -159,24 +158,7 @@ void Minimap::Simulate()
     m_pMyTile[0]->ChangeTexture(g_tilePath_None);  // 타일 제자리 비우기
     m_pMyTile[1]->ChangeTexture(g_tilePath_None);  // 타일 제자리 비우기
 
-    auto PaintTile = [&](int slotId, std::wstring colorPath) {
-        for (auto& enemyTile : m_pEnemyTile) { // 적과 겹치는지 검사
-            if (slotId == enemyTile->GetTileId()) {
-                colorPath = g_tilePath_Purple; // 겹치면 보라색
-            }
-        }
-        simulateTile[slotId]->ChangeTexture(colorPath);
-    };
-
-    if (m_pID == 1) { // 1팀이라면
-        PaintTile(0, g_tilePath_Red);
-        PaintTile(1, g_tilePath_Red);
-    }
-    else if (m_pID == 2) { // 2팀이라면
-        PaintTile(0, g_tilePath_Blue);
-        PaintTile(1, g_tilePath_Blue);
-    }
-
+    PaintTile(simulateTile);
 }
 
 //void Minimap::CreateGridLine(float x, float y, float z)
@@ -198,6 +180,7 @@ void Minimap::SetupPanel() {
             tileData.slotID = myWeapon.slotId;
 
             m_pMyTile[myWeapon.slotId - 1] = tile;
+            
         }
     }
 
@@ -212,6 +195,8 @@ void Minimap::SetupPanel() {
             m_pEnemyTile[enemyWeapon.slotId - 1] = tile;
         }
     }
+
+    PaintTile(m_pMyTile);
 }
 
 void Minimap::UpdatePanel(const BattleResult& battleResult) {
@@ -228,6 +213,7 @@ void Minimap::UpdatePanel(const BattleResult& battleResult) {
             else m_pEnemyTile[info->slotId - 1] = tile;
         }
     }
+    //PaintMyTile(m_pMyTile);
 }
 
 void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
@@ -243,6 +229,7 @@ void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
             else m_pEnemyTile[pieceInfo.slotId - 1] = tile;
         }
     }
+    //PaintMyTile(m_pMyTile);
 }
 
 /*
@@ -427,10 +414,44 @@ void Minimap::DefaultSetAllTile()
     for (auto& tile : m_pTiles) {
         tile->DefaultMinimapSetup();
     }
+    PaintTile(m_pMyTile);
 }
 
 
 /////////////////////////////
+
+void Minimap::PaintTile(std::array<MinimapTile*, 2>& myTiles)
+{
+    std::wstring teamPath;
+    std::wstring enemyPath;
+    // 색상 선택
+    switch (GetTeamData())
+    {
+    case TeamData::Red:  teamPath = g_tilePath_Red; enemyPath = g_tilePath_Blue; break;
+    case TeamData::Blue: teamPath = g_tilePath_Blue; enemyPath = g_tilePath_Red; break;
+    default: assert(false); teamPath = g_tilePath_None; break;
+    }
+
+    // 적 타일 먼저 채색
+    for (MinimapTile* enemyTile : m_pEnemyTile)
+    {
+        if (!enemyTile) continue;
+        enemyTile->ChangeTexture(enemyPath);
+    }
+
+    // 팀 타일 채색 (겹치면 보라색 체크)
+    for (MinimapTile* myTile : myTiles) {
+        std::wstring path = teamPath;
+        const int myId = myTile->GetTileId();
+
+        for (auto& enemyTile : m_pEnemyTile) {
+            if (myId == enemyTile->GetTileId()) {
+                path = g_tilePath_Purple; break;
+            }
+        }
+        myTile->ChangeTexture(path);
+    }
+}
 
 int Minimap::GetTileID(int cx, int cy) const
 {

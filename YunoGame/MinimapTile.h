@@ -6,12 +6,6 @@ const std::wstring g_tilePath_Red = L"../Assets/UI/PLAY/PhaseScene/map_cube_red.
 const std::wstring g_tilePath_Blue = L"../Assets/UI/PLAY/PhaseScene/map_cube_blue.png";
 const std::wstring g_tilePath_Purple = L"../Assets/UI/PLAY/PhaseScene/map_cube_purple.png";
 
-enum class TileTeamData : uint8_t {
-    Default,
-    Red,  // Team1
-    Blue, // Team2
-};
-
 struct TileData {
     bool isPlayerTile; // 플레이어가 있는지
     uint8_t teamID; // 어느 팀인지

@@ -4,6 +4,8 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 
+#include "PhasePanel.h"
+
 MinimapTile::MinimapTile(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
     Clear(); // Clear 추가는 기본적으로!!
@@ -21,7 +23,7 @@ void MinimapTile::Clear()
 void MinimapTile::ClearTileData()
 {
     m_data.isPlayerTile = false;
-    m_data.teamID = (uint8_t)TileTeamData::Default;
+    m_data.teamID = (uint8_t)TeamData::Default;
     m_data.unitID = 0;
 }
 
@@ -39,16 +41,6 @@ void MinimapTile::CreateChild()
 }
 
 bool MinimapTile::Update(float dTime) {
-
-    if (!IsUseLMB()) {
-        switch ((TileTeamData)m_data.teamID) {
-        default:
-        case TileTeamData::Default: ChangeTexture(g_tilePath_None); break;
-        case TileTeamData::Red: ChangeTexture(g_tilePath_Red); break;
-        case TileTeamData::Blue: ChangeTexture(g_tilePath_Blue); break;
-        }
-    }
-
 
     Button::Update(dTime);
 
