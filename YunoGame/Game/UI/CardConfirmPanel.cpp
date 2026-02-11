@@ -89,7 +89,11 @@ void CardConfirmPanel::CreateChild() {
     m_setCardSlots.back()->SetIsEnabled(false);
 
     m_cardConfirmButton = m_uiFactory.CreateChild<CardConfirmButton>(m_name + L"_CardConfirmButton", Float2(367, 69), XMFLOAT3(0, -100, 0), UIDirection::LeftTop, this);
-    
+    m_cardConfirmButton->SetEventLMB([this]() { 
+        // 함수 추가하기
+        if (this->m_confirmReady) { std::cout << "confirm!!" << std::endl; }
+        else { std::cout << "cant confirm!!" << std::endl; }
+        }); 
     m_cardCancelButton = m_uiFactory.CreateChild<CardCancelButton>(m_name + L"_CardCancelButton", Float2(367, 69), XMFLOAT3(700, -100, 0), UIDirection::LeftTop, this);
     m_cardCancelButton->SetEventLMB([this]() { this->ClearSlot(); });
 
@@ -127,8 +131,28 @@ void CardConfirmPanel::UpdateCardSlot()
         m_pMinimap->StartDirChoice(m_setCardSlots[m_openSlot]); // 미니맵 클릭 활성화
     }
     else {
-        if (!m_pMinimap->GetButtonLock()) { // 선택이 완료되면 ButtonLock이 풀릴 것임
-            //m_setCardSlots[m_openSlot]->SetDirection(Direction::);
+        if (m_setCardSlots[m_openSlot]->GetDirection() != Direction::None) { // 선택이 완료되면 Dir이 바뀔것임
+
+            //디버깅 코드
+            switch (m_setCardSlots[m_openSlot]->GetDirection())
+            {
+            case Direction::Left:  std::cout << "Left selected" << std::endl;  break;
+            case Direction::Right: std::cout << "Right selected" << std::endl; break;
+            case Direction::Up:    std::cout << "Up selected" << std::endl;    break;
+            case Direction::Down:  std::cout << "Down selected" << std::endl;  break;
+            }
+
+
+            // 방향 선택 되면
+            const int next = m_openSlot + 1;
+            if (next >= size) { // 마지막까지 도달
+                m_openSlot = size;
+                m_confirmReady = true;
+                return;
+            }
+            m_openSlot = next;
+            m_setCardSlots[m_openSlot]->SetIsEnabled(true);
+            m_dirChoice = false; // dirChoice 상태 초기화
         }
     }
 }
@@ -141,6 +165,7 @@ void CardConfirmPanel::ClearSlot() {
         m_setCardSlots[i]->SetIsEnabled(false);
         m_setCardSlots[i]->CleanSetup();
     }
+    m_confirmReady = false; // 컨펌 준비 취소
 }
 
 void CardConfirmPanel::UpdatePanel(const BattleResult& battleResult)

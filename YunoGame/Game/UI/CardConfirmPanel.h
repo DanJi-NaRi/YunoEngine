@@ -37,6 +37,7 @@ public:
     void SetMinimap(Minimap* pMinimap) { m_pMinimap = pMinimap; }
 protected:
     int m_openSlot; // 드래그 앤 드랍이 가능한 현재 카드 슬롯 번호
+    int m_confirmReady; // 모든 슬롯에 바인딩했는지
     bool m_dirChoice = false; // 현재 Dir 선택중인지
     // 세팅된 카드 / 스냅 위치 정보
     //std::queue<Card*> m_setCards;                   // 세팅한 카드 // 슬롯 4개로 할 것 // m_setCardSlots[i]->GetCard;와 동일

@@ -278,14 +278,19 @@ void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
         {  0,  1 }, // down
     };
 
-    std::vector<MinimapTile*> candidates;
-    candidates.reserve(4);
+    struct Candidate {
+        Candidate(MinimapTile* pTile, std::wstring bk) : pTile(pTile), bk(std::move(bk)) {}
+        MinimapTile* pTile;
+        std::wstring bk;
+    };
+    std::vector<Candidate> candidates;
 
     for (const auto& d : dirs)
     {
         const Int2 n = { tileXY.x + d.x, tileXY.y + d.y };
-        if (auto* dirTile = GetTileByID(n))
-            candidates.push_back(dirTile);
+        if (auto* dirTile = GetTileByID(n)) {
+            candidates.emplace_back(dirTile, dirTile->GetTexturePathBk());
+        }
     }
 
     // 후보 타일 세팅 + 이벤트 등록
@@ -296,8 +301,6 @@ void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
 
         dirTile->SetUseLMB(true);
         dirTile->SetUseRMB(true);
-        
-        std::wstring bkPath = dirTile->GetTexturePathBk();
         dirTile->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/direction_mouseout.png",
                                  L"../Assets/UI/PLAY/PhaseScene/direction_mouseover.png");
             
@@ -310,22 +313,22 @@ void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
         else { continue; }
             
 
-        dirTile->SetEventLMB([this, CardSlot, dir, candidates, bkPath]() mutable
+        dirTile->SetEventLMB([this, CardSlot, dir, candidates]() mutable
             {
                 CardSlot->SetDirection(dir);
 
                 // 후보 전체 닫기
-                for (MinimapTile* tile : candidates)
+                for (const auto& candidate : candidates)
                 {
-                    if (!tile) continue;
-                    tile->ResetHoverTexture(bkPath);
-                    tile->SetUseLMB(false);
-                    tile->SetUseRMB(false);
-                    tile->SetRotZ(0);
-                    tile->MirrorReset();
-                    tile->SetEventLMB(nullptr);
-                    tile->SetEventRMB(nullptr);
-                    std::cout << "endendend" << std::endl;
+                    MinimapTile* pTile = candidate.pTile;
+                    if (!pTile) continue;
+                    pTile->ResetHoverTexture(candidate.bk);
+                    pTile->SetUseLMB(false);
+                    pTile->SetUseRMB(false);
+                    pTile->SetRotZ(0);
+                    pTile->MirrorReset();
+                    pTile->SetEventLMB(nullptr);
+                    pTile->SetEventRMB(nullptr);
                 }
             });
     }
