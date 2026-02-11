@@ -857,7 +857,7 @@ namespace yuno::server
                 pkt.dir = static_cast<uint8_t>(card.dir);
                 pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
                 pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
-                pkt.isCoinTossUsed = coinTossUsed ? 0 : if();
+                pkt.isCoinTossUsed = coinTossUsed ? (aFirst ? 1 : 2) : 0;
                 pkt.actionTime = 3000;
                 if (cardData.m_type == CardType::Utility)
                 {
