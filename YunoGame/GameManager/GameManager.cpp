@@ -223,15 +223,20 @@ void GameManager::FlushPendingPanelUpdates()
 
 void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
 {
-    // 전투 종료 후
-    assert(m_pMinimap);
-    if (m_pMinimap) m_pMinimap->UpdatePanel(obstacleResult);
+    if (!m_pMinimap || !m_pSelectionPanel || !m_pConfirmPanel)
+    {
+        return;
+    }
 
-    assert(m_pSelectionPanel);
-    if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(obstacleResult);
+    while (!m_pendingBattlePanelUpdates.empty())
+    {
+        const BattleResult battleResult = m_pendingBattlePanelUpdates.front();
+        m_pendingBattlePanelUpdates.pop();
 
-    assert(m_pConfirmPanel);
-    if (m_pConfirmPanel) m_pConfirmPanel->UpdatePanel(obstacleResult);
+        m_pMinimap->UpdatePanel(battleResult);
+        m_pSelectionPanel->UpdatePanel(battleResult);
+        m_pConfirmPanel->UpdatePanel(battleResult);
+    }
 }
 
 
