@@ -3,13 +3,14 @@
 
 Text::Text(UIFactory& uiFactory) : Widget(uiFactory)
 {
+    
 }
 
 Text::~Text() = default;
 
 bool Text::CreateMaterial()
 {
-    return true;
+    return false;
 }
 
 bool Text::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)

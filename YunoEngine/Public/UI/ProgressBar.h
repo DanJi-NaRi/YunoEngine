@@ -21,6 +21,7 @@ public:
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::ProgressBar; }
 
     void SetFillDirect(FillDirection dir);
+    void SetGaugeValue(float v);
 
 protected:
     Gauge* m_pGauge;

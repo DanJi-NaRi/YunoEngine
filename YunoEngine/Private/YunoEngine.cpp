@@ -106,12 +106,11 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
             //UI::DrawDebugHUD(&camera.position.x, camera.GetForward().m128_f32);
 
             float fovYDeg = camera.GetFovYDegrees();
-            float aspect = camera.GetAspect();
-            const int changedMask = UI::DrawCameraFovController(&fovYDeg, &aspect);
+            const int changedMask = UI::DrawCameraFovController(&fovYDeg);
 
             if(changedMask & 2)
             {
-                camera.SetAspect(aspect);
+                //camera.SetAspect(aspect);
             }
             else if (changedMask & 1)
             {

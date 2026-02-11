@@ -83,13 +83,12 @@ namespace UI
         ImGui::End();
     }
 
-    int DrawCameraFovController(float* fovYDeg, float* aspect, float minDeg, float maxDeg)
+    int DrawCameraFovController(float* fovYDeg, float minDeg, float maxDeg)
     {
-        if (!fovYDeg || !aspect)
+        if (!fovYDeg)
             return 0;
 
         bool changedY = false;
-        bool changedX = false;
 
         ImGui::SetNextWindowPos(ImVec2(10, 180), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowBgAlpha(0.35f);
@@ -104,14 +103,10 @@ namespace UI
         changedY |= SliderFloat("FOV Y (deg)", fovYDeg, minDeg, maxDeg, "%.1f");
         changedY |= InputFloat("FOV Y Input", fovYDeg, "%.1f");
 
-        changedX |= SliderFloat("Aspect", aspect, 0.001, 3.0f, "%.3f");
-        changedX |= InputFloat("Aspect Input", aspect, "%.3f");
-
         ImGui::End();
 
         int changedMask = 0;
         if (changedY) changedMask |= 1;
-        if (changedX) changedMask |= 2;
 
         return changedMask;
     }

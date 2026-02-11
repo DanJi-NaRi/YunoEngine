@@ -6,6 +6,7 @@
 class Emoji;
 class TextureImage;
 class EmoteButton;
+class PlayerIcon;
 
 struct TimedEmoji
 {
@@ -32,12 +33,22 @@ protected:
     void OnDestroyScene() override;
 
     void ShowEmoteImage(uint8_t pid, uint8_t emoteId); //YDM TEST IMOTE
+    void TryInitPlayerIconsFromWeaponData();
+
+    void UpdateWData(float dTime);
 
 private:
     PlayHUD_InputContext m_uiContext;
 
+    int curRount = 1;
+
     Widget* m_pTurn = nullptr;    // 1의 자리수
     Widget* m_pTurn10 = nullptr;  // 10의 자리수
+
+    std::array<PlayerIcon*, 4> m_playerIcons{};
+    uint32_t m_appliedWeaponDataVersion = 0;
+
+    std::array<TextureImage*, 3> roundWin{};
 
     TextureImage* m_EmoteBubble1P = nullptr;
     TextureImage* m_EmoteBubble2P = nullptr;

@@ -9,6 +9,12 @@
 #include "IInput.h"
 #include "UIFactory.h"
 #include "Gauge.h"
+#include "Text.h"
+
+int Lerp(int prev, int Cur, float a)
+{
+    return prev * (1 - a) + Cur * a;
+}
 
 PlayerIcon::PlayerIcon(UIFactory& uiFactory) : Image(uiFactory)
 {
@@ -22,25 +28,148 @@ PlayerIcon::~PlayerIcon()
 
 void PlayerIcon::Clear()
 {
-    m_bars.clear();
+    m_HpBar = nullptr;
+    m_StaminaBar = nullptr;
+
+    maxHp = -1;
+    prevHp = -1;
+    maxStamina = -1;
+    prevStamina = -1;
+
+    m_idata = {};
 }
 
-void PlayerIcon::SetPlayer(int pNum)
+void PlayerIcon::SetPlayer(const IconData& idata)
 {
-    playerNum = pNum;
-    switch (pNum)
+    if(m_HpBar)
+        m_HpBar->SetFillDirect(FillDirection::RightToLeft);
+    if(m_StaminaBar)
+        m_StaminaBar->SetFillDirect(FillDirection::RightToLeft);
+
+    m_idata = idata;
+
+    SetWeapon(m_idata.weaponId);
+    CheckHP();
+    CheckStamina();
+
+    //m_hpText->SetFont(FontID::Default);
+    //m_hpText->SetText(std::to_wstring(m_idata.hp));
+}
+
+void PlayerIcon::SetWeapon(int weaponID)
+{
+    if (m_idata.pId < 0) return;
+
+    switch (weaponID)
     {
     case 1:
-        for (auto& bar : m_bars)
-            bar->SetFillDirect(FillDirection::RightToLeft);
+        if(m_idata.pId == 1)
+            ChangeTexture(L"../Assets/UI/PLAY/profile_1p_blaster.png");
+        else
+            ChangeTexture(L"../Assets/UI/PLAY/profile_2p_blaster.png");
         break;
     case 2:
-        for (auto& bar : m_bars)
-            bar->SetFillDirect(FillDirection::LeftToRight);
+        if (m_idata.pId == 1)
+            ChangeTexture(L"../Assets/UI/PLAY/profile_1p_chakram.png");
+        else
+            ChangeTexture(L"../Assets/UI/PLAY/profile_2p_chakram.png");
         break;
-    default:
+    case 3:
+        if (m_idata.pId == 1)
+            ChangeTexture(L"../Assets/UI/PLAY/profile_1p_breacher.png");
+        else
+            ChangeTexture(L"../Assets/UI/PLAY/profile_2p_breacher.png");
+        break;
+    case 4:
+        if (m_idata.pId == 1)
+            ChangeTexture(L"../Assets/UI/PLAY/profile_1p_scythe.png");
+        else
+            ChangeTexture(L"../Assets/UI/PLAY/profile_2p_scythe.png");
+        break;
+    case 5:
+        if (m_idata.pId == 1)
+            ChangeTexture(L"../Assets/UI/PLAY/profile_1p_impactor.png");
+        else
+            ChangeTexture(L"../Assets/UI/PLAY/profile_2p_impactor.png");
+        break;
+    case 6:
+        if (m_idata.pId == 1)
+            ChangeTexture(L"../Assets/UI/PLAY/profile_1p_cleaver.png");
+        else
+            ChangeTexture(L"../Assets/UI/PLAY/profile_2p_cleaver.png");
         break;
     }
+}
+
+void PlayerIcon::CheckHP()
+{
+    if (m_idata.hp == prevHp || isChangingHp)
+        return;
+
+    isChangingHp = true;
+}
+
+void PlayerIcon::UpdateHPValue(float dTime)
+{
+    if (!isChangingHp) return;
+
+    m_curChangeTime += dTime;
+
+    float t = m_curChangeTime / m_changeTime;
+    t = std::clamp(t, 0.0f, 1.0f);
+
+    float curHp = prevHp + (m_idata.hp - prevHp) * t;
+
+    float percent = curHp / maxHp;
+    m_HpBar->SetGaugeValue((int)(percent * 100.0f));
+
+    if (t >= 1.0f)
+    {
+        m_curChangeTime = 0.0f;
+        isChangingHp = false;
+    }
+}
+
+void PlayerIcon::CheckStamina()
+{
+    if (m_idata.stamina == prevStamina || isChangingStamina)
+        return;
+
+    isChangingStamina = true;
+}
+
+void PlayerIcon::UpdateStaminaValue(float dTime)
+{
+    if (!isChangingStamina) return;
+
+    m_curChangeTime += dTime;
+
+    float t = m_curChangeTime / m_changeTime;
+    t = std::clamp(t, 0.0f, 1.0f);
+
+    float curStamina = prevStamina + (m_idata.stamina - prevStamina) * t;
+
+    float percent = curStamina / maxStamina;
+    m_StaminaBar->SetGaugeValue((int)(percent * 100.0f));
+
+    if (t >= 1.0f)
+    {
+        m_curChangeTime = 0.0f;
+        isChangingStamina = false;
+    }
+}
+
+void PlayerIcon::UpdateIData(const IconData& idata)
+{
+    if (m_idata.pId != idata.pId || m_idata.weaponId != idata.weaponId)
+    {
+        std::cout << "pID, weapon ID가 초기화 시점과 다름" << std::endl;
+    }
+
+    m_idata = idata;
+
+    CheckHP();
+    CheckStamina();
 }
 
 bool PlayerIcon::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
@@ -78,8 +207,9 @@ bool PlayerIcon::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XM
 
 
 void PlayerIcon::CreateChild() {
-    m_bars.push_back(m_uiFactory.CreateChild<HealthBar>(m_name + L"_HealthBar", Float2(542, 17), XMFLOAT3(300, -24, 0), UIDirection::Center, WidgetLayer::HUD, this));
-    m_bars.push_back(m_uiFactory.CreateChild<StaminaBar>(m_name + L"_StaminaBar", Float2(542, 17), XMFLOAT3(310, 0, 0), UIDirection::Center, WidgetLayer::HUD, this));
+    m_HpBar = m_uiFactory.CreateChild<HealthBar>(m_name + L"_HealthBar", Float2(542, 17), XMFLOAT3(300, -24, 0), UIDirection::Center, WidgetLayer::HUD, this);
+    m_StaminaBar = m_uiFactory.CreateChild<StaminaBar>(m_name + L"_StaminaBar", Float2(542, 17), XMFLOAT3(310, 0, 0), UIDirection::Center, WidgetLayer::HUD, this);
+    //m_hpText = m_uiFactory.CreateChild<Text>(m_name + L"_HpText", Float2(200, 50), XMFLOAT3(0, 0, 0), UIDirection::Center, WidgetLayer::HUD, this);
 }
 
 bool PlayerIcon::Start()
@@ -93,6 +223,8 @@ bool PlayerIcon::Update(float dTime)
 {
     Image::Update(dTime);
 
+    //UpdateHPValue(dTime);
+    //UpdateStaminaValue(dTime);
 
     return true;
 }
