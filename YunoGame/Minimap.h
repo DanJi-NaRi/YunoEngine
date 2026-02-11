@@ -39,6 +39,7 @@ public:
 
     void StartDirChoice(CardConfirmArea* CardSlot);
     void SetButtonLock(bool buttonLock); // SetButtonLock
+    void RestoreSimulationTiles();
 
     void OpenDirButton(int tileID, CardConfirmArea* CardSlot);
 
@@ -72,7 +73,9 @@ protected:
     GridXY m_grid;
     std::vector<MinimapTile*> m_pTiles;
     std::array<MinimapTile*, 2> m_pMyTile = {nullptr,};
+    std::array<MinimapTile*, 2> m_pMyTileBackup = {nullptr,};
     std::array<MinimapTile*, 2> m_pEnemyTile = {nullptr,};
+    bool m_hasSimulationBackup = false;
 
     WidgetGridLine* m_pGridLine = nullptr;
 

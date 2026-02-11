@@ -179,6 +179,9 @@ void CardConfirmPanel::UpdateCardSlot()
 
 
 void CardConfirmPanel::ClearSlot() {
+    if (m_pMinimap)
+        m_pMinimap->RestoreSimulationTiles();
+
     if (m_hasSimulatedStamina && m_cardConfirmButton && !m_cardConfirmButton->GetIsClicked())
     {
         for (int i = 0; i < static_cast<int>(m_originalStamina.size()); ++i)

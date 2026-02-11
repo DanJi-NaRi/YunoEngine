@@ -32,6 +32,7 @@ Minimap::~Minimap()
 void Minimap::Clear()
 {
     m_pGridLine = nullptr;
+    m_hasSimulationBackup = false;
 }
 
 bool Minimap::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
@@ -101,20 +102,35 @@ void Minimap::Simulate()
     }
 
     const auto& slots = m_pConfirmPanel->GetCardSlots();
-    if (slots[0]->GetCard() && slots[0]->GetDirection() != Direction::None) 
-        m_isSimulation = true; // 카드 하나 이상 등록 시. 시뮬레이션 On
-    else 
-        m_isSimulation = false;
+    m_isSimulation = false;
+    for (const auto& slot : slots)
+    {
+        if (!slot || !slot->GetCard()) continue;
+        if (slot->GetDirection() == Direction::None) continue;
+        m_isSimulation = true;
+        break;
+    }
 
     //////////////////////////////
     // 시뮬레이션 연산
-    if (!m_isSimulation) return;
+    if (!m_isSimulation)
+    {
+        RestoreSimulationTiles();
+        return;
+    }
 
-    //ClearGrid();
+    if (!m_hasSimulationBackup)
+    {
+        m_pMyTileBackup = m_pMyTile;
+        m_hasSimulationBackup = true;
+    }
+
+    if (!m_pMyTileBackup[0] || !m_pMyTileBackup[1])
+        return;
 
     std::array<Int2, 2> tilePos; // 타일 포지션 사용하기
-    tilePos[0] = GetCellByID(m_pMyTile[0]->GetTileId());
-    tilePos[1] = GetCellByID(m_pMyTile[1]->GetTileId());
+    tilePos[0] = GetCellByID(m_pMyTileBackup[0]->GetTileId());
+    tilePos[1] = GetCellByID(m_pMyTileBackup[1]->GetTileId());
 
     for (const auto& slot : slots) {
         if (!slot->GetCard()) continue;
@@ -127,8 +143,10 @@ void Minimap::Simulate()
         Int2 moveXY{ moveData->m_moveX, moveData->m_moveY };
 
         auto AddMoveXY = [&tilePos](int slotID, Int2 moveXY) {
-            if (slotID - 1 == 0) tilePos[0] += moveXY;
-            else if (slotID - 1 == 1) tilePos[1] += moveXY;
+            // CardSelectionPanel::SetSlotID()에서 0/1 슬롯 인덱스를 넘긴다.
+            // 여기서 1을 빼면 0번 슬롯 이동이 무시되어 시뮬 결과가 깨진다.
+            if (slotID >= 0 && slotID < static_cast<int>(tilePos.size()))
+                tilePos[slotID] += moveXY;
         };
 
         switch (slot->GetDirection()) // moveXY는 오른쪽 방향 기준임!
@@ -154,11 +172,8 @@ void Minimap::Simulate()
     simulateTile[0] = GetTileByID(tilePos[0]);
     simulateTile[1] = GetTileByID(tilePos[1]);
 
-    // 기존 타일 채색
-    m_pMyTile[0]->ChangeTexture(g_tilePath_None);  // 타일 제자리 비우기
-    m_pMyTile[1]->ChangeTexture(g_tilePath_None);  // 타일 제자리 비우기
-
-    PaintTile(simulateTile);
+    m_pMyTile = simulateTile;
+    DefaultSetAllTile();
 }
 
 //void Minimap::CreateGridLine(float x, float y, float z)
@@ -170,6 +185,7 @@ void Minimap::Simulate()
 //    //m_gridBox->Attach(pLine);
 //}
 void Minimap::SetupPanel() {
+    RestoreSimulationTiles();
     ClearGrid();
     for (const auto& myWeapon : m_player.weapons) {
         if (auto* tile = GetTileByID(myWeapon.currentTile)) {
@@ -200,6 +216,7 @@ void Minimap::SetupPanel() {
 }
 
 void Minimap::UpdatePanel(const BattleResult& battleResult) {
+    RestoreSimulationTiles();
     ClearGrid();
     for (const auto& pieceInfo : battleResult.order) {
         const auto& info = pieceInfo.data();
@@ -217,6 +234,7 @@ void Minimap::UpdatePanel(const BattleResult& battleResult) {
 }
 
 void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
+    RestoreSimulationTiles();
     ClearGrid();
     for (const auto& pieceInfo : obstacleResult.unitState) {
         if (auto* tile = GetTileByID(pieceInfo.targetTileID)) {
@@ -333,6 +351,9 @@ void Minimap::SetButtonLock(bool buttonLock)
 
 void Minimap::StartDirChoice(CardConfirmArea* CardSlot)
 {
+    if (!CardSlot || !CardSlot->GetCard())
+        return;
+
     const int slotID = CardSlot->GetCard()->GetSlotID();
 
     assert(!m_pTiles.empty());
@@ -340,14 +361,24 @@ void Minimap::StartDirChoice(CardConfirmArea* CardSlot)
 
     SetButtonLock(true);
 
-    for (auto& tile : m_pTiles) {
-        auto& data = tile->GetTileData();
-        // 버튼 금지 부분 허용
-        if (m_pID != data.teamID) continue; // 팀이 아니면
-        if (!data.isPlayerTile) continue; // 플레이어 타일이 아니면
-        if (data.slotID-1 != slotID) continue; // 슬롯 아이디가 같지 않으면
-        OpenDirButton(tile->GetTileId(), CardSlot);
-    }
+    if (slotID < 0 || slotID >= static_cast<int>(m_pMyTile.size()))
+        return;
+
+    MinimapTile* currentTile = m_pMyTile[slotID];
+    if (!currentTile)
+        return;
+
+    OpenDirButton(currentTile->GetTileId(), CardSlot);
+}
+
+void Minimap::RestoreSimulationTiles()
+{
+    if (!m_hasSimulationBackup)
+        return;
+
+    m_pMyTile = m_pMyTileBackup;
+    m_hasSimulationBackup = false;
+    DefaultSetAllTile();
 }
 
 void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
@@ -441,10 +472,12 @@ void Minimap::PaintTile(std::array<MinimapTile*, 2>& myTiles)
 
     // 팀 타일 채색 (겹치면 보라색 체크)
     for (MinimapTile* myTile : myTiles) {
+        if (!myTile) continue;
         std::wstring path = teamPath;
         const int myId = myTile->GetTileId();
 
         for (auto& enemyTile : m_pEnemyTile) {
+            if (!enemyTile) continue;
             if (myId == enemyTile->GetTileId()) {
                 path = g_tilePath_Purple; break;
             }
