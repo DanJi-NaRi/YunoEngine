@@ -23,13 +23,17 @@ public:
 
     bool Event(float dTime = 0) override; // AABB 성공 시 작동하는 이벤트
 
-    void SetCard(Card* card) { m_pCard; }
+    void SetCard(Card* card) { m_pCard = card; }
     void SetDirection(Direction direction) { m_direction = direction; }
 
 
-    const Direction& GetDirection() { return m_direction; }
-    Card* GetCard() { return m_pCard; }
-    bool IsSetCard() { return (m_pCard); }
+    //const Direction& GetDirection() { return m_direction; }
+    //Card* GetCard() { return m_pCard; }
+    //bool IsSetCard() { return (m_pCard); }
+
+    const Direction& GetDirection() const { return m_direction; }
+    Card* GetCard() const { return m_pCard; }
+    bool IsSetCard() const { return (m_pCard != nullptr); }
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/draganddrop.png"); };    // 머테리얼 생성 (한 번만)
 
