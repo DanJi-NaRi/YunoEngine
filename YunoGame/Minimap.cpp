@@ -95,7 +95,10 @@ void Minimap::Simulate()
     //////////////////////////////
     // 시뮬레이션 검증
     assert(m_pConfirmPanel);
-    if (!m_pConfirmPanel) return;
+    if (!m_pConfirmPanel) {
+        m_isSimulation = false;
+        return;
+    }
 
     const auto& slots = m_pConfirmPanel->GetCardSlots();
     if (slots[0]->GetCard() && slots[0]->GetDirection() != Direction::None) 
@@ -104,7 +107,7 @@ void Minimap::Simulate()
         m_isSimulation = false;
 
     //////////////////////////////
-    // 시뮬레이션 검사
+    // 시뮬레이션 연산
     if (!m_isSimulation) return;
 
     //ClearGrid();
@@ -114,37 +117,66 @@ void Minimap::Simulate()
     tilePos[1] = GetCellByID(m_pMyTile[1]->GetTileId());
 
     for (const auto& slot : slots) {
-        if (!slot->GetCard()) return;
-        if (slot->GetDirection() == Direction::None) return;
+        if (!slot->GetCard()) continue;
+        if (slot->GetDirection() == Direction::None) continue;
 
         const auto cardID = slot->GetCard()->GetID();
         const auto slotID = slot->GetCard()->GetSlotID();
         const auto* moveData = m_cardManager.GetMoveData(cardID);
-
         if (!moveData) continue;
 
-        if (slotID - 1 == 0) {
-            tilePos[0].x += moveData->m_moveX;
-            tilePos[0].y += moveData->m_moveY;
+        Int2 moveXY{ moveData->m_moveX, moveData->m_moveY };
+
+        auto AddMoveXY = [&tilePos](int slotID, Int2 moveXY) {
+            if (slotID - 1 == 0) tilePos[0] += moveXY;
+            else if (slotID - 1 == 1) tilePos[1] += moveXY;
+        };
+
+        switch (slot->GetDirection()) // moveXY는 오른쪽 방향 기준임!
+        {
+        case Direction::Right:  break;
+        case Direction::Left:   moveXY = { -moveXY.x, -moveXY.y }; break;
+        case Direction::Up:     moveXY = { -moveXY.y,  moveXY.x }; break;
+        case Direction::Down:   moveXY = { moveXY.y, -moveXY.x };  break;
+        default:                moveXY = { 0, 0 };       break;
         }
-        else if (slotID - 1 == 1) {
-            tilePos[1].x += moveData->m_moveX;
-            tilePos[1].y += moveData->m_moveY;
-        }
+        AddMoveXY(slotID, moveXY);
     }
-    std::array<Int2, 2> clampPos;
-    clampPos[0] = GetClampTileID(tilePos[0]);
-    clampPos[1] = GetClampTileID(tilePos[1]);
 
+    //////////////////////////////
+    // 최종 결과 출력
+
+    // 클램프
+    tilePos[0] = GetClampTileID(tilePos[0]);
+    tilePos[1] = GetClampTileID(tilePos[1]);
+
+    // 최종 시뮬레이션 타일 획득
     std::array<MinimapTile*, 2> simulateTile;
-    simulateTile[0] = GetTileByID(clampPos[0]);
-    simulateTile[1] = GetTileByID(clampPos[1]);
+    simulateTile[0] = GetTileByID(tilePos[0]);
+    simulateTile[1] = GetTileByID(tilePos[1]);
 
+    // 기존 타일 채색
     m_pMyTile[0]->ChangeTexture(g_tilePath_None);  // 타일 제자리 비우기
     m_pMyTile[1]->ChangeTexture(g_tilePath_None);  // 타일 제자리 비우기
 
-    simulateTile[0]->ChangeTexture(g_tilePath_Red);
-    simulateTile[1]->ChangeTexture(g_tilePath_Red);
+    auto PaintTile = [&](int slotId, std::wstring colorPath) {
+        for (auto& enemyTile : m_pEnemyTile) { // 적과 겹치는지 검사
+            if (slotId == enemyTile->GetTileId()) {
+                colorPath = g_tilePath_Purple; // 겹치면 보라색
+            }
+        }
+        simulateTile[slotId]->ChangeTexture(colorPath);
+    };
+
+    if (m_pID == 1) { // 1팀이라면
+        PaintTile(0, g_tilePath_Red);
+        PaintTile(1, g_tilePath_Red);
+    }
+    else if (m_pID == 2) { // 2팀이라면
+        PaintTile(0, g_tilePath_Blue);
+        PaintTile(1, g_tilePath_Blue);
+    }
+
 }
 
 //void Minimap::CreateGridLine(float x, float y, float z)

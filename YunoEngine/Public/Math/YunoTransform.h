@@ -269,6 +269,16 @@ struct Int2
     constexpr Int2() = default;
     constexpr Int2(int _x, int _y) : x(_x), y(_y) {}
     int x = 0, y = 0;
+
+    Int2& operator+=(const Int2& o) { x += o.x; y += o.y; return *this; }
+    Int2& operator-=(const Int2& o) { x -= o.x; y -= o.y; return *this; }
+    Int2& operator*=(const Int2& o) { x *= o.x; y *= o.y; return *this; }
+    Int2& operator/=(const Int2& o) { x /= o.x; y /= o.y; return *this; }
+
+    Int2& operator+=(float s) { x += s; y += s; return *this; }
+    Int2& operator-=(float s) { x -= s; y -= s; return *this; }
+    Int2& operator*=(float s) { x *= s; y *= s; return *this; }
+    Int2& operator/=(float s) { x /= s; y /= s; return *this; }
 };
 
 struct Int3
