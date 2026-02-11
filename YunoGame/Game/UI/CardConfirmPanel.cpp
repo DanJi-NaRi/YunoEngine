@@ -146,6 +146,13 @@ void CardConfirmPanel::UpdateCardSlot()
 
 
 void CardConfirmPanel::ClearSlot() {
+    if (m_hasSimulatedStamina && m_cardConfirmButton && !m_cardConfirmButton->GetIsClicked())
+    {
+        for (int i = 0; i < static_cast<int>(m_originalStamina.size()); ++i)
+        {
+            m_player.weapons[i].stamina = m_originalStamina[i];
+        }
+    }
     m_openSlot = 0;
     m_dirChoice = false;
     m_hasSimulatedStamina = false;
@@ -206,6 +213,7 @@ void CardConfirmPanel::SyncSimulatedStaminaFromPlayer()
 {
     for (int i = 0; i < static_cast<int>(m_simulatedStamina.size()); ++i)
     {
+        m_originalStamina[i] = m_player.weapons[i].stamina;
         m_simulatedStamina[i] = m_player.weapons[i].stamina;
     }
     m_hasSimulatedStamina = true;
@@ -253,10 +261,12 @@ void CardConfirmPanel::SubmitCurrentSelection()
 
     const CardData cardData = m_gameManager.GetCardData(selectedRuntimeID);
     m_simulatedStamina[selectedSlot] -= cardData.m_cost;
+    m_player.weapons[selectedSlot].stamina = m_simulatedStamina[selectedSlot];
 
     if (!m_gameManager.PushCardCommand(cmd)) 
     {
         m_simulatedStamina[selectedSlot] += cardData.m_cost;
+        m_player.weapons[selectedSlot].stamina = m_simulatedStamina[selectedSlot];
         return;
     }
 

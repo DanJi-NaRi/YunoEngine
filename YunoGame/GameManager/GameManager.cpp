@@ -51,6 +51,7 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
     data.weaponId = _weaponId;
     data.hp = _hp;
     data.stamina = _stamina;
+    data.maxStamina = _stamina;
     data.currentTile = _currentTile;
 
     m_weapons.push_back(data);

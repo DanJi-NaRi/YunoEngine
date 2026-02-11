@@ -132,6 +132,16 @@ bool CardSelectionPanel::Update(float dTime)
 {
     PhasePanel::Update(dTime);
 
+    for (int i = 0; i < static_cast<int>(m_pPhaseStaminaBars.size()); ++i)
+    {
+        if (!m_pPhaseStaminaBars[i])
+            continue;
+
+        const int maxStamina = std::max(1, m_player.weapons[i].maxStamina);
+        const float staminaRatio = static_cast<float>(m_player.weapons[i].stamina) / static_cast<float>(maxStamina);
+        m_pPhaseStaminaBars[i]->SetStaminaValue(staminaRatio * 100.0f);
+    }
+
     return true;
 }
 

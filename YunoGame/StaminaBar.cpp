@@ -60,3 +60,11 @@ void StaminaBar::GuageUpdate(float dTime)
     if (m_pInput->IsKeyDown(VK_OEM_6)) { m_pGauge->AddValue(30 * dTime); }
     if (m_pInput->IsKeyDown(VK_OEM_4)) { m_pGauge->SubValue(30 * dTime); }
 }
+
+void StaminaBar::SetStaminaValue(float value)
+{
+    if (!m_pGauge)
+        return;
+
+    m_pGauge->SetValue(value);
+}

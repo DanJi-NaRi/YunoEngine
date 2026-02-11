@@ -43,6 +43,7 @@ struct Wdata
     int weaponId = 0;
     int hp = 0;
     int stamina = 0;
+    int maxStamina = 0;
     int currentTile = 0;
 };
 // 얘가 뭘 가지고있어야 될까?
