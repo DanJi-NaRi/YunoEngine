@@ -401,6 +401,7 @@ namespace yuno::game
                 }
 
                 BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, pkt.dir, pkt.actionTime, order };
+                std::cout << "Battle Packet(actionTime) : " << static_cast<int>(pkt.actionTime) << std::endl;
                 gm.PushBattlePacket(br);
                 gm.PushRevealPacket(br);// 복사 저장
                 gm.UpdatePanels(br);

@@ -523,9 +523,10 @@ void PlayGridSystem::CheckPacket(float dt)
     }
 
     // 장애물까지 발동하고 CheckOver
-    if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing && !isRoundOver)
+    if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing)
     {
         const auto obstaclePkt = mng.PopObstaclePacket();
+        if (isRoundOver) return;    // 라운드 종료 시 해당 장애물은 패킷 버리기
         m_pktTime = obstaclePktDuration;
         isProcessing = true;
         ApplyObstacleResult(obstaclePkt);

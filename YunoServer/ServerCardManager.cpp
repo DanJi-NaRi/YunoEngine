@@ -64,7 +64,7 @@ namespace yuno::server
             RemoveBOM(cols[0]);
 
             // 최소 컬럼 수 방어
-            if (cols.size() < 17)
+            if (cols.size() < 18)
                 continue;
 
             // -------------------------
@@ -81,7 +81,7 @@ namespace yuno::server
             card.m_cost = std::stoi(cols[7]);
             card.m_rangeId = std::stoul(cols[11]);
             card.m_controlId = std::stoul(cols[12]);
-            card.actionTime = static_cast<int>(std::stod(cols[17]) * 1000);
+            card.m_actionTime = static_cast<int>(std::stod(cols[17]) * 1000);
             card.m_destroyCnt = 0;
             card.m_effectId = 0;
             card.m_soundId = 0;

@@ -689,7 +689,7 @@ namespace yuno::server
                     pkt.dir = static_cast<uint8_t>(card.dir);
                     pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
                     pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
-                    pkt.actionTime = 3000;
+                    pkt.actionTime = static_cast<uint32_t>(cardData.m_actionTime);
                     if (cardData.m_type == CardType::Utility)
                     {
                         pkt.order.push_back(buildDeltaSnapshot(unitIndex, false));
