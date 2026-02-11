@@ -38,10 +38,13 @@ protected:
     bool HandleDirectionInput(Direction& outDir) const;
     bool IsCardAlreadyQueued(uint32_t runtimeID) const;
     bool HasEnoughStaminaForCard(int unitSlot, uint32_t runtimeID) const;
+    void SyncSimulatedStaminaFromPlayer();
 
 protected:
     int m_openSlot;
     bool m_dirChoice = false;
+    bool m_hasSimulatedStamina = false;
+    std::array<int, 2> m_simulatedStamina = { 0, 0 };
     std::vector<CardConfirmArea*> m_setCardSlots;
     CardConfirmButton* m_cardConfirmButton = nullptr;
     CardCancelButton* m_cardCancelButton = nullptr;

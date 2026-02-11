@@ -148,6 +148,7 @@ void CardConfirmPanel::UpdateCardSlot()
 void CardConfirmPanel::ClearSlot() {
     m_openSlot = 0;
     m_dirChoice = false;
+    m_hasSimulatedStamina = false;
     m_gameManager.ClearCardQueue();
     m_cardConfirmButton->SetIsClicked(false);
 
@@ -192,13 +193,22 @@ bool CardConfirmPanel::IsCardAlreadyQueued(uint32_t runtimeID) const
 
 bool CardConfirmPanel::HasEnoughStaminaForCard(int unitSlot, uint32_t runtimeID) const
 {
-    if (unitSlot < 0 || unitSlot >= static_cast<int>(m_player.weapons.size()))
+    if (unitSlot < 0 || unitSlot >= static_cast<int>(m_simulatedStamina.size()))
         return false;
 
     const CardData cardData = m_gameManager.GetCardData(runtimeID);
-    const int currentStamina = m_player.weapons[unitSlot].stamina;
+    const int currentStamina = m_simulatedStamina[unitSlot];
 
     return currentStamina >= cardData.m_cost;
+}
+
+void CardConfirmPanel::SyncSimulatedStaminaFromPlayer()
+{
+    for (int i = 0; i < static_cast<int>(m_simulatedStamina.size()); ++i)
+    {
+        m_simulatedStamina[i] = m_player.weapons[i].stamina;
+    }
+    m_hasSimulatedStamina = true;
 }
 
 void CardConfirmPanel::SubmitCurrentSelection()
@@ -224,6 +234,11 @@ void CardConfirmPanel::SubmitCurrentSelection()
     if (IsCardAlreadyQueued(selectedRuntimeID))
         return;
 
+    if (!m_hasSimulatedStamina)
+    {
+        SyncSimulatedStaminaFromPlayer();
+    }
+
     const int selectedSlot = m_pSelectionPanel->GetCurrentSlot();
     if (!HasEnoughStaminaForCard(selectedSlot, selectedRuntimeID))
         return;
@@ -236,8 +251,14 @@ void CardConfirmPanel::SubmitCurrentSelection()
     cmd.runtimeID = selectedRuntimeID;
     cmd.dir = dir;
 
-    if (!m_gameManager.PushCardCommand(cmd))
+    const CardData cardData = m_gameManager.GetCardData(selectedRuntimeID);
+    m_simulatedStamina[selectedSlot] -= cardData.m_cost;
+
+    if (!m_gameManager.PushCardCommand(cmd)) 
+    {
+        m_simulatedStamina[selectedSlot] += cardData.m_cost;
         return;
+    }
 
     slot->ChangeTexture(selectedCard->GetTexturePath());
     slot->SetDirection(dir);

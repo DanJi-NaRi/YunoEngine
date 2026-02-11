@@ -380,6 +380,15 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
         m_state = CurrentSceneState::BattleStandBy;
         // 여기에 뭐 대기중인 텍스쳐 띄워주는 씬 push 넣기
+        //SceneTransitionOptions opt{};
+        //opt.immediate = true;
+        //sm->RequestPop(opt);
+        //
+        //ScenePolicy sp;
+        //sp.blockRenderBelow = false;
+        //sp.blockUpdateBelow = false;
+        //sm->RequestPush(std::make_unique<StandByScene>(), sp);
+
         break;
     }
     case CurrentSceneState::AutoBattle:
