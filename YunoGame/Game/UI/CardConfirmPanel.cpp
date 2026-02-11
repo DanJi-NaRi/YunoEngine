@@ -354,6 +354,18 @@ void CardConfirmPanel::SubmitCurrentSelection()
 
 
     m_simulatedStamina[selectedSlot] -= cardData.m_cost;
+
+    if (const CardEffectData* effectData = m_gameManager.GetCardEffectData(selectedRuntimeID))
+    {
+        if (effectData->m_staminaRecover > 0)
+        {
+            const int maxStamina = m_player.weapons[selectedSlot].maxStamina;
+            m_simulatedStamina[selectedSlot] = std::min(
+                maxStamina,
+                m_simulatedStamina[selectedSlot] + effectData->m_staminaRecover);
+        }
+    }
+
     m_player.weapons[selectedSlot].stamina = m_simulatedStamina[selectedSlot];
 
 
