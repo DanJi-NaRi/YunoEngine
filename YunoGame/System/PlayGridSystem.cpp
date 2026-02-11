@@ -115,6 +115,16 @@ void PlayGridSystem::Update(float dt)
     CheckMyQ();
 }
 
+void PlayGridSystem::ApplyTransform()
+{
+    for (auto* unit : m_units)
+    {
+        auto id = unit->GetWeaponID();
+        if (id == 3)
+            unit->SetScale({ 2, 2, 2 });
+    }
+}
+
 void PlayGridSystem::CreateObject(float x, float y, float z)
 {
     CreateGridBox(x, y, z);
@@ -304,7 +314,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/Breacher_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
-         pPiece->SetScale(XMFLOAT3(2, 2, 2));
+         //pPiece->SetScale(XMFLOAT3(2, 2, 2));
          pPiece->SetMoveRotOffset(-0.25f, 0);
          break;
      case 4:
@@ -374,6 +384,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
 
      // 빈 박스에 자식 객체로 등록. (for 정리)
      m_gridBox->Attach(pPiece);
+     m_units.push_back(pPiece);
 }
 
 void PlayGridSystem::CheckMyQ()

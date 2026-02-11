@@ -510,6 +510,8 @@ void PlayScene::OnEnter()
     //std::cout << "[PlayScene] OnEnter\n"; 
     YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
 
+    m_playGrid->ApplyTransform();
+
     m_CurSceneState = GameManager::Get().GetSceneState();
     m_PrevSceneState = m_CurSceneState;
 
