@@ -250,7 +250,7 @@ bool Widget::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOA
     {
         // 아무것도 안 함 (Mesh / Material / MeshNode 생성 X)
     }
-    else if (GetWidgetType() != WidgetType::Text || GetWidgetClass() != WidgetClass::WidgetGridLine)
+    else if (GetWidgetType() != WidgetType::Text && GetWidgetClass() != WidgetClass::WidgetGridLine)
     {
         m_defaultMesh = GetDefWidgetMesh(); // 기본 quad 적용
         if (m_defaultMesh == 0)return false;

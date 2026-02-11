@@ -95,6 +95,15 @@ void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
         }
         std::cout << std::endl;
     }
+
+    m_uiWeaponDataReady = true;
+    ++m_uiWeaponDataVersion;
+}
+
+void GameManager::ClearUIWeaponDataState()
+{
+    m_uiWeaponDataReady = false;
+    ++m_uiWeaponDataVersion;
 }
 
 
@@ -395,7 +404,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         m_state = CurrentSceneState::RoundStart;
         SceneTransitionOptions opt{};
         opt.immediate = true;
-
+        ClearUIWeaponDataState();
         sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
 
         ScenePolicy sp;
@@ -442,6 +451,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::RoundEnd:
     {
+        //m_state = CurrentSceneState::RoundEnd;
         break;
     }
     case CurrentSceneState::GameEnd:

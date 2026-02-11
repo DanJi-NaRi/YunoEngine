@@ -12,7 +12,7 @@ struct YunoCamera
     XMFLOAT3 up{ 0, 1,  0.0f };
 
     float fovY = XM_PIDIV4; 
-    float aspect = 1920 / 1080;
+    float aspect = 1920.0f / 1080.0f;
     float nearZ = 0.1f;
     float farZ = 1000.0f;
 
@@ -78,7 +78,7 @@ struct YunoCamera
     void SetFovYDegrees(float newFovYDegrees) { SetFovYRadians(XMConvertToRadians(newFovYDegrees)); }
     float GetFovYDegrees() const { return XMConvertToDegrees(fovY); }
 
-    void SetAspect(float newAspect) { aspect = newAspect < kMinAspect ? kMinAspect : newAspect; }
+    //void SetAspect(float newAspect) { aspect = newAspect < kMinAspect ? kMinAspect : newAspect; }
     float GetAspect() { return aspect; }
 
     const XMFLOAT3& const Position() { return position; }

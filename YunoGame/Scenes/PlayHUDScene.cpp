@@ -15,7 +15,7 @@
 #include "UIWidgets.h"
 #include "HealthBar.h"
 #include "StaminaBar.h"
-
+#include "EmoteButton.h"
 
 
 bool PlayHUDScene::OnCreateScene()
@@ -26,6 +26,8 @@ bool PlayHUDScene::OnCreateScene()
 
     m_uiManager->SetOrthoFlag(true);
 
+    curRount = 1;
+
     // BackGround
     CreateWidget<TextureImage>(L"BackGround", L"../Assets/UI/PLAY/Play_background_fade.png", XMFLOAT3(0, 0, 0));
 
@@ -35,32 +37,60 @@ bool PlayHUDScene::OnCreateScene()
 
     // Turn
     CreateWidget<TextureImage>(L"Turn", L"../Assets/UI/PLAY/Play_background_turn.png", XMFLOAT3(0, 0, 0));
-    CreateWidget<TextureImage>(L"Turn", L"../Assets/UI/PLAY/Round_0.png", XMFLOAT3(0, 0, 0));
-    CreateWidget<TextureImage>(L"Turn", L"../Assets/UI/PLAY/Round_2.png", XMFLOAT3(0, 0, 0));
+    m_pTurn = CreateWidget<TextureImage>(L"Turn", L"../Assets/UI/PLAY/Round_0.png", XMFLOAT3(0, 0, 0));
+    m_pTurn10 = CreateWidget<TextureImage>(L"Turn", L"../Assets/UI/PLAY/Round_1.png", XMFLOAT3(0, 0, 0));
 
     //WinLose
-    CreateWidget<TextureImage>(L"RoundCount", L"../Assets/UI/PLAY/3player_yet.png", XMFLOAT3(0, 0, 0));
-    CreateWidget<TextureImage>(L"RoundCount", L"../Assets/UI/PLAY/3player_yet.png", XMFLOAT3(0, 0, 0));
-    CreateWidget<TextureImage>(L"RoundCount", L"../Assets/UI/PLAY/3player_yet.png", XMFLOAT3(0, 0, 0));
+    roundWin[0] = CreateWidget<TextureImage>(L"RoundCount", L"../Assets/UI/PLAY/3player_yet.png", XMFLOAT3(0, 0, 0));
+    roundWin[1] = CreateWidget<TextureImage>(L"RoundCount", L"../Assets/UI/PLAY/3player_yet.png", XMFLOAT3(0, 0, 0));
+    roundWin[2] = CreateWidget<TextureImage>(L"RoundCount", L"../Assets/UI/PLAY/3player_yet.png", XMFLOAT3(0, 0, 0));
 
-    auto icon = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
-    icon->SetPlayer(1);
-    icon = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
-    icon->SetPlayer(1);
-    icon = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
-    icon->SetPlayer(1);
-    icon = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(108, 94), XMFLOAT3(700, 500, 0), UIDirection::Center);
-    icon->SetPlayer(1);
+    m_playerIcons[0] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
+    m_playerIcons[1] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
+    m_playerIcons[2] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
+    m_playerIcons[3] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
+
+    TryInitPlayerIconsFromWeaponData();
 
     auto imojibox = CreateWidget<TextureImage>(L"ImojiBox", L"../Assets/UI/PLAY/ImojiBox.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
-    imojibox->Attach(CreateWidget<TextureImage>(L"Imoji", L"../Assets/UI/PLAY/Imoji_zZZ_mouseout.png", XMFLOAT3(0, 0, 0), UIDirection::Center));
-    imojibox->Attach(CreateWidget<TextureImage>(L"Imoji", L"../Assets/UI/PLAY/Imoji_JiantAngry_mouseout.png", XMFLOAT3(0, 0, 0), UIDirection::Center));
-    imojibox->Attach(CreateWidget<TextureImage>(L"Imoji", L"../Assets/UI/PLAY/Imoji_EZ_mouseout.png", XMFLOAT3(0, 0, 0), UIDirection::Center));
+    auto emote = CreateWidget<EmoteButton>(L"Imoji", Float2(80, 67), XMFLOAT3(0, 0, 0), UIDirection::LeftTop);
+    emote->SetIdleHoverTextuer(L"../Assets/UI/PLAY/Imoji_zZZ_mouseout.png", L"../Assets/UI/PLAY/Imoji_zZZ_mouseover.png");
+    emote->SetEmoteNum(1);
+    auto emote2 = CreateWidget<EmoteButton>(L"Imoji", Float2(80, 67), XMFLOAT3(0, 0, 0), UIDirection::LeftTop);
+    emote2->SetIdleHoverTextuer(L"../Assets/UI/PLAY/Imoji_JiantAngry_mouseout.png", L"../Assets/UI/PLAY/Imoji_JiantAngry_mouseover.png");
+    emote2->SetEmoteNum(2);
+    auto emote3 = CreateWidget<EmoteButton>(L"Imoji", Float2(80, 67), XMFLOAT3(0, 0, 0), UIDirection::LeftTop);
+    emote3->SetIdleHoverTextuer(L"../Assets/UI/PLAY/Imoji_EZ_mouseout.png", L"../Assets/UI/PLAY/Imoji_EZ_mouseover.png");
+    emote3->SetEmoteNum(3);
+    imojibox->Attach(emote);
+    imojibox->Attach(emote2);
+    imojibox->Attach(emote3);
 
-    imojibox = CreateWidget<TextureImage>(L"ImojiBubble", L"../Assets/UI/PLAY/SpeechBubble.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
-    imojibox->Attach(CreateWidget<TextureImage>(L"Imoji", L"../Assets/UI/PLAY/Imoji_zZZ_mouseout.png", XMFLOAT3(0, 0, 0), UIDirection::Center));
-    imojibox = CreateWidget<TextureImage>(L"ImojiBubble", L"../Assets/UI/PLAY/SpeechBubble.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
-    imojibox->Attach(CreateWidget<TextureImage>(L"Imoji", L"../Assets/UI/PLAY/Imoji_zZZ_mouseout.png", XMFLOAT3(0, 0, 0), UIDirection::Center));
+    m_emoteButtons.push_back(emote);
+    m_emoteButtons.push_back(emote2);
+    m_emoteButtons.push_back(emote3);
+
+    m_EmoteBubble1P = CreateWidget<TextureImage>(L"ImojiBubble", L"../Assets/UI/PLAY/SpeechBubble.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
+    m_EmoteBubble1P->SetVisible(Visibility::Hidden);
+    m_EmoteBubble2P = CreateWidget<TextureImage>(L"ImojiBubble", L"../Assets/UI/PLAY/SpeechBubble.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
+    m_EmoteBubble2P->SetVisible(Visibility::Hidden);
+
+    m_EmoteImage1P = CreateWidget<Emoji>(L"emote", Float2(80, 67), XMFLOAT3(7, 15, 0), UIDirection::Center);
+    m_EmoteImage1P->SetScale({-1, 1, 1});
+    m_EmoteImage1P->SetVisible(Visibility::Hidden);
+    m_EmoteImage1P->SetLayer(WidgetLayer::HUD);
+    m_EmoteImage2P = CreateWidget<Emoji>(L"emote", Float2(80, 67), XMFLOAT3(7, 15, 0), UIDirection::Center);
+    m_EmoteImage2P->SetVisible(Visibility::Hidden);
+    m_EmoteImage2P->SetLayer(WidgetLayer::HUD);
+
+    m_EmoteBubble1P->Attach(m_EmoteImage1P);
+    m_EmoteBubble2P->Attach(m_EmoteImage2P);
+
+    m_emoteImages.push_back(m_EmoteImage1P);
+    m_emoteImages.push_back(m_EmoteImage2P);
+
+    m_emojis.push_back(&m_emoji1P);
+    m_emojis.push_back(&m_emoji2P);
 
     return true;
 }
@@ -74,11 +104,14 @@ void PlayHUDScene::OnDestroyScene()
 void PlayHUDScene::OnEnter()
 {
     //std::cout << "[PlayHUDScene] OnEnter\n"; 
+    YunoEngine::GetInput()->AddContext(&m_uiContext, this);
+    TryInitPlayerIconsFromWeaponData();
 }
 
 void PlayHUDScene::OnExit()
 {
     //std::cout << "[PlayHUDScene] OnExit\n"; 
+    YunoEngine::GetInput()->RemoveContext(&m_uiContext);
 }
 
 void PlayHUDScene::ShowEmoteImage(uint8_t pid, uint8_t emoteId)
@@ -86,15 +119,107 @@ void PlayHUDScene::ShowEmoteImage(uint8_t pid, uint8_t emoteId)
     std::cout << "[PlayScene] ShowEmoteImage pid=" << int(pid)
         << " emoteId=" << int(emoteId) << "\n";
 
-    auto* emoji = CreateWidget<Emoji>(
-        L"Emoji",
-        Float2{ 64, 64 },
-        (pid == 1) ? XMFLOAT3{ 300, 200, 0 } : XMFLOAT3{ 800, 200, 0 }
-    );
+    if ((pid == 1 && m_emoji1P.emoteid) || (pid == 2 && m_emoji2P.emoteid))
+        return;
 
-    emoji->SetLayer(WidgetLayer::HUD);
-    emoji->ChangeMaterial(emoteId);
-    m_emojis.push_back({ emoji, 2.0f });
+    auto& emote = m_emoteImages[pid - 1];
+    emote->ChangeMaterial(emoteId);
+
+    if (pid == 1)
+    {
+        m_emoji1P = { pid, emoteId, 2.0f };
+        emote->SetVisible(Visibility::Visible);
+        m_EmoteBubble1P->SetVisible(Visibility::Visible);
+    }
+    else if(pid == 2)
+    {
+        m_emoji2P = { pid, emoteId, 2.0f };
+        emote->SetVisible(Visibility::Visible);
+        m_EmoteBubble2P->SetVisible(Visibility::Visible);
+    }
+
+    if (GameManager::Get().GetPID() == pid)
+    {
+        for (auto* button : m_emoteButtons)
+        {
+            button->Lock();
+        }
+    }
+}
+
+void PlayHUDScene::TryInitPlayerIconsFromWeaponData()
+{
+
+    //weapon id 순서//
+    // 1 : blaster, 2 : chakram, 3: breacher, 4 : scythe, 5 : Impactor, 6 : cleaver
+    //
+
+    auto& gm = GameManager::Get();
+    if (!gm.IsUIWeaponDataReady())
+        return;
+
+    const uint64_t version = gm.GetUIWeaponDataVersion();
+    if (version == m_appliedWeaponDataVersion)
+        return;
+
+    auto& myWeapons = gm.GetMyUIWeapons();
+    auto& enemyWeapons = gm.GetEnemyUIWeapons();
+
+    for (int i = 0; i < 2; ++i)
+    {
+        if (m_playerIcons[i] != nullptr)
+        {
+            IconData idata{};
+            idata = { myWeapons[i].pId, 
+                            myWeapons[i].weaponId,
+                            myWeapons[i].hp,
+                            myWeapons[i].stamina };
+            m_playerIcons[i]->SetPlayer(idata);
+        }
+
+        if (m_playerIcons[i + 2] != nullptr)
+        {
+            IconData idata{};
+            idata = { enemyWeapons[i].pId,
+                            enemyWeapons[i].weaponId,
+                            enemyWeapons[i].hp,
+                            enemyWeapons[i].stamina };
+            m_playerIcons[i + 2]->SetPlayer(idata);
+        }
+    }
+
+    m_appliedWeaponDataVersion = version;
+}
+
+void PlayHUDScene::UpdateWData(float dTime)
+{
+    auto& gm = GameManager::Get();
+
+    auto& myWeapons = gm.GetMyUIWeapons();
+    auto& enemyWeapons = gm.GetEnemyUIWeapons();
+
+    for (int i = 0; i < 2; ++i)
+    {
+        if (m_playerIcons[i] != nullptr)
+        {
+            IconData idata{};
+            idata = { myWeapons[i].pId,
+                            myWeapons[i].weaponId,
+                            myWeapons[i].hp,
+                            myWeapons[i].stamina };
+            m_playerIcons[i]->UpdateIData(idata);
+        }
+
+        if (m_playerIcons[i + 2] != nullptr)
+        {
+            IconData idata{};
+            idata = { enemyWeapons[i].pId,
+                            enemyWeapons[i].weaponId,
+                            enemyWeapons[i].hp,
+                            enemyWeapons[i].stamina };
+            m_playerIcons[i + 2]->UpdateIData(idata);
+        }
+    }
 }
 
 void PlayHUDScene::Update(float dt)
@@ -102,25 +227,42 @@ void PlayHUDScene::Update(float dt)
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);
 
+    UpdateWData(dt);
+
     PendingEmote emote;
     while (GameManager::Get().PopEmote(emote))
     {
         ShowEmoteImage(emote.pid, emote.emoteId);
     }
     //이모지 수명 관리
-    for (auto it = m_emojis.begin(); it != m_emojis.end(); )
+    for (auto& emoji : m_emojis)
     {
-        it->remainTime -= dt;
+        if (!emoji->emoteid) continue;
 
-        if (it->remainTime <= 0.f)
+        emoji->remainTime -= dt;
+
+        if (emoji->remainTime <= 0.f)
         {
-            // UI 매니저에서 제거
-            m_uiManager->DestroyWidget(it->widget->GetID());
-            it = m_emojis.erase(it);
-        }
-        else
-        {
-            ++it;
+            emoji->emoteid = 0;
+
+            if (emoji->pid == 1)
+            {
+                m_EmoteBubble1P->SetVisible(Visibility::Hidden);
+                m_EmoteImage1P->SetVisible(Visibility::Hidden);
+            }
+            else
+            {
+                m_EmoteBubble2P->SetVisible(Visibility::Hidden);
+                m_EmoteImage2P->SetVisible(Visibility::Hidden);
+            }
+                
+            if (GameManager::Get().GetPID() == emoji->pid)
+            {
+                for (auto* button : m_emoteButtons)
+                {
+                    button->UnLock();
+                }
+            }
         }
     }
 }

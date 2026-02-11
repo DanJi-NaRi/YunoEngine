@@ -63,3 +63,9 @@ void ProgressBar::SetFillDirect(FillDirection dir)
 {
     m_pGauge->SetFillDirection(dir);
 }
+
+void ProgressBar::SetGaugeValue(float v)
+{
+    v = std::clamp(v, 0.f, 100.0f);
+    m_pGauge->SetValue(v);
+}

@@ -220,6 +220,8 @@ private:
     std::vector<Wdata> m_weapons;
     std::array<Wdata, 2> m_myUIWeapons;
     std::array<Wdata, 2> m_enemyUIWeapons;
+    bool m_uiWeaponDataReady = false;
+    uint32_t m_uiWeaponDataVersion = 0;
 
 public:
     bool IsEmptyWeaponData();
@@ -231,6 +233,9 @@ public:
     }
 
     void SetUIWeaponData(const std::array<Wdata, 4>& wdatas);
+    bool IsUIWeaponDataReady() const { return m_uiWeaponDataReady; }
+    uint64_t GetUIWeaponDataVersion() const { return m_uiWeaponDataVersion; }
+    void ClearUIWeaponDataState();
 
     // 매 턴 매 슬롯 카드 하나 진행할 때마다 받아옴
 private:
