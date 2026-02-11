@@ -29,7 +29,7 @@ public:
     const int GetCardID() { return m_cardID; }
 
 protected:
-    int m_cardID = -1;
+    int m_cardID = -1;  // 카드 runtimeID
 
 };
 

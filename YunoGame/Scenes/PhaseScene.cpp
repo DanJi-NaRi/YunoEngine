@@ -63,6 +63,7 @@ bool PhaseScene::OnCreateScene()
         gm.SetMinimap(m_pMinimap);
         m_pSelectionPanel = CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(1513, 578), XMFLOAT3(clientX, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::RightBottom);
         gm.SetSelectionPanel(m_pSelectionPanel);
+        m_pConfirmPanel->BindSelectionPanel(m_pSelectionPanel);
     
 
 

@@ -67,7 +67,7 @@ bool DirSelectButton::IdleEvent()
 // 커서가 위에 올라있을 때
 bool DirSelectButton::HoveredEvent()
 {
-    std::cout << "HoveredEvent" << std::endl;
+    //std::cout << "HoveredEvent" << std::endl;
     return true;
 }
 

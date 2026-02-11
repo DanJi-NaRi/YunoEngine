@@ -59,7 +59,9 @@ public:
     void BindClientNetwork(yuno::game::YunoClientNetwork* net) { m_clientNet = net; }
 
     void SetSceneState(CurrentSceneState state);
+    void SetState(CurrentSceneState state) { m_state = state; };    // SetSceneState의 함수는 호출안하고 m_state만 변경하고 싶을때 호출
     CurrentSceneState GetSceneState() { return m_state; };
+    void RequestScenePop();
     void StartCountDown(int countTime,int S1U1,int S1U2,int S2U1,int S2U2);
     void Tick(float dt);
 
