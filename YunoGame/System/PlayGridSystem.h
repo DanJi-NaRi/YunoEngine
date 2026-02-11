@@ -5,6 +5,7 @@
 #include "BattlePackets.h"
 
 class UnitTile;
+class UnitPiece;
 class PlayGridQ;
 enum class CardType : uint8_t;
 struct Wdata;
@@ -148,7 +149,7 @@ public:
 
     void CreateObject(float x, float y, float z) override;                      
     void Update(float dt) override;
-    
+    void ApplyTransform() override;
 private:
     void Init();
     void CreateTileAndPiece(float x, float y, float z);
@@ -214,6 +215,7 @@ private:
     std::unordered_map<GamePiece, PieceInfo> m_pieces;      // 기물 정보
 
     std::unique_ptr<PlayGridQ> m_playQ;
+    std::vector<UnitPiece*> m_units;
 
 private:
     // 시간 관련

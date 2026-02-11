@@ -3,6 +3,7 @@
 #include "SceneBase.h"
 #include "Game_InputContext.h"
 #include "IGridSystem.h"
+#include "SceneState.h"
 
 //class Game_InputContext;
 class Triangle;
@@ -33,6 +34,8 @@ private:
 
     void RegisterEffect();
 
+    void MoveCamera(float dt);
+
 private:
     std::unique_ptr<IGridSystem> m_playGrid;
     Game_InputContext m_gameCtx;
@@ -41,4 +44,14 @@ private:
 
     int m_selectedUnitSlot = 0; // 어떤 유닛인지 선택
 
+    CurrentSceneState m_CurSceneState;
+    CurrentSceneState m_PrevSceneState;
+
+    float m_CamMoveTime = 1.0f;
+    float m_curMoveTime = 0.0f;
+
+    XMFLOAT3 m_CurCamPos;
+    XMFLOAT3 m_NextCamPos;
+
+    bool isCamMove = false;
 };
