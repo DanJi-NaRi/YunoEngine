@@ -33,15 +33,17 @@ namespace yuno::server
         if (!m_waitingRoundStartReady)
             return;
 
-        if (std::chrono::steady_clock::now() < m_roundStartReadyDeadline)
-            return;
 
-        auto remainingMs =
-            std::chrono::duration_cast<std::chrono::milliseconds>(
-                m_roundStartReadyDeadline - std::chrono::steady_clock::now());
+        // 타임아웃 로직 버그만 유발해서 제거 ㅡ.,ㅡ (패킷만 잘 받으면 라운드 시작 잘 될거임)
+        //if (std::chrono::steady_clock::now() < m_roundStartReadyDeadline)
+        //    return;
 
-        std::cout << "remaining: " << remainingMs.count() << " ms" << std::endl;
-        std::cout << "[Round] RoundStartReady timeout. Force starting next round\n";
+        //auto remainingMs =
+        //    std::chrono::duration_cast<std::chrono::milliseconds>(
+        //        m_roundStartReadyDeadline - std::chrono::steady_clock::now());
+
+        //std::cout << "remaining: " << remainingMs.count() << " ms" << std::endl;
+        //std::cout << "[Round] RoundStartReady timeout. Force starting next round\n";
 
         //m_waitingRoundStartReady = false;
         //TryStartRound();
@@ -75,8 +77,11 @@ namespace yuno::server
 
         //  라운드 시작 조건 
         if (!(s[0].occupied && s[1].occupied)) return;
-        if (!(s[0].ready && s[1].ready)) return;
-        if (!(s[0].IsUnitsFilled() && s[1].IsUnitsFilled())) return;
+        if (!m_cardsInitialized)
+        {
+            if (!(s[0].ready && s[1].ready)) return;
+            if (!(s[0].IsUnitsFilled() && s[1].IsUnitsFilled())) return;
+        }
         if (m_roundStarted) return;
 
         m_roundStarted = true;
@@ -94,7 +99,6 @@ namespace yuno::server
             SendCountDown(); // 1회 초기화
             m_cardsInitialized = true;
             m_matchLocked = true;
-            m_match.ClearReadyAndUnits();
 
         }
 
@@ -192,7 +196,7 @@ namespace yuno::server
             {
                 rs.Serialize(w);
             });
-
+        std::cout << "=================[Server Send] Round Start Packet=================" << std::endl;
         m_network.Broadcast(std::move(bytes));
     }
 
@@ -239,7 +243,6 @@ namespace yuno::server
         m_waitingRoundStartReady = true;
         m_roundStartReady[0] = false;
         m_roundStartReady[1] = false;
-        m_roundStartReadyDeadline = std::chrono::steady_clock::now() + std::chrono::seconds(50);
 
         //else 
         //{

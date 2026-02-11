@@ -274,10 +274,12 @@ namespace yuno::game
 
                 auto wVector = gm.GetWeaponData();
 
+                std::cout << "=====================================================GetWeaponDataPacket=====================================================" << std::endl;
                 for (const auto& data : wVector) 
                 {
                     std::cout << "Weapon data : " << data.pId << " ," << data.slotId << " ," << data.weaponId << " ," << data.hp << " ," << data.stamina << " ," << data.currentTile << std::endl;
                 }
+
 
             });// RoundStart Packet End
 
