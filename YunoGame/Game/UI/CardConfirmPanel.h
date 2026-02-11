@@ -40,6 +40,8 @@ protected:
     bool HasEnoughStaminaForCard(int unitSlot, uint32_t runtimeID) const;
     void SyncSimulatedStaminaFromPlayer();
 
+    
+
 protected:
     int m_openSlot;
     bool m_dirChoice = false;

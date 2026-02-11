@@ -212,6 +212,7 @@ public:
     bool IsEmptyWeaponData();
     void ResetWeaponData() { m_weapons.clear(); };
     void SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, int _stamina, int _currentTile);
+    static int GetMaxStaminaByWeaponId(int weaponId);
     std::vector<Wdata> GetWeaponData() {
         return m_weapons;
     }

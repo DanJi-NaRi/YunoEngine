@@ -42,6 +42,8 @@ public:
 
     const int GetMaxPage(int slot);
 
+    WeaponNameImage* GetWeaponNameImage() const { return m_pWeaponIMG; }
+
 protected:
     // 덱 정보
     int* m_pID = nullptr; // 플레이어 ID (Team)

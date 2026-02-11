@@ -7,6 +7,7 @@
 #include "CardConfirmButton.h"
 #include "CardCancelButton.h"
 #include "CardSelectionPanel.h"
+#include "WeaponNameImage.h"
 
 #include "BattlePackets.h"
 
@@ -93,6 +94,7 @@ void CardConfirmPanel::CreateChild() {
         m_gameManager.SubmitTurn(m_gameManager.GetCardQueue());
         this->m_cardConfirmButton->SetIsClicked(true);
         m_pSelectionPanel->ViewCardPage(0, 0);
+        m_pSelectionPanel->GetWeaponNameImage()->ChangeWeaponImage(m_player.weapons[0].weaponId);/* m_curSlot = 0*/;
         m_gameManager.SetSceneState(CurrentSceneState::BattleStandBy);
         });
 

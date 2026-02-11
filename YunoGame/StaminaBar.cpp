@@ -66,5 +66,6 @@ void StaminaBar::SetStaminaValue(float value)
     if (!m_pGauge)
         return;
 
-    m_pGauge->SetValue(value);
+    const float normalizedPercent = (value <= 1.0f) ? (value * 100.0f) : value;
+    m_pGauge->SetValue(std::clamp(normalizedPercent, 0.0f, 100.0f));
 }
