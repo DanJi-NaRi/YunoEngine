@@ -274,10 +274,12 @@ namespace yuno::game
 
                 auto wVector = gm.GetWeaponData();
 
+                std::cout << "=====================================================GetWeaponDataPacket=====================================================" << std::endl;
                 for (const auto& data : wVector) 
                 {
                     std::cout << "Weapon data : " << data.pId << " ," << data.slotId << " ," << data.weaponId << " ," << data.hp << " ," << data.stamina << " ," << data.currentTile << std::endl;
                 }
+
 
             });// RoundStart Packet End
 
@@ -399,6 +401,7 @@ namespace yuno::game
                 }
 
                 BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, pkt.dir, pkt.actionTime, order };
+                std::cout << "Battle Packet(actionTime) : " << static_cast<int>(pkt.actionTime) << std::endl;
                 gm.PushBattlePacket(br);
                 gm.PushRevealPacket(br);// 복사 저장
                 gm.UpdatePanels(br);

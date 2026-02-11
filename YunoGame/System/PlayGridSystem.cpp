@@ -101,13 +101,16 @@ void PlayGridSystem::InitRound()
         };
         m_weaponIDs[i] = w.weaponId;
     }  
+    ReflectWeaponData();
     isRoundOver = false;
 }
 
 void PlayGridSystem::Update(float dt)
 {
-    if (!GameManager::Get().IsEmptyWeaponData())
-        InitRound();
+    if (!GameManager::Get().IsEmptyWeaponData())    
+        InitRound();       
+
+    //ReflectWeaponData();        // 이걸 여기 했는데 UI반영이 안된다? 그럼 뭔가 큰 일이 났다는 사실~
 
     UpdateSequence(dt);         // 카드 타입별 step 진행
 
@@ -523,9 +526,10 @@ void PlayGridSystem::CheckPacket(float dt)
     }
 
     // 장애물까지 발동하고 CheckOver
-    if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing && !isRoundOver)
+    if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing)
     {
         const auto obstaclePkt = mng.PopObstaclePacket();
+        if (isRoundOver) return;    // 라운드 종료 시 해당 장애물은 패킷 버리기
         m_pktTime = obstaclePktDuration;
         isProcessing = true;
         ApplyObstacleResult(obstaclePkt);
