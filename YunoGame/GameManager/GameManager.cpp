@@ -14,6 +14,7 @@
 #include "CountdownScene.h"
 #include "OptionScene.h"
 #include "GuideScene.h"
+#include "EscScene.h"
 
 #include "YunoClientNetwork.h"
 
@@ -27,6 +28,7 @@
 #include "C2S_MatchEnter.h"
 #include "C2S_MatchLeave.h"
 #include "C2S_Emote.h"
+#include "C2S_Surrender.h"
 
 #include "Minimap.h" // 미니맵
 #include "CardConfirmPanel.h"   // 카드 컨펌 패널
@@ -248,15 +250,28 @@ void GameManager::SetSceneState(CurrentSceneState state)
         
         break;
     }
+    case CurrentSceneState::EscScene:
+    {
+
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = false;
+        sp.blockInputBelow = true;
+
+        sm->RequestPush(std::make_unique<EscScene>(), sp);
+
+        break;
+    }
     case CurrentSceneState::Option:
     {
 
         ScenePolicy sp;
         sp.blockRenderBelow = false;
-        sp.blockUpdateBelow = true;
+        sp.blockUpdateBelow = false;
         sp.blockInputBelow = true;
 
         sm->RequestPush(std::make_unique<OptionScene>(), sp);
+
         break;
     }
     case CurrentSceneState::Guide:
@@ -264,7 +279,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
 
         ScenePolicy sp;
         sp.blockRenderBelow = false;
-        sp.blockUpdateBelow = true;
+        sp.blockUpdateBelow = false;
         sp.blockInputBelow = true;
 
         sm->RequestPush(std::make_unique<GuideScene>(), sp);
@@ -717,7 +732,27 @@ void GameManager::SubmitTurn(
     m_clientNet->SendPacket(std::move(bytes));
 }
 
+void GameManager::SendSurrender()
+{
+    if (!m_clientNet)
+        return;
 
+    using namespace yuno::net;
+    using namespace yuno::net::packets;
+
+    C2S_Surrender pkt{};
+
+    auto bytes = PacketBuilder::Build(
+        PacketType::C2S_Surrender,
+        [&](ByteWriter& w)
+        {
+            pkt.Serialize(w);
+        });
+
+    m_clientNet->SendPacket(std::move(bytes));
+
+    std::cout << "[GameManager] C2S_Surrender sent\n";
+}
 //void GameManager::RoundInit(yuno::net::packets::S2C_Error data)
 //{
 //    // 너가 패킷 사용해서 하고싶은거하면돼

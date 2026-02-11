@@ -138,7 +138,18 @@ void GameApp::OnUpdate(float dt)
 
     if (input && sm)
     {
+        if (input->IsKeyPressed(VK_F1))
+        {
+            IScene* active = sm->GetActiveScene();
+            if (!active)
+                return;
 
+            // 이미 EscScene 씬이면 무시
+            if (strcmp(active->GetDebugName(), "EscScene") == 0)
+                return;
+
+            GameManager::Get().SetSceneState(CurrentSceneState::EscScene);
+        }
 
         //if (input->IsKeyPressed(VK_F2))
         //{

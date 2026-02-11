@@ -142,6 +142,9 @@
     <Filter Include="Scenes\0.Title">
       <UniqueIdentifier>{27fecdf2-c2ce-454b-8699-682c736c1721}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes\7.Esc">
+      <UniqueIdentifier>{2195f01a-0188-40b4-aa06-872eec5ebde6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -360,6 +363,12 @@
     </ClCompile>
     <ClCompile Include="Scenes\PlayHUDScene.cpp">
       <Filter>Scenes\2.Play</Filter>
+    </ClCompile>
+    <ClCompile Include="EscScene.cpp">
+      <Filter>Scenes\7.Esc</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckPanel.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -607,11 +616,21 @@
     <ClInclude Include="StandByScene.h">
       <Filter>Scenes\1.WeaponSelect</Filter>
     </ClInclude>
+
     <ClInclude Include="Scenes\PlayHUDScene.h">
       <Filter>Scenes\2.Play</Filter>
     </ClInclude>
     <ClInclude Include="Game\UI\PopButton.h">
       <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="EscScene.h">
+      <Filter>Scenes\7.Esc</Filter>
+    </ClInclude>
+    <ClInclude Include="EscScene_inputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckPanel.h">
+      <Filter>Game\UI\Image\Panel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -50,10 +50,6 @@ private:
     OptionButton* m_volumeBtn = nullptr;
     OptionButton* m_creditBtn = nullptr;
 
-    //Battle
-    OptionButton* m_surrenderBtn = nullptr;
-    OptionButton* m_leaveBtn = nullptr;
-
     // Volume
     std::array<Widget*, 3> m_volumePanels{ nullptr, nullptr, nullptr };
     //std::array<Widget*, 1> m_volumePanels{ nullptr};

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Effect.h"
+#include"YunoTransform.h"
 
 // 풀링 없이 ObjectManager에서 일반 Unit처럼 관리하는 이펙트 오브젝트
 class EffectUnit : public Effect
@@ -13,12 +14,28 @@ public:
     virtual bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, PassOption opt) override;
 
     virtual bool Update(float dt) override;
+    virtual void UpdateWorldMatrix() override;
+
 
     // 텍스처를 지정해서 이펙트 머티리얼을 내부 생성
     bool BuildInternalEffectMaterial(const EffectDesc& desc);
 
     // 수동 정지(즉시 초기화)
     void Stop();
+
+public:
+    void IgnoreRotation(bool x, bool y, bool z);
+    void IgnoreScale(bool x, bool y, bool z);
+
+private:
+    XMMATRIX3 GetRotTMs(XMFLOAT3 rot);
+    XMMATRIX3 GetScaleTMs(XMFLOAT3 scale);
+
+    XMMATRIX GetIgnoreRotTM(XMMATRIX3 rotTMs);
+    XMMATRIX GetIgnoreScaleTM(XMMATRIX3 scaleTMs);
+private:
+    Bool3 m_rotIgnore;
+    Bool3 m_scaleIgnore;
 
 #ifdef _DEBUG
     void Serialize() override;

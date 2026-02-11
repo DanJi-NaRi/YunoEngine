@@ -32,12 +32,12 @@ PGridCmd PlayGridQ::Rot_P(Direction dir)
     return cmd;
 }
 
-PGridCmd PlayGridQ::Move_P(float wx, float wy, float wz, float speed, bool isDone)
+PGridCmd PlayGridQ::Move_P(float wx, float wy, float wz, float second, bool isDone)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Move;
     cmd.isDone = isDone;
-    cmd.mv_p = { wx, wy, wz, speed };
+    cmd.mv_p = { wx, wy, wz, second };
     return cmd;
 }
 
@@ -87,6 +87,14 @@ PGridCmd PlayGridQ::Cmd_S(CommandType cmdType, GamePiece pieceType)
     PGridCmd cmd;
     cmd.cmdType = cmdType;
     cmd.over_s.whichPiece = pieceType;
+    return cmd;
+}
+
+PGridCmd PlayGridQ::TimeCmd_P(CommandType cmdType, float seconds)
+{
+    PGridCmd cmd;
+    cmd.cmdType = cmdType;
+    cmd.wait_p.seconds = seconds;
     return cmd;
 }
 
