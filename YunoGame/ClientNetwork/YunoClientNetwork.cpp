@@ -405,7 +405,7 @@ namespace yuno::game
                 gm.PushBattlePacket(br);
                 gm.PushRevealPacket(br);// 복사 저장
                 gm.RequestRevealStart();
-                //gm.UpdatePanels(br);
+                gm.UpdatePanels(br);
                 gm.SetSceneState(CurrentSceneState::AutoBattle);
 
                 // 이거때문에 둘 다 카드 제출하고 업데이트 하는 순간 미니맵 없어서 터짐

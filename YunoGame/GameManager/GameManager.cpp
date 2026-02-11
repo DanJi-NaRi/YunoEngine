@@ -191,14 +191,34 @@ void GameManager::SetUpPanels()
 void GameManager::UpdatePanels(const BattleResult& battleResult)
 {
     // 전투 시 실시간 갱신
-    assert(m_pMinimap);
-    if (m_pMinimap) m_pMinimap->UpdatePanel(battleResult);
+    // PhaseScene 이 내려간 상태에서는 패널 포인터가 유효하지 않을 수 있으므로 보관.
+    if (!m_pMinimap || !m_pSelectionPanel || !m_pConfirmPanel)
+    {
+        m_pendingBattlePanelUpdates.push(battleResult);
+        return;
+    }
 
-    assert(m_pSelectionPanel);
-    if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(battleResult);
+    m_pMinimap->UpdatePanel(battleResult);
+    m_pSelectionPanel->UpdatePanel(battleResult);
+    m_pConfirmPanel->UpdatePanel(battleResult);
+}
 
-    assert(m_pConfirmPanel);
-    if (m_pConfirmPanel) m_pConfirmPanel->UpdatePanel(battleResult);
+void GameManager::FlushPendingPanelUpdates()
+{
+    if (!m_pMinimap || !m_pSelectionPanel || !m_pConfirmPanel)
+    {
+        return;
+    }
+
+    while (!m_pendingBattlePanelUpdates.empty())
+    {
+        const BattleResult battleResult = m_pendingBattlePanelUpdates.front();
+        m_pendingBattlePanelUpdates.pop();
+
+        m_pMinimap->UpdatePanel(battleResult);
+        m_pSelectionPanel->UpdatePanel(battleResult);
+        m_pConfirmPanel->UpdatePanel(battleResult);
+    }
 }
 
 void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
@@ -425,6 +445,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockUpdateBelow = false;
 
         sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+        FlushPendingPanelUpdates();
 
         break;
     }
