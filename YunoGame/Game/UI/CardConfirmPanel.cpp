@@ -181,6 +181,25 @@ bool CardConfirmPanel::HandleDirectionInput(Direction& outDir) const
     return outDir != Direction::None;
 }
 
+bool CardConfirmPanel::IsCardAlreadyQueued(uint32_t runtimeID) const
+{
+    const auto& queue = m_gameManager.GetCardQueue();
+    return std::any_of(queue.begin(), queue.end(), [runtimeID](const CardPlayCommand& queuedCmd) {
+        return queuedCmd.runtimeID == runtimeID;
+        });
+}
+
+bool CardConfirmPanel::HasEnoughStaminaForCard(int unitSlot, uint32_t runtimeID) const
+{
+    if (unitSlot < 0 || unitSlot >= static_cast<int>(m_player.weapons.size()))
+        return false;
+
+    const CardData cardData = m_gameManager.GetCardData(runtimeID);
+    const int currentStamina = m_player.weapons[unitSlot].stamina;
+
+    return currentStamina >= cardData.m_cost;
+}
+
 void CardConfirmPanel::SubmitCurrentSelection()
 {
     if (!m_pSelectionPanel || m_setCardSlots.empty())
@@ -200,12 +219,20 @@ void CardConfirmPanel::SubmitCurrentSelection()
     if (selectedCard->GetCardID() == 0)
         return;
 
+    const auto selectedRuntimeID = static_cast<uint32_t>(selectedCard->GetCardID());
+    if (IsCardAlreadyQueued(selectedRuntimeID))
+        return;
+
+    const int selectedSlot = m_pSelectionPanel->GetCurrentSlot();
+    if (!HasEnoughStaminaForCard(selectedSlot, selectedRuntimeID))
+        return;
+
     Direction dir = Direction::None;
     if (!HandleDirectionInput(dir))
         return;
 
     CardPlayCommand cmd;
-    cmd.runtimeID = static_cast<uint32_t>(selectedCard->GetCardID());
+    cmd.runtimeID = selectedRuntimeID;
     cmd.dir = dir;
 
     if (!m_gameManager.PushCardCommand(cmd))

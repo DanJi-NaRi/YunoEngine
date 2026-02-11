@@ -36,6 +36,8 @@ public:
 protected:
     void SubmitCurrentSelection();
     bool HandleDirectionInput(Direction& outDir) const;
+    bool IsCardAlreadyQueued(uint32_t runtimeID) const;
+    bool HasEnoughStaminaForCard(int unitSlot, uint32_t runtimeID) const;
 
 protected:
     int m_openSlot;

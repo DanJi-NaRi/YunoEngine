@@ -61,5 +61,6 @@ protected:
 public:
     Card* GetSelectedCard() const { return m_pSelectedCard; }
     void ClearSelectedCard() { m_pSelectedCard = nullptr; }
+    int GetCurrentSlot() const { return m_curSlot; }
 };
 
