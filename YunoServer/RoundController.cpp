@@ -266,6 +266,7 @@ namespace yuno::server
 
         // 두 플레이어가 선택한 카드 결과
 
+
         if (g_battleState.turnNumber != 1)
         {
             pkt.addedCards[0] = g_battleState.players[0].handCards.back();
@@ -331,10 +332,17 @@ namespace yuno::server
 
     }
 
-    void RoundController::EndGameByDisconnect(uint8_t winnerPID)
+    void RoundController::EndGameByDisconnect(uint8_t winnerPID, uint32_t winnerSessionId)
     {
         std::cout << "[Round] Match ended by disconnect. winner="
             << int(winnerPID) << "\n";
+
+        // 체크
+        ResetMatchState();
+
+        auto session = m_network.FindSession(winnerSessionId);
+        if (!session)
+            return;
 
         yuno::net::packets::S2C_EndGame_Disconnect pkt{};
         pkt.winnerPID = winnerPID;
@@ -346,9 +354,9 @@ namespace yuno::server
                 pkt.Serialize(w);
             });
 
-        m_network.Broadcast(std::move(bytes));
+        session->Send(std::move(bytes));
 
-        ResetMatchState();
+
     }
 
     void RoundController::ResetMatchState()

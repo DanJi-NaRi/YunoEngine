@@ -32,8 +32,10 @@ public:
     const int GetSlotID() { return m_slotID; }
 
 protected:
+
     int m_cardID = -1;
     int m_slotID = -1; // 현재 기준 어느 슬롯 무기의 것인지
+
 };
 
 

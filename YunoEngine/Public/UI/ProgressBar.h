@@ -1,6 +1,7 @@
 #pragma once
 #include "Widget.h"
 class Gauge;
+enum class FillDirection;
 
 // 각 오브젝트 헤더 파일 최상단에는 Widget 헤더가 있어야됨
 class ProgressBar : public Widget {
@@ -14,10 +15,12 @@ public:
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
 
-    virtual void GuageUpdate(float dTime = 0);
+    virtual void GaugeUpdate(float dTime = 0);
 
     virtual WidgetType GetWidgetType() override { return WidgetType::ProgressBar; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::ProgressBar; }
+
+    void SetFillDirect(FillDirection dir);
 
 protected:
     Gauge* m_pGauge;

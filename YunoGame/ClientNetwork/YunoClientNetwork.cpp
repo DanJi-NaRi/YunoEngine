@@ -548,14 +548,27 @@ namespace yuno::game
                 const uint8_t p1Wins = pkt.results[0].winCount;
                 const uint8_t p2Wins = pkt.results[1].winCount;
 
-                if (p1Wins > p2Wins)
-                    std::cout << "[Result] Player 1 WIN\n";
-                else if (p1Wins < p2Wins)
-                    std::cout << "[Result] Player 2 WIN\n";
-                else
-                    std::cout << "[Result] DRAW\n";
+                int winnerPID = 0;
 
+                if (p1Wins > p2Wins)
+                {
+                    winnerPID = 1;
+                    std::cout << "[Result] Player 1 WIN\n";
+                }
+                else if (p1Wins < p2Wins)
+                {
+                    winnerPID = 2;
+                    std::cout << "[Result] Player 2 WIN\n";
+                }   
+                else
+                {
+                    winnerPID = -1;
+                    std::cout << "[Result] DRAW\n";
+                }
                 std::cout << "=============================\n";
+
+                GameManager::Get().SetWinnerPID(winnerPID);
+                GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
             }
         );// S2C_EndGame Packet End
 
@@ -670,6 +683,8 @@ namespace yuno::game
                 std::cout << "winnerPID : " <<  static_cast<int>(pkt.winnerPID) << std::endl;
 
                 GameManager::Get().SetBattleOngoing(false);
+                GameManager::Get().SetWinnerPID(pkt.winnerPID);
+                GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
             }
         ); //S2C_EndGame_Disconnect Packet End
     }

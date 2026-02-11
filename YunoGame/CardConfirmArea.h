@@ -35,6 +35,6 @@ public:
 
 protected:
     Card* m_pCard = nullptr; // 해당 슬롯에 등록된 카드
-    Direction m_direction; // 선택한 방향
+    Direction m_direction = Direction::None; // 선택한 방향
 };
 

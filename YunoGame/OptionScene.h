@@ -5,6 +5,7 @@
 
 class SceneChangeButton;
 class OptionButton;
+class PopButton;
 
 enum class OptionUIState
 {
@@ -49,10 +50,6 @@ private:
     OptionButton* m_volumeBtn = nullptr;
     OptionButton* m_creditBtn = nullptr;
 
-    //Battle
-    OptionButton* m_surrenderBtn = nullptr;
-    OptionButton* m_leaveBtn = nullptr;
-
     // Volume
     std::array<Widget*, 3> m_volumePanels{ nullptr, nullptr, nullptr };
     //std::array<Widget*, 1> m_volumePanels{ nullptr};
@@ -62,5 +59,5 @@ private:
     Widget* m_creditRoot = nullptr;
 
     // Back
-    SceneChangeButton* m_backBtn = nullptr;
+    PopButton* m_backBtn = nullptr;
 };

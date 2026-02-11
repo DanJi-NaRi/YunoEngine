@@ -5,6 +5,7 @@
 
 class SceneChangeButton;
 class OptionButton;
+class PopButton;
 
 enum class GuideUIState
 {
@@ -12,7 +13,8 @@ enum class GuideUIState
     Keyword,
     CardType,
     Turn,
-    CoinToss
+    CoinToss,
+    Registration
 };
 
 class GuideScene final : public SceneBase
@@ -38,6 +40,7 @@ private:
     void CreateCardTypeUI();
     void CreateTurnUI();
     void CreateCoinTossUI();
+    void CreateRegistrationUI();
 
     // 상태
     void ChangeUIState(GuideUIState state);
@@ -55,13 +58,15 @@ private:
     OptionButton* m_cardTypeBtn = nullptr;
     OptionButton* m_turnBtn = nullptr;
     OptionButton* m_coinTossBtn = nullptr;
+    OptionButton* m_registrationBtn = nullptr;
 
     // Root
     Widget* m_keywordRoot = nullptr;
     Widget* m_cardTypeRoot = nullptr;
     Widget* m_turnRoot = nullptr;
     Widget* m_coinTossRoot = nullptr;
+    Widget* m_registrationRoot = nullptr;
 
     // Back
-    SceneChangeButton* m_backBtn = nullptr;
+    PopButton* m_backBtn = nullptr;
 };

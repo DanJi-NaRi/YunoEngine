@@ -37,7 +37,7 @@ bool ProgressBar::Start()
 bool ProgressBar::Update(float dTime)
 {
     Widget::Update(dTime);
-    GuageUpdate(dTime);
+    GaugeUpdate(dTime);
 
     return true;
 }
@@ -55,6 +55,11 @@ bool ProgressBar::Submit(float dTime)
     return true;
 }
 
-void ProgressBar::GuageUpdate(float dTime)
+void ProgressBar::GaugeUpdate(float dTime)
 {
+}
+
+void ProgressBar::SetFillDirect(FillDirection dir)
+{
+    m_pGauge->SetFillDirection(dir);
 }

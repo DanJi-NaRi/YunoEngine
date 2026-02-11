@@ -56,7 +56,7 @@ bool Card::HoveredEvent()
 
 bool Card::LMBPressedEvent()
 {
-    std::cout << "(Card - LMB)PressedEvent" << std::endl;
+    //std::cout << "(Card - LMB)PressedEvent" << std::endl;
     m_pDrag->StartDrag();
     return true;
 }
@@ -73,7 +73,7 @@ bool Card::KeyPressedEvent(uint32_t key)
 
 bool Card::LMBReleasedEvent()
 {
-    std::cout << "(Card - LMB)ReleasedEvent" << std::endl;
+    //std::cout << "(Card - LMB)ReleasedEvent" << std::endl;
     m_pDrag->EndDrag();
     return true;
 }

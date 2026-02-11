@@ -18,6 +18,8 @@ bool OptionScene::OnCreateScene()
     ClientW = (float)win->GetClientWidth();
     ClientH = (float)win->GetClientHeight();
 
+    CreateWidget<TextureImage>(L"StandByBackGround", L"../Assets/UI/WEAPON_SELECT/black_background.png", XMFLOAT3(ClientW / 2, ClientH / 2, 0), UIDirection::Center);
+
     CreateWidget<TextureImage>(L"Option", L"../Assets/UI/TITLE/option.png", XMFLOAT3(0, 0, 0));
 
     CreateMainUI();
@@ -80,58 +82,16 @@ void OptionScene::CreateMainUI()
         });
 
     //Back//TODO :: 위치 확인
-    m_backBtn = CreateWidget<SceneChangeButton>(
+    m_backBtn = CreateWidget<PopButton>(
         L"BackBtn",
         Float2(416, 90),
         XMFLOAT3(ClientW / 2 + 315, ClientH / 2 + 350, 0),
         UIDirection::Center
     );
-    m_backBtn->SetTargetScene(CurrentSceneState::Title);
     m_backBtn->SetHoverTexture(
         L"../Assets/UI/TITLE/back_mouseout.png",
         L"../Assets/UI/TITLE/back_mouseover.png"
     );
-
-    //서렌버튼
-    m_surrenderBtn = CreateWidget<OptionButton>(
-        L"SurrenderBtn",
-        Float2(208.5f, 45),
-        makePos(2),   // 위치는 조절
-        UIDirection::Center
-    );
-
-    m_surrenderBtn->SetHoverTexture(
-        L"../Assets/UI/TITLE/surrender_mouseout.png",
-        L"../Assets/UI/TITLE/surrender_mouseover.png"
-    );
-
-    m_surrenderBtn->SetOnClick([this]()
-        {
-            //SendSurrender();
-        });
-
-    m_surrenderBtn->SetVisible(Visibility::Collapsed);
-
-
-    // Leave 버튼
-    m_leaveBtn = CreateWidget<OptionButton>(
-        L"LeaveBtn",
-        Float2(208.5f, 45),
-        makePos(3),
-        UIDirection::Center
-    );
-
-    m_leaveBtn->SetHoverTexture(
-        L"../Assets/UI/TITLE/leave_mouseout.png",
-        L"../Assets/UI/TITLE/leave_mouseover.png"
-    );
-
-    m_leaveBtn->SetOnClick([this]()
-        {
-            //SendMatchLeave();
-        });
-
-    m_leaveBtn->SetVisible(Visibility::Collapsed);
 }
 
 void OptionScene::CreateVolumeUI()

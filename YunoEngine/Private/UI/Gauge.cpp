@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "Gauge.h"
 #include "IInput.h"
+#ifdef _DEBUG
+#include "UImgui.h"
+#endif
 
 
 Gauge::Gauge(UIFactory& uiFactory) : Widget(uiFactory)
@@ -96,6 +99,13 @@ bool Gauge::IsFillVertical() const
     return (m_fillDir == FillDirection::TopToBottom || 
             m_fillDir == FillDirection::BottomToTop);
 }
+
+#ifdef _DEBUG
+void Gauge::Serialize()
+{
+    UI::SliderFloat("Value", &m_value, 0.0f, 100.0f, "%.1f%%");
+}
+#endif
 
 bool Gauge::CreateMaterial(std::wstring path, MaterialDesc* pDesc)
 {

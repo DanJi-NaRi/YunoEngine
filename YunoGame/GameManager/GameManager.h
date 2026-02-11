@@ -59,7 +59,9 @@ public:
     void BindClientNetwork(yuno::game::YunoClientNetwork* net) { m_clientNet = net; }
 
     void SetSceneState(CurrentSceneState state);
+    void SetState(CurrentSceneState state) { m_state = state; };    // SetSceneState의 함수는 호출안하고 m_state만 변경하고 싶을때 호출
     CurrentSceneState GetSceneState() { return m_state; };
+    void RequestScenePop();
     void StartCountDown(int countTime,int S1U1,int S1U2,int S2U1,int S2U2);
     void Tick(float dt);
 
@@ -87,6 +89,7 @@ public:
 
     const int GetPID() { return m_PID; }
 
+    void SendSurrender();//항복 패킷 보내기
     //void RoundInit(yuno::net::packets::S2C_Error data);
 
 // 카드 관련 변수와 함수
@@ -140,6 +143,18 @@ public:
     bool IsBattleOngoing() const { return m_isBattleOngoing; }
     void SetBattleOngoing(bool v) { m_isBattleOngoing = v; }
 
+    // 패널 사용 게터
+    std::vector<Wdata>& GetWeapons() { return m_weapons; }
+
+
+    // Picks
+    PieceType& GetMyPick(size_t idx) { return m_myPick[idx]; } // idx: 0~1
+
+
+    //승리플레이어 세터게터
+    void SetWinnerPID(int pid) { m_winnerPID = pid; };
+    int  GetWinnerPID() const { return m_winnerPID; };
+
 private:
     static GameManager* s_instance;
 
@@ -157,6 +172,8 @@ private:
 
     //클라에서 전투중인지 확인
     bool m_isBattleOngoing = false;
+
+    int m_winnerPID = 0;// 승리 플레이어
 
     bool m_isReady = false;
     bool m_p1Ready = false;

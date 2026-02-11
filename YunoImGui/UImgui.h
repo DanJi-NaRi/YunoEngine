@@ -33,6 +33,7 @@ namespace UI
     bool IsLeftMouseDoubleClicked();
 
     bool Button(const char* label);
+    bool Checkbox(const char* label, bool* v);
     void Text(const char* fmt, ...);
 
     bool CollapsingHeader(const char* label);

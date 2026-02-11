@@ -13,13 +13,17 @@ struct PGridCmd
     {
         struct
         {
+            float seconds;
+        } wait_p, rollback_p, roll_p;
+        struct
+        {
             Direction dir;
         } rot_p;
 
         struct
         {
             float wx, wy, wz;
-            float speed;
+            float second;
         } mv_p;  // Move
 
         struct
@@ -65,7 +69,7 @@ public:
 
 public:
     static PGridCmd Rot_P(Direction dir);
-    static PGridCmd Move_P(float wx, float wy, float wz, float speed = 1, bool isDone = false);
+    static PGridCmd Move_P(float wx, float wy, float wz, float second = 1, bool isDone = false);
 
     static PGridCmd Hit_S(GamePiece pieceType);
     static PGridCmd Hit_P();
@@ -75,5 +79,6 @@ public:
     static PGridCmd Disappear_P(float disappearDissolveDuration);
 
     static PGridCmd Cmd_S(CommandType cmdType, GamePiece pieceType);
+    static PGridCmd TimeCmd_P(CommandType cmdType, float seconds);
 
 };

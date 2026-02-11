@@ -191,9 +191,12 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CardConfirmArea.cpp" />
+    <ClCompile Include="CheckPanel.cpp" />
     <ClCompile Include="CountdownImage.cpp" />
     <ClCompile Include="CountdownScene.cpp" />
+    <ClCompile Include="EscScene.cpp" />
     <ClCompile Include="Game\UI\DirSelectButton.cpp" />
+    <ClCompile Include="Scenes\PlayHUDScene.cpp" />
     <ClCompile Include="Game\UI\TextureImage.cpp" />
     <ClCompile Include="Game\UI\VolumePanel.cpp" />
     <ClCompile Include="Game\UI\VolumeTrackButton.cpp" />
@@ -215,6 +218,8 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="HealthGauge.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="Game\UI\PopButton.cpp" />
+    <ClCompile Include="ResultPanel.cpp" />
+    <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="SceneChangeButton.cpp" />
     <ClCompile Include="ShowCardDeck.cpp" />
     <ClCompile Include="PhaseStaminaBar.cpp" />
@@ -296,9 +301,13 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CardConfirmArea.h" />
+    <ClInclude Include="CheckPanel.h" />
     <ClInclude Include="CountdownImage.h" />
     <ClInclude Include="CountdownScene.h" />
+    <ClInclude Include="EscScene.h" />
+    <ClInclude Include="EscScene_inputContext.h" />
     <ClInclude Include="Game\UI\DirSelectButton.h" />
+    <ClInclude Include="Scenes\PlayHUDScene.h" />
     <ClInclude Include="Game\UI\PopButton.h" />
     <ClInclude Include="Game\UI\TextureImage.h" />
     <ClInclude Include="Game\UI\VolumePanel.h" />
@@ -320,6 +329,9 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="Game\UI\CardSelectionPanel.h" />
     <ClInclude Include="HealthGauge.h" />
     <ClInclude Include="HealthBar.h" />
+    <ClInclude Include="ResultPanel.h" />
+    <ClInclude Include="ResultScene.h" />
+    <ClInclude Include="ResultScene_inputContext.h" />
     <ClInclude Include="SceneChangeButton.h" />
     <ClInclude Include="ShowCardDeck.h" />
     <ClInclude Include="PhaseStaminaBar.h" />

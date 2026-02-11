@@ -22,10 +22,14 @@ public:
     virtual bool RMBReleasedEvent() override;                   // 우클릭 뗐을 때
     virtual bool KeyReleasedEvent(uint32_t key = 0) override;   // 바인딩한 키 뗐을 때
 
+    virtual void SetIsClicked(bool isClicked) { m_isClicked = isClicked; };
+    virtual bool GetIsClicked() { return m_isClicked; };
+
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::CardConfirmButton; }
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/select_card_confirm_mouseout.png"); };    // 머테리얼 생성 (한 번만)
 protected:
+    bool m_isClicked = false;
 };

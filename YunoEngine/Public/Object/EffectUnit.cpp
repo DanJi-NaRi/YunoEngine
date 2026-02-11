@@ -98,6 +98,7 @@ bool EffectUnit::BuildInternalEffectMaterial(const EffectDesc& desc)
 
 bool EffectUnit::Update(float dt)
 {
+    m_active = Enable;
     if (!m_active)
     {
         return true;
@@ -116,6 +117,36 @@ bool EffectUnit::Update(float dt)
     return true;
 }
 
+void EffectUnit::UpdateWorldMatrix()
+{
+    XMMATRIX S = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
+    XMMATRIX T = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z);
+
+    XMMATRIX R1 = XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
+    XMMATRIX R2 = UpdateBillBoard();
+    XMMATRIX R = R1 * R2;
+
+    XMMATRIX mTM;
+
+    if (m_Parent)
+    {
+        XMMATRIX3 scaleTMs = GetScaleTMs(m_Parent->GetScale());
+        XMMATRIX3 rotTMs = GetRotTMs(m_Parent->GetRot());
+
+        XMMATRIX pScaleTM = GetIgnoreScaleTM(scaleTMs);
+        XMMATRIX pRotTM = GetIgnoreRotTM(rotTMs);
+
+        auto pPos = m_Parent->GetPos();
+        XMMATRIX pTransTM = XMMatrixTranslation(pPos.x, pPos.y, pPos.z);
+
+        mTM = S * R * T * pScaleTM * pRotTM * pTransTM;
+    }
+    else
+        mTM = S * R * T;
+
+    XMStoreFloat4x4(&m_mWorld, mTM);
+}
+
 void EffectUnit::Stop()
 {
     Reset();
@@ -125,6 +156,57 @@ void EffectUnit::Stop()
         DettachParent();
     }
 }
+
+void EffectUnit::IgnoreRotation(bool ignoreX, bool ignoreY, bool ignoreZ)
+{
+    m_rotIgnore = { ignoreX, ignoreY, ignoreZ };
+}
+
+void EffectUnit::IgnoreScale(bool ignoreX, bool ignoreY, bool ignoreZ)
+{
+    m_scaleIgnore = { ignoreX, ignoreY, ignoreZ };
+}
+
+XMMATRIX3 EffectUnit::GetRotTMs(XMFLOAT3 rot)
+{
+    XMMATRIX3 res;
+    res.x = XMMatrixRotationX(rot.x);
+    res.y = XMMatrixRotationX(rot.y);
+    res.z = XMMatrixRotationX(rot.z);
+    return res;
+}
+
+XMMATRIX3 EffectUnit::GetScaleTMs(XMFLOAT3 scale)
+{
+    XMMATRIX3 res;
+    res.x = XMMatrixScaling(scale.x, 1, 1);
+    res.y = XMMatrixScaling(1, scale.y, 1);
+    res.z = XMMatrixScaling(1, 1, scale.z);
+    return res;
+}
+
+XMMATRIX EffectUnit::GetIgnoreRotTM(XMMATRIX3 rotTMs)
+{
+    XMMATRIX res;
+    XMMATRIX identity = XMMatrixIdentity();
+    res = ((m_rotIgnore.x) ? identity : rotTMs.x) *
+        ((m_rotIgnore.y) ? identity : rotTMs.y) *
+        ((m_rotIgnore.z) ? identity : rotTMs.z);
+
+    return res;
+}
+
+XMMATRIX EffectUnit::GetIgnoreScaleTM(XMMATRIX3 scaleTMs)
+{
+    XMMATRIX res;
+    XMMATRIX identity = XMMatrixIdentity();
+    res = ((m_rotIgnore.x) ? identity : scaleTMs.x) *
+        ((m_rotIgnore.y) ? identity : scaleTMs.y) *
+        ((m_rotIgnore.z) ? identity : scaleTMs.z);
+
+    return res;
+}
+
 
 #ifdef _DEBUG
 void EffectUnit::Serialize()
