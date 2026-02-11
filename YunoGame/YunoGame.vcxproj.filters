@@ -379,6 +379,9 @@
     <ClCompile Include="ResultPanel.cpp">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClCompile>
+    <ClCompile Include="EmoteButton.cpp">
+      <Filter>Game\UI\Button</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -625,7 +628,6 @@
     <ClInclude Include="StandByScene.h">
       <Filter>Scenes\1.WeaponSelect</Filter>
     </ClInclude>
-
     <ClInclude Include="Scenes\PlayHUDScene.h">
       <Filter>Scenes\2.Play</Filter>
     </ClInclude>
@@ -649,6 +651,12 @@
     </ClInclude>
     <ClInclude Include="ResultPanel.h">
       <Filter>Game\UI\Image\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="EmoteButton.h">
+      <Filter>Game\UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayHUD_InputContext.h">
+      <Filter>System\UIContext</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

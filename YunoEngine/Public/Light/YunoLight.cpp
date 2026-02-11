@@ -3,6 +3,23 @@
 #include "YunoLight.h"
 #include "UImgui.h"
 
+namespace
+{
+    void NormalizeDirection(XMFLOAT4& direction)
+    {
+        const float lengthSq = direction.x * direction.x + direction.y * direction.y + direction.z * direction.z;
+        if (lengthSq <= 1e-8f)
+        {
+            direction = XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
+            return;
+        }
+
+        const float invLength = 1.0f / sqrtf(lengthSq);
+        direction.x *= invLength;
+        direction.y *= invLength;
+        direction.z *= invLength;
+    }
+}
 
 const DirectX::XMFLOAT4& YunoDirectionalLight::GetDirFloat4Reverse()
 {
@@ -23,6 +40,7 @@ const DirectX::XMFLOAT3& YunoDirectionalLight::GetDirFloat3()
 void YunoDirectionalLight::SetDirection(const XMFLOAT4& dir)
 {
     m_desc.direction = dir;
+    NormalizeDirection(m_desc.direction);
 }
 
 void YunoDirectionalLight::SetDirection(const XMFLOAT3& dir)
@@ -30,6 +48,8 @@ void YunoDirectionalLight::SetDirection(const XMFLOAT3& dir)
     m_desc.direction.x = dir.x;
     m_desc.direction.y = dir.y;
     m_desc.direction.z = dir.z;
+    m_desc.direction.w = 0.0f;
+    NormalizeDirection(m_desc.direction);
 }
 
 const DirectX::XMFLOAT4& YunoDirectionalLight::GetDiffFloat4()
@@ -112,6 +132,7 @@ const DirectionalLightDesc& YunoDirectionalLight::GetDesc()
 void YunoDirectionalLight::SetDesc(const DirectionalLightDesc& d)
 {
     m_desc = d;
+    NormalizeDirection(m_desc.direction);
 }
 
 
@@ -120,6 +141,14 @@ void YunoDirectionalLight::Serialize()
 {
     if (UI::CollapsingHeader("DirectionalLight"))
     {
+        if (UI::CollapsingHeader("Direction"))
+        {
+            if (UI::DragFloat3Editable("Direction", &m_desc.direction.x, 0.001f, -1.0f, 1.0f))
+            {
+                m_desc.direction.w = 0.0f;
+                NormalizeDirection(m_desc.direction);
+            }
+        }
         if (UI::DragFloat("Intensity", &m_desc.intensity, 0.01f, 0.0f, 10.0f))
         {
 

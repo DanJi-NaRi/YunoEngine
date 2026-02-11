@@ -1,11 +1,16 @@
 #pragma once
 
 #include "SceneBase.h"
+#include "PlayHUD_InputContext.h"
 
 class Emoji;
+class TextureImage;
+class EmoteButton;
+
 struct TimedEmoji
 {
-    Emoji* widget;
+    uint8_t pid = 0;
+    uint8_t emoteid = 0;
     float remainTime; // 초
 };
 
@@ -29,8 +34,20 @@ protected:
     void ShowEmoteImage(uint8_t pid, uint8_t emoteId); //YDM TEST IMOTE
 
 private:
+    PlayHUD_InputContext m_uiContext;
+
     Widget* m_pTurn = nullptr;    // 1의 자리수
     Widget* m_pTurn10 = nullptr;  // 10의 자리수
 
-    std::vector<TimedEmoji> m_emojis; // 이모지 시간 관리
+    TextureImage* m_EmoteBubble1P = nullptr;
+    TextureImage* m_EmoteBubble2P = nullptr;
+    Emoji* m_EmoteImage1P = nullptr;
+    Emoji* m_EmoteImage2P = nullptr;
+    std::vector<Emoji*> m_emoteImages;
+
+    std::vector<EmoteButton*> m_emoteButtons;
+
+    std::vector<TimedEmoji*> m_emojis; // 이모지 시간 관리
+    TimedEmoji m_emoji1P;
+    TimedEmoji m_emoji2P;
 };
