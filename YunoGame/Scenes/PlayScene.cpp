@@ -29,19 +29,14 @@ bool PlayScene::OnCreateScene()
 
 
     m_uiManager->SetOrthoFlag(true);//여기서 ui 쓰는거 맞음?
-
-    YunoEngine::GetRenderer()->GetCamera().position = { 0, 7, -10 };
-    YunoEngine::GetRenderer()->GetCamera().target = { 0, 0, 0 };
-    m_uiManager->SetOrthoFlag(true);
-
     m_objectManager->CreateDirLight();
 
-    //int j = 0;
-    //for (int i = 0; i < 10; i++)
-    //{
-    //    m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
-    //    j++;
-    //}
+    int j = 0;
+    for (int i = 0; i < 12; i++)
+    {
+        m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
+        j++;
+    }
 
     PassOption po;
     po.shader = ShaderId::NoneShadowPBRBase;
@@ -49,58 +44,58 @@ bool PlayScene::OnCreateScene()
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
     map->SetRot({ 0, XM_PIDIV2, 0 });
 
-    //EffectDesc ed{};
-    //ed.id = EffectID::Warning;
-    //ed.shaderid = ShaderId::EffectBase;
-    //ed.billboard = BillboardMode::None;
-    //ed.lifetime = 1.5f;
-    //ed.framecount = 25;
-    //ed.cols = 5;
-    //ed.rows = 5;
-    //ed.emissive = 30.0f;
-    //ed.color = { 1, 0, 0, 1 };
-    //ed.rot = { 0, 0, 0 };
-    //ed.isLoop = true;
-    //ed.texPath = L"../Assets/Effects/Warning/EF_WARNING.png";
+    EffectDesc ed{};
+    ed.id = EffectID::Warning;
+    ed.shaderid = ShaderId::EffectBase;
+    ed.billboard = BillboardMode::None;
+    ed.lifetime = 1.5f;
+    ed.framecount = 25;
+    ed.cols = 5;
+    ed.rows = 5;
+    ed.emissive = 30.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.rot = { 0, 0, 0 };
+    ed.isLoop = true;
+    ed.texPath = L"../Assets/Effects/Warning/EF_WARNING.png";
 
-    //for (auto i = 0; i < 5; i++)
-    //{
-    //    auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning", XMFLOAT3(0, 1, 0));
-    //    warning->BuildInternalEffectMaterial(ed);
-    //}
+    for (auto i = 0; i < 5; i++)
+    {
+        auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning", XMFLOAT3(0, 1, 0));
+        warning->BuildInternalEffectMaterial(ed);
+    }
 
-    //ed.framecount = 25;
-    //ed.cols = 5;
-    //ed.rows = 5;
-    //ed.texPath = L"../Assets/Effects/Warning/EF_WARNING_2.png";
-    //for (auto i = 0; i < 5; i++)
-    //{
-    //    auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_2", XMFLOAT3(0, 1, 0));
-    //    warning->BuildInternalEffectMaterial(ed);
-    //}
+    ed.framecount = 25;
+    ed.cols = 5;
+    ed.rows = 5;
+    ed.texPath = L"../Assets/Effects/Warning/EF_WARNING_2.png";
+    for (auto i = 0; i < 5; i++)
+    {
+        auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_2", XMFLOAT3(0, 1, 0));
+        warning->BuildInternalEffectMaterial(ed);
+    }
 
-    //po = {};
-    //po.raster = RasterPreset::CullNone;
-    //po.blend = BlendPreset::AlphaBlend;
-    //po.shader = ShaderId::EffectWithTexMap;
-    //
-    //for (auto i = 0; i < 5; i++)
-    //{
-    //    auto Holo = m_objectManager->CreateObjectFromFile<Building>(L"Holo_01_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H/HOLD.fbx", po);
-    //    Holo->SetRot({ -XM_PIDIV2, 0, 0 });
-    //    auto Holo2 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_02_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_2/HOLD.fbx", po);
-    //    Holo2->SetRot({ -XM_PIDIV2, 0, 0 });
-    //}
+    po = {};
+    po.raster = RasterPreset::CullNone;
+    po.blend = BlendPreset::AlphaBlend;
+    po.shader = ShaderId::EffectWithTexMap;
 
-    //for (auto i = 0; i < 10; i++)
-    //{
-    //    auto Holo3 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_03_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_3/VS.fbx", po);
-    //}
+    for (auto i = 0; i < 5; i++)
+    {
+        auto Holo = m_objectManager->CreateObjectFromFile<Building>(L"Holo_01_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H/HOLD.fbx", po);
+        Holo->SetRot({ -XM_PIDIV2, 0, 0 });
+        auto Holo2 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_02_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_2/HOLD.fbx", po);
+        Holo2->SetRot({ -XM_PIDIV2, 0, 0 });
+    }
 
-    //for (int i = 0; i < 6; i++)
-    //{
-    //    auto razer = m_objectManager->CreateObjectFromFile<Building>(L"razer", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Razer/Razer.fbx");
-    //}
+    for (auto i = 0; i < 10; i++)
+    {
+        auto Holo3 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_03_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_3/VS.fbx", po);
+    }
+
+    for (int i = 0; i < 6; i++)
+    {
+        auto razer = m_objectManager->CreateObjectFromFile<Building>(L"razer", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Razer/Razer.fbx");
+    }
 
     // 플레이 그리드 시스템 생성
     m_playGrid = std::make_unique<PlayGridSystem>(m_objectManager.get(), m_effectManager.get());

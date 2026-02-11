@@ -203,6 +203,9 @@ bool RenderTest::OnCreateScene()
         warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_Floor2", XMFLOAT3(0, 1, 0));
         warning->BuildInternalEffectMaterial(ed2);
     }*/
+    auto text = CreateWidget<Text>(L"HpText", Float2(200, 50), XMFLOAT3(0, 0, 0));
+    text->SetFont(FontID::Default);
+    text->SetText(std::to_wstring(0));
 
     /////////////////////////////////////////////////////////////////////////////////
     // 이펙트 등록

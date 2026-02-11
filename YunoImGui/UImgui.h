@@ -13,7 +13,8 @@ namespace UI
 
     void DrawDebugHUD(float* v, float* v2);
     // Return value: 1 = FOV Y changed, 2 = FOV X changed, 3 = both changed.
-    int DrawCameraFovController(float* fovYDeg, float* fovXDeg, float minDeg = 1.0f, float maxDeg = 179.0f);
+    int DrawCameraFovController(float* fovYDeg, float minDeg = 1.0f, float maxDeg = 179.0f);
+    int DrawCameraTransformController(float* position, float* target, float speed = 0.1f);
 
     bool TreeNodeEx(const void* id, bool selected, bool haschild, const char* name);
     void TreePop();

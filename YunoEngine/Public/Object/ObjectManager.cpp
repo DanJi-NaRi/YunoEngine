@@ -6,6 +6,8 @@
 #include "YunoCamera.h"
 #include "ObjectTypeRegistry.h"
 
+#define MAX_PL 12
+
 namespace
 {
     struct SharedMeshCacheKey
@@ -93,7 +95,7 @@ void ObjectManager::CreateDirLight()
 
 void ObjectManager::CreatePointLight(const XMFLOAT3& pos, const XMFLOAT4& col, float intensity)
 {
-    if (m_pointLights.size() >= 10) return;
+    if (m_pointLights.size() >= 12) return;
 
     PointLightDesc pd{};
     pd.id = m_pointLightIDs++;
@@ -113,7 +115,7 @@ void ObjectManager::CreateDirLightFromDesc(const DirectionalLightDesc& dd)
 
 void ObjectManager::CreatePointLightFromDesc(const PointLightDesc& pd)
 {
-    if (m_pointLights.size() >= 10) return;
+    if (m_pointLights.size() >= 12) return;
 
     auto pl = std::make_unique<YunoPointLight>(pd);
     m_pointLights.push_back(std::move(pl));
@@ -135,8 +137,8 @@ bool ObjectManager::Init()
     m_objMap.reserve(30); //30개 정도 메모리 잡고 시작
     m_pendingCreateQ.reserve(30);
 
-    m_pointLights.reserve(10);
-    plData.resize(10);
+    m_pointLights.reserve(12);
+    plData.resize(12);
 
     return true;
 }

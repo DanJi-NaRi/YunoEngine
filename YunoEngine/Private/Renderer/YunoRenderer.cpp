@@ -2668,6 +2668,7 @@ void YunoRenderer::BindConstantBuffers_Camera(const Frame_Data_Dir& dirData)
 void YunoRenderer::BindConstantBuffers_Light(const Frame_Data_Dir& dirData, const std::vector<Frame_Data_Point>& plData, UINT plCount)
 {
     using namespace DirectX;
+    constexpr size_t kMaxPointLights = sizeof(m_LightInfo.pointLit) / sizeof(m_LightInfo.pointLit[0]);
     // -----------------------------
     // CBLight (b3)
     // -----------------------------

@@ -30,13 +30,13 @@ bool Emoji::ChangeMaterial(int num)
     switch (num)
     {
     case 1:
-        texturePath = L"../Assets/UI/PLAY/Imoji_EZ_mouseover.png";
+        texturePath = L"../Assets/UI/PLAY/Imoji_zZZ_mouseover.png";
         break;
     case 2:
         texturePath = L"../Assets/UI/PLAY/Imoji_JiantAngry_mouseover.png";
         break;
     case 3:
-        texturePath = L"../Assets/UI/PLAY/Imoji_zZZ_mouseover.png";
+        texturePath = L"../Assets/UI/PLAY/Imoji_EZ_mouseover.png";
         break;
     default:
         break;

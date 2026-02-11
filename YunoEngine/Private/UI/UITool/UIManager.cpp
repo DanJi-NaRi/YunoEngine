@@ -531,9 +531,12 @@ std::vector<WidgetDesc> UIManager::BuildWidgetDesc()
 
 void UIManager::ApplyWidgetFromDesc(const std::vector<WidgetDesc>& wds)
 {
-    for (auto& d : wds)
+    for (const auto& d : wds)
     {
-        Widget* w = FindWidget(d.name);
+        Widget* w = FindWidget(d.ID);
+
+        if (!w || w->GetName() != d.name)
+            w = FindWidget(d.name);
 
         if (!w) continue;
 

@@ -71,6 +71,7 @@ bool GameApp::OnInit()
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
 
+
    sm->RequestReplaceRoot(std::make_unique<Title>(), opt); 
    //{
    //    sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
@@ -104,7 +105,7 @@ void GameApp::OnUpdate(float dt)
     acc += dt;
     ++frameCount;
 
-    CameraMove(dt);
+    //CameraMove(dt);
 
     // MSAA 변경되는지 테스트
     //static float test = 0.0f;

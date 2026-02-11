@@ -195,6 +195,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="CheckPanel.cpp" />
     <ClCompile Include="CountdownImage.cpp" />
     <ClCompile Include="CountdownScene.cpp" />
+    <ClCompile Include="EmoteButton.cpp" />
     <ClCompile Include="EscScene.cpp" />
     <ClCompile Include="Game\UI\DirSelectButton.cpp" />
     <ClCompile Include="PlayMidScene.cpp" />
@@ -307,9 +308,11 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="CheckPanel.h" />
     <ClInclude Include="CountdownImage.h" />
     <ClInclude Include="CountdownScene.h" />
+    <ClInclude Include="EmoteButton.h" />
     <ClInclude Include="EscScene.h" />
     <ClInclude Include="EscScene_inputContext.h" />
     <ClInclude Include="Game\UI\DirSelectButton.h" />
+    <ClInclude Include="PlayHUD_InputContext.h" />
     <ClInclude Include="PlayMidScene.h" />
     <ClInclude Include="PlayMidScene_InputContext.h" />
     <ClInclude Include="Scenes\PlayHUDScene.h" />
