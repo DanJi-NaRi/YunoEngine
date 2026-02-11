@@ -173,10 +173,7 @@ namespace yuno::game
                 GameManager& gm = GameManager::Get();
                 gm.SetMatchPlayerCount(pkt.playerCount);
 
-                if (gm.GetSlotiIdx() == 0)
-                {
-                    gm.SetSlotIdx(pkt.slotIndex);
-                }
+                gm.SetSlotIdx(pkt.slotIndex);
 
                 if (gm.GetSceneState() == CurrentSceneState::RequstEnter)
                 {
@@ -277,10 +274,12 @@ namespace yuno::game
 
                 auto wVector = gm.GetWeaponData();
 
+                std::cout << "=====================================================GetWeaponDataPacket=====================================================" << std::endl;
                 for (const auto& data : wVector) 
                 {
                     std::cout << "Weapon data : " << data.pId << " ," << data.slotId << " ," << data.weaponId << " ," << data.hp << " ," << data.stamina << " ," << data.currentTile << std::endl;
                 }
+
 
             });// RoundStart Packet End
 
@@ -402,9 +401,11 @@ namespace yuno::game
                 }
 
                 BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex ,pkt.dir, pkt.actionTime, pkt.isCoinTossUsed, order };
+
+                std::cout << "Battle Packet(actionTime) : " << static_cast<int>(pkt.actionTime) << std::endl;
+
                 gm.PushBattlePacket(br);
                 gm.PushRevealPacket(br);// 복사 저장
-                gm.RequestRevealStart();
                 gm.UpdatePanels(br);
                 gm.SetSceneState(CurrentSceneState::AutoBattle);
                 gm.SetCoinToss(static_cast<int>(pkt.isCoinTossUsed));
@@ -498,16 +499,18 @@ namespace yuno::game
                 std::cout << "[Client] TurnNumber = "
                     << static_cast<int>(pkt.turnNumber) << "\n";
 
+                auto& gm = GameManager::Get();
+
                 if(pkt.turnNumber == 1)
-                    GameManager::Get().IncreaseRound();
+                    gm.IncreaseRound();
 
                 std::vector<yuno::net::packets::CardSpawnInfo> added;
                 added.push_back(pkt.addedCards[0]);
                 added.push_back(pkt.addedCards[1]);
 
-                GameManager::Get().AddCards(added);
-                GameManager::Get().ClearDrawCandidates();
-                GameManager::Get().ClearCardQueue();
+                gm.AddCards(added);
+                gm.ClearDrawCandidates();
+                gm.ClearCardQueue();
 
                 for (int i = 0; i < 2; ++i)
                 {
@@ -523,6 +526,8 @@ namespace yuno::game
                 }
 
                 std::cout << "[Client] ======================\n";
+                if(gm.GetSceneState() == CurrentSceneState::AutoBattle)
+                    gm.SetSceneState(CurrentSceneState::SubmitCard);
             }
         );// S2C_StartTurn Packet End
 

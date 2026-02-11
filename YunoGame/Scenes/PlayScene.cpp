@@ -198,6 +198,22 @@ void PlayScene::RegisterEffect()
     ed.texPath = L"../Assets/Effects/Buff/EF_Buff.png";
     m_effectManager->RegisterEffect(ed);
 
+    ed.id = EffectID::StaminaBuff;
+    ed.color = { 0, 1, 0, 1 };
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::PowerUpBuff;
+    ed.color = { 1, 0, 0, 1 };
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::ShieldBuff;
+    ed.color = { 1, 1, 0, 1 };
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::DeBuff;
+    ed.color = { 0, 0, 1, 1 };
+    m_effectManager->RegisterEffect(ed);
+
     ed.id = EffectID::Hit;
     ed.framecount = 25;
     ed.lifetime = 1.2f;
@@ -316,6 +332,30 @@ void PlayScene::RegisterEffect()
     ed.id = EffectID::ChakramAttackEnemy02_2;
     ed.color = { 1, 0, 0, 1 };
     m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::FloorWarning1;
+    ed.framecount = 120;
+    ed.lifetime = 0.4f;
+    ed.cols = 12;
+    ed.rows = 10;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { XMConvertToRadians(90), 0, 0 };
+    ed.emissive = 30.0f;
+    ed.color = { 1, 1, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_1.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::FloorWarning2;
+    ed.framecount = 30;
+    ed.lifetime = 0.4f;
+    ed.cols = 5;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { XMConvertToRadians(90), 0, 0 };
+    ed.emissive = 30.0f;
+    ed.color = { 1, 1, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_2.png";
+    m_effectManager->RegisterEffect(ed);
 }
 
 void PlayScene::OnDestroyScene()
@@ -388,12 +428,12 @@ void PlayScene::AddCardSelect()
 {
     int index = -1;
 
-    if (m_input->IsKeyPressed('Z'))
-        index = 0;
-    else if (m_input->IsKeyPressed('X'))
-        index = 1;
-    else if (m_input->IsKeyPressed('C'))
-        index = 2;
+    //if (m_input->IsKeyPressed('Z'))
+    //    index = 0;
+    //else if (m_input->IsKeyPressed('X'))
+    //    index = 1;
+    //else if (m_input->IsKeyPressed('C'))
+    //    index = 2;
 
     if (index == -1)
         return;
@@ -433,7 +473,7 @@ void PlayScene::EndTurn()
 
 void PlayScene::TestInput()
 {
-    AddCardSelect();
+    //AddCardSelect();
     // 디버깅용
     // 카드 선택 (넘버패드 = UI 버튼 대용)
     HandleCardSelect(VK_NUMPAD1, 0, 1); //버프
@@ -469,6 +509,15 @@ void PlayScene::OnEnter()
 {
     //std::cout << "[PlayScene] OnEnter\n"; 
     YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
+
+    m_playGrid->ApplyTransform();
+
+    m_CurSceneState = GameManager::Get().GetSceneState();
+    m_PrevSceneState = m_CurSceneState;
+
+    m_CurCamPos = YunoEngine::GetRenderer()->GetCamera().position;
+    m_NextCamPos = { m_CurCamPos.x, m_CurCamPos.y, -7.8 };
+    isCamMove = true;
 }
 
 void PlayScene::OnExit()
@@ -478,14 +527,60 @@ void PlayScene::OnExit()
 }
 
 
+void PlayScene::MoveCamera(float dt)
+{
+    if (!isCamMove)
+        return;
+
+    auto& cam = YunoEngine::GetRenderer()->GetCamera();
+
+    m_curMoveTime += dt;
+
+    float t = m_curMoveTime / m_CamMoveTime;
+
+    XMVECTOR curpos = XMLoadFloat3(&m_CurCamPos);
+    XMVECTOR nextpos = XMLoadFloat3(&m_NextCamPos);
+
+    XMVECTOR newpos;
+    if (t < 1.0f)
+    {
+        newpos = XMVectorLerp(curpos, nextpos, t);
+        XMStoreFloat3(&cam.position, newpos);
+    }
+    else
+    {
+        newpos = nextpos;
+        XMStoreFloat3(&cam.position, newpos);
+
+        XMStoreFloat3(&m_NextCamPos, curpos);
+        XMStoreFloat3(&m_CurCamPos, newpos);
+
+        m_curMoveTime = 0.0f;
+        isCamMove = false;
+    }
+}
+
 
 void PlayScene::Update(float dt)
 {
     SceneBase::Update(dt);
     //m_input->Dispatch();
-    TestInput();
+    //TestInput();
 
     m_playGrid->Update(dt);
+
+    m_CurSceneState = GameManager::Get().GetSceneState();
+
+    if (m_PrevSceneState != m_CurSceneState)
+    {
+        if (m_CurSceneState == CurrentSceneState::SubmitCard
+            || m_CurSceneState == CurrentSceneState::AutoBattle)
+            isCamMove = true;
+    }
+
+    MoveCamera(dt);
+
+    m_PrevSceneState = m_CurSceneState;
 }
 
 void PlayScene::SubmitObj()

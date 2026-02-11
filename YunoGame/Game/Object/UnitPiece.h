@@ -53,6 +53,7 @@ private:
 public:
     void InsertQ(PGridCmd targetPos);
     void SetWho(GamePiece type, Team team, uint8_t pID, uint8_t weaponID, uint8_t subID = 0);
+    uint8_t GetWeaponID() { return m_weaponID; }
     void SetMoveRotOffset(float moveOffset, float rotOffset);
     void SetIgnoreRot(bool ignore);
     float GetMoveOffset();

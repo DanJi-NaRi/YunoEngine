@@ -40,6 +40,8 @@ namespace yuno::server
 
         void LeaveByUserId(std::uint32_t uid);
 
+        void ClearAllSlots();
+
         std::uint8_t GetOccupiedCount() const;
 
         const std::array<MatchSlot, kMaxSlots>& Slots() const { return m_slots; }

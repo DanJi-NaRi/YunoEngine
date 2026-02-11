@@ -90,6 +90,14 @@ namespace yuno::server
         ResetSlot(m_slots[idx]);
     }
 
+    void MatchManager::ClearAllSlots()
+    {
+        for (auto& slot : m_slots)
+        {
+            ResetSlot(slot);
+        }
+    }
+
     std::uint8_t MatchManager::GetOccupiedCount() const
     {
         std::uint8_t c = 0;

@@ -5,6 +5,7 @@
 #include "BattlePackets.h"
 
 class UnitTile;
+class UnitPiece;
 class PlayGridQ;
 enum class CardType : uint8_t;
 struct Wdata;
@@ -72,6 +73,7 @@ inline void operator++(UtilityPhase& a) { a = (UtilityPhase)((uint8_t)a + 1); }
 struct MoveInfo
 {
     Dirty_US dirty = Dirty_US::None;
+    UnitState prevState{};
     const std::array<UnitState, 4> snapshot;
     int mainUnit = -1;
     Direction dir = Direction::None;
@@ -147,7 +149,7 @@ public:
 
     void CreateObject(float x, float y, float z) override;                      
     void Update(float dt) override;
-    
+    void ApplyTransform() override;
 private:
     void Init();
     void CreateTileAndPiece(float x, float y, float z);
@@ -169,6 +171,7 @@ private:
     void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, uint32_t runCardID, Direction dir);
     bool ApplyBuffChanges(int mainUnit, const CardEffectData*& buffData);
     bool ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir);
+    bool ApplyMoveChanges(Dirty_US dirty, const UnitState& prevUnitState, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir);
     bool ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
     bool ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit,
         const std::vector<RangeOffset>& ranges, Direction dir, const CardEffectData*& buffData, int snapNum);
@@ -213,6 +216,7 @@ private:
     std::unordered_map<GamePiece, PieceInfo> m_pieces;      // 기물 정보
 
     std::unique_ptr<PlayGridQ> m_playQ;
+    std::vector<UnitPiece*> m_units;
 
 private:
     // 시간 관련

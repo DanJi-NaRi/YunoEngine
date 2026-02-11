@@ -101,18 +101,31 @@ void PlayGridSystem::InitRound()
         };
         m_weaponIDs[i] = w.weaponId;
     }  
+    ReflectWeaponData();
     isRoundOver = false;
 }
 
 void PlayGridSystem::Update(float dt)
 {
-    if (!GameManager::Get().IsEmptyWeaponData())
-        InitRound();
+    if (!GameManager::Get().IsEmptyWeaponData())    
+        InitRound();       
+
+    //ReflectWeaponData();        // 이걸 여기 했는데 UI반영이 안된다? 그럼 뭔가 큰 일이 났다는 사실~
 
     UpdateSequence(dt);         // 카드 타입별 step 진행
 
     CheckPacket(dt);
     CheckMyQ();
+}
+
+void PlayGridSystem::ApplyTransform()
+{
+    for (auto* unit : m_units)
+    {
+        auto id = unit->GetWeaponID();
+        if (id == 3)
+            unit->SetScale({ 2, 2, 2 });
+    }
 }
 
 void PlayGridSystem::CreateObject(float x, float y, float z)
@@ -157,6 +170,10 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         // 빈 박스에 자식 객체로 등록. (for 정리)
         m_gridBox->Attach(pTile);
     }
+
+    // 장애물 경고 이펙트 생성
+
+
 
     // 기물 생성
     const auto wData = GameManager::Get().GetWeaponData();
@@ -300,7 +317,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/Breacher_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
-         pPiece->SetScale(XMFLOAT3(2, 2, 2));
+         //pPiece->SetScale(XMFLOAT3(2, 2, 2));
          pPiece->SetMoveRotOffset(-0.25f, 0);
          break;
      case 4:
@@ -370,6 +387,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
 
      // 빈 박스에 자식 객체로 등록. (for 정리)
      m_gridBox->Attach(pPiece);
+     m_units.push_back(pPiece);
 }
 
 void PlayGridSystem::CheckMyQ()
@@ -437,6 +455,7 @@ void PlayGridSystem::CheckMyQ()
             {
                 m_manager->DestroyObject(effectId);
             }
+            pieceInfo.effectIds.clear();
 
             m_pieces.erase(it);
 
@@ -524,13 +543,15 @@ void PlayGridSystem::CheckPacket(float dt)
     }
 
     // 장애물까지 발동하고 CheckOver
-    if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing && !isRoundOver)
+    if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing)
     {
         m_delayFlag = false;
         const auto obstaclePkt = mng.PopObstaclePacket();
+        if (isRoundOver) return;    // 라운드 종료 시 해당 장애물은 패킷 버리기
         m_pktTime = obstaclePktDuration;
         isProcessing = true;
         ApplyObstacleResult(obstaclePkt);
+        GameManager::Get().RequestRevealStart();
     }
 
     // 지금 처리 중인 패킷 시간 체크
@@ -686,7 +707,16 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         {
             int id = tiles[i];
             auto pTile = static_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[id]));
-            pTile->SetFlashColor(as.m_tileEffectColor, as.m_flashCount, as.m_flashInterval);
+
+            Effect* eff;
+            if(as.attacker == GamePiece::Ally1 || as.attacker == GamePiece::Ally2)
+                eff = m_effectManager->Spawn(EffectID::Target, { 0, 0.01, 0 }, { 1, 1, 1 });
+            else
+                eff = m_effectManager->Spawn(EffectID::TargetEnemy, { 0, 0.01, 0 }, { 1, 1, 1 });
+
+            if(eff)
+                pTile->Attach(eff);
+            //pTile->SetFlashColor(as.m_tileEffectColor, as.m_flashCount, as.m_flashInterval);
         }
 
         // 기물 피격 애니메이션 시작
@@ -758,7 +788,7 @@ void PlayGridSystem::UpdateUtilitySequence(float dt)
 
         const auto& pm = us.playerMove;
 
-        ApplyMoveChanges(pm->dirty, pm->snapshot, pm->mainUnit, pm->dir);
+        ApplyMoveChanges(pm->dirty, pm->prevState, pm->snapshot, pm->mainUnit, pm->dir);
 
         us.phaseStarted = false;
         break;
@@ -792,7 +822,7 @@ void PlayGridSystem::UpdateUtilitySequence(float dt)
         for (int i = 0; i < pieces.size(); i++)
         {
             if (!CheckNotDying(pieces[i]))    continue;
-            ApplyMoveChanges(hm[i]->dirty, hm[i]->snapshot, hm[i]->mainUnit, hm[i]->dir);
+            ApplyMoveChanges(hm[i]->dirty, hm[i]->prevState, hm[i]->snapshot, hm[i]->mainUnit, hm[i]->dir);
         }
 
         us.phaseStarted = false;
@@ -853,7 +883,17 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
         }
         if (!os.phaseStarted)    break;
         
-        // 타일
+        // 경고 이펙트 제거
+        for (const auto& tileID : os.hitTileIDs)
+        {
+            if (m_tiles[tileID].effectIDs.size() == 0) continue;
+            for (auto effectID : m_tiles[tileID].effectIDs)
+            {
+                m_manager->DestroyObject(effectID);
+            }
+            m_tiles[tileID].effectIDs.clear();
+        }
+
         for (const auto& tileID : os.hitTileIDs)
         {
             auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
@@ -916,6 +956,41 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
         {
             auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
             pTile->PlayWarning(os.attackType, os.warnColor, os.warnFlashCount, os.warnFlashInterval);
+
+            EffectDesc ed{};
+            ed.id = EffectID::FloorWarning1;
+            ed.shaderid = ShaderId::EffectBase;
+            ed.billboard = BillboardMode::None;
+            ed.lifetime = 5.f;
+            ed.framecount = 120;
+            ed.cols = 12;
+            ed.rows = 10;
+            ed.emissive = 1.0f;
+            ed.color = XMFLOAT4{ 1, 1, 0, 1 };
+            ed.rot = { XMConvertToRadians(90.f), 0, 0 };
+            ed.isLoop = true;
+            ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_1.png";
+            if (os.attackType != ObstacleType::Collapse)
+            {
+                m_effectManager->RegisterEffect(ed);
+                auto pEffect1 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning1", XMFLOAT3(0, 0.01f, 0));
+                pEffect1->BuildInternalEffectMaterial(ed);
+                pTile->Attach(pEffect1);
+                m_tiles[tileID].effectIDs.push_back(pEffect1->GetID());
+            }
+
+            ed.id = EffectID::FloorWarning2;
+            ed.framecount = 30;
+            ed.lifetime = 0.4f;
+            ed.cols = 5;
+            ed.rows = 6;
+            ed.rot = { -XMConvertToRadians(90.f), 0, 0};
+            ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_2.png";
+            m_effectManager->RegisterEffect(ed);
+            auto pEffect2 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning2", XMFLOAT3(0, 0.01f, 0));
+            pEffect2->BuildInternalEffectMaterial(ed);
+            pTile->Attach(pEffect2);
+            m_tiles[tileID].effectIDs.push_back(pEffect2->GetID());
         }
 
         std::cout << "[PlayGridSystem] Warning Next Obstacle\n";
@@ -989,9 +1064,52 @@ bool PlayGridSystem::ApplyBuffChanges(int mainUnit, const CardEffectData*& buffD
     return true;
 }
 
-bool PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir)
+bool PlayGridSystem::ApplyMoveChanges
+(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir)
 {
-    const UnitState prevUS = m_UnitStates[mainUnit];
+    return ApplyMoveChanges(dirty, m_UnitStates[mainUnit], newUnitStates, mainUnit, dir);
+
+    //const UnitState prevUS = m_UnitStates[mainUnit];
+    //const UnitState newUS = newUnitStates[mainUnit];
+    //GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
+    //if (!CheckNotDying(whichPiece))
+    //{
+    //    // 부활 규칙이 없으므로 return 합니다.
+    //    m_pktTime -= moveDuration;
+    //    return false;
+    //}
+
+    //auto newcell = GetCellByID(newUS.targetTileID);
+    //auto oldcell = GetCellByID(prevUS.targetTileID);
+
+    //// 이동하다가 충돌했을 때
+    //bool isCollided = static_cast<bool>(newUS.isEvent);
+    //if (isCollided)
+    //{
+    //    if (HasThis_US(dirty, Dirty_US::hp))
+    //    {
+    //        MoveEvent(whichPiece, oldcell, newcell, dir, true, true);
+    //    }
+    //    else
+    //    {
+    //        MoveEvent(whichPiece, oldcell, newcell, dir, true);
+    //    }
+    //}
+    //// 이동만 할 때
+    //else if (HasThis_US(dirty, Dirty_US::targetTileID))
+    //{
+    //    MoveEvent(whichPiece, oldcell, newcell, dir);
+    //}
+    //else    // 충돌 X & 이동 X 일 경우
+    //{
+    //    m_pktTime -= moveDuration;
+    //    return false;
+    //}
+    //return true;
+}
+
+bool PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const UnitState& prevUS, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir)
+{
     const UnitState newUS = newUnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
     if (!CheckNotDying(whichPiece))
@@ -1103,6 +1221,10 @@ bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
 
     auto& us = m_utilitySequence;
 
+    m_utilityActive = us.phaseStarted = true;
+    us.utilityPhase = UtilityPhase::Move;
+    us.playPiece = whichPiece;
+
     switch (snapNum)
     {
         // 1. 이동 값
@@ -1111,10 +1233,7 @@ bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
             if (!HasThis_US(dirty, Dirty_US::targetTileID))
                 break;
 
-            m_utilityActive = us.phaseStarted = true;
-            us.utilityPhase = UtilityPhase::Move;
-            us.playPiece = whichPiece;
-            us.playerMove = new MoveInfo{ dirty, newUnitStates, mainUnit, dir};
+            us.playerMove = new MoveInfo{ dirty, m_UnitStates[mainUnit], newUnitStates, mainUnit, dir };
             us.m_moveDuration = moveDuration;
             break;
         }
@@ -1139,7 +1258,7 @@ bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
             {
                 int unitID = GetUnitID(hps[i]);
                 Dirty_US d = Diff_US(m_UnitStates[unitID], newUnitStates[unitID]);
-                MoveInfo* mi = new MoveInfo{ d, newUnitStates, unitID, dir };
+                MoveInfo* mi = new MoveInfo{ d, m_UnitStates[unitID], newUnitStates, unitID, dir };
                 us.hittersMove.push_back(mi);
                 if (HasThis_US(d, Dirty_US::targetTileID))   us.hitMove = HitMove::Move;
             }
@@ -1293,17 +1412,26 @@ bool PlayGridSystem::BuffEvent(const GamePiece& pieceType, const CardEffectData*
 
     const auto& pieceInfo = it->second;
 
-    auto applyFlash = [&](Float4 color)
+    auto applyFlash = [&](Float4 color, EffectID effectID)
         {
             auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
-            if (pPiece != nullptr)
-                pPiece->SetFlashColor(color, 1, buffDuration);
+            if (pPiece != nullptr && pieceInfo.subIds.size() == 0)
+            {
+                //pPiece->SetFlashColor(color, 1, buffDuration);
+                auto eff = m_effectManager->Spawn(effectID, { 0.1f, 0.4f, 0 }, { 1.f, 1.f, 1.f });
+                pPiece->Attach(eff);
+            }
+                
 
             for (uint32_t subId : pieceInfo.subIds)
             {
                 auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
                 if (pSubPiece != nullptr)
-                    pSubPiece->SetFlashColor(color, 1, buffDuration);
+                {
+                    //pSubPiece->SetFlashColor(color, 1, buffDuration);
+                    auto eff = m_effectManager->Spawn(effectID, { 0.1f, 0.4f, 0 }, { 1.f, 1.f, 1.f });
+                    pSubPiece->Attach(eff);
+                }
             }
         };
 
@@ -1311,23 +1439,23 @@ bool PlayGridSystem::BuffEvent(const GamePiece& pieceType, const CardEffectData*
 
     if (data.m_giveDamageBonus != 0)            // 공격력 증가(버프)
     {
-        Float4 yellow = { 1, 0.9f, 0, 1 };
-        applyFlash(yellow);
+        Float4 red = { 1, 0, 0, 1 };
+        applyFlash(red, EffectID::PowerUpBuff);
     }
     else if (data.m_takeDamageReduce != 0)      // 방어력 증가(버프)
     {
-        Float4 skyblue = { 0, 1, 0.9f, 1 };
-        applyFlash(skyblue);
+        Float4 yellow = { 1, 1, 0, 1 };
+        applyFlash(yellow, EffectID::ShieldBuff);
     }
     else if (data.m_takeDamageIncrease != 0)    // 방어력 저하(디버프)
     {
-        Float4 blue = { 0, 0.1f, 1, 1 };
-        applyFlash(blue);
+        Float4 blue = { 0, 0.f, 1, 1 };
+        applyFlash(blue, EffectID::DeBuff);
     }
     else if (data.m_staminaRecover != 0)        // 스태미나 회복
     {
         Float4 green = { 0, 1, 0, 1 };
-        applyFlash(green);
+        applyFlash(green, EffectID::StaminaBuff);
     }
 
     return true;
