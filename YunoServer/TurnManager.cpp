@@ -944,7 +944,7 @@ namespace yuno::server
             {
                 break;
             }
-
+            // 여기 까지 오면 BattleResult Packet 8개 전송됨
 
         }
         ClearTurn();
@@ -1116,7 +1116,7 @@ namespace yuno::server
     }
     void TurnManager::NotifyEndFinished()
     {
-        SendObstacleResult();
+        SendObstacleResult();       // 여기서 장애물 패킷 날라감
         m_roundController.EndTurn();
     }
 }
