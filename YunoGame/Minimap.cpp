@@ -318,7 +318,7 @@ void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
                 for (MinimapTile* tile : candidates)
                 {
                     if (!tile) continue;
-                    tile->SetHoverTexture(bkPath, L"000000");
+                    tile->ResetHoverTexture(bkPath);
                     tile->SetUseLMB(false);
                     tile->SetUseRMB(false);
                     tile->SetRotZ(0);

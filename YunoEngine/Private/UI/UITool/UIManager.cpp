@@ -304,7 +304,7 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
             if (!Btn->IsUseHoverEvent()) continue;
 
             const auto& hoverdPath = Btn->GetHoveredTexturePath();
-            if(hoverdPath != L"00000" && Btn->IsUseHoverPath()) Btn->ChangeTexture(Btn->GetHoveredTexturePath());
+            if(hoverdPath != g_notUsePath && Btn->IsUseHoverPath()) Btn->ChangeTexture(Btn->GetHoveredTexturePath());
             Btn->HoveredEvent();
             //std::cout << "Hovered!!" << std::endl;
         }
