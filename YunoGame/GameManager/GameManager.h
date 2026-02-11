@@ -43,6 +43,7 @@ struct Wdata
     int weaponId = 0;
     int hp = 0;
     int stamina = 0;
+    int maxStamina = 0;
     int currentTile = 0;
 };
 // 얘가 뭘 가지고있어야 될까?
@@ -211,6 +212,7 @@ public:
     bool IsEmptyWeaponData();
     void ResetWeaponData() { m_weapons.clear(); };
     void SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, int _stamina, int _currentTile);
+    static int GetMaxStaminaByWeaponId(int weaponId);
     std::vector<Wdata> GetWeaponData() {
         return m_weapons;
     }

@@ -8,6 +8,7 @@
 #include "CardCancelButton.h"
 #include "Minimap.h"
 #include "CardSelectionPanel.h"
+#include "WeaponNameImage.h"
 
 
 #include "BattlePackets.h"
@@ -96,6 +97,8 @@ void CardConfirmPanel::CreateChild() {
         if (!m_gameManager.IsCardQueueFull()) return;
         m_gameManager.SubmitTurn(m_gameManager.GetCardQueue());
         this->m_cardConfirmButton->SetIsClicked(true);
+        m_pSelectionPanel->ViewCardPage(0, 0);
+        m_pSelectionPanel->GetWeaponNameImage()->ChangeWeaponImage(m_player.weapons[0].weaponId);/* m_curSlot = 0*/;
         m_gameManager.SetSceneState(CurrentSceneState::BattleStandBy);
         });
 
@@ -193,8 +196,16 @@ void CardConfirmPanel::UpdateCardSlot()
 
 
 void CardConfirmPanel::ClearSlot() {
+    if (m_hasSimulatedStamina && m_cardConfirmButton && !m_cardConfirmButton->GetIsClicked())
+    {
+        for (int i = 0; i < static_cast<int>(m_originalStamina.size()); ++i)
+        {
+            m_player.weapons[i].stamina = m_originalStamina[i];
+        }
+    }
     m_openSlot = 0;
     m_dirChoice = false;
+    m_hasSimulatedStamina = false;
     m_gameManager.ClearCardQueue();
     m_cardConfirmButton->SetIsClicked(false);
 
@@ -227,6 +238,35 @@ bool CardConfirmPanel::HandleDirectionInput(Direction& outDir) const
     return outDir != Direction::None;
 }
 
+bool CardConfirmPanel::IsCardAlreadyQueued(uint32_t runtimeID) const
+{
+    const auto& queue = m_gameManager.GetCardQueue();
+    return std::any_of(queue.begin(), queue.end(), [runtimeID](const CardPlayCommand& queuedCmd) {
+        return queuedCmd.runtimeID == runtimeID;
+        });
+}
+
+bool CardConfirmPanel::HasEnoughStaminaForCard(int unitSlot, uint32_t runtimeID) const
+{
+    if (unitSlot < 0 || unitSlot >= static_cast<int>(m_simulatedStamina.size()))
+        return false;
+
+    const CardData cardData = m_gameManager.GetCardData(runtimeID);
+    const int currentStamina = m_simulatedStamina[unitSlot];
+
+    return currentStamina >= cardData.m_cost;
+}
+
+void CardConfirmPanel::SyncSimulatedStaminaFromPlayer()
+{
+    for (int i = 0; i < static_cast<int>(m_simulatedStamina.size()); ++i)
+    {
+        m_originalStamina[i] = m_player.weapons[i].stamina;
+        m_simulatedStamina[i] = m_player.weapons[i].stamina;
+    }
+    m_hasSimulatedStamina = true;
+}
+
 void CardConfirmPanel::SubmitCurrentSelection()
 {
     if (!m_pSelectionPanel || m_setCardSlots.empty())
@@ -246,16 +286,37 @@ void CardConfirmPanel::SubmitCurrentSelection()
     if (selectedCard->GetCardID() == 0)
         return;
 
+    const auto selectedRuntimeID = static_cast<uint32_t>(selectedCard->GetCardID());
+    if (IsCardAlreadyQueued(selectedRuntimeID))
+        return;
+
+    if (!m_hasSimulatedStamina)
+    {
+        SyncSimulatedStaminaFromPlayer();
+    }
+
+    const int selectedSlot = m_pSelectionPanel->GetCurrentSlot();
+    if (!HasEnoughStaminaForCard(selectedSlot, selectedRuntimeID))
+        return;
+
     Direction dir = Direction::None;
     if (!HandleDirectionInput(dir))
         return;
 
     CardPlayCommand cmd;
-    cmd.runtimeID = static_cast<uint32_t>(selectedCard->GetCardID());
+    cmd.runtimeID = selectedRuntimeID;
     cmd.dir = dir;
 
-    if (!m_gameManager.PushCardCommand(cmd))
+    const CardData cardData = m_gameManager.GetCardData(selectedRuntimeID);
+    m_simulatedStamina[selectedSlot] -= cardData.m_cost;
+    m_player.weapons[selectedSlot].stamina = m_simulatedStamina[selectedSlot];
+
+    if (!m_gameManager.PushCardCommand(cmd)) 
+    {
+        m_simulatedStamina[selectedSlot] += cardData.m_cost;
+        m_player.weapons[selectedSlot].stamina = m_simulatedStamina[selectedSlot];
         return;
+    }
 
     slot->ChangeTexture(selectedCard->GetTexturePath());
     slot->SetDirection(dir);

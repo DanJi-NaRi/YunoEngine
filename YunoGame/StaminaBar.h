@@ -15,6 +15,8 @@ public:
     bool Submit(float dTime = 0) override;
 
     virtual void GuageUpdate(float dTime = 0);
+    void SetStaminaValue(float value);
+
 
     virtual WidgetType GetWidgetType() override { return WidgetType::ProgressBar; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::StaminaBar; }
