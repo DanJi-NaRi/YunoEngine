@@ -93,7 +93,10 @@ bool PhaseScene::OnCreateScene()
 void PhaseScene::OnDestroyScene()
 {
     //std::cout << "[UIScene] OnDestroy\n";
-
+    auto& gm = GameManager::Get();
+    gm.SetMinimap(nullptr);
+    gm.SetSelectionPanel(nullptr);
+    gm.SetConfirmPanel(nullptr);
 }
 
 void PhaseScene::TestInput()

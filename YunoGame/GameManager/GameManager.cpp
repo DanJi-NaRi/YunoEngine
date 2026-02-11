@@ -191,27 +191,52 @@ void GameManager::SetUpPanels()
 void GameManager::UpdatePanels(const BattleResult& battleResult)
 {
     // 전투 시 실시간 갱신
-    assert(m_pMinimap);
-    if (m_pMinimap) m_pMinimap->UpdatePanel(battleResult);
+    // PhaseScene 이 내려간 상태에서는 패널 포인터가 유효하지 않을 수 있으므로 보관.
+    if (!m_pMinimap || !m_pSelectionPanel || !m_pConfirmPanel)
+    {
+        m_pendingBattlePanelUpdates.push(battleResult);
+        return;
+    }
 
-    assert(m_pSelectionPanel);
-    if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(battleResult);
+    m_pMinimap->UpdatePanel(battleResult);
+    m_pSelectionPanel->UpdatePanel(battleResult);
+    m_pConfirmPanel->UpdatePanel(battleResult);
+}
 
-    assert(m_pConfirmPanel);
-    if (m_pConfirmPanel) m_pConfirmPanel->UpdatePanel(battleResult);
+void GameManager::FlushPendingPanelUpdates()
+{
+    if (!m_pMinimap || !m_pSelectionPanel || !m_pConfirmPanel)
+    {
+        return;
+    }
+
+    while (!m_pendingBattlePanelUpdates.empty())
+    {
+        const BattleResult battleResult = m_pendingBattlePanelUpdates.front();
+        m_pendingBattlePanelUpdates.pop();
+
+        m_pMinimap->UpdatePanel(battleResult);
+        m_pSelectionPanel->UpdatePanel(battleResult);
+        m_pConfirmPanel->UpdatePanel(battleResult);
+    }
 }
 
 void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
 {
-    // 전투 종료 후
-    assert(m_pMinimap);
-    if (m_pMinimap) m_pMinimap->UpdatePanel(obstacleResult);
+    if (!m_pMinimap || !m_pSelectionPanel || !m_pConfirmPanel)
+    {
+        return;
+    }
 
-    assert(m_pSelectionPanel);
-    if (m_pSelectionPanel) m_pSelectionPanel->UpdatePanel(obstacleResult);
+    while (!m_pendingBattlePanelUpdates.empty())
+    {
+        const BattleResult battleResult = m_pendingBattlePanelUpdates.front();
+        m_pendingBattlePanelUpdates.pop();
 
-    assert(m_pConfirmPanel);
-    if (m_pConfirmPanel) m_pConfirmPanel->UpdatePanel(obstacleResult);
+        m_pMinimap->UpdatePanel(battleResult);
+        m_pSelectionPanel->UpdatePanel(battleResult);
+        m_pConfirmPanel->UpdatePanel(battleResult);
+    }
 }
 
 
@@ -412,7 +437,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockRenderBelow = false;
 
         sm->RequestPush(std::make_unique<PlayHUDScene>(), sp, opt);
-        sm->RequestPush(std::make_unique<PlayMidScene>(), sp, opt);
+
 
         SetSceneState(CurrentSceneState::SubmitCard);
         break;
@@ -425,6 +450,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockUpdateBelow = false;
 
         sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+        FlushPendingPanelUpdates();
 
         break;
     }
@@ -432,20 +458,31 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
         m_state = CurrentSceneState::BattleStandBy;
         // 여기에 뭐 대기중인 텍스쳐 띄워주는 씬 push 넣기
-        //SceneTransitionOptions opt{};
-        //opt.immediate = true;
-        //sm->RequestPop(opt);
-        //
-        //ScenePolicy sp;
-        //sp.blockRenderBelow = false;
-        //sp.blockUpdateBelow = false;
-        //sm->RequestPush(std::make_unique<StandByScene>(), sp);
+        SceneTransitionOptions opt{};
+        opt.immediate = true;
+        sm->RequestPop(opt);
+
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = false;
+        sm->RequestPush(std::make_unique<StandByScene>(), sp);
 
         break;
     }
     case CurrentSceneState::AutoBattle:
     {
         m_state = CurrentSceneState::AutoBattle;
+
+        SceneTransitionOptions opt{};
+        opt.immediate = true;
+
+        sm->RequestPop(opt);
+
+
+        ScenePolicy sp;
+        sp.blockInputBelow = false;
+        sp.blockRenderBelow = false;
+        sm->RequestPush(std::make_unique<PlayMidScene>(), sp, opt);
 
         break;
     }

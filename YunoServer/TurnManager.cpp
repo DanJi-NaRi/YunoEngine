@@ -636,7 +636,7 @@ namespace yuno::server
                     m_runtime.RemoveCard(card.runtimeId);
                 };
 
-        auto applyCard = [&](const ResolvedCard& card, bool coinTossUsed)
+        auto applyCard = [&](const ResolvedCard& card, bool coinTossUsed, bool aFirst)
             {
 				static int count = 0;
 
@@ -857,7 +857,7 @@ namespace yuno::server
                 pkt.dir = static_cast<uint8_t>(card.dir);
                 pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
                 pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
-                pkt.isCoinTossUsed = coinTossUsed ? 1 : 0;
+                pkt.isCoinTossUsed = coinTossUsed ? 0 : if();
                 pkt.actionTime = 3000;
                 if (cardData.m_type == CardType::Utility)
                 {
@@ -913,15 +913,15 @@ namespace yuno::server
 
             if (aFirst)
             {
-                applyCard(slotCards[0][i], coinTossUsed);
+                applyCard(slotCards[0][i], coinTossUsed, aFirst);
                 if (g_battleState.roundEnded) break;
-                applyCard(slotCards[1][i], false);
+                applyCard(slotCards[1][i], false, false);
             }
             else
             {
-                applyCard(slotCards[1][i], coinTossUsed);
+                applyCard(slotCards[1][i], coinTossUsed, aFirst);
                 if (g_battleState.roundEnded) break;
-                applyCard(slotCards[0][i], false);
+                applyCard(slotCards[0][i], false, false);
             }
 
             if (g_battleState.roundEnded)

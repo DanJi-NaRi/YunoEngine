@@ -281,5 +281,9 @@ public:
     void SetUpPanels();
     void UpdatePanels(const BattleResult& obstacleResult);
     void UpdatePanels(const ObstacleResult& obstacleResult);
+    void FlushPendingPanelUpdates();
     //void UpdateSelectionPanel(const UnitHand& playerInfo);
+
+    private:
+        std::queue<BattleResult> m_pendingBattlePanelUpdates;
 };
