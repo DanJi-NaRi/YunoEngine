@@ -159,10 +159,34 @@ void CardConfirmPanel::UpdateCardSlot()
     {
         currentSlot->SetIsEnabled(false);
         m_dirChoice = true;
+
+        m_pMinimap->StartDirChoice(currentSlot); // 미니맵 클릭 활성화
     }
     else {
-        m_pMinimap->StartDirChoice(currentSlot); // 미니맵 클릭 활성화
-        return;
+
+        if (m_setCardSlots[m_openSlot]->GetDirection() != Direction::None) { // 선택이 완료되면 Dir이 바뀔것임
+
+            //디버깅 코드
+            switch (m_setCardSlots[m_openSlot]->GetDirection())
+            {
+            case Direction::Left:  std::cout << "Left selected" << std::endl;  break;
+            case Direction::Right: std::cout << "Right selected" << std::endl; break;
+            case Direction::Up:    std::cout << "Up selected" << std::endl;    break;
+            case Direction::Down:  std::cout << "Down selected" << std::endl;  break;
+            }
+
+
+            // 방향 선택 되면
+            const int next = m_openSlot + 1;
+            if (next >= size) { // 마지막까지 도달
+                m_openSlot = size;
+                m_confirmReady = true;
+                return;
+            }
+            m_openSlot = next;
+            m_setCardSlots[m_openSlot]->SetIsEnabled(true);
+            m_dirChoice = false; // dirChoice 상태 초기화
+        }
     }
 
 
