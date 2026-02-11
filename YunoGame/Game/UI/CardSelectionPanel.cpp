@@ -82,27 +82,27 @@ void CardSelectionPanel::CreateChild() {
     {
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1300, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-1100, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(205, 297), XMFLOAT3(-900, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(205, 297), XMFLOAT3(-700, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(205, 297), XMFLOAT3(-500, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-300, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         for (auto* card : m_pCards)
         {

@@ -124,6 +124,7 @@ enum class WidgetLayer : int {
     Background,
     HUD,
     Panels,
+    Card,
     Popups,
     Modal,    // 입력 차단
     Tooltip,  
