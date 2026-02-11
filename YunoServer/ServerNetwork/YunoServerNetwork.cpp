@@ -539,6 +539,20 @@ namespace yuno::server
                 if (idx < 0)
                     return;
 
+                auto& slot = m_match.Slots()[idx];
+
+                using namespace std::chrono;
+
+                auto now = steady_clock::now();
+                constexpr auto cooldown = milliseconds(500);
+
+                if (now - slot.lastEmoteTime < cooldown)
+                {
+                    return;
+                }
+
+                slot.lastEmoteTime = now;
+
                 uint8_t pid = static_cast<uint8_t>(idx + 1); // 1 or 2
 
                 yuno::net::packets::S2C_Emote out{};
