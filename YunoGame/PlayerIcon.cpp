@@ -133,6 +133,7 @@ void PlayerIcon::UpdateHPValue(float dTime)
     {
         m_curChangeTime = 0.0f;
         isChangingHp = false;
+        prevHp = m_idata.hp;
     }
 }
 
@@ -162,6 +163,7 @@ void PlayerIcon::UpdateStaminaValue(float dTime)
     {
         m_curChangeTime = 0.0f;
         isChangingStamina = false;
+        prevStamina = m_idata.stamina;
     }
 }
 
