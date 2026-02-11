@@ -2,7 +2,6 @@
 
 #include <array>
 #include <cstdint>
-#include <chrono>
 
 namespace yuno::server
 {
@@ -28,9 +27,6 @@ namespace yuno::server
             {
                 return unitId1 != 0 && unitId2 != 0;
             }
-
-            std::chrono::steady_clock::time_point lastEmoteTime =
-                std::chrono::steady_clock::time_point::min();
         };
     public:
         MatchManager() = default;
@@ -47,8 +43,6 @@ namespace yuno::server
         std::uint8_t GetOccupiedCount() const;
 
         const std::array<MatchSlot, kMaxSlots>& Slots() const { return m_slots; }
-
-        std::array<MatchSlot, kMaxSlots>& Slots() { return m_slots; } // 쓰기 버전
 
         bool ClearUnitByUserId(std::uint32_t uid, int slotWeaponIndex);
 
