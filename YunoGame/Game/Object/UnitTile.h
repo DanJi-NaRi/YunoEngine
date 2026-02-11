@@ -42,6 +42,7 @@ private:
     float m_blinkTime = 0.5f;         // 한 번 반짝이는 시간
     int m_count = 0;                  // 몇번 번쩍일 건지
     bool isFlashing = false;
+    bool isCollapsed = false;
 
     bool isDone = false;
 };

@@ -218,32 +218,32 @@ bool UnitPiece::Update(float dTime)
     UpdateAttack(dTime);
     UpdateHit(dTime);
 
-    if (m_waitSubMoveHit && m_pendingMoveHit.valid)
-    {
-        bool anySubBusy = false;
-        for (auto* sub : m_linkedSubPieces)
-        {
-            if (sub == nullptr) continue;
-            if (sub->IsBusy())
-            {
-                anySubBusy = true;
-                break;
-            }
-        }
+    //if (m_waitSubMoveHit && m_pendingMoveHit.valid)
+    //{
+    //    bool anySubBusy = false;
+    //    for (auto* sub : m_linkedSubPieces)
+    //    {
+    //        if (sub == nullptr) continue;
+    //        if (sub->IsBusy())
+    //        {
+    //            anySubBusy = true;
+    //            break;
+    //        }
+    //    }
 
-        if (!anySubBusy)
-        {
-            if (m_pendingMoveHit.amIdead)
-                PlayDead(m_pendingMoveHit.disappearDissolveDuration);
-            else
-                PlayHit();
+    //    if (!anySubBusy)
+    //    {
+    //        if (m_pendingMoveHit.amIdead)
+    //            PlayDead(m_pendingMoveHit.disappearDissolveDuration);
+    //        else
+    //            PlayHit();
 
-            PlayGridQ::Insert(PlayGridQ::Hit_S(m_pendingMoveHit.whichPiece));
+    //        PlayGridQ::Insert(PlayGridQ::Hit_S(m_pendingMoveHit.whichPiece));
 
-            m_pendingMoveHit = {};
-            m_waitSubMoveHit = false;
-        }
-    }
+    //        m_pendingMoveHit = {};
+    //        m_waitSubMoveHit = false;
+    //    }
+    //}
 
     CheckMyQ();
 
@@ -353,31 +353,19 @@ void UnitPiece::CheckMyQ()
        }  
        case CommandType::MoveHit:  
        {  
-           // 복합 무기(예: 차크람)는 sub 파츠가 목표 지점에서 공격 애니메이션을 수행하고  
-           // 메인 피스는 sub 동작 완료까지 대기한 뒤 Hit 이벤트를 발생시킨다.  
-           if (!m_linkedSubPieces.empty())  
-           {  
-               m_waitSubMoveHit = true;  
-               m_pendingMoveHit.valid = true;  
-               m_pendingMoveHit.whichPiece = tp.hit_p.whichPiece;  
-               m_pendingMoveHit.amIdead = tp.hit_p.amIdead;  
-               m_pendingMoveHit.disappearDissolveDuration = tp.hit_p.disappearDissolveDuration;  
-
-               for (auto* sub : m_linkedSubPieces)  
-               {  
-                   if (sub == nullptr) continue;  
-                   sub->InsertQ({ CommandType::Hit });  
-               }    
-           }
+           if (tp.hit_p.amIdead)
+               PlayDead(tp.hit_p.disappearDissolveDuration);
            else
-           {
-               if (tp.hit_p.amIdead)
-                   PlayDead(tp.hit_p.disappearDissolveDuration);
-               else
-                   PlayHit();
+               PlayHit();
 
-               PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece));
+           PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece));
+           
+           for (auto* sub : m_linkedSubPieces)
+           {
+               if (sub == nullptr) continue;
+               sub->InsertQ(PlayGridQ::MoveHit_P(tp.hit_p.whichPiece, tp.hit_p.amIdead, tp.hit_p.disappearDissolveDuration));
            }
+
            break;
        }  
        case CommandType::Hit:  
@@ -432,6 +420,7 @@ void UnitPiece::UpdateRot(float dt)
         m_yaw = m_targetYaw;
         m_rotTime = 0.f;
         isRotating = false;
+        m_state = PieceAnim::Idle;
     }
     else
     {
@@ -565,6 +554,17 @@ void UnitPiece::UpdateAttack(float dt)
 
 void UnitPiece::UpdateRollingOrBack(float dt)
 {
+    bool isAnySubBusy = false;
+    for (auto* sub : m_linkedSubPieces)
+    {
+        if (sub == nullptr) continue;
+        if (sub->IsBusy())
+        {
+            isAnySubBusy = true;
+            break;
+        }
+    }
+
     if (isRollingBack)
     {
         m_rollTime += dt * m_rollorbackSpeed;
@@ -582,15 +582,15 @@ void UnitPiece::UpdateRollingOrBack(float dt)
             PlayAttack();
             for (auto* sub : m_linkedSubPieces)
             {
-                if (sub == nullptr)
-                {
-                    PlayAttack();
-                }
+                if (sub == nullptr) continue;
+                sub->PlayAttack();
             }
             isRolling = true;
         }
     }
-    else if (isRolling && !isAttacking)
+    // 복합 무기(차크람)는 부모에 animator가 없으므로 isAttacking으로는
+    // 서브 공격 진행 상태를 알 수 없다. 서브 동작이 끝난 뒤 복귀(roll)하도록 제어한다.
+    else if (isRolling && !isAttacking && !isAnySubBusy)
     {
         m_rollTime += dt * m_rollorbackSpeed;
 
@@ -663,6 +663,7 @@ void UnitPiece::SetDir(Direction dir, bool isAnim, float second)
 
     m_startYaw = m_yaw;
     isRotating = isAnim;
+    m_state = (isAnim)? PieceAnim::Rot : PieceAnim::Idle;
     m_rotSpeed = 1 / second;
 
     m_yaw = (isAnim) ? m_yaw : m_targetYaw;
@@ -886,15 +887,15 @@ void UnitPiece::PlayMove()
         if (isChanged)
             m_animator->SetLoop("move", true);
         m_animator->Play();
+    }
+    for (auto* sub : m_linkedSubPieces)
+    {
+        if (sub == nullptr) continue;
 
-        for (auto* sub : m_linkedSubPieces)
-        {
-            if (sub == nullptr) continue;
-            
-            sub->PlayMove();
-        }
+        sub->PlayMove();
     }
 
+    m_state = PieceAnim::Move;
     isMoving = true;
 }
 
@@ -902,7 +903,7 @@ void UnitPiece::PlayRollBack(float seconds)
 {
     //m_rollorbackSpeed = 1.f / seconds;
     isRollingBack = true;
-
+    m_state = PieceAnim::RollBack;
     isRolling = false;
 }
 
@@ -922,6 +923,8 @@ void UnitPiece::PlayDead(float disappearDisolveDuration)
     isAttacking = false;
     isHitting = false;
 
+    m_state = PieceAnim::Dead;
+
     DisappearDissolve(disappearDisolveDuration);
 
     if (m_animator == nullptr) return;
@@ -938,10 +941,12 @@ void UnitPiece::StopMove()
         m_animator->Change("idle");
         m_animator->SetLoop("idle", true);
         m_animator->Play();
-
-        isMoving = false;
-        m_moveTime = 0.f;
     }
+    // animator가 없는 부모 피스(예: Chakram 루트)도 이동 상태를 반드시 해제해야
+    // 다음 큐 명령(공격/피격/이동)이 정상 처리된다.
+    isMoving = false;
+    m_moveTime = 0.f;
+    m_state = PieceAnim::Idle;
 }
 
 void UnitPiece::SetTmpColor(Float4 color)
@@ -1008,4 +1013,10 @@ void UnitPiece::ClearQ()
     {
         m_Q.pop();
     }
+}
+
+bool HasThis_Anim(PieceAnim a, PieceAnim b)
+{
+    return (static_cast<uint8_t>(a) & static_cast<uint8_t>(b))
+        == static_cast<uint8_t>(b);
 }

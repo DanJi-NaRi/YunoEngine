@@ -225,7 +225,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram1->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pChakram1->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram1->AppearDissolve(appearDisolveDuration);
-         pChakram1->SetWho(gp, team, w.weaponId, 1);
+         pChakram1->SetWho(gp, team, w.pId, w.weaponId, 1);
          //pChakram1->SetDir(dir, false);
          pChakram1->SetMoveRotOffset(0, 0);
 
@@ -242,7 +242,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram2->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pChakram2->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram2->AppearDissolve(appearDisolveDuration);
-         pChakram2->SetWho(gp, team, w.weaponId, 2);
+         pChakram2->SetWho(gp, team, w.pId, w.weaponId, 2);
          //pChakram2->SetDir(dir, false);
          pChakram2->SetMoveRotOffset(0, 0);
 
@@ -1191,24 +1191,9 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
     //auto moveDir = Get8Dir(oldcell.x, oldcell.y, newcell.x, newcell.y);             // 진입 방향
     auto [colW, colC] = GetCollisionPos(moveDir, newcell.x, newcell.y);
 
-    // 
     auto [wx, wz] = m_grids[(int)m_nowG]->CellToWorld(newcell.x, newcell.y);
 
     TileWho who = static_cast<TileWho>(pieceType);
-    
-    // 복합 무기(예: 차크람) 대응
-    // - 실제 이동/충돌 처리 시퀀스(회전 -> 이동 -> 충돌 -> 복귀)는 메인 피스가 담당한다.
-    // - sub 피스는 직접 이동하지 않고, 방향 회전 + 필요한 애니메이션만 담당한다.
-    auto rotSubPieces = [&]()
-        {
-            for (auto& subID : pieceInfo.subIds)
-            {
-                auto sub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subID));
-                if (sub == nullptr) continue;
-                sub->InsertQ(PlayGridQ::Rot_P(fdir));
-                sub->InsertQ(PlayGridQ::Rot_P(fdir));
-            }
-        };
 
     if (to.occuType == TileOccuType::Collapesed)       // 없어진 자리
     {

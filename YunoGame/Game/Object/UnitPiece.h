@@ -3,6 +3,22 @@
 #include "PieceHelper.h"
 
 class EffectManager;
+
+enum class PieceAnim : uint8_t
+{
+    None = 0,
+    Idle = 1 << 1,
+    Move = 1 << 2,
+    Rot = 1 << 3,
+    RollBack = 1 << 4,
+    Roll = 1 << 5,
+    Attack = 1 << 6,
+    Dissolve = 1 << 7,
+    Flash = 1 << 8,
+    Dead = 1 << 9
+};
+bool HasThis_Anim(PieceAnim a, PieceAnim b);
+
 class UnitPiece : public AnimTest
 {
 public:
@@ -65,6 +81,7 @@ private:
 
 private:
     bool m_AnimDone = false;
+    PieceAnim m_state = PieceAnim::Idle;
 
     // 그래프
     float m_linearSlope = 0.f;
