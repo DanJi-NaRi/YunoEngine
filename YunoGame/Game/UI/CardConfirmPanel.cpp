@@ -226,17 +226,6 @@ void CardConfirmPanel::ClearSlot() {
     //m_confirmReady = false; // 컨펌 준비 취소
 }
 
-bool CardConfirmPanel::HandleDirectionInput(Direction& outDir) const
-{
-    outDir = Direction::None;
-
-    if (m_pInput->IsKeyPressed(VK_UP)) outDir = Direction::Up;
-    if (m_pInput->IsKeyPressed(VK_DOWN)) outDir = Direction::Down;
-    if (m_pInput->IsKeyPressed(VK_LEFT)) outDir = Direction::Left;
-    if (m_pInput->IsKeyPressed(VK_RIGHT)) outDir = Direction::Right;
-
-    return outDir != Direction::None;
-}
 
 bool CardConfirmPanel::IsCardAlreadyQueued(uint32_t runtimeID) const
 {
@@ -299,8 +288,8 @@ void CardConfirmPanel::SubmitCurrentSelection()
     if (!HasEnoughStaminaForCard(selectedSlot, selectedRuntimeID))
         return;
 
-    Direction dir = Direction::None;
-    if (!HandleDirectionInput(dir))
+    const Direction dir = slot->GetDirection();
+    if (dir == Direction::None)
         return;
 
     CardPlayCommand cmd;
