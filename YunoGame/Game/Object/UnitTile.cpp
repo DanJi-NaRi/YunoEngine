@@ -198,7 +198,7 @@ bool UnitTile::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 
 bool UnitTile::Update(float dTime)
 {
-    if (isTriggering)
+    if (isTriggering && m_animator)
     {
         bool isPlaying = m_animator->isPlaying();
         if (!isPlaying && !isCollapsed && !isFlashing)
@@ -211,7 +211,7 @@ bool UnitTile::Update(float dTime)
         }
     }
 
-    if (isWarning)
+    if (isWarning && m_animator)
     {
         bool isPlaying = m_animator->isPlaying();
         if (!isPlaying && !isFlashing && !isCollapsed)
@@ -358,12 +358,14 @@ void UnitTile::PlayTrigger(ObstacleType obstacleType, Float4 color, int count, f
 {
     SetFlashColor(color, count, blinkTime);
 
+    if (m_pEffectManager == nullptr && (obstacleType == ObstacleType::Vertical_Razer || obstacleType == ObstacleType::Horizon_Razer))
+        return;
+
     switch (obstacleType)
     {
     case ObstacleType::Vertical_Razer:
     {
-        auto eff = m_pEffectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 2.38f }, { 1.f, 1.f, 1.f }, { 0, 1, 0 });
-        if (eff == nullptr)  return;
+        auto eff = m_pEffectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 0.f }, { 1.f, 1.f, 1.f }, { 0, 1, 0 });
         Attach(eff);
         break;
     }
@@ -371,7 +373,6 @@ void UnitTile::PlayTrigger(ObstacleType obstacleType, Float4 color, int count, f
     {
         // 이펙트 넣기
         auto eff = m_pEffectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 0.f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
-        if (eff == nullptr)  return;
         Attach(eff);
         break;
     }
