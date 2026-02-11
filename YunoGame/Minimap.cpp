@@ -30,7 +30,6 @@ Minimap::~Minimap()
 void Minimap::Clear()
 {
     m_pGridLine = nullptr;
-
 }
 
 bool Minimap::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
@@ -99,19 +98,23 @@ bool Minimap::Submit(float dTime)
 void Minimap::SetupPanel() {
     ClearGrid();
     for (const auto& myWeapon : m_player.weapons) {
-        TileData& tileData = m_pTiles[myWeapon.currentTile-1]->GetTileData();
-        tileData.isPlayerTile = true;
-        tileData.teamID = myWeapon.pId;
-        tileData.unitID = myWeapon.weaponId;
-        tileData.slotID = myWeapon.slotId;
+        if (auto* tile = GetTileByID(myWeapon.currentTile)) {
+            TileData& tileData = tile->GetTileData();
+            tileData.isPlayerTile = true;
+            tileData.teamID = myWeapon.pId;
+            tileData.unitID = myWeapon.weaponId;
+            tileData.slotID = myWeapon.slotId;
+        }
     }
 
     for (const auto& enemyWeapon : m_enemy.weapons) {
-        TileData& tileData = m_pTiles[enemyWeapon.currentTile-1]->GetTileData();
-        tileData.isPlayerTile = true;
-        tileData.teamID = enemyWeapon.pId;
-        tileData.unitID = enemyWeapon.weaponId;
-        tileData.slotID = enemyWeapon.slotId;
+        if (auto* tile = GetTileByID(enemyWeapon.currentTile)) {
+            TileData& tileData = tile->GetTileData();
+            tileData.isPlayerTile = true;
+            tileData.teamID = enemyWeapon.pId;
+            tileData.unitID = enemyWeapon.weaponId;
+            tileData.slotID = enemyWeapon.slotId;
+        }
     }
 }
 
@@ -119,22 +122,26 @@ void Minimap::UpdatePanel(const BattleResult& battleResult) {
     ClearGrid();
     for (const auto& pieceInfo : battleResult.order) {
         const auto& info = pieceInfo.data();
-        TileData& tileData = m_pTiles[info->targetTileID]->GetTileData();
-        tileData.isPlayerTile = true;
-        tileData.teamID = info->pId;
-        tileData.unitID = info->weaponId;
-        tileData.slotID = info->slotId;
+        if (auto* tile = GetTileByID(info->targetTileID)) {
+            TileData& tileData = tile->GetTileData();
+            tileData.isPlayerTile = true;
+            tileData.teamID = info->pId;
+            tileData.unitID = info->weaponId;
+            tileData.slotID = info->slotId;
+        }
     }
 }
 
 void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
     ClearGrid();
     for (const auto& pieceInfo : obstacleResult.unitState) {
-        TileData& tileData = m_pTiles[pieceInfo.pId]->GetTileData();
-        tileData.isPlayerTile = true;
-        tileData.teamID = pieceInfo.pId;
-        tileData.unitID = pieceInfo.weaponId;
-        tileData.slotID = pieceInfo.slotId;
+        if (auto* tile = GetTileByID(pieceInfo.targetTileID)) {
+            TileData& tileData = tile->GetTileData();
+            tileData.isPlayerTile = true;
+            tileData.teamID = pieceInfo.pId;
+            tileData.unitID = pieceInfo.weaponId;
+            tileData.slotID = pieceInfo.slotId;
+        }
     }
 }
 
@@ -213,28 +220,12 @@ void Minimap::ClearGrid()
 }
 
 
-void Minimap::StartDirChoce(int slotID)
+void Minimap::SetButtonLock(bool buttonLock)
 {
     assert(!m_pTiles.empty());
     if (m_pTiles.empty()) return;
 
-    SetButtonLock(false);
-
-    for (auto& tile : m_pTiles) {
-        auto& data = tile->GetTileData();
-        // 버튼 금지 부분 허용
-        if (!data.isPlayerTile) continue;
-        if (data.slotID != slotID) continue;
-    }
-
-}
-
-void Minimap::SetButtonLock(bool flag)
-{
-    assert(!m_pTiles.empty());
-    if (m_pTiles.empty()) return;
-
-    m_buttonLock = flag;
+    m_buttonLock = buttonLock;
     if (m_buttonLock) {
         for (auto& tile : m_pTiles) {
             // 버튼 금지
@@ -251,31 +242,45 @@ void Minimap::SetButtonLock(bool flag)
     }
 }
 
+void Minimap::StartDirChoice(int slotID)
+{
+    assert(!m_pTiles.empty());
+    if (m_pTiles.empty()) return;
+
+    SetButtonLock(true);
+
+    for (auto& tile : m_pTiles) {
+        auto& data = tile->GetTileData();
+        // 버튼 금지 부분 허용
+        if (m_pID != data.teamID) continue; // 팀이 아니면
+        if (!data.isPlayerTile) continue; // 플레이어 타일이 아니면
+        if (data.slotID-1 != slotID) continue; // 슬롯 아이디가 같지 않으면
+        OpenDirButton(tile->GetTileId());
+    }
+}
+
 void Minimap::OpenDirButton(int tileID) {
+
     assert(IsValidTileID(tileID));
     if (!IsValidTileID(tileID)) return;
 
-    Int2 tileXY = GetCellByID(tileID);
+    Int2 tileXY = GetCellByID(tileID); // 여기서 tileID-1 해줌
 
-    Int2 testXY = Int2(tileXY.x - 1, tileXY.y); // 왼쪽
-    if (IsValidTileID(testXY)) { // 왼쪽 검사
-        GetTileByID(testXY)->SetUseLMB(true);
-        GetTileByID(testXY)->SetUseRMB(true);
-    }
-    testXY = Int2(tileXY.x + 1, tileXY.y); // 오른쪽
-    if (IsValidTileID(testXY)) { // 오른쪽 검사
-        GetTileByID(testXY)->SetUseLMB(true);
-        GetTileByID(testXY)->SetUseRMB(true);
-    }
-    testXY = Int2(tileXY.x, tileXY.y - 1); // 위쪽
-    if (IsValidTileID(testXY)) { // 위쪽 검사
-        GetTileByID(testXY)->SetUseLMB(true);
-        GetTileByID(testXY)->SetUseRMB(true);
-    }
-    testXY = Int2(tileXY.x, tileXY.y + 1); // 아래쪽
-    if (IsValidTileID(testXY)) { // 아래쪽 검사
-        GetTileByID(testXY)->SetUseLMB(true);
-        GetTileByID(testXY)->SetUseRMB(true);
+    const Int2 dirs[4] = {
+        { -1,  0 }, // left
+        {  1,  0 }, // right
+        {  0, -1 }, // up
+        {  0,  1 }, // down
+    };
+
+    for (const auto& d : dirs) {
+        const Int2 n = { tileXY.x + d.x, tileXY.y + d.y };
+
+        if (auto* dirTile = GetTileByID(n)) {  // 상하좌우 검사 후 가능한 타일이면 UseL/RMB
+            //std::cout << "TileOnBtn = " << dirTile->GetTileId() << std::endl;
+            dirTile->SetUseLMB(true);
+            dirTile->SetUseRMB(true);
+        }
     }
 }
 
@@ -303,14 +308,14 @@ Int2 Minimap::GetCellByID(int tileID) const
 
     int id = tileID - 1;
     int cx = id % m_grid.col;
-    int cz = id / m_grid.col;
-    return { cx, cz };
+    int cy = id / m_grid.col;
+    return { cx, cy };
 }
 
 MinimapTile* Minimap::GetTileByID(int tileID)
 {
     if (!IsValidTileID(tileID)) return nullptr;
-    return m_pTiles[(size_t)tileID - 1];
+    return m_pTiles[(size_t)tileID - 1]; // -1 보정해줌
 }
 
 MinimapTile* Minimap::GetTileByID(Int2 tileXY)

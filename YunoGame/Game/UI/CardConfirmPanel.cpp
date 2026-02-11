@@ -124,7 +124,7 @@ void CardConfirmPanel::UpdateCardSlot()
         m_setCardSlots[m_openSlot]->SetIsEnabled(false);
         m_dirChoice = true;
         // 선택창 띄우기
-        m_pMinimap->StartDirChoce(m_setCardSlots[m_openSlot]->GetCard()->GetSlotID()); // 미니맵 클릭 활성화
+        m_pMinimap->StartDirChoice(m_setCardSlots[m_openSlot]->GetCard()->GetSlotID()); // 미니맵 클릭 활성화
     }
     else {
         if (!m_pMinimap->GetButtonLock()) { // 선택이 완료되면 ButtonLock이 풀릴 것임

@@ -34,8 +34,8 @@ public:
     void UpdatePanel(const BattleResult& battleResult) override;
     void UpdatePanel(const ObstacleResult& obstacleResult) override;
 
-    void StartDirChoce(int slotID);
-    void SetButtonLock(bool flag); // SetButtonLock
+    void StartDirChoice(int slotID);
+    void SetButtonLock(bool buttonLock); // SetButtonLock
 
     void OpenDirButton(int tileID);
 

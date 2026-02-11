@@ -316,6 +316,9 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
 {
     assert(m_pInput);
 
+    const bool isLMB = (mouseButton == 0);
+    const bool isRMB = (mouseButton == 1);
+
     // 1) 이번 프레임 입력 발생 체크
     switch (state) {
     case ButtonState::Pressed:
@@ -335,13 +338,31 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
         {
             if (m_cursurSystem.GetFocusedMouseButton() != mouseButton) return false;
 
+            const bool wasPressed = (focusWidget->GetButtonState() == ButtonState::Pressed);
+
+            if (isLMB && !focusWidget->IsUseLMB() && wasPressed) { // 이미 눌렸던 상태에서 UseLMB를 끄면
+                m_cursurSystem.FindSnapWidget(); // DragProvider가 있을 경우, 스냅 검색 // LMBReleasedEvent와 순서 주의. IsDrag가 여기서 처리됨.
+                focusWidget->LMBReleasedEvent();
+                focusWidget->SetButtonState(ButtonState::Released);
+                m_cursurSystem.SetFocusedWidget(nullptr);
+                focusWidget = nullptr;
+                return true;
+            }
+            else if (isRMB && !focusWidget->IsUseRMB() && wasPressed) {
+                focusWidget->RMBReleasedEvent();
+                focusWidget->SetButtonState(ButtonState::Released);
+                m_cursurSystem.SetFocusedWidget(nullptr);
+                focusWidget = nullptr;
+                return true;
+            }
+
             focusWidget->SetButtonState(ButtonState::Released);
 
-            if (mouseButton == 0) {
+            if (isLMB && focusWidget->IsUseLMB()) {
                 m_cursurSystem.FindSnapWidget(); // DragProvider가 있을 경우, 스냅 검색 // LMBReleasedEvent와 순서 주의. IsDrag가 여기서 처리됨.
                 focusWidget->LMBReleasedEvent();
             }
-            else if (mouseButton == 1)
+            else if (isRMB && focusWidget->IsUseRMB())
             {
                 focusWidget->RMBReleasedEvent();
             }
@@ -374,13 +395,13 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
 
         switch (state) {
         case ButtonState::Pressed:  
-            if (mouseButton == 0 && Btn->IsUseLMB()) {
+            if (isLMB && Btn->IsUseLMB()) {
                 const auto& event = Btn->GetEventLMB();
                 if (event) event(); // 등록해둔 함수가 있으면 함수 실행
 
                 Btn->LMBPressedEvent();
             }
-            else if (mouseButton == 1 && Btn->IsUseRMB()) {
+            else if (isRMB && Btn->IsUseRMB()) {
                 const auto& event = Btn->GetEventRMB();
                 if (event) event(); // 등록해둔 함수가 있으면 함수 실행
 
@@ -391,8 +412,8 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
             Btn->DownEvent();     
             return true;
         //case ButtonState::Released: // 사실상 이전에 처리
-        //    if (mouseButton == 0) Btn->LMBReleasedEvent();
-        //    else if (mouseButton == 1) Btn->RMBReleasedEvent(); 
+        //    if (isLMB) Btn->LMBReleasedEvent();
+        //    else if (isRMB) Btn->RMBReleasedEvent(); 
         //    return true;
         default: return false;
         }

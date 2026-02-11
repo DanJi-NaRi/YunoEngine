@@ -29,6 +29,10 @@ bool MinimapTile::Create(const std::wstring& name, uint32_t id, Float2 sizePx, X
 {
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
 
+    // 시작 시 버튼 사용안함
+    SetUseLMB(false);
+    SetUseRMB(false);
+
     return true;
 }
 
@@ -68,7 +72,7 @@ bool MinimapTile::IdleEvent()
 // 커서가 위에 올라있을 때
 bool MinimapTile::HoveredEvent()
 {
-    std::cout << "HoveredEvent" << std::endl;
+   //std::cout << "HoveredEvent" << std::endl;
     return true;
 }
 
@@ -82,14 +86,14 @@ bool MinimapTile::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool MinimapTile::LMBPressedEvent()
 {
-    std::cout << "(LMB)PressedEvent" << std::endl;
+    std::cout << "(LMB)PressedEvent - " << static_cast<int>(m_tileID) << std::endl;
     return true;
 }
 
 // 우클릭 눌렀을 때
 bool MinimapTile::RMBPressedEvent()
 {
-    std::cout << "(RMB)PressedEvent" << std::endl;
+    std::cout << "(RMB)PressedEvent - " << static_cast<int>(m_tileID) << std::endl;
     return true;
 }
 
@@ -104,14 +108,14 @@ bool MinimapTile::KeyPressedEvent(uint32_t key)
 // 왼클릭 뗐을 때
 bool MinimapTile::LMBReleasedEvent()
 {
-    std::cout << "(LMB)ReleasedEvent" << std::endl;
+    std::cout << "(LMB)ReleasedEvent - " << static_cast<int>(m_tileID) << std::endl;
     return true;
 }
 
 // 우클릭 뗐을 때
 bool MinimapTile::RMBReleasedEvent()
 {
-    std::cout << "(RMB)ReleasedEvent" << std::endl;
+    std::cout << "(RMB)ReleasedEvent - " << static_cast<int>(m_tileID) << std::endl;
     return true;
 }
 
