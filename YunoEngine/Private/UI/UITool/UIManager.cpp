@@ -268,21 +268,22 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
             Btn = nullptr;
             continue;
         }
-        else if (m_pInput->IsMouseButtonPressed(0)) {
+        else if (m_pInput->IsMouseButtonPressed(0) && Btn->IsUseLMB()) {
+            
             Btn->SetButtonState(ButtonState::Pressed);
             m_cursurSystem.SetFocusedWidget(Btn); // 마지막으로 누른 버튼 갱신
             m_cursurSystem.SetFocusedMouseButton(0);
             //Btn->PressedEvent();
             //std::cout << "LMBPressed!!" << std::endl;
         }
-        else if (m_pInput->IsMouseButtonPressed(1)) {
+        else if (m_pInput->IsMouseButtonPressed(1) && Btn->IsUseRMB()) {
             Btn->SetButtonState(ButtonState::Pressed);
             m_cursurSystem.SetFocusedWidget(Btn); // 마지막으로 누른 버튼 갱신
             m_cursurSystem.SetFocusedMouseButton(1);
             //Btn->PressedEvent();
             //std::cout << "RMBPressed!!" << std::endl;
         }
-        else if (m_pInput->IsMouseButtonDown(0) || m_pInput->IsMouseButtonDown(1)) {
+        else if (m_pInput->IsMouseButtonDown(0) && Btn->IsUseLMB() || m_pInput->IsMouseButtonDown(1) && Btn->IsUseRMB()) {
             Btn->SetButtonState(ButtonState::Down);
             //Btn->DownEvent();
             //std::cout << "Down!!" << std::endl;

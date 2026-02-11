@@ -7,6 +7,7 @@
 //디버그
 class WidgetGridLine;
 class MinimapTile;
+class CardConfirmArea;
 
 class Minimap : public PhasePanel
 {
@@ -34,10 +35,10 @@ public:
     void UpdatePanel(const BattleResult& battleResult) override;
     void UpdatePanel(const ObstacleResult& obstacleResult) override;
 
-    void StartDirChoice(int slotID);
+    void StartDirChoice(CardConfirmArea* CardSlot);
     void SetButtonLock(bool buttonLock); // SetButtonLock
 
-    void OpenDirButton(int tileID);
+    void OpenDirButton(int tileID, CardConfirmArea* CardSlot);
 
     bool GetButtonLock() { return m_buttonLock; } // SetButtonLock
     

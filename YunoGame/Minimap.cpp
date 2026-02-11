@@ -3,6 +3,7 @@
 
 #include "Card.h"
 #include "CardSlot.h"
+#include "CardConfirmArea.h"
 #include "WidgetGridLine.h"
 #include "MinimapTile.h"
 #include "Grid.h"
@@ -70,7 +71,7 @@ void Minimap::CreateChild() {
 
 
     SetupGrid();
-
+    SetButtonLock(true);
 }
 
 
@@ -195,8 +196,10 @@ void Minimap::SetupGrid()
             std::wstring tileName =
                 m_name + L"_Tile(" + std::to_wstring(row) + L"," + std::to_wstring(col) + L")";
 
-            const float x = baseX + (m_grid.cellSize.x + pad) * col;
-            const float y = baseY + (m_grid.cellSize.y + pad) * row;
+            const float x = baseX + (m_grid.cellSize.x + pad) * col; // pivot::Center 기준
+            const float y = baseY + (m_grid.cellSize.y + pad) * row; // pivot::Center 기준
+            //const float x = baseX + (m_grid.cellSize.x + pad) * col - m_grid.cellSize.x * 0.5f; // pivot::LeftTop 기준
+            //const float y = baseY + (m_grid.cellSize.y + pad) * row - m_grid.cellSize.y * 0.5f; // pivot::LeftTop 기준
 
             m_pTiles.push_back(
                 m_uiFactory.CreateChild<MinimapTile>(
@@ -242,8 +245,10 @@ void Minimap::SetButtonLock(bool buttonLock)
     }
 }
 
-void Minimap::StartDirChoice(int slotID)
+void Minimap::StartDirChoice(CardConfirmArea* CardSlot)
 {
+    const int slotID = CardSlot->GetCard()->GetSlotID();
+
     assert(!m_pTiles.empty());
     if (m_pTiles.empty()) return;
 
@@ -255,11 +260,11 @@ void Minimap::StartDirChoice(int slotID)
         if (m_pID != data.teamID) continue; // 팀이 아니면
         if (!data.isPlayerTile) continue; // 플레이어 타일이 아니면
         if (data.slotID-1 != slotID) continue; // 슬롯 아이디가 같지 않으면
-        OpenDirButton(tile->GetTileId());
+        OpenDirButton(tile->GetTileId(), CardSlot);
     }
 }
 
-void Minimap::OpenDirButton(int tileID) {
+void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
 
     assert(IsValidTileID(tileID));
     if (!IsValidTileID(tileID)) return;
@@ -273,14 +278,56 @@ void Minimap::OpenDirButton(int tileID) {
         {  0,  1 }, // down
     };
 
+    std::vector<MinimapTile*> candidates;
+    candidates.reserve(4);
+
+    for (const auto& d : dirs)
+    {
+        const Int2 n = { tileXY.x + d.x, tileXY.y + d.y };
+        if (auto* dirTile = GetTileByID(n))
+            candidates.push_back(dirTile);
+    }
+
+    // 후보 타일 세팅 + 이벤트 등록
     for (const auto& d : dirs) {
         const Int2 n = { tileXY.x + d.x, tileXY.y + d.y };
+        MinimapTile* dirTile = GetTileByID(n);
+        if (!dirTile) continue;
 
-        if (auto* dirTile = GetTileByID(n)) {  // 상하좌우 검사 후 가능한 타일이면 UseL/RMB
-            //std::cout << "TileOnBtn = " << dirTile->GetTileId() << std::endl;
-            dirTile->SetUseLMB(true);
-            dirTile->SetUseRMB(true);
-        }
+        dirTile->SetUseLMB(true);
+        dirTile->SetUseRMB(true);
+        
+        std::wstring bkPath = dirTile->GetTexturePathBk();
+        dirTile->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/direction_mouseout.png",
+                                 L"../Assets/UI/PLAY/PhaseScene/direction_mouseover.png");
+            
+        // 방향별 외형 분기
+        Direction dir{};
+        if (d.x == -1 && d.y == 0) { dir = Direction::Left; }
+        else if (d.x == 1 && d.y == 0) { dir = Direction::Right; dirTile->MirrorScaleX(); }
+        else if (d.x == 0 && d.y == -1) { dir = Direction::Up; dirTile->SetRotZ(90); }
+        else if (d.x == 0 && d.y == 1) { dir = Direction::Down; dirTile->SetRotZ(270); }
+        else { continue; }
+            
+
+        dirTile->SetEventLMB([this, CardSlot, dir, candidates, bkPath]() mutable
+            {
+                CardSlot->SetDirection(dir);
+
+                // 후보 전체 닫기
+                for (MinimapTile* tile : candidates)
+                {
+                    if (!tile) continue;
+                    tile->SetHoverTexture(bkPath, L"000000");
+                    tile->SetUseLMB(false);
+                    tile->SetUseRMB(false);
+                    tile->SetRotZ(0);
+                    tile->MirrorReset();
+                    tile->SetEventLMB(nullptr);
+                    tile->SetEventRMB(nullptr);
+                    std::cout << "endendend" << std::endl;
+                }
+            });
     }
 }
 

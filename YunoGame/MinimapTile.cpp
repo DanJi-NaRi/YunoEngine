@@ -29,10 +29,6 @@ bool MinimapTile::Create(const std::wstring& name, uint32_t id, Float2 sizePx, X
 {
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
 
-    // 시작 시 버튼 사용안함
-    SetUseLMB(false);
-    SetUseRMB(false);
-
     return true;
 }
 
@@ -42,12 +38,15 @@ void MinimapTile::CreateChild()
 
 bool MinimapTile::Update(float dTime) {
 
-    switch ((TileTeamData)m_data.teamID) {
-    default:
-    case TileTeamData::Default: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_non.png"); break;
-    case TileTeamData::Red: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_red.png"); break;
-    case TileTeamData::Blue: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_blue.png"); break;
+    if (!IsUseLMB()) {
+        switch ((TileTeamData)m_data.teamID) {
+        default:
+        case TileTeamData::Default: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_non.png"); break;
+        case TileTeamData::Red: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_red.png"); break;
+        case TileTeamData::Blue: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_blue.png"); break;
+        }
     }
+
 
     Button::Update(dTime);
 
