@@ -36,12 +36,14 @@ public:
     void ClearSlot();
     void BindSelectionPanel(CardSelectionPanel* panel) { m_pSelectionPanel = panel; }
 
+    // 나중에 View 만들어서 대체하기
+    void SetMinimap(Minimap* pMinimap) { m_pMinimap = pMinimap; }
+
 protected:
     void SubmitCurrentSelection();
     bool HandleDirectionInput(Direction& outDir) const;
 
-    // 나중에 View 만들어서 대체하기
-    void SetMinimap(Minimap* pMinimap) { m_pMinimap = pMinimap; }
+
 protected:
 
     //int m_confirmReady; // 모든 슬롯에 바인딩했는지

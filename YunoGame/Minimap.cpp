@@ -127,7 +127,6 @@ void Minimap::UpdatePanel(const BattleResult& battleResult) {
             TileData& tileData = tile->GetTileData();
             tileData.isPlayerTile = true;
             tileData.teamID = info->pId;
-            tileData.unitID = info->weaponId;
             tileData.slotID = info->slotId;
         }
     }
@@ -140,7 +139,6 @@ void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
             TileData& tileData = tile->GetTileData();
             tileData.isPlayerTile = true;
             tileData.teamID = pieceInfo.pId;
-            tileData.unitID = pieceInfo.weaponId;
             tileData.slotID = pieceInfo.slotId;
         }
     }

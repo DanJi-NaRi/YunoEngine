@@ -145,6 +145,46 @@ void CardConfirmPanel::UpdateCardSlot()
     assert(m_pMinimap); // 미니맵 할당되어야 함
     const int size = m_setCardSlots.size();
 
+    if (m_openSlot >= size) return;
+
+    if (!m_setCardSlots[m_openSlot]->GetCard()) return; // 현재 슬롯이 비어있으면 넘김
+
+    if (!m_dirChoice)
+    {
+        // 현재 슬롯이 비어있지 않으면
+        m_setCardSlots[m_openSlot]->SetIsEnabled(false);
+        m_dirChoice = true;
+        // 선택창 띄우기
+        m_pMinimap->StartDirChoice(m_setCardSlots[m_openSlot]); // 미니맵 클릭 활성화
+    }
+    else {
+        if (m_setCardSlots[m_openSlot]->GetDirection() != Direction::None) { // 선택이 완료되면 Dir이 바뀔것임
+
+            //디버깅 코드
+            switch (m_setCardSlots[m_openSlot]->GetDirection())
+            {
+            case Direction::Left:  std::cout << "Left selected" << std::endl;  break;
+            case Direction::Right: std::cout << "Right selected" << std::endl; break;
+            case Direction::Up:    std::cout << "Up selected" << std::endl;    break;
+            case Direction::Down:  std::cout << "Down selected" << std::endl;  break;
+            }
+
+
+            // 방향 선택 되면
+            const int next = m_openSlot + 1;
+            if (next >= size) { // 마지막까지 도달
+                m_openSlot = size;
+                //m_confirmReady = true;
+                return;
+            }
+            m_openSlot = next;
+            m_setCardSlots[m_openSlot]->SetIsEnabled(true);
+            m_dirChoice = false; // dirChoice 상태 초기화
+        }
+    }
+
+
+
     if (m_gameManager.IsCardQueueFull())
         return;
 
@@ -166,42 +206,13 @@ void CardConfirmPanel::ClearSlot() {
         // 현재 슬롯이 비어있지 않으면
         m_setCardSlots[0]->SetIsEnabled(true);
         m_setCardSlots[0]->CleanSetup();
-        // 선택창 띄우기
-        m_pMinimap->StartDirChoice(m_setCardSlots[m_openSlot]); // 미니맵 클릭 활성화
     }
-
-    else {
-        if (m_setCardSlots[m_openSlot]->GetDirection() != Direction::None) { // 선택이 완료되면 Dir이 바뀔것임
-
-            //디버깅 코드
-            switch (m_setCardSlots[m_openSlot]->GetDirection())
-            {
-            case Direction::Left:  std::cout << "Left selected" << std::endl;  break;
-            case Direction::Right: std::cout << "Right selected" << std::endl; break;
-            case Direction::Up:    std::cout << "Up selected" << std::endl;    break;
-            case Direction::Down:  std::cout << "Down selected" << std::endl;  break;
-            }
-
-
-            // 방향 선택 되면
-            const int next = m_openSlot + 1;
-            if (next >= size) { // 마지막까지 도달
-                m_openSlot = size;
-                m_confirmReady = true;
-                return;
-            }
-            m_openSlot = next;
-            m_setCardSlots[m_openSlot]->SetIsEnabled(true);
-            m_dirChoice = false; // dirChoice 상태 초기화
-        }
-    }
-}
 
     for (size_t i = 1; i < m_setCardSlots.size(); ++i) {
         m_setCardSlots[i]->SetIsEnabled(false);
         m_setCardSlots[i]->CleanSetup();
     }
-    m_confirmReady = false; // 컨펌 준비 취소
+    //m_confirmReady = false; // 컨펌 준비 취소
 }
 
 bool CardConfirmPanel::HandleDirectionInput(Direction& outDir) const
