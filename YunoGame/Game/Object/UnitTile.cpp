@@ -326,7 +326,7 @@ void UnitTile::SetFlashColor(Float4 color, int count, float blinkTime)
 
 void UnitTile::PlayWarning(ObstacleType obstacleType, Float4 color, int count, float blinkTime)
 {
-    //SetFlashColor(color, count, blinkTime);
+    SetFlashColor(color, count, blinkTime);
 
     if (!m_animator || m_state == ObstacleType::Collapse)
         return;
@@ -356,7 +356,7 @@ void UnitTile::PlayWarning(ObstacleType obstacleType, Float4 color, int count, f
 
 void UnitTile::PlayTrigger(ObstacleType obstacleType, Float4 color, int count, float blinkTime)
 {
-    //SetFlashColor(color, count, blinkTime);
+    SetFlashColor(color, count, blinkTime);
 
     if (!m_animator)
         return;

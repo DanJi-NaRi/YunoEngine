@@ -32,7 +32,7 @@ private:
 
 public:
     void InsertQ(PGridCmd targetPos);
-    void SetWho(GamePiece type, Team team, uint8_t weaponID, uint8_t subID = 0);
+    void SetWho(GamePiece type, Team team, uint8_t pID, uint8_t weaponID, uint8_t subID = 0);
     void SetMoveRotOffset(float moveOffset, float rotOffset);
     void SetIgnoreRot(bool ignore);
     float GetMoveOffset();
@@ -42,15 +42,20 @@ public:
     void DisappearDissolve(float dissolveTime);
 
     void SetTmpColor(Float4 color);
+    void AddLinkedSubPiece(UnitPiece* subPiece);
+    bool IsBusy() const;
 
 private:
-    void PlayMove(XMFLOAT3 targetPos, float speed);
+    void PlayMove();
     void PlayRollBack(float seconds = 0);
     void PlayRoll(float seconds);
     void PlayAttack();
     void PlayHit();
     void PlayDead(float disappearDisolveDuration);
 
+    void StopMove();
+
+    void SetTarget(XMFLOAT3 targetPos, float second);
     Float4 GetLerpColor(float dt);
     float GetLerp(float dt, float start, float end);
     float QuadraticGraph(float x);
@@ -118,9 +123,22 @@ private:
     // 본인 기물 정보
     GamePiece m_who = GamePiece::None;
     Team m_team = Team::Undefined;
+    uint8_t m_pID = 0;
     uint8_t m_weaponID = 0;
     uint8_t m_subID = 0;                // 차크람일 경우, 서브 아이디
     uint8_t charkramID = 2;             // 챠크람 아이디
+
+    struct PendingMoveHit
+    {
+        bool valid = false;
+        GamePiece whichPiece = GamePiece::None;
+        bool amIdead = false;
+        float disappearDissolveDuration = 0.f;
+    };
+
+    std::vector<UnitPiece*> m_linkedSubPieces;
+    bool m_waitSubMoveHit = false;
+    PendingMoveHit m_pendingMoveHit{};
 
     // 큐
     std::queue<PGridCmd> m_Q;

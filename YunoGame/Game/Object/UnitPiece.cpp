@@ -208,14 +208,42 @@ bool UnitPiece::Update(float dTime)
         return true;
     }
 
+    m_curRotOffset = (isAttacking) ? 0.f : (m_dir == Direction::Right) ? -m_rotOffset : m_rotOffset;
+    m_curMoveOffset = (isAttacking) ? 0.f : m_moveOffset;
+
     UpdateRot(dTime);
     UpdateMove(dTime);
     UpdateFlash(dTime);
-    m_curRotOffset = (isAttacking) ? 0.f : (m_dir == Direction::Right) ? -m_rotOffset : m_rotOffset;
-    m_curMoveOffset = (isAttacking) ? 0.f : m_moveOffset;
     UpdateRollingOrBack(dTime);
     UpdateAttack(dTime);
     UpdateHit(dTime);
+
+    if (m_waitSubMoveHit && m_pendingMoveHit.valid)
+    {
+        bool anySubBusy = false;
+        for (auto* sub : m_linkedSubPieces)
+        {
+            if (sub == nullptr) continue;
+            if (sub->IsBusy())
+            {
+                anySubBusy = true;
+                break;
+            }
+        }
+
+        if (!anySubBusy)
+        {
+            if (m_pendingMoveHit.amIdead)
+                PlayDead(m_pendingMoveHit.disappearDissolveDuration);
+            else
+                PlayHit();
+
+            PlayGridQ::Insert(PlayGridQ::Hit_S(m_pendingMoveHit.whichPiece));
+
+            m_pendingMoveHit = {};
+            m_waitSubMoveHit = false;
+        }
+    }
 
     CheckMyQ();
 
@@ -294,62 +322,81 @@ bool UnitPiece::CheckDead(float dt)
     return true;
 }
 
-void UnitPiece::CheckMyQ()
-{
-    if (isDead) return;
+void UnitPiece::CheckMyQ()  
+{  
+   if (isDead) return;  
 
-    // 애니메이션이 끝나면 하나씩 빼가게 하기
-    while (!m_Q.empty() && !isMoving && !isRotating && !isHitting && !isAttacking && !isRollingBack && !isRolling)
-    {
-        auto tp = m_Q.front();
-        m_Q.pop();
-        switch (tp.cmdType)
-        {
-        case CommandType::Rotate:
-        {
-            SetDir(tp.rot_p.dir, true, 0.5f);
-            break;
-        }
-        case CommandType::Move:
-        {
-            auto [wx, wy, wz, second] = tp.mv_p;
-            PlayMove({ wx, wy, wz }, second);
+   // 애니메이션이 끝나면 하나씩 빼가게 하기  
+   while (!m_Q.empty() && !isMoving && !isRotating && !isHitting && !isAttacking && !isRollingBack && !isRolling && !m_waitSubMoveHit)  
+   {  
+       auto tp = m_Q.front();  
+       m_Q.pop();  
+       switch (tp.cmdType)  
+       {  
+       case CommandType::Rotate:  
+       {  
+           SetDir(tp.rot_p.dir, true, 0.5f);  
+           break;  
+       }  
+       case CommandType::Attack:  
+       {  
+           PlayRollBack();
+           //PlayAttack();  
+           break;  
+       }  
+       case CommandType::Move:  
+       {  
+           auto [wx, wy, wz, second] = tp.mv_p;  
+           SetTarget({ wx, wy, wz }, second);  
 
-            break;
-        }
-        case CommandType::MoveHit:
-        {
-            if (tp.hit_p.amIdead)
-                PlayDead(tp.hit_p.disappearDissolveDuration);
-            else
-                PlayHit();
+           break;  
+       }  
+       case CommandType::MoveHit:  
+       {  
+           // 복합 무기(예: 차크람)는 sub 파츠가 목표 지점에서 공격 애니메이션을 수행하고  
+           // 메인 피스는 sub 동작 완료까지 대기한 뒤 Hit 이벤트를 발생시킨다.  
+           if (!m_linkedSubPieces.empty())  
+           {  
+               m_waitSubMoveHit = true;  
+               m_pendingMoveHit.valid = true;  
+               m_pendingMoveHit.whichPiece = tp.hit_p.whichPiece;  
+               m_pendingMoveHit.amIdead = tp.hit_p.amIdead;  
+               m_pendingMoveHit.disappearDissolveDuration = tp.hit_p.disappearDissolveDuration;  
 
-            PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece));
-            break;
-        }
-        case CommandType::Attack:
-        {
-            PlayRollBack();
-            //PlayAttack();
-            break;
-        }
-        case CommandType::Hit:
-        {
-            PlayHit();
-            break;
-        }
-        case CommandType::Dead:
-        {
-            PlayDead(tp.dead_p.disappearDissolveDuration);
-            break;
-        }
-        case CommandType::Disappear:
-        {
-            DisappearDissolve(tp.disappear_p.disappearDissolveDuration);
-            break;
-        }
-        }
-    }
+               for (auto* sub : m_linkedSubPieces)  
+               {  
+                   if (sub == nullptr) continue;  
+                   sub->InsertQ({ CommandType::Hit });  
+               }    
+           }
+           else
+           {
+               if (tp.hit_p.amIdead)
+                   PlayDead(tp.hit_p.disappearDissolveDuration);
+               else
+                   PlayHit();
+
+               PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece));
+           }
+           break;
+       }  
+       case CommandType::Hit:  
+       {  
+           PlayHit();  
+           break;  
+       }  
+       case CommandType::Dead:  
+       {  
+           PlayDead(tp.dead_p.disappearDissolveDuration);  
+           break;  
+       }  
+       case CommandType::Disappear:  
+       {  
+           DisappearDissolve(tp.disappear_p.disappearDissolveDuration);  
+           break;  
+       }  
+       }  
+   }  
 }
 
 
@@ -403,14 +450,14 @@ void UnitPiece::UpdateMove(float dt)
     {
         XMStoreFloat3(&this->m_vPos, m_Target);
         
-        if (m_animator)
+        StopMove();
+
+        for (auto* sub : m_linkedSubPieces)
         {
-            m_animator->Change("idle");
-            m_animator->SetLoop("idle", true);      // 여기서 터지면 idle 애니메이션이 없는 것임으로 생성단계에 클립을 넣어야함!
-            m_animator->Play();
+            if (sub == nullptr) continue;
+
+            sub->StopMove();
         }
-        isMoving = false;
-        m_moveTime = 0.f;
     }
     else
     {
@@ -533,6 +580,13 @@ void UnitPiece::UpdateRollingOrBack(float dt)
             isRollingBack = false;
             
             PlayAttack();
+            for (auto* sub : m_linkedSubPieces)
+            {
+                if (sub == nullptr)
+                {
+                    PlayAttack();
+                }
+            }
             isRolling = true;
         }
     }
@@ -560,10 +614,11 @@ void UnitPiece::InsertQ(PGridCmd cmd)
 }
 
 
-void UnitPiece::SetWho(GamePiece type, Team team, uint8_t weaponID, uint8_t subID)
+void UnitPiece::SetWho(GamePiece type, Team team, uint8_t pID, uint8_t weaponID, uint8_t subID)
 {
     m_who = type;
     m_team = team;
+    m_pID = pID;
     m_weaponID = weaponID;
     m_subID = subID;
 }
@@ -648,7 +703,7 @@ void UnitPiece::PlayAttack()
     m_animator->Play();
 
     // 이펙트
-    if (m_team == Team::Ally)       // 아군
+    if (m_pID == 1)       // Player 1일 경우
     {
         switch (m_weaponID)
         {
@@ -728,7 +783,7 @@ void UnitPiece::PlayAttack()
         }
         }
     }
-    else if(m_team == Team::Enemy)      // 적군
+    else if(m_pID == 2)      // Player 2일 경우
     {
         switch (m_weaponID)
         {
@@ -823,26 +878,22 @@ void UnitPiece::PlayHit()
     isHitting = true;
 }
 
-void UnitPiece::PlayMove(XMFLOAT3 targetPos, float second)
-{
-    if (isMoving) return;
-
-    m_fixSpeed = 1 / second;
-    m_Target = XMLoadFloat3(&targetPos);
-    m_Start = XMLoadFloat3(&this->m_vPos);
-    XMVECTOR Dist = XMVectorAbs(XMVector3Length(m_Target - m_Start));
-    m_Dist = XMVectorGetX(XMVector3Length(Dist));
-    
+void UnitPiece::PlayMove()
+{   
     if (m_animator)
     {
         bool isChanged = m_animator->Change("move");
         if (isChanged)
             m_animator->SetLoop("move", true);
         m_animator->Play();
-    }
 
-    if (m_Dist == 0)
-        return;
+        for (auto* sub : m_linkedSubPieces)
+        {
+            if (sub == nullptr) continue;
+            
+            sub->PlayMove();
+        }
+    }
 
     isMoving = true;
 }
@@ -880,9 +931,49 @@ void UnitPiece::PlayDead(float disappearDisolveDuration)
     m_animator->Play();
 }
 
+void UnitPiece::StopMove()
+{
+    if (m_animator)
+    {
+        m_animator->Change("idle");
+        m_animator->SetLoop("idle", true);
+        m_animator->Play();
+
+        isMoving = false;
+        m_moveTime = 0.f;
+    }
+}
+
 void UnitPiece::SetTmpColor(Float4 color)
 {
     m_vtmpColor = color;
+}
+
+void UnitPiece::AddLinkedSubPiece(UnitPiece* subPiece)
+{
+    if (subPiece == nullptr) return;
+    m_linkedSubPieces.push_back(subPiece);
+}
+
+bool UnitPiece::IsBusy() const
+{
+    return isMoving || isRotating || isHitting || isAttacking || isRollingBack || isRolling || isDissolving || m_waitSubMoveHit || !m_Q.empty();
+}
+
+void UnitPiece::SetTarget(XMFLOAT3 targetPos, float second)
+{
+    if (isMoving) return;
+
+    m_fixSpeed = 1 / second;
+    m_Target = XMLoadFloat3(&targetPos);
+    m_Start = XMLoadFloat3(&this->m_vPos);
+    XMVECTOR Dist = XMVectorAbs(XMVector3Length(m_Target - m_Start));
+    m_Dist = XMVectorGetX(XMVector3Length(Dist));
+
+    if (m_Dist == 0)
+        return;
+
+    PlayMove();
 }
 
 Float4 UnitPiece::GetLerpColor(float dt)
