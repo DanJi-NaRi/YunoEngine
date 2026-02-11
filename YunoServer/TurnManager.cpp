@@ -604,6 +604,15 @@ namespace yuno::server
 
                         subClamp(targetUnit.hp, adjustedDamage);
 
+                        if (targetUnit.hp == 0)
+                        {
+                            if (targetUnit.tileID != 0)
+                            {
+                                grid[targetUnit.tileID] = -1;
+                                targetUnit.tileID = 0;
+                            }
+                        }
+
                         eventOccurred = true;
 
                         std::cout << "Attack hit unit " << occupantIndex
@@ -660,8 +669,11 @@ namespace yuno::server
                 {
                     if (static_cast<int>(U->hp) == 0) 
                     {
-                        grid[U->tileID] = -1;
-                        U->tileID = 0;      // 0은 Error
+                        if (U->tileID != 0)
+                        {
+                            grid[U->tileID] = -1;
+                            U->tileID = 0;      // 0은 Error
+                        }
                         std::cout << "Died Unit's TileID : " << static_cast<int>(U->tileID) << "\n";
                     }
                 }
@@ -829,7 +841,11 @@ namespace yuno::server
                         {
                             if (units[targetIndex]->hp == 0)
                             {
-                                grid[units[targetIndex]->slotID] = -1;
+                                if (units[targetIndex]->tileID != 0)
+                                {
+                                    grid[units[targetIndex]->tileID] = -1;
+                                    units[targetIndex]->tileID = 0;
+                                }
                                 continue;
                             }
                             if (cardData.m_controlId == 1)
