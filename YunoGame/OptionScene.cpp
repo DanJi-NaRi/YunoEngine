@@ -112,6 +112,8 @@ void OptionScene::CreateVolumeUI()
                 0.f
             )
         );
+
+        m_volumePanels[i]->SetVolumeType(i);
         m_volumePanels[i]->ChangeTexture(L"../Assets/UI/TITLE/volume_fill_full.png");
         m_volumePanels[i]->SetPivot(UIDirection::Center);
         m_volumePanels[i]->SetVisible(Visibility::Visible);
@@ -123,6 +125,10 @@ void OptionScene::CreateVolumeUI()
         UIDirection::Center
     );
     m_volumeRoot->SetVisible(Visibility::Visible);
+
+    m_volumePanels[0]->SetLevel(GameManager::Get().GetMasterVolume());
+    m_volumePanels[1]->SetLevel(GameManager::Get().GetBGMVolume());
+    m_volumePanels[2]->SetLevel(GameManager::Get().GetSFXVolume());
 }
 
 void OptionScene::CreateCreditUI()

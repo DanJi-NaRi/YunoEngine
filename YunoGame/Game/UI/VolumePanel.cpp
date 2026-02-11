@@ -5,6 +5,7 @@
 #include "IInput.h"
 #include "UIFactory.h"
 #include "TextureImage.h"
+#include "GameManager.h"
 
 VolumePanel::VolumePanel(UIFactory& factory)
     : Widget(factory)
@@ -32,19 +33,34 @@ void VolumePanel::CreateChild()
     m_track = m_uiFactory.CreateChild<VolumeTrackButton>(
         L"VolumeTrack",
         Float2(totalWidth, stepH/2),
-        XMFLOAT3(totalWidth/2, stepH/2, 0),
+        XMFLOAT3(0, stepH/2-10, 0),
         UIDirection::Center,
         this
     );
 
     m_track->OnValueChanged = [this](float t)
         {
-            int newLevel = int(std::round(t * (kSteps)));
+            int newLevel = int(std::round(t * kSteps));
             newLevel = std::clamp(newLevel, 0, kSteps);
 
             std::cout << "[Panel] Level = " << newLevel << "\n";
 
             SetLevel(newLevel);
+
+            switch (m_type)
+            {
+            case VolumeType::Master:
+                GameManager::Get().SetMasterVolume(newLevel);
+                break;
+
+            case VolumeType::BGM:
+                GameManager::Get().SetBGMVolume(newLevel);
+                break;
+
+            case VolumeType::SFX:
+                GameManager::Get().SetSFXVolume(newLevel);
+                break;
+            }
         };
 
     //// === Steps ===
