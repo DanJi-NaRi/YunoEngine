@@ -111,6 +111,36 @@ namespace UI
         return changedMask;
     }
 
+    int DrawCameraTransformController(float* position, float* target, float speed)
+    {
+        if (!position || !target)
+            return 0;
+
+        bool changedPosition = false;
+        bool changedTarget = false;
+
+        ImGui::SetNextWindowPos(ImVec2(10, 270), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowBgAlpha(0.35f);
+
+        ImGui::Begin("CameraTransform",
+            nullptr,
+            ImGuiWindowFlags_AlwaysAutoResize |
+            ImGuiWindowFlags_NoSavedSettings |
+            ImGuiWindowFlags_NoNav);
+
+        ImGui::Text("Camera Transform");
+        changedPosition |= DragFloat3("Position", position, speed, 0.0f, 0.0f, "%.3f");
+        changedTarget |= DragFloat3("Target", target, speed, 0.0f, 0.0f, "%.3f");
+
+        ImGui::End();
+
+        int changedMask = 0;
+        if (changedPosition) changedMask |= 1;
+        if (changedTarget) changedMask |= 2;
+
+        return changedMask;
+    }
+
     bool TreeNodeEx(const void* id, bool selected, bool haschild, const char* name)
     {
         ImGuiTreeNodeFlags flags =

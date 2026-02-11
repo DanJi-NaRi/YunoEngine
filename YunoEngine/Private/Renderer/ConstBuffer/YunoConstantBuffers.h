@@ -51,7 +51,7 @@ struct CBPointLight
 struct CBLight_All
 {
     CBDirLight dirLit;
-    CBPointLight pointLit[10];
+    CBPointLight pointLit[12];
     XMFLOAT4 plCount = { 0, 0, 0, 1 }; // Only Use x
     //XMFLOAT4 padding[3];
 };

@@ -52,6 +52,12 @@ void PlayerIcon::SetPlayer(const IconData& idata)
     CheckHP();
     CheckStamina();
 
+    maxHp = m_idata.hp;
+    maxStamina = m_idata.stamina;
+
+    prevHp = maxHp;
+    prevStamina = maxStamina;
+
     //m_hpText->SetFont(FontID::Default);
     //m_hpText->SetText(std::to_wstring(m_idata.hp));
 }
@@ -223,8 +229,8 @@ bool PlayerIcon::Update(float dTime)
 {
     Image::Update(dTime);
 
-    //UpdateHPValue(dTime);
-    //UpdateStaminaValue(dTime);
+    UpdateHPValue(dTime);
+    UpdateStaminaValue(dTime);
 
     return true;
 }

@@ -29,11 +29,6 @@ bool PlayScene::OnCreateScene()
 
 
     m_uiManager->SetOrthoFlag(true);//여기서 ui 쓰는거 맞음?
-
-    YunoEngine::GetRenderer()->GetCamera().position = { 0, 7, -10 };
-    YunoEngine::GetRenderer()->GetCamera().target = { 0, 0, 0 };
-    m_uiManager->SetOrthoFlag(true);
-
     m_objectManager->CreateDirLight();
 
     int j = 0;
