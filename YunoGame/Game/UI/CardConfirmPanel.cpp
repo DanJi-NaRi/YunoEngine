@@ -160,6 +160,30 @@ void CardConfirmPanel::UpdateCardSlot()
     if (!currentSlot->GetCard())
         return; // 현재 슬롯이 비어있으면 넘김
 
+    const int runtimeID = currentSlot->GetRuntimeCardID();
+    if (runtimeID <= 0)
+        return;
+
+    const CardData cardData = m_gameManager.GetCardData(static_cast<uint32_t>(runtimeID));
+    if (cardData.m_type == CardType::Buff)
+    {
+        if (currentSlot->GetDirection() == Direction::None)
+        {
+            currentSlot->SetDirection(Direction::Right);
+        }
+
+        SubmitCurrentSelection();
+        return;
+    }
+
+    const int cardOwnerSlot = currentSlot->GetCardSlotID();
+    if (cardOwnerSlot < 0 || cardOwnerSlot >= static_cast<int>(m_player.weapons.size()) ||
+        m_player.weapons[cardOwnerSlot].hp <= 0)
+    {
+        currentSlot->CleanSetup();
+        return;
+    }
+
     if (!m_dirChoice)
     {
         currentSlot->SetIsEnabled(false);
@@ -211,6 +235,10 @@ void CardConfirmPanel::ClearSlot() {
 
 bool CardConfirmPanel::IsCardAlreadyQueuedInSlots(uint32_t runtimeID, const CardConfirmArea* ignoreSlot) const
 {
+    const uint32_t selectedDataID = m_gameManager.GetCardDataID(runtimeID);
+    if (selectedDataID == 0)
+        return false;
+
     for (const CardConfirmArea* queuedSlot : m_setCardSlots)
     {
         if (!queuedSlot || queuedSlot == ignoreSlot)
@@ -220,7 +248,11 @@ bool CardConfirmPanel::IsCardAlreadyQueuedInSlots(uint32_t runtimeID, const Card
         if (queuedRuntimeID <= 0)
             continue;
 
-        if (static_cast<uint32_t>(queuedRuntimeID) == runtimeID)
+        const uint32_t queuedDataID = m_gameManager.GetCardDataID(static_cast<uint32_t>(queuedRuntimeID));
+        if (queuedDataID == 0)
+            continue;
+
+        if (queuedDataID == selectedDataID)
             return true;
     }
 
@@ -283,8 +315,17 @@ void CardConfirmPanel::SubmitCurrentSelection()
     if (selectedRuntimeID == 0)
         return;
 
-    if (IsCardAlreadyQueuedInSlots(selectedRuntimeID, slot))
+    if (IsCardAlreadyQueuedInSlots(selectedRuntimeID, slot)) 
+    {
+        slot->CleanSetup();
+        slot->SetIsEnabled(true);
+        m_dirChoice = false;
+
+        if (m_pSelectionPanel)
+            m_pSelectionPanel->ClearSelectedCard();
         return;
+    }
+
 
 
     if (!m_hasSimulatedStamina)
@@ -300,19 +341,25 @@ void CardConfirmPanel::SubmitCurrentSelection()
         return;
 
     const Direction dir = slot->GetDirection();
-    if (dir == Direction::None)
+    const CardData cardData = m_gameManager.GetCardData(selectedRuntimeID);
+
+    Direction normalizedDir = dir;
+    if (cardData.m_type == CardType::Buff && normalizedDir == Direction::None)
+    {
+        normalizedDir = Direction::Same;
+    }
+
+    if (normalizedDir == Direction::None)
         return;
 
 
-
-    const CardData cardData = m_gameManager.GetCardData(selectedRuntimeID);
     m_simulatedStamina[selectedSlot] -= cardData.m_cost;
     m_player.weapons[selectedSlot].stamina = m_simulatedStamina[selectedSlot];
 
 
 
     slot->ChangeTexture(selectedCard->GetTexturePath());
-    slot->SetDirection(dir);
+    slot->SetDirection(normalizedDir);
     slot->SetIsEnabled(false);
 
     ++m_openSlot;
@@ -350,7 +397,16 @@ bool CardConfirmPanel::BuildCardQueueFromSlots()
         }
 
         const Direction dir = slot->GetDirection();
-        if (dir == Direction::None)
+        Direction normalizedDir = dir;
+
+        const CardData cardData = m_gameManager.GetCardData(static_cast<uint32_t>(runtimeID));
+        if (cardData.m_type == CardType::Buff && normalizedDir == Direction::None)
+        {
+            normalizedDir = Direction::Same;
+            slot->SetDirection(normalizedDir);
+        }
+
+        if (normalizedDir == Direction::None)
         {
             m_gameManager.ClearCardQueue();
             return false;
@@ -358,7 +414,7 @@ bool CardConfirmPanel::BuildCardQueueFromSlots()
 
         CardPlayCommand cmd;
         cmd.runtimeID = static_cast<uint32_t>(runtimeID);
-        cmd.dir = dir;
+        cmd.dir = normalizedDir;
 
         if (!m_gameManager.PushCardCommand(cmd))
         {

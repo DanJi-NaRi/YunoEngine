@@ -64,14 +64,14 @@ namespace yuno::server
             int dy = std::abs(moveY);
             switch (dir)
             {
-            case Direction::Up: return { 0, -dx };
-            case Direction::Down: return { 0, dx };
-            case Direction::Left: return { -dx, 0 };
-            case Direction::Right: return { dx, 0 };
-            case Direction::UpLeft: return { -dy, -dy };
-            case Direction::UpRight: return { dy, -dy };
-            case Direction::DownLeft: return { -dy, dy };
-            case Direction::DownRight: return { dy, dy };
+            case Direction::Up: return { -dy, -dx };
+            case Direction::Down: return { dy, dx };
+            case Direction::Left: return { -dx, dy };
+            case Direction::Right: return { dx, -dy };
+            //case Direction::UpLeft: return { -dy, -dy };
+            //case Direction::UpRight: return { dy, -dy };
+            //case Direction::DownLeft: return { -dy, dy };
+            //case Direction::DownRight: return { dy, dy };
             case Direction::Same:
             case Direction::None:
             default:
@@ -874,7 +874,7 @@ namespace yuno::server
                 pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
                 pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
                 pkt.isCoinTossUsed = coinTossUsed ? (aFirst ? 1 : 2) : 0;
-                pkt.actionTime = 3000;
+                pkt.actionTime = static_cast<uint32_t>(cardData.m_actionTime);
                 if (cardData.m_type == CardType::Utility)
                 {
                     pkt.order.push_back(utilityMoveSnapshot);
