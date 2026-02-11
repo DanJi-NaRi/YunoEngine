@@ -29,7 +29,6 @@ public:
 
     const Direction& GetDirection() { return m_direction; }
     Card* GetCard() { return m_pCard; }
-    
     bool IsSetCard() { return (m_pCard); }
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/draganddrop.png"); };    // 머테리얼 생성 (한 번만)

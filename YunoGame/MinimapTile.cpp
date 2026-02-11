@@ -38,12 +38,15 @@ void MinimapTile::CreateChild()
 
 bool MinimapTile::Update(float dTime) {
 
-    switch ((TileTeamData)m_data.teamID) {
-    default:
-    case TileTeamData::Default: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_non.png"); break;
-    case TileTeamData::Red: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_red.png"); break;
-    case TileTeamData::Blue: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_blue.png"); break;
+    if (!IsUseLMB()) {
+        switch ((TileTeamData)m_data.teamID) {
+        default:
+        case TileTeamData::Default: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_non.png"); break;
+        case TileTeamData::Red: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_red.png"); break;
+        case TileTeamData::Blue: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_blue.png"); break;
+        }
     }
+
 
     Button::Update(dTime);
 
@@ -68,7 +71,9 @@ bool MinimapTile::IdleEvent()
 // 커서가 위에 올라있을 때
 bool MinimapTile::HoveredEvent()
 {
-    //std::cout << "HoveredEvent" << std::endl;
+
+   //std::cout << "HoveredEvent" << std::endl;
+
     return true;
 }
 
@@ -82,14 +87,14 @@ bool MinimapTile::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool MinimapTile::LMBPressedEvent()
 {
-    std::cout << "(LMB)PressedEvent" << std::endl;
+    std::cout << "(LMB)PressedEvent - " << static_cast<int>(m_tileID) << std::endl;
     return true;
 }
 
 // 우클릭 눌렀을 때
 bool MinimapTile::RMBPressedEvent()
 {
-    std::cout << "(RMB)PressedEvent" << std::endl;
+    std::cout << "(RMB)PressedEvent - " << static_cast<int>(m_tileID) << std::endl;
     return true;
 }
 
@@ -104,14 +109,14 @@ bool MinimapTile::KeyPressedEvent(uint32_t key)
 // 왼클릭 뗐을 때
 bool MinimapTile::LMBReleasedEvent()
 {
-    std::cout << "(LMB)ReleasedEvent" << std::endl;
+    std::cout << "(LMB)ReleasedEvent - " << static_cast<int>(m_tileID) << std::endl;
     return true;
 }
 
 // 우클릭 뗐을 때
 bool MinimapTile::RMBReleasedEvent()
 {
-    std::cout << "(RMB)ReleasedEvent" << std::endl;
+    std::cout << "(RMB)ReleasedEvent - " << static_cast<int>(m_tileID) << std::endl;
     return true;
 }
 

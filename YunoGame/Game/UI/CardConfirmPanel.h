@@ -6,7 +6,10 @@ class CardSlot;
 class CardConfirmButton;
 class CardCancelButton;
 class CardConfirmArea;
+
+class Minimap;
 class CardSelectionPanel;
+
 
 class CardConfirmPanel : public PhasePanel
 {
@@ -37,14 +40,21 @@ protected:
     void SubmitCurrentSelection();
     bool HandleDirectionInput(Direction& outDir) const;
 
+    // 나중에 View 만들어서 대체하기
+    void SetMinimap(Minimap* pMinimap) { m_pMinimap = pMinimap; }
 protected:
+
+    //int m_confirmReady; // 모든 슬롯에 바인딩했는지
+
+
     int m_openSlot;
     bool m_dirChoice = false;
     std::vector<CardConfirmArea*> m_setCardSlots;
     CardConfirmButton* m_cardConfirmButton = nullptr;
     CardCancelButton* m_cardCancelButton = nullptr;
     CardSelectionPanel* m_pSelectionPanel = nullptr;
+
     
-    //std::unique_ptr<Minimap> m_miniMap;           // 미니맵 // 스폰 포지션 따로 받기?
+    Minimap* m_pMinimap = nullptr;                  // 미니맵 
 };
 

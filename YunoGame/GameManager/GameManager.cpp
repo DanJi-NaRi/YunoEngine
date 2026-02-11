@@ -132,9 +132,11 @@ void GameManager::SetMinimap(Minimap* pMinimap)
     m_pMinimap = pMinimap;
 }
 
+
 void GameManager::SetUpPanels()
 {
-
+    //assert(m_pMinimap);
+    //if (m_pMinimap) m_pMinimap->SetupPanel();
 }
 
 void GameManager::UpdatePanels(const BattleResult& battleResult)
