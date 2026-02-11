@@ -388,12 +388,12 @@ void PlayScene::AddCardSelect()
 {
     int index = -1;
 
-    if (m_input->IsKeyPressed('Z'))
-        index = 0;
-    else if (m_input->IsKeyPressed('X'))
-        index = 1;
-    else if (m_input->IsKeyPressed('C'))
-        index = 2;
+    //if (m_input->IsKeyPressed('Z'))
+    //    index = 0;
+    //else if (m_input->IsKeyPressed('X'))
+    //    index = 1;
+    //else if (m_input->IsKeyPressed('C'))
+    //    index = 2;
 
     if (index == -1)
         return;
@@ -433,7 +433,7 @@ void PlayScene::EndTurn()
 
 void PlayScene::TestInput()
 {
-    AddCardSelect();
+    //AddCardSelect();
     // 디버깅용
     // 카드 선택 (넘버패드 = UI 버튼 대용)
     HandleCardSelect(VK_NUMPAD1, 0, 1); //버프
@@ -483,7 +483,7 @@ void PlayScene::Update(float dt)
 {
     SceneBase::Update(dt);
     //m_input->Dispatch();
-    TestInput();
+    //TestInput();
 
     m_playGrid->Update(dt);
 }

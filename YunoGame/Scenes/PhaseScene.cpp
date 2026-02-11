@@ -95,6 +95,12 @@ void PhaseScene::OnDestroyScene()
     std::cout << "===================" << std::endl;
     std::cout << "[UIScene] OnDestroy\n";
     std::cout << "===================" << std::endl;
+
+    if (!GameManager::HasInstance())
+    {
+        return;
+    }
+
     auto& gm = GameManager::Get();
     gm.SetMinimap(nullptr);
     gm.SetSelectionPanel(nullptr);

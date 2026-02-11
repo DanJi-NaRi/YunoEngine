@@ -53,6 +53,7 @@ public:
     static void Initialize(GameManager* inst);
     void Init();
     static void Shutdown();
+    static bool HasInstance();
     static GameManager& Get();
     
     void BindSceneManager(ISceneManager* sm) { m_sceneManager = sm; }
@@ -161,6 +162,7 @@ public:
     void ResetRound() { m_currentRound = 0; }
 
     void RequestRevealStart() { m_shouldStartReveal = true; }
+    bool GetRevealStart() const { return m_shouldStartReveal; }
     bool ConsumeRevealStart()
     {
         if (!m_shouldStartReveal) return false;

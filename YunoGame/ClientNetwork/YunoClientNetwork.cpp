@@ -173,10 +173,7 @@ namespace yuno::game
                 GameManager& gm = GameManager::Get();
                 gm.SetMatchPlayerCount(pkt.playerCount);
 
-                if (gm.GetSlotiIdx() == 0)
-                {
-                    gm.SetSlotIdx(pkt.slotIndex);
-                }
+                gm.SetSlotIdx(pkt.slotIndex);
 
                 if (gm.GetSceneState() == CurrentSceneState::RequstEnter)
                 {
@@ -404,7 +401,6 @@ namespace yuno::game
                 BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, pkt.dir, pkt.actionTime, order };
                 gm.PushBattlePacket(br);
                 gm.PushRevealPacket(br);// 복사 저장
-                gm.RequestRevealStart();
                 gm.UpdatePanels(br);
                 gm.SetSceneState(CurrentSceneState::AutoBattle);
 

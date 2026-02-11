@@ -264,6 +264,11 @@ void GameManager::Shutdown()
     s_instance = nullptr;
 }
 
+bool GameManager::HasInstance()
+{
+    return s_instance != nullptr;
+}
+
 GameManager& GameManager::Get()
 {
     assert(s_instance);
@@ -283,6 +288,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
         m_state = CurrentSceneState::Title;
         m_matchPlayerCount = 0;
+        m_PID = 0;
         ResetMyPicks();
         SceneTransitionOptions opt{};
         opt.immediate = true;

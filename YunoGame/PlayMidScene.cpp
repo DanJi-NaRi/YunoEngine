@@ -333,7 +333,7 @@ void PlayMidScene::UpdateRevealCard(float dt, GameManager& gm)
             PopAndRevealPair(gm);
 
             //  마지막 카드까지 공개됐는지 체크
-            if (m_leftRevealIndex >= 4 && m_rightRevealIndex >= 4)
+            if (m_leftRevealIndex >= 4 && m_rightRevealIndex >= 4 )
             {
                 m_revealFinished = true;
                 m_postRevealTimer = 0.f;
