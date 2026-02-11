@@ -80,6 +80,7 @@ bool Minimap::Update(float dTime)
 {
     PhasePanel::Update(dTime);
 
+    Simulate();
     return true;
 }
 
@@ -91,51 +92,59 @@ bool Minimap::Submit(float dTime)
 
 void Minimap::Simulate()
 {
+    //////////////////////////////
+    // 시뮬레이션 검증
     assert(m_pConfirmPanel);
     if (!m_pConfirmPanel) return;
 
     const auto& slots = m_pConfirmPanel->GetCardSlots();
-    ClearGrid();
+    if (slots[0]->GetCard() && slots[0]->GetDirection() != Direction::None) 
+        m_isSimulation = true; // 카드 하나 이상 등록 시. 시뮬레이션 On
+    else 
+        m_isSimulation = false;
+
+    //////////////////////////////
+    // 시뮬레이션 검사
+    if (!m_isSimulation) return;
+
+    //ClearGrid();
+
+    std::array<Int2, 2> tilePos; // 타일 포지션 사용하기
+    tilePos[0] = GetCellByID(m_pMyTile[0]->GetTileId());
+    tilePos[1] = GetCellByID(m_pMyTile[1]->GetTileId());
 
     for (const auto& slot : slots) {
         if (!slot->GetCard()) return;
         if (slot->GetDirection() == Direction::None) return;
 
-        auto cardID = slot->GetCard()->GetID();
-        auto slotID = slot->GetCard()->GetSlotID();
+        const auto cardID = slot->GetCard()->GetID();
+        const auto slotID = slot->GetCard()->GetSlotID();
+        const auto* moveData = m_cardManager.GetMoveData(cardID);
 
-        if (slotID == m_player.weapons[0].slotId) {
+        if (!moveData) continue;
 
+        if (slotID - 1 == 0) {
+            tilePos[0].x += moveData->m_moveX;
+            tilePos[0].y += moveData->m_moveY;
         }
-        else if (slotID == m_player.weapons[1].slotId) {
-
-        }
-
-    }
-    for (const auto& myWeapon : m_player.weapons) {
-        if (auto* tile = GetTileByID(myWeapon.currentTile)) {
-            TileData& tileData = tile->GetTileData();
-            tileData.isPlayerTile = true;
-            tileData.teamID = myWeapon.pId;
-            tileData.unitID = myWeapon.weaponId;
-            tileData.slotID = myWeapon.slotId;
-
-            m_pMyTile[myWeapon.slotId - 1] = tile;
+        else if (slotID - 1 == 1) {
+            tilePos[1].x += moveData->m_moveX;
+            tilePos[1].y += moveData->m_moveY;
         }
     }
+    std::array<Int2, 2> clampPos;
+    clampPos[0] = GetClampTileID(tilePos[0]);
+    clampPos[1] = GetClampTileID(tilePos[1]);
 
+    std::array<MinimapTile*, 2> simulateTile;
+    simulateTile[0] = GetTileByID(clampPos[0]);
+    simulateTile[1] = GetTileByID(clampPos[1]);
 
-    for (const auto& enemyWeapon : m_enemy.weapons) {
-        if (auto* tile = GetTileByID(enemyWeapon.currentTile)) {
-            TileData& tileData = tile->GetTileData();
-            tileData.isPlayerTile = true;
-            tileData.teamID = enemyWeapon.pId;
-            tileData.unitID = enemyWeapon.weaponId;
-            tileData.slotID = enemyWeapon.slotId;
+    m_pMyTile[0]->ChangeTexture(g_tilePath_None);  // 타일 제자리 비우기
+    m_pMyTile[1]->ChangeTexture(g_tilePath_None);  // 타일 제자리 비우기
 
-            m_pEnemyTile[enemyWeapon.slotId - 1] = tile;
-        }
-    }
+    simulateTile[0]->ChangeTexture(g_tilePath_Red);
+    simulateTile[1]->ChangeTexture(g_tilePath_Red);
 }
 
 //void Minimap::CreateGridLine(float x, float y, float z)
@@ -428,6 +437,30 @@ MinimapTile* Minimap::GetTileByID(Int2 tileXY)
     return GetTileByID(tileID); // 기존 GetTileByID(int) 재사용
 }
 
+
+int Minimap::GetClampTileID(int tileID) const
+{
+    assert(m_grid.col > 0 && m_grid.row > 0);
+    if (m_grid.col <= 0 || m_grid.row <= 0) return 0;
+
+    Int2 tileXY = GetClampTileID(GetCellByID(tileID));
+    if (tileXY.x < 0 || tileXY.y < 0) return 0;
+
+    const int tileID_ = (tileXY.y * m_grid.col + tileXY.x) + 1;
+    return tileID_;
+}
+
+Int2 Minimap::GetClampTileID(Int2 tileXY) const
+{
+    assert(m_grid.col > 0 && m_grid.row > 0);
+    if (m_grid.col <= 0 || m_grid.row <= 0) return { -1, -1 };
+
+    tileXY.x = std::clamp(tileXY.x, 0, m_grid.col - 1);
+    tileXY.y = std::clamp(tileXY.y, 0, m_grid.row - 1);
+    return tileXY;
+}
+
+
 bool Minimap::IsValidTileID(int tileID) const
 {
     if (tileID <= 0) return false;
@@ -454,3 +487,5 @@ bool Minimap::IsValidTileID(Int2 tileXY) const
     const int tileID = (tileXY.y * m_grid.col + tileXY.x) + 1;
     return IsValidTileID(tileID);
 }
+
+

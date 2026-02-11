@@ -50,6 +50,8 @@ public:
     int GetTileID(int cx, int cy) const;
     int GetTileID(Int2 tileXY) const;
     Int2 GetCellByID(int tileID) const;
+    int GetClampTileID(int tileID) const;
+    Int2 GetClampTileID(Int2 tileXY) const;
     MinimapTile* GetTileByID(int tileID);
     MinimapTile* GetTileByID(Int2 tileXY);
     bool IsValidTileID(int tileID) const;

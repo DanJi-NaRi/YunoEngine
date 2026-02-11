@@ -43,9 +43,9 @@ bool MinimapTile::Update(float dTime) {
     if (!IsUseLMB()) {
         switch ((TileTeamData)m_data.teamID) {
         default:
-        case TileTeamData::Default: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_non.png"); break;
-        case TileTeamData::Red: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_red.png"); break;
-        case TileTeamData::Blue: ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/map_cube_blue.png"); break;
+        case TileTeamData::Default: ChangeTexture(g_tilePath_None); break;
+        case TileTeamData::Red: ChangeTexture(g_tilePath_Red); break;
+        case TileTeamData::Blue: ChangeTexture(g_tilePath_Blue); break;
         }
     }
 

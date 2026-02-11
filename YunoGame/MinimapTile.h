@@ -1,6 +1,11 @@
 #pragma once
 #include "Button.h"
 
+const std::wstring g_tilePath_None = L"../Assets/UI/PLAY/PhaseScene/map_cube_non.png";
+const std::wstring g_tilePath_Red = L"../Assets/UI/PLAY/PhaseScene/map_cube_red.png";
+const std::wstring g_tilePath_Blue = L"../Assets/UI/PLAY/PhaseScene/map_cube_blue.png";
+const std::wstring g_tilePath_Purple = L"../Assets/UI/PLAY/PhaseScene/map_cube_purple.png";
+
 enum class TileTeamData : uint8_t {
     Default,
     Red,  // Team1
