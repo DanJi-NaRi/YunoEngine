@@ -500,9 +500,9 @@ void UnitPiece::DisappearDissolve(float dissolveTime)
 void UnitPiece::PlayAttack()
 {
     if (m_animator == nullptr) return;
-    bool isChanged = m_animator->Change((m_dir == Direction::Right) ? "attack" : "attackF");
+    bool isChanged = m_animator->Change("attack");
     if (!isChanged) return;
-    m_animator->SetLoop((m_dir == Direction::Right) ? "attack" : "attackF", false);
+    m_animator->SetLoop("attack", false);
     m_animator->Play();
 
     // 이펙트
