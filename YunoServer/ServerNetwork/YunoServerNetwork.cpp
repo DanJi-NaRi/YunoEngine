@@ -102,9 +102,16 @@ namespace yuno::server
 
                 if (idx >= 0)
                 {
-                    const auto& slots = m_match.Slots();
-                    const auto uid = slots[static_cast<std::size_t>(idx)].userId;
-                    m_match.LeaveByUserId(uid);
+                    if (m_roundController.IsRoundStarted())
+                    {
+                        m_match.ClearAllSlots();
+                    }
+                    else
+                    {
+                        const auto& slots = m_match.Slots();
+                        const auto uid = slots[static_cast<std::size_t>(idx)].userId;
+                        m_match.LeaveByUserId(uid);
+                    }
 
                     m_roundController.ResetMatchState();
                     m_countdownSent = false;
@@ -331,9 +338,20 @@ namespace yuno::server
                     }
                 }
 
-                const auto& matchSlots = m_match.Slots();
-                const auto uid = matchSlots[static_cast<std::size_t>(idx)].userId;
-                m_match.LeaveByUserId(uid);
+                if (isBattleOngoing)
+                {
+                    m_match.ClearAllSlots();
+                }
+                else
+                {
+                    const auto& matchSlots = m_match.Slots();
+                    const auto uid = matchSlots[static_cast<std::size_t>(idx)].userId;
+                    m_match.LeaveByUserId(uid);
+                }
+
+                m_roundController.ResetMatchState();
+                m_countdownSent = false;
+
                 const auto& slots = m_match.Slots();
                 const std::uint8_t playerCount = m_match.GetOccupiedCount();
                 for (std::size_t i = 0; i < slots.size(); ++i)
