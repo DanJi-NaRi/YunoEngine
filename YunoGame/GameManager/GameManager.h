@@ -266,6 +266,7 @@ private:
         std::array<UnitHand, 2>& GetEnemyHands() { return m_enemyHands; }
 
 public:
+    void ClearBattlePacket();
     void PushBattlePacket(const BattleResult _BattleResult);
     void PushRevealPacket(const BattleResult _BattleResult);
     BattleResult PopBattlePacket();
