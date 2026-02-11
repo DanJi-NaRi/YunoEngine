@@ -52,6 +52,8 @@ void CardConfirmArea::Clear()
 {
     m_pCard = nullptr;
     m_direction = Direction::None;
+    m_runtimeCardID = 0;
+    m_cardSlotID = -1;
 }
 
 void CardConfirmArea::CleanSetup()
@@ -63,8 +65,12 @@ void CardConfirmArea::CleanSetup()
 
 bool CardConfirmArea::Event(float dTime)
 {
-    std::cout << "EVENT!!!" << std::endl;
+    //std::cout << "EVENT!!!" << std::endl;
     assert(m_snapPoint.pSnapOwner);
+
+    Card* snappedCard = dynamic_cast<Card*>(m_snapPoint.pSnapOwner);
+    SetCard(snappedCard);
+
     m_pCard = dynamic_cast<Card*>(m_snapPoint.pSnapOwner);
 
     if (m_pCard)

@@ -82,27 +82,27 @@ void CardSelectionPanel::CreateChild() {
     {
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1300, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-        m_pCards.back()->SetCardID(1);
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-1100, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-        m_pCards.back()->SetCardID(2);
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(205, 297), XMFLOAT3(-900, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-        m_pCards.back()->SetCardID(3);
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(205, 297), XMFLOAT3(-700, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-        m_pCards.back()->SetCardID(4);
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(205, 297), XMFLOAT3(-500, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-        m_pCards.back()->SetCardID(5);
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-300, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-        m_pCards.back()->SetCardID(6);
+        m_pCards.back()->SetLayer(WidgetLayer::Card);
 
         for (auto* card : m_pCards)
         {
@@ -131,6 +131,16 @@ bool CardSelectionPanel::Start()
 bool CardSelectionPanel::Update(float dTime)
 {
     PhasePanel::Update(dTime);
+
+    for (int i = 0; i < static_cast<int>(m_pPhaseStaminaBars.size()); ++i)
+    {
+        if (!m_pPhaseStaminaBars[i])
+            continue;
+
+        const int maxStamina = std::max(1, m_player.weapons[i].maxStamina);
+        const float staminaRatio = static_cast<float>(m_player.weapons[i].stamina) / static_cast<float>(maxStamina);
+        m_pPhaseStaminaBars[i]->SetStaminaValue(staminaRatio * 100.0f);
+    }
 
     return true;
 }
@@ -198,12 +208,14 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
             const auto dataID = cards[idx].dataID;
             const auto runtimeID = cards[idx].runtimeID;
             m_pCards[i]->SetCardID(runtimeID);
+            m_pCards[i]->SetSlotID(slot);
             m_pCards[i]->ChangeTexture(m_cardManager.GetCardTexturePath(dataID));
         }
         else
         {
             // 남는 슬롯은 카드 뒷면으로 채움
-            m_pCards[i]->SetCardID(0); // 의미 없는 값이면 0 등으로 정리 (필요 없으면 제거)
+            m_pCards[i]->SetCardID(0);    // 아이디 등록
+            m_pCards[i]->SetSlotID(slot); // 슬롯 순번 등록
             m_pCards[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         }
     }

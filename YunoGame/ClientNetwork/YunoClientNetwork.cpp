@@ -406,6 +406,9 @@ namespace yuno::game
                 gm.RequestRevealStart();
                 gm.UpdatePanels(br);
                 gm.SetSceneState(CurrentSceneState::AutoBattle);
+
+                // 이거때문에 둘 다 카드 제출하고 업데이트 하는 순간 미니맵 없어서 터짐
+                gm.UpdatePanels(br);
                 // MK 추가
                 // 게임 매니저 큐에 push.
 

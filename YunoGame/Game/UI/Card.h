@@ -26,10 +26,15 @@ public:
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::Card; }
 
     void SetCardID(int id) { m_cardID = id; }
-    const int GetCardID() { return m_cardID; }
+    int GetCardID() { return m_cardID; }
+
+    void SetSlotID(int id) { m_slotID = id; }
+    const int GetSlotID() { return m_slotID; }
 
 protected:
-    int m_cardID = -1;  // 카드 runtimeID
+
+    int m_cardID = -1;  // 런타임 ID
+    int m_slotID = -1; // 현재 기준 어느 슬롯 무기의 것인지
 
 };
 

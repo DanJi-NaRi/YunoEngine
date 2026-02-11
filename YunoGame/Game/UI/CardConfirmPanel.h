@@ -6,7 +6,10 @@ class CardSlot;
 class CardConfirmButton;
 class CardCancelButton;
 class CardConfirmArea;
+
+class Minimap;
 class CardSelectionPanel;
+
 
 class CardConfirmPanel : public PhasePanel
 {
@@ -33,18 +36,35 @@ public:
     void ClearSlot();
     void BindSelectionPanel(CardSelectionPanel* panel) { m_pSelectionPanel = panel; }
 
-protected:
-    void SubmitCurrentSelection();
-    bool HandleDirectionInput(Direction& outDir) const;
+    // 나중에 View 만들어서 대체하기
+    void SetMinimap(Minimap* pMinimap) { m_pMinimap = pMinimap; }
 
 protected:
+    void SubmitCurrentSelection();
+    bool IsCardAlreadyQueuedInSlots(uint32_t runtimeID, const CardConfirmArea* ignoreSlot = nullptr) const;
+    bool BuildCardQueueFromSlots();
+    bool HasEnoughStaminaForCard(int unitSlot, uint32_t runtimeID) const;
+    void SyncSimulatedStaminaFromPlayer();
+
+    
+
+
+protected:
+
+    int m_confirmReady; // 모든 슬롯에 바인딩했는지
+
+
     int m_openSlot;
     bool m_dirChoice = false;
+    bool m_hasSimulatedStamina = false;
+    std::array<int, 2> m_originalStamina = { 0, 0 };
+    std::array<int, 2> m_simulatedStamina = { 0, 0 };
     std::vector<CardConfirmArea*> m_setCardSlots;
     CardConfirmButton* m_cardConfirmButton = nullptr;
     CardCancelButton* m_cardCancelButton = nullptr;
     CardSelectionPanel* m_pSelectionPanel = nullptr;
+
     
-    //std::unique_ptr<Minimap> m_miniMap;           // 미니맵 // 스폰 포지션 따로 받기?
+    Minimap* m_pMinimap = nullptr;                  // 미니맵 
 };
 
