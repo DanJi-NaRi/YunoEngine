@@ -71,16 +71,16 @@ bool PlayHUDScene::OnCreateScene()
     m_emoteButtons.push_back(emote3);
 
     m_EmoteBubble1P = CreateWidget<TextureImage>(L"ImojiBubble", L"../Assets/UI/PLAY/SpeechBubble.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
-    m_EmoteBubble1P->SetVisible(Visibility::Hidden);
+    m_EmoteBubble1P->SetVisible(Visibility::Visible);
     m_EmoteBubble2P = CreateWidget<TextureImage>(L"ImojiBubble", L"../Assets/UI/PLAY/SpeechBubble.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
-    m_EmoteBubble2P->SetVisible(Visibility::Hidden);
+    m_EmoteBubble2P->SetVisible(Visibility::Visible);
 
     m_EmoteImage1P = CreateWidget<Emoji>(L"emote", Float2(80, 67), XMFLOAT3(7, 15, 0), UIDirection::Center);
     m_EmoteImage1P->SetScale({-1, 1, 1});
-    m_EmoteImage1P->SetVisible(Visibility::Hidden);
+    m_EmoteImage1P->SetVisible(Visibility::Visible);
     m_EmoteImage1P->SetLayer(WidgetLayer::HUD);
     m_EmoteImage2P = CreateWidget<Emoji>(L"emote", Float2(80, 67), XMFLOAT3(7, 15, 0), UIDirection::Center);
-    m_EmoteImage2P->SetVisible(Visibility::Hidden);
+    m_EmoteImage2P->SetVisible(Visibility::Visible);
     m_EmoteImage2P->SetLayer(WidgetLayer::HUD);
 
     m_EmoteBubble1P->Attach(m_EmoteImage1P);
@@ -174,7 +174,10 @@ void PlayHUDScene::TryInitPlayerIconsFromWeaponData()
                             myWeapons[i].weaponId,
                             myWeapons[i].hp,
                             myWeapons[i].stamina };
-            m_playerIcons[i]->SetPlayer(idata);
+            if(idata.pId == 1)
+                m_playerIcons[i]->SetPlayer(idata);
+            else
+                m_playerIcons[i + 2]->SetPlayer(idata);
         }
 
         if (m_playerIcons[i + 2] != nullptr)
@@ -184,7 +187,10 @@ void PlayHUDScene::TryInitPlayerIconsFromWeaponData()
                             enemyWeapons[i].weaponId,
                             enemyWeapons[i].hp,
                             enemyWeapons[i].stamina };
-            m_playerIcons[i + 2]->SetPlayer(idata);
+            if (idata.pId == 2)
+                m_playerIcons[i + 2]->SetPlayer(idata);
+            else
+                m_playerIcons[i]->SetPlayer(idata);
         }
     }
 

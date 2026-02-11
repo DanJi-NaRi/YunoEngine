@@ -73,10 +73,10 @@ bool GameApp::OnInit()
 
 
    sm->RequestReplaceRoot(std::make_unique<Title>(), opt); 
-   //{
-   //    sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
-   //    sm->RequestPush(std::make_unique<PlayHUDScene>());
-   //}
+   /*{
+       sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+       sm->RequestPush(std::make_unique<PlayHUDScene>());
+   }*/
    //sm->RequestReplaceRoot(std::make_unique<PhaseScene>(), opt);
 
 

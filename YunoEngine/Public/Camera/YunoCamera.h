@@ -22,7 +22,7 @@ struct YunoCamera
     static constexpr float kMaxFovY = XMConvertToRadians(179.0f);
     static constexpr float kMinAspect = 0.0001f;
 
-    XMVECTOR GetForward()
+    XMVECTOR GetForward() const
     {
         XMVECTOR pos = XMLoadFloat3(&position);
         XMVECTOR lookat = XMLoadFloat3(&target);
@@ -34,7 +34,7 @@ struct YunoCamera
     XMMATRIX View() const
     {
         using namespace DirectX;
-        return (useOrtho) ? XMMatrixIdentity() : XMMatrixLookAtLH(XMLoadFloat3(&position), XMLoadFloat3(&target), XMLoadFloat3(&up));
+        return (useOrtho) ? XMMatrixIdentity() : XMMatrixLookAtLH(XMLoadFloat3(&position), GetForward(), XMLoadFloat3(&up));
     }
 
     XMMATRIX Proj(float width, float height) const
