@@ -331,6 +331,9 @@ namespace yuno::server
         std::cout << "[Round] Match ended by disconnect. winner="
             << int(winnerPID) << "\n";
 
+        // 체크
+        ResetMatchState();
+
         auto session = m_network.FindSession(winnerSessionId);
         if (!session)
             return;
@@ -347,7 +350,7 @@ namespace yuno::server
 
         session->Send(std::move(bytes));
 
-        ResetMatchState();
+
     }
 
     void RoundController::ResetMatchState()
