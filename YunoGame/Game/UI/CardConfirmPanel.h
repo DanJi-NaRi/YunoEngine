@@ -41,7 +41,8 @@ public:
 
 protected:
     void SubmitCurrentSelection();
-    bool IsCardAlreadyQueued(uint32_t runtimeID) const;
+    bool IsCardAlreadyQueuedInSlots(uint32_t runtimeID, const CardConfirmArea* ignoreSlot = nullptr) const;
+    bool BuildCardQueueFromSlots();
     bool HasEnoughStaminaForCard(int unitSlot, uint32_t runtimeID) const;
     void SyncSimulatedStaminaFromPlayer();
 
@@ -50,7 +51,7 @@ protected:
 
 protected:
 
-    //int m_confirmReady; // 모든 슬롯에 바인딩했는지
+    int m_confirmReady; // 모든 슬롯에 바인딩했는지
 
 
     int m_openSlot;

@@ -1,8 +1,7 @@
 #pragma once
 #include "Slot.h"
 #include "C2S_BattlePackets.h"
-
-class Card;
+#include "Card.h"
 
 class CardConfirmArea : public Slot
 {
@@ -23,18 +22,41 @@ public:
 
     bool Event(float dTime = 0) override; // AABB 성공 시 작동하는 이벤트
 
-    void SetCard(Card* card) { m_pCard; }
+    void SetCard(Card* card)
+    {
+        m_pCard = card;
+
+        if (!m_pCard)
+        {
+            m_runtimeCardID = 0;
+            m_cardSlotID = -1;
+            return;
+        }
+
+        m_runtimeCardID = m_pCard->GetCardID();
+        m_cardSlotID = m_pCard->GetSlotID();
+    }
     void SetDirection(Direction direction) { m_direction = direction; }
 
 
-    const Direction& GetDirection() { return m_direction; }
-    Card* GetCard() { return m_pCard; }
-    bool IsSetCard() { return (m_pCard); }
+    //const Direction& GetDirection() { return m_direction; }
+    //Card* GetCard() { return m_pCard; }
+    //bool IsSetCard() { return (m_pCard); }
+
+    const Direction& GetDirection() const { return m_direction; }
+    Card* GetCard() const { return m_pCard; }
+    bool IsSetCard() const { return (m_pCard != nullptr); }
+
+    int GetRuntimeCardID() const { return m_runtimeCardID; }
+    int GetCardSlotID() const { return m_cardSlotID; }
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/draganddrop.png"); };    // 머테리얼 생성 (한 번만)
 
 protected:
     Card* m_pCard = nullptr; // 해당 슬롯에 등록된 카드
     Direction m_direction = Direction::None; // 선택한 방향
+
+    int m_runtimeCardID = 0;
+    int m_cardSlotID = -1;
 };
 
