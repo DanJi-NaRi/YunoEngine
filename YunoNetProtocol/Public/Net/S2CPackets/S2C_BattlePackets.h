@@ -47,6 +47,7 @@ namespace yuno::net::packets
         uint8_t dir;             // 카드배치때 선택한 방향 
         uint8_t ownerSlot;       // PID (1,2)
         uint8_t unitLocalIndex;  // 해당 플레이어의 유닛 (1,2)
+        uint8_t isCoinTossUsed; // 코인토스 사용여부
         uint32_t actionTime;      // 해당 결과 액션 타임
 
         std::vector<std::array<UnitStateDelta, 4>> order;   // 카드 시뮬 결과
