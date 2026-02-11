@@ -379,6 +379,12 @@
     <ClCompile Include="ResultPanel.cpp">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClCompile>
+    <ClCompile Include="PlayMidScene.cpp">
+      <Filter>Scenes\2.Play</Filter>
+    </ClCompile>
+    <ClCompile Include="AddCardPanel.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -625,7 +631,6 @@
     <ClInclude Include="StandByScene.h">
       <Filter>Scenes\1.WeaponSelect</Filter>
     </ClInclude>
-
     <ClInclude Include="Scenes\PlayHUDScene.h">
       <Filter>Scenes\2.Play</Filter>
     </ClInclude>
@@ -648,6 +653,15 @@
       <Filter>System\UIContext</Filter>
     </ClInclude>
     <ClInclude Include="ResultPanel.h">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayMidScene.h">
+      <Filter>Scenes\2.Play</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayMidScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="AddCardPanel.h">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClInclude>
   </ItemGroup>

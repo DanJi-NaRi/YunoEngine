@@ -17,6 +17,8 @@
 #include "GuideScene.h"
 #include "EscScene.h"
 #include "ResultScene.h"
+#include "PlayMidScene.h"
+
 #include "YunoClientNetwork.h"
 
 #include "utilityClass.h"
@@ -83,6 +85,12 @@ void GameManager::PushBattlePacket(const BattleResult _BattleResult)
     std::cout << "Battle Packet is inserted into Queue.\n";
 }
 
+//UI용 복사본
+void GameManager::PushRevealPacket(const BattleResult _BattleResult)
+{
+    m_revealBuffer.push(_BattleResult);
+}
+
 BattleResult GameManager::PopBattlePacket()
 {
     BattleResult pckt = m_turnPkts.front();
@@ -91,9 +99,21 @@ BattleResult GameManager::PopBattlePacket()
     return pckt;
 }
 
+BattleResult GameManager::PopRevealPacket()
+{
+    BattleResult pckt = m_revealBuffer.front();
+    m_revealBuffer.pop();
+    return pckt;
+}
+
 bool GameManager::IsEmptyBattlePacket()
 {
     return m_turnPkts.empty();
+}
+
+bool GameManager::IsEmptyRevealQueue()
+{
+    return m_revealBuffer.empty();
 }
 
 
@@ -361,6 +381,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockRenderBelow = false;
 
         sm->RequestPush(std::make_unique<PlayHUDScene>(), sp, opt);
+        sm->RequestPush(std::make_unique<PlayMidScene>(), sp, opt);
 
         SetSceneState(CurrentSceneState::SubmitCard);
         break;

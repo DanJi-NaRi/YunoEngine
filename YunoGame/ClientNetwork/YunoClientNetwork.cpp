@@ -402,6 +402,8 @@ namespace yuno::game
 
                 BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, pkt.dir, pkt.actionTime, order };
                 gm.PushBattlePacket(br);
+                gm.PushRevealPacket(br);// 복사 저장
+                gm.RequestRevealStart();
                 gm.UpdatePanels(br);
                 gm.SetSceneState(CurrentSceneState::AutoBattle);
                 // MK 추가
@@ -490,6 +492,9 @@ namespace yuno::game
                 std::cout << "\n[Client] === S2C_StartTurn ===\n";
                 std::cout << "[Client] TurnNumber = "
                     << static_cast<int>(pkt.turnNumber) << "\n";
+
+                if(pkt.turnNumber == 1)
+                    GameManager::Get().IncreaseRound();
 
                 std::vector<yuno::net::packets::CardSpawnInfo> added;
                 added.push_back(pkt.addedCards[0]);

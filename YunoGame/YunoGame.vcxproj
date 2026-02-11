@@ -190,12 +190,14 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddCardPanel.cpp" />
     <ClCompile Include="CardConfirmArea.cpp" />
     <ClCompile Include="CheckPanel.cpp" />
     <ClCompile Include="CountdownImage.cpp" />
     <ClCompile Include="CountdownScene.cpp" />
     <ClCompile Include="EscScene.cpp" />
     <ClCompile Include="Game\UI\DirSelectButton.cpp" />
+    <ClCompile Include="PlayMidScene.cpp" />
     <ClCompile Include="Scenes\PlayHUDScene.cpp" />
     <ClCompile Include="Game\UI\TextureImage.cpp" />
     <ClCompile Include="Game\UI\VolumePanel.cpp" />
@@ -300,6 +302,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="WeaponNameImage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddCardPanel.h" />
     <ClInclude Include="CardConfirmArea.h" />
     <ClInclude Include="CheckPanel.h" />
     <ClInclude Include="CountdownImage.h" />
@@ -307,6 +310,8 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="EscScene.h" />
     <ClInclude Include="EscScene_inputContext.h" />
     <ClInclude Include="Game\UI\DirSelectButton.h" />
+    <ClInclude Include="PlayMidScene.h" />
+    <ClInclude Include="PlayMidScene_InputContext.h" />
     <ClInclude Include="Scenes\PlayHUDScene.h" />
     <ClInclude Include="Game\UI\PopButton.h" />
     <ClInclude Include="Game\UI\TextureImage.h" />
