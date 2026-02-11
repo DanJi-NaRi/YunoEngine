@@ -6,6 +6,8 @@
 #include "EffectManager.h"
 #include "UnitPiece.h"
 
+#include "AudioQueue.h"
+
 UnitPiece::UnitPiece()
 {
     m_name = L"Piece";
@@ -516,6 +518,8 @@ void UnitPiece::PlayAttack()
                 auto eff = m_pEffectManager->Spawn(EffectID::BlasterAttack, { 0.f, -0.05f, -0.05f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
                 AttachChildBone(eff, 2);
                 });
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_BlasterAttack));
             break;
         }
         case 2:
@@ -544,6 +548,8 @@ void UnitPiece::PlayAttack()
                     Attach(eff);
                     });
             }
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_CharkramAttack));
             break;
         }
         case 3:
@@ -552,6 +558,8 @@ void UnitPiece::PlayAttack()
                 auto eff = m_pEffectManager->Spawn(EffectID::DrillAttack1, { 0.05f, 1.1f, 0.0f }, { 3.f, 3.f, 1.f }, { 1, 0, 0 });
                 AttachChildBone(eff, 1);
                 });
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_BreacherAttack));
             break;
         }
         case 4:
@@ -562,6 +570,8 @@ void UnitPiece::PlayAttack()
                 eff = m_pEffectManager->Spawn(EffectID::ScytheAttack2, { 0.0f, 1.0f, -0.45f }, { 1.f, 1.f, 1.f });
                 AttachChildBone(eff, 1);
                 });
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_ScytheAttack));
             break;
         }
         case 5:
@@ -572,6 +582,8 @@ void UnitPiece::PlayAttack()
                 eff = m_pEffectManager->Spawn(EffectID::AxAttack2, { 0.0f, 0.4f, 0.f }, { 1.f, 1.f, 1.f });
                 Attach(eff);
                 });
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_ImpactorAttack));
             break;
         }
         case 6:
@@ -582,6 +594,8 @@ void UnitPiece::PlayAttack()
                 eff = m_pEffectManager->Spawn(EffectID::AxAttack2, { 0.0f, 0.4f, 0.f }, { 1.f, 1.f, 1.f });
                 Attach(eff);
                 });
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_CleaverAttack));
             break;
         }
         }
@@ -596,6 +610,8 @@ void UnitPiece::PlayAttack()
                 auto eff = m_pEffectManager->Spawn(EffectID::BlasterAttackEnemy, { 0.f, -0.05f, -0.05f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
                 AttachChildBone(eff, 2);
                 });
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_BlasterAttack));
             break;
         }
         case 2:
@@ -624,6 +640,8 @@ void UnitPiece::PlayAttack()
                     Attach(eff);
                     });
             }
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_CharkramAttack));
             break;
         }
         case 3:
@@ -632,6 +650,8 @@ void UnitPiece::PlayAttack()
                 auto eff = m_pEffectManager->Spawn(EffectID::DrillAttackEnemy1, { 0.05f, 1.1f, 0.0f }, { 3.f, 3.f, 1.f }, { 1, 0, 0 });
                 AttachChildBone(eff, 1);
                 });
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_BreacherAttack));
             break;
         }
         case 4:
@@ -642,6 +662,8 @@ void UnitPiece::PlayAttack()
                 eff = m_pEffectManager->Spawn(EffectID::ScytheAttackEnemy2, { 0.0f, 1.0f, -0.45f }, { 1.f, 1.f, 1.f });
                 AttachChildBone(eff, 1);
                 });
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_ScytheAttack));
             break;
         }
         case 5:
@@ -652,6 +674,8 @@ void UnitPiece::PlayAttack()
                 eff = m_pEffectManager->Spawn(EffectID::AxAttackEnemy2, { 0.0f, 0.4f, 0.f }, { 1.f, 1.f, 1.f });
                 Attach(eff);
                 });
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_ImpactorAttack));
             break;
         }
         case 6:
@@ -662,6 +686,8 @@ void UnitPiece::PlayAttack()
                 eff = m_pEffectManager->Spawn(EffectID::AxAttackEnemy2, { 0.0f, 0.4f, 0.f }, { 1.f, 1.f, 1.f });
                 Attach(eff);
                 });
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_CleaverAttack));
             break;
         }
         }
@@ -692,6 +718,8 @@ void UnitPiece::PlayHit()
     m_animator->SetLoop((m_dir == Direction::Right) ? "hit" : "hitF", false);
     m_animator->Play();
     AddAnimState(PieceAnim::Hit);
+
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_Hit));
 }
 
 void UnitPiece::PlayMove()
@@ -709,6 +737,9 @@ void UnitPiece::PlayMove()
 
         sub->PlayMove();
     }
+
+    if(m_subID == 0)
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_Move));
 
     m_state = PieceAnim::Move;
     AddAnimState(PieceAnim::Move);
@@ -742,6 +773,8 @@ void UnitPiece::PlayDead(float disappearDisolveDuration)
     if (!isChanged) return;
     m_animator->SetLoop((m_dir == Direction::Right) ? "dead" : "deadF", false);
     m_animator->Play();
+    
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_Dead));
 }
 
 void UnitPiece::StopMove()

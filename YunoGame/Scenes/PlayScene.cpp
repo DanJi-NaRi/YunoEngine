@@ -10,6 +10,7 @@
 #include "YunoLight.h"
 #include "YunoCamera.h"
 #include "IInput.h"
+#include "AudioQueue.h"
 //#include "Game_InputContext.h"
 
 #include "PlayGridSystem.h"
@@ -20,6 +21,7 @@
 #include "Emoji.h"
 #include "PlayQueue.h"
 #include "EffectUnit.h"
+
 
 bool PlayScene::OnCreateScene()
 {
@@ -105,6 +107,10 @@ bool PlayScene::OnCreateScene()
     m_objectManager->CreateDirLight();
 
     RegisterEffect();
+
+    // 오디오 추가
+    AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Lobby, true));
+    AudioQ::Insert(AudioQ::PlayEvent(EventName::BGM_Main));
 
     return true;
 }

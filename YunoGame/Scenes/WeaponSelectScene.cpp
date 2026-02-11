@@ -16,7 +16,7 @@
 //#include "Building.h"
 #include "UIWidgets.h"
 
-
+#include "AudioQueue.h"
 
 namespace
 {
@@ -177,7 +177,10 @@ bool WeaponSelectScene::OnCreateScene()
     m_pExitBtn->SetTargetScene(CurrentSceneState::Title);
 
 
-
+    // 오디오 추가
+    AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Title, true));
+    AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Main, true));
+    AudioQ::Insert(AudioQ::PlayEvent(EventName::BGM_Lobby));
 
 
     return true;

@@ -2,6 +2,7 @@
 #include "UnitTile.h"
 
 #include "PlayQueue.h"
+#include "AudioQueue.h"
 
 #include "ObjectTypeRegistry.h"
 #include "ObjectManager.h"
@@ -336,9 +337,13 @@ void UnitTile::PlayWarning(ObstacleType obstacleType, Float4 color, int count, f
     switch (obstacleType)
     {
     case ObstacleType::Vertical_Razer:
+    {
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_VerticalLazer));
+        break;
+    }
     case ObstacleType::Horizon_Razer:
     {
-        // 이펙트 넣기
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_HorizonLazer));
         break;
     }
     case ObstacleType::Collapse:
@@ -347,6 +352,8 @@ void UnitTile::PlayWarning(ObstacleType obstacleType, Float4 color, int count, f
         if(isChanged)
             m_animator->SetLoop("wave", false);
         m_animator->Play();
+
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_TileCollapse));
         break;
     }
     }
