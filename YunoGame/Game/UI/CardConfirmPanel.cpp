@@ -110,13 +110,16 @@ void CardConfirmPanel::CreateChild() {
         { 
             if (m_gameManager.GetSceneState() == CurrentSceneState::BattleStandBy) return;
             this->ClearSlot(); 
+            
+            assert(m_pMinimap);
+            if (m_pMinimap)
+                m_pMinimap->DefaultSetAllTile();
             // 만들었는데 생각해보니까 우리 카드 제출 후 취소를 못하네?
             //if (m_gameManager.GetSceneState() == CurrentSceneState::StandBy) 
             //{
             //    m_gameManager.RequestScenePop();        // StandBy씬이면 Pop하기
             //    m_gameManager.SetState(CurrentSceneState::SubmitCard);
             //}
-
         }
     );
 
@@ -167,8 +170,6 @@ void CardConfirmPanel::UpdateCardSlot()
         m_pMinimap->StartDirChoice(currentSlot);
         return;
     }
-
-
 
     if (currentSlot->GetDirection() == Direction::None)
         return;
@@ -278,7 +279,7 @@ void CardConfirmPanel::SubmitCurrentSelection()
     if (selectedRuntimeIDRaw <= 0)
         return;
 
-    const auto selectedRuntimeID = static_cast<uint32_t>(selectedRuntimeIDRaw);
+    const auto selectedRuntimeID = static_cast<uint32_t>(selectedRuntimeIDRaw); 
 
     if (selectedRuntimeID == 0)
         return;

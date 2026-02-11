@@ -37,8 +37,9 @@ public:
     void BindSelectionPanel(CardSelectionPanel* panel) { m_pSelectionPanel = panel; }
 
     // 나중에 View 만들어서 대체하기
-    void SetMinimap(Minimap* pMinimap) { m_pMinimap = pMinimap; }
+    void BindMinimap(Minimap* pMinimap) { m_pMinimap = pMinimap; }
 
+    std::vector<CardConfirmArea*>& GetCardSlots() { return m_setCardSlots; }
 protected:
     void SubmitCurrentSelection();
     bool IsCardAlreadyQueuedInSlots(uint32_t runtimeID, const CardConfirmArea* ignoreSlot = nullptr) const;
@@ -63,7 +64,7 @@ protected:
     CardConfirmButton* m_cardConfirmButton = nullptr;
     CardCancelButton* m_cardCancelButton = nullptr;
     CardSelectionPanel* m_pSelectionPanel = nullptr;
-
+    
     
     Minimap* m_pMinimap = nullptr;                  // 미니맵 
 };

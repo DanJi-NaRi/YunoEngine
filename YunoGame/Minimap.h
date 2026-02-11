@@ -8,6 +8,7 @@
 class WidgetGridLine;
 class MinimapTile;
 class CardConfirmArea;
+class CardConfirmPanel;
 
 class Minimap : public PhasePanel
 {
@@ -29,6 +30,7 @@ public:
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/window_popup_minimap.png"); };  // 머테리얼 생성
 
+    void Simulate();
 
     void SetupPanel();
 
@@ -40,8 +42,11 @@ public:
 
     void OpenDirButton(int tileID, CardConfirmArea* CardSlot);
 
+    void DefaultSetAllTile();
+
+    void BindCardConfirmPanel(CardConfirmPanel* confirmPanel) { m_pConfirmPanel = confirmPanel; };
+
     bool GetButtonLock() { return m_buttonLock; } // SetButtonLock
-    
     int GetTileID(int cx, int cy) const;
     int GetTileID(Int2 tileXY) const;
     Int2 GetCellByID(int tileID) const;
@@ -57,10 +62,16 @@ protected:                             // 그리드 라인 오브젝트 생성
     void ClearGrid();
 
 protected:
+    bool m_isSimulation = false;
     bool m_buttonLock = true;
     // Grid // 기준 : XY
     GridXY m_grid;
     std::vector<MinimapTile*> m_pTiles;
+    std::array<MinimapTile*, 2> m_pMyTile = {nullptr,};
+    std::array<MinimapTile*, 2> m_pEnemyTile = {nullptr,};
+
     WidgetGridLine* m_pGridLine = nullptr;
+
+    CardConfirmPanel* m_pConfirmPanel;
 };
 

@@ -25,6 +25,8 @@ public:
     bool Submit(float dTime = 0) override;
     void Clear();
 
+    void DefaultMinimapSetup(); //미니맵용 클리어
+
     // 버튼 이벤트 핸들
     virtual bool IdleEvent() override;                          // 아무것도 안할 때
     virtual bool HoveredEvent() override;                       // 커서가 위에 있을 때
@@ -51,6 +53,7 @@ public:
 protected:
     uint8_t m_tileID;
     TileData m_data;
-
+    
+    std::wstring m_backUpOriginPath;
     bool isSimulation; // 시뮬레이션 중인지 판단
 };

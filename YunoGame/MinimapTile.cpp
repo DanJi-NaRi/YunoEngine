@@ -29,6 +29,8 @@ bool MinimapTile::Create(const std::wstring& name, uint32_t id, Float2 sizePx, X
 {
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
 
+    m_backUpOriginPath = m_texturePathBk;
+
     return true;
 }
 
@@ -51,6 +53,16 @@ bool MinimapTile::Update(float dTime) {
     Button::Update(dTime);
 
     return true;
+}
+
+void MinimapTile::DefaultMinimapSetup() {
+    ResetHoverTexture(m_backUpOriginPath);
+    SetUseLMB(false);
+    SetUseRMB(false);
+    SetRotZ(0);
+    MirrorReset();
+    SetEventLMB(nullptr);
+    SetEventRMB(nullptr);
 }
 
 

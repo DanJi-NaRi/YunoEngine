@@ -55,19 +55,19 @@ bool PhaseScene::OnCreateScene()
     auto& gm = GameManager::Get();
 
 
-    // 원본 사이즈
+    // 원본 사이즈 
     m_pMinimap = CreateWidget<Minimap>(L"Minimap", Float2(730, 616), XMFLOAT3(clientX * 0.5f, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::Bottom);
     gm.SetMinimap(m_pMinimap);
     m_pMinimap->SetupPanel();
-
+   
     m_pSelectionPanel = CreateWidget<CardSelectionPanel>(L"CardSelectionPanel", Float2(1513, 578), XMFLOAT3(clientX, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::RightBottom);
     gm.SetSelectionPanel(m_pSelectionPanel);
 
     m_pConfirmPanel = CreateWidget<CardConfirmPanel>(L"CardConformPanel", Float2(1066, 579), XMFLOAT3(0, clientY, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftBottom);        // 이거 사이즈 달라서 고쳐둠
     gm.SetConfirmPanel(m_pConfirmPanel);
-    m_pConfirmPanel->SetMinimap(m_pMinimap); // 미니맵 할당 순서 주의!!
-
-
+    
+    m_pMinimap->BindCardConfirmPanel(m_pConfirmPanel);
+    m_pConfirmPanel->BindMinimap(m_pMinimap); // 미니맵 할당 순서 주의!!
     m_pConfirmPanel->BindSelectionPanel(m_pSelectionPanel);
     
 

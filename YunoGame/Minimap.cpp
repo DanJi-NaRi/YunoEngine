@@ -3,6 +3,7 @@
 
 #include "Card.h"
 #include "CardSlot.h"
+#include "CardConfirmPanel.h"
 #include "CardConfirmArea.h"
 #include "WidgetGridLine.h"
 #include "MinimapTile.h"
@@ -88,6 +89,55 @@ bool Minimap::Submit(float dTime)
     return false;
 }
 
+void Minimap::Simulate()
+{
+    assert(m_pConfirmPanel);
+    if (!m_pConfirmPanel) return;
+
+    const auto& slots = m_pConfirmPanel->GetCardSlots();
+    ClearGrid();
+
+    for (const auto& slot : slots) {
+        if (!slot->GetCard()) return;
+        if (slot->GetDirection() == Direction::None) return;
+
+        auto cardID = slot->GetCard()->GetID();
+        auto slotID = slot->GetCard()->GetSlotID();
+
+        if (slotID == m_player.weapons[0].slotId) {
+
+        }
+        else if (slotID == m_player.weapons[1].slotId) {
+
+        }
+
+    }
+    for (const auto& myWeapon : m_player.weapons) {
+        if (auto* tile = GetTileByID(myWeapon.currentTile)) {
+            TileData& tileData = tile->GetTileData();
+            tileData.isPlayerTile = true;
+            tileData.teamID = myWeapon.pId;
+            tileData.unitID = myWeapon.weaponId;
+            tileData.slotID = myWeapon.slotId;
+
+            m_pMyTile[myWeapon.slotId - 1] = tile;
+        }
+    }
+
+
+    for (const auto& enemyWeapon : m_enemy.weapons) {
+        if (auto* tile = GetTileByID(enemyWeapon.currentTile)) {
+            TileData& tileData = tile->GetTileData();
+            tileData.isPlayerTile = true;
+            tileData.teamID = enemyWeapon.pId;
+            tileData.unitID = enemyWeapon.weaponId;
+            tileData.slotID = enemyWeapon.slotId;
+
+            m_pEnemyTile[enemyWeapon.slotId - 1] = tile;
+        }
+    }
+}
+
 //void Minimap::CreateGridLine(float x, float y, float z)
 //{
 //    //if (m_gridBox == nullptr) return;
@@ -105,6 +155,8 @@ void Minimap::SetupPanel() {
             tileData.teamID = myWeapon.pId;
             tileData.unitID = myWeapon.weaponId;
             tileData.slotID = myWeapon.slotId;
+
+            m_pMyTile[myWeapon.slotId - 1] = tile;
         }
     }
 
@@ -115,6 +167,8 @@ void Minimap::SetupPanel() {
             tileData.teamID = enemyWeapon.pId;
             tileData.unitID = enemyWeapon.weaponId;
             tileData.slotID = enemyWeapon.slotId;
+
+            m_pEnemyTile[enemyWeapon.slotId - 1] = tile;
         }
     }
 }
@@ -128,6 +182,9 @@ void Minimap::UpdatePanel(const BattleResult& battleResult) {
             tileData.isPlayerTile = true;
             tileData.teamID = info->pId;
             tileData.slotID = info->slotId;
+
+            if(info->pId == 1) m_pMyTile[info->slotId - 1] = tile;
+            else m_pEnemyTile[info->slotId - 1] = tile;
         }
     }
 }
@@ -140,6 +197,9 @@ void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
             tileData.isPlayerTile = true;
             tileData.teamID = pieceInfo.pId;
             tileData.slotID = pieceInfo.slotId;
+
+            if (pieceInfo.pId == 1) m_pMyTile[pieceInfo.slotId - 1] = tile;
+            else m_pEnemyTile[pieceInfo.slotId - 1] = tile;
         }
     }
 }
@@ -276,18 +336,13 @@ void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
         {  0,  1 }, // down
     };
 
-    struct Candidate {
-        Candidate(MinimapTile* pTile, std::wstring bk) : pTile(pTile), bk(std::move(bk)) {}
-        MinimapTile* pTile;
-        std::wstring bk;
-    };
-    std::vector<Candidate> candidates;
+    std::vector<MinimapTile*> candidates;
 
     for (const auto& d : dirs)
     {
         const Int2 n = { tileXY.x + d.x, tileXY.y + d.y };
         if (auto* dirTile = GetTileByID(n)) {
-            candidates.emplace_back(dirTile, dirTile->GetTexturePathBk());
+            candidates.emplace_back(dirTile);
         }
     }
 
@@ -318,17 +373,18 @@ void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
                 // 후보 전체 닫기
                 for (const auto& candidate : candidates)
                 {
-                    MinimapTile* pTile = candidate.pTile;
+                    MinimapTile* pTile = candidate;
                     if (!pTile) continue;
-                    pTile->ResetHoverTexture(candidate.bk);
-                    pTile->SetUseLMB(false);
-                    pTile->SetUseRMB(false);
-                    pTile->SetRotZ(0);
-                    pTile->MirrorReset();
-                    pTile->SetEventLMB(nullptr);
-                    pTile->SetEventRMB(nullptr);
+                    pTile->DefaultMinimapSetup();
                 }
             });
+    }
+}
+
+void Minimap::DefaultSetAllTile()
+{
+    for (auto& tile : m_pTiles) {
+        tile->DefaultMinimapSetup();
     }
 }
 
