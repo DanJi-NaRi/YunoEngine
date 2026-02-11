@@ -73,8 +73,8 @@ bool WeaponSelectScene::OnCreateScene()
 
 
     //CreateWidget<TitleImage>(L"Title", g_defWidgetSize, XMFLOAT3(0, 0, 0), XMFLOAT3(0.5f, 0.5f, 0.5f),UIDirection::LeftTop);
-
-    CreateWidget<TextureImage>(L"WeaponSelect", L"../Assets/UI/WEAPON_SELECT/background_weaponselect.png", XMFLOAT3(0, 0, 0));
+    CreateWidget<TextureImage>(L"WeaponSelectSceneBackGround", L"../Assets/UI/WEAPON_SELECT/background_weaponselect.png", XMFLOAT3(0, 0, 0));
+    CreateWidget<TextureImage>(L"WeaponSelect", L"../Assets/UI/WEAPON_SELECT/Weaponselect_background.png", XMFLOAT3(0, 0, 0));
 
     CreateWidget<TextureImage>(L"P1", L"../Assets/UI/WEAPON_SELECT/Weaponselect_background_1player.png", XMFLOAT3(0, 0, 0));
     CreateWidget<TextureImage>(L"P2", L"../Assets/UI/WEAPON_SELECT/Weaponselect_background_2player.png", XMFLOAT3(0, 0, 0));

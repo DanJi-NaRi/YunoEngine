@@ -480,6 +480,8 @@ void PlayGridSystem::CheckPacket(float dt)
         // 서버 쪽에서 패킷 시간 계산 로직 끝나면 지워야함
         const auto& cardData = mng.GetCardData(runTimeCardID);
 
+
+
         const int effectID = cardData.m_effectId;
         const int soundID = cardData.m_soundId;
 
@@ -489,6 +491,12 @@ void PlayGridSystem::CheckPacket(float dt)
         else if (cardType == CardType::Utility)    m_pktTime = utilityPktTime;
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
+
+        // useID == 1 카드는 사용 즉시 손패에서 제거한다.
+        if (pckt.pId == static_cast<uint8_t>(mng.GetPID()) && cardData.m_useId == 1)
+        {
+            mng.RemoveCard(runTimeCardID);
+        }
     }
 
     // 장애물까지 발동하고 CheckOver

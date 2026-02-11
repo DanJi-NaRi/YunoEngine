@@ -43,8 +43,8 @@ namespace yuno::server
         std::cout << "remaining: " << remainingMs.count() << " ms" << std::endl;
         std::cout << "[Round] RoundStartReady timeout. Force starting next round\n";
 
-        m_waitingRoundStartReady = false;
-        TryStartRound();
+        //m_waitingRoundStartReady = false;
+        //TryStartRound();
     }
 
     void RoundController::OnRoundStartReadyOK(int playerIdx)

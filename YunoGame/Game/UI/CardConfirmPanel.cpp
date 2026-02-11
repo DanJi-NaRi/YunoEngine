@@ -92,6 +92,7 @@ void CardConfirmPanel::CreateChild() {
         if (!m_gameManager.IsCardQueueFull()) return;
         m_gameManager.SubmitTurn(m_gameManager.GetCardQueue());
         this->m_cardConfirmButton->SetIsClicked(true);
+        m_pSelectionPanel->ViewCardPage(0, 0);
         m_gameManager.SetSceneState(CurrentSceneState::BattleStandBy);
         });
 
