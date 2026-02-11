@@ -3,6 +3,13 @@
 
 class VolumeTrackButton;
 
+enum class VolumeType
+{
+    Master,
+    BGM,
+    SFX
+};
+
 class VolumePanel final : public Widget
 {
 public:
@@ -23,9 +30,12 @@ public:
     int  GetLevel() const { return m_level; }
     void SetLevel(int level);
 
+    void SetVolumeType(int typeIndex){ m_type = static_cast<VolumeType>(typeIndex); }
 private:
     VolumeTrackButton* m_track = nullptr;
     std::vector<Widget*> m_steps;
+
+    VolumeType m_type = VolumeType::Master;
 
     int m_level = 10;
 

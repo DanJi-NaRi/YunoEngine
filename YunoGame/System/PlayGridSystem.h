@@ -205,6 +205,7 @@ private:
     void ClearTileState();
  
 private:
+    bool m_delayFlag = true; //YDM
     // 기물 및 타일 관련 변수
     float m_wy;                                             // 기물의 world y
 
@@ -275,6 +276,7 @@ private:
 
     bool isRoundOver = false;
     bool isProcessing = false;
+    bool m_firstDelay = false;
     float m_pktTime = 0;
     float m_currTime = 0;
 

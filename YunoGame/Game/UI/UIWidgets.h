@@ -28,6 +28,7 @@ Gauge, // ProgressBar의 확정 자식
 #include "PhasePanel.h"
 #include "CardSelectionPanel.h"
 #include "CardConfirmPanel.h"
+#include "AddCardPanel.h"
 #include "UserImage.h"
 #include "PlayerIcon.h"
 #include "TitleImage.h"

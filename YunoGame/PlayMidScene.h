@@ -7,6 +7,7 @@
 
 class TextureImage;
 class AddCardPanel;
+class SpriteSheet;
 
 enum class PlayMidUIState
 {
@@ -15,6 +16,7 @@ enum class PlayMidUIState
     RevealCard,
     Warning,
     AddCardSelect,
+    CoinToss,
     Finished
 };
 
@@ -49,7 +51,7 @@ private:
     void CreateRevealCardUI();
     void CreateWarningUI();
     void CreateAddCardSelectUI();
-
+    void CreateCoinTossUI();
     // 상태
     void ChangeUIState(PlayMidUIState state);
     void Clear();
@@ -62,6 +64,8 @@ private:
     void RevealSingleCard(const BattleResult& br, GameManager& gm);
     void ResetAllCardsToBack();
     void UpdateWarning(float dt);
+    void UpdateCoinToss(float dt);
+    bool TryHandleCoinToss(GameManager& gm);
 private:
     PlayMidScene_InputContext m_uiCtx;
     PlayMidUIState m_uiState = PlayMidUIState::Main;
@@ -70,8 +74,9 @@ private:
     float m_phaseTimer = 0.f;
     float m_revealTimer = 0.f;
     float m_postRevealTimer = 0.f;
-    float m_postRevealDelay = 4.0f;
-    float m_revealInterval = 5.0f; // 5.0초마다 한 장
+    float m_postRevealDelay = 8.0f;
+    float m_nextRevealDelay = 0.f; // 다음 오픈까지 남은 시간
+    bool m_waitingNextReveal = false; // 대기중 여부
     bool  m_roundNoticeShown = false; // 라운드 시작 알림 한번만
 
     float ClientW = 0.f;
@@ -94,8 +99,20 @@ private:
     float m_warningDuration = 2.5f;
 
     float m_warningScrollSpeed = 400.f;   // 초당 이동 속도
-    float m_warningStartX = -500.f;       // 시작 위치
+    float m_warningStartX = -300.f;       // 시작 위치
     float m_warningEndX = 2500.f;         // 화면 밖 오른쪽
+
+    SpriteSheet* m_coin = nullptr;
+
+    int coin = 0;
+
+    int m_coinPairIndex = 0;
+    float m_coinTimer = 0.f;
+    float m_coinDuration = 2.0f;
+    bool  m_coinPlaying = false;
+
+    bool m_isRevealInitialized = false;
+    bool m_coinHandledThisStep = false;
 
     TextureImage* m_leftBG = nullptr;
     TextureImage* m_rightBG = nullptr;

@@ -504,7 +504,15 @@ void PlayGridSystem::CheckPacket(float dt)
     {
         const auto pckt = mng.PopBattlePacket();
         isProcessing = true;
-        m_pktTime = pckt.actionTime / 1000.f; //임의값 넣어둠
+
+        if (static_cast<int>(pckt.isCoinTossUsed) > 0 && m_delayFlag)
+            m_pktTime = (pckt.actionTime  + 500 + 4500) / 1000.f; //임의값 넣어둠
+        else if(m_delayFlag)
+            m_pktTime = (pckt.actionTime + 500) / 1000.f;
+        else if(static_cast<int>(pckt.isCoinTossUsed) > 0)
+            m_pktTime = (pckt.actionTime + 4500) / 1000.f;
+        else
+            m_pktTime = (pckt.actionTime) / 1000.f;
 
         const auto runTimeCardID = pckt.runTimeCardID;
         const auto dir = pckt.dir;
@@ -516,8 +524,6 @@ void PlayGridSystem::CheckPacket(float dt)
         // runtimeCardID로 CardManager에서 카드 정보 얻어옴
         // 서버 쪽에서 패킷 시간 계산 로직 끝나면 지워야함
         const auto& cardData = mng.GetCardData(runTimeCardID);
-
-
 
         const int effectID = cardData.m_effectId;
         const int soundID = cardData.m_soundId;
@@ -539,6 +545,7 @@ void PlayGridSystem::CheckPacket(float dt)
     // 장애물까지 발동하고 CheckOver
     if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing)
     {
+        m_delayFlag = false;
         const auto obstaclePkt = mng.PopObstaclePacket();
         if (isRoundOver) return;    // 라운드 종료 시 해당 장애물은 패킷 버리기
         m_pktTime = obstaclePktDuration;

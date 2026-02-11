@@ -6,6 +6,7 @@
 class SceneChangeButton;
 class OptionButton;
 class PopButton;
+class VolumePanel;
 
 enum class OptionUIState
 {
@@ -51,7 +52,7 @@ private:
     OptionButton* m_creditBtn = nullptr;
 
     // Volume
-    std::array<Widget*, 3> m_volumePanels{ nullptr, nullptr, nullptr };
+    std::array<VolumePanel*, 3> m_volumePanels{ nullptr, nullptr, nullptr };
     //std::array<Widget*, 1> m_volumePanels{ nullptr};
     Widget* m_volumeRoot = nullptr;
 
