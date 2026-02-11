@@ -37,10 +37,14 @@ protected:
 
     void UpdateWData(float dTime);
 
+    void ResetRound();
+
 private:
     PlayHUD_InputContext m_uiContext;
 
-    int curRount = 1;
+    bool isRoundReset = false;
+
+    int curRound = 0;
 
     Widget* m_pTurn = nullptr;    // 1의 자리수
     Widget* m_pTurn10 = nullptr;  // 10의 자리수

@@ -154,6 +154,7 @@ enum class DepthPreset : uint8_t
 enum class FontID : uint8_t
 {
     Default = 0,
+    Number = 1,
 
 
     Count
