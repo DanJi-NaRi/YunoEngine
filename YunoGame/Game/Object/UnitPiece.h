@@ -37,13 +37,11 @@ public:
     bool Submit(float dTime = 0) override;
 
 private:
-    bool CreateMesh() override;      // 메시 생성 (한 번만)
-    bool CreateMaterial() override;  // 머테리얼 생성 (한 번만)
-
     bool CheckDead(float dt);
     void CheckMyQ();
 
     bool UpdateMatrix();
+    void UpdateOffset();
     void UpdateRot(float dt);
     void UpdateMove(float dt);
     void UpdateFlash(float dt);
@@ -69,8 +67,8 @@ public:
 
 private:
     void PlayMove();
-    void PlayRollBack(float seconds = 0);
-    void PlayRoll(float seconds);
+    void PlayRollBack();
+    void PlayRoll();
     void PlayAttack();
     void PlayHit();
     void PlayDead(float disappearDisolveDuration);
