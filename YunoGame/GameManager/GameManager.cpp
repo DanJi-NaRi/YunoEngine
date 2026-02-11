@@ -9,6 +9,7 @@
 #include "TitleScene.h"
 #include "WeaponSelectScene.h"
 #include "PlayScene.h"
+#include "PlayHUDScene.h"
 #include "PhaseScene.h"
 #include "StandByScene.h"
 #include "CountdownScene.h"
@@ -354,6 +355,12 @@ void GameManager::SetSceneState(CurrentSceneState state)
         opt.immediate = true;
 
         sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+
+        ScenePolicy sp;
+        sp.blockInputBelow = false;
+        sp.blockRenderBelow = false;
+
+        sm->RequestPush(std::make_unique<PlayHUDScene>(), sp, opt);
 
         SetSceneState(CurrentSceneState::SubmitCard);
         break;

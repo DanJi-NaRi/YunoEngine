@@ -146,16 +146,10 @@ public:
     // 패널 사용 게터
     std::vector<Wdata>& GetWeapons() { return m_weapons; }
 
-    // Card managers
-    CardManager& GetCardBasicManager() { return m_cardBasicMng; }
-    CardRangeManager& GetCardRangeManager() { return m_cardRangeMng; }
 
     // Picks
     PieceType& GetMyPick(size_t idx) { return m_myPick[idx]; } // idx: 0~1
 
-    // Hands
-    std::array<UnitHand, 2>& GetMyHands() { return m_myHands; }
-    std::array<UnitHand, 2>& GetEnemyHands() { return m_enemyHands; }
 
     //승리플레이어 세터게터
     void SetWinnerPID(int pid) { m_winnerPID = pid; };
