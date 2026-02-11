@@ -141,6 +141,24 @@ public:
     bool IsBattleOngoing() const { return m_isBattleOngoing; }
     void SetBattleOngoing(bool v) { m_isBattleOngoing = v; }
 
+    // 패널 사용 게터
+    std::vector<Wdata>& GetWeapons() { return m_weapons; }
+
+    // Card managers
+    CardManager& GetCardBasicManager() { return m_cardBasicMng; }
+    CardRangeManager& GetCardRangeManager() { return m_cardRangeMng; }
+
+    // Picks
+    PieceType& GetMyPick(size_t idx) { return m_myPick[idx]; } // idx: 0~1
+
+    // Hands
+    std::array<UnitHand, 2>& GetMyHands() { return m_myHands; }
+    std::array<UnitHand, 2>& GetEnemyHands() { return m_enemyHands; }
+
+    //승리플레이어 세터게터
+    void SetWinnerPID(int pid) { m_winnerPID = pid; };
+    int  GetWinnerPID() const { return m_winnerPID; };
+
 private:
     static GameManager* s_instance;
 
@@ -158,6 +176,8 @@ private:
 
     //클라에서 전투중인지 확인
     bool m_isBattleOngoing = false;
+
+    int m_winnerPID = 0;// 승리 플레이어
 
     bool m_isReady = false;
     bool m_p1Ready = false;

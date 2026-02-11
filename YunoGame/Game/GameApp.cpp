@@ -138,7 +138,7 @@ void GameApp::OnUpdate(float dt)
 
     if (input && sm)
     {
-        if (input->IsKeyPressed(VK_F1))
+        if (input->IsKeyPressed(VK_F1)) //이건 플레이씬으로 옮길것
         {
             IScene* active = sm->GetActiveScene();
             if (!active)
@@ -151,6 +151,18 @@ void GameApp::OnUpdate(float dt)
             GameManager::Get().SetSceneState(CurrentSceneState::EscScene);
         }
 
+        if (input->IsKeyPressed(VK_F2)) //이건 테스트용
+        {
+            IScene* active = sm->GetActiveScene();
+            if (!active)
+                return;
+
+            // 이미 ResultScene 씬이면 무시
+            if (strcmp(active->GetDebugName(), "ResultScene") == 0)
+                return;
+
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+        }
         //if (input->IsKeyPressed(VK_F2))
         //{
         //    SceneTransitionOptions opt{};

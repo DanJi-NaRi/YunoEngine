@@ -15,7 +15,7 @@
 #include "OptionScene.h"
 #include "GuideScene.h"
 #include "EscScene.h"
-
+#include "ResultScene.h"
 #include "YunoClientNetwork.h"
 
 #include "utilityClass.h"
@@ -259,6 +259,18 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockInputBelow = true;
 
         sm->RequestPush(std::make_unique<EscScene>(), sp);
+
+        break;
+    }
+    case CurrentSceneState::ResultScene:
+    {
+
+        ScenePolicy sp;
+        sp.blockRenderBelow = false;
+        sp.blockUpdateBelow = true;
+        sp.blockInputBelow = true;
+
+        sm->RequestPush(std::make_unique<ResultScene>(), sp);
 
         break;
     }

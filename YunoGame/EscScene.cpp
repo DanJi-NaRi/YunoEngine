@@ -71,7 +71,6 @@ void EscScene::CreateMainUI()
 
             m_checkPanel->Show();
         });
-    // --------------------------------------Leave 버튼 끝--------------------------------------
 
      //--------------------------------------Guide 버튼 시작--------------------------------------
     m_guideBtn = CreateWidget<OptionButton>(
@@ -90,7 +89,6 @@ void EscScene::CreateMainUI()
         {
             GameManager::Get().SetSceneState(CurrentSceneState::Guide);
         });
-    //--------------------------------------Guide 버튼 끝--------------------------------------
 
     //--------------------------------------Option 버튼 시작--------------------------------------
     m_optionBtn = CreateWidget<OptionButton>(
@@ -109,7 +107,6 @@ void EscScene::CreateMainUI()
         {
             GameManager::Get().SetSceneState(CurrentSceneState::Option);
         });
-    //--------------------------------------Option 버튼 끝--------------------------------------
     
      //--------------------------------------Surrender 버튼 시작--------------------------------------
     m_surrenderBtn = CreateWidget<OptionButton>(
@@ -142,7 +139,6 @@ void EscScene::CreateMainUI()
 
             m_checkPanel->Show();
         });
-    //--------------------------------------Surrender 버튼 끝--------------------------------------
     
     //--------------------------------------Back 버튼 시작--------------------------------------
     m_backBtn = CreateWidget<PopButton>(
@@ -155,7 +151,6 @@ void EscScene::CreateMainUI()
         L"../Assets/UI/PLAY/back_mouseout.png",
         L"../Assets/UI/PLAY/back_mouseover.png"
     );
-    //--------------------------------------Back 버튼 끝--------------------------------------
 }
 
 void EscScene::CreateCheckUI()

@@ -26,7 +26,7 @@ namespace yuno::server
         void OnPlayerSelectedCard(int playerIdx);
         void ResetMatchState();
 
-        void EndGameByDisconnect(uint8_t winnerPID);
+        void EndGameByDisconnect(uint8_t winnerPID, uint32_t winnerSessionId);
 
         
         bool GetRoundStarted() { return m_roundStarted; }
