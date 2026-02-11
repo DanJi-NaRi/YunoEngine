@@ -358,38 +358,6 @@ void PlayScene::RegisterEffect()
     m_effectManager->RegisterEffect(ed);
 }
 
-void PlayScene::MoveCamera(float dt)
-{
-    if (!isCamMove)
-        return;
-
-    auto& cam = YunoEngine::GetRenderer()->GetCamera();
-
-    m_curMoveTime += dt;
-
-    float t = m_curMoveTime / m_CamMoveTime;
-
-    XMVECTOR curpos = XMLoadFloat3(&m_CurCamPos);
-    XMVECTOR nextpos = XMLoadFloat3(&m_NextCamPos);
-
-    XMVECTOR newpos;
-    if (t < 1.0f)
-    {
-        newpos = XMVectorLerp(curpos, nextpos, t);
-        XMStoreFloat3(&cam.position, newpos);
-    }
-    else
-    {
-        newpos = nextpos;
-        XMStoreFloat3(&cam.position, newpos);
-
-        XMStoreFloat3(&m_NextCamPos, curpos);
-        XMStoreFloat3(&m_CurCamPos, newpos);
-
-        isCamMove = false;
-    }
-}
-
 void PlayScene::OnDestroyScene()
 {
     //std::cout << "[PlayScene] OnDestroy\n";
@@ -556,6 +524,39 @@ void PlayScene::OnExit()
     YunoEngine::GetInput()->RemoveContext(&m_gameCtx);
 }
 
+
+void PlayScene::MoveCamera(float dt)
+{
+    if (!isCamMove)
+        return;
+
+    auto& cam = YunoEngine::GetRenderer()->GetCamera();
+
+    m_curMoveTime += dt;
+
+    float t = m_curMoveTime / m_CamMoveTime;
+
+    XMVECTOR curpos = XMLoadFloat3(&m_CurCamPos);
+    XMVECTOR nextpos = XMLoadFloat3(&m_NextCamPos);
+
+    XMVECTOR newpos;
+    if (t < 1.0f)
+    {
+        newpos = XMVectorLerp(curpos, nextpos, t);
+        XMStoreFloat3(&cam.position, newpos);
+    }
+    else
+    {
+        newpos = nextpos;
+        XMStoreFloat3(&cam.position, newpos);
+
+        XMStoreFloat3(&m_NextCamPos, curpos);
+        XMStoreFloat3(&m_CurCamPos, newpos);
+
+        m_curMoveTime = 0.0f;
+        isCamMove = false;
+    }
+}
 
 
 void PlayScene::Update(float dt)
