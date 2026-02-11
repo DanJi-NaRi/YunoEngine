@@ -30,6 +30,8 @@ CardConfirmPanel::~CardConfirmPanel()
 void CardConfirmPanel::Clear()
 {
     m_openSlot = 0;
+    m_confirmReady = false;
+    m_dirChoice = false;
     m_pMinimap = nullptr;
 }
 
@@ -146,47 +148,24 @@ void CardConfirmPanel::UpdateCardSlot()
 {
 
     assert(m_pMinimap); // 미니맵 할당되어야 함
-    const int size = m_setCardSlots.size();
+    const int size = static_cast<int>(m_setCardSlots.size());
 
-    if (m_openSlot >= size) return;
+    if (m_openSlot < 0 || m_openSlot >= size)
+        return;
 
     CardConfirmArea* currentSlot = m_setCardSlots[m_openSlot];
-    if (!currentSlot) return;
+    if (!currentSlot)
+        return;
 
-    if (!currentSlot->GetCard()) return; // 현재 슬롯이 비어있으면 넘김
+    if (!currentSlot->GetCard())
+        return; // 현재 슬롯이 비어있으면 넘김
 
     if (!m_dirChoice)
     {
         currentSlot->SetIsEnabled(false);
         m_dirChoice = true;
-
-        m_pMinimap->StartDirChoice(currentSlot); // 미니맵 클릭 활성화
-    }
-    else {
-
-        if (m_setCardSlots[m_openSlot]->GetDirection() != Direction::None) { // 선택이 완료되면 Dir이 바뀔것임
-
-            //디버깅 코드
-            switch (m_setCardSlots[m_openSlot]->GetDirection())
-            {
-            case Direction::Left:  std::cout << "Left selected" << std::endl;  break;
-            case Direction::Right: std::cout << "Right selected" << std::endl; break;
-            case Direction::Up:    std::cout << "Up selected" << std::endl;    break;
-            case Direction::Down:  std::cout << "Down selected" << std::endl;  break;
-            }
-
-
-            // 방향 선택 되면
-            const int next = m_openSlot + 1;
-            if (next >= size) { // 마지막까지 도달
-                m_openSlot = size;
-                m_confirmReady = true;
-                return;
-            }
-            m_openSlot = next;
-            m_setCardSlots[m_openSlot]->SetIsEnabled(true);
-            m_dirChoice = false; // dirChoice 상태 초기화
-        }
+        m_pMinimap->StartDirChoice(currentSlot);
+        return;
     }
 
 
@@ -342,6 +321,11 @@ void CardConfirmPanel::SubmitCurrentSelection()
     if (m_openSlot < static_cast<int>(m_setCardSlots.size()))
     {
         m_setCardSlots[m_openSlot]->SetIsEnabled(true);
+        m_confirmReady = false;
+    }
+    else
+    {
+        m_confirmReady = true;
     }
 }
 
