@@ -482,22 +482,6 @@ void PlayScene::OnExit()
     YunoEngine::GetInput()->RemoveContext(&m_gameCtx);
 }
 
-void PlayScene::ShowEmoteImage(uint8_t pid, uint8_t emoteId)
-{
-    std::cout << "[PlayScene] ShowEmoteImage pid=" << int(pid)
-        << " emoteId=" << int(emoteId) << "\n";
-
-    auto* emoji = CreateWidget<Emoji>(
-        L"Emoji",
-        Float2{ 64, 64 },
-        (pid == 1) ? XMFLOAT3{ 300, 200, 0 } : XMFLOAT3{ 800, 200, 0 }
-    );
-
-    emoji->SetLayer(WidgetLayer::HUD);
-    emoji->ChangeMaterial(emoteId);
-    m_emojis.push_back({ emoji, 2.0f });
-}
-
 
 
 void PlayScene::Update(float dt)
@@ -507,28 +491,6 @@ void PlayScene::Update(float dt)
     TestInput();
 
     m_playGrid->Update(dt);
-
-    PendingEmote emote;
-    while (GameManager::Get().PopEmote(emote))
-    {
-        ShowEmoteImage(emote.pid, emote.emoteId);
-    }
-    //이모지 수명 관리
-    for (auto it = m_emojis.begin(); it != m_emojis.end(); )
-    {
-        it->remainTime -= dt;
-
-        if (it->remainTime <= 0.f)
-        {
-            // UI 매니저에서 제거
-            m_uiManager->DestroyWidget(it->widget->GetID());
-            it = m_emojis.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
 }
 
 void PlayScene::SubmitObj()

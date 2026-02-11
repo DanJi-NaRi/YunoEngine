@@ -25,6 +25,7 @@ bool GuideScene::OnCreateScene()
     CreateCardTypeUI();
     CreateTurnUI();
     CreateCoinTossUI();
+    CreateRegistrationUI();
 
     ChangeUIState(GuideUIState::Main);
 
@@ -107,6 +108,22 @@ void GuideScene::CreateMainUI()
             ChangeUIState(GuideUIState::CoinToss);
         });
 
+    m_registrationBtn = CreateWidget<OptionButton>(
+        L"RegistrationBtn",
+        Float2(208.5f, 45),
+        makePos(4),
+        UIDirection::Center
+    );
+    m_registrationBtn->SetHoverTexture(
+        L"../Assets/UI/TITLE/guide_cardinventory_mouseout.png",
+        L"../Assets/UI/TITLE/guide_cardinventory_mouseover.png"
+    );
+    m_registrationBtn->SetOnClick([this]()
+        {
+            std::cout << "test";
+            ChangeUIState(GuideUIState::Registration);
+        });
+
     //Back//TODO::위치
     m_backBtn = CreateWidget<PopButton>(
         L"BackBtn",
@@ -164,12 +181,24 @@ void GuideScene::CreateCoinTossUI()
     m_coinTossRoot->SetVisible(Visibility::Hidden);
 }
 
+void GuideScene::CreateRegistrationUI()
+{
+    m_registrationRoot = CreateWidget<TextureImage>(
+        L"RegistrationPanel",
+        L"../Assets/UI/TITLE/guide_cardinventory.png",
+        XMFLOAT3(ClientW / 2, ClientH / 2 - 10, 0),
+        UIDirection::Center
+    );
+    m_registrationRoot->SetVisible(Visibility::Hidden);
+}
+
 void GuideScene::ClearSelection()
 {
     m_keywordBtn->SetSelected(false);
     m_cardTypeBtn->SetSelected(false);
     m_turnBtn->SetSelected(false);
     m_coinTossBtn->SetSelected(false);
+    m_registrationBtn->SetSelected(false);
 }
 
 void GuideScene::ClearRoot()
@@ -178,6 +207,7 @@ void GuideScene::ClearRoot()
     m_cardTypeRoot->SetVisible(Visibility::Hidden);
     m_turnRoot->SetVisible(Visibility::Hidden);
     m_coinTossRoot->SetVisible(Visibility::Hidden);
+    m_registrationRoot->SetVisible(Visibility::Hidden);
 }
 
 void GuideScene::ChangeUIState(GuideUIState state)
@@ -194,6 +224,7 @@ void GuideScene::ChangeUIState(GuideUIState state)
         m_cardTypeBtn->SetVisible(Visibility::Visible);
         m_turnBtn->SetVisible(Visibility::Visible);
         m_coinTossBtn->SetVisible(Visibility::Visible);
+        m_registrationBtn->SetVisible(Visibility::Visible);
         m_keywordRoot->SetVisible(Visibility::Visible);
         m_keywordBtn->SetSelected(true);
         break;
@@ -216,6 +247,11 @@ void GuideScene::ChangeUIState(GuideUIState state)
     case GuideUIState::CoinToss:
         m_coinTossBtn->SetSelected(true);
         m_coinTossRoot->SetVisible(Visibility::Visible);
+        break;
+
+    case GuideUIState::Registration:
+        m_registrationBtn->SetSelected(true);
+        m_registrationRoot->SetVisible(Visibility::Visible);
         break;
     }
 }

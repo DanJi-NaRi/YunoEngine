@@ -14,6 +14,7 @@
 #include "Title.h"
 #include "TitleScene.h"
 #include "PlayScene.h"
+#include "PlayHUDScene.h"
 #include "UIScene.h"
 #include "PhaseScene.h"
 #include "WeaponSelectScene.h"
@@ -68,7 +69,9 @@ bool GameApp::OnInit()
    //sm->RequestReplaceRoot(std::make_unique<RenderTest>(), opt);  // 본인이 작업중인 씬으로 넣으면 됨
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
-   sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
+   //sm->RequestReplaceRoot(std::make_unique<Title>(), opt); 
+   sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+   sm->RequestPush(std::make_unique<PlayHUDScene>());
    //sm->RequestReplaceRoot(std::make_unique<PhaseScene>(), opt);
 
 
@@ -135,7 +138,7 @@ void GameApp::OnUpdate(float dt)
 
     if (input && sm)
     {
-        if (input->IsKeyPressed(VK_F1))
+        if (input->IsKeyPressed(VK_F1)) //이건 플레이씬으로 옮길것
         {
             IScene* active = sm->GetActiveScene();
             if (!active)
@@ -148,6 +151,18 @@ void GameApp::OnUpdate(float dt)
             GameManager::Get().SetSceneState(CurrentSceneState::EscScene);
         }
 
+        if (input->IsKeyPressed(VK_F2)) //이건 테스트용
+        {
+            IScene* active = sm->GetActiveScene();
+            if (!active)
+                return;
+
+            // 이미 ResultScene 씬이면 무시
+            if (strcmp(active->GetDebugName(), "ResultScene") == 0)
+                return;
+
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+        }
         //if (input->IsKeyPressed(VK_F2))
         //{
         //    SceneTransitionOptions opt{};
