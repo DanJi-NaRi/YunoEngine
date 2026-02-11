@@ -45,6 +45,8 @@ enum class EffectID : uint32_t
     ChakramAttack02_2,
     ChakramAttackEnemy02_1,
     ChakramAttackEnemy02_2,
+    FloorWarning1,
+    FloorWarning2,
 
     Count
 };

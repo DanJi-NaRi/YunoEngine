@@ -316,6 +316,30 @@ void PlayScene::RegisterEffect()
     ed.id = EffectID::ChakramAttackEnemy02_2;
     ed.color = { 1, 0, 0, 1 };
     m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::FloorWarning1;
+    ed.framecount = 120;
+    ed.lifetime = 0.4f;
+    ed.cols = 12;
+    ed.rows = 10;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { XMConvertToRadians(90), 0, 0 };
+    ed.emissive = 30.0f;
+    ed.color = { 1, 1, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_1.png";
+    m_effectManager->RegisterEffect(ed);
+
+    ed.id = EffectID::FloorWarning2;
+    ed.framecount = 30;
+    ed.lifetime = 0.4f;
+    ed.cols = 5;
+    ed.rows = 6;
+    ed.billboard = BillboardMode::None;
+    ed.rot = { XMConvertToRadians(90), 0, 0 };
+    ed.emissive = 30.0f;
+    ed.color = { 1, 1, 0, 1 };
+    ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_2.png";
+    m_effectManager->RegisterEffect(ed);
 }
 
 void PlayScene::OnDestroyScene()

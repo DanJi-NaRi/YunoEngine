@@ -358,21 +358,28 @@ void UnitTile::PlayTrigger(ObstacleType obstacleType, Float4 color, int count, f
 {
     SetFlashColor(color, count, blinkTime);
 
-    if (!m_animator)
-        return;
-
-    isTriggering = true;
-
     switch (obstacleType)
     {
     case ObstacleType::Vertical_Razer:
+    {
+        auto eff = m_pEffectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 2.38f }, { 1.f, 1.f, 1.f }, { 0, 1, 0 });
+        if (eff == nullptr)  return;
+        Attach(eff);
+        break;
+    }
     case ObstacleType::Horizon_Razer:
     {
         // 이펙트 넣기
+        auto eff = m_pEffectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 0.f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
+        if (eff == nullptr)  return;
+        Attach(eff);
         break;
     }
     case ObstacleType::Collapse:
     {
+        if (!m_animator)
+            return;
+
         bool isChanged = m_animator->Change("crash", 0);
         if (isChanged)
             m_animator->SetLoop("crash", false);
@@ -381,7 +388,7 @@ void UnitTile::PlayTrigger(ObstacleType obstacleType, Float4 color, int count, f
         break;
     }
     }
-
+    isTriggering = true;
     m_state = obstacleType;
 }
 

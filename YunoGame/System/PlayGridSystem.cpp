@@ -158,6 +158,10 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
         m_gridBox->Attach(pTile);
     }
 
+    // 장애물 경고 이펙트 생성
+
+
+
     // 기물 생성
     const auto wData = GameManager::Get().GetWeaponData();
     GameManager::Get().ResetWeaponData();
@@ -437,6 +441,7 @@ void PlayGridSystem::CheckMyQ()
             {
                 m_manager->DestroyObject(effectId);
             }
+            pieceInfo.effectIds.clear();
 
             m_pieces.erase(it);
 
@@ -846,7 +851,17 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
         }
         if (!os.phaseStarted)    break;
         
-        // 타일
+        // 경고 이펙트 제거
+        for (const auto& tileID : os.hitTileIDs)
+        {
+            if (m_tiles[tileID].effectIDs.size() == 0) continue;
+            for (auto effectID : m_tiles[tileID].effectIDs)
+            {
+                m_manager->DestroyObject(effectID);
+            }
+            m_tiles[tileID].effectIDs.clear();
+        }
+
         for (const auto& tileID : os.hitTileIDs)
         {
             auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
@@ -909,6 +924,41 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
         {
             auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
             pTile->PlayWarning(os.attackType, os.warnColor, os.warnFlashCount, os.warnFlashInterval);
+
+            EffectDesc ed{};
+            ed.id = EffectID::FloorWarning1;
+            ed.shaderid = ShaderId::EffectBase;
+            ed.billboard = BillboardMode::None;
+            ed.lifetime = 5.f;
+            ed.framecount = 120;
+            ed.cols = 12;
+            ed.rows = 10;
+            ed.emissive = 1.0f;
+            ed.color = XMFLOAT4{ 1, 1, 0, 1 };
+            ed.rot = { XMConvertToRadians(90.f), 0, 0 };
+            ed.isLoop = true;
+            ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_1.png";
+            if (os.attackType != ObstacleType::Collapse)
+            {
+                m_effectManager->RegisterEffect(ed);
+                auto pEffect1 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning1", XMFLOAT3(0, 0.01f, 0));
+                pEffect1->BuildInternalEffectMaterial(ed);
+                pTile->Attach(pEffect1);
+                m_tiles[tileID].effectIDs.push_back(pEffect1->GetID());
+            }
+
+            ed.id = EffectID::FloorWarning2;
+            ed.framecount = 30;
+            ed.lifetime = 0.4f;
+            ed.cols = 5;
+            ed.rows = 6;
+            ed.rot = { -XMConvertToRadians(90.f), 0, 0};
+            ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_2.png";
+            m_effectManager->RegisterEffect(ed);
+            auto pEffect2 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning2", XMFLOAT3(0, 0.01f, 0));
+            pEffect2->BuildInternalEffectMaterial(ed);
+            pTile->Attach(pEffect2);
+            m_tiles[tileID].effectIDs.push_back(pEffect2->GetID());
         }
 
         std::cout << "[PlayGridSystem] Warning Next Obstacle\n";
