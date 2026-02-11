@@ -336,7 +336,7 @@ namespace UI
         ImGui::SameLine();
 
         const float width = ImGui::CalcItemWidth();
-        ImGui::PushMultiItemsWidths(3, width);
+        ImGui::PushMultiItemsWidths(2, width);
 
         // ===== X (Red) =====
         ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 80, 80, 255));
