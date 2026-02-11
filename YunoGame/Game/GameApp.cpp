@@ -19,6 +19,7 @@
 #include "PhaseScene.h"
 #include "WeaponSelectScene.h"
 #include "RenderTest.h"
+#include "PlayMidScene.h"
 
 #include "AudioQueue.h"
 #include "PlayQueue.h"

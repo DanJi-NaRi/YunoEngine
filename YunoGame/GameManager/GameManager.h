@@ -156,6 +156,17 @@ public:
     void SetWinnerPID(int pid) { m_winnerPID = pid; };
     int  GetWinnerPID() const { return m_winnerPID; };
 
+    int GetCurrentRound() const { return m_currentRound; }
+    void IncreaseRound() { ++m_currentRound; }
+    void ResetRound() { m_currentRound = 0; }
+
+    void RequestRevealStart() { m_shouldStartReveal = true; }
+    bool ConsumeRevealStart()
+    {
+        if (!m_shouldStartReveal) return false;
+        m_shouldStartReveal = false;
+        return true;
+    }
 private:
     static GameManager* s_instance;
 
@@ -167,6 +178,8 @@ private:
     PieceType m_myPick[2] = { PieceType::None, PieceType::None };
     PieceType m_lastPickedPiece = PieceType::None;
 
+    int m_currentRound = 0;
+    bool m_shouldStartReveal = false;
 
     int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽
     int m_matchPlayerCount = 0;
@@ -223,6 +236,7 @@ public:
 private:
 
     std::queue<BattleResult> m_turnPkts;
+    std::queue<BattleResult> m_revealBuffer;
     std::queue<ObstacleResult> m_obstaclePkts;
 
     Minimap* m_pMinimap = nullptr; // 미니맵
@@ -246,9 +260,11 @@ private:
 
 public:
     void PushBattlePacket(const BattleResult _BattleResult);
+    void PushRevealPacket(const BattleResult _BattleResult);
     BattleResult PopBattlePacket();
+    BattleResult PopRevealPacket();
     bool IsEmptyBattlePacket();
-
+    bool IsEmptyRevealQueue();
     void PushObstaclePacket(const ObstacleResult& obstacleResult);
     ObstacleResult PopObstaclePacket();
     bool IsEmptyObstaclePacket();
