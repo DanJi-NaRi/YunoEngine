@@ -276,7 +276,7 @@ void PlayHUDScene::Update(float dt)
     if (!GameManager::Get().IsBattleOngoing())
         ResetRound();
 
-    if((scenestate != CurrentSceneState::SubmitCard) && (scenestate != CurrentSceneState::BattleStandBy))
+    //if((scenestate != CurrentSceneState::SubmitCard) && (scenestate != CurrentSceneState::BattleStandBy))
         UpdateWData(dt);
 
     PendingEmote emote;
