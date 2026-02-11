@@ -201,7 +201,7 @@ bool UnitTile::Update(float dTime)
     if (isTriggering)
     {
         bool isPlaying = m_animator->isPlaying();
-        if (!isPlaying && m_state != ObstacleType::Collapse && !isFlashing)
+        if (!isPlaying && !isCollapsed && !isFlashing)
         {
             m_animator->Change("idle");
             m_animator->SetLoop("idle", true);
@@ -214,7 +214,7 @@ bool UnitTile::Update(float dTime)
     if (isWarning)
     {
         bool isPlaying = m_animator->isPlaying();
-        if (!isPlaying && !isFlashing)
+        if (!isPlaying && !isFlashing && !isCollapsed)
         {
             // +경고 표시 이펙트 해제하기
             m_animator->Change("idle");
@@ -326,7 +326,7 @@ void UnitTile::SetFlashColor(Float4 color, int count, float blinkTime)
 
 void UnitTile::PlayWarning(ObstacleType obstacleType, Float4 color, int count, float blinkTime)
 {
-    //SetFlashColor(color, count, blinkTime);
+    SetFlashColor(color, count, blinkTime);
 
     if (!m_animator || m_state == ObstacleType::Collapse)
         return;
@@ -356,7 +356,7 @@ void UnitTile::PlayWarning(ObstacleType obstacleType, Float4 color, int count, f
 
 void UnitTile::PlayTrigger(ObstacleType obstacleType, Float4 color, int count, float blinkTime)
 {
-    //SetFlashColor(color, count, blinkTime);
+    SetFlashColor(color, count, blinkTime);
 
     if (!m_animator)
         return;
@@ -377,6 +377,7 @@ void UnitTile::PlayTrigger(ObstacleType obstacleType, Float4 color, int count, f
         if (isChanged)
             m_animator->SetLoop("crash", false);
         m_animator->Play();
+        isCollapsed = true;
         break;
     }
     }

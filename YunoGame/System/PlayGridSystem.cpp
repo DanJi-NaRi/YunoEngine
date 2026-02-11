@@ -212,8 +212,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      {
          pPiece = m_manager->CreateObject<UnitPiece>(
              L"Weapon", XMFLOAT3(px, m_wy, pz));
-         pPiece->SetMoveRotOffset(0, 0);
-         pPiece->SetIgnoreRot(true);
+         //pPiece->SetMoveRotOffset(0, 0);
+         //pPiece->SetIgnoreRot(true);
 
          auto pChakram1 = m_manager->CreateObjectFromFile<UnitPiece>(
              L"Chakram1", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram01.fbx", po);
@@ -221,15 +221,19 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram1->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_01.fbx");
          pChakram1->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Chakram_move_01.fbx");
          pChakram1->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Chakram_dead_01.fbx");
+         pChakram1->AddAnimationClip("deadF", L"../Assets/fbx/Animation/dead/flip/Chakram_dead_flip_01.fbx");
          pChakram1->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Chakram_hit_01.fbx");
+         pChakram1->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/flip/Chakram_hit_flip_01.fbx");
          pChakram1->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pChakram1->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram1->AppearDissolve(appearDisolveDuration);
-         pChakram1->SetWho(gp, team, w.weaponId, 1);
+         pChakram1->SetWho(gp, team, w.pId, w.weaponId, 1);
          pChakram1->SetDir(dir, false);
-         //pChakram1->SetMoveRotOffset(0, 0);
+         pChakram1->SetMoveRotOffset(0, 0);
+         pChakram1->SetIgnoreRot(true);
 
          pPiece->Attach(pChakram1);
+         pPiece->AddLinkedSubPiece(pChakram1);
 
          auto pChakram2 = m_manager->CreateObjectFromFile<UnitPiece>(
              L"Chakram2", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Chakram/Chakram02.fbx", po);
@@ -237,15 +241,19 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram2->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Chakram_attack_02.fbx");
          pChakram2->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Chakram_move_02.fbx");
          pChakram2->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Chakram_dead_02.fbx");
+         pChakram2->AddAnimationClip("deadF", L"../Assets/fbx/Animation/dead/flip/Chakram_dead_flip_02.fbx");
          pChakram2->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Chakram_hit_02.fbx");
+         pChakram2->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/flip/Chakram_hit_flip_02.fbx");
          pChakram2->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pChakram2->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pChakram2->AppearDissolve(appearDisolveDuration);
-         pChakram2->SetWho(gp, team, w.weaponId, 2);
+         pChakram2->SetWho(gp, team, w.pId, w.weaponId, 2);
          pChakram2->SetDir(dir, false);
-         //pChakram2->SetMoveRotOffset(0, 0);
+         pChakram2->SetMoveRotOffset(0, 0);
+         pChakram2->SetIgnoreRot(true);
 
          pPiece->Attach(pChakram2);
+         pPiece->AddLinkedSubPiece(pChakram2);
 
          pieceInfo = PieceInfo{ pPiece->GetID(), dir, team };
          pieceInfo.subIds.push_back(pChakram1->GetID());
@@ -275,7 +283,9 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Blaster_attack.fbx");
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Blaster_move.fbx");
          pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Blaster_dead.fbx");
+         pPiece->AddAnimationClip("deadF", L"../Assets/fbx/Animation/dead/flip/Blaster_dead_flip.fbx");
          pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Blaster_hit.fbx");
+         pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/flip/Blaster_hit_flip.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
 
@@ -285,7 +295,9 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Breacher_attack.fbx");
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Breacher_move.fbx");
          pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Breacher_dead.fbx");
+         pPiece->AddAnimationClip("deadF", L"../Assets/fbx/Animation/dead/Breacher_dead.fbx");
          pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Breacher_hit.fbx");
+         pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/Breacher_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pPiece->SetScale(XMFLOAT3(2, 2, 2));
@@ -296,7 +308,9 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/scythe_attack.fbx");
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/scythe_move.fbx");
          pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Scythe_dead.fbx");
+         pPiece->AddAnimationClip("deadF", L"../Assets/fbx/Animation/dead/flip/Scythe_dead_flip.fbx");
          pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Scythe_hit.fbx");
+         pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/flip/Scythe_hit_flip.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
@@ -305,7 +319,9 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Impactor_attack.fbx");
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Impactor_move.fbx");
          pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Impactor_dead.fbx");
+         pPiece->AddAnimationClip("deadF", L"../Assets/fbx/Animation/dead/flip/Impactor_dead_flip.fbx");
          pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Impactor_hit.fbx");
+         pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/flip/Impactor_hit_flip.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
@@ -314,17 +330,19 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Cleaver_attack.fbx");
          pPiece->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Cleaver_move.fbx");
          pPiece->AddAnimationClip("dead", L"../Assets/fbx/Animation/dead/Cleaver_dead.fbx");
+         pPiece->AddAnimationClip("deadF", L"../Assets/fbx/Animation/dead/flip/Cleaver_dead_flip.fbx");
          pPiece->AddAnimationClip("hit", L"../Assets/fbx/Animation/hit/Cleaver_hit.fbx");
+         pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/flip/Cleaver_hit_flip.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          break;
      }
-     pPiece->SetWho(gp, team, w.weaponId);
+     pPiece->SetWho(gp, team, w.pId, w.weaponId);
      pPiece->SetDir(dir, false);
 
      // 기물 따라다니는 바닥 이펙트
      EffectDesc ed{};
-     ed.id = (pieceInfo.team == Team::Ally) ? EffectID::PeacePosAlly : EffectID::PeacePosEnemy;
+     ed.id = (w.pId == 1) ? EffectID::PeacePosAlly : EffectID::PeacePosEnemy;
      ed.shaderid = ShaderId::EffectBase;
      ed.billboard = BillboardMode::None;
      ed.lifetime = 1.5f;
@@ -332,10 +350,10 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      ed.cols = 8;
      ed.rows = 8;
      ed.emissive = 30.0f;
-     ed.color = (pieceInfo.team == Team::Ally)? XMFLOAT4{ 0, 0, 1, 1 } : XMFLOAT4{ 1, 0, 0, 1 };
+     ed.color = (w.pId == 1)? XMFLOAT4{ 0, 0, 1, 1 } : XMFLOAT4{ 1, 0, 0, 1 };
      ed.rot = { XM_PIDIV2, 0, 0 };
      ed.isLoop = true;
-     ed.texPath = (pieceInfo.team == Team::Ally) ? L"../Assets/Effects/Pos/EF_Player_Blue.png" : L"../Assets/Effects/Pos/EF_Player_Red.png";
+     ed.texPath = (w.pId == 1) ? L"../Assets/Effects/Pos/EF_Player_Blue.png" : L"../Assets/Effects/Pos/EF_Player_Red.png";
      m_effectManager->RegisterEffect(ed);
      auto pEffect = m_manager->CreateObject<EffectUnit>(L"PeacePosAlly", XMFLOAT3(0, 0.01f, 0));
      pEffect->BuildInternalEffectMaterial(ed);
@@ -576,14 +594,14 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
 
 
         pPiece->SetDir(as.dir, true, attackRotDuration);
-        for (uint32_t subId : pieceInfo.subIds)
-        {
-            auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
-            if (pSubPiece != nullptr)
-            {
-                pSubPiece->SetDir(as.dir, true, attackRotDuration);
-            }
-        }
+        //for (uint32_t subId : pieceInfo.subIds)
+        //{
+        //    auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
+        //    if (pSubPiece != nullptr)
+        //    {
+        //        pSubPiece->SetDir(as.dir, true, attackRotDuration);
+        //    }
+        //}
 
         const auto& tiles = as.tileIDs;
         for (int i = 0; i < tiles.size(); i++)
@@ -624,16 +642,20 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             break;
         }
 
-        if(pieceInfo.subIds.size() == 0)    // 서브 유닛이 없는 경우에만
-            pPiece->InsertQ({ CommandType::Attack });
-        for (uint32_t subId : pieceInfo.subIds)
-        {
-            auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
-            if (pSubPiece != nullptr)
-            {
-                pSubPiece->InsertQ({ CommandType::Attack });
-            }
-        }
+        pPiece->InsertQ({ CommandType::Attack });
+
+        //if(pieceInfo.subIds.size() == 0)    // 서브 유닛이 없는 경우에만
+        //    pPiece->InsertQ({ CommandType::Attack });
+        //else
+        //    pPiece->InsertQ({ CommandType::Attack });
+        //for (uint32_t subId : pieceInfo.subIds)
+        //{
+        //    auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
+        //    if (pSubPiece != nullptr)
+        //    {
+        //        pSubPiece->InsertQ({ CommandType::Attack });
+        //    }
+        //}
         as.phaseStarted = false;
         
         std::cout << "[Attack Sequence]\nAttacker hp: " << static_cast<int>(m_UnitStates[GetUnitID(as.attacker)].hp) << std::endl;
@@ -1179,6 +1201,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
 
     // 아이디로 오브젝트 포인터 받아오기
     UnitPiece* pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
+    if (pPiece == nullptr) return;
 
     // 기존 타일과 이동할 타일의 상태
     const TileOccupy oldTo = GetTileTO(oldcell.x, oldcell.y);
@@ -1192,11 +1215,9 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
     //auto moveDir = Get8Dir(oldcell.x, oldcell.y, newcell.x, newcell.y);             // 진입 방향
     auto [colW, colC] = GetCollisionPos(moveDir, newcell.x, newcell.y);
 
-    // 
     auto [wx, wz] = m_grids[(int)m_nowG]->CellToWorld(newcell.x, newcell.y);
 
     TileWho who = static_cast<TileWho>(pieceType);
-    
 
     if (to.occuType == TileOccuType::Collapesed)       // 없어진 자리
     {
@@ -1226,12 +1247,6 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
             pPiece->InsertQ(PlayGridQ::Move_P(colW.x, m_wy, colW.y));       // 충돌 위치까지 이동 후
             pPiece->InsertQ(PlayGridQ::MoveHit_P(existWho, amIdead, disappearDisolveDuration));                                 // 이동하는 애 죽었는지 부딪힌 애 죽었는지
             pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));            // 제자리로 돌아감
-            for (auto& subID : pieceInfo.subIds)
-            {
-                auto sub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subID));
-                if (sub == nullptr) continue;
-                sub->InsertQ(PlayGridQ::Rot_P(fdir));
-            }
         }
         else                                                // 아군과 충돌
         {
@@ -1241,12 +1256,6 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
             pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
             pPiece->InsertQ(PlayGridQ::Move_P(colW.x, m_wy, colW.y));
             pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));
-            for (auto& subID : pieceInfo.subIds)
-            {
-                auto sub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subID));
-                if (sub == nullptr) continue;
-                sub->InsertQ(PlayGridQ::Rot_P(fdir));
-            }
         }
     }
     else                                                                                // 비어있는 자리
