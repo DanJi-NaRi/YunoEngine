@@ -59,6 +59,8 @@ protected:
     Unit* m_Parent;
     std::unordered_map<uint32_t, Unit*> m_Childs;
 
+    bool Enable = true;
+
 protected:
     IRenderer* m_pRenderer = nullptr;
     ITextureManager* m_pTextures = nullptr;
@@ -133,6 +135,16 @@ public:
 
     void SetMeshPath(const std::wstring& meshpath) { m_meshpath = meshpath; }
     virtual UnitDesc GetDesc();
+
+    bool IsEnabled() const { return Enable; }
+    void SetEnable(bool enabled);
+    void SetEnable() { SetEnable(true); }
+    void SetDisable() { SetEnable(false); }
+
+protected:
+    virtual void OnEnableChanged(bool enabled) {}
+
+public:
 
 #ifdef _DEBUG
     virtual void Serialize(); //나중에 상속해서 새로운 오브젝트 만들 때 임구이에 띄우고 싶은거있으면 이 함수 오버라이드하면됌

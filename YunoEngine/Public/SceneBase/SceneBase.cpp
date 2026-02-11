@@ -142,6 +142,71 @@ SceneDesc SceneBase::BuildSceneDesc()
     return sd;
 }
 
+bool SceneBase::OverlaySceneFromFile(const std::wstring& filepath, const RuntimeSceneOverlayOptions& options)
+{
+    SceneDesc sd;
+    if (!LoadSceneFromFile(filepath, sd))
+        return false;
+
+    if (options.applyCamera)
+    {
+        auto& camera = YunoEngine::GetRenderer()->GetCamera();
+        camera.position = ToXM(sd.camera.position);
+        camera.target = ToXM(sd.camera.lookAt);
+        camera.up = ToXM(sd.camera.up);
+        camera.nearZ = sd.camera.nearZ;
+        camera.farZ = sd.camera.farZ;
+        camera.SetOrthoFlag(sd.camera.useOrtho);
+        camera.SetFovYRadians(sd.camera.fovYRadians);
+    }
+
+    if (options.applyPostProcess)
+    {
+        YunoEngine::GetRenderer()->SetPostProcessOption(sd.postprocess);
+    }
+
+    if (options.replaceObjects)
+    {
+        m_objectManager->Clear();
+        m_objectManager->Init();
+        m_objectManager->SetEffectManager(m_effectManager.get());
+
+        for (const auto& unit : sd.units)
+            m_objectManager->CreateObjectFromDesc(unit);
+
+        m_objectManager->ProcessPending();
+
+        if (options.applyLights)
+        {
+            if (sd.dirLight)
+                m_objectManager->CreateDirLightFromDesc(*sd.dirLight);
+
+            for (const auto& pointLight : sd.pointLights)
+                m_objectManager->CreatePointLightFromDesc(pointLight);
+        }
+    }
+    else
+    {
+        m_objectManager->ProcessPending();
+        m_objectManager->ApplyUnitFromDesc(sd.units);
+
+        if (options.applyLights)
+        {
+            if (sd.dirLight)
+                m_objectManager->ApplyDirLightFromDesc(*sd.dirLight);
+            m_objectManager->ApplyPointLightsFromDesc(sd.pointLights);
+        }
+    }
+
+    if (options.applyWidgets)
+    {
+        m_uiManager->ProcessPending();
+        m_uiManager->ApplyWidgetFromDesc(sd.widgets);
+    }
+
+    return true;
+}
+
 // 삭제
 void SceneBase::OnDestroy()
 {
@@ -270,22 +335,16 @@ void SceneBase::DrawObjectList()
         if (!m_uiManager)
             return;
 
-        const uint32_t widgetcount = m_uiManager->GetWidgetCount();
-
         auto& widgetlist = m_uiManager->GetWidgetlist();
 
         for (auto [id, widget] : widgetlist)
         {
             Widget* obj = widget;
 
-            bool selected = false; //  EditorState에서 가져오게 될 것
+            if (obj->GetParent())
+                continue;
 
-            std::string name = WStringToString(obj->GetName());
-
-            if (UI::Selectable(name.c_str(), selected))
-            {
-                SelectWidget(obj);
-            }
+            DrawWidgetNode(obj);
         }
     }
 

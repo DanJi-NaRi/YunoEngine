@@ -57,7 +57,21 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
 
 void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
 {
-    m_uiWeapons = wdatas;
+
+    for (int i = 0; i < 3; i+=2) 
+    {
+        if ((i / 2)+1 == m_PID)     // 내가 1P임
+        {
+            m_myUIWeapons[0] = wdatas[i];
+            m_myUIWeapons[1] = wdatas[i+1];
+        }
+        else                        // 내가 2P임 
+        {
+            m_enemyUIWeapons[0] = wdatas[i];
+            m_enemyUIWeapons[1] = wdatas[i + 1];
+        }
+        std::cout << std::endl;
+    }
 }
 
 
@@ -274,7 +288,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::Guide:
     {
-        //m_state = CurrentSceneState::Guide; TODO::이거 이상해요
 
         ScenePolicy sp;
         sp.blockRenderBelow = false;
@@ -352,7 +365,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
 
-        sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+        //sm->RequestPush(std::make_unique<PhaseScene>(), sp);
 
         break;
     }

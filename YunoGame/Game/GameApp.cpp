@@ -14,6 +14,7 @@
 #include "Title.h"
 #include "TitleScene.h"
 #include "PlayScene.h"
+#include "PlayHUDScene.h"
 #include "UIScene.h"
 #include "PhaseScene.h"
 #include "WeaponSelectScene.h"
@@ -68,8 +69,11 @@ bool GameApp::OnInit()
    //sm->RequestReplaceRoot(std::make_unique<RenderTest>(), opt);  // 본인이 작업중인 씬으로 넣으면 됨
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
-   sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
+   //sm->RequestReplaceRoot(std::make_unique<Title>(), opt); 
+   sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+   sm->RequestPush(std::make_unique<PlayHUDScene>());
    //sm->RequestReplaceRoot(std::make_unique<PhaseScene>(), opt);
+
 
 
 
@@ -80,8 +84,6 @@ bool GameApp::OnInit()
     m_clientNet.Start("127.0.0.1", 9000);
 
     m_clientNet.RegisterMatchPacketHandler();
-
-
 
     return true;
 }

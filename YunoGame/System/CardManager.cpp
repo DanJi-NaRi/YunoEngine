@@ -82,7 +82,7 @@ bool CardManager::LoadFromCSV(const std::string& path)
         // 최소 컬럼 수 방어
         if (cols.size() < 17)
             continue;
-
+    
         // -------------------------
         // CardData
         // -------------------------

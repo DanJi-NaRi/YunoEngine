@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <limits>
+#include <unordered_set>
 
 #include "TurnManager.h"
 #include "MatchManager.h"
@@ -189,10 +190,44 @@ namespace yuno::server
         for (int slot = 0; slot < 2; ++slot)
         {
             int localIndex = 0;
+            std::unordered_set<uint32_t> usedRuntimeIds;
+            auto& handCards = g_battleState.players[slot].handCards;
 
             for (const CardPlayCommand& cmd : m_turnCards[slot]) // 플레이어가 제출한 카드들
             {
                 uint32_t runtimeId = cmd.runtimeID;
+
+                                if (!usedRuntimeIds.insert(runtimeId).second)
+                {
+                    std::cout
+                        << "[Server] INVALID TURN: duplicated runtimeId in same turn"
+                        << " slot=" << slot
+                        << " runtimeId=" << runtimeId
+                        << "\n";
+                    ClearTurn();
+                    return;
+                }
+
+                const auto handIt = std::find_if(
+                    handCards.begin(),
+                    handCards.end(),
+                    [&](const auto& c)
+                    {
+                        return c.runtimeID == runtimeId;
+                    });
+
+                if (handIt == handCards.end())
+                {
+                    std::cout
+                        << "[Server] INVALID TURN: runtimeId not in player hand"
+                        << " slot=" << slot
+                        << " runtimeId=" << runtimeId
+                        << "\n";
+                    ClearTurn();
+                    return;
+                }
+
+
                 uint32_t dataId = m_runtime.GetDataID(runtimeId); // 런타임ID >> 데이터ID로 변경
                 const CardData& card = m_cardDB.GetCardData(dataId); // 데이터ID로 카드DB에서 카드 데이터 가져옴
 
@@ -426,11 +461,13 @@ namespace yuno::server
                 return false;
             };
 
-        auto addClamp = [](auto& value, int delta)
+        auto addClamp = [](auto& value, int delta, int maxLimit = -1)
             {
                 using T = std::decay_t<decltype(value)>;
                 int v = static_cast<int>(value) + delta;
-                int maxValue = static_cast<int>(std::numeric_limits<T>::max());
+                int maxValue = maxLimit >= 0
+                    ? maxLimit
+                    : static_cast<int>(std::numeric_limits<T>::max());
                 if (v < 0) v = 0;
                 if (v > maxValue) v = maxValue;
                 value = static_cast<T>(v);
@@ -577,10 +614,33 @@ namespace yuno::server
                 return eventOccurred;
             };
 
+            auto consumeCardIfNeeded = [&](const ResolvedCard& card)
+                {
+                    const CardData& cardData = m_cardDB.GetCardData(card.dataId);
+                    if (cardData.m_useId != 1)
+                        return;
+
+                    auto& handCards = g_battleState.players[card.ownerSlot].handCards;
+                    auto handIt = std::find_if(
+                        handCards.begin(),
+                        handCards.end(),
+                        [&](const auto& c)
+                        {
+                            return c.runtimeID == card.runtimeId;
+                        });
+
+                    if (handIt == handCards.end())
+                        return;
+
+                    handCards.erase(handIt);
+                    m_runtime.RemoveCard(card.runtimeId);
+                };
+
         auto applyCard = [&](const ResolvedCard& card)
             {
 				static int count = 0;
 
+                consumeCardIfNeeded(card);
 
                 const CardData& cardData = m_cardDB.GetCardData(card.dataId);
                 int unitIndex = getUnitIndexForCard(card.ownerSlot, cardData);
@@ -668,7 +728,7 @@ namespace yuno::server
                         if (effectData->m_staminaRecover != 0)
                         {
                             std::cout << "--Stamana Recovery--" << std::endl;
-                            addClamp(unit.stamina, effectData->m_staminaRecover);
+                            addClamp(unit.stamina, effectData->m_staminaRecover, static_cast<int>(unit.maxStamina));
                         }
                         if (effectData->m_giveDamageBonus != 0)
                         {
@@ -1000,6 +1060,7 @@ namespace yuno::server
 
                 ObstacleState state{};
                 state.obstacleID = static_cast<uint8_t>(obstacle->obstacleType);
+                state.actionTime = 11250;       // ms임 -> 11.25초
                 state.tileIDs.reserve(obstacle->tileIds.size());
                 for (int tileId : obstacle->tileIds)
                 {

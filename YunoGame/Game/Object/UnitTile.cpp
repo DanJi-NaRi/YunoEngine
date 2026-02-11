@@ -5,6 +5,7 @@
 
 #include "ObjectTypeRegistry.h"
 #include "ObjectManager.h"
+#include "EffectManager.h"
 
 //오브젝트 타입.h
 
