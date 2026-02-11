@@ -41,5 +41,6 @@ struct TileState
 {
     TileOccupy to;
     TileEvent te;
+    std::vector<uint32_t> effectIDs;
     TileState() : to(TileOccupy{}), te(TileEvent::None) {}
 };

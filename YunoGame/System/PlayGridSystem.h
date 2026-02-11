@@ -72,6 +72,7 @@ inline void operator++(UtilityPhase& a) { a = (UtilityPhase)((uint8_t)a + 1); }
 struct MoveInfo
 {
     Dirty_US dirty = Dirty_US::None;
+    UnitState prevState{};
     const std::array<UnitState, 4> snapshot;
     int mainUnit = -1;
     Direction dir = Direction::None;
@@ -169,6 +170,7 @@ private:
     void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, uint32_t runCardID, Direction dir);
     bool ApplyBuffChanges(int mainUnit, const CardEffectData*& buffData);
     bool ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir);
+    bool ApplyMoveChanges(Dirty_US dirty, const UnitState& prevUnitState, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir);
     bool ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
     bool ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit,
         const std::vector<RangeOffset>& ranges, Direction dir, const CardEffectData*& buffData, int snapNum);

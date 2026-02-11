@@ -224,6 +224,9 @@ void Unit::SetOpacity(const float opacity)
 
 void Unit::Attach(Unit* obj) //this가 부모, 파라미터로 자식
 {
+    if (obj == nullptr)
+        return;
+
     if (obj->m_Parent)//기존 부모있으면 떨어진 후 결합
         obj->DettachParent();
 
