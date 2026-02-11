@@ -544,10 +544,10 @@ void PlayGridSystem::CheckPacket(float dt)
             // ui weapon data에 현 유닛 상태 반영
             ReflectWeaponData();
             // 라운드 끝났는지 체크
-
+            CheckOver();
         }
     }
-    CheckOver();
+
 }
 
 
