@@ -257,6 +257,9 @@ void GameManager::Init()
 
 void GameManager::Shutdown()
 {
+    std::cout << "=================================" << std::endl;
+    std::cout << "==========GameManager Die========" << std::endl;
+    std::cout << "=================================" << std::endl;
     assert(s_instance);
     s_instance = nullptr;
 }
@@ -444,6 +447,13 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::SubmitCard:
     {
+        if(m_state== CurrentSceneState::AutoBattle)
+        {
+            // AutoBattle에서 SubmitCard로 올 때는 PhaseScene을 pop해야 함
+            SceneTransitionOptions opt{};
+            opt.immediate = true;
+            sm->RequestPop(opt);
+        }
         m_state = CurrentSceneState::SubmitCard;
         ScenePolicy sp;
         sp.blockRenderBelow = false;

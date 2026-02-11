@@ -497,16 +497,18 @@ namespace yuno::game
                 std::cout << "[Client] TurnNumber = "
                     << static_cast<int>(pkt.turnNumber) << "\n";
 
+                auto& gm = GameManager::Get();
+
                 if(pkt.turnNumber == 1)
-                    GameManager::Get().IncreaseRound();
+                    gm.IncreaseRound();
 
                 std::vector<yuno::net::packets::CardSpawnInfo> added;
                 added.push_back(pkt.addedCards[0]);
                 added.push_back(pkt.addedCards[1]);
 
-                GameManager::Get().AddCards(added);
-                GameManager::Get().ClearDrawCandidates();
-                GameManager::Get().ClearCardQueue();
+                gm.AddCards(added);
+                gm.ClearDrawCandidates();
+                gm.ClearCardQueue();
 
                 for (int i = 0; i < 2; ++i)
                 {
@@ -522,6 +524,8 @@ namespace yuno::game
                 }
 
                 std::cout << "[Client] ======================\n";
+                if(gm.GetSceneState() == CurrentSceneState::AutoBattle)
+                    gm.SetSceneState(CurrentSceneState::SubmitCard);
             }
         );// S2C_StartTurn Packet End
 
