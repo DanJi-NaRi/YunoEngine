@@ -72,7 +72,7 @@ bool GameApp::OnInit()
    //sm->RequestReplaceRoot(std::make_unique<Title>(), opt); 
    {
        sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
-       sm->RequestPush(std::make_unique<PlayHUDScene>());
+       //sm->RequestPush(std::make_unique<PlayHUDScene>());
    }
    //sm->RequestReplaceRoot(std::make_unique<PhaseScene>(), opt);
 
@@ -101,7 +101,7 @@ void GameApp::OnUpdate(float dt)
     acc += dt;
     ++frameCount;
 
-    CameraMove(dt);
+    //CameraMove(dt);
 
     // MSAA 변경되는지 테스트
     //static float test = 0.0f;
