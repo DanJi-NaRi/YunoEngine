@@ -124,6 +124,7 @@ enum class WidgetLayer : int {
     Background,
     HUD,
     Panels,
+    Card,
     Popups,
     Modal,    // 입력 차단
     Tooltip,  
@@ -341,7 +342,9 @@ public:
     void          SetSize(Float2 size)          { m_size = size; m_transformDirty = true; }
     void          SetPos(XMFLOAT3 vPos)         { m_vPos = vPos; m_transformDirty = true; }
     void          SetPosBK(XMFLOAT3 vPosBk)     { m_vPosBk = vPosBk; }
-    void          SetRot(XMFLOAT3 vRot)         { m_vRot = vRot; m_transformDirty = true; }
+    void          SetRot(XMFLOAT3 vRot);        // vRot: degree 기준
+    void          SetRotRadian(XMFLOAT3 vRot)   { m_vRot = vRot; m_transformDirty = true; }
+    void          SetRotZ(float rot)            { m_vRot.z = XMConvertToRadians(rot); m_transformDirty = true; }
     void          SetRotBK(XMFLOAT3 vRotBk)     { m_vRotBk = vRotBk; }
     void          SetScale(XMFLOAT3 vScale)     { m_vScale = vScale; m_transformDirty = true;}
     void          SetScaleBK(XMFLOAT3 vScaleBk) { m_vScaleBk = vScaleBk; }
@@ -357,6 +360,8 @@ public:
     void          UpdateEffectiveVisibility();
     void          MirrorScaleX() { m_vScale.x *= -1; m_mirrorX = !m_mirrorX; }
     void          MirrorScaleY() { m_vScale.y *= -1; m_mirrorY = !m_mirrorY; }
+    void          MirrorReset();
+
 
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }

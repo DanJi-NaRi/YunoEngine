@@ -17,6 +17,7 @@ Card::~Card()
 
 void Card::Clear()
 {
+    m_slotID = 0;
 }
 
 bool Card::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
@@ -24,6 +25,8 @@ bool Card::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3
     Button::Create(name, id, sizePx, vPos, rotZ, vScale);
     m_pDrag = std::make_unique<DragProvider>(); // 드래그 기능 사용
     if (!m_pDrag) return false;
+
+    SetLayer(WidgetLayer::Card);
 
     m_pDrag->Init(&m_vPos, true, &m_uiFactory,this);
     return true;

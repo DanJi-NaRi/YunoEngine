@@ -11,6 +11,8 @@
 
 // 카드도 Button 상속해서 쓰게 하면 될 듯??
 
+const std::wstring g_notUsePath = L"00000";
+
 class DragProvider;
 
 enum class ButtonState : int { Idle, Hovered, Pressed, Down, Released, Count };
@@ -31,6 +33,7 @@ public:
     const std::wstring& GetHoveredTexturePath() { return m_hoverdTexturePath; }
 
     void SetHoverTexture(std::wstring idlePath, std::wstring hoverdPath);
+    void ResetHoverTexture(std::wstring idlePath);
 
     void SetIdleTexture(std::wstring path);
     void SetHoverdTexture(std::wstring path);
@@ -68,19 +71,26 @@ public:
     void        SetUseHoverEvent(bool use) { m_useHoverEvent = use; }
     bool        IsUseHoverEvent() { return m_useHoverEvent; }
     
+    void        SetUseLMB(bool use) { m_useLMB = use; }
+    bool        IsUseLMB() { return m_useLMB; }
 
+    void        SetUseRMB(bool use) { m_useRMB = use; }
+    bool        IsUseRMB() { return m_useRMB; }
 
     void        Clear();
+
 protected:
     // 버튼 상태 : 대기/커서입력/눌림 (standby/CursorOn/Push)
     ButtonState m_btnState;							//UI버튼별 상태 저장.
     uint32_t m_bindkey = 0;
     std::unique_ptr<DragProvider> m_pDrag = nullptr; // 드래그 기능 공급자. 기본은 null이니 파생해서 초기화 때 채워줄 것.
 
-    std::wstring m_hoverdTexturePath = L"000000"; // 커서를 올렸을 때, 바뀌는 텍스처
-    std::wstring m_PressedTexturePath = L"000000"; // 클릭했을 때, 바뀌는 텍스처 // 사용 안 함
+    std::wstring m_hoverdTexturePath = g_notUsePath; // 커서를 올렸을 때, 바뀌는 텍스처
+    std::wstring m_PressedTexturePath = g_notUsePath; // 클릭했을 때, 바뀌는 텍스처 // 사용 안 함
     bool m_useHoverPath = false;
     bool m_useHoverEvent = true;
+    bool m_useLMB = true;
+    bool m_useRMB = true;
 
     std::function<void()> m_eventLMB = nullptr; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용
     std::function<void()> m_eventRMB = nullptr; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용

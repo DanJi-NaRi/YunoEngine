@@ -17,6 +17,8 @@
 #include "GuideScene.h"
 #include "EscScene.h"
 #include "ResultScene.h"
+#include "PlayMidScene.h"
+
 #include "YunoClientNetwork.h"
 
 #include "utilityClass.h"
@@ -43,6 +45,21 @@ bool GameManager::IsEmptyWeaponData()
     return m_weapons.empty();
 }
 
+int GameManager::GetMaxStaminaByWeaponId(int weaponId)
+{
+    switch (weaponId)
+    {
+    case 1: return 120; // Blaster
+    case 2: return 110; // Chakram
+    case 3: return 100; // Breacher
+    case 4: return 100; // Scythe
+    case 5: return 80;  // Impactor
+    case 6: return 90;  // Cleaver
+    default: return 100;
+    }
+}
+
+
 void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, int _stamina, int _currentTile)
 {
     Wdata data;
@@ -51,6 +68,7 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
     data.weaponId = _weaponId;
     data.hp = _hp;
     data.stamina = _stamina;
+    data.maxStamina = GetMaxStaminaByWeaponId(_weaponId);
     data.currentTile = _currentTile;
 
     m_weapons.push_back(data);
@@ -65,11 +83,15 @@ void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
         {
             m_myUIWeapons[0] = wdatas[i];
             m_myUIWeapons[1] = wdatas[i+1];
+            m_myUIWeapons[0].maxStamina = GetMaxStaminaByWeaponId(m_myUIWeapons[0].weaponId);
+            m_myUIWeapons[1].maxStamina = GetMaxStaminaByWeaponId(m_myUIWeapons[1].weaponId);
         }
         else                        // 내가 2P임 
         {
             m_enemyUIWeapons[0] = wdatas[i];
             m_enemyUIWeapons[1] = wdatas[i + 1];
+            m_enemyUIWeapons[0].maxStamina = GetMaxStaminaByWeaponId(m_enemyUIWeapons[0].weaponId);
+            m_enemyUIWeapons[1].maxStamina = GetMaxStaminaByWeaponId(m_enemyUIWeapons[1].weaponId);
         }
         std::cout << std::endl;
     }
@@ -92,6 +114,12 @@ void GameManager::PushBattlePacket(const BattleResult _BattleResult)
     std::cout << "Battle Packet is inserted into Queue.\n";
 }
 
+//UI용 복사본
+void GameManager::PushRevealPacket(const BattleResult _BattleResult)
+{
+    m_revealBuffer.push(_BattleResult);
+}
+
 BattleResult GameManager::PopBattlePacket()
 {
     BattleResult pckt = m_turnPkts.front();
@@ -100,9 +128,21 @@ BattleResult GameManager::PopBattlePacket()
     return pckt;
 }
 
+BattleResult GameManager::PopRevealPacket()
+{
+    BattleResult pckt = m_revealBuffer.front();
+    m_revealBuffer.pop();
+    return pckt;
+}
+
 bool GameManager::IsEmptyBattlePacket()
 {
     return m_turnPkts.empty();
+}
+
+bool GameManager::IsEmptyRevealQueue()
+{
+    return m_revealBuffer.empty();
 }
 
 
@@ -141,9 +181,11 @@ void GameManager::SetMinimap(Minimap* pMinimap)
     m_pMinimap = pMinimap;
 }
 
+
 void GameManager::SetUpPanels()
 {
-
+    //assert(m_pMinimap);
+    //if (m_pMinimap) m_pMinimap->SetupPanel();
 }
 
 void GameManager::UpdatePanels(const BattleResult& battleResult)
@@ -370,6 +412,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockRenderBelow = false;
 
         sm->RequestPush(std::make_unique<PlayHUDScene>(), sp, opt);
+        sm->RequestPush(std::make_unique<PlayMidScene>(), sp, opt);
 
         SetSceneState(CurrentSceneState::SubmitCard);
         break;
@@ -389,6 +432,15 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
         m_state = CurrentSceneState::BattleStandBy;
         // 여기에 뭐 대기중인 텍스쳐 띄워주는 씬 push 넣기
+        //SceneTransitionOptions opt{};
+        //opt.immediate = true;
+        //sm->RequestPop(opt);
+        //
+        //ScenePolicy sp;
+        //sp.blockRenderBelow = false;
+        //sp.blockUpdateBelow = false;
+        //sm->RequestPush(std::make_unique<StandByScene>(), sp);
+
         break;
     }
     case CurrentSceneState::AutoBattle:

@@ -379,8 +379,15 @@
     <ClCompile Include="ResultPanel.cpp">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClCompile>
+
     <ClCompile Include="EmoteButton.cpp">
       <Filter>Game\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayMidScene.cpp">
+      <Filter>Scenes\2.Play</Filter>
+    </ClCompile>
+    <ClCompile Include="AddCardPanel.cpp">
+      <Filter>Game\UI\Image\Panel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -652,12 +659,24 @@
     <ClInclude Include="ResultPanel.h">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClInclude>
+
     <ClInclude Include="EmoteButton.h">
       <Filter>Game\UI\Button</Filter>
     </ClInclude>
     <ClInclude Include="PlayHUD_InputContext.h">
       <Filter>System\UIContext</Filter>
     </ClInclude>
+
+    <ClInclude Include="PlayMidScene.h">
+      <Filter>Scenes\2.Play</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayMidScene_InputContext.h">
+      <Filter>System\UIContext</Filter>
+    </ClInclude>
+    <ClInclude Include="AddCardPanel.h">
+      <Filter>Game\UI\Image\Panel</Filter>
+    </ClInclude>
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

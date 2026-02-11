@@ -297,7 +297,14 @@ bool Widget::Start() {
     return true;
 }
 
+void Widget::SetRot(XMFLOAT3 vRot)   // vRot: degree
+{
+    m_vRot.x = XMConvertToRadians(vRot.x);
+    m_vRot.y = XMConvertToRadians(vRot.y);
+    m_vRot.z = XMConvertToRadians(vRot.z);
 
+    m_transformDirty = true;
+}
 
 bool Widget::UpdateTransform(float dTime)
 {
@@ -544,15 +551,27 @@ void Widget::UpdateRect()
 
 void Widget::UpdateRectWorld()
 {
-    const float ox = -m_pivot.x;
-    const float oy = -m_pivot.y;
+    //{
+    //    // 피벗 문제 오류 코드
+    //    const float ox = -m_pivot.x;
+    //    const float oy = -m_pivot.y;
 
+    //    const XMVECTOR localCorners[4] =
+    //    {
+    //        XMVectorSet(ox,     oy,     0.0f, 1.0f),
+    //        XMVectorSet(ox + 1, oy,     0.0f, 1.0f),
+    //        XMVectorSet(ox,     oy + 1, 0.0f, 1.0f),
+    //        XMVectorSet(ox + 1, oy + 1, 0.0f, 1.0f),
+    //    };
+    //}
+
+    // 피벗 문제 정상화 코드(윗내용 지우면 됨)
     const XMVECTOR localCorners[4] =
     {
-        XMVectorSet(ox,     oy,     0.0f, 1.0f),
-        XMVectorSet(ox + 1, oy,     0.0f, 1.0f),
-        XMVectorSet(ox,     oy + 1, 0.0f, 1.0f),
-        XMVectorSet(ox + 1, oy + 1, 0.0f, 1.0f),
+        XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
+        XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f),
+        XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f),
+        XMVectorSet(1.0f, 1.0f, 0.0f, 1.0f),
     };
 
     // 렌더/스냅/Rect와 동일한 월드(=WithSize)
@@ -619,6 +638,14 @@ void Widget::UpdateEffectiveVisibility()
         if (child)
             child->UpdateEffectiveVisibility();
     }
+}
+
+void Widget::MirrorReset()
+{
+    m_vScale.x = std::fabs(m_vScale.x);
+    m_vScale.y = std::fabs(m_vScale.y);
+    m_mirrorX = false;
+    m_mirrorY = false;
 }
 
 void Widget::SetVisible(Visibility visible)
