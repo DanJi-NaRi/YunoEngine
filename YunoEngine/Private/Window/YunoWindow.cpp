@@ -273,7 +273,6 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
     {
         if (IInput* input = YunoEngine::GetInput())
         {
-            std::cout << "Leave Client!!!!" << std::endl;
             InputEvent evt{};
             evt.type = InputEventType::MouseLeave;
             input->PushEvent(evt);

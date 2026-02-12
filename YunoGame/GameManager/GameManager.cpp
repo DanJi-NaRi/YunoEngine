@@ -83,6 +83,11 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
     data.currentTile = _currentTile;
 
     m_weapons.push_back(data);
+
+    if (m_weapons.size() >= 4)
+    {
+        SyncUIWeaponDataFromStoredWeapons();
+    }
 }
 
 void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
@@ -109,6 +114,44 @@ void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
 
     m_uiWeaponDataReady = true;
     ++m_uiWeaponDataVersion;
+}
+
+bool GameManager::BuildStoredWeaponArray(std::array<Wdata, 4>& out) const
+{
+    if (m_weapons.size() < out.size())
+        return false;
+
+    for (auto& d : out)
+        d = Wdata{};
+
+    for (const auto& w : m_weapons)
+    {
+        if (w.pId < 1 || w.pId > 2)
+            continue;
+        if (w.slotId < 1 || w.slotId > 2)
+            continue;
+
+        const int index = (w.pId - 1) * 2 + (w.slotId - 1);
+        out[index] = w;
+    }
+
+    for (const auto& d : out)
+    {
+        if (d.pId == 0 || d.slotId == 0)
+            return false;
+    }
+
+    return true;
+}
+
+bool GameManager::SyncUIWeaponDataFromStoredWeapons()
+{
+    std::array<Wdata, 4> roundStartWeapons{};
+    if (!BuildStoredWeaponArray(roundStartWeapons))
+        return false;
+
+    SetUIWeaponData(roundStartWeapons);
+    return true;
 }
 
 void GameManager::ClearUIWeaponDataState()
@@ -231,6 +274,11 @@ bool GameManager::IsRuntimeCardInConfirmSlots(uint32_t runtimeID) const
 
 void GameManager::UpdatePanels(const BattleResult& battleResult)
 {
+    if (m_state != CurrentSceneState::AutoBattle)
+    {
+        return;
+    }
+
     // 전투 시 실시간 갱신
     // PhaseScene 이 내려간 상태에서는 패널 포인터가 유효하지 않을 수 있으므로 보관.
     if (!m_pMinimap || !m_pSelectionPanel || !m_pConfirmPanel)
@@ -263,17 +311,19 @@ void GameManager::FlushPendingPanelUpdates()
 
     while (!m_pendingObstaclePanelUpdates.empty())
     {
-        const ObstacleResult obstacleResult = m_pendingObstaclePanelUpdates.front();
+
         m_pendingObstaclePanelUpdates.pop();
 
-        m_pMinimap->UpdatePanel(obstacleResult);
-        m_pSelectionPanel->UpdatePanel(obstacleResult);
-        m_pConfirmPanel->UpdatePanel(obstacleResult);
     }
 }
 
 void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
 {
+    if (m_state != CurrentSceneState::AutoBattle)
+    {
+        return;
+    }
+
     if (!m_pMinimap || !m_pSelectionPanel || !m_pConfirmPanel)
     {
         m_pendingObstaclePanelUpdates.push(obstacleResult);
@@ -533,7 +583,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         ResetTurn();
         SceneTransitionOptions opt{};
         opt.immediate = true;
-        ClearUIWeaponDataState();
+        //ClearUIWeaponDataState();
         sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
 
         ScenePolicy sp;
@@ -549,7 +599,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::SubmitCard:
     {
         SceneTransitionOptions opt{};
-        opt.immediate = false;
+        opt.immediate = true;
         if(m_state== CurrentSceneState::AutoBattle)
         {
             // AutoBattle에서 SubmitCard로 올 때는 PhaseScene을 pop해야 함
@@ -557,9 +607,12 @@ void GameManager::SetSceneState(CurrentSceneState state)
             sm->RequestPop(opt);
         }
         m_state = CurrentSceneState::SubmitCard;
+        SyncUIWeaponDataFromStoredWeapons();
+
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
+
 
         sm->RequestPush(std::make_unique<PhaseScene>(), sp, opt);
         FlushPendingPanelUpdates();

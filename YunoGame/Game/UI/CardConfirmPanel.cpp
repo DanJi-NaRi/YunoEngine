@@ -171,6 +171,36 @@ void CardConfirmPanel::UpdateCardSlot()
     if (runtimeID <= 0)
         return;
 
+    const int cardOwnerSlot = currentSlot->GetCardSlotID();
+    if (cardOwnerSlot < 0 || cardOwnerSlot >= static_cast<int>(m_player.weapons.size()) ||
+        m_player.weapons[cardOwnerSlot].hp <= 0)
+    {
+        currentSlot->CleanSetup();
+        RefreshSlotVisualState();
+        if (m_pSelectionPanel)
+            m_pSelectionPanel->RefreshCardVisualState();
+        return;
+    }
+
+    if (!m_hasSimulatedStamina)
+    {
+        SyncSimulatedStaminaFromPlayer();
+    }
+
+    if (!HasEnoughStaminaForCard(cardOwnerSlot, static_cast<uint32_t>(runtimeID)))
+    {
+        currentSlot->CleanSetup();
+        currentSlot->SetIsEnabled(true);
+        m_dirChoice = false;
+
+        if (m_pSelectionPanel)
+            m_pSelectionPanel->ClearSelectedCard();
+        RefreshSlotVisualState();
+        if (m_pSelectionPanel)
+            m_pSelectionPanel->RefreshCardVisualState();
+        return;
+    }
+
     const CardData cardData = m_gameManager.GetCardData(static_cast<uint32_t>(runtimeID));
     if (cardData.m_type == CardType::Buff)
     {
@@ -180,17 +210,6 @@ void CardConfirmPanel::UpdateCardSlot()
         }
 
         SubmitCurrentSelection();
-        return;
-    }
-
-    const int cardOwnerSlot = currentSlot->GetCardSlotID();
-    if (cardOwnerSlot < 0 || cardOwnerSlot >= static_cast<int>(m_player.weapons.size()) ||
-        m_player.weapons[cardOwnerSlot].hp <= 0)
-    {
-        currentSlot->CleanSetup();
-        RefreshSlotVisualState();
-        if (m_pSelectionPanel)
-            m_pSelectionPanel->RefreshCardVisualState();
         return;
     }
 

@@ -499,12 +499,22 @@ void PlayGridSystem::CheckPacket(float dt)
 {
     auto& mng = GameManager::Get();
     // 현재 씬이 '오토배틀'씬이 아니면 반환.
-    if (mng.GetSceneState() != CurrentSceneState::AutoBattle)    return;
+    //if (mng.GetSceneState() != CurrentSceneState::AutoBattle)    return;              // 일단 의심돼서 주석처리함
+    const bool isAutoBattleScene = (mng.GetSceneState() == CurrentSceneState::AutoBattle);
 
+    // 전투 패킷은 AutoBattle 씬에서만 처리.
+    // 단, 이미 처리 중인 연출/타이머가 있거나 장애물 패킷이 남아 있으면 씬 상태와 무관하게 이어서 처리한다.
+    const bool canProcessObstaclePacket =
+        !mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing;
+
+    if (!isAutoBattleScene && !isProcessing && !canProcessObstaclePacket)
+        return;
+
+    //-----
 
 
     // 게임 매니저에서 배틀 패킷 하나씩 받아옴
-    if (!mng.IsEmptyBattlePacket() && !isProcessing && mng.GetActionGuard() < 2)
+    if (isAutoBattleScene && !mng.IsEmptyBattlePacket() && !isProcessing && mng.GetActionGuard() < 2)
     {
         const auto pckt = mng.PopBattlePacket();
         isProcessing = true;

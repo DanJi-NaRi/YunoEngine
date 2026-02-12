@@ -309,6 +309,7 @@ public:
     }
 
     void SetUIWeaponData(const std::array<Wdata, 4>& wdatas);
+    bool SyncUIWeaponDataFromStoredWeapons();
     bool IsUIWeaponDataReady() const { return m_uiWeaponDataReady; }
     uint64_t GetUIWeaponDataVersion() const { return m_uiWeaponDataVersion; }
     void ClearUIWeaponDataState();
@@ -361,6 +362,9 @@ public:
     void FlushPendingPanelUpdates();
     bool IsRuntimeCardInConfirmSlots(uint32_t runtimeID) const;
     //void UpdateSelectionPanel(const UnitHand& playerInfo);
+    
+    private:
+        bool BuildStoredWeaponArray(std::array<Wdata, 4>& out) const;
 
     private:
         std::queue<BattleResult> m_pendingBattlePanelUpdates;
