@@ -269,15 +269,9 @@ void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
         return;
     }
 
-    while (!m_pendingBattlePanelUpdates.empty())
-    {
-        const BattleResult battleResult = m_pendingBattlePanelUpdates.front();
-        m_pendingBattlePanelUpdates.pop();
-
-        m_pMinimap->UpdatePanel(battleResult);
-        m_pSelectionPanel->UpdatePanel(battleResult);
-        m_pConfirmPanel->UpdatePanel(battleResult);
-    }
+    m_pMinimap->UpdatePanel(obstacleResult);
+    m_pSelectionPanel->UpdatePanel(obstacleResult);
+    m_pConfirmPanel->UpdatePanel(obstacleResult);
 }
 
 
