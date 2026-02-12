@@ -343,9 +343,9 @@ bool RenderTest::OnCreateScene()
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::Target;
-    ed.framecount = 30;
-    ed.lifetime = 1.2f;
-    ed.cols = 6;
+    ed.framecount = 25;
+    ed.lifetime = 0.9f;
+    ed.cols = 5;
     ed.rows = 5;
     ed.billboard = BillboardMode::None;
     ed.rot = { XM_PIDIV2, 0, 0 };

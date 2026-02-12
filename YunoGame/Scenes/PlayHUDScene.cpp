@@ -16,6 +16,7 @@
 #include "HealthBar.h"
 #include "StaminaBar.h"
 #include "EmoteButton.h"
+#include "SpriteSheet.h"
 
 
 bool PlayHUDScene::OnCreateScene()
@@ -72,7 +73,7 @@ bool PlayHUDScene::OnCreateScene()
     m_EmoteBubble2P->SetVisible(Visibility::Hidden);
 
     m_EmoteImage1P = CreateWidget<Emoji>(L"emote", Float2(80, 67), XMFLOAT3(7, 15, 0), UIDirection::Center);
-    m_EmoteImage1P->SetScale({-1, 1, 1});
+    m_EmoteImage1P->SetScale({ -1, 1, 1 });
     m_EmoteImage1P->SetVisible(Visibility::Hidden);
     m_EmoteImage1P->SetLayer(WidgetLayer::HUD);
     m_EmoteImage2P = CreateWidget<Emoji>(L"emote", Float2(80, 67), XMFLOAT3(7, 15, 0), UIDirection::Center);
@@ -104,7 +105,15 @@ bool PlayHUDScene::OnCreateScene()
         m_playerIcons[i]->Attach(stamina);
     }
 
+    m_SceneChange = CreateWidget<SpriteSheet>(L"scenechange", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::LeftTop);
+    m_SceneChange->SetSpriteSheet(L"../Assets/UI/PLAY/EF_Scene.png", 5, 5, 25, 24.0f, false);
+    m_SceneChange->Stop();
+    m_SceneChange->SetVisible(Visibility::Hidden);
+
     TryInitPlayerIconsFromWeaponData();
+
+    curRound = 1;
+    prevRound = 1;
 
     return true;
 }
@@ -218,6 +227,22 @@ void PlayHUDScene::UpdateWData(float dTime)
     auto& myWeapons = gm.GetMyUIWeapons();
     auto& enemyWeapons = gm.GetEnemyUIWeapons();
 
+    if (myWeapons[0].hp <= 0 && myWeapons[1].hp <= 0)
+    {
+        if (gm.GetPID() == 1)
+            m_1PAllDead = true;
+        else
+            m_2PAllDead = true;
+    }
+    
+    if (enemyWeapons[0].hp <= 0 && enemyWeapons[1].hp <= 0)
+    {
+        if (gm.GetPID() == 1)
+            m_2PAllDead = true;
+        else
+            m_1PAllDead = true;
+    }
+
     for (int i = 0; i < 2; ++i)
     {
         if (m_playerIcons[i] != nullptr)
@@ -250,21 +275,20 @@ void PlayHUDScene::UpdateWData(float dTime)
 
 bool PlayHUDScene::CheckRoundOver()
 {
-    int hp[4];
-    int i = 0;
-    for (auto* p : m_playerIcons)
-    {
-        hp[i] = p->GetIData().hp;
-        i++;
-    }
+    curRound = GameManager::Get().GetCurrentRound();
 
-    if ((hp[0] <= 0 && hp[1] <= 0) || (hp[2] <= 0 && hp[3] <= 0))
+    if (prevRound != curRound)
     {
         isRoundReset = false;
-        return true;
+        isChangeRound = true;
+
+        m_SceneChange->SetVisible(Visibility::Visible);
+        m_SceneChange->Play();
     }
+
+    prevRound = curRound;
         
-    return false;
+    return !isRoundReset;
 }
 
 void PlayHUDScene::ResetRound()
@@ -272,17 +296,42 @@ void PlayHUDScene::ResetRound()
     if (isRoundReset)
         return;
 
-    curRound = GameManager::Get().GetCurrentRound();
     m_pTurn10->ChangeTexture(L"../Assets/UI/PLAY/Round_" + std::to_wstring(curRound) + L".png");
 
-    int winnerID = GameManager::Get().GetWinnerPID();
-
-    if (winnerID == 1)
-        roundWin[curRound - 1]->ChangeTexture(L"../Assets/UI/PLAY/2player_win_blick.png");
+    if (m_1PAllDead && m_2PAllDead)
+        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/4player_draw.png");
+    else if(m_1PAllDead)
+        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/1player_win_blink.png");
+    else if(m_2PAllDead)
+        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/2player_win_blink.png");
     else
-        roundWin[curRound - 1]->ChangeTexture(L"../Assets/UI/PLAY/1player_win_blink.png");
+        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/4player_draw_blink.png"); //디버그용 뜨면 버그인거임
+
+    m_1PAllDead = false;
+    m_2PAllDead = false;
+
+    //라운드별 오브젝트 초기화
 
     isRoundReset = true;
+}
+
+void PlayHUDScene::ChangeRound(float dt)
+{
+    static bool isReverse = false;
+
+    if (m_SceneChange->IsFinished() && !isReverse)
+    {
+        ResetRound();
+        m_SceneChange->SetReverse(true);
+        m_SceneChange->Play();
+        isReverse = true;
+    }
+    if (m_SceneChange->IsFinished() && isReverse)
+    {
+        m_SceneChange->SetReverse(false);
+        m_SceneChange->SetVisible(Visibility::Hidden);
+        isReverse = false;
+    }
 }
 
 void PlayHUDScene::Update(float dt)
@@ -292,11 +341,13 @@ void PlayHUDScene::Update(float dt)
 
     auto scenestate = GameManager::Get().GetSceneState();
 
-    if (CheckRoundOver())
-        ResetRound();
+    CheckRoundOver();
+
+    if (isChangeRound)
+        ChangeRound(dt);
 
     //if((scenestate != CurrentSceneState::SubmitCard) && (scenestate != CurrentSceneState::BattleStandBy))
-    UpdateWData(dt);
+    //UpdateWData(dt);
 
     PendingEmote emote;
     while (GameManager::Get().PopEmote(emote))

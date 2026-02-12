@@ -7,6 +7,7 @@ class Emoji;
 class TextureImage;
 class EmoteButton;
 class PlayerIcon;
+class SpriteSheet;
 
 struct TimedEmoji
 {
@@ -43,12 +44,23 @@ protected:
 private:
     PlayHUD_InputContext m_uiContext;
 
+    bool m_1PAllDead = false;
+    bool m_2PAllDead = false;
+
     bool isRoundReset = false;
 
     int curRound = 0;
+    int prevRound = 0;
+
+    SpriteSheet* m_SceneChange;
+    bool isChangeRound = false;
+
+    void ChangeRound(float dt);
 
     Widget* m_pTurn = nullptr;    // 1의 자리수
     Widget* m_pTurn10 = nullptr;  // 10의 자리수
+    int m_turn = 0;
+    int m_turn10 = 1;
 
     std::array<PlayerIcon*, 4> m_playerIcons{};
     uint32_t m_appliedWeaponDataVersion = 0;
