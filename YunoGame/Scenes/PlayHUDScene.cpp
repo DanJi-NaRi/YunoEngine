@@ -132,6 +132,9 @@ void PlayHUDScene::OnEnter()
     m_appliedTurnStateVersion = std::numeric_limits<uint64_t>::max();
     RefreshTurnTexture();
 
+    XMFLOAT3 emoteBoxPos = GameManager::Get().GetPID() == 1 ? XMFLOAT3{135, 293, 0} : XMFLOAT3{1785, 293, 0};
+    m_EmoteBox->SetPos(emoteBoxPos);
+
     TryInitPlayerIconsFromWeaponData();
 }
 
