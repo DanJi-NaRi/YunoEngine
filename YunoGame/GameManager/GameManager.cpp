@@ -369,6 +369,14 @@ void GameManager::SetSceneState(CurrentSceneState state)
         m_pConfirmPanel = nullptr;
         m_pSelectionPanel = nullptr;
 
+        for (const auto& pair : m_CardRuntimeIDs)
+        {
+            std::cout
+                << "RuntimeID: " << pair.first
+                << " -> DataID: " << pair.second
+                << std::endl;
+        }
+
         SceneTransitionOptions opt{};
         opt.immediate = true;
         sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
@@ -417,7 +425,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::EscScene:
     {
-
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
@@ -527,7 +534,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
 
         sm->RequestPush(std::make_unique<PlayHUDScene>(), sp, opt);
 
-
         SetSceneState(CurrentSceneState::SubmitCard);
         break;
     }
@@ -545,6 +551,15 @@ void GameManager::SetSceneState(CurrentSceneState state)
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
+
+
+        for (const auto& pair : m_CardRuntimeIDs)
+        {
+            std::cout
+                << "RuntimeID: " << pair.first
+                << " -> DataID: " << pair.second
+                << std::endl;
+        }
 
         sm->RequestPush(std::make_unique<PhaseScene>(), sp, opt);
         FlushPendingPanelUpdates();

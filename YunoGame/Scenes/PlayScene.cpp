@@ -22,6 +22,7 @@
 #include "PlayQueue.h"
 #include "EffectUnit.h"
 
+#include "ISceneManager.h"
 
 bool PlayScene::OnCreateScene()
 {
@@ -496,12 +497,7 @@ void PlayScene::TestInput()
 
     HandleCardSelect(VK_NUMPAD9, 1,9);
 
-    if (m_input->IsKeyPressed('Q'))
-        GameManager::Get().SendEmote(1);
-    if (m_input->IsKeyPressed('W'))
-        GameManager::Get().SendEmote(2);
-    if (m_input->IsKeyPressed('E'))
-        GameManager::Get().SendEmote(3);
+   
 
     //방향 선택
     HandleDirectionInput();
@@ -628,6 +624,17 @@ void PlayScene::Update(float dt)
     }
 
     MoveCamera(dt);
+    
+    if (m_input->IsKeyPressed(VK_ESCAPE) && flag)
+    {
+        YunoEngine::GetSceneManager()->RequestPop();
+        flag = false;
+    }
+    else if(m_input->IsKeyPressed(VK_ESCAPE))
+    {
+        GameManager::Get().SetSceneState(CurrentSceneState::EscScene);
+        flag = true;
+    }
 
     m_PrevSceneState = m_CurSceneState;
 }

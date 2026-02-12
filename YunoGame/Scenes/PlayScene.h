@@ -59,5 +59,7 @@ private:
     XMFLOAT3 m_NextCamPos;
     XMFLOAT3 m_NextCamTarget;
 
+    bool flag = false;
+
     bool isCamMove = false;
 };
