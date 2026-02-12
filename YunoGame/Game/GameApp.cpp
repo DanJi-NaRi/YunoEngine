@@ -29,6 +29,7 @@
 #include "GameApp.h"
 
 #include "PacketBuilder.h"
+#include "utilityClass.h"
 
 
 // 패킷들
@@ -87,7 +88,11 @@ bool GameApp::OnInit()
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
 
     // 네트워크 스레드 시작
-    m_clientNet.Start("127.0.0.1", 9000);
+   const std::string serverHost = ReadServerHostFromEnv();
+   const std::uint16_t serverPort = ReadServerPortFromEnv();
+   std::cout << "[GameApp] Connect target=" << serverHost << ":" << serverPort << "\n";
+   m_clientNet.Start(serverHost, serverPort);
+    //m_clientNet.Start("127.0.0.1", 9000);
 
     m_clientNet.RegisterMatchPacketHandler();
 

@@ -107,6 +107,14 @@ void GameManager::ClearUIWeaponDataState()
 }
 
 
+void GameManager::ClearBattlePacket()
+{
+    for (int i = 0; i < m_turnPkts.size(); i++) 
+    {
+        m_turnPkts.pop();
+    }
+}
+
 // 배틀 전용 함수들
 void GameManager::PushBattlePacket(const BattleResult _BattleResult)
 {

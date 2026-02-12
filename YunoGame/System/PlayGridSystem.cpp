@@ -1520,6 +1520,7 @@ void PlayGridSystem::CheckOver()
         }
     }
     isRoundOver = true;
+    GameManager::Get().ClearBattlePacket();
 }
 
 void PlayGridSystem::ReflectWeaponData()
