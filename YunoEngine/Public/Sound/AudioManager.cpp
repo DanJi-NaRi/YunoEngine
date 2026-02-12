@@ -15,18 +15,18 @@
 const std::string to_string(BankName event)
 {
     std::string res;
-    switch (event)
-    {
-    case BankName::Title:
-        res = "Title";
-        break;
-    case BankName::Play:
-        res = "Play";
-        break;
-    case BankName::UI:
-        res = "UI";
-        break;
-    }
+    //switch (event)
+    //{
+    //case BankName::Title:
+    //    res = "Title";
+    //    break;
+    //case BankName::Play:
+    //    res = "Play";
+    //    break;
+    //case BankName::UI:
+    //    res = "UI";
+    //    break;
+    //}
     return res;
 }
 
@@ -37,7 +37,20 @@ const std::string to_string(GroupName event)
 
 const std::string to_string(VolumeType event)
 {
-    return std::string();
+    std::string res;
+    switch (event)
+    {
+    case VolumeType::Master:
+        res = "Master";
+        break;
+    case VolumeType::Music:
+        res = "Music";
+        break;
+    case VolumeType::SFX:
+        res = "SFX";
+        break;
+    }
+    return res;
 }
 
 const std::string to_string(EventName event)
@@ -45,11 +58,107 @@ const std::string to_string(EventName event)
     std::string res;
     switch (event)
     {
-    case EventName::BGM_Playlist:
-        res = "BGM/Playlist";
+    case EventName::BGM_Title:
+        res = "BGM/Title";
         break;
-    case EventName::UI_Click:
-        res = "UI/Click";
+    case EventName::BGM_Lobby:
+        res = "BGM/Lobby";
+        break;
+    case EventName::BGM_Main:
+        res = "BGM/Main";
+        break;
+    case EventName::UI_MouseHover:
+        res = "UI/MouseHover";
+        break;
+    case EventName::UI_MouseClick:
+        res = "UI/MouseClick";
+        break;
+    case EventName::UI_CountDown:
+        res = "UI/CountDown";
+        break;
+    case EventName::UI_CointEvent:
+        res = "UI/CointEvent";
+        break;
+    case EventName::UI_CoinToss:
+        res = "UI/CoinToss";
+        break;
+    case EventName::UI_CardUse:
+        res = "UI/CardUse";
+        break;
+    case EventName::UI_Win:
+        res = "UI/Win";
+        break;
+    case EventName::UI_Lose:
+        res = "UI/Lose";
+        break;
+    case EventName::UI_Draw:
+        res = "UI/Draw";
+        break;
+    case EventName::UI_RoundStart:
+        res = "UI/RoundStart";
+        break;
+    case EventName::UI_RoundOver:
+        res = "UI/RoundOver";
+        break;
+    case EventName::UI_Emogi:
+        res = "UI/Emogi";
+        break;
+    case EventName::UI_Move:
+        res = "UI/Move";
+        break;
+    case EventName::PLAYER_BlasterAttack:
+        res = "PLAYER/BlasterAttack";
+        break;
+    case EventName::PLAYER_CharkramAttack:
+        res = "PLAYER/CharkramAttack";
+        break;
+    case EventName::PLAYER_BreacherAttack:
+        res = "PLAYER/BreacherAttack";
+        break;
+    case EventName::PLAYER_ScytheAttack:
+        res = "PLAYER/ScytheAttack";
+        break;
+    case EventName::PLAYER_ImpactorAttack:
+        res = "PLAYER/ImpactorAttack";
+        break;
+    case EventName::PLAYER_CleaverAttack:
+        res = "PLAYER/CleaverAttack";
+        break;
+    case EventName::PLAYER_StaminaBuff:
+        res = "PLAYER/StaminaBuff";
+        break;
+    case EventName::PLAYER_PowerUpBuff:
+        res = "PLAYER/PowerUpBuff";
+        break;
+    case EventName::PLAYER_ShieldBuff:
+        res = "PLAYER/ShieldBuff";
+        break;
+    case EventName::PLAYER_DeBuff:
+        res = "PLAYER/DeBuff";
+        break;
+    case EventName::PLAYER_Move:
+        res = "PLAYER/Move";
+        break;
+    case EventName::PLAYER_Crash:
+        res = "PLAYER/Crash";
+        break;
+    case EventName::PLAYER_Hit:
+        res = "PLAYER/Hit";
+        break;
+    case EventName::PLAYER_Dead:
+        res = "PLAYER/Dead";
+        break;
+    case EventName::PLAYER_TileHit:
+        res = "PLAYER/TileHit";
+        break;
+    case EventName::PLAYER_HorizonLazer:
+        res = "PLAYER/HorizonLazer";
+        break;
+    case EventName::PLAYER_VerticalLazer:
+        res = "PLAYER/VerticalLazer";
+        break;
+    case EventName::PLAYER_TileCollapse:
+        res = "PLAYER/TileCollapse";
         break;
     }
     return res;

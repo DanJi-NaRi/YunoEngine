@@ -6,6 +6,7 @@
 #include "ObjectManager.h"
 #include "EffectManager.h"
 #include "GameManager.h"
+#include "AudioQueue.h"
 
 #include "EffectUnit.h"
 #include "Grid.h"
@@ -548,6 +549,7 @@ void PlayGridSystem::CheckPacket(float dt)
         m_delayFlag = false;
         const auto obstaclePkt = mng.PopObstaclePacket();
         if (isRoundOver) return;    // 라운드 종료 시 해당 장애물은 패킷 버리기
+      
         m_pktTime = obstaclePktDuration;
         isProcessing = true;
         ApplyObstacleResult(obstaclePkt);
@@ -718,6 +720,8 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
                 pTile->Attach(eff);
             //pTile->SetFlashColor(as.m_tileEffectColor, as.m_flashCount, as.m_flashInterval);
         }
+
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_TileHit));
 
         // 기물 피격 애니메이션 시작
         const auto& pieces = as.hitPieces;
@@ -1441,21 +1445,25 @@ bool PlayGridSystem::BuffEvent(const GamePiece& pieceType, const CardEffectData*
     {
         Float4 red = { 1, 0, 0, 1 };
         applyFlash(red, EffectID::PowerUpBuff);
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_PowerUpBuff));
     }
     else if (data.m_takeDamageReduce != 0)      // 방어력 증가(버프)
     {
         Float4 yellow = { 1, 1, 0, 1 };
         applyFlash(yellow, EffectID::ShieldBuff);
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_ShieldBuff));
     }
     else if (data.m_takeDamageIncrease != 0)    // 방어력 저하(디버프)
     {
         Float4 blue = { 0, 0.f, 1, 1 };
         applyFlash(blue, EffectID::DeBuff);
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_DeBuff));
     }
     else if (data.m_staminaRecover != 0)        // 스태미나 회복
     {
         Float4 green = { 0, 1, 0, 1 };
         applyFlash(green, EffectID::StaminaBuff);
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_StaminaBuff));
     }
 
     return true;
