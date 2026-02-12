@@ -25,9 +25,7 @@ enum class AudioCmdType : uint8_t
 
 enum class BankName : uint8_t
 {
-    Title,
-    Play,
-    UI
+    // master bank에 통합 로드하는 걸로
 };
 
 enum class GroupName : uint8_t
@@ -36,12 +34,49 @@ enum class GroupName : uint8_t
 
 enum class VolumeType : uint8_t
 {
+    Master,
+    Music,
+    SFX
 };
 
 enum class EventName : uint8_t
 {
-    BGM_Playlist,
-    UI_Click
+    BGM_Title,
+    BGM_Lobby,
+    BGM_Main,
+
+    UI_MouseHover,
+    UI_MouseClick,
+    UI_CountDown,
+    UI_CointEvent,
+    UI_CoinToss,
+    UI_CardUse,
+    UI_Win,
+    UI_Lose,
+    UI_Draw,
+    UI_RoundStart,
+    UI_RoundOver,
+    UI_Emogi,
+    UI_Move,
+
+    PLAYER_BlasterAttack,
+    PLAYER_CharkramAttack,
+    PLAYER_BreacherAttack,
+    PLAYER_ScytheAttack,
+    PLAYER_ImpactorAttack,
+    PLAYER_CleaverAttack,
+    PLAYER_StaminaBuff,
+    PLAYER_PowerUpBuff,
+    PLAYER_ShieldBuff,
+    PLAYER_DeBuff,
+    PLAYER_Move,
+    PLAYER_Crash,
+    PLAYER_Hit,
+    PLAYER_Dead,
+    PLAYER_TileHit,
+    PLAYER_HorizonLazer,
+    PLAYER_VerticalLazer,
+    PLAYER_TileCollapse
 };
 
 enum class ParamName : uint8_t
@@ -78,7 +113,7 @@ struct AudioCmd
         struct
         {
             EventName event;
-            bool is3D = false;
+            bool is3D;
             float3 pos;
         } pe;       // PlayEvent
         struct

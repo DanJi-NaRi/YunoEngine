@@ -42,7 +42,7 @@ bool PhaseScene::OnCreateScene()
 
     //CreateWidget<CardConfirmButton>(L"tstButton", XMFLOAT3(0, 0, 0), Float2(140, 55), UIDirection::LeftTop);
     //CreateWidget<CardSlot>(L"tstSlot", XMFLOAT3(600, 100, 0), Float2(100, 135), UIDirection::LeftTop);
-    //CreateWidget<Card>(L"tstCard", Float2(100, 135), XMFLOAT3(300, 100, 0), XMFLOAT3(0.5f, 0.5f, 0.5f), UIDirection::LeftTop);
+
 
     
     // 테스트용 사이즈
@@ -92,7 +92,15 @@ bool PhaseScene::OnCreateScene()
 
 void PhaseScene::OnDestroyScene()
 {
-    //std::cout << "[UIScene] OnDestroy\n";
+    std::cout << "===================" << std::endl;
+    std::cout << "[UIScene] OnDestroy\n";
+    std::cout << "===================" << std::endl;
+
+    if (!GameManager::HasInstance())
+    {
+        return;
+    }
+
     auto& gm = GameManager::Get();
     gm.SetMinimap(nullptr);
     gm.SetSelectionPanel(nullptr);

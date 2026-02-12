@@ -107,6 +107,14 @@ void GameManager::ClearUIWeaponDataState()
 }
 
 
+void GameManager::ClearBattlePacket()
+{
+    for (int i = 0; i < m_turnPkts.size(); i++) 
+    {
+        m_turnPkts.pop();
+    }
+}
+
 // 배틀 전용 함수들
 void GameManager::PushBattlePacket(const BattleResult _BattleResult)
 {
@@ -257,8 +265,16 @@ void GameManager::Init()
 
 void GameManager::Shutdown()
 {
+    std::cout << "=================================" << std::endl;
+    std::cout << "==========GameManager Die========" << std::endl;
+    std::cout << "=================================" << std::endl;
     assert(s_instance);
     s_instance = nullptr;
+}
+
+bool GameManager::HasInstance()
+{
+    return s_instance != nullptr;
 }
 
 GameManager& GameManager::Get()
@@ -280,6 +296,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
         m_state = CurrentSceneState::Title;
         m_matchPlayerCount = 0;
+        m_PID = 0;
         ResetMyPicks();
         SceneTransitionOptions opt{};
         opt.immediate = true;
@@ -444,6 +461,13 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::SubmitCard:
     {
+        if(m_state== CurrentSceneState::AutoBattle)
+        {
+            // AutoBattle에서 SubmitCard로 올 때는 PhaseScene을 pop해야 함
+            SceneTransitionOptions opt{};
+            opt.immediate = true;
+            sm->RequestPop(opt);
+        }
         m_state = CurrentSceneState::SubmitCard;
         ScenePolicy sp;
         sp.blockRenderBelow = false;
@@ -472,6 +496,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::AutoBattle:
     {
         m_state = CurrentSceneState::AutoBattle;
+        RequestRevealStart();
 
         SceneTransitionOptions opt{};
         opt.immediate = true;

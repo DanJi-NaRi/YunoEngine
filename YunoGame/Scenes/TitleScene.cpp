@@ -76,7 +76,7 @@ void TitleScene::OnEnter()
 {
     //std::cout << "[TitleScene] OnEnter\n";
 
-    AudioQ::Insert(AudioQ::LoadBank(BankName::Title));
+    //AudioQ::Insert(AudioQ::LoadBank(BankName::Title));
     //AudioQ::Insert(AudioQ::PlayEvent(EventName::BGM_Playlist));
 
     YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
@@ -88,7 +88,7 @@ void TitleScene::OnExit()
 {
     //std::cout << "[TitleScene] OnExit\n";
 
-    AudioQ::Insert(AudioQ::UnLoadBank(BankName::Title));
+    //AudioQ::Insert(AudioQ::UnLoadBank(BankName::Title));
     //m_audioScene->Unload();
     YunoEngine::GetInput()->RemoveContext(&m_gameCtx);
 
@@ -102,8 +102,8 @@ void TitleScene::Update(float dt)
 
     if (m_input->IsKeyPressed(VK_OEM_PERIOD))
     {
-        AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, true));
-        AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, false));
+        //AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, true));
+        //AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, false));
     }
 
     //// 테스트용 -> ally1으로 부여한 기물이 움직여용

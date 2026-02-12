@@ -68,10 +68,11 @@ namespace yuno::server
             case Direction::Down: return { dy, dx };
             case Direction::Left: return { -dx, dy };
             case Direction::Right: return { dx, -dy };
-            case Direction::UpLeft: return { -dy, -dy };
-            case Direction::UpRight: return { dy, -dy };
-            case Direction::DownLeft: return { -dy, dy };
-            case Direction::DownRight: return { dy, dy };
+            //case Direction::UpLeft: return { -dy, -dy };
+            //case Direction::UpRight: return { dy, -dy };
+            //case Direction::DownLeft: return { -dy, dy };
+            //case Direction::DownRight: return { dy, dy };
+
             case Direction::Same:
             case Direction::None:
             default:
@@ -604,6 +605,15 @@ namespace yuno::server
 
                         subClamp(targetUnit.hp, adjustedDamage);
 
+                        if (targetUnit.hp == 0)
+                        {
+                            if (targetUnit.tileID != 0)
+                            {
+                                grid[targetUnit.tileID] = -1;
+                                targetUnit.tileID = 0;
+                            }
+                        }
+
                         eventOccurred = true;
 
                         std::cout << "Attack hit unit " << occupantIndex
@@ -660,8 +670,11 @@ namespace yuno::server
                 {
                     if (static_cast<int>(U->hp) == 0) 
                     {
-                        grid[U->tileID] = -1;
-                        U->tileID = 0;      // 0은 Error
+                        if (U->tileID != 0)
+                        {
+                            grid[U->tileID] = -1;
+                            U->tileID = 0;      // 0은 Error
+                        }
                         std::cout << "Died Unit's TileID : " << static_cast<int>(U->tileID) << "\n";
                     }
                 }
@@ -677,7 +690,7 @@ namespace yuno::server
                     pkt.dir = static_cast<uint8_t>(card.dir);
                     pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
                     pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
-                    pkt.actionTime = 3000;
+                    pkt.actionTime = static_cast<uint32_t>(cardData.m_actionTime);
                     if (cardData.m_type == CardType::Utility)
                     {
                         pkt.order.push_back(buildDeltaSnapshot(unitIndex, false));
@@ -829,7 +842,11 @@ namespace yuno::server
                         {
                             if (units[targetIndex]->hp == 0)
                             {
-                                grid[units[targetIndex]->slotID] = -1;
+                                if (units[targetIndex]->tileID != 0)
+                                {
+                                    grid[units[targetIndex]->tileID] = -1;
+                                    units[targetIndex]->tileID = 0;
+                                }
                                 continue;
                             }
                             if (cardData.m_controlId == 1)
@@ -858,7 +875,7 @@ namespace yuno::server
                 pkt.ownerSlot = static_cast<uint8_t>(card.ownerSlot + 1);
                 pkt.unitLocalIndex = static_cast<uint8_t>((unitIndex % 2) + 1);
                 pkt.isCoinTossUsed = coinTossUsed ? (aFirst ? 1 : 2) : 0;
-                pkt.actionTime = 3000;
+                pkt.actionTime = static_cast<uint32_t>(cardData.m_actionTime);
                 if (cardData.m_type == CardType::Utility)
                 {
                     pkt.order.push_back(utilityMoveSnapshot);
@@ -928,7 +945,7 @@ namespace yuno::server
             {
                 break;
             }
-
+            // 여기 까지 오면 BattleResult Packet 8개 전송됨
 
         }
         ClearTurn();
@@ -1100,7 +1117,7 @@ namespace yuno::server
     }
     void TurnManager::NotifyEndFinished()
     {
-        SendObstacleResult();
+        SendObstacleResult();       // 여기서 장애물 패킷 날라감
         m_roundController.EndTurn();
     }
 }

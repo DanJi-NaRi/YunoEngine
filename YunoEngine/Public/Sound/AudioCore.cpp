@@ -169,7 +169,7 @@ FMOD::Studio::VCA* AudioCore::GetVCA(const std::string& vcaName)
 /////////////////////////////
 // vcaName:
 //  Master = 전체 볼륨
-//  BGM / UI / Card / Player
+//  Music / SFX
 // volume:
 //  1.f : 기본값
 //  0.f : 무음

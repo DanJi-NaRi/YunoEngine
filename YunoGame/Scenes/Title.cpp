@@ -17,6 +17,9 @@
 #include "SpriteSheet.h"
 #include "Building.h"
 
+// 오디오
+#include "AudioQueue.h"
+
 // 사용법
 // 컨트롤 + H 누르면 이름 변경 나옴
 // 위쪽 칸에 Title 적고
@@ -78,6 +81,10 @@ bool Title::OnCreateScene()
 
     CreateWidget<ExitButton>(L"ExitBtn", Float2(1538, 105), makeButtonPos(3), UIDirection::Center)->SetHoverTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
 
+    // 오디오 추가
+    AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Main, true));
+    AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Lobby, true));
+    AudioQ::Insert(AudioQ::PlayEvent(EventName::BGM_Title));
 
     return true;
 }

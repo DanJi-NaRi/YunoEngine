@@ -53,6 +53,7 @@ public:
     static void Initialize(GameManager* inst);
     void Init();
     static void Shutdown();
+    static bool HasInstance();
     static GameManager& Get();
     
     void BindSceneManager(ISceneManager* sm) { m_sceneManager = sm; }
@@ -161,11 +162,30 @@ public:
     void ResetRound() { m_currentRound = 0; }
 
     void RequestRevealStart() { m_shouldStartReveal = true; }
+    bool GetRevealStart() const { return m_shouldStartReveal; }
     bool ConsumeRevealStart()
     {
         if (!m_shouldStartReveal) return false;
         m_shouldStartReveal = false;
         return true;
+    }
+
+    void SetMasterVolume(int v) { m_masterVolume = v; };
+    int GetMasterVolume() const { return m_masterVolume; };
+    void SetBGMVolume(int v) { m_bgmVolume = v; };
+    int GetBGMVolume() const { return m_bgmVolume; };
+    void SetSFXVolume(int v) { m_sfxVolume = v; };
+    int GetSFXVolume() const { return m_sfxVolume; };
+
+    void SetCoinToss(int c) { m_coinTossQueue.push(c); }
+    int PopCoinToss()
+    {
+        if (m_coinTossQueue.empty())
+            return 0;
+
+        int v = m_coinTossQueue.front();
+        m_coinTossQueue.pop();
+        return v;
     }
 private:
     static GameManager* s_instance;
@@ -192,6 +212,12 @@ private:
     bool m_isReady = false;
     bool m_p1Ready = false;
     bool m_p2Ready = false;
+
+    int m_masterVolume = 5;
+    int m_bgmVolume = 5;
+    int m_sfxVolume = 5;
+
+    std::queue<int> m_coinTossQueue;
 
     std::array<UnitHand,2> m_myHands;                                                          //UI 카드 선택용
     std::array<UnitHand,2> m_enemyHands;                                                       //UI 보여주기용
@@ -264,6 +290,7 @@ private:
         std::array<UnitHand, 2>& GetEnemyHands() { return m_enemyHands; }
 
 public:
+    void ClearBattlePacket();
     void PushBattlePacket(const BattleResult _BattleResult);
     void PushRevealPacket(const BattleResult _BattleResult);
     BattleResult PopBattlePacket();
@@ -286,4 +313,8 @@ public:
 
     private:
         std::queue<BattleResult> m_pendingBattlePanelUpdates;
+
+
+    private:
+    bool m_coinPlaying = false;
 };

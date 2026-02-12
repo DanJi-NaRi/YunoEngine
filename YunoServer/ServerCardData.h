@@ -55,6 +55,7 @@ public:
     int m_cost;                      // 소모 스태미나 비용
     int m_controlId;                  //그랩 및 넉백 같은 효과ID  // 0이 효과 x, 1이 당기기, 2가 밀기
     uint32_t m_rangeId;        // 카드 범위
+    int m_actionTime;
 
     int m_effectId;                     // 사용 시 발동할 Effect ID
     int m_soundId;                    // 사용 시 발동할 Sound ID

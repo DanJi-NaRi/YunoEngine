@@ -26,8 +26,6 @@ bool PlayHUDScene::OnCreateScene()
 
     m_uiManager->SetOrthoFlag(true);
 
-    curRount = 1;
-
     // BackGround
     CreateWidget<TextureImage>(L"BackGround", L"../Assets/UI/PLAY/Play_background_fade.png", XMFLOAT3(0, 0, 0));
 
@@ -49,8 +47,6 @@ bool PlayHUDScene::OnCreateScene()
     m_playerIcons[1] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
     m_playerIcons[2] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
     m_playerIcons[3] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
-
-    TryInitPlayerIconsFromWeaponData();
 
     auto imojibox = CreateWidget<TextureImage>(L"ImojiBox", L"../Assets/UI/PLAY/ImojiBox.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
     auto emote = CreateWidget<EmoteButton>(L"Imoji", Float2(80, 67), XMFLOAT3(0, 0, 0), UIDirection::LeftTop);
@@ -91,6 +87,24 @@ bool PlayHUDScene::OnCreateScene()
 
     m_emojis.push_back(&m_emoji1P);
     m_emojis.push_back(&m_emoji2P);
+
+    for (int i = 0; i < 4; i++)
+    {
+        auto hp = CreateWidget<Text>(L"hp", Float2{ 200, 50 }, { 0, 0, 0 });
+        hp->SetFont(FontID::Number);
+        hp->SetText(L"000");
+
+        auto stamina = CreateWidget<Text>(L"stamina", Float2{ 200, 50 }, { 0, 0, 0 });
+        stamina->SetFont(FontID::Number);
+        stamina->SetText(L"000");
+
+        m_playerIcons[i]->SetHpText(hp);
+        m_playerIcons[i]->SetStaminaText(stamina);
+        m_playerIcons[i]->Attach(hp);
+        m_playerIcons[i]->Attach(stamina);
+    }
+
+    TryInitPlayerIconsFromWeaponData();
 
     return true;
 }
@@ -174,7 +188,10 @@ void PlayHUDScene::TryInitPlayerIconsFromWeaponData()
                             myWeapons[i].weaponId,
                             myWeapons[i].hp,
                             myWeapons[i].stamina };
-            m_playerIcons[i]->SetPlayer(idata);
+            if(idata.pId == 1)
+                m_playerIcons[i]->SetPlayer(idata);
+            else
+                m_playerIcons[i + 2]->SetPlayer(idata);
         }
 
         if (m_playerIcons[i + 2] != nullptr)
@@ -184,7 +201,10 @@ void PlayHUDScene::TryInitPlayerIconsFromWeaponData()
                             enemyWeapons[i].weaponId,
                             enemyWeapons[i].hp,
                             enemyWeapons[i].stamina };
-            m_playerIcons[i + 2]->SetPlayer(idata);
+            if (idata.pId == 2)
+                m_playerIcons[i + 2]->SetPlayer(idata);
+            else
+                m_playerIcons[i]->SetPlayer(idata);
         }
     }
 
@@ -207,7 +227,10 @@ void PlayHUDScene::UpdateWData(float dTime)
                             myWeapons[i].weaponId,
                             myWeapons[i].hp,
                             myWeapons[i].stamina };
-            m_playerIcons[i]->UpdateIData(idata);
+            if (idata.pId == 2)
+                m_playerIcons[i + 2]->UpdateIData(idata);
+            else
+                m_playerIcons[i]->UpdateIData(idata);
         }
 
         if (m_playerIcons[i + 2] != nullptr)
@@ -217,9 +240,49 @@ void PlayHUDScene::UpdateWData(float dTime)
                             enemyWeapons[i].weaponId,
                             enemyWeapons[i].hp,
                             enemyWeapons[i].stamina };
-            m_playerIcons[i + 2]->UpdateIData(idata);
+            if (idata.pId == 2)
+                m_playerIcons[i + 2]->UpdateIData(idata);
+            else
+                m_playerIcons[i]->UpdateIData(idata);
         }
     }
+}
+
+bool PlayHUDScene::CheckRoundOver()
+{
+    int hp[4];
+    int i = 0;
+    for (auto* p : m_playerIcons)
+    {
+        hp[i] = p->GetIData().hp;
+        i++;
+    }
+
+    if ((hp[0] <= 0 && hp[1] <= 0) || (hp[2] <= 0 && hp[3] <= 0))
+    {
+        isRoundReset = false;
+        return true;
+    }
+        
+    return false;
+}
+
+void PlayHUDScene::ResetRound()
+{
+    if (isRoundReset)
+        return;
+
+    curRound = GameManager::Get().GetCurrentRound();
+    m_pTurn10->ChangeTexture(L"../Assets/UI/PLAY/Round_" + std::to_wstring(curRound) + L".png");
+
+    int winnerID = GameManager::Get().GetWinnerPID();
+
+    if (winnerID == 1)
+        roundWin[curRound - 1]->ChangeTexture(L"../Assets/UI/PLAY/2player_win_blick.png");
+    else
+        roundWin[curRound - 1]->ChangeTexture(L"../Assets/UI/PLAY/1player_win_blink.png");
+
+    isRoundReset = true;
 }
 
 void PlayHUDScene::Update(float dt)
@@ -227,6 +290,12 @@ void PlayHUDScene::Update(float dt)
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);
 
+    auto scenestate = GameManager::Get().GetSceneState();
+
+    if (CheckRoundOver())
+        ResetRound();
+
+    //if((scenestate != CurrentSceneState::SubmitCard) && (scenestate != CurrentSceneState::BattleStandBy))
     UpdateWData(dt);
 
     PendingEmote emote;

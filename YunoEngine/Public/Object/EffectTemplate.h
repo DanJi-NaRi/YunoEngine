@@ -26,6 +26,10 @@ enum class EffectID : uint32_t
     AxAttackEnemy,
     AxAttackEnemy2,
     Buff,
+    StaminaBuff,
+    PowerUpBuff,
+    ShieldBuff,
+    DeBuff,
     DrillAttack1,
     DrillAttack2,
     DrillAttackEnemy1,
@@ -45,6 +49,8 @@ enum class EffectID : uint32_t
     ChakramAttack02_2,
     ChakramAttackEnemy02_1,
     ChakramAttackEnemy02_2,
+    FloorWarning1,
+    FloorWarning2,
 
     Count
 };

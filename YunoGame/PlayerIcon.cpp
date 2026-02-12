@@ -58,8 +58,8 @@ void PlayerIcon::SetPlayer(const IconData& idata)
     prevHp = maxHp;
     prevStamina = maxStamina;
 
-    //m_hpText->SetFont(FontID::Default);
-    //m_hpText->SetText(std::to_wstring(m_idata.hp));
+    m_hpText->SetText(std::to_wstring(prevHp) + L" / " + std::to_wstring(maxHp));
+    m_StaminaText->SetText(std::to_wstring(prevStamina) + L" / " + std::to_wstring(maxStamina));
 }
 
 void PlayerIcon::SetWeapon(int weaponID)
@@ -128,11 +128,13 @@ void PlayerIcon::UpdateHPValue(float dTime)
 
     float percent = curHp / maxHp;
     m_HpBar->SetGaugeValue((int)(percent * 100.0f));
+    m_hpText->SetText(std::to_wstring(static_cast<int>(curHp)) + L" / " + std::to_wstring(maxHp));
 
     if (t >= 1.0f)
     {
         m_curChangeTime = 0.0f;
         isChangingHp = false;
+        prevHp = m_idata.hp;
     }
 }
 
@@ -157,11 +159,13 @@ void PlayerIcon::UpdateStaminaValue(float dTime)
 
     float percent = curStamina / maxStamina;
     m_StaminaBar->SetGaugeValue((int)(percent * 100.0f));
+    m_StaminaText->SetText(std::to_wstring(static_cast<int>(curStamina)) + L" / " + std::to_wstring(maxStamina));
 
     if (t >= 1.0f)
     {
         m_curChangeTime = 0.0f;
         isChangingStamina = false;
+        prevStamina = m_idata.stamina;
     }
 }
 
@@ -215,7 +219,10 @@ bool PlayerIcon::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XM
 void PlayerIcon::CreateChild() {
     m_HpBar = m_uiFactory.CreateChild<HealthBar>(m_name + L"_HealthBar", Float2(542, 17), XMFLOAT3(300, -24, 0), UIDirection::Center, WidgetLayer::HUD, this);
     m_StaminaBar = m_uiFactory.CreateChild<StaminaBar>(m_name + L"_StaminaBar", Float2(542, 17), XMFLOAT3(310, 0, 0), UIDirection::Center, WidgetLayer::HUD, this);
-    //m_hpText = m_uiFactory.CreateChild<Text>(m_name + L"_HpText", Float2(200, 50), XMFLOAT3(0, 0, 0), UIDirection::Center, WidgetLayer::HUD, this);
+    /*m_hpText = m_uiFactory.CreateChild<Text>(m_name + L"_HpText", Float2(200, 50), XMFLOAT3(0, 0, 0), UIDirection::Center, WidgetLayer::HUD, this);
+    m_hpText->SetFont(FontID::Number);
+    m_StaminaText = m_uiFactory.CreateChild<Text>(m_name + L"_StaminaText", Float2(200, 50), XMFLOAT3(0, 0, 0), UIDirection::Center, WidgetLayer::HUD, this);
+    m_StaminaText->SetFont(FontID::Number);*/
 }
 
 bool PlayerIcon::Start()
