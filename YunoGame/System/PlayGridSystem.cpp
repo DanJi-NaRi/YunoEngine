@@ -1500,16 +1500,22 @@ void PlayGridSystem::CheckOver()
     RoundResult roundResult = RoundResult::None;
     if (allyDead && enemyDead)          // 무승부
     {
+        if(GameManager::Get().GetEndGame())
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         std::cout << "This Round Result : Draw\n";
         roundResult = RoundResult::Draw;
     }
     else if (allyDead)                  // Lose
     {
+        if (GameManager::Get().GetEndGame())
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         std::cout << "This Round Result : Lose\n";
         roundResult = (myIsP1) ? RoundResult::Winner_P2 : RoundResult::Winner_P1;
     }
     else if (enemyDead)                 // Win
     {
+        if (GameManager::Get().GetEndGame())
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         std::cout << "This Round Result : Win\n";
         roundResult = (myIsP1) ? RoundResult::Winner_P1 : RoundResult::Winner_P2;
     }

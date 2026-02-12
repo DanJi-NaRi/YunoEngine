@@ -42,7 +42,7 @@ void AddCardPanel::CreateChild()
         auto* btn = m_uiFactory.CreateChild<OptionButton>(
             L"AddCardBtn_" + std::to_wstring(i),
             Float2{ 205/2,297/2 },
-            XMFLOAT3(810 + i * 150, 540, 0),
+            XMFLOAT3(810 + i * 150, 560, 0),
             UIDirection::Center,
             this
         );
@@ -97,7 +97,7 @@ void AddCardPanel::OnCardSelected(int index)
         .GetCardTexturePath(dataID);
 
     m_addCard[index]->ChangeTexture(texturePath);
-    m_addCard[index]->SetScale({ 1.2f,1.2f,1.2f });
+    m_addCard[index]->SetScale({ 1.35f,1.35f,1.35f });
     
     GameManager::Get().SendSelectCard(index);
 
