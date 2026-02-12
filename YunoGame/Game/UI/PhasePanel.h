@@ -18,8 +18,8 @@ struct PlayerData {
 
 enum class TeamData : uint8_t {
     Default,
-    Red,  // Team1
-    Blue, // Team2
+    Blue,  // Team1
+    Red, // Team2
 };
 
 class PhasePanel : public Image
