@@ -313,4 +313,8 @@ public:
 
     private:
         std::queue<BattleResult> m_pendingBattlePanelUpdates;
+
+
+    private:
+    bool m_coinPlaying = false;
 };

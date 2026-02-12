@@ -496,6 +496,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::AutoBattle:
     {
         m_state = CurrentSceneState::AutoBattle;
+        RequestRevealStart();
 
         SceneTransitionOptions opt{};
         opt.immediate = true;

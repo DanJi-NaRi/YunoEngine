@@ -553,7 +553,6 @@ void PlayGridSystem::CheckPacket(float dt)
         m_pktTime = obstaclePktDuration;
         isProcessing = true;
         ApplyObstacleResult(obstaclePkt);
-        GameManager::Get().RequestRevealStart();
     }
 
     // 지금 처리 중인 패킷 시간 체크

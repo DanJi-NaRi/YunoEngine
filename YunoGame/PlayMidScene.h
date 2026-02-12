@@ -108,7 +108,7 @@ private:
 
     int m_coinPairIndex = 0;
     float m_coinTimer = 0.f;
-    float m_coinDuration = 2.0f;
+    float m_coinDuration = 2.0f;            // 나중에 시간 ms
     bool  m_coinPlaying = false;
 
     bool m_isRevealInitialized = false;

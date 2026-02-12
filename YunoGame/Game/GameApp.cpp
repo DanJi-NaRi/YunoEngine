@@ -72,7 +72,7 @@ bool GameApp::OnInit()
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
 
-
+   //sm->RequestReplaceRoot(std::make_unique<PlayMidScene>(), opt);
    sm->RequestReplaceRoot(std::make_unique<Title>(), opt); 
    /*{
        sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);

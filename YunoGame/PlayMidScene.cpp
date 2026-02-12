@@ -548,7 +548,7 @@ void PlayMidScene::Update(float dt)
     m_phaseTimer += dt;
 
     CheckRoundChange(gm);
-
+    
     if (gm.ConsumeRevealStart())
     {
         ChangeUIState(PlayMidUIState::RevealCard);
