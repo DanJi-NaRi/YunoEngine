@@ -66,6 +66,8 @@ public:
             return evt.consumed;
         }
         else if (Leaved) {
+            evt.consumed = m_uiManager->ProcessLeaveCursur();
+            return evt.consumed;
         }
         return false;
     }
