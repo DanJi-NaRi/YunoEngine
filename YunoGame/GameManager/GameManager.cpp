@@ -306,7 +306,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
     {
         m_state = CurrentSceneState::Title;
         ResetTurn();
-        ResetRoundResultState();
         m_matchPlayerCount = 0;
         m_PID = 0;
         ResetMyPicks();
@@ -457,7 +456,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
         //if (m_state == CurrentSceneState::RoundStart) return;
         m_state = CurrentSceneState::RoundStart;
         ResetTurn();
-        ResetRoundResultState();
         SceneTransitionOptions opt{};
         opt.immediate = true;
         ClearUIWeaponDataState();

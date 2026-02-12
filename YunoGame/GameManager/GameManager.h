@@ -187,24 +187,6 @@ public:
         ++m_turnStateVersion;
     }
 
-    int GetCurrentTurn() const { return m_currentTurn; }
-    uint64_t GetTurnStateVersion() const { return m_turnStateVersion; }
-    void SetCurrentTurn(int turn)
-    {
-        if (turn < 0)
-            turn = 0;
-
-        if (m_currentTurn == turn)
-            return;
-
-        m_currentTurn = turn;
-        ++m_turnStateVersion;
-    }
-    void ResetTurn()
-    {
-        m_currentTurn = 0;
-        ++m_turnStateVersion;
-    }
 
     void RequestRevealStart() { m_shouldStartReveal = true; }
     bool GetRevealStart() const { return m_shouldStartReveal; }
