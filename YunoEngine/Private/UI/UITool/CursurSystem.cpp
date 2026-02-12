@@ -40,8 +40,6 @@ void CursurSystem::UpdateCheckSnap()
 
     DragProvider* drag = m_focusedWidget->GetDragProvider();
     if (!drag) return;
-
-    drag->IsNowDragging();          // 얘 뭐지? 왜있는거지? - 준혁
     
     if (m_focusedWidget->GetButtonState() == ButtonState::Released) {
         FindSnapWidget();

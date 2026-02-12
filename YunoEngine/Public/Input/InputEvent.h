@@ -9,7 +9,8 @@ enum class InputEventType : uint8_t
     MouseHover,
     MouseButtonDown,
     MouseButtonUp,
-    MouseWheel
+    MouseWheel,
+    MouseLeave, // 커서가 윈도우 밖으로 나감
 };
 
 /*

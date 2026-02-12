@@ -41,6 +41,8 @@ public:
         bool KeyUp = (evt.type == InputEventType::KeyUp
             && evt.key != 0 && input->IsKeyReleased(evt.key));
 
+        bool Leaved = (evt.type == InputEventType::MouseLeave
+            && input->IsMouseLeaved());
 
         if (LMB_Pressed)
         {
@@ -54,7 +56,6 @@ public:
             return evt.consumed;
         }
         else if (LMB_Up) {
-            this;
             evt.consumed = m_uiManager->ProcessButtonMouse(ButtonState::Released, 0);
             return evt.consumed;
         }
@@ -63,6 +64,8 @@ public:
         else if (KeyUp) {
             evt.consumed = m_uiManager->ProcessButtonKey(ButtonState::Released, evt.key);
             return evt.consumed;
+        }
+        else if (Leaved) {
         }
         return false;
     }

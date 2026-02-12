@@ -429,6 +429,11 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
     return false;
 }
 
+bool UIManager::ProcessLeaveCursur()
+{
+    return false;
+}
+
 bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)
 {
     // 1) 이번 프레임 입력 발생 체크
