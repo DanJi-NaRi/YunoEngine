@@ -593,6 +593,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sm->RequestPush(std::make_unique<PlayHUDScene>(), sp, opt);
 
 
+        // 이거 위치 한 번 턴 스타트로 옮겨볼예정
         SetSceneState(CurrentSceneState::SubmitCard);
         break;
     }
