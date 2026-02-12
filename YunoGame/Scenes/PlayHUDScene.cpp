@@ -322,19 +322,26 @@ void PlayHUDScene::ResetRound()
     if (isRoundReset)
         return;
 
-    if (m_1PAllDead && m_2PAllDead)
-        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/4player_draw.png");
-    else if(m_1PAllDead)
+    auto& gm = GameManager::Get();
+
+    switch (gm.GetRoundResult())
+    {
+    case RoundResult::Winner_P1:
+        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/2player_win_blick.png");
+        break;
+    case RoundResult::Winner_P2:
         roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/1player_win_blink.png");
-    else if(m_2PAllDead)
-        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/2player_win_blink.png");
-    else
+        break;
+    case RoundResult::Draw:
+        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/4player_draw.png");
+        break;
+    default:
         roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/4player_draw_blink.png"); //디버그용 뜨면 버그인거임
+        break;
+    }
 
-    m_1PAllDead = false;
-    m_2PAllDead = false;
+    gm.ResetTurn();
 
-    GameManager::Get().ResetTurn();
     //라운드별 오브젝트 초기화
 
     isRoundReset = true;
