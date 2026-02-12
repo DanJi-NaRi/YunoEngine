@@ -42,7 +42,7 @@ private:
     ResultUIState m_uiState = ResultUIState::Main;
 
     float m_delayTimer = 0.f;
-    float m_delayDuration = 2.0f;
+    float m_delayDuration = 0.5f;
     bool  m_waiting = true;
     ResultUIState m_pendingState = ResultUIState::Main;
 
