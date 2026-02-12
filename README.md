@@ -29,7 +29,7 @@
 ```bat
 set YUNO_SERVER_HOST=192.168.0.23
 set YUNO_SERVER_PORT=9000
-set YUNO_USER_ID=1001
+set YUNO_USER_ID=1
 YunoGame.exe
 ```
 
@@ -38,7 +38,7 @@ YunoGame.exe
 ```bat
 set YUNO_SERVER_HOST=192.168.0.23
 set YUNO_SERVER_PORT=9000
-set YUNO_USER_ID=1002
+set YUNO_USER_ID=2
 YunoGame.exe
 ```
 
