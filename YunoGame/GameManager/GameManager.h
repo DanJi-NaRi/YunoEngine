@@ -187,6 +187,9 @@ public:
         m_coinTossQueue.pop();
         return v;
     }
+
+    void SetEndGame(bool end) { m_endGame = end; }
+    bool GetEndGame() { return m_endGame; }
 private:
     static GameManager* s_instance;
 
@@ -197,6 +200,8 @@ private:
 
     PieceType m_myPick[2] = { PieceType::None, PieceType::None };
     PieceType m_lastPickedPiece = PieceType::None;
+
+    bool m_endGame = false;
 
     int m_currentRound = 0;
     bool m_shouldStartReveal = false;

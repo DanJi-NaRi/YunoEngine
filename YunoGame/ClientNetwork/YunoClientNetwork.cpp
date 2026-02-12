@@ -583,7 +583,7 @@ namespace yuno::game
                 std::cout << "=============================\n";
 
                 GameManager::Get().SetWinnerPID(winnerPID);
-                GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+                GameManager::Get().SetEndGame(true);
             }
         );// S2C_EndGame Packet End
 

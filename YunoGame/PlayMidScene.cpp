@@ -220,7 +220,7 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
             const float leftX = 50.f;
             const float rightX = ClientW - 50.f;
             const float centerY = ClientH * 0.5f;
-            const float startY = centerY - 75;
+            const float startY = centerY - 74;
             const float gapY = 160.f;
 
             for (int i = 0; i < (int)m_readyCards.size(); ++i)

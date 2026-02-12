@@ -107,6 +107,7 @@ void ResultScene::ChangeUIState(ResultUIState state)
         break;
 
     case ResultUIState::Draw:
+        //std::cout << "HelpHelpHelpHelpHelpHelpHelpHelpHelpHelpDRAWDRAWDRAWDRAWDRAWDRAW";
         m_drawPanel->Show();
         break;
 
