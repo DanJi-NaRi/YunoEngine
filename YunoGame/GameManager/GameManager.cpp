@@ -40,6 +40,16 @@
 GameManager* GameManager::s_instance = nullptr;
 
 
+void GameManager::SetRoundResult(RoundResult result)
+{
+    m_roundResult = result;
+}
+
+const RoundResult GameManager::GetRoundResult()
+{
+    return m_roundResult;
+}
+
 bool GameManager::IsEmptyWeaponData()
 {
     return m_weapons.empty();

@@ -180,6 +180,18 @@ bool Button::KeyReleasedEvent(uint32_t key)
     return true;
 }
 
+bool Button::HoverJoinEvent()
+{
+    //std::cout << "CursurJoined" << std::endl;
+    return true;
+}
+
+bool Button::HoverLeftEvent()
+{
+    //std::cout << "CursurLefted" << std::endl;
+    return true;
+}
+
 void Button::Clear() {
     m_pDrag = nullptr;
 }

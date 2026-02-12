@@ -46,6 +46,13 @@ struct Wdata
     int maxStamina = 0;
     int currentTile = 0;
 };
+enum class RoundResult : uint8_t
+{
+    None,
+    Winner_P1,
+    Winner_P2,
+    Draw
+};
 // 얘가 뭘 가지고있어야 될까?
 class GameManager
 {
@@ -280,6 +287,12 @@ private:
 
     yuno::game::YunoClientNetwork* m_clientNet = nullptr;
 
+    // 라운드 승패 결과
+private:
+    RoundResult m_roundResult = RoundResult::None;
+    public:
+        void SetRoundResult(RoundResult result);
+        const RoundResult GetRoundResult();
 
     // 라운드 초기화 데이터
 private:

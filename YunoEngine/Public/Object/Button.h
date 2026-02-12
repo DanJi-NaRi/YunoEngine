@@ -47,6 +47,8 @@ public:
     virtual bool LMBReleasedEvent();
     virtual bool RMBReleasedEvent();
     virtual bool KeyReleasedEvent(uint32_t key = 0);
+    virtual bool HoverJoinEvent();
+    virtual bool HoverLeftEvent();
     virtual bool DownEvent();
     
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
@@ -77,6 +79,9 @@ public:
     void        SetUseRMB(bool use) { m_useRMB = use; }
     bool        IsUseRMB() { return m_useRMB; }
 
+    void        SetIsHoverJoin(bool isHoverJoin) { m_isHoverJoin = isHoverJoin; }
+    bool        IsHoverJoin() { return m_isHoverJoin; }
+
     void        Clear();
 
 protected:
@@ -91,6 +96,8 @@ protected:
     bool m_useHoverEvent = true;
     bool m_useLMB = true;
     bool m_useRMB = true;
+
+    bool m_isHoverJoin = false;
 
     std::function<void()> m_eventLMB = nullptr; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용
     std::function<void()> m_eventRMB = nullptr; // 펑션 // 타 클래스의 함수를 등록하고 싶으면 사용

@@ -20,6 +20,9 @@ public:
     virtual bool LMBReleasedEvent() override;
     virtual bool RMBReleasedEvent() override;
     virtual bool KeyReleasedEvent(uint32_t key = 0) override;
+    virtual bool HoverJoinEvent() override;
+    virtual bool HoverLeftEvent() override;
+
     //virtual bool DownEvent() override;
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }

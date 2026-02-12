@@ -160,6 +160,8 @@ const std::string to_string(EventName event)
     case EventName::PLAYER_TileCollapse:
         res = "PLAYER/TileCollapse";
         break;
+    case EventName::Blocking:
+        res = "Blocking";
     }
     return res;
 }
@@ -246,6 +248,9 @@ void AudioManager::Update(float dt)
             break;
         }
 
+        case AudioCmdType::PlaySnapshot:
+            PlaySnapshot(to_string(cmd.pe.event));
+            break;
         case AudioCmdType::PlayEvent:
             PlayEvent(to_string(cmd.pe.event), cmd.pe.is3D, { cmd.pe.pos.x, cmd.pe.pos.y, cmd.pe.pos.z });
             break;
@@ -341,6 +346,35 @@ void AudioManager::PlayEvent(const std::string& eventName, bool is3D, XMFLOAT3 p
     {
         h.Set3DAttributes(pos, forward, up, vel);
     }
+
+    BuildParamCache(eventName, desc);
+}
+
+void AudioManager::PlaySnapshot(const std::string& eventName)
+{
+    auto it = m_InstList.find(eventName);
+    if (it != m_InstList.end())
+    {
+        it->second.Start();
+        return;
+    }
+
+    auto desc = AudioCore::Get().GetSnapshotDesc(eventName);
+    if (desc == nullptr)
+    {
+        std::cerr << "해당 음원은 현재 씬에 없습니다.\n";
+        return;
+    }
+
+    FMOD::Studio::EventInstance* inst = nullptr;
+    FMOD_RESULT fres = desc->createInstance(&inst);
+    if (!inst) return;
+
+    EventHandle h(inst);
+    h.Start();
+
+    // 루프/지속형은 씬이 관리하도록 보관
+    m_InstList[eventName] = h;;
 
     BuildParamCache(eventName, desc);
 }
