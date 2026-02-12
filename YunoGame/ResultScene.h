@@ -41,6 +41,11 @@ private:
     ResultScene_InputContext m_uiCtx;
     ResultUIState m_uiState = ResultUIState::Main;
 
+    float m_delayTimer = 0.f;
+    float m_delayDuration = 2.0f;
+    bool  m_waiting = true;
+    ResultUIState m_pendingState = ResultUIState::Main;
+
     ResultPanel* m_victoryPanel = nullptr;
     ResultPanel* m_defeatPanel = nullptr;
     ResultPanel* m_drawPanel = nullptr;

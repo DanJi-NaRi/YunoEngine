@@ -190,6 +190,8 @@ public:
 
     void SetEndGame(bool end) { m_endGame = end; }
     bool GetEndGame() { return m_endGame; }
+    void SetEndTrun(bool end) { m_endTrun = end; }
+    bool GetEndTrun() { return m_endTrun; }
 private:
     static GameManager* s_instance;
 
@@ -202,6 +204,7 @@ private:
     PieceType m_lastPickedPiece = PieceType::None;
 
     bool m_endGame = false;
+    bool m_endTrun = false;
 
     int m_currentRound = 0;
     bool m_shouldStartReveal = false;
