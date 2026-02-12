@@ -502,8 +502,17 @@ namespace yuno::game
                 auto& gm = GameManager::Get();
                 gm.SetCurrentTurn(static_cast<int>(pkt.turnNumber));
 
-                if(pkt.turnNumber == 1)
+                if (pkt.turnNumber == 1) 
+                {
                     gm.IncreaseRound();
+                    if (gm.GetSceneState() == CurrentSceneState::AutoBattle)
+                    {
+                        gm.SetSceneState(CurrentSceneState::SubmitCard);
+                    }
+                }
+
+
+                
 
                 std::vector<yuno::net::packets::CardSpawnInfo> added;
                 added.push_back(pkt.addedCards[0]);
@@ -529,7 +538,7 @@ namespace yuno::game
 
                 std::cout << "[Client] ======================\n";
                 //if(gm.GetSceneState() == CurrentSceneState::AutoBattle)
-                //    gm.SetSceneState(CurrentSceneState::SubmitCard);
+                //gm.SetSceneState(CurrentSceneState::SubmitCard);
             }
         );// S2C_StartTurn Packet End
 
