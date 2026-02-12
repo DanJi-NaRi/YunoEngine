@@ -45,9 +45,6 @@ protected:
 private:
     PlayHUD_InputContext m_uiContext;
 
-    bool m_1PAllDead = false;
-    bool m_2PAllDead = false;
-
     bool isRoundReset = false;
 
     int curRound = 0;
@@ -56,6 +53,7 @@ private:
     SpriteSheet* m_SceneChange;
     bool isChangeRound = false;
     bool m_isRoundChangeReverse = false;
+    bool m_hasRoundChangeSignalSent = false;
 
     void ChangeRound(float dt);
 

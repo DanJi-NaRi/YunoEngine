@@ -106,7 +106,7 @@ bool PlayHUDScene::OnCreateScene()
     }
 
     m_SceneChange = CreateWidget<SpriteSheet>(L"scenechange", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::LeftTop);
-    m_SceneChange->SetSpriteSheet(L"../Assets/UI/PLAY/EF_Scene.png", 5, 5, 25, 24.0f, false);
+    m_SceneChange->SetSpriteSheet(L"../Assets/UI/PLAY/EF_Scene.png", 5, 7, 35, 36.0f, false);
     m_SceneChange->Stop();
     m_SceneChange->SetVisible(Visibility::Hidden);
 
@@ -296,7 +296,7 @@ bool PlayHUDScene::CheckRoundOver()
         isChangeRound = true;
         m_isRoundChangeReverse = false;
 
-        GameManager::Get().SetRoundChangeNow();
+        m_hasRoundChangeSignalSent = false;
 
         m_SceneChange->SetVisible(Visibility::Visible);
         m_SceneChange->Play();
@@ -337,15 +337,16 @@ void PlayHUDScene::ResetRound()
 
 void PlayHUDScene::ChangeRound(float dt)
 {
-    if (m_SceneChange->IsFinished() && !m_isRoundChangeReverse)
+    if (m_SceneChange->IsFinished() && !m_isRoundChangeReverse && !m_hasRoundChangeSignalSent)
     {
         ResetRound();
         m_SceneChange->SetReverse(true);
         m_SceneChange->Stop();
         GameManager::Get().SetRoundChangeNow();
+        m_hasRoundChangeSignalSent = true;
     }
 
-    if (!GameManager::Get().isRoundChangeNow() && !m_isRoundChangeReverse)
+    if (m_hasRoundChangeSignalSent && !GameManager::Get().isRoundChangeNow() && !m_isRoundChangeReverse)
     {
         m_SceneChange->Play();
         m_isRoundChangeReverse = true;
@@ -356,6 +357,7 @@ void PlayHUDScene::ChangeRound(float dt)
         m_SceneChange->SetReverse(false);
         m_SceneChange->SetVisible(Visibility::Hidden);
         m_isRoundChangeReverse = false;
+        m_hasRoundChangeSignalSent = false;
         isChangeRound = false;
     }
 }
