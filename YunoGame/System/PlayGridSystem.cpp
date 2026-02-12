@@ -255,6 +255,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram1->SetMoveRotOffset(0, 0);
          pChakram1->SetIgnoreRot(true);
          pChakram1->SetEmissiveColor(0, emissiveCol);
+         pChakram1->SetEmissivePow(0, 30);
 
          pPiece->Attach(pChakram1);
          pPiece->AddLinkedSubPiece(pChakram1);
@@ -276,6 +277,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram2->SetMoveRotOffset(0, 0);
          pChakram2->SetIgnoreRot(true);
          pChakram2->SetEmissiveColor(0, emissiveCol);
+         pChakram2->SetEmissivePow(0, 30);
 
          pPiece->Attach(pChakram2);
          pPiece->AddLinkedSubPiece(pChakram2);
@@ -314,6 +316,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pPiece->SetEmissiveColor(0, emissiveCol);
+         pPiece->SetEmissivePow(0, 30);
 
          break;
      case 3:
@@ -329,7 +332,9 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->SetScale(XMFLOAT3(2, 2, 2));
          pPiece->SetMoveRotOffset(-0.25f, 0);
          pPiece->SetEmissiveColor(0, emissiveCol);
+         pPiece->SetEmissivePow(0, 30);
          pPiece->SetEmissiveColor(1, emissiveCol);
+         pPiece->SetEmissivePow(1, 30);
          break;
      case 4:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
@@ -342,8 +347,11 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pPiece->SetEmissiveColor(0, emissiveCol);
+         pPiece->SetEmissivePow(0, 30);
          pPiece->SetEmissiveColor(1, emissiveCol);
+         pPiece->SetEmissivePow(1, 30);
          pPiece->SetEmissiveColor(2, emissiveCol);
+         pPiece->SetEmissivePow(2, 30);
          break;
      case 5:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
@@ -356,6 +364,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pPiece->SetEmissiveColor(1, emissiveCol);
+         pPiece->SetEmissivePow(1, 30);
          break;
      case 6:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Cleaver_idle.fbx");
@@ -368,6 +377,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
          pPiece->SetEmissiveColor(0, emissiveCol);
+         pPiece->SetEmissivePow(0, 30);
          break;
      }
      pPiece->SetWho(gp, team, w.pId, w.weaponId);
