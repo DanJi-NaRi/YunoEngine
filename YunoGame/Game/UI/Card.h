@@ -20,6 +20,9 @@ public:
     virtual bool LMBReleasedEvent() override;
     virtual bool RMBReleasedEvent() override;
     virtual bool KeyReleasedEvent(uint32_t key = 0) override;
+    virtual bool HoverJoinEvent() override;
+    virtual bool HoverLeftEvent() override;
+
     //virtual bool DownEvent() override;
 
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
@@ -31,11 +34,14 @@ public:
     void SetSlotID(int id) { m_slotID = id; }
     const int GetSlotID() { return m_slotID; }
 
+    void SetDraggable(bool isDraggable) { m_isDraggable = isDraggable; }
+    bool IsDraggable() const { return m_isDraggable; }
+
 protected:
 
     int m_cardID = -1;  // 런타임 ID
     int m_slotID = -1; // 현재 기준 어느 슬롯 무기의 것인지
-
+    bool m_isDraggable = false;
 };
 
 

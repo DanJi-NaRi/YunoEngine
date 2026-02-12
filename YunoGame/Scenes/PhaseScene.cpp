@@ -22,6 +22,7 @@
 //#include "GridLine.h"
 //#include "PlayQueue.h"
 #include "MinimapQueue.h"
+#include "AudioQueue.h"
 
 
 #include "MinimapGridSystem.h"
@@ -87,6 +88,8 @@ bool PhaseScene::OnCreateScene()
 
     m_uiManager->AllParentsSetScale(0.5f); // 일괄 사이즈 조정
 
+    AudioQ::Insert(AudioQ::PlaySnapshot(EventName::Blocking));
+
     return true;
 }
 
@@ -100,6 +103,8 @@ void PhaseScene::OnDestroyScene()
     {
         return;
     }
+
+    AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::Blocking, true));
 
     auto& gm = GameManager::Get();
     gm.SetMinimap(nullptr);

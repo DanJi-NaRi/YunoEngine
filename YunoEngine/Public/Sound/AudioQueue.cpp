@@ -53,6 +53,12 @@ AudioCmd AudioQ::EmitterUpdate(EventName event, float x, float y, float z)
     cmd.eu.pos = { x, y, z };
     return cmd;
 }
+AudioCmd AudioQ::PlaySnapshot(EventName event)
+{
+    AudioCmd cmd{ AudioCmdType::PlaySnapshot };
+    cmd.ps.event = event;
+    return cmd;
+}
 AudioCmd AudioQ::PlayEvent(EventName event, bool is3D, float x, float y, float z)
 {
     AudioCmd cmd{ AudioCmdType::PlayEvent };

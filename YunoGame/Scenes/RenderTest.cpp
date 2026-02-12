@@ -114,6 +114,7 @@ bool RenderTest::OnCreateScene()
     blade = m_objectManager->CreateObjectFromFile<AnimTest>(L"blade", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Cleaver/Cleaver.fbx");
     blade->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Cleaver_idle.fbx");
     blade->AddAnimationClip("attack", L"../Assets/fbx/Animation/attack/Cleaver_attack.fbx");
+    blade->AddAnimationClip("move", L"../Assets/fbx/Animation/move/Cleaver_move.fbx");
 
     breacher = m_objectManager->CreateObjectFromFile<AnimTest>(L"breacher", XMFLOAT3(0, 0, 0), L"../Assets/fbx/weapon/Breacher/Breacher.fbx");
     breacher->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Breacher_idle.fbx");
@@ -218,20 +219,23 @@ bool RenderTest::OnCreateScene()
     ed.cols = 8;
     ed.rows = 8;
     ed.emissive = 30.0f;
-    ed.color = { 0, 0, 1, 1 };
+    ed.color = { 0, 0.5f, 1, 1 };
     ed.rot = { XM_PIDIV2, 0, 0 };
     ed.isLoop = true;
     ed.texPath = L"../Assets/Effects/Pos/EF_Player_Blue.png";
     m_effectManager->RegisterEffect(ed);
+    auto pEffect = m_objectManager->CreateObject<EffectUnit>(L"PeacePosAlly", XMFLOAT3(0, 0.01f, 0));
+    pEffect->BuildInternalEffectMaterial(ed);
+    pEffect->SetRot({ 0, 0, 0 });
 
     ed.id = EffectID::PeacePosEnemy;
     ed.color = { 1, 0, 0, 1 };
     ed.texPath = L"../Assets/Effects/Pos/EF_Player_Red.png";
     m_effectManager->RegisterEffect(ed);
 
-    auto eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
-    gun->Attach(eff);
-    eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    //auto eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    gun->Attach(pEffect);
+    auto eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
     axe->Attach(eff);
     eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
     chakram01->Attach(eff);
@@ -340,9 +344,9 @@ bool RenderTest::OnCreateScene()
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::Target;
-    ed.framecount = 30;
-    ed.lifetime = 1.2f;
-    ed.cols = 6;
+    ed.framecount = 25;
+    ed.lifetime = 0.9f;
+    ed.cols = 5;
     ed.rows = 5;
     ed.billboard = BillboardMode::None;
     ed.rot = { XM_PIDIV2, 0, 0 };

@@ -9,6 +9,7 @@
 #include "IInput.h"
 #include "UIFactory.h"
 #include "Button.h"
+#include "DragProvider.h"
 
 
 UIManager::UIManager()
@@ -263,6 +264,9 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
             if(Btn->IsUseHoverPath())
                 Btn->ChangeTexture(Btn->GetTexturePathBk());
             
+            if (Btn->IsHoverJoin()) Btn->HoverLeftEvent(); // 커서 입장 시 1번만 실행
+            Btn->SetIsHoverJoin(false);
+
             Btn->IdleEvent();
             //std::cout << "Idle!!" << std::endl;
             Btn = nullptr;
@@ -302,6 +306,9 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
             Btn->SetButtonState(ButtonState::Hovered);
 
             if (!Btn->IsUseHoverEvent()) continue;
+
+            if (!Btn->IsHoverJoin()) Btn->HoverJoinEvent(); // 커서 입장 시 1번만 실행
+            Btn->SetIsHoverJoin(true);
 
             const auto& hoverdPath = Btn->GetHoveredTexturePath();
             if(hoverdPath != g_notUsePath && Btn->IsUseHoverPath()) Btn->ChangeTexture(Btn->GetHoveredTexturePath());
@@ -421,6 +428,28 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
     }
 
     return false;
+}
+
+bool UIManager::ProcessLeaveCursur()
+{
+    assert(m_pInput);
+
+    if (!m_pInput->IsMouseLeaved()) return false;
+
+    Button* focusWidget = m_cursurSystem.GetFocusedWidget();
+    if (!focusWidget) return false;
+
+    DragProvider* drag = focusWidget->GetDragProvider();
+    if (!drag || !drag->IsNowDragging()) {
+        focusWidget->SetButtonState(ButtonState::Idle);
+        m_cursurSystem.SetFocusedWidget(nullptr);
+        return true;
+    }
+
+    drag->EndDrag();
+    focusWidget->SetButtonState(ButtonState::Idle);
+    m_cursurSystem.SetFocusedWidget(nullptr);
+    return true;
 }
 
 bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)

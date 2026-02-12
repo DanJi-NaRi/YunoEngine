@@ -46,6 +46,13 @@ struct Wdata
     int maxStamina = 0;
     int currentTile = 0;
 };
+enum class RoundResult : uint8_t
+{
+    None,
+    Winner_P1,
+    Winner_P2,
+    Draw
+};
 // 얘가 뭘 가지고있어야 될까?
 class GameManager
 {
@@ -161,6 +168,26 @@ public:
     void IncreaseRound() { ++m_currentRound; }
     void ResetRound() { m_currentRound = 0; }
 
+    int GetCurrentTurn() const { return m_currentTurn; }
+    uint64_t GetTurnStateVersion() const { return m_turnStateVersion; }
+    void SetCurrentTurn(int turn)
+    {
+        if (turn < 0)
+            turn = 0;
+
+        if (m_currentTurn == turn)
+            return;
+
+        m_currentTurn = turn;
+        ++m_turnStateVersion;
+    }
+    void ResetTurn()
+    {
+        m_currentTurn = 0;
+        ++m_turnStateVersion;
+    }
+
+
     void RequestRevealStart() { m_shouldStartReveal = true; }
     bool GetRevealStart() const { return m_shouldStartReveal; }
     bool ConsumeRevealStart()
@@ -205,8 +232,11 @@ private:
 
     bool m_endGame = false;
     bool m_endTrun = false;
+    int m_currentTurn = 0;
+    uint64_t m_turnStateVersion = 0;
 
     int m_currentRound = 0;
+
     bool m_shouldStartReveal = false;
 
     int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽
@@ -246,6 +276,12 @@ private:
 
     yuno::game::YunoClientNetwork* m_clientNet = nullptr;
 
+    // 라운드 승패 결과
+private:
+    RoundResult m_roundResult = RoundResult::None;
+    public:
+        void SetRoundResult(RoundResult result);
+        const RoundResult GetRoundResult();
 
     // 라운드 초기화 데이터
 private:
@@ -317,6 +353,7 @@ public:
     void UpdatePanels(const BattleResult& obstacleResult);
     void UpdatePanels(const ObstacleResult& obstacleResult);
     void FlushPendingPanelUpdates();
+    bool IsRuntimeCardInConfirmSlots(uint32_t runtimeID) const;
     //void UpdateSelectionPanel(const UnitHand& playerInfo);
 
     private:

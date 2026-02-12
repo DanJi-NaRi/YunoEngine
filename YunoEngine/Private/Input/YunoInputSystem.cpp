@@ -40,6 +40,11 @@ bool YunoInputSystem::IsMouseHovered() const
     return m_state.mouseHovered;
 }
 
+bool YunoInputSystem::IsMouseLeaved() const
+{
+    return m_state.mouseLeaved;
+}
+
 bool YunoInputSystem::IsMouseButtonDown(uint32_t button) const
 {
     if (button >= m_state.mouseDown.size()) return false;
@@ -196,6 +201,7 @@ void YunoInputSystem::ApplyToState(const InputEvent& evt)
         m_state.mouseDeltaY += (m_state.mouseY - prevY);
 
         m_state.mouseHovered = false;
+        m_state.mouseLeaved = false;
         break;
     }
     
@@ -205,6 +211,10 @@ void YunoInputSystem::ApplyToState(const InputEvent& evt)
 
     case InputEventType::MouseWheel:
         // 상태 기반 wheel 누적이 필요하면 InputState에 wheelDelta 추가해서 누적
+        break;
+
+    case InputEventType::MouseLeave:
+        m_state.mouseLeaved = true;
         break;
 
     default:

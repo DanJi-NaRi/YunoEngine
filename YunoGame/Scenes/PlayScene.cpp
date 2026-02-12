@@ -233,14 +233,14 @@ void PlayScene::RegisterEffect()
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::Target;
-    ed.framecount = 30;
-    ed.lifetime = 1.2f;
-    ed.cols = 6;
+    ed.framecount = 25;
+    ed.lifetime = 0.9f;
+    ed.cols = 5;
     ed.rows = 5;
     ed.billboard = BillboardMode::None;
     ed.rot = { XM_PIDIV2, 0, 0 };
     ed.emissive = 30.0f;
-    ed.color = { 0, 0, 1, 1 };
+    ed.color = { XMFLOAT4{ 0, 0.1f, 1, 1 } };
     ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
     m_effectManager->RegisterEffect(ed);
     ed.id = EffectID::TargetEnemy;
@@ -521,8 +521,11 @@ void PlayScene::OnEnter()
     m_CurSceneState = GameManager::Get().GetSceneState();
     m_PrevSceneState = m_CurSceneState;
 
-    m_CurCamPos = YunoEngine::GetRenderer()->GetCamera().position;
-    m_NextCamPos = { m_CurCamPos.x, m_CurCamPos.y, -7.8 };
+    
+    m_CurCamPos = { 0.0f, 5.672f, -3.07f };
+    m_CurCamTarget = { 0, 0, 0 };
+    m_NextCamPos = { 0.0f, 4.043f, -5.651f };
+    m_NextCamTarget = { 0.0f, 3.293f, -6.313f };
     isCamMove = true;
 }
 
@@ -545,21 +548,30 @@ void PlayScene::MoveCamera(float dt)
     float t = m_curMoveTime / m_CamMoveTime;
 
     XMVECTOR curpos = XMLoadFloat3(&m_CurCamPos);
+    XMVECTOR curTarget = XMLoadFloat3(&m_CurCamTarget);
     XMVECTOR nextpos = XMLoadFloat3(&m_NextCamPos);
+    XMVECTOR nextTarget = XMLoadFloat3(&m_NextCamTarget);
 
     XMVECTOR newpos;
+    XMVECTOR newTarget;
     if (t < 1.0f)
     {
         newpos = XMVectorLerp(curpos, nextpos, t);
+        newTarget = XMVectorLerp(curTarget, nextTarget, t);
         XMStoreFloat3(&cam.position, newpos);
+        XMStoreFloat3(&cam.target, newTarget);
     }
     else
     {
         newpos = nextpos;
+        newTarget = nextTarget;
         XMStoreFloat3(&cam.position, newpos);
+        XMStoreFloat3(&cam.target, newTarget);
 
         XMStoreFloat3(&m_NextCamPos, curpos);
+        XMStoreFloat3(&m_NextCamTarget, curTarget);
         XMStoreFloat3(&m_CurCamPos, newpos);
+        XMStoreFloat3(&m_CurCamTarget, newTarget);
 
         m_curMoveTime = 0.0f;
         isCamMove = false;

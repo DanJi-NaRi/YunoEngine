@@ -216,7 +216,7 @@ private:
     std::unordered_map<GamePiece, PieceInfo> m_pieces;      // 기물 정보
 
     std::unique_ptr<PlayGridQ> m_playQ;
-    std::vector<UnitPiece*> m_units;
+    std::unordered_map<GamePiece, UnitPiece*> m_units;
 
 private:
     // 시간 관련
