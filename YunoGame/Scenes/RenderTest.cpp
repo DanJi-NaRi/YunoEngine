@@ -218,20 +218,23 @@ bool RenderTest::OnCreateScene()
     ed.cols = 8;
     ed.rows = 8;
     ed.emissive = 30.0f;
-    ed.color = { 0, 0, 1, 1 };
+    ed.color = { 0, 0.5f, 1, 1 };
     ed.rot = { XM_PIDIV2, 0, 0 };
     ed.isLoop = true;
     ed.texPath = L"../Assets/Effects/Pos/EF_Player_Blue.png";
     m_effectManager->RegisterEffect(ed);
+    auto pEffect = m_objectManager->CreateObject<EffectUnit>(L"PeacePosAlly", XMFLOAT3(0, 0.01f, 0));
+    pEffect->BuildInternalEffectMaterial(ed);
+    pEffect->SetRot({ 0, 0, 0 });
 
     ed.id = EffectID::PeacePosEnemy;
     ed.color = { 1, 0, 0, 1 };
     ed.texPath = L"../Assets/Effects/Pos/EF_Player_Red.png";
     m_effectManager->RegisterEffect(ed);
 
-    auto eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
-    gun->Attach(eff);
-    eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    //auto eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
+    gun->Attach(pEffect);
+    auto eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
     axe->Attach(eff);
     eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
     chakram01->Attach(eff);
