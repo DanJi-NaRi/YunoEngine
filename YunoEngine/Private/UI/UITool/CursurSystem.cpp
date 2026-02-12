@@ -24,7 +24,8 @@ bool CursurSystem::Init(std::deque<std::unique_ptr<Widget>>* pWidgets)
 void CursurSystem::Clear() {
     m_pWidgets = nullptr;
     m_focusedWidget = nullptr;
-    m_useKeyWidget;
+    m_useKeyWidget = nullptr;
+    m_focusedMouseButton = -1;
 }
 
 void CursurSystem::UpdateCheckSnap()
