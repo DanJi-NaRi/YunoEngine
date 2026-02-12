@@ -260,12 +260,23 @@ void GameManager::FlushPendingPanelUpdates()
         m_pSelectionPanel->UpdatePanel(battleResult);
         m_pConfirmPanel->UpdatePanel(battleResult);
     }
+
+    while (!m_pendingObstaclePanelUpdates.empty())
+    {
+        const ObstacleResult obstacleResult = m_pendingObstaclePanelUpdates.front();
+        m_pendingObstaclePanelUpdates.pop();
+
+        m_pMinimap->UpdatePanel(obstacleResult);
+        m_pSelectionPanel->UpdatePanel(obstacleResult);
+        m_pConfirmPanel->UpdatePanel(obstacleResult);
+    }
 }
 
 void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
 {
     if (!m_pMinimap || !m_pSelectionPanel || !m_pConfirmPanel)
     {
+        m_pendingObstaclePanelUpdates.push(obstacleResult);
         return;
     }
 
@@ -278,6 +289,10 @@ void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
         m_pSelectionPanel->UpdatePanel(battleResult);
         m_pConfirmPanel->UpdatePanel(battleResult);
     }
+
+    m_pMinimap->UpdatePanel(obstacleResult);
+    m_pSelectionPanel->UpdatePanel(obstacleResult);
+    m_pConfirmPanel->UpdatePanel(obstacleResult);
 }
 
 

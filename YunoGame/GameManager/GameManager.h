@@ -364,6 +364,7 @@ public:
 
     private:
         std::queue<BattleResult> m_pendingBattlePanelUpdates;
+        std::queue<ObstacleResult> m_pendingObstaclePanelUpdates;
 
 
     private:
