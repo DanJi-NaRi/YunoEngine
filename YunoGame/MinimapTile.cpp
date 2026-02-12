@@ -81,6 +81,11 @@ bool MinimapTile::HoveredEvent()
     return true;
 }
 
+bool MinimapTile::HoverJoinEvent()
+{
+    return true;
+}
+
 // Down 기능은 현재 미지원
 //bool MinimapTile::DownEvent()
 //{

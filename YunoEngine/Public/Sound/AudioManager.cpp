@@ -106,6 +106,9 @@ const std::string to_string(EventName event)
     case EventName::UI_Move:
         res = "UI/Move";
         break;
+    case EventName::UI_Cross:
+        res = "UI/Cross";
+        break;
     case EventName::PLAYER_BlasterAttack:
         res = "PLAYER/BlasterAttack";
         break;

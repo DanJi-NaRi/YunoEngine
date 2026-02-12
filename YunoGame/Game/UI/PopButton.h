@@ -15,6 +15,7 @@ public:
 
     // 버튼 이벤트 핸들
     virtual bool IdleEvent() override;                          // 아무것도 안할 때
+    virtual bool HoverJoinEvent() override;                     // 호버 진입했을 때
     virtual bool HoveredEvent() override;                       // 커서가 위에 있을 때
     virtual bool LMBPressedEvent() override;                    // 왼클릭 눌렀을 때
     virtual bool RMBPressedEvent() override;                    // 우클릭 눌렀을 때

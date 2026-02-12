@@ -4,6 +4,7 @@
 #include "YunoEngine.h"
 #include "DragProvider.h"
 #include "IInput.h"
+#include "AudioQueue.h"
 
 Card::Card(UIFactory& uiFactory) : Button(uiFactory)
 {
@@ -61,6 +62,7 @@ bool Card::LMBPressedEvent()
     if (!m_isDraggable)
         return true;
     //std::cout << "(Card - LMB)PressedEvent" << std::endl;
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseClick));
     m_pDrag->StartDrag();
     return true;
 }
@@ -97,7 +99,8 @@ bool Card::KeyReleasedEvent(uint32_t key)
 
 bool Card::HoverJoinEvent()
 {
-    return false;
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
+    return true;
 }
 
 bool Card::HoverLeftEvent()

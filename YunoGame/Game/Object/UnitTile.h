@@ -23,6 +23,7 @@ private:
 private:
     void UpdateFlash(float dt);
 public:
+    void SetIdleState();
     void SetFlashColor(Float4 color, int count, float blinkTime);
     void PlayWarning(ObstacleType obstacleType);
     void PlayTrigger(ObstacleType obstacleType);

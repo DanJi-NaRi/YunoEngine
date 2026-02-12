@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "WeaponButton.h"
+#include "AudioQueue.h"
 
 #include "YunoEngine.h"
 #include "IInput.h"
@@ -129,6 +130,12 @@ bool WeaponButton::IdleEvent()
     return true;
 }
 
+bool WeaponButton::HoverJoinEvent()
+{
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
+    return true;
+}
+
 // 커서가 위에 올라있을 때
 bool WeaponButton::HoveredEvent()
 {
@@ -148,7 +155,7 @@ bool WeaponButton::HoveredEvent()
 bool WeaponButton::LMBPressedEvent()
 {
     std::cout << "OnCLick" << std::endl;
-
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseClick));
 
     GameManager& gm = GameManager::Get();
 

@@ -57,6 +57,9 @@ public:
 
         return true;
     }
+
+    virtual bool HoverJoinEvent() override;                     // 호버 진입했을 때
+    virtual bool LMBPressedEvent() override;                    // 왼클릭 눌렀을 때
 protected:
     bool LMBReleasedEvent() override
     {

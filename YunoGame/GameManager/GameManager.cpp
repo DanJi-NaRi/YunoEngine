@@ -4,6 +4,7 @@
 
 #include "YunoEngine.h"
 #include "ISceneManager.h"
+#include "AudioQueue.h"
 
 #include "Title.h"
 #include "TitleScene.h"
@@ -360,6 +361,9 @@ void GameManager::Init()
 {
     m_cardBasicMng.LoadFromCSV("../Assets/CardData/Carddata.csv");
     m_cardRangeMng.LoadFromCSV("../Assets/CardData/CardRange.csv");
+    SetMasterVolume(m_masterVolume);
+    SetBGMVolume(m_bgmVolume);
+    SetSFXVolume(m_sfxVolume);
 }
 
 void GameManager::Shutdown()
@@ -905,6 +909,24 @@ int GameManager::GetCountDownSlotUnitId(int slotIndex, int unitIndex) const
         return 0;
     }
 }
+
+void GameManager::SetMasterVolume(int v)
+{
+    m_masterVolume = v;
+    AudioQ::Insert(AudioQ::SetUserVolume(VolumeType::Master, v / m_KSteps));
+}
+void GameManager::SetBGMVolume(int v)
+{
+    m_bgmVolume = v;
+    AudioQ::Insert(AudioQ::SetUserVolume(VolumeType::Music, v / m_KSteps));
+}
+
+void GameManager::SetSFXVolume(int v)
+{
+    m_sfxVolume = v;
+    AudioQ::Insert(AudioQ::SetUserVolume(VolumeType::SFX, v / m_KSteps));
+}
+
 
 
 void GameManager::RequestScenePop()

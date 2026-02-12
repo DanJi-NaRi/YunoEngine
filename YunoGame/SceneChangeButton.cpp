@@ -6,7 +6,7 @@
 #include "YunoEngine.h"
 #include "IInput.h"
 #include "UIFactory.h"
-
+#include "AudioQueue.h"
 
 
 // 패킷 관련 인클루드
@@ -88,6 +88,12 @@ bool SceneChangeButton::HoveredEvent()
     return true;
 }
 
+bool SceneChangeButton::HoverJoinEvent()
+{
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
+    return true;
+}
+
 // Down 기능은 현재 미지원
 //bool ButtonTemplate::DownEvent()
 //{
@@ -100,6 +106,7 @@ bool SceneChangeButton::LMBPressedEvent()
 {
     if (GameManager::Get().GetSceneState() == CurrentSceneState::CountDown) { return false; }
     GameManager::Get().SetSceneState(m_targetScene);
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseClick));
     
     return true;
 }

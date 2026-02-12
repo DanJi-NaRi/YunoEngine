@@ -5,6 +5,7 @@
 #include "IInput.h"
 #include "UIFactory.h"
 #include "GameManager.h"
+#include "AudioQueue.h"
 
 //#include "DragProvider.h" // 드래그가 필요하면
 
@@ -67,6 +68,12 @@ bool EmoteButton::IdleEvent()
     return true;
 }
 
+bool EmoteButton::HoverJoinEvent()
+{
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
+    return true;
+}
+
 // 커서가 위에 올라있을 때
 bool EmoteButton::HoveredEvent()
 {
@@ -76,8 +83,11 @@ bool EmoteButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool EmoteButton::LMBPressedEvent()
 {
-    if(!isLock)
+    if (!isLock)
+    {
         GameManager::Get().SendEmote(emoteNum);
+    }
+
     return true;
 }
 

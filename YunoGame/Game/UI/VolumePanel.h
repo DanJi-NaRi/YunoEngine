@@ -1,14 +1,8 @@
 #pragma once
 #include "Widget.h"
+#include "AudioQueue.h"
 
 class VolumeTrackButton;
-
-enum class VolumeType
-{
-    Master,
-    BGM,
-    SFX
-};
 
 class VolumePanel final : public Widget
 {
@@ -30,7 +24,7 @@ public:
     int  GetLevel() const { return m_level; }
     void SetLevel(int level);
 
-    void SetVolumeType(int typeIndex){ m_type = static_cast<VolumeType>(typeIndex); }
+    void SetVolumeType(int typeIndex);
 private:
     VolumeTrackButton* m_track = nullptr;
     std::vector<Widget*> m_steps;

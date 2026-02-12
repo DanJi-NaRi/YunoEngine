@@ -8,6 +8,7 @@
 #include "IWindow.h"
 #include "UIWidgets.h"
 #include "AddCardPanel.h"
+#include "AudioQueue.h"
 
 bool PlayMidScene::OnCreateScene()
 {
@@ -273,6 +274,8 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
             m_warningLogo->SetPos({ ClientW * 0.5f, ClientH * 0.5f - 100.f, 0 });
             m_warningLogo->SetLayer(WidgetLayer::HUD);
         }
+
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_CointEvent));
         break;
 
     case PlayMidUIState::AddCardSelect:
@@ -281,6 +284,8 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
 
         if (m_addCardPanel)
             m_addCardPanel->SetVisible(Visibility::Visible);
+
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_Move));
 
         auto& gm = GameManager::Get();
         const auto& candidates = gm.GetDrawCandidates();
@@ -306,6 +311,7 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
             m_coin->SetFrameIndex(0);
             m_coin->SetVisible(Visibility::Visible);
             m_coin->Play();
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_CoinToss));
         }
     }
     break; //  fall-through 버그 수정
@@ -503,6 +509,8 @@ bool PlayMidScene::PopAndRevealPair(GameManager& gm)
         return false;
 
     float totalActionTime = 0.f;
+
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_CardUse));
 
     BattleResult br1 = gm.PopRevealPacket();
     RevealSingleCard(br1, gm);

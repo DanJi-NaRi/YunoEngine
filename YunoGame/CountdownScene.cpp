@@ -6,6 +6,7 @@
 #include "UIManager.h"
 #include "CountdownImage.h"
 #include "Emoji.h"
+#include "AudioQueue.h"
 
 
 namespace
@@ -156,6 +157,8 @@ void CountdownScene::OnEnter()
     m_lastNumber = -1;
     m_vsElapsed = 0.0f;
     m_roundStartRequested = false;
+
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_CountDown));
 }
 
 void CountdownScene::OnExit()

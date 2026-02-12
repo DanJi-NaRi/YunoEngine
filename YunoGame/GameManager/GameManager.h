@@ -201,11 +201,12 @@ public:
         return true;
     }
 
-    void SetMasterVolume(int v) { m_masterVolume = v; };
+    float m_KSteps = 50.f;  // 최대 볼륨
+    void SetMasterVolume(int v);
     int GetMasterVolume() const { return m_masterVolume; };
-    void SetBGMVolume(int v) { m_bgmVolume = v; };
+    void SetBGMVolume(int v);
     int GetBGMVolume() const { return m_bgmVolume; };
-    void SetSFXVolume(int v) { m_sfxVolume = v; };
+    void SetSFXVolume(int v);
     int GetSFXVolume() const { return m_sfxVolume; };
 
     void SetCoinToss(int c) { m_coinTossQueue.push(c); }
@@ -261,9 +262,9 @@ private:
     bool m_p1Ready = false;
     bool m_p2Ready = false;
 
-    int m_masterVolume = 5;
-    int m_bgmVolume = 5;
-    int m_sfxVolume = 5;
+    int m_masterVolume = 25;
+    int m_bgmVolume = 25;
+    int m_sfxVolume = 25;
 
     std::queue<int> m_coinTossQueue;
 

@@ -6,6 +6,7 @@
 #include "UIFactory.h"
 #include "TextureImage.h"
 #include "GameManager.h"
+#include "AudioQueue.h"
 
 VolumePanel::VolumePanel(UIFactory& factory)
     : Widget(factory)
@@ -50,15 +51,16 @@ void VolumePanel::CreateChild()
             switch (m_type)
             {
             case VolumeType::Master:
-                GameManager::Get().SetMasterVolume(newLevel);
+                GameManager::Get().SetSFXVolume(newLevel);
                 break;
 
-            case VolumeType::BGM:
+            case VolumeType::Music:
                 GameManager::Get().SetBGMVolume(newLevel);
+
                 break;
 
             case VolumeType::SFX:
-                GameManager::Get().SetSFXVolume(newLevel);
+                GameManager::Get().SetMasterVolume(newLevel);
                 break;
             }
         };
@@ -106,4 +108,9 @@ void VolumePanel::SetLevel(int level)
             : L"../Assets/UI/TITLE/volume_unfill.png"
         );
     }
+}
+
+void VolumePanel::SetVolumeType(int typeIndex)
+{
+    m_type = static_cast<VolumeType>(typeIndex);
 }

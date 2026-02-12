@@ -11,6 +11,9 @@
 #include "UIManager.h"
 #include "iwindow.h"
 
+// 오디오 큐
+#include "AudioQueue.h"
+
 // 여러 오브젝트들 ;; 
 #include "UIWidgets.h"
 #include "HealthBar.h"
@@ -298,6 +301,8 @@ bool PlayHUDScene::CheckRoundOver()
 
         m_hasRoundChangeSignalSent = false;
 
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_Cross));
+
         m_SceneChange->SetVisible(Visibility::Visible);
         m_SceneChange->Play();
     }
@@ -387,6 +392,7 @@ void PlayHUDScene::Update(float dt)
     PendingEmote emote;
     while (GameManager::Get().PopEmote(emote))
     {
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_Emogi));
         ShowEmoteImage(emote.pid, emote.emoteId);
     }
     //이모지 수명 관리

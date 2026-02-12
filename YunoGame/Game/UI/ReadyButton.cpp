@@ -3,7 +3,7 @@
 
 #include "YunoEngine.h"
 #include "IInput.h"
-
+#include "AudioQueue.h"
 
 #include "GameManager.h"
 
@@ -70,6 +70,12 @@ bool ReadyButton::HoveredEvent()
     return true;
 }
 
+bool ReadyButton::HoverJoinEvent()
+{
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
+    return true;
+}
+
 // Down 기능은 현재 미지원
 //bool ButtonTemplate::DownEvent()
 //{
@@ -92,6 +98,7 @@ bool ReadyButton::LMBPressedEvent()
         return false;
     }
 
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseClick));
 
     const bool isReady = gm.ToggleReady();
 

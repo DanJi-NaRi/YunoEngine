@@ -6,18 +6,30 @@ class EffectManager;
 
 enum class PieceAnim : uint16_t
 {
+    //None,
+    //Idle,
+    //Move,
+    //Rot,
+    //RollBack,
+    //Roll,
+    //Attack,
+    //Dissolve,
+    //Flash ,
+    //Hit,
+    //Dead,
+    //DeadQueued
     None = 0,
-    Idle = 1 << 1,
-    Move = 1 << 2,
-    Rot = 1 << 3,
-    RollBack = 1 << 4,
-    Roll = 1 << 5,
-    Attack = 1 << 6,
-    Dissolve = 1 << 7,
-    Flash = 1 << 8,
-    Hit = 1 << 9,
-    Dead = 1 << 10,
-    DeadQueued = 1 << 11
+    Idle = 1 << 0,
+    Move = 1 << 1,
+    Rot = 1 << 2,
+    RollBack = 1 << 3,
+    Roll = 1 << 4,
+    Attack = 1 << 5,
+    Dissolve = 1 << 6,
+    Flash = 1 << 7,
+    Hit = 1 << 8,
+    Dead = 1 << 9,
+    DeadQueued = 1 << 10
 };
 bool HasThis_Anim(PieceAnim a, PieceAnim b);
 bool EqualThis_Anim(PieceAnim a, PieceAnim b);
@@ -64,7 +76,6 @@ public:
 
     void SetTmpColor(Float4 color);
     void AddLinkedSubPiece(UnitPiece* subPiece);
-    bool IsBusy() const;
 
 private:
     void PlayMove();
@@ -99,7 +110,7 @@ private:
 
     // 디졸브
     float m_dissolveTime = 0.f;
-    float m_dissolveDuration = 0.f;
+    float m_dissolveDuration = 1.25f;
     float m_startDissolveAmount = 0.f;
 
     // 공격
@@ -116,7 +127,7 @@ private:
     int m_count = 0;
 
     // 이동
-    float m_moveOffset = 0; //-0.5f
+    float m_moveOffset = -0.5f;
     float m_curMoveOffset = 0.f;
     XMVECTOR m_Target{};
     XMVECTOR m_Start{};
@@ -126,7 +137,7 @@ private:
     float m_moveTime = 0.f;
 
     // 회전
-    float m_rotOffset = 0; //XMConvertToRadians(30.f)
+    float m_rotOffset = XMConvertToRadians(30.f);
     float m_curRotOffset = 0.f;
     Direction m_dir = Direction::None;
     float m_rotTime = 0.f;
@@ -155,7 +166,6 @@ private:
     };
 
     std::vector<UnitPiece*> m_linkedSubPieces;
-    bool m_waitSubMoveHit = false;
     PendingMoveHit m_pendingMoveHit{};
 
     // 큐
