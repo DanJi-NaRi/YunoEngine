@@ -122,13 +122,13 @@ void UnitPiece::CheckMyQ()
            if (tp.hit_p.amIdead)
                PlayDead(tp.hit_p.disappearDissolveDuration);
            else
-               PlayHit();
+               PlayHit(true);
 
            // MoveHit는 본체가 1회만 시스템 큐에 전달해야 한다.
            // 서브 피스까지 동일 커맨드를 전달받으면 Hit_S가 중복 enqueue되어
            // 상대 피스 hit가 여러 번 재생되거나 대상이 꼬일 수 있다.
            if (m_subID == 0 && tp.hit_p.whichPiece != GamePiece::None)
-               PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece));
+               PlayGridQ::Insert(PlayGridQ::Hit_S(tp.hit_p.whichPiece, true));
            
            for (auto* sub : m_linkedSubPieces)
            {
@@ -140,7 +140,7 @@ void UnitPiece::CheckMyQ()
        }  
        case CommandType::Hit:  
        {  
-           PlayHit();  
+           PlayHit(tp.hit_p.isCollided);
            break;  
        }  
        case CommandType::Dead:  
@@ -186,14 +186,21 @@ void UnitPiece::UpdateOffset()
     for (auto* sub : m_linkedSubPieces)
     {
         if (sub == nullptr) continue;
-        if (sub->m_state == PieceAnim::Attack)
+        if (sub->HasAnimState(PieceAnim::Attack) || sub->HasAnimState(PieceAnim::RollBack) || sub->HasAnimState(PieceAnim::Roll))
         {
             isAnySubBusy = true;
             break;
         }
     }
-    m_curRotOffset = (m_state == PieceAnim::Attack || isAnySubBusy) ? 0.f : (m_dir == Direction::Right) ? -m_rotOffset : m_rotOffset;
-    m_curMoveOffset = (m_state == PieceAnim::Attack || isAnySubBusy) ? 0.f : m_moveOffset;
+    //m_curRotOffset = (HasAnimState(PieceAnim::Attack) || isAnySubBusy) ? 0.f : (m_dir == Direction::Right) ? -m_rotOffset : m_rotOffset;
+    //m_curMoveOffset = (HasAnimState(PieceAnim::Attack) || isAnySubBusy) ? 0.f : m_moveOffset;
+    const bool keepAttackPose = HasAnimState(PieceAnim::Attack) || HasAnimState(PieceAnim::RollBack) || isAnySubBusy;
+    const bool isRotating = HasAnimState(PieceAnim::Rot);
+    // 회전 중에는 방향(dir)이 이미 목표 방향으로 바뀌어 있어
+    // z-lean 부호가 먼저 뒤집히는 현상이 생길 수 있다.
+    // 회전 구간에서는 z-lean을 잠시 0으로 유지해 roll 축 튐을 막는다.
+    m_curRotOffset = (keepAttackPose || isRotating) ? 0.f : (m_dir == Direction::Right) ? -m_rotOffset : m_rotOffset;
+    m_curMoveOffset = keepAttackPose ? 0.f : m_moveOffset;
 }
 
 void UnitPiece::UpdateRot(float dt)
@@ -216,8 +223,27 @@ void UnitPiece::UpdateRot(float dt)
 
 void UnitPiece::UpdateMove(float dt)
 {
-    if (m_state != PieceAnim::Move)  return;
+    if (!HasAnimState(PieceAnim::Move))  return;
+
+    bool anySubHitting = false;
+    if (m_animator == nullptr)
+    {
+        // animator가 없는 부모 피스(예: 차크람 루트)는
+        // 자식 피격이 끝날 때까지 move 상태를 유지해야함.
+
+        for (auto* sub : m_linkedSubPieces)
+        {
+            if (sub == nullptr) continue;
+            if (sub->HasAnimState(PieceAnim::Hit))
+            {
+                anySubHitting = true;
+                break;
+            }
+        }
+    }
     
+    if (anySubHitting)   return;
+
     m_moveTime += dt / m_Dist * m_speed * m_fixSpeed;
 
     if (m_moveTime >= 1.f)
@@ -226,12 +252,6 @@ void UnitPiece::UpdateMove(float dt)
         
         StopMove();
 
-        for (auto* sub : m_linkedSubPieces)
-        {
-            if (sub == nullptr) continue;
-
-            sub->StopMove();
-        }
     }
     else
     {
@@ -325,7 +345,7 @@ void UnitPiece::UpdateDissolve(float dt)
 
 void UnitPiece::UpdateAttack(float dt)
 {
-    if (m_state != PieceAnim::Attack) return;
+    if (!HasAnimState(PieceAnim::Attack)) return;
 
     if (m_animator == nullptr)
     {
@@ -335,7 +355,7 @@ void UnitPiece::UpdateAttack(float dt)
         for (auto* sub : m_linkedSubPieces)
         {
             if (sub == nullptr) continue;
-            if (sub->HasAnimState(PieceAnim::Attack) || sub->HasAnimState(PieceAnim::RollBack))
+            if (sub->HasAnimState(PieceAnim::Attack))
             {
                 anySubAttacking = true;
                 break;
@@ -343,7 +363,7 @@ void UnitPiece::UpdateAttack(float dt)
         }
 
         if (!anySubAttacking)
-            m_state = PieceAnim::Idle;
+            PlayRoll();
 
         return;
     }
@@ -355,7 +375,7 @@ void UnitPiece::UpdateAttack(float dt)
         m_animator->Change("idle");
         m_animator->Play();
 
-        m_state = PieceAnim::Idle;
+        PlayRoll();
     }
 }
 
@@ -365,7 +385,7 @@ void UnitPiece::UpdateRollingOrBack(float dt)
     for (auto* sub : m_linkedSubPieces)
     {
         if (sub == nullptr) continue;
-        if (sub->m_state == PieceAnim::Attack)
+        if (sub->HasAnimState(PieceAnim::Attack) || sub->HasAnimState(PieceAnim::RollBack) || sub->HasAnimState(PieceAnim::Roll))
         {
             isAnySubBusy = true;
             break;
@@ -464,13 +484,25 @@ void UnitPiece::SetDir(Direction dir, bool isAnim, float second)
         return;
         break;
     }
-    if (m_targetYaw == m_yaw) return;
+    const float yawDiff = fabsf(m_targetYaw - m_yaw);
+    if (yawDiff <= 0.0001f)
+    {
+        // 부동소수 비교 오차로 회전이 스킵되지 않게, 거의 같은 각도면 즉시 정렬만 수행.
+        m_yaw = m_targetYaw;
+        return;
+    }
 
     m_startYaw = m_yaw;
-    SetAnimState(PieceAnim::Rot, isAnim);
-    m_rotSpeed = 1 / second;
-
-    m_yaw = (isAnim) ? m_yaw : m_targetYaw;
+    if (isAnim)
+    {
+        // Rot은 단일 동작 상태로 관리해야 UpdateRot()가 정상 동작한다.
+        m_state = PieceAnim::Rot;
+        m_rotSpeed = (second > 0.f) ? (1.f / second) : 1.f;
+    }
+    else
+    {
+        m_yaw = m_targetYaw;
+    }
 }
 
 void UnitPiece::SetFlashColor(Float4 color, int count, float blinkTime)
@@ -492,6 +524,9 @@ void UnitPiece::AppearDissolve(float dissolveTime)
 
 void UnitPiece::DisappearDissolve(float dissolveTime)
 {
+    if (dissolveTime <= 0.f)
+        dissolveTime = 0.01f;
+
     m_linearSlope = 1.f / dissolveTime;
     m_dissolveDuration = dissolveTime;
     m_startDissolveAmount = m_dissolveAmount;
@@ -503,12 +538,16 @@ void UnitPiece::DisappearDissolve(float dissolveTime)
 
 void UnitPiece::PlayAttack()
 {
-    if (m_animator == nullptr) return;
+    if (m_animator == nullptr && m_linkedSubPieces.size() != 0)
+    {
+        m_state = PieceAnim::Attack;
+        return;
+    }
     bool isChanged = m_animator->Change("attack", (m_weaponID == 2)? 0.1f : 0.5f);   // 챠크람, 대검일 경우에는 블렌딩 시간 0.1f
     if (!isChanged) return;
     m_animator->SetLoop("attack", false);
     m_animator->Play();
-
+    m_state = PieceAnim::Attack;
     // 이펙트
     if (m_pID == 1)       // Player 1일 경우
     {
@@ -694,13 +733,18 @@ void UnitPiece::PlayAttack()
         }
         }
     }
-
-    m_state = PieceAnim::Attack;
 }
 
-void UnitPiece::PlayHit()
+void UnitPiece::PlayHit(bool isCollided)
 {
-    if (m_animator == nullptr) return;
+    if (m_animator == nullptr && m_linkedSubPieces.size() != 0 && !isCollided)
+    {
+        auto eff = m_pEffectManager->Spawn(EffectID::Hit, { 0.15f, 0.5f, 0 }, { 1.5f, 1.5f, 1.5f });
+        Attach(eff);
+        return;
+    }
+
+    if (m_animator == nullptr)   return;
 
     bool isChanged = m_animator->Change((m_dir == Direction::Right) ? "hit" : "hitF");
     // 같은 clip("hit")이 이미 current면 Change가 false를 반환한다.
@@ -715,6 +759,12 @@ void UnitPiece::PlayHit()
     m_animator->SetLoop((m_dir == Direction::Right) ? "hit" : "hitF", false);
     m_animator->Play();
     m_state = PieceAnim::Hit;
+
+    if (!isCollided)
+    {
+        auto eff = m_pEffectManager->Spawn(EffectID::Hit, { 0.15f, 0.5f, 0 }, { 1.5f, 1.5f, 1.5f });
+        Attach(eff);
+    }
 
     AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_Hit));
 }

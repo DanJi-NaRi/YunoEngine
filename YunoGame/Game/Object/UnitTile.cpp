@@ -377,22 +377,21 @@ void UnitTile::PlayWarning(ObstacleType obstacleType)
 void UnitTile::PlayTrigger(ObstacleType obstacleType)
 {
 
-    if (m_pEffectManager == nullptr && (obstacleType == ObstacleType::Vertical_Razer || obstacleType == ObstacleType::Horizon_Razer))
+    if (m_pEffectManager == nullptr)
         return;
 
     switch (obstacleType)
     {
     case ObstacleType::Vertical_Razer:
     {
-        auto eff = m_pEffectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 0.f }, { 1.f, 1.f, 1.f }, { 0, 1, 0 });
+        auto eff = m_pEffectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 0.f }, { 11.f, 1.f, 1.f }, { 0, 1, 0 });
         Attach(eff);
+
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_VerticalLazer));
         break;
     }
     case ObstacleType::Horizon_Razer:
     {
-        // 이펙트 넣기
-        auto eff = m_pEffectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 0.f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
-        Attach(eff);
         break;
     }
     case ObstacleType::Collapse:
@@ -405,6 +404,8 @@ void UnitTile::PlayTrigger(ObstacleType obstacleType)
             m_animator->SetLoop("crash", false);
         m_animator->Play();
         isCollapsed = true;
+
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_TileCollapse));
         break;
     }
     }

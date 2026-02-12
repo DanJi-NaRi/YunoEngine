@@ -82,7 +82,7 @@ private:
     void PlayRollBack();
     void PlayRoll();
     void PlayAttack();
-    void PlayHit();
+    void PlayHit(bool isCollided = false);
     void PlayDead(float disappearDisolveDuration);
 
     void StopMove();

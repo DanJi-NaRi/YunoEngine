@@ -359,7 +359,7 @@ void GameManager::Initialize(GameManager* inst)
 
 void GameManager::Init()
 {
-    m_cardBasicMng.LoadFromCSV("../Assets/CardData/Carddata.csv");
+    m_cardBasicMng.LoadFromCSV("../Assets/CardData/Carddata(Cheat).csv");
     m_cardRangeMng.LoadFromCSV("../Assets/CardData/CardRange.csv");
     SetMasterVolume(m_masterVolume);
     SetBGMVolume(m_bgmVolume);

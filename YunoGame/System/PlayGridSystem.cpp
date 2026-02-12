@@ -470,13 +470,13 @@ void PlayGridSystem::CheckMyQ()
             }
             else
             {
-                pPiece->InsertQ(PlayGridQ::Hit_P());
+                pPiece->InsertQ(PlayGridQ::Hit_P(cmd.hit_s.isCollided));
 
                 for (uint32_t subId : pieceInfo.subIds)
                 {
                     auto pSubPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
                     if (pSubPiece != nullptr)
-                        pSubPiece->InsertQ(PlayGridQ::Hit_P());
+                        pSubPiece->InsertQ(PlayGridQ::Hit_P(cmd.hit_s.isCollided));
                 }
             }
 
@@ -968,9 +968,11 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
             if (middleTileID != 0)
             {
                 auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[middleTileID]));
-                auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 0.f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
+                auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 0.f }, { 11.f, 1.f, 1.f }, { -1, 0, 0 });
                 pTile->Attach(eff);
             }
+
+            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_HorizonLazer));
         }
 
         // 기물
@@ -1020,6 +1022,8 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
             break;
         }
         if (!os.phaseStarted)    break;
+
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_CointEvent));
 
         // 타일
         for (const auto& tileID : os.warningTileIDs)
