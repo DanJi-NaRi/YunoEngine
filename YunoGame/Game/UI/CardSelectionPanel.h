@@ -2,6 +2,7 @@
 #include <array>
 #include "PhasePanel.h"
 
+class Text;
 class Button;
 class Card;
 class CardSlot;
@@ -66,6 +67,7 @@ protected:
     WeaponNameImage* m_pWeaponIMG = nullptr;
     //std::unique_ptr<Minimap> m_miniMap;           // 미니맵 // 스폰 포지션 따로 받기?
     Card* m_pSelectedCard = nullptr;
+    Text* m_pPageText = nullptr;
 
 public:
     Card* GetSelectedCard() const { return m_pSelectedCard; }
