@@ -66,6 +66,7 @@ public:
     static void Insert(PGridCmd cmd);
     bool Empty();
     const PGridCmd Pop();
+    void Clear();
 
 public:
     static PGridCmd Rot_P(Direction dir);

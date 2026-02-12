@@ -24,6 +24,14 @@ const PGridCmd PlayGridQ::Pop()
     return res;
 }
 
+void PlayGridQ::Clear()
+{
+    while (!pieceQue.empty())
+    {
+        pieceQue.pop();
+    }
+}
+
 PGridCmd PlayGridQ::Rot_P(Direction dir)
 {
     PGridCmd cmd;

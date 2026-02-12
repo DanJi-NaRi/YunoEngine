@@ -440,8 +440,10 @@ namespace yuno::server
                                     hp = static_cast<T>(v);
                                 };
 
-                            subClamp(unit.hp, 10);
-                            subClamp(other.hp, 5);
+                            //subClamp(unit.hp, 10);
+                            //subClamp(other.hp, 5);
+                            subClamp(unit.hp, 30);
+                            subClamp(other.hp, 25);
                         }
                         else
                         {

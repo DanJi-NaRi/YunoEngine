@@ -74,7 +74,7 @@ bool UnitPiece::CheckDead(float dt)
     if (HasAnimState(PieceAnim::DeadQueued)) return true;
 
     // 다 사라지고 난 뒤에만 시스템에 삭제를 요청한다.
-    if (m_dissolveAmount == 1)
+    if (m_dissolveAmount >= 0.999f)
     {
         PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
         AddAnimState(PieceAnim::DeadQueued);
@@ -88,7 +88,7 @@ void UnitPiece::CheckMyQ()
     if (HasAnimState(PieceAnim::Dead)) return;
 
    // 애니메이션이 끝나면 하나씩 빼가게 하기  
-   while (!m_Q.empty() && m_state == PieceAnim::Idle)
+   while (!m_Q.empty() && EqualAnimState(PieceAnim::Idle))
    {  
        auto tp = m_Q.front();  
        m_Q.pop();  
@@ -305,7 +305,12 @@ void UnitPiece::UpdateDissolve(float dt)
     {
         m_dissolveAmount = m_startDissolveAmount + linearGraph(m_dissolveDuration);
         m_dissolveTime = 0.f;
-        m_state = PieceAnim::Idle;
+        // 죽는 디졸브(Dead 플래그 동반)에서는 Dead 상태를 보존해야
+        // CheckDead에서 시스템 삭제 커맨드를 올릴 수 있다.
+        if (HasAnimState(PieceAnim::Dead))
+            RemoveAnimState(PieceAnim::Dissolve);
+        else
+            m_state = PieceAnim::Idle;
     }
     else
     {
@@ -491,10 +496,9 @@ void UnitPiece::DisappearDissolve(float dissolveTime)
     m_dissolveDuration = dissolveTime;
     m_startDissolveAmount = m_dissolveAmount;
 
-    m_state = PieceAnim::Dissolve | PieceAnim::Dead;
-    //AddAnimState(PieceAnim::Dissolve);
-    //AddAnimState(PieceAnim::Dead);
-    //RemoveAnimState(PieceAnim::DeadQueued);
+    AddAnimState(PieceAnim::Dissolve);
+    AddAnimState(PieceAnim::Dead);
+    RemoveAnimState(PieceAnim::DeadQueued);
 }
 
 void UnitPiece::PlayAttack()
@@ -705,7 +709,7 @@ void UnitPiece::PlayHit()
     if (!isChanged)
     {
         m_animator->Change("idle", 0.0f);
-        bool retriggered = m_animator->Change((m_dir == Direction::Right) ? "hit" : "hitF", 0.0f);
+        bool retriggered = m_animator->Change("idle", 0.0f);
         if (!retriggered) return;
     }
     m_animator->SetLoop((m_dir == Direction::Right) ? "hit" : "hitF", false);

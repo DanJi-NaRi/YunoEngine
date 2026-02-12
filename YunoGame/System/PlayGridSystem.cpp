@@ -56,6 +56,17 @@ void PlayGridSystem::Init()
 
 void PlayGridSystem::InitRound()
 {
+    // 이전 라운드에서 남았을 수 있는 시스템 커맨드를 제거한다.
+    m_playQ->Clear();
+
+    // 라운드 경계에서 시퀀스 상태를 초기화한다.
+    m_attackActive = false;
+    m_utilityActive = false;
+    m_obstacleActive = false;
+    m_attackSequence = {};
+    m_utilitySequence = {};
+    m_obstacleSequence = {};
+
     const auto wData = GameManager::Get().GetWeaponData();
     GameManager::Get().ResetWeaponData();
     for (int i = 0; i < wData.size(); i++)
@@ -565,7 +576,7 @@ void PlayGridSystem::CheckPacket(float dt)
         if (m_currTime >= m_pktTime)
         {
             isProcessing = false;
-            m_currTime -= m_pktTime;
+            m_currTime = 0;
             std::cout << "Packet Time is Over\n";
 
             // 라운드 끝났는지 체크
@@ -1376,12 +1387,16 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
         pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));
     }
     
-    // 타일 상태 변경
-    ChangeTileTO(oldcell.x, oldcell.y, TileOccupy{ TileOccuType::Unoccupied, TileWho::None });
-    ChangeTileTO(newcell.x, newcell.y,
-        (pieceInfo.team == Team::Ally) ?
-        TileOccupy{ TileOccuType::Ally_Occupied, who } :
-        TileOccupy{ TileOccuType::Enemy_Occupied, who });
+    if (!isCollided)
+    {
+        // 타일 상태 변경
+        ChangeTileTO(oldcell.x, oldcell.y, TileOccupy{ TileOccuType::Unoccupied, TileWho::None });
+        ChangeTileTO(newcell.x, newcell.y,
+            (pieceInfo.team == Team::Ally) ?
+            TileOccupy{ TileOccuType::Ally_Occupied, who } :
+            TileOccupy{ TileOccuType::Enemy_Occupied, who });
+    }
+
 }
 
 bool PlayGridSystem::BuffEvent(const GamePiece& pieceType, const CardEffectData*& buffData)
