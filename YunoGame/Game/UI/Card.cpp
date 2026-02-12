@@ -90,3 +90,13 @@ bool Card::KeyReleasedEvent(uint32_t key)
     return true;
 }
 
+bool Card::HoverJoinEvent()
+{
+    return false;
+}
+
+bool Card::HoverLeftEvent()
+{
+    return false;
+}
+
