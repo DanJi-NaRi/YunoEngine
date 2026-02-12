@@ -67,7 +67,7 @@ bool GameApp::OnInit()
 
    ISceneManager* sm = YunoEngine::GetSceneManager();
    if (!sm) return false;
-
+   
    m_gameManager = std::make_unique<GameManager>();
    GameManager::Initialize(m_gameManager.get());
    m_gameManager->BindClientNetwork(&m_clientNet);
@@ -88,10 +88,6 @@ bool GameApp::OnInit()
        sm->RequestPush(std::make_unique<PlayHUDScene>());
    }*/
    //sm->RequestReplaceRoot(std::make_unique<PhaseScene>(), opt);
-
-
-
-
 
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
@@ -158,31 +154,7 @@ void GameApp::OnUpdate(float dt)
 
     if (input && sm)
     {
-        if (input->IsKeyPressed(VK_F1)) //이건 플레이씬으로 옮길것
-        {
-            IScene* active = sm->GetActiveScene();
-            if (!active)
-                return;
-
-            // 이미 EscScene 씬이면 무시
-            if (strcmp(active->GetDebugName(), "EscScene") == 0)
-                return;
-
-            GameManager::Get().SetSceneState(CurrentSceneState::EscScene);
-        }
-
-        if (input->IsKeyPressed(VK_F2)) //이건 테스트용
-        {
-            IScene* active = sm->GetActiveScene();
-            if (!active)
-                return;
-
-            // 이미 ResultScene 씬이면 무시
-            if (strcmp(active->GetDebugName(), "ResultScene") == 0)
-                return;
-
-            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
-        }
+        
         //if (input->IsKeyPressed(VK_F2))
         //{
         //    SceneTransitionOptions opt{};

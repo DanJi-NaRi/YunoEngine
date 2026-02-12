@@ -130,12 +130,14 @@ void Minimap::Simulate()
         m_hasSimulationBackup = true;
     }
 
-    if (!m_pMyTileBackup[0] || !m_pMyTileBackup[1])
-        return;
+    std::array<Int2, 2> tilePos = { Int2{0, 0}, Int2{0, 0} };
+    std::array<bool, 2> hasTile = { false, false };
 
-    std::array<Int2, 2> tilePos; // 타일 포지션 사용하기
-    tilePos[0] = GetCellByID(m_pMyTileBackup[0]->GetTileId());
-    tilePos[1] = GetCellByID(m_pMyTileBackup[1]->GetTileId());
+    for (size_t i = 0; i < m_pMyTileBackup.size(); ++i) {
+        if (!m_pMyTileBackup[i]) continue;
+        tilePos[i] = GetCellByID(m_pMyTileBackup[i]->GetTileId());
+        hasTile[i] = true;
+    }
 
     for (const auto& slot : slots) {
         if (!slot->GetCard()) continue;
@@ -147,10 +149,10 @@ void Minimap::Simulate()
 
         Int2 moveXY{ moveData->m_moveX, moveData->m_moveY };
 
-        auto AddMoveXY = [&tilePos](int slotID, Int2 moveXY) {
+        auto AddMoveXY = [&tilePos, &hasTile](int slotID, Int2 moveXY) {
             // CardSelectionPanel::SetSlotID()에서 0/1 슬롯 인덱스를 넘긴다.
             // 여기서 1을 빼면 0번 슬롯 이동이 무시되어 시뮬 결과가 깨진다.
-            if (slotID >= 0 && slotID < static_cast<int>(tilePos.size()))
+            if (slotID >= 0 && slotID < static_cast<int>(tilePos.size()) && hasTile[slotID])
                 tilePos[slotID] += moveXY;
         };
 
@@ -169,13 +171,17 @@ void Minimap::Simulate()
     // 최종 결과 출력
 
     // 클램프
-    tilePos[0] = GetClampTileID(tilePos[0]);
-    tilePos[1] = GetClampTileID(tilePos[1]);
+    for (size_t i = 0; i < tilePos.size(); ++i) {
+        if (!hasTile[i]) continue;
+        tilePos[i] = GetClampTileID(tilePos[i]);
+    }
 
     // 최종 시뮬레이션 타일 획득
-    std::array<MinimapTile*, 2> simulateTile;
-    simulateTile[0] = GetTileByID(tilePos[0]);
-    simulateTile[1] = GetTileByID(tilePos[1]);
+    std::array<MinimapTile*, 2> simulateTile = { nullptr, nullptr };
+    for (size_t i = 0; i < tilePos.size(); ++i) {
+        if (!hasTile[i]) continue;
+        simulateTile[i] = GetTileByID(tilePos[i]);
+    }
 
     // 실제 내 타일(m_pMyTile)은 유지하고, 시뮬레이션 결과만 별도로 채색한다.
     // (기존 타일 상태와 시뮬레이션 타일이 로직상 섞이지 않도록 분리)
@@ -199,7 +205,20 @@ void Minimap::Simulate()
 void Minimap::SetupPanel() {
     DefaultSetAllTile();
     ClearGrid();
+    m_pMyTile = { nullptr, nullptr };
+    m_pEnemyTile = { nullptr, nullptr };
+    m_pMyTileBackup = { nullptr, nullptr };
+    m_hasSimulationBackup = false;
+
+    auto IsValidSlotIndex = [](int slotId, size_t arrSize) {
+        const int index = slotId - 1;
+        return index >= 0 && index < static_cast<int>(arrSize);
+    };
+
     for (const auto& myWeapon : m_player.weapons) {
+        if (myWeapon.hp <= 0)
+            continue;
+
         if (auto* tile = GetTileByID(myWeapon.currentTile)) {
             TileData& tileData = tile->GetTileData();
             tileData.isPlayerTile = true;
@@ -207,12 +226,17 @@ void Minimap::SetupPanel() {
             tileData.unitID = myWeapon.weaponId;
             tileData.slotID = myWeapon.slotId;
 
-            m_pMyTile[myWeapon.slotId - 1] = tile;
+            if (IsValidSlotIndex(myWeapon.slotId, m_pMyTile.size())) {
+                m_pMyTile[myWeapon.slotId - 1] = tile;
+            }
             
         }
     }
 
     for (const auto& enemyWeapon : m_enemy.weapons) {
+        if (enemyWeapon.hp <= 0)
+            continue;
+
         if (auto* tile = GetTileByID(enemyWeapon.currentTile)) {
             TileData& tileData = tile->GetTileData();
             tileData.isPlayerTile = true;
@@ -220,7 +244,9 @@ void Minimap::SetupPanel() {
             tileData.unitID = enemyWeapon.weaponId;
             tileData.slotID = enemyWeapon.slotId;
 
-            m_pEnemyTile[enemyWeapon.slotId - 1] = tile;
+            if (IsValidSlotIndex(enemyWeapon.slotId, m_pEnemyTile.size())) {
+                m_pEnemyTile[enemyWeapon.slotId - 1] = tile;
+            }
         }
     }
 
@@ -230,16 +256,37 @@ void Minimap::SetupPanel() {
 void Minimap::UpdatePanel(const BattleResult& battleResult) {
     DefaultSetAllTile();
     ClearGrid();
+    m_pMyTile = { nullptr, nullptr };
+    m_pEnemyTile = { nullptr, nullptr };
+    m_pMyTileBackup = { nullptr, nullptr };
+    m_hasSimulationBackup = false;
+
+    auto IsValidSlotIndex = [](int slotId, size_t arrSize) {
+        const int index = slotId - 1;
+        return index >= 0 && index < static_cast<int>(arrSize);
+    };
+
     for (const auto& pieceInfo : battleResult.order) {
         const auto& info = pieceInfo.data();
+        if (info->hp <= 0)
+            continue;
+
         if (auto* tile = GetTileByID(info->targetTileID)) {
             TileData& tileData = tile->GetTileData();
             tileData.isPlayerTile = true;
             tileData.teamID = info->pId;
             tileData.slotID = info->slotId;
 
-            if(info->pId == m_pID) m_pMyTile[info->slotId - 1] = tile;
-            else m_pEnemyTile[info->slotId - 1] = tile;
+            if (info->pId == m_pID) {
+                if (IsValidSlotIndex(info->slotId, m_pMyTile.size())) {
+                    m_pMyTile[info->slotId - 1] = tile;
+                }
+            }
+            else {
+                if (IsValidSlotIndex(info->slotId, m_pEnemyTile.size())) {
+                    m_pEnemyTile[info->slotId - 1] = tile;
+                }
+            }
         }
     }
     PaintTile(m_pMyTile);
@@ -248,15 +295,36 @@ void Minimap::UpdatePanel(const BattleResult& battleResult) {
 void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
     DefaultSetAllTile();
     ClearGrid();
+    m_pMyTile = { nullptr, nullptr };
+    m_pEnemyTile = { nullptr, nullptr };
+    m_pMyTileBackup = { nullptr, nullptr };
+    m_hasSimulationBackup = false;
+
+    auto IsValidSlotIndex = [](int slotId, size_t arrSize) {
+        const int index = slotId - 1;
+        return index >= 0 && index < static_cast<int>(arrSize);
+    };
+
     for (const auto& pieceInfo : obstacleResult.unitState) {
+        if (pieceInfo.hp <= 0)
+            continue;
+
         if (auto* tile = GetTileByID(pieceInfo.targetTileID)) {
             TileData& tileData = tile->GetTileData();
             tileData.isPlayerTile = true;
             tileData.teamID = pieceInfo.pId;
             tileData.slotID = pieceInfo.slotId;
 
-            if (pieceInfo.pId == m_pID) m_pMyTile[pieceInfo.slotId - 1] = tile;
-            else m_pEnemyTile[pieceInfo.slotId - 1] = tile;
+            if (pieceInfo.pId == m_pID) {
+                if (IsValidSlotIndex(pieceInfo.slotId, m_pMyTile.size())) {
+                    m_pMyTile[pieceInfo.slotId - 1] = tile;
+                }
+            }
+            else {
+                if (IsValidSlotIndex(pieceInfo.slotId, m_pEnemyTile.size())) {
+                    m_pEnemyTile[pieceInfo.slotId - 1] = tile;
+                }
+            }
         }
     }
     PaintTile(m_pMyTile);

@@ -45,9 +45,6 @@ protected:
 private:
     PlayHUD_InputContext m_uiContext;
 
-    bool m_1PAllDead = false;
-    bool m_2PAllDead = false;
-
     bool isRoundReset = false;
 
     int curRound = 0;
@@ -55,6 +52,8 @@ private:
 
     SpriteSheet* m_SceneChange;
     bool isChangeRound = false;
+    bool m_isRoundChangeReverse = false;
+    bool m_hasRoundChangeSignalSent = false;
 
     void ChangeRound(float dt);
 
@@ -67,6 +66,7 @@ private:
 
     std::array<TextureImage*, 3> roundWin{};
 
+    TextureImage* m_EmoteBox = nullptr;
     TextureImage* m_EmoteBubble1P = nullptr;
     TextureImage* m_EmoteBubble2P = nullptr;
     Emoji* m_EmoteImage1P = nullptr;

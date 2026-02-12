@@ -155,7 +155,7 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 
         if (wParam == VK_ESCAPE)
         {
-            SendMessage(hWnd, WM_DESTROY, 0, 0);
+            //SendMessage(hWnd, WM_DESTROY, 0, 0);
         }
 
         return 0;

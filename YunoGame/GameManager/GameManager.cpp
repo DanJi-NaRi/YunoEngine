@@ -340,6 +340,7 @@ void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
         m_pConfirmPanel->UpdatePanel(battleResult);
     }
 
+
     m_pMinimap->UpdatePanel(obstacleResult);
     m_pSelectionPanel->UpdatePanel(obstacleResult);
     m_pConfirmPanel->UpdatePanel(obstacleResult);
@@ -434,6 +435,14 @@ void GameManager::SetSceneState(CurrentSceneState state)
         m_pConfirmPanel = nullptr;
         m_pSelectionPanel = nullptr;
 
+        for (const auto& pair : m_CardRuntimeIDs)
+        {
+            std::cout
+                << "RuntimeID: " << pair.first
+                << " -> DataID: " << pair.second
+                << std::endl;
+        }
+
         SceneTransitionOptions opt{};
         opt.immediate = true;
         sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
@@ -482,7 +491,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::EscScene:
     {
-
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
@@ -592,8 +600,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
 
         sm->RequestPush(std::make_unique<PlayHUDScene>(), sp, opt);
 
-
-        // 이거 위치 한 번 턴 스타트로 옮겨볼예정
         SetSceneState(CurrentSceneState::SubmitCard);
         break;
     }

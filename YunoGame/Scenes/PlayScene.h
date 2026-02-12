@@ -35,6 +35,7 @@ private:
     void RegisterEffect();
 
     void MoveCamera(float dt);
+    void ApplyRoundObject();
 
 private:
     std::unique_ptr<IGridSystem> m_playGrid;
@@ -47,6 +48,9 @@ private:
     CurrentSceneState m_CurSceneState;
     CurrentSceneState m_PrevSceneState;
 
+    int curRound = 0;
+    int prevRound = 0;
+
     float m_CamMoveTime = 1.0f;
     float m_curMoveTime = 0.0f;
 
@@ -54,6 +58,8 @@ private:
     XMFLOAT3 m_CurCamTarget;
     XMFLOAT3 m_NextCamPos;
     XMFLOAT3 m_NextCamTarget;
+
+    bool flag = false;
 
     bool isCamMove = false;
 };

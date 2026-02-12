@@ -219,7 +219,7 @@ bool RenderTest::OnCreateScene()
     ed.cols = 8;
     ed.rows = 8;
     ed.emissive = 30.0f;
-    ed.color = { 0, 0.5f, 1, 1 };
+    ed.color = { 0, 0.13f, 1, 1 };
     ed.rot = { XM_PIDIV2, 0, 0 };
     ed.isLoop = true;
     ed.texPath = L"../Assets/Effects/Pos/EF_Player_Blue.png";
@@ -227,14 +227,19 @@ bool RenderTest::OnCreateScene()
     auto pEffect = m_objectManager->CreateObject<EffectUnit>(L"PeacePosAlly", XMFLOAT3(0, 0.01f, 0));
     pEffect->BuildInternalEffectMaterial(ed);
     pEffect->SetRot({ 0, 0, 0 });
+    gun->Attach(pEffect);
 
     ed.id = EffectID::PeacePosEnemy;
     ed.color = { 1, 0, 0, 1 };
+    ed.emissive = 18.0f;
     ed.texPath = L"../Assets/Effects/Pos/EF_Player_Red.png";
     m_effectManager->RegisterEffect(ed);
+    pEffect = m_objectManager->CreateObject<EffectUnit>(L"PeacePosAlly", XMFLOAT3(0, 0.01f, 0));
+    pEffect->BuildInternalEffectMaterial(ed);
+    pEffect->SetRot({ 0, 0, 0 });
 
     //auto eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
-    gun->Attach(pEffect);
+    
     auto eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
     axe->Attach(eff);
     eff = m_effectManager->Spawn(EffectID::PeacePosAlly, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
@@ -242,7 +247,7 @@ bool RenderTest::OnCreateScene()
     eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
     blade->Attach(eff);
     eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 0.5f, 0.5f, 0.5f }, { 1, 0, 0 });
-    breacher->Attach(eff);
+    breacher->Attach(pEffect);
     eff = m_effectManager->Spawn(EffectID::PeacePosEnemy, { 0.0f, 0.01f, 0.0f }, { 1.f, 1.f, 1.f }, { 1, 0, 0 });
     scythe->Attach(eff);
 
@@ -268,7 +273,7 @@ bool RenderTest::OnCreateScene()
     ed.billboard = BillboardMode::None;
     ed.texPath = L"../Assets/Effects/Blaster/EF_Shot.png";
     ed.emissive = 50.0f;
-    ed.color = { 0, 0.5f, 1, 1 };
+    ed.color = { 0, 0.13f, 1, 1 };
     ed.rot = { 0, -XM_PIDIV2, -XM_PIDIV2 };
     m_effectManager->RegisterEffect(ed);
     ed.id = EffectID::BlasterAttackEnemy;
@@ -350,12 +355,14 @@ bool RenderTest::OnCreateScene()
     ed.rows = 5;
     ed.billboard = BillboardMode::None;
     ed.rot = { XM_PIDIV2, 0, 0 };
-    ed.emissive = 30.0f;
-    ed.color = { 0, 0, 1, 1 };
-    ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
+    ed.emissive = 10.0f;
+    ed.color = { XMFLOAT4{ 0, 0.03f, 1, 1 } };
+    ed.texPath = L"../Assets/Effects/Target/EF_Target_Blue.png";
     m_effectManager->RegisterEffect(ed);
     ed.id = EffectID::TargetEnemy;
     ed.color = { 1, 0, 0, 1 };
+    ed.emissive = 5.0f;
+    ed.texPath = L"../Assets/Effects/Target/EF_Target_Red.png";
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::ScytheAttack;
@@ -542,9 +549,9 @@ void RenderTest::Update(float dt)
     if (YunoEngine::GetInput()->IsKeyPressed('4'))
     {
         auto eff = m_effectManager->Spawn(EffectID::Target, { -2.14f, 0.05f, 1.19f }, { 1.f, 1.f, 1.f });
-        eff = m_effectManager->Spawn(EffectID::Target, { -1.07f, 0.05f, 1.19f }, { 1.f, 1.f, 1.f });
+        eff = m_effectManager->Spawn(EffectID::TargetEnemy, { -1.07f, 0.05f, 1.19f }, { 1.f, 1.f, 1.f });
         eff = m_effectManager->Spawn(EffectID::Target, { 0.0f, 0.05f, 1.19f }, { 1.f, 1.f, 1.f });
-        eff = m_effectManager->Spawn(EffectID::Target, { 1.07f, 0.05f, 1.19f }, { 1.f, 1.f, 1.f });
+        eff = m_effectManager->Spawn(EffectID::TargetEnemy, { 1.07f, 0.05f, 1.19f }, { 1.f, 1.f, 1.f });
         eff = m_effectManager->Spawn(EffectID::Target, { 2.14f, 0.05f, 1.19f }, { 1.f, 1.f, 1.f });
     }
     if (YunoEngine::GetInput()->IsKeyPressed('5'))

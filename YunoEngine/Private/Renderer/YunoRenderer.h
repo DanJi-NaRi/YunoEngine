@@ -497,6 +497,14 @@ public:
         const char* psEntry,      // "PSMain"
         const char* vsProfile = "vs_5_0",
         const char* psProfile = "ps_5_0");
+    bool LoadShaderBinary(
+        ShaderId id,
+        const std::wstring& vsBinaryPath,
+        const std::wstring& psBinaryPath);
+    bool LoadShaderBinary(
+        ShaderId id,
+        const char* vsBinaryPath,
+        const char* psBinaryPath);
 
 // 텍스쳐
 private:

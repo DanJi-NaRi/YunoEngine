@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CardSelectionPanel.h"
 
+#include "Text.h"
 #include "Button.h"
 #include "Card.h"
 #include "CardSlot.h"
@@ -128,7 +129,7 @@ void CardSelectionPanel::CreateChild() {
     this->SetLayer(WidgetLayer::Panels);
 
     // 웨폰 수직 이름 이미지
-    m_pWeaponIMG = m_uiFactory.CreateChild<WeaponNameImage>(m_name + L"_WeaponName", Float2(56, 259), XMFLOAT3(-1400, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+    m_pWeaponIMG = m_uiFactory.CreateChild<WeaponNameImage>(m_name + L"_WeaponName", Float2(56, 259), XMFLOAT3(-1456, -299, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
 
     // 필터 버튼
     {
@@ -183,12 +184,18 @@ void CardSelectionPanel::CreateChild() {
     
     // 페이지 버튼
     {
-        m_pPageUpButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(74, 66), XMFLOAT3(-100, -350, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+        m_pPageText = m_uiFactory.CreateChild<Text>(m_name + L"_PageNum", Float2(74, 66), XMFLOAT3(-100, -302, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::Center, this);
+        m_pPageText->SetText(std::to_wstring(m_curPage));
+        m_pPageText->SetTextScale(XMFLOAT3(1.5f, 1.5f, 1.5f));
+        m_pPageText->SetFont(FontID::Number);
+
+
+        m_pPageUpButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(74, 66), XMFLOAT3(-100, -302, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
         assert(m_pPageUpButton);
         m_pPageUpButton->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseout.png", L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseover.png");
         m_pPageUpButton->SetEventLMB([this]() { this->PageUp(m_curSlot); });
 
-        m_pPageDownButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(74, 66), XMFLOAT3(-100, -150, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+        m_pPageDownButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageDown", Float2(74, 66), XMFLOAT3(-100, -66, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
         assert(m_pPageDownButton);
         m_pPageDownButton->MirrorScaleY();
         m_pPageDownButton->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseout.png", L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseover.png");
@@ -197,27 +204,27 @@ void CardSelectionPanel::CreateChild() {
 
     // 카드
     {
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1300, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1382, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-1100, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-1169, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(205, 297), XMFLOAT3(-900, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(205, 297), XMFLOAT3(-955, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(205, 297), XMFLOAT3(-700, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(205, 297), XMFLOAT3(-740, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(205, 297), XMFLOAT3(-500, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(205, 297), XMFLOAT3(-526, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-300, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-312, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
@@ -292,6 +299,7 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
     if (total == 0)
     {
         m_curPage = 0;
+        m_pPageText->SetText(std::to_wstring(m_curPage));
         for (int i = 0; i < viewCount; ++i)
         {
             m_pCards[i]->SetCardID(0);
@@ -307,6 +315,7 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
 
     page = std::clamp(page, 0, maxPage);
     m_curPage = page;
+    m_pPageText->SetText(std::to_wstring(m_curPage));
 
     const int startIdx = page * CardSlotSize;
 
@@ -397,7 +406,10 @@ void CardSelectionPanel::RefreshCardVisualState()
 
 const int CardSelectionPanel::GetMaxPage(int slot)
 {
-    const auto& cards = m_player.hands[slot].cards;
+    if (slot < 0 || slot >= static_cast<int>(m_player.hands.size()))
+        return -1;
+
+    const auto cards = GetCardsByFilter(slot, m_curFilter);
 
     constexpr int CardSlotSize = 6; // 한 페이지 당 카드 갯수
     const int total = static_cast<int>(cards.size()); // 카드 총 사이즈

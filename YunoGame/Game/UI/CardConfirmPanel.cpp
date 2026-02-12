@@ -81,18 +81,18 @@ void CardConfirmPanel::CreateChild() {
     // 고정 하위 위젯 생성
 
 
-    m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S0", Float2(178, 264), XMFLOAT3(50, -400, 0),  UIDirection::LeftTop, this));
+    m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S0", Float2(178, 264), XMFLOAT3(85, -448, 0),  UIDirection::LeftTop, this));
     m_setCardSlots.back()->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/draganddrop.png");
 
-    m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S1", Float2(178, 264), XMFLOAT3(350, -400, 0), UIDirection::LeftTop, this));
+    m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S1", Float2(178, 264), XMFLOAT3(324, -448, 0), UIDirection::LeftTop, this));
     m_setCardSlots.back()->SetIsEnabled(false);
     m_setCardSlots.back()->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/draganddrop_x.png");
 
-    m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S2", Float2(178, 264), XMFLOAT3(650, -400, 0), UIDirection::LeftTop, this));
+    m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S2", Float2(178, 264), XMFLOAT3(563, -448, 0), UIDirection::LeftTop, this));
     m_setCardSlots.back()->SetIsEnabled(false);
     m_setCardSlots.back()->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/draganddrop_x.png");
 
-    m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S3", Float2(178, 264), XMFLOAT3(950, -400, 0), UIDirection::LeftTop, this));
+    m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S3", Float2(178, 264), XMFLOAT3(801, -448, 0), UIDirection::LeftTop, this));
     m_setCardSlots.back()->SetIsEnabled(false);
     m_setCardSlots.back()->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/draganddrop_x.png");
 

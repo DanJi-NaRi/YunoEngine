@@ -47,7 +47,7 @@ void AddCardPanel::CreateChild()
             this
         );
 
-        btn->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
+        btn->SetHoverTexture(L"../Assets/UI/CARD/Card_back.png", L"../Assets/UI/CARD/Card_back_mouseover.png");
 
         int index = i;
         btn->SetEventLMB([this, index]()
@@ -65,7 +65,7 @@ void AddCardPanel::SetCandidateCards(const std::vector<ClientCardInfo>& cards)
 
     for (auto* btn : m_addCard)
     {
-        btn->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
+        btn->SetHoverTexture(L"../Assets/UI/CARD/Card_back.png", L"../Assets/UI/CARD/Card_back_mouseover.png");
         btn->SetScale({ 1.f,1.f,1.f });
     }
 
@@ -85,7 +85,7 @@ void AddCardPanel::OnCardSelected(int index)
 
     for (auto* btn : m_addCard)
     {
-        btn->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
+        btn->SetHoverTexture(L"../Assets/UI/CARD/Card_back.png", L"../Assets/UI/CARD/Card_back_mouseover.png");
         btn->SetScale({ 1.f,1.f,1.f });
     }
     // 선택한 카드만 강조 가능 (선택 연출)
@@ -96,7 +96,7 @@ void AddCardPanel::OnCardSelected(int index)
         .GetCardBasicManager()
         .GetCardTexturePath(dataID);
 
-    m_addCard[index]->ChangeTexture(texturePath);
+    m_addCard[index]->SetHoverTexture(texturePath, texturePath);
     m_addCard[index]->SetScale({ 1.35f,1.35f,1.35f });
     
     GameManager::Get().SendSelectCard(index);
