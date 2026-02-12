@@ -138,7 +138,6 @@ void AddCardPanel::Hide()
 
 bool AddCardPanel::Update(float dt)
 {
-
     if (m_locked)
     {
         m_closeTimer += dt;
@@ -146,7 +145,13 @@ bool AddCardPanel::Update(float dt)
         if (m_closeTimer >= m_closeDelay)
         {
             Hide();
-
+            
+            if (GameManager::Get().GetEndTrun())
+            {
+                GameManager::Get().SetSceneState(CurrentSceneState::SubmitCard);
+                GameManager::Get().SetEndTrun(false);
+            }
+                
             // 상태 리셋
             m_locked = false;
             m_selectedIndex = -1;

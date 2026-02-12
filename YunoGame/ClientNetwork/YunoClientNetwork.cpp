@@ -512,6 +512,7 @@ namespace yuno::game
                 gm.AddCards(added);
                 gm.ClearDrawCandidates();
                 gm.ClearCardQueue();
+                gm.SetEndTrun(true);
 
                 for (int i = 0; i < 2; ++i)
                 {
@@ -527,8 +528,8 @@ namespace yuno::game
                 }
 
                 std::cout << "[Client] ======================\n";
-                if(gm.GetSceneState() == CurrentSceneState::AutoBattle)
-                    gm.SetSceneState(CurrentSceneState::SubmitCard);
+                //if(gm.GetSceneState() == CurrentSceneState::AutoBattle)
+                //    gm.SetSceneState(CurrentSceneState::SubmitCard);
             }
         );// S2C_StartTurn Packet End
 
