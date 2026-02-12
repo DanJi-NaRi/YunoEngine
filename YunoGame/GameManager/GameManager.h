@@ -219,6 +219,10 @@ public:
     bool GetEndGame() { return m_endGame; }
     void SetEndTrun(bool end) { m_endTrun = end; }
     bool GetEndTrun() { return m_endTrun; }
+
+    void AddActionGuard() { ++m_actionPopGuard; }
+    void ResetActionGuard() { m_actionPopGuard = 0; }
+    int GetActionGuard() { return m_actionPopGuard; }
 private:
     static GameManager* s_instance;
 
@@ -229,6 +233,8 @@ private:
 
     PieceType m_myPick[2] = { PieceType::None, PieceType::None };
     PieceType m_lastPickedPiece = PieceType::None;
+
+    int m_actionPopGuard = 2;
 
     bool m_endGame = false;
     bool m_endTrun = false;

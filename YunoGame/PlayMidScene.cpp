@@ -392,7 +392,7 @@ void PlayMidScene::UpdateRevealCard(float dt, GameManager& gm)
     {
         m_nextRevealDelay -= dt;
 
-        if (m_nextRevealDelay > 0.f)
+        if (m_nextRevealDelay + 0.5f > 0.f)
             return;
 
         m_waitingNextReveal = false;
@@ -515,6 +515,7 @@ bool PlayMidScene::PopAndRevealPair(GameManager& gm)
         totalActionTime += br2.actionTime;
     }
 
+    GameManager::Get().ResetActionGuard();
     m_nextRevealDelay = totalActionTime * 0.001f;
 
     return true;
