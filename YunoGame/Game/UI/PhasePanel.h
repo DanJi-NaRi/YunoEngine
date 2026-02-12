@@ -16,6 +16,12 @@ struct PlayerData {
     std::array<UnitHand, 2>& hands;
 };
 
+enum class TeamData : uint8_t {
+    Default,
+    Red,  // Team1
+    Blue, // Team2
+};
+
 class PhasePanel : public Image
 {
 public:
@@ -38,6 +44,9 @@ public:
     //const int GetUserID() { return *m_pID; }
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Textures/white.png"); };    // 머테리얼 생성 (한 번만)
+
+    const TeamData GetTeamData() { return static_cast<TeamData>(m_pID); }
+    const int GetPID() { return m_pID; }
 
 protected:
 

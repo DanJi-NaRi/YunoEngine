@@ -72,6 +72,7 @@ namespace yuno::server
             //case Direction::UpRight: return { dy, -dy };
             //case Direction::DownLeft: return { -dy, dy };
             //case Direction::DownRight: return { dy, dy };
+
             case Direction::Same:
             case Direction::None:
             default:

@@ -8,6 +8,7 @@
 class WidgetGridLine;
 class MinimapTile;
 class CardConfirmArea;
+class CardConfirmPanel;
 
 class Minimap : public PhasePanel
 {
@@ -29,6 +30,7 @@ public:
 
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/window_popup_minimap.png"); };  // 머테리얼 생성
 
+    void Simulate();
 
     void SetupPanel();
 
@@ -37,14 +39,23 @@ public:
 
     void StartDirChoice(CardConfirmArea* CardSlot);
     void SetButtonLock(bool buttonLock); // SetButtonLock
+    
 
     void OpenDirButton(int tileID, CardConfirmArea* CardSlot);
 
+    void RestoreSimulationTiles(); // 초기 버전으로 돌리기
+    void DefaultSetAllTile(); // 아예 다 지우기
+
+    void BindCardConfirmPanel(CardConfirmPanel* confirmPanel) { m_pConfirmPanel = confirmPanel; };
+
+    void PaintTile(std::array<MinimapTile*, 2>& myTiles); // 팀 기준의 타일 배열을 넣으면 됨
+
     bool GetButtonLock() { return m_buttonLock; } // SetButtonLock
-    
     int GetTileID(int cx, int cy) const;
     int GetTileID(Int2 tileXY) const;
     Int2 GetCellByID(int tileID) const;
+    int GetClampTileID(int tileID) const;
+    Int2 GetClampTileID(Int2 tileXY) const;
     MinimapTile* GetTileByID(int tileID);
     MinimapTile* GetTileByID(Int2 tileXY);
     bool IsValidTileID(int tileID) const;
@@ -57,10 +68,18 @@ protected:                             // 그리드 라인 오브젝트 생성
     void ClearGrid();
 
 protected:
+    bool m_isSimulation = false;
     bool m_buttonLock = true;
     // Grid // 기준 : XY
     GridXY m_grid;
     std::vector<MinimapTile*> m_pTiles;
+    std::array<MinimapTile*, 2> m_pMyTile = {nullptr,};
+    std::array<MinimapTile*, 2> m_pMyTileBackup = {nullptr,};
+    std::array<MinimapTile*, 2> m_pEnemyTile = {nullptr,};
+    bool m_hasSimulationBackup = false;
+
     WidgetGridLine* m_pGridLine = nullptr;
+
+    CardConfirmPanel* m_pConfirmPanel;
 };
 

@@ -1,11 +1,10 @@
 #pragma once
 #include "Button.h"
 
-enum class TileTeamData : uint8_t {
-    Default,
-    Red,  // Team1
-    Blue, // Team2
-};
+const std::wstring g_tilePath_None = L"../Assets/UI/PLAY/PhaseScene/map_cube_non.png";
+const std::wstring g_tilePath_Red = L"../Assets/UI/PLAY/PhaseScene/map_cube_red.png";
+const std::wstring g_tilePath_Blue = L"../Assets/UI/PLAY/PhaseScene/map_cube_blue.png";
+const std::wstring g_tilePath_Purple = L"../Assets/UI/PLAY/PhaseScene/map_cube_purple.png";
 
 struct TileData {
     bool isPlayerTile; // 플레이어가 있는지
@@ -24,6 +23,8 @@ public:
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();
+
+    void DefaultMinimapSetup(); //미니맵용 클리어
 
     // 버튼 이벤트 핸들
     virtual bool IdleEvent() override;                          // 아무것도 안할 때
@@ -51,6 +52,6 @@ public:
 protected:
     uint8_t m_tileID;
     TileData m_data;
-
-    bool isSimulation; // 시뮬레이션 중인지 판단
+    
+    std::wstring m_backUpOriginPath;
 };
