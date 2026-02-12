@@ -28,4 +28,8 @@ public:
 
     // 최근 프레임에서 크기 변경이 있었는지
     virtual bool ConsumeResize(uint32_t& outW, uint32_t& outH) = 0;
+
+    virtual void InitializeCursor(
+        const wchar_t* normalPath,
+        const wchar_t* clickPath) = 0;
 };

@@ -48,6 +48,15 @@ bool GameApp::OnInit()
 {
     std::cout << "[GameApp] OnInit\n";
 
+    IWindow* window = YunoEngine::GetWindow();
+    if (window)
+    {
+        window->InitializeCursor(
+            L"../Assets/UI/cursor/mousecursor_mouseout.cur",
+            L"../Assets/UI/cursor/mousecursor_mouseclick.cur"
+        );
+    }
+
     IRenderer* renderer = YunoEngine::GetRenderer();
     if (!renderer)
     {

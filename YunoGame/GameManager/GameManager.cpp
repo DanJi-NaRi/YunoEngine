@@ -35,6 +35,7 @@
 
 #include "Minimap.h" // 미니맵
 #include "CardConfirmPanel.h"   // 카드 컨펌 패널
+#include "CardConfirmArea.h"
 #include "CardSelectionPanel.h" // 카드 선택 패널
 
 GameManager* GameManager::s_instance = nullptr;
@@ -119,7 +120,7 @@ void GameManager::ClearUIWeaponDataState()
 
 void GameManager::ClearBattlePacket()
 {
-    for (int i = 0; i < m_turnPkts.size(); i++) 
+    while (!m_turnPkts.empty())
     {
         m_turnPkts.pop();
     }
@@ -204,6 +205,28 @@ void GameManager::SetUpPanels()
 {
     //assert(m_pMinimap);
     //if (m_pMinimap) m_pMinimap->SetupPanel();
+}
+
+bool GameManager::IsRuntimeCardInConfirmSlots(uint32_t runtimeID) const
+{
+    if (!m_pConfirmPanel || runtimeID == 0)
+        return false;
+
+    const auto& slots = m_pConfirmPanel->GetCardSlots();
+    for (const auto* slot : slots)
+    {
+        if (!slot)
+            continue;
+
+        const int queuedRuntimeID = slot->GetRuntimeCardID();
+        if (queuedRuntimeID <= 0)
+            continue;
+
+        if (static_cast<uint32_t>(queuedRuntimeID) == runtimeID)
+            return true;
+    }
+
+    return false;
 }
 
 void GameManager::UpdatePanels(const BattleResult& battleResult)
@@ -305,10 +328,47 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::Title:
     {
         m_state = CurrentSceneState::Title;
+        ResetRound();
         ResetTurn();
         m_matchPlayerCount = 0;
         m_PID = 0;
         ResetMyPicks();
+
+        m_winnerPID = 0;
+        m_endGame = false;
+        m_isBattleOngoing = false;
+
+        m_countdownActive = false;
+        m_countdownFinished = false;
+        m_countdownRemaining = 0.0f;
+        m_S1U1 = 0;
+        m_S1U2 = 0;
+        m_S2U1 = 0;
+        m_S2U2 = 0;
+
+        for (auto& hand : m_myHands)
+            hand.cards.clear();
+        for (auto& hand : m_enemyHands)
+            hand.cards.clear();
+        m_CardRuntimeIDs.clear();
+        m_drawCandidates.clear();
+        m_cardQueue.Clear();
+        m_weapons.clear();
+        m_myUIWeapons = {};
+        m_enemyUIWeapons = {};
+        ClearUIWeaponDataState();
+
+        while (!m_pendingEmotes.empty()) m_pendingEmotes.pop();
+        while (!m_coinTossQueue.empty()) m_coinTossQueue.pop();
+        while (!m_revealBuffer.empty()) m_revealBuffer.pop();
+        while (!m_obstaclePkts.empty()) m_obstaclePkts.pop();
+        while (!m_pendingBattlePanelUpdates.empty()) m_pendingBattlePanelUpdates.pop();
+        ClearBattlePacket();
+
+        m_pMinimap = nullptr;
+        m_pConfirmPanel = nullptr;
+        m_pSelectionPanel = nullptr;
+
         SceneTransitionOptions opt{};
         opt.immediate = true;
         sm->RequestReplaceRoot(std::make_unique<Title>(), opt);

@@ -321,7 +321,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/Breacher_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
-         //pPiece->SetScale(XMFLOAT3(2, 2, 2));
+         pPiece->SetScale(XMFLOAT3(2, 2, 2));
          pPiece->SetMoveRotOffset(-0.25f, 0);
          break;
      case 4:
@@ -1500,16 +1500,22 @@ void PlayGridSystem::CheckOver()
     RoundResult roundResult = RoundResult::None;
     if (allyDead && enemyDead)          // 무승부
     {
+        if(GameManager::Get().GetEndGame())
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         std::cout << "This Round Result : Draw\n";
         roundResult = RoundResult::Draw;
     }
     else if (allyDead)                  // Lose
     {
+        if (GameManager::Get().GetEndGame())
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         std::cout << "This Round Result : Lose\n";
         roundResult = (myIsP1) ? RoundResult::Winner_P2 : RoundResult::Winner_P1;
     }
     else if (enemyDead)                 // Win
     {
+        if (GameManager::Get().GetEndGame())
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         std::cout << "This Round Result : Win\n";
         roundResult = (myIsP1) ? RoundResult::Winner_P1 : RoundResult::Winner_P2;
     }

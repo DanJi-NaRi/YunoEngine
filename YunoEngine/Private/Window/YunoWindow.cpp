@@ -21,7 +21,7 @@ bool YunoWindow::Create(const wchar_t* title, uint32_t width, uint32_t height)
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = YunoWindow::WndProc;
     wc.hInstance = hInst;
-    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wc.hCursor = nullptr;
     wc.lpszClassName = kClassName;
 
     RegisterClassEx(&wc);
@@ -196,6 +196,22 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         return 0;
     }
     case WM_LBUTTONDOWN:
+    {
+        if (IInput* input = YunoEngine::GetInput())
+        {
+            InputEvent evt{};
+            evt.type = InputEventType::MouseButtonDown;
+            evt.key = 0;
+            evt.x = (float)GET_X_LPARAM(lParam);
+            evt.y = (float)GET_Y_LPARAM(lParam);
+            input->PushEvent(evt);
+        }
+
+        window->m_isClicking = true;
+        SetCursor(window->m_clickCursor);
+
+        break;
+    }
     case WM_LBUTTONUP:
     {
         if (IInput* input = YunoEngine::GetInput())
@@ -208,6 +224,8 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             evt.y = static_cast<float>(GET_Y_LPARAM(lParam));
             input->PushEvent(evt);
         }
+        window->m_isClicking = false;
+        SetCursor(window->m_normalCursor);
         return 0;
     }
     case WM_RBUTTONDOWN:
@@ -259,6 +277,18 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             input->PushEvent(evt);
         }
         return 0;
+    case WM_SETCURSOR:
+    {
+        if (LOWORD(lParam) == HTCLIENT && window)
+        {
+            if (window->m_isClicking)
+                SetCursor(window->m_clickCursor);
+            else
+                SetCursor(window->m_normalCursor);
+
+            return TRUE; 
+        }
+        break;
     }
     case WM_SIZE:
         if (window)
@@ -289,6 +319,24 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         return 0;
     }
+    
 
     return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void YunoWindow::InitializeCursor(const wchar_t* normalPath,
+    const wchar_t* clickPath)
+{
+    m_normalCursor = LoadCursorFromFile(normalPath);
+    m_clickCursor = LoadCursorFromFile(clickPath);
+
+    SetClassLongPtr(m_hWnd, GCLP_HCURSOR,
+        (LONG_PTR)m_normalCursor);
+
+    SetCursor(m_normalCursor);
+}
+
+void YunoWindow::SetClickState(bool isClicking)
+{
+    m_isClicking = isClicking;
 }
