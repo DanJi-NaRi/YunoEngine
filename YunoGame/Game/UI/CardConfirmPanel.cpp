@@ -113,7 +113,7 @@ void CardConfirmPanel::CreateChild() {
             
             assert(m_pMinimap);
             if (m_pMinimap)
-                m_pMinimap->DefaultSetAllTile();
+                m_pMinimap->RestoreSimulationTiles();
             // 만들었는데 생각해보니까 우리 카드 제출 후 취소를 못하네?
             //if (m_gameManager.GetSceneState() == CurrentSceneState::StandBy) 
             //{

@@ -39,11 +39,12 @@ public:
 
     void StartDirChoice(CardConfirmArea* CardSlot);
     void SetButtonLock(bool buttonLock); // SetButtonLock
-    void RestoreSimulationTiles();
+    
 
     void OpenDirButton(int tileID, CardConfirmArea* CardSlot);
 
-    void DefaultSetAllTile();
+    void RestoreSimulationTiles(); // 초기 버전으로 돌리기
+    void DefaultSetAllTile(); // 아예 다 지우기
 
     void BindCardConfirmPanel(CardConfirmPanel* confirmPanel) { m_pConfirmPanel = confirmPanel; };
 

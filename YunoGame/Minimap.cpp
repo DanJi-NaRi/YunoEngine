@@ -93,8 +93,6 @@ bool Minimap::Submit(float dTime)
 
 void Minimap::Simulate()
 {
-    RestoreSimulationTiles();
-
     if (m_pConfirmPanel && m_pConfirmPanel->IsDirectionChoiceActive()) {
         m_isSimulation = false;
         return;
@@ -156,12 +154,12 @@ void Minimap::Simulate()
                 tilePos[slotID] += moveXY;
         };
 
-        switch (slot->GetDirection()) // moveXY는 오른쪽 방향 기준임!
+        switch (slot->GetDirection()) // moveXY는 오른쪽 방향 기준(그리드 y+가 아래)
         {
         case Direction::Right:  break;
         case Direction::Left:   moveXY = { -moveXY.x, -moveXY.y }; break;
-        case Direction::Up:     moveXY = { -moveXY.y,  moveXY.x }; break;
-        case Direction::Down:   moveXY = { moveXY.y, -moveXY.x };  break;
+        case Direction::Up:     moveXY = { moveXY.y, -moveXY.x };  break;
+        case Direction::Down:   moveXY = { -moveXY.y,  moveXY.x }; break;
         default:                moveXY = { 0, 0 };       break;
         }
         AddMoveXY(slotID, moveXY);
@@ -179,8 +177,13 @@ void Minimap::Simulate()
     simulateTile[0] = GetTileByID(tilePos[0]);
     simulateTile[1] = GetTileByID(tilePos[1]);
 
-    m_pMyTile = simulateTile;
+    // 실제 내 타일(m_pMyTile)은 유지하고, 시뮬레이션 결과만 별도로 채색한다.
+    // (기존 타일 상태와 시뮬레이션 타일이 로직상 섞이지 않도록 분리)
+    for (auto& tile : m_pTiles) {
+        tile->DefaultMinimapSetup();
+    }
     DefaultSetAllTile();
+    PaintTile(simulateTile);
 }
 
 //void Minimap::CreateGridLine(float x, float y, float z)
@@ -192,7 +195,7 @@ void Minimap::Simulate()
 //    //m_gridBox->Attach(pLine);
 //}
 void Minimap::SetupPanel() {
-    RestoreSimulationTiles();
+    DefaultSetAllTile();
     ClearGrid();
     for (const auto& myWeapon : m_player.weapons) {
         if (auto* tile = GetTileByID(myWeapon.currentTile)) {
@@ -223,7 +226,7 @@ void Minimap::SetupPanel() {
 }
 
 void Minimap::UpdatePanel(const BattleResult& battleResult) {
-    RestoreSimulationTiles();
+    DefaultSetAllTile();
     ClearGrid();
     for (const auto& pieceInfo : battleResult.order) {
         const auto& info = pieceInfo.data();
@@ -237,11 +240,11 @@ void Minimap::UpdatePanel(const BattleResult& battleResult) {
             else m_pEnemyTile[info->slotId - 1] = tile;
         }
     }
-    //PaintMyTile(m_pMyTile);
+    PaintTile(m_pMyTile);
 }
 
 void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
-    RestoreSimulationTiles();
+    DefaultSetAllTile();
     ClearGrid();
     for (const auto& pieceInfo : obstacleResult.unitState) {
         if (auto* tile = GetTileByID(pieceInfo.targetTileID)) {
@@ -254,7 +257,7 @@ void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
             else m_pEnemyTile[pieceInfo.slotId - 1] = tile;
         }
     }
-    //PaintMyTile(m_pMyTile);
+    PaintTile(m_pMyTile);
 }
 
 /*
@@ -380,12 +383,13 @@ void Minimap::StartDirChoice(CardConfirmArea* CardSlot)
 
 void Minimap::RestoreSimulationTiles()
 {
-    if (!m_hasSimulationBackup)
-        return;
-
-    m_pMyTile = m_pMyTileBackup;
-    m_hasSimulationBackup = false;
     DefaultSetAllTile();
+    if (m_hasSimulationBackup)
+    {
+        m_pMyTile = m_pMyTileBackup;
+        m_hasSimulationBackup = false;
+    }
+    PaintTile(m_pMyTile);
 }
 
 void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
@@ -451,8 +455,8 @@ void Minimap::DefaultSetAllTile()
 {
     for (auto& tile : m_pTiles) {
         tile->DefaultMinimapSetup();
+        tile->ChangeTexture(g_tilePath_None);
     }
-    PaintTile(m_pMyTile);
 }
 
 
