@@ -9,6 +9,7 @@ enum class AudioCmdType : uint8_t
     ListenerUpdate, // 청자의 위치 갱신
     EmitterUpdate,   // 3D음원 위치 갱신
 
+    PlaySnapshot,
     PlayEvent,      // 루프 음원 재생 시
     PlayOneShot,    // 단일성 음원 재생 시
 
@@ -76,7 +77,9 @@ enum class EventName : uint8_t
     PLAYER_TileHit,
     PLAYER_HorizonLazer,
     PLAYER_VerticalLazer,
-    PLAYER_TileCollapse
+    PLAYER_TileCollapse,
+
+    Blocking
 };
 
 enum class ParamName : uint8_t
@@ -119,7 +122,7 @@ struct AudioCmd
         struct
         {
             EventName event;
-        } po;       // PlayOneShot
+        } po, ps;       // PlayOneShot, PlaySnapshot
 
         struct
         {
@@ -168,6 +171,7 @@ public:
     static AudioCmd UnLoadBank(BankName bank);
     static AudioCmd ListenerUpdate(float x, float y, float z);
     static AudioCmd EmitterUpdate(EventName event, float x, float y, float z);
+    static AudioCmd PlaySnapshot(EventName event);
     static AudioCmd PlayEvent(EventName event, bool is3D = false, float x = 0, float y = 0, float z = 0);
     static AudioCmd PlayOneShot(EventName event);
     static AudioCmd StopOrRestartEvent(EventName event, bool isStop);

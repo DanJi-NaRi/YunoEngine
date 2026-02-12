@@ -263,6 +263,9 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
             if(Btn->IsUseHoverPath())
                 Btn->ChangeTexture(Btn->GetTexturePathBk());
             
+            if (Btn->IsHoverJoin()) Btn->HoverLeftEvent(); // 커서 입장 시 1번만 실행
+            Btn->SetIsHoverJoin(false);
+
             Btn->IdleEvent();
             //std::cout << "Idle!!" << std::endl;
             Btn = nullptr;
@@ -302,6 +305,9 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
             Btn->SetButtonState(ButtonState::Hovered);
 
             if (!Btn->IsUseHoverEvent()) continue;
+
+            if (!Btn->IsHoverJoin()) Btn->HoverJoinEvent(); // 커서 입장 시 1번만 실행
+            Btn->SetIsHoverJoin(true);
 
             const auto& hoverdPath = Btn->GetHoveredTexturePath();
             if(hoverdPath != g_notUsePath && Btn->IsUseHoverPath()) Btn->ChangeTexture(Btn->GetHoveredTexturePath());

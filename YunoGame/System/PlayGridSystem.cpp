@@ -103,6 +103,7 @@ void PlayGridSystem::InitRound()
         m_weaponIDs[i] = w.weaponId;
     }  
     ReflectWeaponData();
+    ApplyTransform();
     isRoundOver = false;
 }
 
@@ -121,11 +122,13 @@ void PlayGridSystem::Update(float dt)
 
 void PlayGridSystem::ApplyTransform()
 {
-    for (auto* unit : m_units)
+    for (auto&[piece, unit] : m_units)
     {
         auto id = unit->GetWeaponID();
         if (id == 3)
             unit->SetScale({ 2, 2, 2 });
+        else
+            unit->SetScale({ 1, 1, 1 });
     }
 }
 
@@ -179,7 +182,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     // 기물 생성
     const auto wData = GameManager::Get().GetWeaponData();
     GameManager::Get().ResetWeaponData();
-    m_wy = y;
+    m_wy = y + 0.1f;
     int cx = 0; int cy = 0;
     Team team = Team::Undefined;
     Direction dir;
@@ -368,7 +371,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      ed.cols = 8;
      ed.rows = 8;
      ed.emissive = 30.0f;
-     ed.color = (w.pId == 1)? XMFLOAT4{ 0, 0, 1, 1 } : XMFLOAT4{ 1, 0, 0, 1 };
+     ed.color = (w.pId == 1)? XMFLOAT4{ 0, 0.5f, 1, 1 } : XMFLOAT4{ 1, 0, 0, 1 };
      ed.rot = { XM_PIDIV2, 0, 0 };
      ed.isLoop = true;
      ed.texPath = (w.pId == 1) ? L"../Assets/Effects/Pos/EF_Player_Blue.png" : L"../Assets/Effects/Pos/EF_Player_Red.png";
@@ -388,7 +391,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
 
      // 빈 박스에 자식 객체로 등록. (for 정리)
      m_gridBox->Attach(pPiece);
-     m_units.push_back(pPiece);
+     m_units.emplace(gp, pPiece);
 }
 
 void PlayGridSystem::CheckMyQ()
@@ -709,10 +712,13 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
             int id = tiles[i];
             auto pTile = static_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[id]));
 
-            Effect* eff;
-            if(as.attacker == GamePiece::Ally1 || as.attacker == GamePiece::Ally2)
+            Team team = m_pieces[as.attacker].team;
+
+            Effect* eff = nullptr;;
+
+            if((GameManager::Get().GetPID() == 1 && team == Team::Ally) || (GameManager::Get().GetPID() == 2 && team == Team::Enemy))
                 eff = m_effectManager->Spawn(EffectID::Target, { 0, 0.01, 0 }, { 1, 1, 1 });
-            else
+            else if((GameManager::Get().GetPID() == 1 && team == Team::Enemy) || (GameManager::Get().GetPID() == 2 && team == Team::Ally))
                 eff = m_effectManager->Spawn(EffectID::TargetEnemy, { 0, 0.01, 0 }, { 1, 1, 1 });
 
             if(eff)
@@ -1183,8 +1189,10 @@ bool PlayGridSystem::ApplyAttackChanges
 
     // 공격 팀 확인. 피격 팀 확인하기.
     Team attackTeam = m_pieces[whichPiece].team;
-    Float4 allyColor = Float4{ 0, 0, 0.8f, 1 };
-    Float4 enemyColor = Float4{ 0.8f, 0, 0, 1 };
+    //Float4 allyColor = Float4{ 0, 0, 0.8f, 1 };
+    Float4 allyColor = Float4{ 0.6f, 0.6f, 1.0f, 1 };
+    //Float4 enemyColor = Float4{ 0.8f, 0, 0, 1 };
+    Float4 enemyColor = Float4{ 1.0f, 0.6f, 0.6f, 1 };
     as.m_alarmColor = (attackTeam == Team::Ally) ? allyColor : enemyColor;
 
     for (int i = 0; i < targetTileIDs.size(); i++)
@@ -1489,23 +1497,27 @@ void PlayGridSystem::CheckOver()
     const bool allyDead = deadUnits[(int)GamePiece::Ally1] && deadUnits[(int)GamePiece::Ally2];
     const bool enemyDead = deadUnits[(int)GamePiece::Enemy1] && deadUnits[(int)GamePiece::Enemy2];
     
+    RoundResult roundResult = RoundResult::None;
     if (allyDead && enemyDead)          // 무승부
     {
         if(GameManager::Get().GetEndGame())
             GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         std::cout << "This Round Result : Draw\n";
+        roundResult = RoundResult::Draw;
     }
     else if (allyDead)                  // Lose
     {
         if (GameManager::Get().GetEndGame())
             GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         std::cout << "This Round Result : Lose\n";
+        roundResult = (myIsP1) ? RoundResult::Winner_P2 : RoundResult::Winner_P1;
     }
     else if (enemyDead)                 // Win
     {
         if (GameManager::Get().GetEndGame())
             GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         std::cout << "This Round Result : Win\n";
+        roundResult = (myIsP1) ? RoundResult::Winner_P1 : RoundResult::Winner_P2;
     }
     else
         return;
@@ -1534,6 +1546,7 @@ void PlayGridSystem::CheckOver()
     }
     isRoundOver = true;
     GameManager::Get().ClearBattlePacket();
+    GameManager::Get().SetRoundResult(roundResult);
 }
 
 void PlayGridSystem::ReflectWeaponData()

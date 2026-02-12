@@ -116,7 +116,7 @@ private:
     int m_count = 0;
 
     // 이동
-    float m_moveOffset = -0.5f;
+    float m_moveOffset = 0; //-0.5f
     float m_curMoveOffset = 0.f;
     XMVECTOR m_Target{};
     XMVECTOR m_Start{};
@@ -126,7 +126,7 @@ private:
     float m_moveTime = 0.f;
 
     // 회전
-    float m_rotOffset = XMConvertToRadians(30.f);
+    float m_rotOffset = 0; //XMConvertToRadians(30.f)
     float m_curRotOffset = 0.f;
     Direction m_dir = Direction::None;
     float m_rotTime = 0.f;

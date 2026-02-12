@@ -29,6 +29,7 @@ public:
     // 2D음원 재생 시, eventName만 기입.
     // 3D음원 재생 시, eventName, is3D, pos, forward 값 전달 모두 필요
     void PlayEvent(const std::string& eventName, bool is3D = false, XMFLOAT3 pos = {}, XMFLOAT3 forward = { 0, 0, 1 }, XMFLOAT3 up = { 0, 1, 0 }, XMFLOAT3 vel = {}) override;
+    void PlaySnapshot(const std::string& eventName);
 
     // 한 번 재생하고 나면 사라질 음원
     void PlayOneShot(const std::string& eventName) override;

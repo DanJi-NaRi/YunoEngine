@@ -40,6 +40,16 @@
 GameManager* GameManager::s_instance = nullptr;
 
 
+void GameManager::SetRoundResult(RoundResult result)
+{
+    m_roundResult = result;
+}
+
+const RoundResult GameManager::GetRoundResult()
+{
+    return m_roundResult;
+}
+
 bool GameManager::IsEmptyWeaponData()
 {
     return m_weapons.empty();
@@ -295,6 +305,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::Title:
     {
         m_state = CurrentSceneState::Title;
+        ResetTurn();
         m_matchPlayerCount = 0;
         m_PID = 0;
         ResetMyPicks();
@@ -444,6 +455,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         // 이미 라운드 씬이면 무시
         //if (m_state == CurrentSceneState::RoundStart) return;
         m_state = CurrentSceneState::RoundStart;
+        ResetTurn();
         SceneTransitionOptions opt{};
         opt.immediate = true;
         ClearUIWeaponDataState();
@@ -461,11 +473,12 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::SubmitCard:
     {
+        SceneTransitionOptions opt{};
+        opt.immediate = false;
         if(m_state== CurrentSceneState::AutoBattle)
         {
             // AutoBattle에서 SubmitCard로 올 때는 PhaseScene을 pop해야 함
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
+        
             sm->RequestPop(opt);
         }
         m_state = CurrentSceneState::SubmitCard;
@@ -473,7 +486,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
 
-        sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+        sm->RequestPush(std::make_unique<PhaseScene>(), sp, opt);
         FlushPendingPanelUpdates();
 
         break;
@@ -501,7 +514,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         SceneTransitionOptions opt{};
         opt.immediate = true;
 
-        sm->RequestPop(opt);
+        sm->RequestPop(opt);            // StandBy 씬 제거
 
 
         ScenePolicy sp;
