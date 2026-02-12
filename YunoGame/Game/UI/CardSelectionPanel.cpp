@@ -30,14 +30,25 @@ namespace
         }
     }
 
+    PieceType ToPieceTypeFromWeaponId(int weaponId)
+    {
+        if (weaponId > static_cast<int>(PieceType::None) && weaponId < static_cast<int>(PieceType::Count))
+            return static_cast<PieceType>(weaponId);
+
+        return PieceType::None;
+    }
+
     PieceType ToPieceTypeFromAllowedMask(PieceMask mask)
     {
-        if (mask == PieceBit(PieceType::Blaster)) return PieceType::Blaster;
-        if (mask == PieceBit(PieceType::Breacher)) return PieceType::Breacher;
-        if (mask == PieceBit(PieceType::Impactor)) return PieceType::Impactor;
-        if (mask == PieceBit(PieceType::Chakram)) return PieceType::Chakram;
-        if (mask == PieceBit(PieceType::Scythe)) return PieceType::Scythe;
-        if (mask == PieceBit(PieceType::Cleaver)) return PieceType::Cleaver;
+        if (mask == kAny || mask == kNone)
+            return PieceType::None;
+
+        if ((mask & PieceBit(PieceType::Blaster)) != 0) return PieceType::Blaster;
+        if ((mask & PieceBit(PieceType::Chakram)) != 0) return PieceType::Chakram;
+        if ((mask & PieceBit(PieceType::Breacher)) != 0) return PieceType::Breacher;
+        if ((mask & PieceBit(PieceType::Scythe)) != 0) return PieceType::Scythe;
+        if ((mask & PieceBit(PieceType::Impactor)) != 0) return PieceType::Impactor;
+        if ((mask & PieceBit(PieceType::Cleaver)) != 0) return PieceType::Cleaver;
         return PieceType::None;
     }
 
@@ -284,7 +295,18 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
             m_pCards[i]->SetCardID(runtimeID);
             m_pCards[i]->SetSlotID(slot);
             const CardData cardData = m_cardManager.GetCardData(static_cast<int>(dataID));
-            const PieceType pieceType = ToPieceTypeFromAllowedMask(cardData.m_allowedUnits);
+
+            PieceType pieceType = PieceType::None;
+            if (slot >= 0 && slot < static_cast<int>(m_player.weapons.size()))
+            {
+                pieceType = ToPieceTypeFromWeaponId(m_player.weapons[slot].weaponId);
+            }
+
+            if (pieceType == PieceType::None)
+            {
+                pieceType = ToPieceTypeFromAllowedMask(cardData.m_allowedUnits);
+            }
+
             const int cardIndex = ParseCardIndex(cardData.m_name);
             const bool isSelectedInConfirmSlots = m_gameManager.IsRuntimeCardInConfirmSlots(runtimeID);
             m_pCards[i]->ChangeTexture(BuildCardTexturePath(pieceType, cardIndex, isSelectedInConfirmSlots));

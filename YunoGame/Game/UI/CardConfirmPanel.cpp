@@ -387,7 +387,7 @@ void CardConfirmPanel::SubmitCurrentSelection()
 
 
 
-    slot->ChangeTexture(selectedCard->GetTexturePath());
+    slot->ChangeTexture(slot->GetCardTexturePath());
     slot->SetDirection(normalizedDir);
     slot->SetIsEnabled(false);
 
@@ -469,7 +469,7 @@ void CardConfirmPanel::RefreshSlotVisualState()
         Card* card = slot->GetCard();
         if (card)
         {
-            slot->ChangeTexture(card->GetTexturePath());
+            slot->ChangeTexture(slot->GetCardTexturePath());
             continue;
         }
 
