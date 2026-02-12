@@ -179,7 +179,7 @@ void PlayGridSystem::CreateTileAndPiece(float x, float y, float z)
     // 기물 생성
     const auto wData = GameManager::Get().GetWeaponData();
     GameManager::Get().ResetWeaponData();
-    m_wy = y;
+    m_wy = y + 0.1f;
     int cx = 0; int cy = 0;
     Team team = Team::Undefined;
     Direction dir;
@@ -1489,17 +1489,21 @@ void PlayGridSystem::CheckOver()
     const bool allyDead = deadUnits[(int)GamePiece::Ally1] && deadUnits[(int)GamePiece::Ally2];
     const bool enemyDead = deadUnits[(int)GamePiece::Enemy1] && deadUnits[(int)GamePiece::Enemy2];
     
+    RoundResult roundResult = RoundResult::None;
     if (allyDead && enemyDead)          // 무승부
     {
         std::cout << "This Round Result : Draw\n";
+        roundResult = RoundResult::Draw;
     }
     else if (allyDead)                  // Lose
     {
         std::cout << "This Round Result : Lose\n";
+        roundResult = (myIsP1) ? RoundResult::Winner_P2 : RoundResult::Winner_P1;
     }
     else if (enemyDead)                 // Win
     {
         std::cout << "This Round Result : Win\n";
+        roundResult = (myIsP1) ? RoundResult::Winner_P1 : RoundResult::Winner_P2;
     }
     else
         return;
@@ -1528,6 +1532,7 @@ void PlayGridSystem::CheckOver()
     }
     isRoundOver = true;
     GameManager::Get().ClearBattlePacket();
+    GameManager::Get().SetRoundResult(roundResult);
 }
 
 void PlayGridSystem::ReflectWeaponData()
