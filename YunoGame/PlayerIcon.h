@@ -41,6 +41,8 @@ public:
     void SetHpText(Text* hp) { m_hpText = hp; }
     void SetStaminaText(Text* hp) { m_StaminaText = hp; }
 
+    IconData GetIData() { return m_idata; }
+
     virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/Bar_playericon.png"); };    // 머테리얼 생성 (한 번만)
 protected:
     ProgressBar* m_HpBar;

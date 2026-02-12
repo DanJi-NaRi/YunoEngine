@@ -248,6 +248,25 @@ void PlayHUDScene::UpdateWData(float dTime)
     }
 }
 
+bool PlayHUDScene::CheckRoundOver()
+{
+    int hp[4];
+    int i = 0;
+    for (auto* p : m_playerIcons)
+    {
+        hp[i] = p->GetIData().hp;
+        i++;
+    }
+
+    if ((hp[0] <= 0 && hp[1] <= 0) || (hp[2] <= 0 && hp[3] <= 0))
+    {
+        isRoundReset = false;
+        return true;
+    }
+        
+    return false;
+}
+
 void PlayHUDScene::ResetRound()
 {
     if (isRoundReset)
@@ -273,11 +292,11 @@ void PlayHUDScene::Update(float dt)
 
     auto scenestate = GameManager::Get().GetSceneState();
 
-    if (!GameManager::Get().IsBattleOngoing())
+    if (CheckRoundOver())
         ResetRound();
 
     //if((scenestate != CurrentSceneState::SubmitCard) && (scenestate != CurrentSceneState::BattleStandBy))
-        UpdateWData(dt);
+    UpdateWData(dt);
 
     PendingEmote emote;
     while (GameManager::Get().PopEmote(emote))

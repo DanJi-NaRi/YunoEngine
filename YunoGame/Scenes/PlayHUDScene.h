@@ -37,6 +37,7 @@ protected:
 
     void UpdateWData(float dTime);
 
+    bool CheckRoundOver();
     void ResetRound();
 
 private:
