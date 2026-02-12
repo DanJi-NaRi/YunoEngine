@@ -159,9 +159,9 @@ void CardSelectionPanel::CreateChild() {
     
     // 페이지 버튼
     {
-        m_pPageText = m_uiFactory.CreateChild<Text>(m_name + L"_PageNum", Float2(74, 66), XMFLOAT3(-100, -302, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+        m_pPageText = m_uiFactory.CreateChild<Text>(m_name + L"_PageNum", Float2(74, 66), XMFLOAT3(-100, -302, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::Center, this);
         m_pPageText->SetText(std::to_wstring(m_curPage));
-        m_pPageText->SetTextScale(XMFLOAT3(1, 1, 1));
+        m_pPageText->SetTextScale(XMFLOAT3(1.5f, 1.5f, 1.5f));
         m_pPageText->SetFont(FontID::Number);
 
 
@@ -375,7 +375,10 @@ void CardSelectionPanel::RefreshCardVisualState()
 
 const int CardSelectionPanel::GetMaxPage(int slot)
 {
-    const auto& cards = m_player.hands[slot].cards;
+    if (slot < 0 || slot >= static_cast<int>(m_player.hands.size()))
+        return -1;
+
+    const auto cards = GetCardsByFilter(slot, m_curFilter);
 
     constexpr int CardSlotSize = 6; // 한 페이지 당 카드 갯수
     const int total = static_cast<int>(cards.size()); // 카드 총 사이즈
