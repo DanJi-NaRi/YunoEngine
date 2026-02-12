@@ -35,6 +35,7 @@
 
 #include "Minimap.h" // 미니맵
 #include "CardConfirmPanel.h"   // 카드 컨펌 패널
+#include "CardConfirmArea.h"
 #include "CardSelectionPanel.h" // 카드 선택 패널
 
 GameManager* GameManager::s_instance = nullptr;
@@ -204,6 +205,28 @@ void GameManager::SetUpPanels()
 {
     //assert(m_pMinimap);
     //if (m_pMinimap) m_pMinimap->SetupPanel();
+}
+
+bool GameManager::IsRuntimeCardInConfirmSlots(uint32_t runtimeID) const
+{
+    if (!m_pConfirmPanel || runtimeID == 0)
+        return false;
+
+    const auto& slots = m_pConfirmPanel->GetCardSlots();
+    for (const auto* slot : slots)
+    {
+        if (!slot)
+            continue;
+
+        const int queuedRuntimeID = slot->GetRuntimeCardID();
+        if (queuedRuntimeID <= 0)
+            continue;
+
+        if (static_cast<uint32_t>(queuedRuntimeID) == runtimeID)
+            return true;
+    }
+
+    return false;
 }
 
 void GameManager::UpdatePanels(const BattleResult& battleResult)

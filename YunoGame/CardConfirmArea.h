@@ -25,6 +25,7 @@ public:
     void SetCard(Card* card)
     {
         m_pCard = card;
+        m_cardTexturePath.clear();
 
         if (!m_pCard)
         {
@@ -35,6 +36,7 @@ public:
 
         m_runtimeCardID = m_pCard->GetCardID();
         m_cardSlotID = m_pCard->GetSlotID();
+        m_cardTexturePath = m_pCard->GetTexturePath();
     }
     void SetDirection(Direction direction) { m_direction = direction; }
 
@@ -49,8 +51,9 @@ public:
 
     int GetRuntimeCardID() const { return m_runtimeCardID; }
     int GetCardSlotID() const { return m_cardSlotID; }
+    const std::wstring& GetCardTexturePath() const { return m_cardTexturePath; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/draganddrop.png"); };    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/PhaseScene/draganddrop_x.png"); };    // 머테리얼 생성 (한 번만)
 
 protected:
     Card* m_pCard = nullptr; // 해당 슬롯에 등록된 카드
@@ -58,5 +61,6 @@ protected:
 
     int m_runtimeCardID = 0;
     int m_cardSlotID = -1;
+    std::wstring m_cardTexturePath;
 };
 

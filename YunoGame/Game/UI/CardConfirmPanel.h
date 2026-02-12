@@ -47,7 +47,7 @@ protected:
     bool BuildCardQueueFromSlots();
     bool HasEnoughStaminaForCard(int unitSlot, uint32_t runtimeID) const;
     void SyncSimulatedStaminaFromPlayer();
-
+    void RefreshSlotVisualState();
     
 
 

@@ -14,6 +14,78 @@
 #include "IInput.h"
 #include "UIFactory.h"
 
+namespace
+{
+    std::wstring ToLowerPieceName(PieceType pieceType)
+    {
+        switch (pieceType)
+        {
+        case PieceType::Blaster: return L"blaster";
+        case PieceType::Breacher: return L"breacher";
+        case PieceType::Impactor: return L"impactor";
+        case PieceType::Chakram: return L"chakram";
+        case PieceType::Scythe: return L"scythe";
+        case PieceType::Cleaver: return L"cleaver";
+        default: return L"";
+        }
+    }
+
+    PieceType ToPieceTypeFromWeaponId(int weaponId)
+    {
+        if (weaponId > static_cast<int>(PieceType::None) && weaponId < static_cast<int>(PieceType::Count))
+            return static_cast<PieceType>(weaponId);
+
+        return PieceType::None;
+    }
+
+    PieceType ToPieceTypeFromAllowedMask(PieceMask mask)
+    {
+        if (mask == kAny || mask == kNone)
+            return PieceType::None;
+
+        if ((mask & PieceBit(PieceType::Blaster)) != 0) return PieceType::Blaster;
+        if ((mask & PieceBit(PieceType::Chakram)) != 0) return PieceType::Chakram;
+        if ((mask & PieceBit(PieceType::Breacher)) != 0) return PieceType::Breacher;
+        if ((mask & PieceBit(PieceType::Scythe)) != 0) return PieceType::Scythe;
+        if ((mask & PieceBit(PieceType::Impactor)) != 0) return PieceType::Impactor;
+        if ((mask & PieceBit(PieceType::Cleaver)) != 0) return PieceType::Cleaver;
+        return PieceType::None;
+    }
+
+    int ParseCardIndex(const std::wstring& cardName)
+    {
+        const size_t underscorePos = cardName.rfind(L"_");
+        if (underscorePos == std::wstring::npos || underscorePos + 1 >= cardName.size())
+            return 0;
+
+        const std::wstring indexPart = cardName.substr(underscorePos + 1);
+        if (indexPart.empty())
+            return 0;
+
+        for (wchar_t ch : indexPart)
+        {
+            if (ch < L'0' || ch > L'9')
+                return 0;
+        }
+
+        return std::stoi(indexPart);
+    }
+
+    std::wstring BuildCardTexturePath(PieceType pieceType, int cardIndex, bool isSelected)
+    {
+        const std::wstring lowerName = ToLowerPieceName(pieceType);
+        if (lowerName.empty() || cardIndex <= 0)
+            return L"../Assets/UI/CARD/Card_back.png";
+
+        if (isSelected)
+        {
+            return L"../Assets/UI/CARD_locked/card_" + lowerName + L"_locked_" + std::to_wstring(cardIndex) + L".png";
+        }
+
+        return L"../Assets/UI/CARD/card_" + lowerName + L"_" + std::to_wstring(cardIndex) + L".png";
+    }
+}
+
 CardSelectionPanel::CardSelectionPanel(UIFactory& uiFactory) : PhasePanel(uiFactory)
 {
     Clear();
@@ -222,7 +294,22 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
             const auto runtimeID = cards[idx].runtimeID;
             m_pCards[i]->SetCardID(runtimeID);
             m_pCards[i]->SetSlotID(slot);
-            m_pCards[i]->ChangeTexture(m_cardManager.GetCardTexturePath(dataID));
+            const CardData cardData = m_cardManager.GetCardData(static_cast<int>(dataID));
+
+            PieceType pieceType = PieceType::None;
+            if (slot >= 0 && slot < static_cast<int>(m_player.weapons.size()))
+            {
+                pieceType = ToPieceTypeFromWeaponId(m_player.weapons[slot].weaponId);
+            }
+
+            if (pieceType == PieceType::None)
+            {
+                pieceType = ToPieceTypeFromAllowedMask(cardData.m_allowedUnits);
+            }
+
+            const int cardIndex = ParseCardIndex(cardData.m_name);
+            const bool isSelectedInConfirmSlots = m_gameManager.IsRuntimeCardInConfirmSlots(runtimeID);
+            m_pCards[i]->ChangeTexture(BuildCardTexturePath(pieceType, cardIndex, isSelectedInConfirmSlots));
         }
         else
         {
@@ -267,6 +354,11 @@ void CardSelectionPanel::PageDown(int slot)
 
     m_curPage = std::clamp(m_curPage + 1, 0, maxPage);
     ViewCardPage(slot, m_curPage);
+}
+
+void CardSelectionPanel::RefreshCardVisualState()
+{
+    ViewCardPage(m_curSlot, m_curPage);
 }
 
 const int CardSelectionPanel::GetMaxPage(int slot)
