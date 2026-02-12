@@ -148,12 +148,8 @@ void DragProvider::StartDrag()
 
 void DragProvider::EndDrag()
 {
-
     // 이미 커서 안에 있을 때 호출되는 것일 테니..
     if (m_isDrag) {
-        //(SearchSnapPoint()) ? m_bkPos = : m_pPos = m_bkPos; // 검사 성공 시 스냅 위치에 따라 백업 포지션 갱신
-        
-        //std::cout << "endDrag!! bk!!" << std::endl;
         *m_pPos = m_bkPos;
         m_pressedPos = XMFLOAT2{};
         m_isDrag = false;

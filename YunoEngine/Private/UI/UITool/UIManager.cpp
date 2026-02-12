@@ -9,6 +9,7 @@
 #include "IInput.h"
 #include "UIFactory.h"
 #include "Button.h"
+#include "DragProvider.h"
 
 
 UIManager::UIManager()
@@ -427,6 +428,28 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
     }
 
     return false;
+}
+
+bool UIManager::ProcessLeaveCursur()
+{
+    assert(m_pInput);
+
+    if (!m_pInput->IsMouseLeaved()) return false;
+
+    Button* focusWidget = m_cursurSystem.GetFocusedWidget();
+    if (!focusWidget) return false;
+
+    DragProvider* drag = focusWidget->GetDragProvider();
+    if (!drag || !drag->IsNowDragging()) {
+        focusWidget->SetButtonState(ButtonState::Idle);
+        m_cursurSystem.SetFocusedWidget(nullptr);
+        return true;
+    }
+
+    drag->EndDrag();
+    focusWidget->SetButtonState(ButtonState::Idle);
+    m_cursurSystem.SetFocusedWidget(nullptr);
+    return true;
 }
 
 bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)

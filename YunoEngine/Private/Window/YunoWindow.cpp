@@ -267,6 +267,16 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         return 0;
     }
+    case WM_MOUSELEAVE:
+    {
+        if (IInput* input = YunoEngine::GetInput())
+        {
+            std::cout << "Leave Client!!!!" << std::endl;
+            InputEvent evt{};
+            evt.type = InputEventType::MouseLeave;
+            input->PushEvent(evt);
+        }
+        return 0;
     case WM_SETCURSOR:
     {
         if (LOWORD(lParam) == HTCLIENT && window)
