@@ -473,11 +473,12 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::SubmitCard:
     {
+        SceneTransitionOptions opt{};
+        opt.immediate = false;
         if(m_state== CurrentSceneState::AutoBattle)
         {
             // AutoBattle에서 SubmitCard로 올 때는 PhaseScene을 pop해야 함
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
+        
             sm->RequestPop(opt);
         }
         m_state = CurrentSceneState::SubmitCard;
@@ -485,7 +486,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
 
-        sm->RequestPush(std::make_unique<PhaseScene>(), sp);
+        sm->RequestPush(std::make_unique<PhaseScene>(), sp, opt);
         FlushPendingPanelUpdates();
 
         break;
@@ -513,7 +514,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         SceneTransitionOptions opt{};
         opt.immediate = true;
 
-        sm->RequestPop(opt);
+        sm->RequestPop(opt);            // StandBy 씬 제거
 
 
         ScenePolicy sp;
