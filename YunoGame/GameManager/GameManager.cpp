@@ -90,7 +90,7 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
     }
 }
 
-void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
+void GameManager::SetUIWeaponData(const std::array<Wdata, 4> wdatas)
 {
 
     for (int i = 0; i < 3; i+=2) 

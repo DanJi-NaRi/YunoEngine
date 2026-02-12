@@ -1507,8 +1507,8 @@ void PlayGridSystem::CheckOver()
     {
         if(GameManager::Get().GetEndGame())
             GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
-        else 
-            GameManager::Get().SetSceneState(CurrentSceneState::SubmitCard);
+        //else 
+        //    GameManager::Get().SetSceneState(CurrentSceneState::RoundStart);
         std::cout << "This Round Result : Draw\n";
         roundResult = RoundResult::Draw;
     }
@@ -1516,8 +1516,8 @@ void PlayGridSystem::CheckOver()
     {
         if (GameManager::Get().GetEndGame())
             GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
-        else
-            GameManager::Get().SetSceneState(CurrentSceneState::SubmitCard);
+        //else
+        //    GameManager::Get().SetSceneState(CurrentSceneState::RoundStart);
         std::cout << "This Round Result : Lose\n";
         roundResult = (myIsP1) ? RoundResult::Winner_P2 : RoundResult::Winner_P1;
     }
@@ -1525,8 +1525,8 @@ void PlayGridSystem::CheckOver()
     {
         if (GameManager::Get().GetEndGame())
             GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
-        else
-            GameManager::Get().SetSceneState(CurrentSceneState::SubmitCard);
+        //else
+        //    GameManager::Get().SetSceneState(CurrentSceneState::RoundStart);
         std::cout << "This Round Result : Win\n";
         roundResult = (myIsP1) ? RoundResult::Winner_P1 : RoundResult::Winner_P2;
     }

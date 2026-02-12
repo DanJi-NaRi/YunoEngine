@@ -505,6 +505,8 @@ namespace yuno::game
                 if(pkt.turnNumber == 1)
                     gm.IncreaseRound();
 
+                
+
                 std::vector<yuno::net::packets::CardSpawnInfo> added;
                 added.push_back(pkt.addedCards[0]);
                 added.push_back(pkt.addedCards[1]);

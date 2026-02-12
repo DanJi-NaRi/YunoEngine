@@ -308,8 +308,10 @@ public:
         return m_weapons;
     }
 
-    void SetUIWeaponData(const std::array<Wdata, 4>& wdatas);
+
+    void SetUIWeaponData(const std::array<Wdata, 4> wdatas);
     bool SyncUIWeaponDataFromStoredWeapons();
+
     bool IsUIWeaponDataReady() const { return m_uiWeaponDataReady; }
     uint64_t GetUIWeaponDataVersion() const { return m_uiWeaponDataVersion; }
     void ClearUIWeaponDataState();
