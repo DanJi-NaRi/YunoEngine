@@ -269,6 +269,7 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
         for (int i = 0; i < viewCount; ++i)
         {
             m_pCards[i]->SetCardID(0);
+            m_pCards[i]->SetDraggable(false);
             m_pCards[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         }
         return;
@@ -309,6 +310,7 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
 
             const int cardIndex = ParseCardIndex(cardData.m_name);
             const bool isSelectedInConfirmSlots = m_gameManager.IsRuntimeCardInConfirmSlots(runtimeID);
+            m_pCards[i]->SetDraggable(!isSelectedInConfirmSlots);
             m_pCards[i]->ChangeTexture(BuildCardTexturePath(pieceType, cardIndex, isSelectedInConfirmSlots));
         }
         else
@@ -316,6 +318,7 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
             // 남는 슬롯은 카드 뒷면으로 채움
             m_pCards[i]->SetCardID(0);    // 아이디 등록
             m_pCards[i]->SetSlotID(slot); // 슬롯 순번 등록
+            m_pCards[i]->SetDraggable(false);
             m_pCards[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         }
     }

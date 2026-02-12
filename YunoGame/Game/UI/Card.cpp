@@ -58,6 +58,8 @@ bool Card::HoveredEvent()
 
 bool Card::LMBPressedEvent()
 {
+    if (!m_isDraggable)
+        return true;
     //std::cout << "(Card - LMB)PressedEvent" << std::endl;
     m_pDrag->StartDrag();
     return true;
@@ -70,6 +72,9 @@ bool Card::RMBPressedEvent()
 
 bool Card::KeyPressedEvent(uint32_t key)
 {
+    if (m_isDraggable)
+        m_pDrag->EndDrag();
+
     return true;
 }
 
