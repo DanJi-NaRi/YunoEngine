@@ -170,10 +170,10 @@ private:
 private:
     void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, uint32_t runCardID, Direction dir);
     bool ApplyBuffChanges(int mainUnit, const CardEffectData*& buffData);
-    bool ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir);
-    bool ApplyMoveChanges(Dirty_US dirty, const UnitState& prevUnitState, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir);
-    bool ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
-    bool ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit,
+    bool ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit, Direction dir);
+    bool ApplyMoveChanges(Dirty_US dirty, const UnitState prevUnitState, const std::array<UnitState, 4> newUnitStates, int mainUnit, Direction dir);
+    bool ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
+    bool ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit,
         const std::vector<RangeOffset>& ranges, Direction dir, const CardEffectData*& buffData, int snapNum);
     void ApplyObstacleResult(const ObstacleResult& obstacle);   // 장애물 패킷 적용하는 함수
 
@@ -220,7 +220,7 @@ private:
 
 private:
     // 시간 관련
-    float moveDuration = 2.5f;      // 이동
+    float moveDuration = 3.f;      // 이동
     float buffDuration = 2.f;       // 버프
     float attackDuration = 3.f;     // 공격
 
@@ -229,12 +229,8 @@ private:
     float tileFlashInterval = 0.3f;
     float tileFlashDuration = tileFlashCount * tileFlashInterval;
     float attackRotDuration = 0.25f;
-    float offsetDuration = 0.25f;
-    float hitDuration = tileFlashDuration;    // 미정. 현재 tileFlashDuration과 동일.
-    float chakramAttackAnimDuration = 2.54f;  // ..ㅎㅎ
-
+    float hitDuration = 2;
     float attackAndMoveDuration = attackDuration + tileFlashDuration + hitDuration;
-
 
         // 장애물
     int warnFlashCount = 5;

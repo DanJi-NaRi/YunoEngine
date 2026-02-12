@@ -317,6 +317,20 @@ void UnitTile::UpdateFlash(float dt)
     }
 }
 
+void UnitTile::SetIdleState()
+{
+    if (m_state == ObstacleType::None) return;
+    
+    m_state = ObstacleType::None;
+    isTriggering = false;
+    isWarning = false;
+
+    if (!m_animator) return;
+
+    m_animator->Change("idle");
+    m_animator->SetLoop("idle", true);
+}
+
 void UnitTile::SetFlashColor(Float4 color, int count, float blinkTime)
 {
     m_flashColor = color;

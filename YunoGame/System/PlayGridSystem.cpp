@@ -102,6 +102,15 @@ void PlayGridSystem::InitRound()
         };
         m_weaponIDs[i] = w.weaponId;
     }  
+
+    // 타일 초기화
+    for (int tileID = 0; tileID < m_tiles.size(); tileID++)
+    {
+        auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(tileID));
+        pTile->SetIdleState();
+        m_tiles = {};
+    }
+
     ReflectWeaponData();
     ApplyTransform();
     isRoundOver = false;
@@ -525,17 +534,8 @@ void PlayGridSystem::CheckPacket(float dt)
         GamePiece whichPiece = GetGamePiece(pckt.pId, pckt.slotId);
         int mainUnit = GetUnitID(pckt.pId, pckt.slotId);
 
-        // runtimeCardID로 CardManager에서 카드 정보 얻어옴
-        // 서버 쪽에서 패킷 시간 계산 로직 끝나면 지워야함
         const auto& cardData = mng.GetCardData(runTimeCardID);
 
-        const int effectID = cardData.m_effectId;
-        const int soundID = cardData.m_soundId;
-
-        const CardType cardType = cardData.m_type;
-        
-        if (cardType == CardType::Attack)    m_pktTime = attackPktTime;
-        else if (cardType == CardType::Utility)    m_pktTime = utilityPktTime;
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
 
@@ -567,13 +567,14 @@ void PlayGridSystem::CheckPacket(float dt)
             isProcessing = false;
             m_currTime -= m_pktTime;
             std::cout << "Packet Time is Over\n";
-            // ui weapon data에 현 유닛 상태 반영
-            ReflectWeaponData();
+
             // 라운드 끝났는지 체크
             CheckOver();
         }
     }
 
+    // ui weapon data에 현 유닛 상태 반영
+    ReflectWeaponData();
 }
 
 
@@ -626,14 +627,6 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
 
 
         pPiece->SetDir(as.dir, true, attackRotDuration);
-        //for (uint32_t subId : pieceInfo.subIds)
-        //{
-        //    auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
-        //    if (pSubPiece != nullptr)
-        //    {
-        //        pSubPiece->SetDir(as.dir, true, attackRotDuration);
-        //    }
-        //}
 
         const auto& tiles = as.tileIDs;
         for (int i = 0; i < tiles.size(); i++)
@@ -903,13 +896,29 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
             m_tiles[tileID].effectIDs.clear();
         }
 
+        // 장애물 발동
+
         for (const auto& tileID : os.hitTileIDs)
         {
             auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
             pTile->PlayTrigger(os.attackType, os.hitColor, os.hitFlashCount, os.hitFlashInterval);
+
             auto [cx, cz] = GetCellByID(tileID);
             if(os.attackType == ObstacleType::Collapse)
                 ChangeTileTO(cx, cz, TileOccupy{ TileOccuType::Collapesed, TileWho::None });
+        }
+
+        // 세로 장애물은 가운데 타일 위치에서 한번만 발동
+        if (os.attackType == ObstacleType::Horizon_Razer)
+        {
+            int middleTileID = os.hitTileIDs.size() / 2.f;
+
+            if (middleTileID != 0)
+            {
+                auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[middleTileID]));
+                auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 0.f }, { 1.f, 1.f, 1.f }, { -1, 0, 0 });
+                pTile->Attach(eff);
+            }
         }
 
         // 기물
@@ -976,13 +985,13 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
             ed.rows = 10;
             ed.emissive = 1.0f;
             ed.color = XMFLOAT4{ 1, 1, 0, 1 };
-            ed.rot = { XMConvertToRadians(90.f), 0, 0 };
+            ed.rot = { 0, 0, 0 };
             ed.isLoop = true;
             ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_1.png";
             if (os.attackType != ObstacleType::Collapse)
             {
                 m_effectManager->RegisterEffect(ed);
-                auto pEffect1 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning1", XMFLOAT3(0, 0.01f, 0));
+                auto pEffect1 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning1", XMFLOAT3(0, 0, 0.1f));
                 pEffect1->BuildInternalEffectMaterial(ed);
                 pTile->Attach(pEffect1);
                 m_tiles[tileID].effectIDs.push_back(pEffect1->GetID());
@@ -993,10 +1002,11 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
             ed.lifetime = 0.4f;
             ed.cols = 5;
             ed.rows = 6;
+            ed.color = (os.attackType == ObstacleType::Collapse)? XMFLOAT4{ 1, 0, 0, 1 } : XMFLOAT4{ 1, 1, 0, 1 };
             ed.rot = { -XMConvertToRadians(90.f), 0, 0};
             ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_2.png";
             m_effectManager->RegisterEffect(ed);
-            auto pEffect2 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning2", XMFLOAT3(0, 0.01f, 0));
+            auto pEffect2 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning2", XMFLOAT3(0, 0, -0.5f));
             pEffect2->BuildInternalEffectMaterial(ed);
             pTile->Attach(pEffect2);
             m_tiles[tileID].effectIDs.push_back(pEffect2->GetID());
@@ -1074,50 +1084,13 @@ bool PlayGridSystem::ApplyBuffChanges(int mainUnit, const CardEffectData*& buffD
 }
 
 bool PlayGridSystem::ApplyMoveChanges
-(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir)
+(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit, Direction dir)
 {
     return ApplyMoveChanges(dirty, m_UnitStates[mainUnit], newUnitStates, mainUnit, dir);
-
-    //const UnitState prevUS = m_UnitStates[mainUnit];
-    //const UnitState newUS = newUnitStates[mainUnit];
-    //GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
-    //if (!CheckNotDying(whichPiece))
-    //{
-    //    // 부활 규칙이 없으므로 return 합니다.
-    //    m_pktTime -= moveDuration;
-    //    return false;
-    //}
-
-    //auto newcell = GetCellByID(newUS.targetTileID);
-    //auto oldcell = GetCellByID(prevUS.targetTileID);
-
-    //// 이동하다가 충돌했을 때
-    //bool isCollided = static_cast<bool>(newUS.isEvent);
-    //if (isCollided)
-    //{
-    //    if (HasThis_US(dirty, Dirty_US::hp))
-    //    {
-    //        MoveEvent(whichPiece, oldcell, newcell, dir, true, true);
-    //    }
-    //    else
-    //    {
-    //        MoveEvent(whichPiece, oldcell, newcell, dir, true);
-    //    }
-    //}
-    //// 이동만 할 때
-    //else if (HasThis_US(dirty, Dirty_US::targetTileID))
-    //{
-    //    MoveEvent(whichPiece, oldcell, newcell, dir);
-    //}
-    //else    // 충돌 X & 이동 X 일 경우
-    //{
-    //    m_pktTime -= moveDuration;
-    //    return false;
-    //}
-    //return true;
 }
 
-bool PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const UnitState& prevUS, const std::array<UnitState, 4>& newUnitStates, int mainUnit, Direction dir)
+bool PlayGridSystem::ApplyMoveChanges
+(Dirty_US dirty, const UnitState prevUS, const std::array<UnitState, 4> newUnitStates, int mainUnit, Direction dir)
 {
     const UnitState newUS = newUnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
@@ -1158,7 +1131,7 @@ bool PlayGridSystem::ApplyMoveChanges(Dirty_US dirty, const UnitState& prevUS, c
 }
 
 bool PlayGridSystem::ApplyAttackChanges
-(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir)
+(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir)
 {
     const UnitState prevUS = m_UnitStates[mainUnit];
     const UnitState newUS = newUnitStates[mainUnit];
@@ -1189,9 +1162,8 @@ bool PlayGridSystem::ApplyAttackChanges
 
     // 공격 팀 확인. 피격 팀 확인하기.
     Team attackTeam = m_pieces[whichPiece].team;
-    //Float4 allyColor = Float4{ 0, 0, 0.8f, 1 };
+
     Float4 allyColor = Float4{ 0.6f, 0.6f, 1.0f, 1 };
-    //Float4 enemyColor = Float4{ 0.8f, 0, 0, 1 };
     Float4 enemyColor = Float4{ 1.0f, 0.6f, 0.6f, 1 };
     as.m_alarmColor = (attackTeam == Team::Ally) ? allyColor : enemyColor;
 
@@ -1218,7 +1190,7 @@ bool PlayGridSystem::ApplyAttackChanges
     return true;
 }
 
-bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4>& newUnitStates, int mainUnit,
+bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit,
     const std::vector<RangeOffset>& ranges, Direction dir, const CardEffectData*& buffData, int snapNum)
 {
     const UnitState prevUS = m_UnitStates[mainUnit];
@@ -1297,13 +1269,13 @@ const std::vector<int> PlayGridSystem::GetRangeTileIDs(const Int2 unitCell, cons
             relativeRanges.push_back({ -range.dy, -range.dx });
             break;
         case Direction::Down:
-            relativeRanges.push_back({ -range.dy, range.dx });
+            relativeRanges.push_back({ range.dy, range.dx });
             break;
         case Direction::Left:
             relativeRanges.push_back({ -range.dx, range.dy });
             break;
         case Direction::Right:
-            relativeRanges.push_back({ range.dx, range.dy });
+            relativeRanges.push_back({ range.dx, -range.dy });
             break;
         }
     }
@@ -1539,6 +1511,18 @@ void PlayGridSystem::CheckOver()
         }
     }
     isRoundOver = true;
+
+    // 경고 이펙트 제거
+    for (auto& tileInfo : m_tiles)
+    {
+        if (tileInfo.effectIDs.size() == 0) continue;
+        for (auto effectID : tileInfo.effectIDs)
+        {
+            m_manager->DestroyObject(effectID);
+        }
+        tileInfo.effectIDs.clear();
+    }
+
     GameManager::Get().ClearBattlePacket();
     GameManager::Get().SetRoundResult(roundResult);
 }

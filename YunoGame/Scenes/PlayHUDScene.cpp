@@ -311,6 +311,8 @@ bool PlayHUDScene::CheckRoundOver()
         isRoundReset = false;
         isChangeRound = true;
 
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_Cross));
+
         m_SceneChange->SetVisible(Visibility::Visible);
         m_SceneChange->Play();
     }

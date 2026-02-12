@@ -59,6 +59,7 @@ enum class EventName : uint8_t
     UI_RoundOver,
     UI_Emogi,
     UI_Move,
+    UI_Cross,
 
     PLAYER_BlasterAttack,
     PLAYER_CharkramAttack,

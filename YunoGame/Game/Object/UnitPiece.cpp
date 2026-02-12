@@ -77,7 +77,6 @@ bool UnitPiece::CheckDead(float dt)
     if (m_dissolveAmount == 1)
     {
         PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
-        //isDeadQueued = true;
         AddAnimState(PieceAnim::DeadQueued);
     }
 
@@ -86,11 +85,10 @@ bool UnitPiece::CheckDead(float dt)
 
 void UnitPiece::CheckMyQ()  
 {  
-   //if (isDead) return;  
-   if (HasAnimState(PieceAnim::Dead)) return;
+   if (m_state == PieceAnim::Dead) return;
 
    // 애니메이션이 끝나면 하나씩 빼가게 하기  
-   while (!m_Q.empty() && !m_waitSubMoveHit && m_state == PieceAnim::Idle)
+   while (!m_Q.empty() && m_state == PieceAnim::Idle)
    {  
        auto tp = m_Q.front();  
        m_Q.pop();  
@@ -188,27 +186,26 @@ void UnitPiece::UpdateOffset()
     for (auto* sub : m_linkedSubPieces)
     {
         if (sub == nullptr) continue;
-        if (sub->HasAnimState(PieceAnim::Attack))
+        if (sub->m_state == PieceAnim::Attack)
         {
             isAnySubBusy = true;
             break;
         }
     }
-    m_curRotOffset = (HasAnimState(PieceAnim::Attack) || isAnySubBusy) ? 0.f : (m_dir == Direction::Right) ? -m_rotOffset : m_rotOffset;
-    m_curMoveOffset = (HasAnimState(PieceAnim::Attack) || isAnySubBusy) ? 0.f : m_moveOffset;
+    m_curRotOffset = (m_state == PieceAnim::Attack || isAnySubBusy) ? 0.f : (m_dir == Direction::Right) ? -m_rotOffset : m_rotOffset;
+    m_curMoveOffset = (m_state == PieceAnim::Attack || isAnySubBusy) ? 0.f : m_moveOffset;
 }
 
 void UnitPiece::UpdateRot(float dt)
 {
-    //if (!isRotating)    return;
-    if (!HasAnimState(PieceAnim::Rot))    return;
+    if (m_state != PieceAnim::Rot)   return;
     
     m_rotTime += dt * m_rotSpeed;
     if (m_rotTime >= 1.f)
     {
         m_yaw = m_targetYaw;
         m_rotTime = 0.f;
-        RemoveAnimState(PieceAnim::Rot);
+        m_state = PieceAnim::Idle;
     }
     else
     {
@@ -219,8 +216,8 @@ void UnitPiece::UpdateRot(float dt)
 
 void UnitPiece::UpdateMove(float dt)
 {
-    if (!HasAnimState(PieceAnim::Move))   return;
-
+    if (m_state != PieceAnim::Move)  return;
+    
     m_moveTime += dt / m_Dist * m_speed * m_fixSpeed;
 
     if (m_moveTime >= 1.f)
@@ -245,45 +242,42 @@ void UnitPiece::UpdateMove(float dt)
 
 void UnitPiece::UpdateFlash(float dt)
 {
-    if (HasAnimState(PieceAnim::Flash))
+    if (m_state != PieceAnim::Flash)    return;
+    
+    // 속도 조절 가능
+    m_flashTime += dt;
+
+    // 0에서 시작해 1까지 올라갔다 다시 내려오는 부드러운 곡선
+    float btw0_1 = QuadraticGraph(m_flashTime);
+
+    // btw0_1을 기반으로 색상 보간
+    Float4 fc = GetLerpColor(btw0_1);
+    SetMaskColor({ fc.x, fc.y, fc.z, fc.w });
+
+    if (m_flashTime >= m_blinkTime)
     {
-        // 속도 조절 가능
-        m_flashTime += dt;
-
-        // 0에서 시작해 1까지 올라갔다 다시 내려오는 부드러운 곡선
-        float btw0_1 = QuadraticGraph(m_flashTime);
-
-        // btw0_1을 기반으로 색상 보간
-        Float4 fc = GetLerpColor(btw0_1);
-        SetMaskColor({ fc.x, fc.y, fc.z, fc.w });
-        //SetEmissiveColor(2, { fc.x, fc.y, fc.z, fc.w });
-
-        if (m_flashTime >= m_blinkTime)
-        {
-            m_count--;
-            m_flashTime = 0.f;
-        }
-        if (m_count == 0)
-        {
-            // 종료 시 원래 색 복원
-            SetMaskColor({ m_vtmpColor.x, m_vtmpColor.y, m_vtmpColor.z, m_vtmpColor.w });
-            //SetEmissiveColor(2, { m_vtmpColor.x, m_vtmpColor.y, m_vtmpColor.z, m_vtmpColor.w });
-            m_flashTime = 0.f;
-            RemoveAnimState(PieceAnim::Flash);
-        }
-
+        m_count--;
+        m_flashTime = 0.f;
     }
+    if (m_count == 0)
+    {
+        // 종료 시 원래 색 복원
+        SetMaskColor({ m_vtmpColor.x, m_vtmpColor.y, m_vtmpColor.z, m_vtmpColor.w });
+        m_flashTime = 0.f;
+        m_state = PieceAnim::Idle;
+    }
+
 }
 
 void UnitPiece::UpdateHit(float dt)
 {
-    if (!HasAnimState(PieceAnim::Hit))  return;
+    if (m_state != PieceAnim::Hit)  return;
 
     // animator가 없는 피스(예: 복합 무기 루트)는 히트 상태가 남아
     // 큐가 영구 정지되지 않도록 즉시 정리한다.
     if (m_animator == nullptr)
     {
-        RemoveAnimState(PieceAnim::Hit);
+        m_state = PieceAnim::Idle;
         return;
     }
 
@@ -295,13 +289,14 @@ void UnitPiece::UpdateHit(float dt)
             m_animator->Change("idle");
             m_animator->SetLoop("idle", true);
             m_animator->Play();
-            RemoveAnimState(PieceAnim::Hit);
+            m_state = PieceAnim::Idle;
         }
     }
 }
 
 void UnitPiece::UpdateDissolve(float dt)
 {
+    //if (m_state != PieceAnim::Dissolve) return;
     if (!HasAnimState(PieceAnim::Dissolve)) return;
 
     m_dissolveTime += dt;
@@ -310,7 +305,7 @@ void UnitPiece::UpdateDissolve(float dt)
     {
         m_dissolveAmount = m_startDissolveAmount + linearGraph(m_dissolveDuration);
         m_dissolveTime = 0.f;
-        RemoveAnimState(PieceAnim::Dissolve);
+        m_state = PieceAnim::Idle;
     }
     else
     {
@@ -325,7 +320,7 @@ void UnitPiece::UpdateDissolve(float dt)
 
 void UnitPiece::UpdateAttack(float dt)
 {
-    if (!HasAnimState(PieceAnim::Attack)) return;
+    if (m_state != PieceAnim::Attack) return;
 
     if (m_animator == nullptr)
     {
@@ -343,7 +338,8 @@ void UnitPiece::UpdateAttack(float dt)
         }
 
         if (!anySubAttacking)
-            RemoveAnimState(PieceAnim::Attack);
+            m_state = PieceAnim::Idle;
+
         return;
     }
 
@@ -353,7 +349,8 @@ void UnitPiece::UpdateAttack(float dt)
     {
         m_animator->Change("idle");
         m_animator->Play();
-        RemoveAnimState(PieceAnim::Attack);
+
+        m_state = PieceAnim::Idle;
     }
 }
 
@@ -363,14 +360,14 @@ void UnitPiece::UpdateRollingOrBack(float dt)
     for (auto* sub : m_linkedSubPieces)
     {
         if (sub == nullptr) continue;
-        if (sub->HasAnimState(PieceAnim::Attack))
+        if (sub->m_state == PieceAnim::Attack)
         {
             isAnySubBusy = true;
             break;
         }
     }
 
-    if (HasAnimState(PieceAnim::RollBack))
+    if (m_state == PieceAnim::RollBack)
     {
         m_rollTime += dt * m_rollorbackSpeed;
 
@@ -382,7 +379,6 @@ void UnitPiece::UpdateRollingOrBack(float dt)
             m_curMoveOffset = 0;
             m_curRotOffset = 0;
             m_rollTime = 0;
-            RemoveAnimState(PieceAnim::RollBack);
             
             PlayAttack();
             for (auto* sub : m_linkedSubPieces)
@@ -390,12 +386,11 @@ void UnitPiece::UpdateRollingOrBack(float dt)
                 if (sub == nullptr) continue;
                 sub->PlayAttack();
             }
-            AddAnimState(PieceAnim::Roll);
         }
     }
     // 복합 무기(차크람)는 부모에 animator가 없으므로 isAttacking으로는
     // 서브 공격 진행 상태를 알 수 없다. 서브 동작이 끝난 뒤 복귀(roll)하도록 제어한다.
-    else if (HasAnimState(PieceAnim::Roll) && !HasAnimState(PieceAnim::Attack) && !isAnySubBusy)
+    else if (m_state == PieceAnim::Roll && !isAnySubBusy)
     {
         m_rollTime += dt * m_rollorbackSpeed;
 
@@ -407,7 +402,7 @@ void UnitPiece::UpdateRollingOrBack(float dt)
             m_curMoveOffset = m_moveOffset;
             m_curRotOffset = m_rotOffset;
             m_rollTime = 0;
-            RemoveAnimState(PieceAnim::Roll);
+            m_state = PieceAnim::Idle;
         }
     }
 }
@@ -478,7 +473,7 @@ void UnitPiece::SetFlashColor(Float4 color, int count, float blinkTime)
     m_flashColor = color;
     m_count = count;
     m_blinkTime = blinkTime;
-    AddAnimState(PieceAnim::Flash);
+    m_state = PieceAnim::Flash;
 }
 
 void UnitPiece::AppearDissolve(float dissolveTime)
@@ -486,7 +481,8 @@ void UnitPiece::AppearDissolve(float dissolveTime)
     m_linearSlope = -(1.f / dissolveTime);
     m_dissolveDuration = dissolveTime;
     m_startDissolveAmount = m_dissolveAmount;
-    AddAnimState(PieceAnim::Dissolve);
+    m_state = PieceAnim::Dissolve;
+    //AddAnimState(PieceAnim::Dissolve);
 }
 
 void UnitPiece::DisappearDissolve(float dissolveTime)
@@ -494,15 +490,17 @@ void UnitPiece::DisappearDissolve(float dissolveTime)
     m_linearSlope = 1.f / dissolveTime;
     m_dissolveDuration = dissolveTime;
     m_startDissolveAmount = m_dissolveAmount;
-    AddAnimState(PieceAnim::Dissolve);
-    AddAnimState(PieceAnim::Dead);
-    RemoveAnimState(PieceAnim::DeadQueued);
+
+    m_state = PieceAnim::Dissolve | PieceAnim::Dead;
+    //AddAnimState(PieceAnim::Dissolve);
+    //AddAnimState(PieceAnim::Dead);
+    //RemoveAnimState(PieceAnim::DeadQueued);
 }
 
 void UnitPiece::PlayAttack()
 {
     if (m_animator == nullptr) return;
-    bool isChanged = m_animator->Change("attack");
+    bool isChanged = m_animator->Change("attack", (m_weaponID == 2)? 0.1f : 0.5f);   // 챠크람, 대검일 경우에는 블렌딩 시간 0.1f
     if (!isChanged) return;
     m_animator->SetLoop("attack", false);
     m_animator->Play();
@@ -693,17 +691,12 @@ void UnitPiece::PlayAttack()
         }
     }
 
-    AddAnimState(PieceAnim::Attack);
+    m_state = PieceAnim::Attack;
 }
 
 void UnitPiece::PlayHit()
 {
-    //SetFlashColor(color, count, blinkTime);
     if (m_animator == nullptr) return;
-
-    // hit가 기존 공격/롤 상태를 선점하면 이전 상태 비트가 남아
-    // IsBusy가 해제되지 않는 문제가 생길 수 있어 선제 정리한다.
-    RemoveAnimState(PieceAnim::Attack | PieceAnim::RollBack | PieceAnim::Roll);
 
     bool isChanged = m_animator->Change((m_dir == Direction::Right) ? "hit" : "hitF");
     // 같은 clip("hit")이 이미 current면 Change가 false를 반환한다.
@@ -723,10 +716,10 @@ void UnitPiece::PlayHit()
 }
 
 void UnitPiece::PlayMove()
-{   
+{
     if (m_animator)
     {
-        bool isChanged = m_animator->Change("move");
+        bool isChanged = m_animator->Change("move", (m_weaponID == 6) ? 0.1f : 0.5f);
         if (isChanged)
             m_animator->SetLoop("move", true);
         m_animator->Play();
@@ -738,22 +731,20 @@ void UnitPiece::PlayMove()
         sub->PlayMove();
     }
 
-    if(m_subID == 0)
+    if (m_subID == 0)
         AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_Move));
 
     m_state = PieceAnim::Move;
-    AddAnimState(PieceAnim::Move);
 }
 
 void UnitPiece::PlayRollBack()
 {
-    AddAnimState(PieceAnim::RollBack);
-    RemoveAnimState(PieceAnim::Roll);
+    m_state = PieceAnim::RollBack;
 }
 
 void UnitPiece::PlayRoll()
 {
-    AddAnimState(PieceAnim::Roll);
+    m_state = PieceAnim::Roll;
 }
 
 
@@ -761,10 +752,6 @@ void UnitPiece::PlayDead(float disappearDisolveDuration)
 {
     // 죽음 직후 기존 행동 큐를 정리해 후속 이동/피격 명령이 덮어쓰지 않게 한다.
     ClearQ();
-    RemoveAnimState(PieceAnim::Move | PieceAnim::Rot | PieceAnim::Attack | PieceAnim::Hit | PieceAnim::RollBack | PieceAnim::Roll);
-
-    AddAnimState(PieceAnim::Dead);
-    RemoveAnimState(PieceAnim::DeadQueued);
 
     DisappearDissolve(disappearDisolveDuration);
 
@@ -787,7 +774,6 @@ void UnitPiece::StopMove()
     }
     // animator가 없는 부모 피스(예: Chakram 루트)도 이동 상태를 반드시 해제해야
     // 다음 큐 명령(공격/피격/이동)이 정상 처리된다.
-    RemoveAnimState(PieceAnim::Move);
     m_moveTime = 0.f;
     m_state = PieceAnim::Idle;
 }
@@ -803,15 +789,9 @@ void UnitPiece::AddLinkedSubPiece(UnitPiece* subPiece)
     m_linkedSubPieces.push_back(subPiece);
 }
 
-bool UnitPiece::IsBusy() const
-{
-    return 
-        HasAnimState(PieceAnim::Move | PieceAnim::Rot | PieceAnim::Flash | PieceAnim::Hit | PieceAnim::Attack | PieceAnim::RollBack | PieceAnim::Roll | PieceAnim::Dissolve) || m_waitSubMoveHit || !m_Q.empty();
-}
-
 void UnitPiece::SetTarget(XMFLOAT3 targetPos, float second)
 {
-    if (HasAnimState(PieceAnim::Move)) return;
+    if (m_state == PieceAnim::Move) return;
 
     m_fixSpeed = 1 / second;
     m_Target = XMLoadFloat3(&targetPos);
