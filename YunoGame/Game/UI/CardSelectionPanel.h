@@ -43,11 +43,7 @@ public:
     void PageUp(int slot);
     void PageDown(int slot);
 
-    void ClearSelectedCard() { m_pSelectedCard = nullptr; }
-
     const int GetMaxPage(int slot);
-    Card* GetSelectedCard() const { return m_pSelectedCard; }
-    int GetCurrentSlot() const { return m_curSlot; }
 
     WeaponNameImage* GetWeaponNameImage() const { return m_pWeaponIMG; }
 

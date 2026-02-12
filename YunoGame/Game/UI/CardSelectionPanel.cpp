@@ -30,21 +30,48 @@ namespace
         }
     }
 
+    PieceType ToPieceTypeFromAllowedMask(PieceMask mask)
+    {
+        if (mask == PieceBit(PieceType::Blaster)) return PieceType::Blaster;
+        if (mask == PieceBit(PieceType::Breacher)) return PieceType::Breacher;
+        if (mask == PieceBit(PieceType::Impactor)) return PieceType::Impactor;
+        if (mask == PieceBit(PieceType::Chakram)) return PieceType::Chakram;
+        if (mask == PieceBit(PieceType::Scythe)) return PieceType::Scythe;
+        if (mask == PieceBit(PieceType::Cleaver)) return PieceType::Cleaver;
+        return PieceType::None;
+    }
+
+    int ParseCardIndex(const std::wstring& cardName)
+    {
+        const size_t underscorePos = cardName.rfind(L"_");
+        if (underscorePos == std::wstring::npos || underscorePos + 1 >= cardName.size())
+            return 0;
+
+        const std::wstring indexPart = cardName.substr(underscorePos + 1);
+        if (indexPart.empty())
+            return 0;
+
+        for (wchar_t ch : indexPart)
+        {
+            if (ch < L'0' || ch > L'9')
+                return 0;
+        }
+
+        return std::stoi(indexPart);
+    }
+
     std::wstring BuildCardTexturePath(PieceType pieceType, int cardIndex, bool isSelected)
     {
         const std::wstring lowerName = ToLowerPieceName(pieceType);
         if (lowerName.empty() || cardIndex <= 0)
             return L"../Assets/UI/CARD/Card_back.png";
-    
 
-        if (isSelected) 
+        if (isSelected)
         {
             return L"../Assets/UI/CARD_locked/card_" + lowerName + L"_locked_" + std::to_wstring(cardIndex) + L".png";
         }
-        else 
-        {
-            return L"../Assets/UI/CARD/card_" + lowerName + L"_" + std::to_wstring(cardIndex) + L".png";
-        }
+
+        return L"../Assets/UI/CARD/card_" + lowerName + L"_" + std::to_wstring(cardIndex) + L".png";
     }
 }
 
@@ -257,8 +284,10 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
             m_pCards[i]->SetCardID(runtimeID);
             m_pCards[i]->SetSlotID(slot);
             const CardData cardData = m_cardManager.GetCardData(static_cast<int>(dataID));
+            const PieceType pieceType = ToPieceTypeFromAllowedMask(cardData.m_allowedUnits);
+            const int cardIndex = ParseCardIndex(cardData.m_name);
             const bool isSelectedInConfirmSlots = m_gameManager.IsRuntimeCardInConfirmSlots(runtimeID);
-            m_pCards[i]->ChangeTexture(BuildCardTexturePath(cardData.m_piece, cardData.m_cardNum, isSelectedInConfirmSlots));
+            m_pCards[i]->ChangeTexture(BuildCardTexturePath(pieceType, cardIndex, isSelectedInConfirmSlots));
         }
         else
         {

@@ -35,6 +35,7 @@
 
 #include "Minimap.h" // 미니맵
 #include "CardConfirmPanel.h"   // 카드 컨펌 패널
+#include "CardConfirmArea.h"
 #include "CardSelectionPanel.h" // 카드 선택 패널
 
 GameManager* GameManager::s_instance = nullptr;
