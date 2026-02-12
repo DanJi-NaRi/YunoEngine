@@ -54,6 +54,7 @@ void CardConfirmArea::Clear()
     m_direction = Direction::None;
     m_runtimeCardID = 0;
     m_cardSlotID = -1;
+    m_cardTexturePath.clear();
 }
 
 void CardConfirmArea::CleanSetup()
@@ -74,7 +75,7 @@ bool CardConfirmArea::Event(float dTime)
     m_pCard = dynamic_cast<Card*>(m_snapPoint.pSnapOwner);
 
     if (m_pCard)
-        this->ChangeTexture(m_pCard->GetTexturePath());
+        this->ChangeTexture(m_cardTexturePath);
         
     // 이벤트 공간
     

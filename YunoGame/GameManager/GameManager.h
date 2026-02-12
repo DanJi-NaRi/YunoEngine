@@ -152,6 +152,10 @@ public:
     bool IsBattleOngoing() const { return m_isBattleOngoing; }
     void SetBattleOngoing(bool v) { m_isBattleOngoing = v; }
 
+    bool isRoundChangeNow() { return m_bRoundChangeNow; }
+    void SetRoundChangeNow() { m_bRoundChangeNow = true; } //HUD씬에서
+    void RoundChangeComplete() { m_bRoundChangeNow = false; } //Play씬에서
+
     // 패널 사용 게터
     std::vector<Wdata>& GetWeapons() { return m_weapons; }
 
@@ -215,6 +219,15 @@ public:
         m_coinTossQueue.pop();
         return v;
     }
+
+    void SetEndGame(bool end) { m_endGame = end; }
+    bool GetEndGame() { return m_endGame; }
+    void SetEndTrun(bool end) { m_endTrun = end; }
+    bool GetEndTrun() { return m_endTrun; }
+
+    void AddActionGuard() { ++m_actionPopGuard; }
+    void ResetActionGuard() { m_actionPopGuard = 0; }
+    int GetActionGuard() { return m_actionPopGuard; }
 private:
     static GameManager* s_instance;
 
@@ -226,6 +239,10 @@ private:
     PieceType m_myPick[2] = { PieceType::None, PieceType::None };
     PieceType m_lastPickedPiece = PieceType::None;
 
+    int m_actionPopGuard = 2;
+
+    bool m_endGame = false;
+    bool m_endTrun = false;
     int m_currentTurn = 0;
     uint64_t m_turnStateVersion = 0;
 
@@ -263,6 +280,8 @@ private:
     bool m_countdownFinished = false;
     float m_countdownRemaining = 0.0f;
 
+    bool m_bRoundChangeNow = false;
+
     int m_S1U1 = 0;
     int m_S1U2 = 0;
     int m_S2U1 = 0;
@@ -296,7 +315,10 @@ public:
         return m_weapons;
     }
 
-    void SetUIWeaponData(const std::array<Wdata, 4>& wdatas);
+
+    void SetUIWeaponData(const std::array<Wdata, 4> wdatas);
+    bool SyncUIWeaponDataFromStoredWeapons();
+
     bool IsUIWeaponDataReady() const { return m_uiWeaponDataReady; }
     uint64_t GetUIWeaponDataVersion() const { return m_uiWeaponDataVersion; }
     void ClearUIWeaponDataState();
@@ -347,10 +369,15 @@ public:
     void UpdatePanels(const BattleResult& obstacleResult);
     void UpdatePanels(const ObstacleResult& obstacleResult);
     void FlushPendingPanelUpdates();
+    bool IsRuntimeCardInConfirmSlots(uint32_t runtimeID) const;
     //void UpdateSelectionPanel(const UnitHand& playerInfo);
+    
+    private:
+        bool BuildStoredWeaponArray(std::array<Wdata, 4>& out) const;
 
     private:
         std::queue<BattleResult> m_pendingBattlePanelUpdates;
+        std::queue<ObstacleResult> m_pendingObstaclePanelUpdates;
 
 
     private:

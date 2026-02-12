@@ -22,6 +22,10 @@ public:
 
     bool ConsumeResize(uint32_t& outW, uint32_t& outH) override;
 
+    void InitializeCursor(const wchar_t* normalPath, const wchar_t* clickPath) override;
+
+    void SetClickState(bool isClicking);
+
 private:
     static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void OnResizeFromClientRect();
@@ -29,6 +33,11 @@ private:
 private:
     HWND     m_hWnd = nullptr;
     bool     m_shouldClose = false;
+
+    HCURSOR m_normalCursor = nullptr;
+    HCURSOR m_clickCursor = nullptr;
+
+    bool    m_isClicking = false;
 
     uint32_t m_clientWidth = 0; // 현재 해상도
     uint32_t m_clientHeight = 0;// 현재 해상도

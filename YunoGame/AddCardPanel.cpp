@@ -42,12 +42,12 @@ void AddCardPanel::CreateChild()
         auto* btn = m_uiFactory.CreateChild<OptionButton>(
             L"AddCardBtn_" + std::to_wstring(i),
             Float2{ 205/2,297/2 },
-            XMFLOAT3(810 + i * 150, 540, 0),
+            XMFLOAT3(810 + i * 150, 560, 0),
             UIDirection::Center,
             this
         );
 
-        btn->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
+        btn->SetHoverTexture(L"../Assets/UI/CARD/Card_back.png", L"../Assets/UI/CARD/Card_back_mouseover.png");
 
         int index = i;
         btn->SetEventLMB([this, index]()
@@ -65,7 +65,7 @@ void AddCardPanel::SetCandidateCards(const std::vector<ClientCardInfo>& cards)
 
     for (auto* btn : m_addCard)
     {
-        btn->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
+        btn->SetHoverTexture(L"../Assets/UI/CARD/Card_back.png", L"../Assets/UI/CARD/Card_back_mouseover.png");
         btn->SetScale({ 1.f,1.f,1.f });
     }
 
@@ -85,7 +85,7 @@ void AddCardPanel::OnCardSelected(int index)
 
     for (auto* btn : m_addCard)
     {
-        btn->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
+        btn->SetHoverTexture(L"../Assets/UI/CARD/Card_back.png", L"../Assets/UI/CARD/Card_back_mouseover.png");
         btn->SetScale({ 1.f,1.f,1.f });
     }
     // 선택한 카드만 강조 가능 (선택 연출)
@@ -96,8 +96,8 @@ void AddCardPanel::OnCardSelected(int index)
         .GetCardBasicManager()
         .GetCardTexturePath(dataID);
 
-    m_addCard[index]->ChangeTexture(texturePath);
-    m_addCard[index]->SetScale({ 1.2f,1.2f,1.2f });
+    m_addCard[index]->SetHoverTexture(texturePath, texturePath);
+    m_addCard[index]->SetScale({ 1.35f,1.35f,1.35f });
     
     GameManager::Get().SendSelectCard(index);
 
@@ -138,7 +138,6 @@ void AddCardPanel::Hide()
 
 bool AddCardPanel::Update(float dt)
 {
-
     if (m_locked)
     {
         m_closeTimer += dt;
@@ -146,7 +145,13 @@ bool AddCardPanel::Update(float dt)
         if (m_closeTimer >= m_closeDelay)
         {
             Hide();
-
+            
+            if (GameManager::Get().GetEndTrun())
+            {
+                GameManager::Get().SetSceneState(CurrentSceneState::SubmitCard);
+                GameManager::Get().SetEndTrun(false);
+            }
+                
             // 상태 리셋
             m_locked = false;
             m_selectedIndex = -1;

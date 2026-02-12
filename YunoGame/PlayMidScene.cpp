@@ -71,8 +71,8 @@ void PlayMidScene::CreateRevealCardUI()
 
     const float centerY = ClientH * 0.5f;
 
-    const float startY = centerY;
-    const float gapY = 160.f;
+    const float startY = centerY- 100;
+    const float gapY = 200.f;
 
     m_leftBG = CreateWidget<TextureImage>(
         L"LeftCardBG",
@@ -204,6 +204,7 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
     {
         if (!m_isRevealInitialized)
         {
+            std::cout << " testestsetse";
             m_isRevealInitialized = true;
 
             m_cardAnims.clear();
@@ -220,7 +221,7 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
             const float leftX = 50.f;
             const float rightX = ClientW - 50.f;
             const float centerY = ClientH * 0.5f;
-            const float startY = centerY;
+            const float startY = centerY - 74;
             const float gapY = 160.f;
 
             for (int i = 0; i < (int)m_readyCards.size(); ++i)
@@ -327,6 +328,7 @@ void PlayMidScene::OnDestroyScene()
 void PlayMidScene::OnEnter()
 {
     YunoEngine::GetInput()->AddContext(&m_uiCtx, this);
+    m_isRevealInitialized = false;
 }
 
 void PlayMidScene::OnExit()
@@ -396,7 +398,7 @@ void PlayMidScene::UpdateRevealCard(float dt, GameManager& gm)
     {
         m_nextRevealDelay -= dt;
 
-        if (m_nextRevealDelay > 0.f)
+        if (m_nextRevealDelay + 0.5f > 0.f)
             return;
 
         m_waitingNextReveal = false;
@@ -487,13 +489,13 @@ bool PlayMidScene::TryHandleCoinToss(GameManager& gm)
     {
         m_coin->SetSpriteSheet(
             L"../Assets/Effects/Coin/EF_Coin1P.png",
-            10, 10, 100, 24.f, false);
+            10, 10, 100, 96.f, false);
     }
     else if (coin == 2)
     {
         m_coin->SetSpriteSheet(
             L"../Assets/Effects/Coin/EF_Coin2P.png",
-            10, 10, 100, 24.f, false);
+            10, 10, 100, 96.f, false);
     }
 
     ChangeUIState(PlayMidUIState::Warning);
@@ -521,6 +523,7 @@ bool PlayMidScene::PopAndRevealPair(GameManager& gm)
         totalActionTime += br2.actionTime;
     }
 
+    GameManager::Get().ResetActionGuard();
     m_nextRevealDelay = totalActionTime * 0.001f;
 
     return true;

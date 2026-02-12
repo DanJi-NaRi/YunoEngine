@@ -182,6 +182,10 @@ bool WeaponSelectScene::OnCreateScene()
     AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Main, true));
     AudioQ::Insert(AudioQ::PlayEvent(EventName::BGM_Lobby));
 
+    auto* a = CreateWidget<Letterbox>(L"LetterBoxA", Float2(50, 50), XMFLOAT3(0, 0, 0));
+    a->SetRole(Letterbox::Role::BarA);
+    auto* b = CreateWidget<Letterbox>(L"LetterBoxB", Float2(50, 50), XMFLOAT3(0, 0, 0));
+    b->SetRole(Letterbox::Role::BarB);
 
     return true;
 }

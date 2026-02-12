@@ -36,6 +36,7 @@
 
 #include "Minimap.h" // 미니맵
 #include "CardConfirmPanel.h"   // 카드 컨펌 패널
+#include "CardConfirmArea.h"
 #include "CardSelectionPanel.h" // 카드 선택 패널
 
 GameManager* GameManager::s_instance = nullptr;
@@ -83,9 +84,14 @@ void GameManager::SetWeaponData(int _pId, int _slotId, int _weaponId, int _hp, i
     data.currentTile = _currentTile;
 
     m_weapons.push_back(data);
+
+    if (m_weapons.size() >= 4)
+    {
+        SyncUIWeaponDataFromStoredWeapons();
+    }
 }
 
-void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
+void GameManager::SetUIWeaponData(const std::array<Wdata, 4> wdatas)
 {
 
     for (int i = 0; i < 3; i+=2) 
@@ -104,11 +110,49 @@ void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
             m_enemyUIWeapons[0].maxStamina = GetMaxStaminaByWeaponId(m_enemyUIWeapons[0].weaponId);
             m_enemyUIWeapons[1].maxStamina = GetMaxStaminaByWeaponId(m_enemyUIWeapons[1].weaponId);
         }
-        std::cout << std::endl;
+
     }
 
     m_uiWeaponDataReady = true;
     ++m_uiWeaponDataVersion;
+}
+
+bool GameManager::BuildStoredWeaponArray(std::array<Wdata, 4>& out) const
+{
+    if (m_weapons.size() < out.size())
+        return false;
+
+    for (auto& d : out)
+        d = Wdata{};
+
+    for (const auto& w : m_weapons)
+    {
+        if (w.pId < 1 || w.pId > 2)
+            continue;
+        if (w.slotId < 1 || w.slotId > 2)
+            continue;
+
+        const int index = (w.pId - 1) * 2 + (w.slotId - 1);
+        out[index] = w;
+    }
+
+    for (const auto& d : out)
+    {
+        if (d.pId == 0 || d.slotId == 0)
+            return false;
+    }
+
+    return true;
+}
+
+bool GameManager::SyncUIWeaponDataFromStoredWeapons()
+{
+    std::array<Wdata, 4> roundStartWeapons{};
+    if (!BuildStoredWeaponArray(roundStartWeapons))
+        return false;
+
+    SetUIWeaponData(roundStartWeapons);
+    return true;
 }
 
 void GameManager::ClearUIWeaponDataState()
@@ -120,7 +164,7 @@ void GameManager::ClearUIWeaponDataState()
 
 void GameManager::ClearBattlePacket()
 {
-    for (int i = 0; i < m_turnPkts.size(); i++) 
+    while (!m_turnPkts.empty())
     {
         m_turnPkts.pop();
     }
@@ -207,8 +251,35 @@ void GameManager::SetUpPanels()
     //if (m_pMinimap) m_pMinimap->SetupPanel();
 }
 
+bool GameManager::IsRuntimeCardInConfirmSlots(uint32_t runtimeID) const
+{
+    if (!m_pConfirmPanel || runtimeID == 0)
+        return false;
+
+    const auto& slots = m_pConfirmPanel->GetCardSlots();
+    for (const auto* slot : slots)
+    {
+        if (!slot)
+            continue;
+
+        const int queuedRuntimeID = slot->GetRuntimeCardID();
+        if (queuedRuntimeID <= 0)
+            continue;
+
+        if (static_cast<uint32_t>(queuedRuntimeID) == runtimeID)
+            return true;
+    }
+
+    return false;
+}
+
 void GameManager::UpdatePanels(const BattleResult& battleResult)
 {
+    if (m_state != CurrentSceneState::AutoBattle)
+    {
+        return;
+    }
+
     // 전투 시 실시간 갱신
     // PhaseScene 이 내려간 상태에서는 패널 포인터가 유효하지 않을 수 있으므로 보관.
     if (!m_pMinimap || !m_pSelectionPanel || !m_pConfirmPanel)
@@ -238,12 +309,25 @@ void GameManager::FlushPendingPanelUpdates()
         m_pSelectionPanel->UpdatePanel(battleResult);
         m_pConfirmPanel->UpdatePanel(battleResult);
     }
+
+    while (!m_pendingObstaclePanelUpdates.empty())
+    {
+
+        m_pendingObstaclePanelUpdates.pop();
+
+    }
 }
 
 void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
 {
+    if (m_state != CurrentSceneState::AutoBattle)
+    {
+        return;
+    }
+
     if (!m_pMinimap || !m_pSelectionPanel || !m_pConfirmPanel)
     {
+        m_pendingObstaclePanelUpdates.push(obstacleResult);
         return;
     }
 
@@ -256,6 +340,11 @@ void GameManager::UpdatePanels(const ObstacleResult& obstacleResult)
         m_pSelectionPanel->UpdatePanel(battleResult);
         m_pConfirmPanel->UpdatePanel(battleResult);
     }
+
+
+    m_pMinimap->UpdatePanel(obstacleResult);
+    m_pSelectionPanel->UpdatePanel(obstacleResult);
+    m_pConfirmPanel->UpdatePanel(obstacleResult);
 }
 
 
@@ -309,10 +398,55 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::Title:
     {
         m_state = CurrentSceneState::Title;
+        ResetRound();
         ResetTurn();
         m_matchPlayerCount = 0;
         m_PID = 0;
         ResetMyPicks();
+
+        m_winnerPID = 0;
+        m_endGame = false;
+        m_isBattleOngoing = false;
+
+        m_countdownActive = false;
+        m_countdownFinished = false;
+        m_countdownRemaining = 0.0f;
+        m_S1U1 = 0;
+        m_S1U2 = 0;
+        m_S2U1 = 0;
+        m_S2U2 = 0;
+
+        for (auto& hand : m_myHands)
+            hand.cards.clear();
+        for (auto& hand : m_enemyHands)
+            hand.cards.clear();
+        m_CardRuntimeIDs.clear();
+        m_drawCandidates.clear();
+        m_cardQueue.Clear();
+        m_weapons.clear();
+        m_myUIWeapons = {};
+        m_enemyUIWeapons = {};
+        ClearUIWeaponDataState();
+
+        while (!m_pendingEmotes.empty()) m_pendingEmotes.pop();
+        while (!m_coinTossQueue.empty()) m_coinTossQueue.pop();
+        while (!m_revealBuffer.empty()) m_revealBuffer.pop();
+        while (!m_obstaclePkts.empty()) m_obstaclePkts.pop();
+        while (!m_pendingBattlePanelUpdates.empty()) m_pendingBattlePanelUpdates.pop();
+        ClearBattlePacket();
+
+        m_pMinimap = nullptr;
+        m_pConfirmPanel = nullptr;
+        m_pSelectionPanel = nullptr;
+
+        for (const auto& pair : m_CardRuntimeIDs)
+        {
+            std::cout
+                << "RuntimeID: " << pair.first
+                << " -> DataID: " << pair.second
+                << std::endl;
+        }
+
         SceneTransitionOptions opt{};
         opt.immediate = true;
         sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
@@ -361,7 +495,6 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::EscScene:
     {
-
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
@@ -462,7 +595,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         ResetTurn();
         SceneTransitionOptions opt{};
         opt.immediate = true;
-        ClearUIWeaponDataState();
+        //ClearUIWeaponDataState();
         sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
 
         ScenePolicy sp;
@@ -471,14 +604,13 @@ void GameManager::SetSceneState(CurrentSceneState state)
 
         sm->RequestPush(std::make_unique<PlayHUDScene>(), sp, opt);
 
-
         SetSceneState(CurrentSceneState::SubmitCard);
         break;
     }
     case CurrentSceneState::SubmitCard:
     {
         SceneTransitionOptions opt{};
-        opt.immediate = false;
+        opt.immediate = true;
         if(m_state== CurrentSceneState::AutoBattle)
         {
             // AutoBattle에서 SubmitCard로 올 때는 PhaseScene을 pop해야 함
@@ -486,9 +618,12 @@ void GameManager::SetSceneState(CurrentSceneState state)
             sm->RequestPop(opt);
         }
         m_state = CurrentSceneState::SubmitCard;
+        SyncUIWeaponDataFromStoredWeapons();
+
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
+
 
         sm->RequestPush(std::make_unique<PhaseScene>(), sp, opt);
         FlushPendingPanelUpdates();

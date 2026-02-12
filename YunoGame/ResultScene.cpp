@@ -107,6 +107,7 @@ void ResultScene::ChangeUIState(ResultUIState state)
         break;
 
     case ResultUIState::Draw:
+        //std::cout << "HelpHelpHelpHelpHelpHelpHelpHelpHelpHelpDRAWDRAWDRAWDRAWDRAWDRAW";
         m_drawPanel->Show();
         break;
 
@@ -127,12 +128,16 @@ void ResultScene::OnEnter()
     m_pID = GameManager::Get().GetPID();
     std::cout << winner;
     std::cout << m_pID;
+
     if (winner < 0)
-        ChangeUIState(ResultUIState::Draw);     //무승부
+        m_pendingState = ResultUIState::Draw;
     else if (winner == m_pID)
-        ChangeUIState(ResultUIState::Victory);  //승리
+        m_pendingState = ResultUIState::Victory;
     else
-        ChangeUIState(ResultUIState::Defeat);   //패배
+        m_pendingState = ResultUIState::Defeat;
+
+    m_delayTimer = 0.f;
+    m_waiting = true;
 }
 
 void ResultScene::OnExit()
@@ -147,10 +152,16 @@ void ResultScene::Update(float dt)
 {
     SceneBase::Update(dt);
 
-    /* 연출 트랜스폼 변화
-    auto* fg = m_victoryPanel->GetFG();
-    fg->SetScale(XMFLOAT3(0.8f, 0.8f, 1.f));
-    */
+    if (m_waiting)
+    {
+        m_delayTimer += dt;
+
+        if (m_delayTimer >= m_delayDuration)
+        {
+            m_waiting = false;
+            ChangeUIState(m_pendingState);
+        }
+    }
 }
 
 void ResultScene::SubmitObj()

@@ -103,7 +103,7 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
     ImGuiManager::RegisterDraw([this]()
         {
             auto& camera = m_renderer->GetCamera();
-            UI::DrawDebugHUD(&camera.position.x, camera.GetForward().m128_f32);
+            //UI::DrawDebugHUD(&camera.position.x, camera.GetForward().m128_f32);
             UI::DrawCameraTransformController(&camera.position.x, &camera.target.x, 0.001);
 
             float fovYDeg = camera.GetFovYDegrees();
@@ -205,7 +205,7 @@ int YunoEngine::Run()
     //    // IMGUI 디버깅 스코프
         ImGuiManager::BeginFrame();
     
-        // 머지할때 이거 풀고 머지 ㄱㄱ
+         //머지할때 이거 풀고 머지 ㄱㄱ
         //if (m_sceneManager->GetActiveScene()->GetUIManager()) {
         //    auto& map = m_sceneManager->GetActiveScene()->GetUIManager()->GetWidgetlist();
         //    for (const auto& kv : map) // kv: pair<const UINT, Widget*>

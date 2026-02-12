@@ -24,7 +24,8 @@ bool CursurSystem::Init(std::deque<std::unique_ptr<Widget>>* pWidgets)
 void CursurSystem::Clear() {
     m_pWidgets = nullptr;
     m_focusedWidget = nullptr;
-    m_useKeyWidget;
+    m_useKeyWidget = nullptr;
+    m_focusedMouseButton = -1;
 }
 
 void CursurSystem::UpdateCheckSnap()
@@ -40,8 +41,6 @@ void CursurSystem::UpdateCheckSnap()
 
     DragProvider* drag = m_focusedWidget->GetDragProvider();
     if (!drag) return;
-
-    drag->IsNowDragging();          // 얘 뭐지? 왜있는거지? - 준혁
     
     if (m_focusedWidget->GetButtonState() == ButtonState::Released) {
         FindSnapWidget();

@@ -25,8 +25,8 @@ private:
 public:
     void SetIdleState();
     void SetFlashColor(Float4 color, int count, float blinkTime);
-    void PlayWarning(ObstacleType obstacleType, Float4 color, int count, float blinkTime);
-    void PlayTrigger(ObstacleType obstacleType, Float4 color, int count, float blinkTime);
+    void PlayWarning(ObstacleType obstacleType);
+    void PlayTrigger(ObstacleType obstacleType);
 private:
     Float4 GetLerpColor(float dt);
     float Graph(float x);

@@ -24,6 +24,7 @@ public:
     bool IsKeyReleased(uint32_t key) const override;
 
     bool IsMouseHovered() const override;
+    bool IsMouseLeaved() const override;
     bool IsMouseButtonDown(uint32_t button) const override;
     bool IsMouseButtonPressed(uint32_t button) const override;
     bool IsMouseButtonReleased(uint32_t button) const override;

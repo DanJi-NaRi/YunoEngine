@@ -59,6 +59,8 @@ bool Card::HoveredEvent()
 
 bool Card::LMBPressedEvent()
 {
+    if (!m_isDraggable)
+        return true;
     //std::cout << "(Card - LMB)PressedEvent" << std::endl;
     AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseClick));
     m_pDrag->StartDrag();
@@ -72,6 +74,9 @@ bool Card::RMBPressedEvent()
 
 bool Card::KeyPressedEvent(uint32_t key)
 {
+    if (m_isDraggable)
+        m_pDrag->EndDrag();
+
     return true;
 }
 

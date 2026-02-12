@@ -76,9 +76,16 @@ void Button::ButtonUpdate(float dTime) // 버튼 상태 갱신
 
     if (!PtInRect(&m_rect, mouseXY)) return;	//커서/버튼 영역 검사.
 
+
+    if (m_pInput->IsMouseLeaved() && m_isHoverJoin && m_pDrag) { m_btnState = ButtonState::Released; /*std::cout << "LEAVE!!!!" << std::endl;*/ }
+
+
     // 버튼 State 업데이트
     if (m_pInput->IsMouseButtonDown(0)) { m_btnState = ButtonState::Pressed; }
-    else if (m_btnState != ButtonState::Pressed && m_pInput->IsMouseButtonPressed(0)) { m_btnState = ButtonState::Pressed; }
+    else if (m_btnState != ButtonState::Pressed && m_pInput->IsMouseButtonPressed(0)) { 
+        m_btnState = ButtonState::Pressed; 
+        m_pDrag->EndDrag();
+    }
     else { m_btnState = ButtonState::Hovered; } // 커서가 올라가있는 것은 확정이므로, 기본값은 Hovered
 
     switch (m_btnState) // 버튼 상태에 따른 그리기 셋업

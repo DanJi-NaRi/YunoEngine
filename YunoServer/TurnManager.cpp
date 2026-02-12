@@ -440,10 +440,10 @@ namespace yuno::server
                                     hp = static_cast<T>(v);
                                 };
 
-                            //subClamp(unit.hp, 10);
-                            //subClamp(other.hp, 5);
-                            subClamp(unit.hp, 30);
-                            subClamp(other.hp, 25);
+
+                            subClamp(unit.hp, 10);
+                            subClamp(other.hp, 5);
+
                         }
                         else
                         {
@@ -990,7 +990,9 @@ namespace yuno::server
                     obstacleState.unitState[i].ownerSlot = static_cast<uint8_t>(ownerSlot);
                     obstacleState.unitState[i].unitLocalIndex = static_cast<uint8_t>(unitLocalIndex);
                     obstacleState.unitState[i].hp = units[i]->hp;
-                    obstacleState.unitState[i].stamina = units[i]->stamina;
+                    const int boostedStamina = static_cast<int>(units[i]->stamina) + 10;
+                    obstacleState.unitState[i].stamina = static_cast<uint8_t>(
+                        std::min(boostedStamina, static_cast<int>(units[i]->maxStamina)));
                     obstacleState.unitState[i].targetTileID = units[i]->tileID;
                     obstacleState.unitState[i].isEvent = damagedByObstacle[i] ? 1 : 0; // 장애물 패킷에서 isEvent는 장애물에 적중됐으면 T, 아니면 F
                 }

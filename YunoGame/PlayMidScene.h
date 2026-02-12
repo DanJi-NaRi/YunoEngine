@@ -74,7 +74,7 @@ private:
     float m_phaseTimer = 0.f;
     float m_revealTimer = 0.f;
     float m_postRevealTimer = 0.f;
-    float m_postRevealDelay = 8.0f;
+    float m_postRevealDelay = 6.0f;
     float m_nextRevealDelay = 0.f; // 다음 오픈까지 남은 시간
     bool m_waitingNextReveal = false; // 대기중 여부
     bool  m_roundNoticeShown = false; // 라운드 시작 알림 한번만
@@ -108,7 +108,7 @@ private:
 
     int m_coinPairIndex = 0;
     float m_coinTimer = 0.f;
-    float m_coinDuration = 2.0f;            // 나중에 시간 ms
+    float m_coinDuration = 2.9f;            // 나중에 시간 ms
     bool  m_coinPlaying = false;
 
     bool m_isRevealInitialized = false;

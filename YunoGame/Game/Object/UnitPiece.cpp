@@ -557,7 +557,7 @@ void UnitPiece::PlayAttack()
         case 3:
         {
             RegisterFrameEvent(1, 21, [this]() {
-                auto eff = m_pEffectManager->Spawn(EffectID::DrillAttack1, { 0.05f, 1.1f, 0.0f }, { 3.f, 3.f, 1.f }, { 1, 0, 0 });
+                auto eff = m_pEffectManager->Spawn(EffectID::DrillAttack1, { -0.05f, 1.1f, 0.0f }, { 3.f, 3.f, 1.f }, { 1, 0, 0 });
                 AttachChildBone(eff, 1);
                 });
 

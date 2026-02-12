@@ -339,9 +339,8 @@ void UnitTile::SetFlashColor(Float4 color, int count, float blinkTime)
     isFlashing = true;
 }
 
-void UnitTile::PlayWarning(ObstacleType obstacleType, Float4 color, int count, float blinkTime)
+void UnitTile::PlayWarning(ObstacleType obstacleType)
 {
-    SetFlashColor(color, count, blinkTime);
 
     if (!m_animator || m_state == ObstacleType::Collapse)
         return;
@@ -375,9 +374,8 @@ void UnitTile::PlayWarning(ObstacleType obstacleType, Float4 color, int count, f
     m_state = obstacleType;
 }
 
-void UnitTile::PlayTrigger(ObstacleType obstacleType, Float4 color, int count, float blinkTime)
+void UnitTile::PlayTrigger(ObstacleType obstacleType)
 {
-    SetFlashColor(color, count, blinkTime);
 
     if (m_pEffectManager == nullptr && (obstacleType == ObstacleType::Vertical_Razer || obstacleType == ObstacleType::Horizon_Razer))
         return;

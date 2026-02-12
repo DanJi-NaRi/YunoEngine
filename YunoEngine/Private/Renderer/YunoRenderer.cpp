@@ -115,28 +115,45 @@ bool YunoRenderer::Initialize(IWindow* window)
 bool YunoRenderer::CreateShaders()
 {
     // 여기서 쉐이더들 초기화 쭉 하면 됨
-    if (!LoadShader(ShaderId::Basic, "../Assets/Shaders/BasicColor.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PBRBase, "../Assets/Shaders/PBR_Base.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::NoneShadowPBRBase, "../Assets/Shaders/NoneShadowPBR_Base.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PBR_AniDissolve, "../Assets/Shaders/PBR_Animation_Dissolve.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::UIDebug, "../Assets/Shaders/UI_Debug.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::UIGauge, "../Assets/Shaders/UI_Gauge.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::UISpriteSheet, "../Assets/Shaders/UI_SpriteAnim.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::EffectBase, "../Assets/Shaders/EffectBase.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::EffectWithTexMap, "../Assets/Shaders/EffectWithTexMap.hlsl", "VSMain", "PSMain")) return false;
+    //if (!LoadShader(ShaderId::Basic, "../Assets/Shaders/BasicColor.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::Basic, "../Assets/Shaders/Binary/BasicColor_VS.cso", "../Assets/Shaders/Binary/BasicColor_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PBRBase, "../Assets/Shaders/Binary/PBR_Base_VS.cso", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PBRBase, "../Assets/Shaders/Binary/PBR_Base_VS.cso", "../Assets/Shaders/Binary/PBR_Base_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::NoneShadowPBRBase, "../Assets/Shaders/NoneShadowPBR_Base.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::NoneShadowPBRBase, "../Assets/Shaders/Binary/NoneShadowPBR_Base_VS.cso", 
+                                                                                                        "../Assets/Shaders/Binary/NoneShadowPBR_Base_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::BasicAnimation, "../Assets/Shaders/Binary/BasicAnimation_VS.cso", "../Assets/Shaders/Binary/BasicAnimation_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PBRAnimation, "../Assets/Shaders/Binary/PBR_Animation_VS.cso", "../Assets/Shaders/Binary/PBR_Animation_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PBR_AniDissolve, "../Assets/Shaders/PBR_Animation_Dissolve.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PBR_AniDissolve, "../Assets/Shaders/Binary/PBR_Animation_Dissolve_VS.cso", "../Assets/Shaders/Binary/PBR_Animation_Dissolve_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::UIBase, "../Assets/Shaders/Binary/UI_Base_VS.cso", "../Assets/Shaders/Binary/UI_Base_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::UIDebug, "../Assets/Shaders/UI_Debug.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::UIDebug, "../Assets/Shaders/Binary/UI_Debug_VS.cso", "../Assets/Shaders/Binary/UI_Debug_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::UIGauge, "../Assets/Shaders/UI_Gauge.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::UIGauge, "../Assets/Shaders/Binary/UI_Gauge_VS.cso", "../Assets/Shaders/Binary/UI_Gauge_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::UISpriteSheet, "../Assets/Shaders/UI_SpriteAnim.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::UISpriteSheet, "../Assets/Shaders/Binary/UI_SpriteAnim_VS.cso", "../Assets/Shaders/Binary/UI_SpriteAnim_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::EffectBase, "../Assets/Shaders/EffectBase.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::EffectBase, "../Assets/Shaders/Binary/EffectBase_VS.cso", "../Assets/Shaders/Binary/EffectBase_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::EffectWithTexMap, "../Assets/Shaders/EffectWithTexMap.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::EffectWithTexMap, "../Assets/Shaders/Binary/EffectWithTexMap_VS.cso", "../Assets/Shaders/Binary/EffectWithTexMap_PS.cso")) return false;
 
     if (!CreatePPShader()) return false;
 
     //Debug
-    if (!LoadShader(ShaderId::DebugGrid, "../Assets/Shaders/DebugGrid.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::DebugMesh, "../Assets/Shaders/DebugMesh.hlsl", "VSMain", "PSMain")) return false;
+    //if (!LoadShader(ShaderId::DebugGrid, "../Assets/Shaders/DebugGrid.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::DebugGrid, "../Assets/Shaders/Binary/DebugGrid_VS.cso", "../Assets/Shaders/Binary/DebugGrid_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::DebugMesh, "../Assets/Shaders/DebugMesh.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::DebugMesh, "../Assets/Shaders/Binary/DebugMesh_VS.cso", "../Assets/Shaders/Binary/DebugMesh_PS.cso")) return false;
 
     //ps 안씀
-    if (!LoadShader(ShaderId::ShadowPass, "../Assets/Shaders/ShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::ShadowPassSkinning, "../Assets/Shaders/SkinningShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
+    //if (!LoadShader(ShaderId::ShadowPass, "../Assets/Shaders/ShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::ShadowPass, "../Assets/Shaders/Binary/ShadowMapWrite_VS.cso", "../Assets/Shaders/Binary/ShadowMapWrite_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::ShadowPassSkinning, "../Assets/Shaders/SkinningShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::ShadowPassSkinning, "../Assets/Shaders/Binary/SkinningShadowMapWrite_VS.cso", "../Assets/Shaders/Binary/SkinningShadowMapWrite_PS.cso")) return false;
 
     //픽셀셰이더 필요없을 때 쓰는 셰이더(섀도우맵)
     YunoShader empty;
@@ -761,14 +778,22 @@ bool YunoRenderer::CreateBloomRT(uint32_t width, uint32_t height)
 
 bool YunoRenderer::CreatePPShader()
 {
-    if (!LoadShader(ShaderId::PP_Default, "../Assets/Shaders/PP_Default.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_Threshold, "../Assets/Shaders/PP_Threshold.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_DownSample, "../Assets/Shaders/PP_DownSample.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_BlurH, "../Assets/Shaders/PP_BlurHorizon.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_BlurV, "../Assets/Shaders/PP_BlurVertical.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_Combine, "../Assets/Shaders/PP_Combine.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_ColorGrading, "../Assets/Shaders/PP_ColorGrading.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_ToneMap, "../Assets/Shaders/PP_ToneMap.hlsl", "VSMain", "PSMain")) return false;
+    //if (!LoadShader(ShaderId::PP_Default, "../Assets/Shaders/PP_Default.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_Default, "../Assets/Shaders/Binary/PP_Default_VS.cso", "../Assets/Shaders/Binary/PP_Default_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_Threshold, "../Assets/Shaders/PP_Threshold.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_Threshold, "../Assets/Shaders/Binary/PP_Threshold_VS.cso", "../Assets/Shaders/Binary/PP_Threshold_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_DownSample, "../Assets/Shaders/PP_DownSample.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_DownSample, "../Assets/Shaders/Binary/PP_DownSample_VS.cso", "../Assets/Shaders/Binary/PP_DownSample_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_BlurH, "../Assets/Shaders/PP_BlurHorizon.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_BlurH, "../Assets/Shaders/Binary/PP_BlurHorizon_VS.cso", "../Assets/Shaders/Binary/PP_BlurHorizon_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_BlurV, "../Assets/Shaders/PP_BlurVertical.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_BlurV, "../Assets/Shaders/Binary/PP_BlurVertical_VS.cso", "../Assets/Shaders/Binary/PP_BlurVertical_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_Combine, "../Assets/Shaders/PP_Combine.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_Combine, "../Assets/Shaders/Binary/PP_Combine_VS.cso", "../Assets/Shaders/Binary/PP_Combine_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_ColorGrading, "../Assets/Shaders/PP_ColorGrading.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_ColorGrading, "../Assets/Shaders/Binary/PP_ColorGrading_VS.cso", "../Assets/Shaders/Binary/PP_ColorGrading_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_ToneMap, "../Assets/Shaders/PP_ToneMap.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_ToneMap, "../Assets/Shaders/Binary/PP_ToneMap_VS.cso", "../Assets/Shaders/Binary/PP_ToneMap_PS.cso")) return false;
 
     return true;
 }
@@ -1552,6 +1577,45 @@ bool YunoRenderer::LoadShader(
     const std::string  sPsProfile = psProfile ? psProfile : "ps_5_0";
 
     return LoadShader(id, wPath, sVsEntry, sPsEntry, sVsProfile, sPsProfile);
+}
+
+bool YunoRenderer::LoadShaderBinary(ShaderId id, const std::wstring& vsBinaryPath, const std::wstring& psBinaryPath)
+{
+    if (!m_device)
+        return false;
+
+    Microsoft::WRL::ComPtr<ID3DBlob> vsBlob;
+    Microsoft::WRL::ComPtr<ID3DBlob> psBlob;
+
+    const HRESULT hrVS = D3DReadFileToBlob(vsBinaryPath.c_str(), vsBlob.GetAddressOf());
+    if (FAILED(hrVS) || !vsBlob)
+        return false;
+
+    const HRESULT hrPS = D3DReadFileToBlob(psBinaryPath.c_str(), psBlob.GetAddressOf());
+    if (FAILED(hrPS) || !psBlob)
+        return false;
+
+    ShaderProgram prog{};
+    prog.vsBytecode = vsBlob;
+
+    prog.vs = std::make_unique<YunoShader>();
+    prog.ps = std::make_unique<YunoShader>();
+
+    if (!prog.vs->CreateVertexShader(m_device.Get(), vsBlob.Get()))
+        return false;
+    if (!prog.ps->CreatePixelShader(m_device.Get(), psBlob.Get()))
+        return false;
+
+    m_programs[id] = std::move(prog);
+    return true;
+}
+
+bool YunoRenderer::LoadShaderBinary(ShaderId id, const char* vsBinaryPath, const char* psBinaryPath)
+{
+    if (!vsBinaryPath || !psBinaryPath)
+        return false;
+
+    return LoadShaderBinary(id, Utf8ToWString(vsBinaryPath), Utf8ToWString(psBinaryPath));
 }
 
 

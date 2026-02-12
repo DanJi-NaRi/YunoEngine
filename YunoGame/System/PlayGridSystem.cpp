@@ -229,10 +229,12 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
     int cx = 0; int cy = 0;
     Team team = Team::Undefined;
     Direction dir;
+    XMFLOAT4 emissiveCol;
 
      team = (w.pId == m_pID) ? Team::Ally : Team::Enemy;
 
      dir = (w.pId == 1) ? Direction::Right : Direction::Left;
+     emissiveCol = (w.pId == 1) ? XMFLOAT4{0, 0.13f, 1, 1} : XMFLOAT4{1, 0.01, 0, 1};
      auto cellPos = GetCellByID(w.currentTile);
      cx = cellPos.x;     cy = cellPos.y;
 
@@ -273,6 +275,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram1->SetDir(dir, false);
          pChakram1->SetMoveRotOffset(0, 0);
          pChakram1->SetIgnoreRot(true);
+         pChakram1->SetEmissiveColor(0, emissiveCol);
+         pChakram1->SetEmissivePow(0, 30);
 
          pPiece->Attach(pChakram1);
          pPiece->AddLinkedSubPiece(pChakram1);
@@ -293,6 +297,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pChakram2->SetDir(dir, false);
          pChakram2->SetMoveRotOffset(0, 0);
          pChakram2->SetIgnoreRot(true);
+         pChakram2->SetEmissiveColor(0, emissiveCol);
+         pChakram2->SetEmissivePow(0, 30);
 
          pPiece->Attach(pChakram2);
          pPiece->AddLinkedSubPiece(pChakram2);
@@ -330,6 +336,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/flip/Blaster_hit_flip.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
+         pPiece->SetEmissiveColor(0, emissiveCol);
+         pPiece->SetEmissivePow(0, 30);
 
          break;
      case 3:
@@ -342,8 +350,12 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/Breacher_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
-         //pPiece->SetScale(XMFLOAT3(2, 2, 2));
+         pPiece->SetScale(XMFLOAT3(2, 2, 2));
          pPiece->SetMoveRotOffset(-0.25f, 0);
+         pPiece->SetEmissiveColor(0, emissiveCol);
+         pPiece->SetEmissivePow(0, 30);
+         pPiece->SetEmissiveColor(1, emissiveCol);
+         pPiece->SetEmissivePow(1, 30);
          break;
      case 4:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/scythe_idle.fbx");
@@ -355,6 +367,12 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/flip/Scythe_hit_flip.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
+         pPiece->SetEmissiveColor(0, emissiveCol);
+         pPiece->SetEmissivePow(0, 30);
+         pPiece->SetEmissiveColor(1, emissiveCol);
+         pPiece->SetEmissivePow(1, 30);
+         pPiece->SetEmissiveColor(2, emissiveCol);
+         pPiece->SetEmissivePow(2, 30);
          break;
      case 5:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/impactor_idle.fbx");
@@ -366,6 +384,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/flip/Impactor_hit_flip.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
+         pPiece->SetEmissiveColor(1, emissiveCol);
+         pPiece->SetEmissivePow(1, 30);
          break;
      case 6:
          pPiece->AddAnimationClip("idle", L"../Assets/fbx/Animation/idle/Cleaver_idle.fbx");
@@ -377,6 +397,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/flip/Cleaver_hit_flip.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
+         pPiece->SetEmissiveColor(0, emissiveCol);
+         pPiece->SetEmissivePow(0, 30);
          break;
      }
      pPiece->SetWho(gp, team, w.pId, w.weaponId);
@@ -391,8 +413,8 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
      ed.framecount = 60;
      ed.cols = 8;
      ed.rows = 8;
-     ed.emissive = 30.0f;
-     ed.color = (w.pId == 1)? XMFLOAT4{ 0, 0.5f, 1, 1 } : XMFLOAT4{ 1, 0, 0, 1 };
+     ed.emissive = (w.pId == 1) ? 30.0f : 18.0f;
+     ed.color = (w.pId == 1)? XMFLOAT4{ 0, 0.18f, 1, 1 } : XMFLOAT4{ 1, 0, 0, 1 };
      ed.rot = { XM_PIDIV2, 0, 0 };
      ed.isLoop = true;
      ed.texPath = (w.pId == 1) ? L"../Assets/Effects/Pos/EF_Player_Blue.png" : L"../Assets/Effects/Pos/EF_Player_Red.png";
@@ -520,24 +542,29 @@ void PlayGridSystem::CheckPacket(float dt)
 {
     auto& mng = GameManager::Get();
     // 현재 씬이 '오토배틀'씬이 아니면 반환.
-    if (mng.GetSceneState() != CurrentSceneState::AutoBattle)    return;
+    //if (mng.GetSceneState() != CurrentSceneState::AutoBattle)    return;              // 일단 의심돼서 주석처리함
+    const bool isAutoBattleScene = (mng.GetSceneState() == CurrentSceneState::AutoBattle);
 
+    // 전투 패킷은 AutoBattle 씬에서만 처리.
+    // 단, 이미 처리 중인 연출/타이머가 있거나 장애물 패킷이 남아 있으면 씬 상태와 무관하게 이어서 처리한다.
+    const bool canProcessObstaclePacket =
+        !mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing;
+
+    if (!isAutoBattleScene && !isProcessing && !canProcessObstaclePacket)
+        return;
+
+    //-----
 
 
     // 게임 매니저에서 배틀 패킷 하나씩 받아옴
-    if (!mng.IsEmptyBattlePacket() && !isProcessing)
+    if (isAutoBattleScene && !mng.IsEmptyBattlePacket() && !isProcessing && mng.GetActionGuard() < 2)
     {
         const auto pckt = mng.PopBattlePacket();
         isProcessing = true;
 
-        if (static_cast<int>(pckt.isCoinTossUsed) > 0 && m_delayFlag)
-            m_pktTime = (pckt.actionTime  + 500 + 4500) / 1000.f; //임의값 넣어둠
-        else if(m_delayFlag)
-            m_pktTime = (pckt.actionTime + 500) / 1000.f;
-        else if(static_cast<int>(pckt.isCoinTossUsed) > 0)
-            m_pktTime = (pckt.actionTime + 4500) / 1000.f;
-        else
-            m_pktTime = (pckt.actionTime) / 1000.f;
+        mng.AddActionGuard();
+
+        m_pktTime = (pckt.actionTime) / 1000.f;
 
         const auto runTimeCardID = pckt.runTimeCardID;
         const auto dir = pckt.dir;
@@ -922,7 +949,11 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
         for (const auto& tileID : os.hitTileIDs)
         {
             auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
-            pTile->PlayTrigger(os.attackType, os.hitColor, os.hitFlashCount, os.hitFlashInterval);
+
+            //pTile->PlayTrigger(os.attackType, os.hitColor, os.hitFlashCount, os.hitFlashInterval);
+
+
+            pTile->PlayTrigger(os.attackType);
 
             auto [cx, cz] = GetCellByID(tileID);
             if(os.attackType == ObstacleType::Collapse)
@@ -994,7 +1025,7 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
         for (const auto& tileID : os.warningTileIDs)
         {
             auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
-            pTile->PlayWarning(os.attackType, os.warnColor, os.warnFlashCount, os.warnFlashInterval);
+            pTile->PlayWarning(os.attackType);
 
             EffectDesc ed{};
             ed.id = EffectID::FloorWarning1;
@@ -1012,7 +1043,7 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
             if (os.attackType != ObstacleType::Collapse)
             {
                 m_effectManager->RegisterEffect(ed);
-                auto pEffect1 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning1", XMFLOAT3(0, 0, 0.1f));
+                auto pEffect1 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning1", XMFLOAT3(0, 0, -0.01f));
                 pEffect1->BuildInternalEffectMaterial(ed);
                 pTile->Attach(pEffect1);
                 m_tiles[tileID].effectIDs.push_back(pEffect1->GetID());
@@ -1020,14 +1051,16 @@ void PlayGridSystem::UpdateObstacleSequence(float dt)
 
             ed.id = EffectID::FloorWarning2;
             ed.framecount = 30;
-            ed.lifetime = 0.4f;
+            ed.lifetime = 1.2f;
             ed.cols = 5;
             ed.rows = 6;
             ed.color = (os.attackType == ObstacleType::Collapse)? XMFLOAT4{ 1, 0, 0, 1 } : XMFLOAT4{ 1, 1, 0, 1 };
             ed.rot = { -XMConvertToRadians(90.f), 0, 0};
             ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_2.png";
             m_effectManager->RegisterEffect(ed);
-            auto pEffect2 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning2", XMFLOAT3(0, 0, -0.5f));
+
+            auto pEffect2 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning2", XMFLOAT3(0, 0, -0.3f));
+
             pEffect2->BuildInternalEffectMaterial(ed);
             pTile->Attach(pEffect2);
             m_tiles[tileID].effectIDs.push_back(pEffect2->GetID());
@@ -1184,7 +1217,10 @@ bool PlayGridSystem::ApplyAttackChanges
     // 공격 팀 확인. 피격 팀 확인하기.
     Team attackTeam = m_pieces[whichPiece].team;
 
-    Float4 allyColor = Float4{ 0.6f, 0.6f, 1.0f, 1 };
+    //Float4 allyColor = Float4{ 0, 0, 0.8f, 1 };
+    Float4 allyColor = Float4{ 0.8f, 0.8f, 1.5f, 1 };
+    //Float4 enemyColor = Float4{ 0.8f, 0, 0, 1 };
+
     Float4 enemyColor = Float4{ 1.0f, 0.6f, 0.6f, 1 };
     as.m_alarmColor = (attackTeam == Team::Ally) ? allyColor : enemyColor;
 
@@ -1497,16 +1533,28 @@ void PlayGridSystem::CheckOver()
     RoundResult roundResult = RoundResult::None;
     if (allyDead && enemyDead)          // 무승부
     {
+        if(GameManager::Get().GetEndGame())
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+        //else 
+        //    GameManager::Get().SetSceneState(CurrentSceneState::RoundStart);
         std::cout << "This Round Result : Draw\n";
         roundResult = RoundResult::Draw;
     }
     else if (allyDead)                  // Lose
     {
+        if (GameManager::Get().GetEndGame())
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+        //else
+        //    GameManager::Get().SetSceneState(CurrentSceneState::RoundStart);
         std::cout << "This Round Result : Lose\n";
         roundResult = (myIsP1) ? RoundResult::Winner_P2 : RoundResult::Winner_P1;
     }
     else if (enemyDead)                 // Win
     {
+        if (GameManager::Get().GetEndGame())
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+        //else
+        //    GameManager::Get().SetSceneState(CurrentSceneState::RoundStart);
         std::cout << "This Round Result : Win\n";
         roundResult = (myIsP1) ? RoundResult::Winner_P1 : RoundResult::Winner_P2;
     }
@@ -1581,7 +1629,7 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
     {
         std::cout << static_cast<int>(tile) << " ";
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
 
     bool hasTriggerSnapshot = false;
     Float4 warnColor{ 1.0f, 0.0f, 0.0f, 1.f };
@@ -1665,9 +1713,9 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
 
     // 다음 장애물 경고    // 이펙트 넣기★
     if (obstacle.obstacleID == ObstacleType::Horizon_Razer || obstacle.obstacleID == ObstacleType::Vertical_Razer) 
-        warnColor = { 0.0f, 1.0f, 0.0f, 1.f };
+        warnColor = { 0.1f, 0.1f, 0.1f, 1.f };
     else if (obstacle.obstacleID == ObstacleType::Collapse) 
-        warnColor = { 0.0f, 0.0f, 1.0f, 1.f };
+        warnColor = { 1.0f, 0.0f, 0.0f, 1.f };
 
     //for (auto tileId : obstacle.tileIDs)
     //{

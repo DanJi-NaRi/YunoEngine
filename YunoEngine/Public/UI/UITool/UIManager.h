@@ -84,9 +84,6 @@ public:
     template<typename T>
     T* CreateWidget(const std::wstring& name, const std::wstring& texturePath, XMFLOAT3 pos, UIDirection pivot);
 
-    template<typename T>
-    T* CreateWidget_Internal(const std::wstring& name, XMFLOAT3 pos);
-
     // 테스트용으로 추가
     template<typename T>
     T* CreateObject(const std::wstring& name, Float2 sizePx, XMFLOAT3 pos);
@@ -108,7 +105,9 @@ public:
 
     // 입력값 업데이트
     bool ProcessButtonMouse(ButtonState state, uint32_t mouseButton = 0); // 커서 <-> 위젯 Rect 위치 비교
+    bool ProcessLeaveCursur();
     bool ProcessButtonKey(ButtonState state, uint32_t key);
+
 
     Float2 GetCanvasSize();
     UICanvasMapping GetCanvasMapping();

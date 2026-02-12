@@ -502,8 +502,17 @@ namespace yuno::game
                 auto& gm = GameManager::Get();
                 gm.SetCurrentTurn(static_cast<int>(pkt.turnNumber));
 
-                if(pkt.turnNumber == 1)
+                if (pkt.turnNumber == 1) 
+                {
                     gm.IncreaseRound();
+                    if (gm.GetSceneState() == CurrentSceneState::AutoBattle)
+                    {
+                        gm.SetSceneState(CurrentSceneState::SubmitCard);
+                    }
+                }
+
+
+                
 
                 std::vector<yuno::net::packets::CardSpawnInfo> added;
                 added.push_back(pkt.addedCards[0]);
@@ -512,6 +521,7 @@ namespace yuno::game
                 gm.AddCards(added);
                 gm.ClearDrawCandidates();
                 gm.ClearCardQueue();
+                gm.SetEndTrun(true);
 
                 for (int i = 0; i < 2; ++i)
                 {
@@ -527,8 +537,8 @@ namespace yuno::game
                 }
 
                 std::cout << "[Client] ======================\n";
-                if(gm.GetSceneState() == CurrentSceneState::AutoBattle)
-                    gm.SetSceneState(CurrentSceneState::SubmitCard);
+                //if(gm.GetSceneState() == CurrentSceneState::AutoBattle)
+                //gm.SetSceneState(CurrentSceneState::SubmitCard);
             }
         );// S2C_StartTurn Packet End
 
@@ -584,7 +594,7 @@ namespace yuno::game
                 std::cout << "=============================\n";
 
                 GameManager::Get().SetWinnerPID(winnerPID);
-                GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+                GameManager::Get().SetEndGame(true);
             }
         );// S2C_EndGame Packet End
 

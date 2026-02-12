@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CardSelectionPanel.h"
 
+#include "Text.h"
 #include "Button.h"
 #include "Card.h"
 #include "CardSlot.h"
@@ -14,6 +15,86 @@
 
 #include "IInput.h"
 #include "UIFactory.h"
+
+namespace
+{
+    bool IsWeaponSlotAlive(const PlayerData& player, int slot)
+    {
+        if (slot < 0 || slot >= static_cast<int>(player.weapons.size()))
+            return false;
+
+        return player.weapons[slot].hp > 0;
+    }
+
+    std::wstring ToLowerPieceName(PieceType pieceType)
+    {
+        switch (pieceType)
+        {
+        case PieceType::Blaster: return L"blaster";
+        case PieceType::Breacher: return L"breacher";
+        case PieceType::Impactor: return L"impactor";
+        case PieceType::Chakram: return L"chakram";
+        case PieceType::Scythe: return L"scythe";
+        case PieceType::Cleaver: return L"cleaver";
+        default: return L"";
+        }
+    }
+
+    PieceType ToPieceTypeFromWeaponId(int weaponId)
+    {
+        if (weaponId > static_cast<int>(PieceType::None) && weaponId < static_cast<int>(PieceType::Count))
+            return static_cast<PieceType>(weaponId);
+
+        return PieceType::None;
+    }
+
+    PieceType ToPieceTypeFromAllowedMask(PieceMask mask)
+    {
+        if (mask == kAny || mask == kNone)
+            return PieceType::None;
+
+        if ((mask & PieceBit(PieceType::Blaster)) != 0) return PieceType::Blaster;
+        if ((mask & PieceBit(PieceType::Chakram)) != 0) return PieceType::Chakram;
+        if ((mask & PieceBit(PieceType::Breacher)) != 0) return PieceType::Breacher;
+        if ((mask & PieceBit(PieceType::Scythe)) != 0) return PieceType::Scythe;
+        if ((mask & PieceBit(PieceType::Impactor)) != 0) return PieceType::Impactor;
+        if ((mask & PieceBit(PieceType::Cleaver)) != 0) return PieceType::Cleaver;
+        return PieceType::None;
+    }
+
+    int ParseCardIndex(const std::wstring& cardName)
+    {
+        const size_t underscorePos = cardName.rfind(L"_");
+        if (underscorePos == std::wstring::npos || underscorePos + 1 >= cardName.size())
+            return 0;
+
+        const std::wstring indexPart = cardName.substr(underscorePos + 1);
+        if (indexPart.empty())
+            return 0;
+
+        for (wchar_t ch : indexPart)
+        {
+            if (ch < L'0' || ch > L'9')
+                return 0;
+        }
+
+        return std::stoi(indexPart);
+    }
+
+    std::wstring BuildCardTexturePath(PieceType pieceType, int cardIndex, bool isSelected)
+    {
+        const std::wstring lowerName = ToLowerPieceName(pieceType);
+        if (lowerName.empty() || cardIndex <= 0)
+            return L"../Assets/UI/CARD/Card_back.png";
+
+        if (isSelected)
+        {
+            return L"../Assets/UI/CARD_locked/card_" + lowerName + L"_locked_" + std::to_wstring(cardIndex) + L".png";
+        }
+
+        return L"../Assets/UI/CARD/card_" + lowerName + L"_" + std::to_wstring(cardIndex) + L".png";
+    }
+}
 
 CardSelectionPanel::CardSelectionPanel(UIFactory& uiFactory) : PhasePanel(uiFactory)
 {
@@ -49,7 +130,7 @@ void CardSelectionPanel::CreateChild() {
     this->SetLayer(WidgetLayer::Panels);
 
     // 웨폰 수직 이름 이미지
-    m_pWeaponIMG = m_uiFactory.CreateChild<WeaponNameImage>(m_name + L"_WeaponName", Float2(56, 259), XMFLOAT3(-1400, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+    m_pWeaponIMG = m_uiFactory.CreateChild<WeaponNameImage>(m_name + L"_WeaponName", Float2(56, 259), XMFLOAT3(-1456, -299, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
 
     // 필터 버튼
     {
@@ -78,21 +159,44 @@ void CardSelectionPanel::CreateChild() {
     {
         m_pPhaseStaminaBars[0] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_0", Float2(1083, 34), XMFLOAT3(-650, -450, 0), UIDirection::Center, this);
         m_pPhaseStaminaBars[0]->GetWeponSelectButton()->ChangeWeaponImage(m_player.weapons[0].weaponId);
-        m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[0].weaponId); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
+        m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() {
+            if (!IsWeaponSlotAlive(m_player, 0))
+                return;
+
+            this->ViewCardPage(0, 0);
+            this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[0].weaponId);
+            m_curSlot = 0;
+            }); // 0번 슬롯 CardPage 0번으로 이동
+
+        //m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[0].weaponId); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
         
         m_pPhaseStaminaBars[1] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_1", Float2(1083, 34), XMFLOAT3(-650, -400, 0), UIDirection::Center, this);
         m_pPhaseStaminaBars[1]->GetWeponSelectButton()->ChangeWeaponImage(m_player.weapons[1].weaponId);
-        m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[1].weaponId); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
+        m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() {
+            if (!IsWeaponSlotAlive(m_player, 1))
+                return;
+
+            this->ViewCardPage(1, 0);
+            this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[1].weaponId);
+            m_curSlot = 1;
+            }); // 0번 슬롯 CardPage 0번으로 이동
+        //m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[1].weaponId); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
     }
     
     // 페이지 버튼
     {
-        m_pPageUpButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(74, 66), XMFLOAT3(-100, -350, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+        m_pPageText = m_uiFactory.CreateChild<Text>(m_name + L"_PageNum", Float2(74, 66), XMFLOAT3(-100, -302, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::Center, this);
+        m_pPageText->SetText(std::to_wstring(m_curPage));
+        m_pPageText->SetTextScale(XMFLOAT3(1.5f, 1.5f, 1.5f));
+        m_pPageText->SetFont(FontID::Number);
+
+
+        m_pPageUpButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(74, 66), XMFLOAT3(-100, -302, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
         assert(m_pPageUpButton);
         m_pPageUpButton->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseout.png", L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseover.png");
         m_pPageUpButton->SetEventLMB([this]() { this->PageUp(m_curSlot); });
 
-        m_pPageDownButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(74, 66), XMFLOAT3(-100, -150, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
+        m_pPageDownButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageDown", Float2(74, 66), XMFLOAT3(-100, -66, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
         assert(m_pPageDownButton);
         m_pPageDownButton->MirrorScaleY();
         m_pPageDownButton->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseout.png", L"../Assets/UI/PLAY/PhaseScene/nextpage_mouseover.png");
@@ -101,27 +205,27 @@ void CardSelectionPanel::CreateChild() {
 
     // 카드
     {
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1300, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C0", Float2(205, 297), XMFLOAT3(-1382, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-1100, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C1", Float2(205, 297), XMFLOAT3(-1169, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(205, 297), XMFLOAT3(-900, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C2", Float2(205, 297), XMFLOAT3(-955, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(205, 297), XMFLOAT3(-700, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C3", Float2(205, 297), XMFLOAT3(-740, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(205, 297), XMFLOAT3(-500, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C4", Float2(205, 297), XMFLOAT3(-526, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
-        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-300, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
+        m_pCards.push_back(m_uiFactory.CreateChild<Card>(m_name + L"_C5", Float2(205, 297), XMFLOAT3(-312, -331, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this));
         m_pCards.back()->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         m_pCards.back()->SetLayer(WidgetLayer::Card);
 
@@ -130,6 +234,7 @@ void CardSelectionPanel::CreateChild() {
             if (!card) continue;
             card->SetEventLMB([this, card]() {
                 if (card->GetCardID() == 0) return;
+                if (!card->IsDraggable()) return;
                 m_pSelectedCard = card;
                 });
         }
@@ -195,9 +300,11 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
     if (total == 0)
     {
         m_curPage = 0;
+        m_pPageText->SetText(std::to_wstring(m_curPage));
         for (int i = 0; i < viewCount; ++i)
         {
             m_pCards[i]->SetCardID(0);
+            m_pCards[i]->SetDraggable(false);
             m_pCards[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         }
         return;
@@ -209,6 +316,7 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
 
     page = std::clamp(page, 0, maxPage);
     m_curPage = page;
+    m_pPageText->SetText(std::to_wstring(m_curPage));
 
     const int startIdx = page * CardSlotSize;
 
@@ -223,13 +331,35 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
             const auto runtimeID = cards[idx].runtimeID;
             m_pCards[i]->SetCardID(runtimeID);
             m_pCards[i]->SetSlotID(slot);
-            m_pCards[i]->ChangeTexture(m_cardManager.GetCardTexturePath(dataID));
+            const CardData cardData = m_cardManager.GetCardData(static_cast<int>(dataID));
+
+            PieceType pieceType = PieceType::None;
+            if (slot >= 0 && slot < static_cast<int>(m_player.weapons.size()))
+            {
+                pieceType = ToPieceTypeFromWeaponId(m_player.weapons[slot].weaponId);
+            }
+
+            if (pieceType == PieceType::None)
+            {
+                pieceType = ToPieceTypeFromAllowedMask(cardData.m_allowedUnits);
+            }
+
+            const int cardIndex = ParseCardIndex(cardData.m_name);
+            const bool isSelectedInConfirmSlots = m_gameManager.IsRuntimeCardInConfirmSlots(runtimeID);
+            
+            const bool isDeadUnitSlot = !IsWeaponSlotAlive(m_player, slot);
+            const bool canDrag = !isSelectedInConfirmSlots && !isDeadUnitSlot;
+            m_pCards[i]->SetDraggable(canDrag);
+            m_pCards[i]->ChangeTexture(BuildCardTexturePath(pieceType, cardIndex, !canDrag));
+            //m_pCards[i]->SetDraggable(!isSelectedInConfirmSlots);
+            //m_pCards[i]->ChangeTexture(BuildCardTexturePath(pieceType, cardIndex, isSelectedInConfirmSlots));
         }
         else
         {
             // 남는 슬롯은 카드 뒷면으로 채움
             m_pCards[i]->SetCardID(0);    // 아이디 등록
             m_pCards[i]->SetSlotID(slot); // 슬롯 순번 등록
+            m_pCards[i]->SetDraggable(false);
             m_pCards[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         }
     }
@@ -270,9 +400,17 @@ void CardSelectionPanel::PageDown(int slot)
     ViewCardPage(slot, m_curPage);
 }
 
+void CardSelectionPanel::RefreshCardVisualState()
+{
+    ViewCardPage(m_curSlot, m_curPage);
+}
+
 const int CardSelectionPanel::GetMaxPage(int slot)
 {
-    const auto& cards = m_player.hands[slot].cards;
+    if (slot < 0 || slot >= static_cast<int>(m_player.hands.size()))
+        return -1;
+
+    const auto cards = GetCardsByFilter(slot, m_curFilter);
 
     constexpr int CardSlotSize = 6; // 한 페이지 당 카드 갯수
     const int total = static_cast<int>(cards.size()); // 카드 총 사이즈

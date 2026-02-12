@@ -259,7 +259,16 @@ namespace yuno::server
     void RoundController::StartTurn()
     {
 
+        //auto recoverUnitStamina = [](UnitState& unit)
+        //    {
+        //        const int recovered = static_cast<int>(unit.stamina) + 10;
+        //        unit.stamina = static_cast<uint8_t>(std::min(recovered, static_cast<int>(unit.maxStamina)));
+        //    };
 
+        //recoverUnitStamina(g_battleState.players[0].unit1);
+        //recoverUnitStamina(g_battleState.players[0].unit2);
+        //recoverUnitStamina(g_battleState.players[1].unit1);
+        //recoverUnitStamina(g_battleState.players[1].unit2);
 
         yuno::net::packets::S2C_StartTurn pkt{};
         pkt.turnNumber = ++g_battleState.turnNumber;        // 1턴부터 시작

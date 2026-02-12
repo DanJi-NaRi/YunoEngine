@@ -109,7 +109,7 @@ void EscScene::CreateMainUI()
         });
     
      //--------------------------------------Surrender 버튼 시작--------------------------------------
-    m_surrenderBtn = CreateWidget<OptionButton>(
+    /*m_surrenderBtn = CreateWidget<OptionButton>(
         L"SurrenderBtn",
         Float2(btnW, btnH),
         makePos(3),
@@ -138,13 +138,13 @@ void EscScene::CreateMainUI()
                 });
 
             m_checkPanel->Show();
-        });
+        });*/
     
     //--------------------------------------Back 버튼 시작--------------------------------------
     m_backBtn = CreateWidget<PopButton>(
         L"BackBtn",
         Float2(btnW*2, btnH*2),
-        makePos(4),
+        makePos(3),
         UIDirection::Center
     );
     m_backBtn->SetHoverTexture(
