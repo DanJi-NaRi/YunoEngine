@@ -152,6 +152,10 @@ public:
     bool IsBattleOngoing() const { return m_isBattleOngoing; }
     void SetBattleOngoing(bool v) { m_isBattleOngoing = v; }
 
+    bool isRoundChangeNow() { return m_bRoundChangeNow; }
+    void SetRoundChangeNow() { m_bRoundChangeNow = true; } //HUD씬에서
+    void RoundChangeComplete() { m_bRoundChangeNow = false; } //Play씬에서
+
     // 패널 사용 게터
     std::vector<Wdata>& GetWeapons() { return m_weapons; }
 
@@ -274,6 +278,8 @@ private:
     bool m_countdownActive = false;
     bool m_countdownFinished = false;
     float m_countdownRemaining = 0.0f;
+
+    bool m_bRoundChangeNow = false;
 
     int m_S1U1 = 0;
     int m_S1U2 = 0;

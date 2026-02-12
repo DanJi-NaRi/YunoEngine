@@ -49,7 +49,7 @@ bool PlayHUDScene::OnCreateScene()
     m_playerIcons[2] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
     m_playerIcons[3] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
 
-    auto imojibox = CreateWidget<TextureImage>(L"ImojiBox", L"../Assets/UI/PLAY/ImojiBox.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
+    m_EmoteBox = CreateWidget<TextureImage>(L"ImojiBox", L"../Assets/UI/PLAY/ImojiBox.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
     auto emote = CreateWidget<EmoteButton>(L"Imoji", Float2(80, 67), XMFLOAT3(0, 0, 0), UIDirection::LeftTop);
     emote->SetIdleHoverTextuer(L"../Assets/UI/PLAY/Imoji_zZZ_mouseout.png", L"../Assets/UI/PLAY/Imoji_zZZ_mouseover.png");
     emote->SetEmoteNum(1);
@@ -59,9 +59,9 @@ bool PlayHUDScene::OnCreateScene()
     auto emote3 = CreateWidget<EmoteButton>(L"Imoji", Float2(80, 67), XMFLOAT3(0, 0, 0), UIDirection::LeftTop);
     emote3->SetIdleHoverTextuer(L"../Assets/UI/PLAY/Imoji_EZ_mouseout.png", L"../Assets/UI/PLAY/Imoji_EZ_mouseover.png");
     emote3->SetEmoteNum(3);
-    imojibox->Attach(emote);
-    imojibox->Attach(emote2);
-    imojibox->Attach(emote3);
+    m_EmoteBox->Attach(emote);
+    m_EmoteBox->Attach(emote2);
+    m_EmoteBox->Attach(emote3);
 
     m_emoteButtons.push_back(emote);
     m_emoteButtons.push_back(emote2);
@@ -106,7 +106,7 @@ bool PlayHUDScene::OnCreateScene()
     }
 
     m_SceneChange = CreateWidget<SpriteSheet>(L"scenechange", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::LeftTop);
-    m_SceneChange->SetSpriteSheet(L"../Assets/UI/PLAY/EF_Scene.png", 5, 5, 25, 24.0f, false);
+    m_SceneChange->SetSpriteSheet(L"../Assets/UI/PLAY/EF_Scene.png", 5, 7, 35, 36.0f, false);
     m_SceneChange->Stop();
     m_SceneChange->SetVisible(Visibility::Hidden);
 
@@ -131,6 +131,9 @@ void PlayHUDScene::OnEnter()
 
     m_appliedTurnStateVersion = std::numeric_limits<uint64_t>::max();
     RefreshTurnTexture();
+
+    XMFLOAT3 emoteBoxPos = GameManager::Get().GetPID() == 1 ? XMFLOAT3{135, 293, 0} : XMFLOAT3{1785, 293, 0};
+    m_EmoteBox->SetPos(emoteBoxPos);
 
     TryInitPlayerIconsFromWeaponData();
 }
@@ -231,22 +234,6 @@ void PlayHUDScene::UpdateWData(float dTime)
     auto& myWeapons = gm.GetMyUIWeapons();
     auto& enemyWeapons = gm.GetEnemyUIWeapons();
 
-    if (myWeapons[0].hp <= 0 && myWeapons[1].hp <= 0)
-    {
-        if (gm.GetPID() == 1)
-            m_1PAllDead = true;
-        else
-            m_2PAllDead = true;
-    }
-    
-    if (enemyWeapons[0].hp <= 0 && enemyWeapons[1].hp <= 0)
-    {
-        if (gm.GetPID() == 1)
-            m_2PAllDead = true;
-        else
-            m_1PAllDead = true;
-    }
-
     for (int i = 0; i < 2; ++i)
     {
         if (m_playerIcons[i] != nullptr)
@@ -285,7 +272,7 @@ void PlayHUDScene::RefreshTurnTexture()
     int oneDigit = 1;
 
     if (currentTurn)
-        oneDigit = currentTurn & 10;
+        oneDigit = currentTurn % 10;
     int tenDigit = (currentTurn / 10) % 10;
 
     if (m_pTurn != nullptr)
@@ -307,6 +294,9 @@ bool PlayHUDScene::CheckRoundOver()
     {
         isRoundReset = false;
         isChangeRound = true;
+        m_isRoundChangeReverse = false;
+
+        m_hasRoundChangeSignalSent = false;
 
         m_SceneChange->SetVisible(Visibility::Visible);
         m_SceneChange->Play();
@@ -342,27 +332,33 @@ void PlayHUDScene::ResetRound()
 
     gm.ResetTurn();
 
-    //라운드별 오브젝트 초기화
-
     isRoundReset = true;
 }
 
 void PlayHUDScene::ChangeRound(float dt)
 {
-    static bool isReverse = false;
-
-    if (m_SceneChange->IsFinished() && !isReverse)
+    if (m_SceneChange->IsFinished() && !m_isRoundChangeReverse && !m_hasRoundChangeSignalSent)
     {
         ResetRound();
         m_SceneChange->SetReverse(true);
-        m_SceneChange->Play();
-        isReverse = true;
+        m_SceneChange->Stop();
+        GameManager::Get().SetRoundChangeNow();
+        m_hasRoundChangeSignalSent = true;
     }
-    if (m_SceneChange->IsFinished() && isReverse)
+
+    if (m_hasRoundChangeSignalSent && !GameManager::Get().isRoundChangeNow() && !m_isRoundChangeReverse)
+    {
+        m_SceneChange->Play();
+        m_isRoundChangeReverse = true;
+    }
+
+    if (m_SceneChange->IsFinished() && m_isRoundChangeReverse)
     {
         m_SceneChange->SetReverse(false);
         m_SceneChange->SetVisible(Visibility::Hidden);
-        isReverse = false;
+        m_isRoundChangeReverse = false;
+        m_hasRoundChangeSignalSent = false;
+        isChangeRound = false;
     }
 }
 
