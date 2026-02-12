@@ -16,6 +16,14 @@
 
 namespace
 {
+    bool IsWeaponSlotAlive(const PlayerData& player, int slot)
+    {
+        if (slot < 0 || slot >= static_cast<int>(player.weapons.size()))
+            return false;
+
+        return player.weapons[slot].hp > 0;
+    }
+
     std::wstring ToLowerPieceName(PieceType pieceType)
     {
         switch (pieceType)
@@ -149,11 +157,28 @@ void CardSelectionPanel::CreateChild() {
     {
         m_pPhaseStaminaBars[0] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_0", Float2(1083, 34), XMFLOAT3(-650, -450, 0), UIDirection::Center, this);
         m_pPhaseStaminaBars[0]->GetWeponSelectButton()->ChangeWeaponImage(m_player.weapons[0].weaponId);
-        m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[0].weaponId); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
+        m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() {
+            if (!IsWeaponSlotAlive(m_player, 0))
+                return;
+
+            this->ViewCardPage(0, 0);
+            this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[0].weaponId);
+            m_curSlot = 0;
+            }); // 0번 슬롯 CardPage 0번으로 이동
+
+        //m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[0].weaponId); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
         
         m_pPhaseStaminaBars[1] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_1", Float2(1083, 34), XMFLOAT3(-650, -400, 0), UIDirection::Center, this);
         m_pPhaseStaminaBars[1]->GetWeponSelectButton()->ChangeWeaponImage(m_player.weapons[1].weaponId);
-        m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[1].weaponId); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
+        m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() {
+            if (!IsWeaponSlotAlive(m_player, 1))
+                return;
+
+            this->ViewCardPage(1, 0);
+            this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[1].weaponId);
+            m_curSlot = 1;
+            }); // 0번 슬롯 CardPage 0번으로 이동
+        //m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[1].weaponId); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
     }
     
     // 페이지 버튼
@@ -201,6 +226,7 @@ void CardSelectionPanel::CreateChild() {
             if (!card) continue;
             card->SetEventLMB([this, card]() {
                 if (card->GetCardID() == 0) return;
+                if (!card->IsDraggable()) return;
                 m_pSelectedCard = card;
                 });
         }
@@ -310,8 +336,13 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
 
             const int cardIndex = ParseCardIndex(cardData.m_name);
             const bool isSelectedInConfirmSlots = m_gameManager.IsRuntimeCardInConfirmSlots(runtimeID);
-            m_pCards[i]->SetDraggable(!isSelectedInConfirmSlots);
-            m_pCards[i]->ChangeTexture(BuildCardTexturePath(pieceType, cardIndex, isSelectedInConfirmSlots));
+            
+            const bool isDeadUnitSlot = !IsWeaponSlotAlive(m_player, slot);
+            const bool canDrag = !isSelectedInConfirmSlots && !isDeadUnitSlot;
+            m_pCards[i]->SetDraggable(canDrag);
+            m_pCards[i]->ChangeTexture(BuildCardTexturePath(pieceType, cardIndex, !canDrag));
+            //m_pCards[i]->SetDraggable(!isSelectedInConfirmSlots);
+            //m_pCards[i]->ChangeTexture(BuildCardTexturePath(pieceType, cardIndex, isSelectedInConfirmSlots));
         }
         else
         {
