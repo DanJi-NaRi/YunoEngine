@@ -82,15 +82,19 @@ void CardConfirmPanel::CreateChild() {
 
 
     m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S0", Float2(178, 264), XMFLOAT3(50, -400, 0),  UIDirection::LeftTop, this));
+    m_setCardSlots.back()->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/draganddrop.png");
 
     m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S1", Float2(178, 264), XMFLOAT3(350, -400, 0), UIDirection::LeftTop, this));
     m_setCardSlots.back()->SetIsEnabled(false);
+    m_setCardSlots.back()->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/draganddrop_x.png");
 
     m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S2", Float2(178, 264), XMFLOAT3(650, -400, 0), UIDirection::LeftTop, this));
     m_setCardSlots.back()->SetIsEnabled(false);
+    m_setCardSlots.back()->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/draganddrop_x.png");
 
     m_setCardSlots.push_back(m_uiFactory.CreateChild<CardConfirmArea>(m_name + L"_S3", Float2(178, 264), XMFLOAT3(950, -400, 0), UIDirection::LeftTop, this));
     m_setCardSlots.back()->SetIsEnabled(false);
+    m_setCardSlots.back()->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/draganddrop_x.png");
 
     m_cardConfirmButton = m_uiFactory.CreateChild<CardConfirmButton>(m_name + L"_CardConfirmButton", Float2(367, 69), XMFLOAT3(0, -100, 0), UIDirection::LeftTop, this);
 
@@ -184,6 +188,7 @@ void CardConfirmPanel::UpdateCardSlot()
         m_player.weapons[cardOwnerSlot].hp <= 0)
     {
         currentSlot->CleanSetup();
+        RefreshSlotVisualState();
         return;
     }
 
@@ -234,6 +239,7 @@ void CardConfirmPanel::ClearSlot() {
         m_setCardSlots[i]->CleanSetup();
     }
     m_confirmReady = false; // 컨펌 준비 취소
+    RefreshSlotVisualState();
 }
 
 
@@ -327,6 +333,7 @@ void CardConfirmPanel::SubmitCurrentSelection()
 
         if (m_pSelectionPanel)
             m_pSelectionPanel->ClearSelectedCard();
+        RefreshSlotVisualState();
         return;
     }
 
@@ -391,6 +398,7 @@ void CardConfirmPanel::SubmitCurrentSelection()
     {
         m_confirmReady = true;
     }
+    RefreshSlotVisualState();
 }
 
 bool CardConfirmPanel::BuildCardQueueFromSlots()
@@ -440,6 +448,30 @@ bool CardConfirmPanel::BuildCardQueueFromSlots()
     }
 
     return m_gameManager.IsCardQueueFull();
+}
+
+void CardConfirmPanel::RefreshSlotVisualState()
+{
+    for (int i = 0; i < static_cast<int>(m_setCardSlots.size()); ++i)
+    {
+        CardConfirmArea* slot = m_setCardSlots[i];
+        if (!slot)
+            continue;
+
+        Card* card = slot->GetCard();
+        if (card)
+        {
+            slot->ChangeTexture(card->GetTexturePath());
+            continue;
+        }
+
+        const bool isOpenSlot = (i == m_openSlot);
+        const wchar_t* texturePath = isOpenSlot
+            ? L"../Assets/UI/PLAY/PhaseScene/draganddrop.png"
+            : L"../Assets/UI/PLAY/PhaseScene/draganddrop_x.png";
+
+        slot->ChangeTexture(texturePath);
+    }
 }
 
 void CardConfirmPanel::UpdatePanel(const BattleResult& battleResult)
