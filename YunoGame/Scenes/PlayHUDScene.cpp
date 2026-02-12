@@ -49,7 +49,7 @@ bool PlayHUDScene::OnCreateScene()
     m_playerIcons[2] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
     m_playerIcons[3] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
 
-    auto imojibox = CreateWidget<TextureImage>(L"ImojiBox", L"../Assets/UI/PLAY/ImojiBox.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
+    m_EmoteBox = CreateWidget<TextureImage>(L"ImojiBox", L"../Assets/UI/PLAY/ImojiBox.png", XMFLOAT3(0, 0, 0), UIDirection::Center);
     auto emote = CreateWidget<EmoteButton>(L"Imoji", Float2(80, 67), XMFLOAT3(0, 0, 0), UIDirection::LeftTop);
     emote->SetIdleHoverTextuer(L"../Assets/UI/PLAY/Imoji_zZZ_mouseout.png", L"../Assets/UI/PLAY/Imoji_zZZ_mouseover.png");
     emote->SetEmoteNum(1);
@@ -59,9 +59,9 @@ bool PlayHUDScene::OnCreateScene()
     auto emote3 = CreateWidget<EmoteButton>(L"Imoji", Float2(80, 67), XMFLOAT3(0, 0, 0), UIDirection::LeftTop);
     emote3->SetIdleHoverTextuer(L"../Assets/UI/PLAY/Imoji_EZ_mouseout.png", L"../Assets/UI/PLAY/Imoji_EZ_mouseover.png");
     emote3->SetEmoteNum(3);
-    imojibox->Attach(emote);
-    imojibox->Attach(emote2);
-    imojibox->Attach(emote3);
+    m_EmoteBox->Attach(emote);
+    m_EmoteBox->Attach(emote2);
+    m_EmoteBox->Attach(emote3);
 
     m_emoteButtons.push_back(emote);
     m_emoteButtons.push_back(emote2);
@@ -342,8 +342,6 @@ void PlayHUDScene::ResetRound()
 
     gm.ResetTurn();
 
-    //라운드별 오브젝트 초기화
-
     isRoundReset = true;
 }
 
@@ -355,14 +353,22 @@ void PlayHUDScene::ChangeRound(float dt)
     {
         ResetRound();
         m_SceneChange->SetReverse(true);
+        m_SceneChange->Stop();
+        GameManager::Get().SetRoundChangeNow();
+    }
+
+    if (!GameManager::Get().isRoundChangeNow() && !isReverse)
+    {
         m_SceneChange->Play();
         isReverse = true;
     }
+
     if (m_SceneChange->IsFinished() && isReverse)
     {
         m_SceneChange->SetReverse(false);
         m_SceneChange->SetVisible(Visibility::Hidden);
         isReverse = false;
+        isChangeRound = false;
     }
 }
 

@@ -521,7 +521,6 @@ void PlayScene::OnEnter()
     m_CurSceneState = GameManager::Get().GetSceneState();
     m_PrevSceneState = m_CurSceneState;
 
-    
     m_CurCamPos = { 0.0f, 5.672f, -3.07f };
     m_CurCamTarget = { 0, 0, 0 };
     m_NextCamPos = { 0.0f, 4.043f, -5.651f };
@@ -578,12 +577,41 @@ void PlayScene::MoveCamera(float dt)
     }
 }
 
+void PlayScene::ApplyRoundObject()
+{
+    auto& gm = GameManager::Get();
+
+    if (gm.GetCurrentRound() != 2)
+    {
+        gm.RoundChangeComplete();
+        return;
+    }
+
+    //라운드 오브젝트 초기화
+    RuntimeSceneOverlayOptions opt{};
+    opt.applyCamera = false;
+    opt.applyLights = false;
+    opt.applyPostProcess = false;
+    opt.replaceObjects = false;
+    opt.applyWidgets = false;
+
+    std::wstring filepath = L"../Assets/Scenes/3stage/PlayScene.json";
+
+    OverlaySceneFromFile(L"", opt);
+
+    gm.RoundChangeComplete();
+}
+
 
 void PlayScene::Update(float dt)
 {
     SceneBase::Update(dt);
     //m_input->Dispatch();
     //TestInput();
+    auto& gm = GameManager::Get();
+
+    if (gm.isRoundChangeNow())
+        ApplyRoundObject();
 
     m_playGrid->Update(dt);
 

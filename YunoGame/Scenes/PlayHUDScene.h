@@ -67,6 +67,7 @@ private:
 
     std::array<TextureImage*, 3> roundWin{};
 
+    TextureImage* m_EmoteBox = nullptr;
     TextureImage* m_EmoteBubble1P = nullptr;
     TextureImage* m_EmoteBubble2P = nullptr;
     Emoji* m_EmoteImage1P = nullptr;
