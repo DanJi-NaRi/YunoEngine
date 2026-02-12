@@ -37,6 +37,7 @@ protected:
     void TryInitPlayerIconsFromWeaponData();
 
     void UpdateWData(float dTime);
+    void RefreshTurnTexture();
 
     bool CheckRoundOver();
     void ResetRound();
@@ -59,8 +60,7 @@ private:
 
     Widget* m_pTurn = nullptr;    // 1의 자리수
     Widget* m_pTurn10 = nullptr;  // 10의 자리수
-    int m_turn = 0;
-    int m_turn10 = 1;
+    uint64_t m_appliedTurnStateVersion = 0;
 
     std::array<PlayerIcon*, 4> m_playerIcons{};
     uint32_t m_appliedWeaponDataVersion = 0;

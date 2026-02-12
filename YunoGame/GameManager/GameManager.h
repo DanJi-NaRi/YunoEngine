@@ -161,6 +161,44 @@ public:
     void IncreaseRound() { ++m_currentRound; }
     void ResetRound() { m_currentRound = 0; }
 
+    int GetCurrentTurn() const { return m_currentTurn; }
+    uint64_t GetTurnStateVersion() const { return m_turnStateVersion; }
+    void SetCurrentTurn(int turn)
+    {
+        if (turn < 0)
+            turn = 0;
+
+        if (m_currentTurn == turn)
+            return;
+
+        m_currentTurn = turn;
+        ++m_turnStateVersion;
+    }
+    void ResetTurn()
+    {
+        m_currentTurn = 0;
+        ++m_turnStateVersion;
+    }
+
+    int GetCurrentTurn() const { return m_currentTurn; }
+    uint64_t GetTurnStateVersion() const { return m_turnStateVersion; }
+    void SetCurrentTurn(int turn)
+    {
+        if (turn < 0)
+            turn = 0;
+
+        if (m_currentTurn == turn)
+            return;
+
+        m_currentTurn = turn;
+        ++m_turnStateVersion;
+    }
+    void ResetTurn()
+    {
+        m_currentTurn = 0;
+        ++m_turnStateVersion;
+    }
+
     void RequestRevealStart() { m_shouldStartReveal = true; }
     bool GetRevealStart() const { return m_shouldStartReveal; }
     bool ConsumeRevealStart()
@@ -198,7 +236,11 @@ private:
     PieceType m_myPick[2] = { PieceType::None, PieceType::None };
     PieceType m_lastPickedPiece = PieceType::None;
 
+    int m_currentTurn = 0;
+    uint64_t m_turnStateVersion = 0;
+
     int m_currentRound = 0;
+
     bool m_shouldStartReveal = false;
 
     int m_PID = 0; // 1 또는 2  >> 1이면 왼쪽 2면 오른쪽

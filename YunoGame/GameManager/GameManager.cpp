@@ -295,6 +295,8 @@ void GameManager::SetSceneState(CurrentSceneState state)
     case CurrentSceneState::Title:
     {
         m_state = CurrentSceneState::Title;
+        ResetTurn();
+        ResetRoundResultState();
         m_matchPlayerCount = 0;
         m_PID = 0;
         ResetMyPicks();
@@ -444,6 +446,8 @@ void GameManager::SetSceneState(CurrentSceneState state)
         // 이미 라운드 씬이면 무시
         //if (m_state == CurrentSceneState::RoundStart) return;
         m_state = CurrentSceneState::RoundStart;
+        ResetTurn();
+        ResetRoundResultState();
         SceneTransitionOptions opt{};
         opt.immediate = true;
         ClearUIWeaponDataState();

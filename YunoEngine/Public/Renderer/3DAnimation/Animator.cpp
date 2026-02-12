@@ -201,6 +201,7 @@ void Animator::BlendingUpdate(float dTime)
 
     m_RootBone->SampleLocalPose(PrevTickTime, m_prevAnim->channels, m_LocalBoneA);
     m_RootBone->SampleLocalPose(CurTickTime, m_CurAnim->channels, m_LocalBoneB);
+    //m_RootBone->SampleLocalPose(0, m_CurAnim->channels, m_LocalBoneB);
 
     BlendLocalPose(m_LocalBoneA, m_LocalBoneB, blendAlpha, m_BlendBoneTM);
 

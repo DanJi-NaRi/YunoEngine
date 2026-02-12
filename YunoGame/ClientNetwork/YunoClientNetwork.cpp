@@ -500,6 +500,7 @@ namespace yuno::game
                     << static_cast<int>(pkt.turnNumber) << "\n";
 
                 auto& gm = GameManager::Get();
+                gm.SetCurrentTurn(static_cast<int>(pkt.turnNumber));
 
                 if(pkt.turnNumber == 1)
                     gm.IncreaseRound();

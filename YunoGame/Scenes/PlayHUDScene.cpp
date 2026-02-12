@@ -128,6 +128,10 @@ void PlayHUDScene::OnEnter()
 {
     //std::cout << "[PlayHUDScene] OnEnter\n"; 
     YunoEngine::GetInput()->AddContext(&m_uiContext, this);
+
+    m_appliedTurnStateVersion = std::numeric_limits<uint64_t>::max();
+    RefreshTurnTexture();
+
     TryInitPlayerIconsFromWeaponData();
 }
 
@@ -273,6 +277,28 @@ void PlayHUDScene::UpdateWData(float dTime)
     }
 }
 
+void PlayHUDScene::RefreshTurnTexture()
+{
+    auto& gm = GameManager::Get();
+    const int currentTurn = gm.GetCurrentTurn();
+
+    int oneDigit = 1;
+
+    if (currentTurn)
+        oneDigit = currentTurn & 10;
+    int tenDigit = (currentTurn / 10) % 10;
+
+    if (m_pTurn != nullptr)
+    {
+        m_pTurn->ChangeTexture(L"../Assets/UI/PLAY/Round_" + std::to_wstring(tenDigit) + L".png");
+    }
+
+    if (m_pTurn10 != nullptr)
+    {
+        m_pTurn10->ChangeTexture(L"../Assets/UI/PLAY/Round_" + std::to_wstring(oneDigit) + L".png");
+    }
+}
+
 bool PlayHUDScene::CheckRoundOver()
 {
     curRound = GameManager::Get().GetCurrentRound();
@@ -296,8 +322,6 @@ void PlayHUDScene::ResetRound()
     if (isRoundReset)
         return;
 
-    m_pTurn10->ChangeTexture(L"../Assets/UI/PLAY/Round_" + std::to_wstring(curRound) + L".png");
-
     if (m_1PAllDead && m_2PAllDead)
         roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/4player_draw.png");
     else if(m_1PAllDead)
@@ -310,6 +334,7 @@ void PlayHUDScene::ResetRound()
     m_1PAllDead = false;
     m_2PAllDead = false;
 
+    GameManager::Get().ResetTurn();
     //라운드별 오브젝트 초기화
 
     isRoundReset = true;
@@ -339,7 +364,14 @@ void PlayHUDScene::Update(float dt)
     // 이거만 있으면 오브젝트 업데이트 됨 따로 업뎃 ㄴㄴ
     SceneBase::Update(dt);
 
-    auto scenestate = GameManager::Get().GetSceneState();
+    auto& gm = GameManager::Get();
+    auto scenestate = gm.GetSceneState();
+
+    if (m_appliedTurnStateVersion != gm.GetTurnStateVersion())
+    {
+        RefreshTurnTexture();
+        m_appliedTurnStateVersion = gm.GetTurnStateVersion();
+    }
 
     CheckRoundOver();
 
@@ -347,7 +379,7 @@ void PlayHUDScene::Update(float dt)
         ChangeRound(dt);
 
     //if((scenestate != CurrentSceneState::SubmitCard) && (scenestate != CurrentSceneState::BattleStandBy))
-    //UpdateWData(dt);
+    UpdateWData(dt);
 
     PendingEmote emote;
     while (GameManager::Get().PopEmote(emote))

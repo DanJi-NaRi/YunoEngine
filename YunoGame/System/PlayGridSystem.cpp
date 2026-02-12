@@ -127,6 +127,8 @@ void PlayGridSystem::ApplyTransform()
         auto id = unit->GetWeaponID();
         if (id == 3)
             unit->SetScale({ 2, 2, 2 });
+        else
+            unit->SetScale({ 1, 1, 1 });
     }
 }
 
