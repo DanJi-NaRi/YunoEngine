@@ -104,7 +104,7 @@ void GameManager::SetUIWeaponData(const std::array<Wdata, 4>& wdatas)
             m_enemyUIWeapons[0].maxStamina = GetMaxStaminaByWeaponId(m_enemyUIWeapons[0].weaponId);
             m_enemyUIWeapons[1].maxStamina = GetMaxStaminaByWeaponId(m_enemyUIWeapons[1].weaponId);
         }
-        std::cout << std::endl;
+
     }
 
     m_uiWeaponDataReady = true;

@@ -196,7 +196,7 @@ void YunoSceneManager::CreateView(const SceneEntry& e, UINT idx)
 
 void YunoSceneManager::DumpStack_Console(const char* reason) const
 {
-    std::cout << "\n[SceneStack] "
+    std::cout << "[SceneStack] "
         << (reason ? reason : "")
         << " | size=" << m_stack.size() << "\n";
 
@@ -208,7 +208,7 @@ void YunoSceneManager::DumpStack_Console(const char* reason) const
             << "  [" << i << "] "
             << (e.scene ? e.scene->GetDebugName() : "(null)")
             << " | state=" << static_cast<int>(e.state)
-            << "\n\n";
+            << "\n";
     }
 }
 

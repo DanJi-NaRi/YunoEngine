@@ -1502,6 +1502,8 @@ void PlayGridSystem::CheckOver()
     {
         if(GameManager::Get().GetEndGame())
             GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+        else 
+            GameManager::Get().SetSceneState(CurrentSceneState::SubmitCard);
         std::cout << "This Round Result : Draw\n";
         roundResult = RoundResult::Draw;
     }
@@ -1509,6 +1511,8 @@ void PlayGridSystem::CheckOver()
     {
         if (GameManager::Get().GetEndGame())
             GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+        else
+            GameManager::Get().SetSceneState(CurrentSceneState::SubmitCard);
         std::cout << "This Round Result : Lose\n";
         roundResult = (myIsP1) ? RoundResult::Winner_P2 : RoundResult::Winner_P1;
     }
@@ -1516,6 +1520,8 @@ void PlayGridSystem::CheckOver()
     {
         if (GameManager::Get().GetEndGame())
             GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+        else
+            GameManager::Get().SetSceneState(CurrentSceneState::SubmitCard);
         std::cout << "This Round Result : Win\n";
         roundResult = (myIsP1) ? RoundResult::Winner_P1 : RoundResult::Winner_P2;
     }
@@ -1578,7 +1584,7 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
     {
         std::cout << static_cast<int>(tile) << " ";
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
 
     bool hasTriggerSnapshot = false;
     Float4 warnColor{ 1.0f, 0.0f, 0.0f, 1.f };
