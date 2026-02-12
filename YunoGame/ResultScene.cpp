@@ -7,6 +7,7 @@
 #include "IWindow.h"
 #include "UIWidgets.h"
 #include "ResultPanel.h"
+#include "AudioQueue.h"
 
 bool ResultScene::OnCreateScene()
 {
@@ -100,15 +101,18 @@ void ResultScene::ChangeUIState(ResultUIState state)
     {
     case ResultUIState::Victory:
         m_victoryPanel->Show();
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_Win));
         break;
 
     case ResultUIState::Defeat:
         m_defeatPanel->Show();
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_Lose));
         break;
 
     case ResultUIState::Draw:
         //std::cout << "HelpHelpHelpHelpHelpHelpHelpHelpHelpHelpDRAWDRAWDRAWDRAWDRAWDRAW";
         m_drawPanel->Show();
+        AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_Draw));
         break;
 
     default:

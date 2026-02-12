@@ -445,6 +445,7 @@ void PlayMidScene::UpdateWarning(float dt)
         pos.x += m_warningScrollSpeed * dt;
 
         m_warningFG->SetPos(pos);
+
     }
 
     if (m_warningTimer >= m_warningDuration)

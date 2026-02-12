@@ -49,18 +49,20 @@ PGridCmd PlayGridQ::Move_P(float wx, float wy, float wz, float second, bool isDo
     return cmd;
 }
 
-PGridCmd PlayGridQ::Hit_S(GamePiece pieceType)
+PGridCmd PlayGridQ::Hit_S(GamePiece pieceType, bool isCollided)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Hit;
     cmd.hit_s.whichPiece = pieceType;
+    cmd.hit_s.isCollided = isCollided;
     return cmd;
 }
 
-PGridCmd PlayGridQ::Hit_P()
+PGridCmd PlayGridQ::Hit_P(bool isCollided)
 {
     PGridCmd cmd;
     cmd.cmdType = CommandType::Hit;
+    cmd.hit_p.isCollided = isCollided;
     return cmd;
 }
 

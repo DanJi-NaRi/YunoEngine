@@ -22,6 +22,7 @@
 //#include "GridLine.h"
 //#include "PlayQueue.h"
 #include "MinimapQueue.h"
+#include "AudioQueue.h"
 
 
 #include "MinimapGridSystem.h"
@@ -86,6 +87,8 @@ bool PhaseScene::OnCreateScene()
     //m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
 
     m_uiManager->AllParentsSetScale(0.5f); // 일괄 사이즈 조정
+
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_Move));
 
     return true;
 }
