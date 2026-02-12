@@ -22,7 +22,7 @@ bool UnitPiece::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
     Unit::Create(name, id, vPos);
 
     // 오브젝트 처음에는 안보이게 설정
-    m_dissolveAmount = 1.f;
+    m_startDissolveAmount = m_dissolveAmount = 1.f;
     for (auto& mesh : m_Meshs)
     {
         mesh->SetDissolveAmount(m_dissolveAmount);
@@ -85,7 +85,7 @@ bool UnitPiece::CheckDead(float dt)
 
 void UnitPiece::CheckMyQ()  
 {  
-   if (m_state == PieceAnim::Dead) return;
+    if (HasAnimState(PieceAnim::Dead)) return;
 
    // 애니메이션이 끝나면 하나씩 빼가게 하기  
    while (!m_Q.empty() && m_state == PieceAnim::Idle)
@@ -710,7 +710,7 @@ void UnitPiece::PlayHit()
     }
     m_animator->SetLoop((m_dir == Direction::Right) ? "hit" : "hitF", false);
     m_animator->Play();
-    AddAnimState(PieceAnim::Hit);
+    m_state = PieceAnim::Hit;
 
     AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_Hit));
 }

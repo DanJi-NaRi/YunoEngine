@@ -6,18 +6,30 @@ class EffectManager;
 
 enum class PieceAnim : uint16_t
 {
-    None,
-    Idle,
-    Move,
-    Rot,
-    RollBack,
-    Roll,
-    Attack,
-    Dissolve,
-    Flash ,
-    Hit,
-    Dead,
-    DeadQueued
+    //None,
+    //Idle,
+    //Move,
+    //Rot,
+    //RollBack,
+    //Roll,
+    //Attack,
+    //Dissolve,
+    //Flash ,
+    //Hit,
+    //Dead,
+    //DeadQueued
+    None = 0,
+    Idle = 1 << 0,
+    Move = 1 << 1,
+    Rot = 1 << 2,
+    RollBack = 1 << 3,
+    Roll = 1 << 4,
+    Attack = 1 << 5,
+    Dissolve = 1 << 6,
+    Flash = 1 << 7,
+    Hit = 1 << 8,
+    Dead = 1 << 9,
+    DeadQueued = 1 << 10
 };
 bool HasThis_Anim(PieceAnim a, PieceAnim b);
 bool EqualThis_Anim(PieceAnim a, PieceAnim b);
@@ -98,7 +110,7 @@ private:
 
     // 디졸브
     float m_dissolveTime = 0.f;
-    float m_dissolveDuration = 0.f;
+    float m_dissolveDuration = 1.25f;
     float m_startDissolveAmount = 0.f;
 
     // 공격
