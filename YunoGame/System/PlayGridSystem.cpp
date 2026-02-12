@@ -67,6 +67,15 @@ void PlayGridSystem::InitRound()
     m_utilitySequence = {};
     m_obstacleSequence = {};
 
+    // 라운드 시작 시 타일 상태/연출을 먼저 초기화한다.
+    ClearTileState();
+    for (int tileID = 1; tileID < static_cast<int>(m_tilesIDs.size()); ++tileID)
+    {
+        auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
+        if (pTile != nullptr)
+            pTile->SetIdleState();
+    }
+
     const auto wData = GameManager::Get().GetWeaponData();
     GameManager::Get().ResetWeaponData();
     for (int i = 0; i < wData.size(); i++)
@@ -113,14 +122,6 @@ void PlayGridSystem::InitRound()
         };
         m_weaponIDs[i] = w.weaponId;
     }  
-
-    // 타일 초기화
-    for (int tileID = 0; tileID < m_tiles.size(); tileID++)
-    {
-        auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(tileID));
-        pTile->SetIdleState();
-        m_tiles = {};
-    }
 
     ReflectWeaponData();
     ApplyTransform();
@@ -550,6 +551,9 @@ void PlayGridSystem::CheckPacket(float dt)
         //---------------------------------------------------
         ApplyActionOrder(order, mainUnit, runTimeCardID, (Direction)dir);
 
+        // actionTime이 연출 시간보다 짧게 들어오더라도 즉시 다음 패킷으로 넘어가지 않도록 하한을 둔다.
+        m_pktTime = std::max(0.05f, m_pktTime);
+
         // useID == 1 카드는 사용 즉시 손패에서 제거한다.
         if (pckt.pId == static_cast<uint8_t>(mng.GetPID()) && cardData.m_useId == 1)
         {
@@ -573,7 +577,9 @@ void PlayGridSystem::CheckPacket(float dt)
     if (isProcessing)
     {
         m_currTime += dt;
-        if (m_currTime >= m_pktTime)
+        //if (m_currTime >= m_pktTime)
+        const bool sequenceBusy = m_attackActive || m_utilityActive || m_obstacleActive;
+        if (m_currTime >= m_pktTime && !sequenceBusy)
         {
             isProcessing = false;
             m_currTime = 0;
@@ -801,7 +807,9 @@ void PlayGridSystem::UpdateUtilitySequence(float dt)
 
         const auto& pm = us.playerMove;
 
-        ApplyMoveChanges(pm->dirty, pm->prevState, pm->snapshot, pm->mainUnit, pm->dir);
+        //ApplyMoveChanges(pm->dirty, pm->prevState, pm->snapshot, pm->mainUnit, pm->dir);
+        if (pm != nullptr)
+            ApplyMoveChanges(pm->dirty, pm->prevState, pm->snapshot, pm->mainUnit, pm->dir);
 
         us.phaseStarted = false;
         break;
@@ -856,6 +864,8 @@ void PlayGridSystem::UpdateUtilitySequence(float dt)
 
         if(us.buffData != nullptr)
             BuffEvent(us.playPiece, us.buffData);
+
+        us.phaseStarted = false;
 
         break;
     }
