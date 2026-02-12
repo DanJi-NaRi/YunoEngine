@@ -234,22 +234,6 @@ void PlayHUDScene::UpdateWData(float dTime)
     auto& myWeapons = gm.GetMyUIWeapons();
     auto& enemyWeapons = gm.GetEnemyUIWeapons();
 
-    if (myWeapons[0].hp <= 0 && myWeapons[1].hp <= 0)
-    {
-        if (gm.GetPID() == 1)
-            m_1PAllDead = true;
-        else
-            m_2PAllDead = true;
-    }
-    
-    if (enemyWeapons[0].hp <= 0 && enemyWeapons[1].hp <= 0)
-    {
-        if (gm.GetPID() == 1)
-            m_2PAllDead = true;
-        else
-            m_1PAllDead = true;
-    }
-
     for (int i = 0; i < 2; ++i)
     {
         if (m_playerIcons[i] != nullptr)
@@ -288,7 +272,7 @@ void PlayHUDScene::RefreshTurnTexture()
     int oneDigit = 1;
 
     if (currentTurn)
-        oneDigit = currentTurn & 10;
+        oneDigit = currentTurn % 10;
     int tenDigit = (currentTurn / 10) % 10;
 
     if (m_pTurn != nullptr)
@@ -310,6 +294,9 @@ bool PlayHUDScene::CheckRoundOver()
     {
         isRoundReset = false;
         isChangeRound = true;
+        m_isRoundChangeReverse = false;
+
+        GameManager::Get().SetRoundChangeNow();
 
         m_SceneChange->SetVisible(Visibility::Visible);
         m_SceneChange->Play();
@@ -350,9 +337,7 @@ void PlayHUDScene::ResetRound()
 
 void PlayHUDScene::ChangeRound(float dt)
 {
-    static bool isReverse = false;
-
-    if (m_SceneChange->IsFinished() && !isReverse)
+    if (m_SceneChange->IsFinished() && !m_isRoundChangeReverse)
     {
         ResetRound();
         m_SceneChange->SetReverse(true);
@@ -360,17 +345,17 @@ void PlayHUDScene::ChangeRound(float dt)
         GameManager::Get().SetRoundChangeNow();
     }
 
-    if (!GameManager::Get().isRoundChangeNow() && !isReverse)
+    if (!GameManager::Get().isRoundChangeNow() && !m_isRoundChangeReverse)
     {
         m_SceneChange->Play();
-        isReverse = true;
+        m_isRoundChangeReverse = true;
     }
 
-    if (m_SceneChange->IsFinished() && isReverse)
+    if (m_SceneChange->IsFinished() && m_isRoundChangeReverse)
     {
         m_SceneChange->SetReverse(false);
         m_SceneChange->SetVisible(Visibility::Hidden);
-        isReverse = false;
+        m_isRoundChangeReverse = false;
         isChangeRound = false;
     }
 }

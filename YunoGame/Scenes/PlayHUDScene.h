@@ -55,6 +55,7 @@ private:
 
     SpriteSheet* m_SceneChange;
     bool isChangeRound = false;
+    bool m_isRoundChangeReverse = false;
 
     void ChangeRound(float dt);
 
