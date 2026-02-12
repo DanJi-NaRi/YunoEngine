@@ -156,10 +156,10 @@ void Minimap::Simulate()
 
         switch (slot->GetDirection()) // moveXY는 오른쪽 방향 기준(그리드 y+가 아래)
         {
-        case Direction::Right:  break;
-        case Direction::Left:   moveXY = { -moveXY.x, -moveXY.y }; break;
-        case Direction::Up:     moveXY = { moveXY.y, -moveXY.x };  break;
-        case Direction::Down:   moveXY = { -moveXY.y,  moveXY.x }; break;
+        case Direction::Right:  moveXY = { moveXY.x, -moveXY.y }; break;
+        case Direction::Left:   moveXY = { -moveXY.x, moveXY.y }; break;
+        case Direction::Up:     moveXY = { -moveXY.y, -moveXY.x };  break;
+        case Direction::Down:   moveXY = { moveXY.y,  moveXY.x }; break;
         default:                moveXY = { 0, 0 };       break;
         }
         AddMoveXY(slotID, moveXY);
@@ -182,8 +182,10 @@ void Minimap::Simulate()
     for (auto& tile : m_pTiles) {
         tile->DefaultMinimapSetup();
     }
+
+    m_pMyTile = simulateTile;
     DefaultSetAllTile();
-    PaintTile(simulateTile);
+    PaintTile(m_pMyTile);
 }
 
 //void Minimap::CreateGridLine(float x, float y, float z)

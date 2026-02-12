@@ -54,5 +54,4 @@ protected:
     TileData m_data;
     
     std::wstring m_backUpOriginPath;
-    bool isSimulation; // 시뮬레이션 중인지 판단
 };

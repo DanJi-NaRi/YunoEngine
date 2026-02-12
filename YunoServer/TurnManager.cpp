@@ -64,10 +64,10 @@ namespace yuno::server
             int dy = std::abs(moveY);
             switch (dir)
             {
-            case Direction::Up: return { 0, -dx };
-            case Direction::Down: return { 0, dx };
-            case Direction::Left: return { -dx, 0 };
-            case Direction::Right: return { dx, 0 };
+            case Direction::Up: return { -dy, -dx };
+            case Direction::Down: return { dy, dx };
+            case Direction::Left: return { -dx, dy };
+            case Direction::Right: return { dx, -dy };
             case Direction::UpLeft: return { -dy, -dy };
             case Direction::UpRight: return { dy, -dy };
             case Direction::DownLeft: return { -dy, dy };
