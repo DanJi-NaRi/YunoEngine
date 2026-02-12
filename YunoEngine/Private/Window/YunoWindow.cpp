@@ -132,14 +132,16 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
     switch (msg)
     {
     case WM_CLOSE:
+    {
         if (window) window->m_shouldClose = true;
         DestroyWindow(hWnd);
         return 0;
-
+    }
     case WM_DESTROY:
+    {
         PostQuitMessage(0);
         return 0;
-
+    }
     case WM_KEYDOWN:
     {
 
@@ -228,21 +230,21 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         SetCursor(window->m_normalCursor);
         return 0;
     }
-    case WM_RBUTTONDOWN:
-    case WM_RBUTTONUP:
-    {
-        if (IInput* input = YunoEngine::GetInput())
-        {
-            InputEvent evt{};
-            evt.type = (msg == WM_RBUTTONDOWN) ? InputEventType::MouseButtonDown
-                : InputEventType::MouseButtonUp;
-            evt.key = 1; // RMB
-            evt.x = static_cast<float>(GET_X_LPARAM(lParam));
-            evt.y = static_cast<float>(GET_Y_LPARAM(lParam));
-            input->PushEvent(evt);
-        }
-        return 0;
-    }
+    //case WM_RBUTTONDOWN:
+    //case WM_RBUTTONUP:
+    //{
+    //    if (IInput* input = YunoEngine::GetInput())
+    //    {
+    //        InputEvent evt{};
+    //        evt.type = (msg == WM_RBUTTONDOWN) ? InputEventType::MouseButtonDown
+    //            : InputEventType::MouseButtonUp;
+    //        evt.key = 1; // RMB
+    //        evt.x = static_cast<float>(GET_X_LPARAM(lParam));
+    //        evt.y = static_cast<float>(GET_Y_LPARAM(lParam));
+    //        input->PushEvent(evt);
+    //    }
+    //    return 0;
+    //}
     case WM_MBUTTONDOWN:
     case WM_MBUTTONUP:
     {
@@ -277,6 +279,7 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             input->PushEvent(evt);
         }
         return 0;
+    }
     case WM_SETCURSOR:
     {
         if (LOWORD(lParam) == HTCLIENT && window)
@@ -286,11 +289,12 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             else
                 SetCursor(window->m_normalCursor);
 
-            return TRUE; 
+            return TRUE;
         }
         break;
     }
     case WM_SIZE:
+    {
         if (window)
         {
             const uint32_t w = static_cast<uint32_t>(LOWORD(lParam));
@@ -319,13 +323,12 @@ LRESULT CALLBACK YunoWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         return 0;
     }
-    
+    }
 
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-void YunoWindow::InitializeCursor(const wchar_t* normalPath,
-    const wchar_t* clickPath)
+void YunoWindow::InitializeCursor(const wchar_t* normalPath, const wchar_t* clickPath)
 {
     m_normalCursor = LoadCursorFromFile(normalPath);
     m_clickCursor = LoadCursorFromFile(clickPath);

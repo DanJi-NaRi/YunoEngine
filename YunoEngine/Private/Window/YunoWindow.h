@@ -22,8 +22,7 @@ public:
 
     bool ConsumeResize(uint32_t& outW, uint32_t& outH) override;
 
-    void InitializeCursor(const wchar_t* normalPath,
-        const wchar_t* clickPath) override;
+    void InitializeCursor(const wchar_t* normalPath, const wchar_t* clickPath) override;
 
     void SetClickState(bool isClicking);
 
