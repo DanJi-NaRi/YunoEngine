@@ -35,6 +35,7 @@ bool CardSelectionPanel::Create(const std::wstring& name, uint32_t id, Float2 si
     m_anchor = UIDirection::LeftTop;
     
     m_curPage = 0;
+    m_curFilter = CardType::None;
     m_curSlot = 0;
 
     Backup();
@@ -49,19 +50,38 @@ void CardSelectionPanel::CreateChild() {
     // 웨폰 수직 이름 이미지
     m_pWeaponIMG = m_uiFactory.CreateChild<WeaponNameImage>(m_name + L"_WeaponName", Float2(56, 259), XMFLOAT3(-1400, -350, 0), XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);
 
+    // 필터 버튼
+    {
+        m_pFilterButtons[0] = m_uiFactory.CreateChild<Button>(m_name + L"FillterBtn_All", Float2(296, 50), XMFLOAT3(-1328, -505, 0), UIDirection::Center, this);
+        m_pFilterButtons[0]->SetVisible(Visibility::Hidden);
+        m_pFilterButtons[0]->SetEventLMB([this]() {this->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/tap_all_click.png"); m_curFilter = CardType::None; ViewCardPage(m_curSlot, 0); });
+
+        m_pFilterButtons[1] = m_uiFactory.CreateChild<Button>(m_name + L"FillterBtn_Buff", Float2(165, 50), XMFLOAT3(-1070, -505, 0), UIDirection::Center, this);
+        m_pFilterButtons[1]->SetVisible(Visibility::Hidden);
+        m_pFilterButtons[1]->SetEventLMB([this]() {this->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/tap_buff_click.png"); m_curFilter = CardType::Buff; ViewCardPage(m_curSlot, 0); });
+
+        m_pFilterButtons[2] = m_uiFactory.CreateChild<Button>(m_name + L"FillterBtn_Move", Float2(165, 50), XMFLOAT3(-886, -505, 0), UIDirection::Center, this);
+        m_pFilterButtons[2]->SetVisible(Visibility::Hidden);
+        m_pFilterButtons[2]->SetEventLMB([this]() {this->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/tap_move_click.png"); m_curFilter = CardType::Move; ViewCardPage(m_curSlot, 0); });
+        
+        m_pFilterButtons[3] = m_uiFactory.CreateChild<Button>(m_name + L"FillterBtn_Attack", Float2(165, 50), XMFLOAT3(-702, -505, 0), UIDirection::Center, this);
+        m_pFilterButtons[3]->SetVisible(Visibility::Hidden);
+        m_pFilterButtons[3]->SetEventLMB([this]() {this->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/tap_attack_click.png"); m_curFilter = CardType::Attack; ViewCardPage(m_curSlot, 0); });
+        
+        m_pFilterButtons[4] = m_uiFactory.CreateChild<Button>(m_name + L"FillterBtn_Util", Float2(165, 50), XMFLOAT3(-518, -505, 0), UIDirection::Center, this);
+        m_pFilterButtons[4]->SetVisible(Visibility::Hidden);
+        m_pFilterButtons[4]->SetEventLMB([this]() {this->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/tap_special_click.png"); m_curFilter = CardType::Utility; ViewCardPage(m_curSlot, 0); });
+    }
+
     // 스태미나 바
     {
-
         m_pPhaseStaminaBars[0] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_0", Float2(1083, 34), XMFLOAT3(-650, -450, 0), UIDirection::Center, this);
         m_pPhaseStaminaBars[0]->GetWeponSelectButton()->ChangeWeaponImage(m_player.weapons[0].weaponId);
         m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[0].weaponId); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
-        //m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
         
         m_pPhaseStaminaBars[1] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_1", Float2(1083, 34), XMFLOAT3(-650, -400, 0), UIDirection::Center, this);
         m_pPhaseStaminaBars[1]->GetWeponSelectButton()->ChangeWeaponImage(m_player.weapons[1].weaponId);
         m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[1].weaponId); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
-        //m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
-        
     }
     
     // 페이지 버튼
@@ -162,16 +182,9 @@ void CardSelectionPanel::UpdatePanel(const ObstacleResult& obstacleResult)
 
 void CardSelectionPanel::ViewCardPage(int slot, int page)
 {
-    //const auto& card = myHands[slot].cards;
-    //const int maxPage = myHands[slot].cards.size()/6;
-
-    //for (int i = 0; i < m_pCards.size(); ++i) {
-    //    auto id = card[i].dataID;
-    //    m_pCards[i]->SetCardID(id);
-    //    m_pCards[i]->ChangeTexture(m_cardManager.GetCardTexturePath(id));
-    //}
-
-    const auto& cards = m_player.hands[slot].cards;
+    //const auto& cards = m_player.hands[slot].cards; // 카드 받기
+    
+    const auto cards = GetCardsByFilter(slot, m_curFilter);
 
     constexpr int CardSlotSize = 6; // 한 페이지 당 카드 갯수
     const int total = static_cast<int>(cards.size()); // 카드 총 사이즈
@@ -219,6 +232,23 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
             m_pCards[i]->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
         }
     }
+}
+
+
+std::vector<ClientCardInfo> CardSelectionPanel::GetCardsByFilter(int slot, const CardType filter)
+{
+    //const auto& cards = m_player.hands[slot].cards; // 카드 받기
+    const std::vector<ClientCardInfo>& cards = m_player.hands[slot].cards; // 카드 받기
+    std::vector<ClientCardInfo> filterCards;
+
+    if (filter == CardType::None || filter == CardType::Count) return cards;
+
+    for (auto& card : cards) { // 필터에 맞는 카드만 주기
+        CardType type = m_cardManager.GetCardData(m_gameManager.GetCardDataID(card.runtimeID)).m_type;
+        if (type == filter) filterCards.push_back(card);
+    }
+
+    return filterCards;
 }
 
 void CardSelectionPanel::PageUp(int slot)
