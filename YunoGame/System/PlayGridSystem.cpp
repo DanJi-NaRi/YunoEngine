@@ -504,19 +504,14 @@ void PlayGridSystem::CheckPacket(float dt)
 
 
     // 게임 매니저에서 배틀 패킷 하나씩 받아옴
-    if (!mng.IsEmptyBattlePacket() && !isProcessing)
+    if (!mng.IsEmptyBattlePacket() && !isProcessing && mng.GetActionGuard() < 2)
     {
         const auto pckt = mng.PopBattlePacket();
         isProcessing = true;
 
-        if (static_cast<int>(pckt.isCoinTossUsed) > 0 && m_delayFlag)
-            m_pktTime = (pckt.actionTime  + 500 + 4500) / 1000.f; //임의값 넣어둠
-        else if(m_delayFlag)
-            m_pktTime = (pckt.actionTime + 500) / 1000.f;
-        else if(static_cast<int>(pckt.isCoinTossUsed) > 0)
-            m_pktTime = (pckt.actionTime + 4500) / 1000.f;
-        else
-            m_pktTime = (pckt.actionTime) / 1000.f;
+        mng.AddActionGuard();
+
+        m_pktTime = (pckt.actionTime) / 1000.f;
 
         const auto runTimeCardID = pckt.runTimeCardID;
         const auto dir = pckt.dir;
