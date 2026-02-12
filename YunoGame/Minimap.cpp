@@ -238,7 +238,7 @@ void Minimap::UpdatePanel(const BattleResult& battleResult) {
             tileData.teamID = info->pId;
             tileData.slotID = info->slotId;
 
-            if(info->pId == 1) m_pMyTile[info->slotId - 1] = tile;
+            if(info->pId == m_pID) m_pMyTile[info->slotId - 1] = tile;
             else m_pEnemyTile[info->slotId - 1] = tile;
         }
     }
@@ -255,7 +255,7 @@ void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
             tileData.teamID = pieceInfo.pId;
             tileData.slotID = pieceInfo.slotId;
 
-            if (pieceInfo.pId == 1) m_pMyTile[pieceInfo.slotId - 1] = tile;
+            if (pieceInfo.pId == m_pID) m_pMyTile[pieceInfo.slotId - 1] = tile;
             else m_pEnemyTile[pieceInfo.slotId - 1] = tile;
         }
     }
