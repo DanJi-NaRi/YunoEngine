@@ -442,6 +442,8 @@ namespace yuno::server
 
                             subClamp(unit.hp, 10);
                             subClamp(other.hp, 5);
+
+
                         }
                         else
                         {
