@@ -12,12 +12,13 @@ public:
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
 
-    void SetSpriteSheet(const std::wstring& texturePath, int cols, int rows, int frameCount, float fps, bool loop = true);
+    void SetSpriteSheet(const std::wstring& texturePath, int cols, int rows, int frameCount, float fps, bool loop = true, bool reverse = false);
     void SetFrameIndex(int frameIndex);
     void SetFrameCount(int frameCount);
     void SetGrid(int cols, int rows);
     void SetFPS(float fps);
     void SetLoop(bool loop);
+    void SetReverse(bool reverse);
 
     void Play();
     void Pause();
@@ -28,6 +29,9 @@ public:
     int GetCols() const { return m_cols; }
     int GetRows() const { return m_rows; }
     bool IsPlaying() const { return m_playing; }
+    bool IsFinished() const { return m_finished; }
+    bool IsReverse() const { return m_reverse; }
+
 
     virtual WidgetType GetWidgetType() override { return WidgetType::SpriteSheet; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::SpriteSheet; }
@@ -50,4 +54,6 @@ private:
     float m_elapsed = 0.0f;
     bool m_loop = true;
     bool m_playing = true;
+    bool m_reverse = false;
+    bool m_finished = false;
 };

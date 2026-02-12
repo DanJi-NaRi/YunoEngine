@@ -54,13 +54,15 @@ bool SpriteSheet::Submit(float dTime)
     return true;
 }
 
-void SpriteSheet::SetSpriteSheet(const std::wstring& texturePath, int cols, int rows, int frameCount, float fps, bool loop)
+void SpriteSheet::SetSpriteSheet(const std::wstring& texturePath, int cols, int rows, int frameCount, float fps, bool loop, bool reverse)
 {
     m_spriteSheetPath = texturePath;
     SetGrid(cols, rows);
     SetFrameCount(frameCount);
     SetFPS(fps);
     SetLoop(loop);
+    SetReverse(reverse);
+    m_finished = false;
 
     ApplySpriteMaterial();
 }
@@ -74,6 +76,7 @@ void SpriteSheet::SetFrameIndex(int frameIndex)
     }
 
     m_frameIndex = std::clamp(frameIndex, 0, m_frameCount - 1);
+    m_finished = false;
     UpdateFrameConstants();
 }
 
@@ -99,11 +102,19 @@ void SpriteSheet::SetFPS(float fps)
 void SpriteSheet::SetLoop(bool loop)
 {
     m_loop = loop;
+    if (m_loop)
+        m_finished = false;
+}
+
+void SpriteSheet::SetReverse(bool reverse)
+{
+    m_reverse = reverse;
 }
 
 void SpriteSheet::Play()
 {
     m_playing = true;
+    m_finished = false;
 }
 
 void SpriteSheet::Pause()
@@ -116,8 +127,9 @@ void SpriteSheet::Stop(bool resetFrame)
     m_playing = false;
     m_frameTimer = 0.0f;
     m_elapsed = 0.0f;
+    m_finished = false;
     if (resetFrame)
-        m_frameIndex = 0;
+        m_frameIndex = m_reverse ? (m_frameCount - 1) : 0;
     UpdateFrameConstants();
 }
 
@@ -174,9 +186,9 @@ void SpriteSheet::AdvanceAnimation(float dTime)
     while (m_frameTimer >= frameDuration)
     {
         m_frameTimer -= frameDuration;
-        m_frameIndex++;
+        m_frameIndex += (m_reverse ? -1 : 1);
 
-        if (m_frameIndex >= m_frameCount)
+        if (!m_reverse && m_frameIndex >= m_frameCount)
         {
             if (m_loop)
                 m_frameIndex = 0;
@@ -184,6 +196,19 @@ void SpriteSheet::AdvanceAnimation(float dTime)
             {
                 m_frameIndex = m_frameCount - 1;
                 m_playing = false;
+                m_finished = true;
+                break;
+            }
+        }
+        else if (m_reverse && m_frameIndex < 0)
+        {
+            if (m_loop)
+                m_frameIndex = m_frameCount - 1;
+            else
+            {
+                m_frameIndex = 0;
+                m_playing = false;
+                m_finished = true;
                 break;
             }
         }

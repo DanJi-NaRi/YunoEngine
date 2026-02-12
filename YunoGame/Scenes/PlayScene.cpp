@@ -233,14 +233,14 @@ void PlayScene::RegisterEffect()
     m_effectManager->RegisterEffect(ed);
 
     ed.id = EffectID::Target;
-    ed.framecount = 30;
-    ed.lifetime = 1.2f;
-    ed.cols = 6;
+    ed.framecount = 25;
+    ed.lifetime = 0.9f;
+    ed.cols = 5;
     ed.rows = 5;
     ed.billboard = BillboardMode::None;
     ed.rot = { XM_PIDIV2, 0, 0 };
     ed.emissive = 30.0f;
-    ed.color = { 0, 0, 1, 1 };
+    ed.color = { XMFLOAT4{ 0, 0.1f, 1, 1 } };
     ed.texPath = L"../Assets/Effects/Target/EF_Target.png";
     m_effectManager->RegisterEffect(ed);
     ed.id = EffectID::TargetEnemy;
