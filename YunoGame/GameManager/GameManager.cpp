@@ -206,6 +206,28 @@ void GameManager::SetUpPanels()
     //if (m_pMinimap) m_pMinimap->SetupPanel();
 }
 
+bool GameManager::IsRuntimeCardInConfirmSlots(uint32_t runtimeID) const
+{
+    if (!m_pConfirmPanel || runtimeID == 0)
+        return false;
+
+    const auto& slots = m_pConfirmPanel->GetCardSlots();
+    for (const auto* slot : slots)
+    {
+        if (!slot)
+            continue;
+
+        const int queuedRuntimeID = slot->GetRuntimeCardID();
+        if (queuedRuntimeID <= 0)
+            continue;
+
+        if (static_cast<uint32_t>(queuedRuntimeID) == runtimeID)
+            return true;
+    }
+
+    return false;
+}
+
 void GameManager::UpdatePanels(const BattleResult& battleResult)
 {
     // 전투 시 실시간 갱신

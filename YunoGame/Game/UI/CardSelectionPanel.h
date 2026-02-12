@@ -70,5 +70,13 @@ protected:
     WeaponNameImage* m_pWeaponIMG = nullptr;
     //std::unique_ptr<Minimap> m_miniMap;           // 미니맵 // 스폰 포지션 따로 받기?
     Card* m_pSelectedCard = nullptr;
+
+public:
+    Card* GetSelectedCard() const { return m_pSelectedCard; }
+    void ClearSelectedCard() { m_pSelectedCard = nullptr; }
+    int GetCurrentSlot() const { return m_curSlot; }
+    int GetCurrentPage() const { return m_curPage; }
+    void RefreshCardVisualState();
+
 };
 

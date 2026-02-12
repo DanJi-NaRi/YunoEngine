@@ -346,6 +346,7 @@ public:
     void UpdatePanels(const BattleResult& obstacleResult);
     void UpdatePanels(const ObstacleResult& obstacleResult);
     void FlushPendingPanelUpdates();
+    bool IsRuntimeCardInConfirmSlots(uint32_t runtimeID) const;
     //void UpdateSelectionPanel(const UnitHand& playerInfo);
 
     private:

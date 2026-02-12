@@ -14,6 +14,40 @@
 #include "IInput.h"
 #include "UIFactory.h"
 
+namespace
+{
+    std::wstring ToLowerPieceName(PieceType pieceType)
+    {
+        switch (pieceType)
+        {
+        case PieceType::Blaster: return L"blaster";
+        case PieceType::Breacher: return L"breacher";
+        case PieceType::Impactor: return L"impactor";
+        case PieceType::Chakram: return L"chakram";
+        case PieceType::Scythe: return L"scythe";
+        case PieceType::Cleaver: return L"cleaver";
+        default: return L"";
+        }
+    }
+
+    std::wstring BuildCardTexturePath(PieceType pieceType, int cardIndex, bool isSelected)
+    {
+        const std::wstring lowerName = ToLowerPieceName(pieceType);
+        if (lowerName.empty() || cardIndex <= 0)
+            return L"../Assets/UI/CARD/Card_back.png";
+    
+
+        if (isSelected) 
+        {
+            return L"../Assets/UI/CARD_locked/card_" + lowerName + L"_locked_" + std::to_wstring(cardIndex) + L".png";
+        }
+        else 
+        {
+            return L"../Assets/UI/CARD/card_" + lowerName + L"_" + std::to_wstring(cardIndex) + L".png";
+        }
+    }
+}
+
 CardSelectionPanel::CardSelectionPanel(UIFactory& uiFactory) : PhasePanel(uiFactory)
 {
     Clear();
@@ -222,7 +256,9 @@ void CardSelectionPanel::ViewCardPage(int slot, int page)
             const auto runtimeID = cards[idx].runtimeID;
             m_pCards[i]->SetCardID(runtimeID);
             m_pCards[i]->SetSlotID(slot);
-            m_pCards[i]->ChangeTexture(m_cardManager.GetCardTexturePath(dataID));
+            const CardData cardData = m_cardManager.GetCardData(static_cast<int>(dataID));
+            const bool isSelectedInConfirmSlots = m_gameManager.IsRuntimeCardInConfirmSlots(runtimeID);
+            m_pCards[i]->ChangeTexture(BuildCardTexturePath(cardData.m_piece, cardData.m_cardNum, isSelectedInConfirmSlots));
         }
         else
         {
@@ -267,6 +303,11 @@ void CardSelectionPanel::PageDown(int slot)
 
     m_curPage = std::clamp(m_curPage + 1, 0, maxPage);
     ViewCardPage(slot, m_curPage);
+}
+
+void CardSelectionPanel::RefreshCardVisualState()
+{
+    ViewCardPage(m_curSlot, m_curPage);
 }
 
 const int CardSelectionPanel::GetMaxPage(int slot)

@@ -189,6 +189,8 @@ void CardConfirmPanel::UpdateCardSlot()
     {
         currentSlot->CleanSetup();
         RefreshSlotVisualState();
+        if (m_pSelectionPanel)
+            m_pSelectionPanel->RefreshCardVisualState();
         return;
     }
 
@@ -240,6 +242,8 @@ void CardConfirmPanel::ClearSlot() {
     }
     m_confirmReady = false; // 컨펌 준비 취소
     RefreshSlotVisualState();
+    if (m_pSelectionPanel)
+        m_pSelectionPanel->RefreshCardVisualState();
 }
 
 
@@ -334,6 +338,8 @@ void CardConfirmPanel::SubmitCurrentSelection()
         if (m_pSelectionPanel)
             m_pSelectionPanel->ClearSelectedCard();
         RefreshSlotVisualState();
+        if (m_pSelectionPanel)
+            m_pSelectionPanel->RefreshCardVisualState();
         return;
     }
 
@@ -399,6 +405,8 @@ void CardConfirmPanel::SubmitCurrentSelection()
         m_confirmReady = true;
     }
     RefreshSlotVisualState();
+    if (m_pSelectionPanel)
+        m_pSelectionPanel->RefreshCardVisualState();
 }
 
 bool CardConfirmPanel::BuildCardQueueFromSlots()
