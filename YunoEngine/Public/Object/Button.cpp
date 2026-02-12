@@ -3,6 +3,7 @@
 
 #include "IInput.h"
 #include "DragProvider.h"
+#include "AudioQueue.h"
 
 Button::Button(UIFactory& uiFactory) : Widget(uiFactory)
 {
@@ -149,6 +150,7 @@ bool Button::DownEvent()
 bool Button::LMBPressedEvent()
 {
     //std::cout << "(LMB)PressedEvent" << std::endl;
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
     return true;
 }
 bool Button::RMBPressedEvent()
@@ -183,6 +185,7 @@ bool Button::KeyReleasedEvent(uint32_t key)
 bool Button::HoverJoinEvent()
 {
     //std::cout << "CursurJoined" << std::endl;
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
     return true;
 }
 

@@ -3,6 +3,7 @@
 
 #include "YunoEngine.h"
 #include "IInput.h"
+#include "AudioQueue.h"
 
 #include "ISceneManager.h"
 #include "IScene.h"
@@ -58,6 +59,12 @@ bool PopButton::IdleEvent()
     return true;
 }
 
+bool PopButton::HoverJoinEvent()
+{
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
+    return true;
+}
+
 // 커서가 위에 올라있을 때
 bool PopButton::HoveredEvent()
 {
@@ -77,6 +84,7 @@ bool PopButton::LMBPressedEvent()
 {
     //std::cout << "(LMB)PressedEvent" << std::endl;
     // 게임 끄기
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseClick));
 
     YunoEngine::GetSceneManager()->RequestPop();
 

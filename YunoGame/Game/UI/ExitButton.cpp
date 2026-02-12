@@ -3,6 +3,7 @@
 
 #include "YunoEngine.h"
 #include "IInput.h"
+#include "AudioQueue.h"
 
 #include "ISceneManager.h"
 #include "IScene.h"
@@ -69,6 +70,12 @@ bool ExitButton::HoveredEvent()
     return true;
 }
 
+bool ExitButton::HoverJoinEvent()
+{
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
+    return true;
+}
+
 // Down 기능은 현재 미지원
 //bool ButtonTemplate::DownEvent()
 //{
@@ -80,6 +87,7 @@ bool ExitButton::HoveredEvent()
 bool ExitButton::LMBPressedEvent()
 {
     //std::cout << "(LMB)PressedEvent" << std::endl;
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseClick));
     // 게임 끄기
     PostQuitMessage(0);
     return true;

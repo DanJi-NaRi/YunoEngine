@@ -198,6 +198,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="EmoteButton.cpp" />
     <ClCompile Include="EscScene.cpp" />
     <ClCompile Include="Game\UI\DirSelectButton.cpp" />
+    <ClCompile Include="OptionButton.cpp" />
     <ClCompile Include="PlayMidScene.cpp" />
     <ClCompile Include="Scenes\PlayHUDScene.cpp" />
     <ClCompile Include="Game\UI\TextureImage.cpp" />

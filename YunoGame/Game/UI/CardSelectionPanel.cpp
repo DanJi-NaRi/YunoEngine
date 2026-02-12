@@ -10,6 +10,7 @@
 
 #include "BattlePackets.h"
 #include "GameManager.h"
+#include "AudioQueue.h"
 
 #include "IInput.h"
 #include "UIFactory.h"
