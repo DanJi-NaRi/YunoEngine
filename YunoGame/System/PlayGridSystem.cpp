@@ -112,7 +112,7 @@ void PlayGridSystem::Update(float dt)
     if (!GameManager::Get().IsEmptyWeaponData())    
         InitRound();       
 
-    //ReflectWeaponData();        // 이걸 여기 했는데 UI반영이 안된다? 그럼 뭔가 큰 일이 났다는 사실~
+    ReflectWeaponData();        // 이걸 여기 했는데 UI반영이 안된다? 그럼 뭔가 큰 일이 났다는 사실~
 
     UpdateSequence(dt);         // 카드 타입별 step 진행
 
