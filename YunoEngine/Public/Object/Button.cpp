@@ -75,7 +75,7 @@ void Button::ButtonUpdate(float dTime) // 버튼 상태 갱신
 
     if (!PtInRect(&m_rect, mouseXY)) return;	//커서/버튼 영역 검사.
 
-    if (m_pInput->IsMouseLeaved() && m_isHoverJoin && m_pDrag) { m_btnState = ButtonState::Released; std::cout << "LEAVE!!!!" << std::endl; }
+    if (m_pInput->IsMouseLeaved() && m_isHoverJoin && m_pDrag) { m_btnState = ButtonState::Released; /*std::cout << "LEAVE!!!!" << std::endl;*/ }
 
     // 버튼 State 업데이트
     if (m_pInput->IsMouseButtonDown(0)) { m_btnState = ButtonState::Pressed; }
