@@ -40,6 +40,7 @@ public:
     void BindMinimap(Minimap* pMinimap) { m_pMinimap = pMinimap; }
 
     std::vector<CardConfirmArea*>& GetCardSlots() { return m_setCardSlots; }
+    bool IsDirectionChoiceActive() const { return m_dirChoice; }
 protected:
     void SubmitCurrentSelection();
     bool IsCardAlreadyQueuedInSlots(uint32_t runtimeID, const CardConfirmArea* ignoreSlot = nullptr) const;

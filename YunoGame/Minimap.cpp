@@ -93,11 +93,18 @@ bool Minimap::Submit(float dTime)
 
 void Minimap::Simulate()
 {
+    RestoreSimulationTiles();
+
+    if (m_pConfirmPanel && m_pConfirmPanel->IsDirectionChoiceActive()) {
+        m_isSimulation = false;
+        return;
+    }
+
     //////////////////////////////
     // 시뮬레이션 검증
     assert(m_pConfirmPanel);
     if (!m_pConfirmPanel) {
-        m_isSimulation = false;
+        RestoreSimulationTiles();
         return;
     }
 
