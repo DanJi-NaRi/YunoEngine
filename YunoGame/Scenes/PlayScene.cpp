@@ -22,6 +22,7 @@
 #include "PlayQueue.h"
 #include "EffectUnit.h"
 
+#include "ISceneManager.h"
 
 bool PlayScene::OnCreateScene()
 {
@@ -592,10 +593,16 @@ void PlayScene::Update(float dt)
     }
 
     MoveCamera(dt);
-
-    if (m_input->IsKeyPressed(VK_ESCAPE))
+    
+    if (m_input->IsKeyPressed(VK_ESCAPE) && flag)
+    {
+        YunoEngine::GetSceneManager()->RequestPop();
+        flag = false;
+    }
+    else if(m_input->IsKeyPressed(VK_ESCAPE))
     {
         GameManager::Get().SetSceneState(CurrentSceneState::EscScene);
+        flag = true;
     }
 
     m_PrevSceneState = m_CurSceneState;

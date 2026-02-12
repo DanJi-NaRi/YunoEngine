@@ -425,22 +425,13 @@ void GameManager::SetSceneState(CurrentSceneState state)
     }
     case CurrentSceneState::EscScene:
     {
-       
-        if (m_state == CurrentSceneState::EscScene)
-        {
-            sm->RequestPop();
-            break;
-        }
-        
-        m_state = CurrentSceneState::EscScene;
-
         ScenePolicy sp;
         sp.blockRenderBelow = false;
         sp.blockUpdateBelow = false;
         sp.blockInputBelow = true;
 
-        
         sm->RequestPush(std::make_unique<EscScene>(), sp);
+
         break;
     }
     case CurrentSceneState::ResultScene:
