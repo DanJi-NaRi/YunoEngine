@@ -49,6 +49,7 @@ void UIManager::Update(float dTime)
 {
     FrameDataUpdate();
     UpdateButtonStates(); // 모든 버튼 상태 업데이트
+    ProcessLeaveCursur(); // 클라이언트 밖으로 나간 경우 드래그/포커스 정리
 
     // 로직 업데이트
     for (auto& widget : m_widgets)
@@ -327,6 +328,17 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
     const bool isLMB = (mouseButton == 0);
     const bool isRMB = (mouseButton == 1);
 
+    // 드래그 중 타 버튼 입력 차단
+    if (state == ButtonState::Pressed) {
+        Button* focusedWidget = m_cursurSystem.GetFocusedWidget();
+        if (focusedWidget) {
+            DragProvider* drag = focusedWidget->GetDragProvider();
+            if (drag && drag->IsNowDragging() && m_cursurSystem.GetFocusedMouseButton() != (int)mouseButton) {
+                return false;
+            }
+        }
+    }
+
     // 1) 이번 프레임 입력 발생 체크
     switch (state) {
     case ButtonState::Pressed:
@@ -443,12 +455,14 @@ bool UIManager::ProcessLeaveCursur()
     if (!drag || !drag->IsNowDragging()) {
         focusWidget->SetButtonState(ButtonState::Idle);
         m_cursurSystem.SetFocusedWidget(nullptr);
+        m_cursurSystem.SetFocusedMouseButton(-1);
         return true;
     }
 
     drag->EndDrag();
     focusWidget->SetButtonState(ButtonState::Idle);
     m_cursurSystem.SetFocusedWidget(nullptr);
+    m_cursurSystem.SetFocusedMouseButton(-1);
     return true;
 }
 
