@@ -108,13 +108,25 @@ void PlayGridSystem::InitRound()
 
 void PlayGridSystem::Update(float dt)
 {
-    if (!GameManager::Get().IsEmptyWeaponData())
-        InitRound();
+    if (!GameManager::Get().IsEmptyWeaponData())    
+        InitRound();       
+
+    //ReflectWeaponData();        // 이걸 여기 했는데 UI반영이 안된다? 그럼 뭔가 큰 일이 났다는 사실~
 
     UpdateSequence(dt);         // 카드 타입별 step 진행
 
     CheckPacket(dt);
     CheckMyQ();
+}
+
+void PlayGridSystem::ApplyTransform()
+{
+    for (auto* unit : m_units)
+    {
+        auto id = unit->GetWeaponID();
+        if (id == 3)
+            unit->SetScale({ 2, 2, 2 });
+    }
 }
 
 void PlayGridSystem::CreateObject(float x, float y, float z)
@@ -306,7 +318,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/Breacher_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
-         pPiece->SetScale(XMFLOAT3(2, 2, 2));
+         //pPiece->SetScale(XMFLOAT3(2, 2, 2));
          pPiece->SetMoveRotOffset(-0.25f, 0);
          break;
      case 4:
@@ -376,6 +388,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
 
      // 빈 박스에 자식 객체로 등록. (for 정리)
      m_gridBox->Attach(pPiece);
+     m_units.push_back(pPiece);
 }
 
 void PlayGridSystem::CheckMyQ()
@@ -492,7 +505,15 @@ void PlayGridSystem::CheckPacket(float dt)
     {
         const auto pckt = mng.PopBattlePacket();
         isProcessing = true;
-        m_pktTime = pckt.actionTime / 1000.f; //임의값 넣어둠
+
+        if (static_cast<int>(pckt.isCoinTossUsed) > 0 && m_delayFlag)
+            m_pktTime = (pckt.actionTime  + 500 + 4500) / 1000.f; //임의값 넣어둠
+        else if(m_delayFlag)
+            m_pktTime = (pckt.actionTime + 500) / 1000.f;
+        else if(static_cast<int>(pckt.isCoinTossUsed) > 0)
+            m_pktTime = (pckt.actionTime + 4500) / 1000.f;
+        else
+            m_pktTime = (pckt.actionTime) / 1000.f;
 
         const auto runTimeCardID = pckt.runTimeCardID;
         const auto dir = pckt.dir;
@@ -504,8 +525,6 @@ void PlayGridSystem::CheckPacket(float dt)
         // runtimeCardID로 CardManager에서 카드 정보 얻어옴
         // 서버 쪽에서 패킷 시간 계산 로직 끝나면 지워야함
         const auto& cardData = mng.GetCardData(runTimeCardID);
-
-
 
         const int effectID = cardData.m_effectId;
         const int soundID = cardData.m_soundId;
@@ -527,9 +546,10 @@ void PlayGridSystem::CheckPacket(float dt)
     // 장애물까지 발동하고 CheckOver
     if (!mng.IsEmptyObstaclePacket() && mng.IsEmptyBattlePacket() && !isProcessing)
     {
+        m_delayFlag = false;
         const auto obstaclePkt = mng.PopObstaclePacket();
         if (isRoundOver) return;    // 라운드 종료 시 해당 장애물은 패킷 버리기
-
+      
         m_pktTime = obstaclePktDuration;
         isProcessing = true;
         ApplyObstacleResult(obstaclePkt);
@@ -689,7 +709,16 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
         {
             int id = tiles[i];
             auto pTile = static_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[id]));
-            pTile->SetFlashColor(as.m_tileEffectColor, as.m_flashCount, as.m_flashInterval);
+
+            Effect* eff;
+            if(as.attacker == GamePiece::Ally1 || as.attacker == GamePiece::Ally2)
+                eff = m_effectManager->Spawn(EffectID::Target, { 0, 0.01, 0 }, { 1, 1, 1 });
+            else
+                eff = m_effectManager->Spawn(EffectID::TargetEnemy, { 0, 0.01, 0 }, { 1, 1, 1 });
+
+            if(eff)
+                pTile->Attach(eff);
+            //pTile->SetFlashColor(as.m_tileEffectColor, as.m_flashCount, as.m_flashInterval);
         }
 
         AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_TileHit));
@@ -1499,6 +1528,7 @@ void PlayGridSystem::CheckOver()
         }
     }
     isRoundOver = true;
+    GameManager::Get().ClearBattlePacket();
 }
 
 void PlayGridSystem::ReflectWeaponData()

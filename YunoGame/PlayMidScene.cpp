@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "PlayMidScene.h"
 
+#include "SpriteSheet.h"
 #include "YunoEngine.h"
 #include "GameManager.h"
 #include "UIManager.h"
@@ -22,6 +23,7 @@ bool PlayMidScene::OnCreateScene()
     CreateRevealCardUI();
     CreateWarningUI();
     CreateAddCardSelectUI();
+    CreateCoinTossUI();
 
     ChangeUIState(PlayMidUIState::Main);
 
@@ -31,18 +33,15 @@ bool PlayMidScene::OnCreateScene()
 void PlayMidScene::Clear()
 {
     // 전부 비활성화
-    if (m_round) m_round-> SetVisible(Visibility::Collapsed);
-
-    for (auto* card : m_readyCards)
-        if (card) card->SetVisible(Visibility::Collapsed);
-    if (m_leftBG)  m_leftBG->SetVisible(Visibility::Collapsed);
-    if (m_rightBG) m_rightBG->SetVisible(Visibility::Collapsed);
+    if (m_round) m_round->SetVisible(Visibility::Collapsed);
 
     if (m_warningBG) m_warningBG->SetVisible(Visibility::Collapsed);
     if (m_warningFG) m_warningFG->SetVisible(Visibility::Collapsed);
     if (m_warningLogo) m_warningLogo->SetVisible(Visibility::Collapsed);
 
     if (m_addCardPanel) m_addCardPanel->SetVisible(Visibility::Collapsed);
+
+    if (m_coin) m_coin->SetVisible(Visibility::Collapsed); // 추가
 }
 
 void PlayMidScene::CreateMainUI()
@@ -71,7 +70,7 @@ void PlayMidScene::CreateRevealCardUI()
 
     const float centerY = ClientH * 0.5f;
 
-    const float startY = centerY - 180.f;
+    const float startY = centerY;
     const float gapY = 160.f;
 
     m_leftBG = CreateWidget<TextureImage>(
@@ -117,7 +116,7 @@ void PlayMidScene::CreateWarningUI()
     m_warningBG = CreateWidget<TextureImage>(
         L"WarningBG",
         Float2(3840.f, 2160.f),
-        XMFLOAT3(ClientW * 0.5f, ClientH * 0.5f, 0),
+        XMFLOAT3(960, 540, 0),
         UIDirection::Center
     );
 
@@ -127,7 +126,7 @@ void PlayMidScene::CreateWarningUI()
     m_warningFG = CreateWidget<TextureImage>(
         L"WarningFG",
         Float2(8431.f, 535.f),
-        XMFLOAT3(ClientW * 0.5f - 4014, ClientH * 0.5f, 0),
+        XMFLOAT3(-120.f, ClientH * 0.5f, 0),
         UIDirection::Center
     );
 
@@ -136,7 +135,7 @@ void PlayMidScene::CreateWarningUI()
     m_warningLogo = CreateWidget<TextureImage>(
         L"WarningLogo",
         Float2(534.f, 557.f),
-        XMFLOAT3(ClientW * 0.5f, ClientH * 0.5f - 100, 0),
+        XMFLOAT3(960, 540, 0),
         UIDirection::Center
     );
 
@@ -160,6 +159,27 @@ void PlayMidScene::CreateAddCardSelectUI()
     m_addCardPanel->SetVisible(Visibility::Collapsed);
 }
 
+void PlayMidScene::CreateCoinTossUI()
+{
+    m_coin = CreateWidget<SpriteSheet>(
+        L"CoinToss",
+        Float2{ 512, 512 },
+        XMFLOAT3{ ClientW * 0.5f, ClientH * 0.5f, 0 },
+        UIDirection::Center
+    );
+
+    m_coin->SetSpriteSheet(
+        L"../Assets/Effects/Coin/EF_Coin1P.png",
+        10,      // col
+        10,      // row
+        100,     // total frame
+        24.f,    // fps
+        false    // loop X
+    );
+
+    m_coin->SetVisible(Visibility::Collapsed);
+}
+
 void PlayMidScene::ChangeUIState(PlayMidUIState state)
 {
     if (m_uiState == state) return;
@@ -180,46 +200,65 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
         break;
 
     case PlayMidUIState::RevealCard:
-        m_cardAnims.clear();
-        m_moveTimer = 0.f;
-        m_isMoving = true;
-
-        m_leftRevealIndex = 0;
-        m_rightRevealIndex = 0;
-        m_revealTimer = 0.f;
-        m_revealFinished = false;
-        m_postRevealTimer = 0.f;
-
-        if (m_leftBG)  m_leftBG->SetVisible(Visibility::Visible);
-        if (m_rightBG) m_rightBG->SetVisible(Visibility::Visible);
-
-        for (int i = 0; i < m_readyCards.size(); ++i)
+    {
+        if (!m_isRevealInitialized)
         {
-            auto* card = m_readyCards[i];
-            if (!card) continue;
+            m_isRevealInitialized = true;
 
-            card->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
-            card->SetVisible(Visibility::Visible);
+            m_cardAnims.clear();
+            m_moveTimer = 0.f;
+            m_isMoving = true;
 
-            XMFLOAT3 target = card->GetPos();
+            m_leftRevealIndex = 0;
+            m_rightRevealIndex = 0;
+            m_postRevealTimer = 0.f;
 
-            XMFLOAT3 start = target;
+            if (m_leftBG)  m_leftBG->SetVisible(Visibility::Visible);
+            if (m_rightBG) m_rightBG->SetVisible(Visibility::Visible);
 
-            if (i < 4)
-                start.x = -300.f;                 // 왼쪽 화면 밖
-            else
-                start.x = ClientW + 300.f;        // 오른쪽 화면 밖
+            const float leftX = 50.f;
+            const float rightX = ClientW - 50.f;
+            const float centerY = ClientH * 0.5f;
+            const float startY = centerY;
+            const float gapY = 160.f;
 
-            card->SetPos(start);
+            for (int i = 0; i < (int)m_readyCards.size(); ++i)
+            {
+                auto* card = m_readyCards[i];
+                if (!card) continue;
 
-            m_cardAnims.push_back({ card, start, target });
+                card->ChangeTexture(L"../Assets/UI/CARD/Card_back.png");
+                card->SetVisible(Visibility::Visible);
+
+                float x = (i < 4) ? leftX : rightX;
+                float y = startY + (i % 4) * gapY;
+
+                XMFLOAT3 target = { x, y, 0 };
+                XMFLOAT3 start = target;
+
+                if (i < 4)
+                    start.x = -300.f;
+                else
+                    start.x = ClientW + 300.f;
+
+                card->SetPos(start);
+                m_cardAnims.push_back({ card, start, target });
+            }
         }
-        break;
+
+        m_revealFinished = false;
+    }
+    break;
 
     case PlayMidUIState::Warning:
         m_warningTimer = 0.f;
 
-        if (m_warningBG) m_warningBG->SetVisible(Visibility::Visible);
+        if (m_warningBG)
+        {
+            m_warningBG->SetPos({ ClientW * 0.5f, ClientH * 0.5f, 0 });
+            m_warningBG->SetVisible(Visibility::Visible);
+            m_warningBG->SetLayer(WidgetLayer::Background);
+        }
 
         if (m_warningFG)
         {
@@ -227,12 +266,18 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
             m_warningFG->SetPos({ m_warningStartX, ClientH * 0.5f, 0 });
         }
 
-        if (m_warningLogo) m_warningLogo->SetVisible(Visibility::Visible);
-
+        if (m_warningLogo)
+        {
+            m_warningLogo->SetVisible(Visibility::Visible);
+            m_warningLogo->SetPos({ ClientW * 0.5f, ClientH * 0.5f - 100.f, 0 });
+            m_warningLogo->SetLayer(WidgetLayer::HUD);
+        }
         break;
 
     case PlayMidUIState::AddCardSelect:
     {
+        m_isRevealInitialized = false;
+
         if (m_addCardPanel)
             m_addCardPanel->SetVisible(Visibility::Visible);
 
@@ -241,8 +286,28 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
 
         m_addCardPanel->SetCandidateCards(candidates);
         m_addCardPanel->Show();
+
+        for (auto* card : m_readyCards)
+            if (card) card->SetVisible(Visibility::Collapsed);
+
+        if (m_leftBG)  m_leftBG->SetVisible(Visibility::Collapsed);
+        if (m_rightBG) m_rightBG->SetVisible(Visibility::Collapsed);
     }
     break;
+
+    case PlayMidUIState::CoinToss:
+    {
+        m_coinTimer = 0.f;
+        m_coinPlaying = true;
+
+        if (m_coin)
+        {
+            m_coin->SetFrameIndex(0);
+            m_coin->SetVisible(Visibility::Visible);
+            m_coin->Play();
+        }
+    }
+    break; //  fall-through 버그 수정
 
     case PlayMidUIState::Finished:
         break;
@@ -256,7 +321,6 @@ void PlayMidScene::OnDestroyScene()
 void PlayMidScene::OnEnter()
 {
     YunoEngine::GetInput()->AddContext(&m_uiCtx, this);
-    //여기서 카드 결과 받을 거임
 }
 
 void PlayMidScene::OnExit()
@@ -316,33 +380,43 @@ void PlayMidScene::UpdateRevealCard(float dt, GameManager& gm)
 
         if (t >= 1.f)
         {
-            m_isMoving = false;  // 이동 완료
+            m_isMoving = false;
         }
 
-        return;  // 이동 중에는 카드 공개 안 함
+        return;
     }
-    // 아직 공개 중이면
+
+    if (m_waitingNextReveal)
+    {
+        m_nextRevealDelay -= dt;
+
+        if (m_nextRevealDelay > 0.f)
+            return;
+
+        m_waitingNextReveal = false;
+    }
+
     if (!m_revealFinished)
     {
-        m_revealTimer += dt;
-
-        if (m_revealTimer >= m_revealInterval)
+        if (!m_coinHandledThisStep)
         {
-            m_revealTimer = 0.f;
+            if (TryHandleCoinToss(gm))
+                return;
+        }
 
-            PopAndRevealPair(gm);
-
-            //  마지막 카드까지 공개됐는지 체크
-            if (m_leftRevealIndex >= 4 && m_rightRevealIndex >= 4 )
-            {
-                m_revealFinished = true;
-                m_postRevealTimer = 0.f;
-            }
+        if (PopAndRevealPair(gm))
+        {
+            m_coinHandledThisStep = false;
+            m_waitingNextReveal = true;
+        }
+        if (m_leftRevealIndex >= 4 && m_rightRevealIndex >= 4)
+        {
+            m_revealFinished = true;
+            m_postRevealTimer = 0.f;
         }
     }
     else
     {
-        //  전부 공개 완료 후 대기 시간
         m_postRevealTimer += dt;
 
         if (m_postRevealTimer >= m_postRevealDelay)
@@ -367,8 +441,58 @@ void PlayMidScene::UpdateWarning(float dt)
 
     if (m_warningTimer >= m_warningDuration)
     {
-        ChangeUIState(PlayMidUIState::Main);
+        ChangeUIState(PlayMidUIState::CoinToss);
     }
+}
+
+void PlayMidScene::UpdateCoinToss(float dt)
+{
+    if (!m_coinPlaying) return;
+
+    m_coinTimer += dt;
+
+    if (m_coinTimer >= m_coinDuration)
+    {
+        m_coinPlaying = false;
+
+        if (m_coin)
+            m_coin->SetVisible(Visibility::Collapsed);
+
+        ChangeUIState(PlayMidUIState::RevealCard);
+    }
+}
+
+bool PlayMidScene::TryHandleCoinToss(GameManager& gm)
+{
+
+    int first = gm.PopCoinToss();   // 0,2,4,6
+    int second = gm.PopCoinToss();   // 1,3,5,7 (버림)
+
+    int coin = first;
+
+    m_coinHandledThisStep = true;
+
+    if (coin <= 0)
+        return false;
+
+    std::cout << "coin = " << coin << std::endl;
+
+    if (coin == 1)
+    {
+        m_coin->SetSpriteSheet(
+            L"../Assets/Effects/Coin/EF_Coin1P.png",
+            10, 10, 100, 24.f, false);
+    }
+    else if (coin == 2)
+    {
+        m_coin->SetSpriteSheet(
+            L"../Assets/Effects/Coin/EF_Coin2P.png",
+            10, 10, 100, 24.f, false);
+    }
+
+    ChangeUIState(PlayMidUIState::Warning);
+
+    return true;  // 코인 연출 시작했음
 }
 
 bool PlayMidScene::PopAndRevealPair(GameManager& gm)
@@ -376,16 +500,20 @@ bool PlayMidScene::PopAndRevealPair(GameManager& gm)
     if (gm.IsEmptyRevealQueue())
         return false;
 
-    // 첫 번째 (P1)
+    float totalActionTime = 0.f;
+
     BattleResult br1 = gm.PopRevealPacket();
     RevealSingleCard(br1, gm);
+    totalActionTime += br1.actionTime;
 
-    // 두 번째 (P2)
     if (!gm.IsEmptyRevealQueue())
     {
         BattleResult br2 = gm.PopRevealPacket();
         RevealSingleCard(br2, gm);
+        totalActionTime += br2.actionTime;
     }
+
+    m_nextRevealDelay = totalActionTime * 0.001f;
 
     return true;
 }
@@ -420,20 +548,10 @@ void PlayMidScene::Update(float dt)
     m_phaseTimer += dt;
 
     CheckRoundChange(gm);
-    
+
     if (gm.ConsumeRevealStart())
     {
         ChangeUIState(PlayMidUIState::RevealCard);
-    }
-
-   //if (gm.ConsumeWarning())
-   //{
-   //    ChangeUIState(PlayMidUIState::Warning);
-   //}
-    
-    if (m_input->IsKeyPressed('V'))
-    {
-        ChangeUIState(PlayMidUIState::Warning);
     }
 
     switch (m_uiState)
@@ -445,9 +563,15 @@ void PlayMidScene::Update(float dt)
     case PlayMidUIState::RevealCard:
         UpdateRevealCard(dt, gm);
         break;
+
     case PlayMidUIState::Warning:
         UpdateWarning(dt);
         break;
+
+    case PlayMidUIState::CoinToss:
+        UpdateCoinToss(dt);
+        break; //  break 추가
+
     default:
         break;
     }

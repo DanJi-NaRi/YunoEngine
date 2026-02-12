@@ -274,10 +274,12 @@ namespace yuno::game
 
                 auto wVector = gm.GetWeaponData();
 
+                std::cout << "=====================================================GetWeaponDataPacket=====================================================" << std::endl;
                 for (const auto& data : wVector) 
                 {
                     std::cout << "Weapon data : " << data.pId << " ," << data.slotId << " ," << data.weaponId << " ," << data.hp << " ," << data.stamina << " ," << data.currentTile << std::endl;
                 }
+
 
             });// RoundStart Packet End
 
@@ -398,11 +400,15 @@ namespace yuno::game
                     order.push_back(us);
                 }
 
-                BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex, pkt.dir, pkt.actionTime, order };
+                BattleResult br{ pkt.runtimeCardId, pkt.ownerSlot, pkt.unitLocalIndex ,pkt.dir, pkt.actionTime, pkt.isCoinTossUsed, order };
+
+                std::cout << "Battle Packet(actionTime) : " << static_cast<int>(pkt.actionTime) << std::endl;
+
                 gm.PushBattlePacket(br);
                 gm.PushRevealPacket(br);// 복사 저장
                 gm.UpdatePanels(br);
                 gm.SetSceneState(CurrentSceneState::AutoBattle);
+                gm.SetCoinToss(static_cast<int>(pkt.isCoinTossUsed));
 
                 // 이거때문에 둘 다 카드 제출하고 업데이트 하는 순간 미니맵 없어서 터짐
                 //gm.UpdatePanels(br);

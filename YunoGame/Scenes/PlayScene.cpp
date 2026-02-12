@@ -33,12 +33,12 @@ bool PlayScene::OnCreateScene()
     m_uiManager->SetOrthoFlag(true);//여기서 ui 쓰는거 맞음?
     m_objectManager->CreateDirLight();
 
-    //int j = 0;
-    //for (int i = 0; i < 12; i++)
-    //{
-    //    m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
-    //    j++;
-    //}
+    int j = 0;
+    for (int i = 0; i < 12; i++)
+    {
+        m_objectManager->CreatePointLight(XMFLOAT3(0, 1, 0), XMFLOAT4(1, 1, 1, 1), 30.0f);
+        j++;
+    }
 
     PassOption po;
     po.shader = ShaderId::NoneShadowPBRBase;
@@ -46,53 +46,53 @@ bool PlayScene::OnCreateScene()
     auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
     map->SetRot({ 0, XM_PIDIV2, 0 });
 
-    //EffectDesc ed{};
-    //ed.id = EffectID::Warning;
-    //ed.shaderid = ShaderId::EffectBase;
-    //ed.billboard = BillboardMode::None;
-    //ed.lifetime = 1.5f;
-    //ed.framecount = 25;
-    //ed.cols = 5;
-    //ed.rows = 5;
-    //ed.emissive = 30.0f;
-    //ed.color = { 1, 0, 0, 1 };
-    //ed.rot = { 0, 0, 0 };
-    //ed.isLoop = true;
-    //ed.texPath = L"../Assets/Effects/Warning/EF_WARNING.png";
+    EffectDesc ed{};
+    ed.id = EffectID::Warning;
+    ed.shaderid = ShaderId::EffectBase;
+    ed.billboard = BillboardMode::None;
+    ed.lifetime = 1.5f;
+    ed.framecount = 25;
+    ed.cols = 5;
+    ed.rows = 5;
+    ed.emissive = 30.0f;
+    ed.color = { 1, 0, 0, 1 };
+    ed.rot = { 0, 0, 0 };
+    ed.isLoop = true;
+    ed.texPath = L"../Assets/Effects/Warning/EF_WARNING.png";
 
-    //for (auto i = 0; i < 5; i++)
-    //{
-    //    auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning", XMFLOAT3(0, 1, 0));
-    //    warning->BuildInternalEffectMaterial(ed);
-    //}
+    for (auto i = 0; i < 5; i++)
+    {
+        auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning", XMFLOAT3(0, 1, 0));
+        warning->BuildInternalEffectMaterial(ed);
+    }
 
-    //ed.framecount = 25;
-    //ed.cols = 5;
-    //ed.rows = 5;
-    //ed.texPath = L"../Assets/Effects/Warning/EF_WARNING_2.png";
-    //for (auto i = 0; i < 5; i++)
-    //{
-    //    auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_2", XMFLOAT3(0, 1, 0));
-    //    warning->BuildInternalEffectMaterial(ed);
-    //}
+    ed.framecount = 25;
+    ed.cols = 5;
+    ed.rows = 5;
+    ed.texPath = L"../Assets/Effects/Warning/EF_WARNING_2.png";
+    for (auto i = 0; i < 5; i++)
+    {
+        auto warning = m_objectManager->CreateObject<EffectUnit>(L"Warning_2", XMFLOAT3(0, 1, 0));
+        warning->BuildInternalEffectMaterial(ed);
+    }
 
-    //po = {};
-    //po.raster = RasterPreset::CullNone;
-    //po.blend = BlendPreset::AlphaBlend;
-    //po.shader = ShaderId::EffectWithTexMap;
+    po = {};
+    po.raster = RasterPreset::CullNone;
+    po.blend = BlendPreset::AlphaBlend;
+    po.shader = ShaderId::EffectWithTexMap;
 
-    //for (auto i = 0; i < 5; i++)
-    //{
-    //    auto Holo = m_objectManager->CreateObjectFromFile<Building>(L"Holo_01_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H/HOLD.fbx", po);
-    //    Holo->SetRot({ -XM_PIDIV2, 0, 0 });
-    //    auto Holo2 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_02_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_2/HOLD.fbx", po);
-    //    Holo2->SetRot({ -XM_PIDIV2, 0, 0 });
-    //}
+    for (auto i = 0; i < 5; i++)
+    {
+        auto Holo = m_objectManager->CreateObjectFromFile<Building>(L"Holo_01_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H/HOLD.fbx", po);
+        Holo->SetRot({ -XM_PIDIV2, 0, 0 });
+        auto Holo2 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_02_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_2/HOLD.fbx", po);
+        Holo2->SetRot({ -XM_PIDIV2, 0, 0 });
+    }
 
-    //for (auto i = 0; i < 10; i++)
-    //{
-    //    auto Holo3 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_03_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_3/VS.fbx", po);
-    //}
+    for (auto i = 0; i < 10; i++)
+    {
+        auto Holo3 = m_objectManager->CreateObjectFromFile<Building>(L"Holo_03_", XMFLOAT3(0, 1, 0), L"../Assets/fbx/Map/H_3/VS.fbx", po);
+    }
 
     for (int i = 0; i < 6; i++)
     {
@@ -515,6 +515,15 @@ void PlayScene::OnEnter()
 {
     //std::cout << "[PlayScene] OnEnter\n"; 
     YunoEngine::GetInput()->AddContext(&m_gameCtx, this);
+
+    m_playGrid->ApplyTransform();
+
+    m_CurSceneState = GameManager::Get().GetSceneState();
+    m_PrevSceneState = m_CurSceneState;
+
+    m_CurCamPos = YunoEngine::GetRenderer()->GetCamera().position;
+    m_NextCamPos = { m_CurCamPos.x, m_CurCamPos.y, -7.8 };
+    isCamMove = true;
 }
 
 void PlayScene::OnExit()
@@ -524,6 +533,39 @@ void PlayScene::OnExit()
 }
 
 
+void PlayScene::MoveCamera(float dt)
+{
+    if (!isCamMove)
+        return;
+
+    auto& cam = YunoEngine::GetRenderer()->GetCamera();
+
+    m_curMoveTime += dt;
+
+    float t = m_curMoveTime / m_CamMoveTime;
+
+    XMVECTOR curpos = XMLoadFloat3(&m_CurCamPos);
+    XMVECTOR nextpos = XMLoadFloat3(&m_NextCamPos);
+
+    XMVECTOR newpos;
+    if (t < 1.0f)
+    {
+        newpos = XMVectorLerp(curpos, nextpos, t);
+        XMStoreFloat3(&cam.position, newpos);
+    }
+    else
+    {
+        newpos = nextpos;
+        XMStoreFloat3(&cam.position, newpos);
+
+        XMStoreFloat3(&m_NextCamPos, curpos);
+        XMStoreFloat3(&m_CurCamPos, newpos);
+
+        m_curMoveTime = 0.0f;
+        isCamMove = false;
+    }
+}
+
 
 void PlayScene::Update(float dt)
 {
@@ -532,6 +574,19 @@ void PlayScene::Update(float dt)
     //TestInput();
 
     m_playGrid->Update(dt);
+
+    m_CurSceneState = GameManager::Get().GetSceneState();
+
+    if (m_PrevSceneState != m_CurSceneState)
+    {
+        if (m_CurSceneState == CurrentSceneState::SubmitCard
+            || m_CurSceneState == CurrentSceneState::AutoBattle)
+            isCamMove = true;
+    }
+
+    MoveCamera(dt);
+
+    m_PrevSceneState = m_CurSceneState;
 }
 
 void PlayScene::SubmitObj()
