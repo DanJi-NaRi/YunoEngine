@@ -51,7 +51,9 @@ private:
     float m_curMoveTime = 0.0f;
 
     XMFLOAT3 m_CurCamPos;
+    XMFLOAT3 m_CurCamTarget;
     XMFLOAT3 m_NextCamPos;
+    XMFLOAT3 m_NextCamTarget;
 
     bool isCamMove = false;
 };

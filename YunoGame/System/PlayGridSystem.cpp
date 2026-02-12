@@ -321,7 +321,7 @@ void PlayGridSystem::CreatePiece(const Wdata& w)
          pPiece->AddAnimationClip("hitF", L"../Assets/fbx/Animation/hit/Breacher_hit.fbx");
          pPiece->SetNoiseTexture(L"../Assets/Textures/BloodDisolve.png");
          pPiece->SetDissolveColor(XMFLOAT3(1, 1, 1));
-         //pPiece->SetScale(XMFLOAT3(2, 2, 2));
+         pPiece->SetScale(XMFLOAT3(2, 2, 2));
          pPiece->SetMoveRotOffset(-0.25f, 0);
          break;
      case 4:
