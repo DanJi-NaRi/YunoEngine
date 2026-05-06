@@ -19,6 +19,7 @@ public:
     virtual bool IsKeyReleased(uint32_t key) const = 0;
 
     virtual bool IsMouseHovered() const = 0;
+    virtual bool IsMouseLeaved() const = 0;
     virtual bool IsMouseButtonDown(uint32_t button) const = 0;
     virtual bool IsMouseButtonPressed(uint32_t button) const = 0;
     virtual bool IsMouseButtonReleased(uint32_t button) const = 0;
@@ -36,4 +37,6 @@ public:
     // 인풋을 사용할 컨텍스트
     virtual void AddContext(IInputContext* context, IScene* scene) = 0;
     virtual void RemoveContext(IInputContext* context) = 0;
+
+    virtual void SetInputBlockScene(IScene* scene) = 0;
 };

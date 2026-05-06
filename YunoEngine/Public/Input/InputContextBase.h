@@ -33,6 +33,10 @@ public:
         m_uiManager = m_scene->GetUIManager();
     }
 
+    IScene* GetScene() const
+    {
+        return m_scene;
+    }
     //void SetObjectManager(ObjectManager* objManger) { m_objManager = m_objManager; }
     //void SetUIManager(UIManager* uiManger) { m_uiManager = uiManger; }
 

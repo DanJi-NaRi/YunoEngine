@@ -6,23 +6,7 @@ namespace yuno::server
     class MatchManager;
     class ServerCardDealer;
     class YunoServerNetwork;
-
-    // MK 추가
-    struct UnitState
-    {
-        uint8_t slotID = 0;      // 몇번째 유닛인지
-        uint8_t WeaponID = 0;    // 무기 아이디
-        uint8_t hp = 0;          // 체력
-        uint8_t tileID = 0;      // 현재 좌표
-    };
-    
-    struct PlayerUnits
-    {
-        uint8_t PID = 0;         // 플레이어 아이디
-        uint8_t stamina = 0;     // 스태미나
-        UnitState unit1;
-        UnitState unit2;
-    };
+    class PlayerCardController;
 
     class RoundController
     {
@@ -30,28 +14,49 @@ namespace yuno::server
         RoundController(
             MatchManager& match,
             ServerCardDealer& dealer,
-            YunoServerNetwork& network);
+            YunoServerNetwork& network,
+            PlayerCardController& mcardController);
 
         void TryStartRound();
+        void Update();
+        void OnRoundStartReadyOK(int playerIdx);
+        void EndTurn();
+        void EndGame();
+        void OnPlayerSelectedCard(int playerIdx);
+        void ResetMatchState();
 
-        uint8_t GetUnitId(int slotIdx, int localUnitIdx) const;
+        void EndGameByDisconnect(uint8_t winnerPID, uint32_t winnerSessionId);
 
-        // MK 추가
-        PlayerUnits& GetPlayerUnitState(uint8_t PID);
+        
+        bool GetRoundStarted() { return m_roundStarted; }
+        bool IsMatchLocked() const { return m_matchLocked; }
 
+        bool IsRoundStarted() { return m_roundStarted; }
+
+        void EndRound();
     private:
         void SendCountDown();
         void SendInitialCards();
         void SendRoundStart();
+        void SendDrawCandidates();
+
+        void StartTurn();
+        
 
         MatchManager& m_match;
         ServerCardDealer& m_cardDealer;
         YunoServerNetwork& m_network;
+        PlayerCardController& m_cardController;
 
         bool m_roundStarted = false;
-        std::unordered_map<uint32_t, uint8_t> m_unitIdMap;
+        bool m_cardsInitialized = false;
 
-        // MK 추가
-        std::unordered_map<uint8_t, PlayerUnits> allPlayerUnits; // key: player id, value: player 별 유닛 상태값
+        bool m_matchLocked = false;
+
+        bool m_waitingRoundStartReady = false;
+        bool m_roundStartReady[2] = { false, false };
+
+        bool m_cardSelected[2] = { false, false };
+        std::unordered_map<uint32_t, uint8_t> m_unitIdMap;
     };
 }

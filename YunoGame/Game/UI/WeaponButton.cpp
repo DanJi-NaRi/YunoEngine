@@ -1,11 +1,88 @@
 #include "pch.h"
 
 #include "WeaponButton.h"
+#include "AudioQueue.h"
 
 #include "YunoEngine.h"
 #include "IInput.h"
 #include "GameManager.h"
-#include "UserImage.h"
+#include "TextureImage.h"
+#include "ShowCardDeck.h"
+
+namespace
+{
+    std::wstring GetPieceNameLower(PieceType pieceType)
+    {
+        switch (pieceType)
+        {
+        case PieceType::Blaster:
+            return L"blaster";
+        case PieceType::Chakram:
+            return L"chakram";
+        case PieceType::Breacher:
+            return L"breacher";
+        case PieceType::Scythe:
+            return L"scythe";
+        case PieceType::Impactor:
+            return L"impactor";
+        case PieceType::Cleaver:
+            return L"cleaver";
+        case PieceType::None:
+        default:
+            return L"";
+        }
+    }
+
+    std::wstring GetSelectedSlotTexturePath(PieceType pieceType, int slotTextureIndex)
+    {
+        const std::wstring pieceName = GetPieceNameLower(pieceType);
+        if (pieceName.empty())
+            return L"";
+
+        if (slotTextureIndex < 1 || slotTextureIndex > 4)
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/selected_" + pieceName + L"_" + std::to_wstring(slotTextureIndex) + L".png";
+    }
+
+    std::wstring GetWeaponSlotTexturePath(PieceType pieceType, int slotTextureIndex)
+    {
+        const std::wstring pieceName = GetPieceNameLower(pieceType);
+        if (pieceName.empty())
+            return L"";
+
+        if (slotTextureIndex < 1 || slotTextureIndex > 4)
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/weapon_" + std::to_wstring(slotTextureIndex) + L"_" + pieceName + L".png";
+    }
+
+    std::wstring GetWeaponNameTexturePath(PieceType pieceType)
+    {
+        const std::wstring pieceName = GetPieceNameLower(pieceType);
+        if (pieceName.empty())
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/Weapon_name_" + pieceName + L".png";
+    }
+
+    std::wstring GetWeaponCardTexturePath(PieceType pieceType)
+    {
+        const std::wstring pieceName = GetPieceNameLower(pieceType);
+        if (pieceName.empty())
+            return L"";
+    
+        return L"../Assets/UI/CARD/card_" + pieceName + L"_3.png";
+    }
+    
+    std::wstring GetBeforeSelectTexturePath(int slotTextureIndex)
+    {
+        if (slotTextureIndex < 1 || slotTextureIndex > 4)
+            return L"";
+
+        return L"../Assets/UI/WEAPON_SELECT/Before_select_" + std::to_wstring(slotTextureIndex) + L".png";
+    }
+}
 
 WeaponButton::WeaponButton(UIFactory& uiFactory) : Button(uiFactory) // 오른쪽에 부모의 생성자를 반드시 호출해줄 것.
 {
@@ -21,9 +98,11 @@ void WeaponButton::Clear()
 {
 }
 
-bool WeaponButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool WeaponButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Button::Create(name, id, vPos);
+    sizePx.x /= 2;
+    sizePx.y /= 2;
+    Button::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     m_bindkey = 0; // 0인 경우, 안쓴다는 뜻
 
@@ -31,8 +110,8 @@ bool WeaponButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 }
 
 bool WeaponButton::Update(float dTime) {
+    if (GameManager::Get().GetSceneState() == CurrentSceneState::StandBy|| GameManager::Get().GetSceneState() == CurrentSceneState::CountDown) m_useHoverEvent = false;
     Button::Update(dTime);
-
 
     return true;
 }
@@ -51,9 +130,16 @@ bool WeaponButton::IdleEvent()
     return true;
 }
 
+bool WeaponButton::HoverJoinEvent()
+{
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
+    return true;
+}
+
 // 커서가 위에 올라있을 때
 bool WeaponButton::HoveredEvent()
 {
+    if (m_isSelected) return false;
     //std::cout << "HoveredEvent" << std::endl;
     return true;
 }
@@ -68,23 +154,73 @@ bool WeaponButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool WeaponButton::LMBPressedEvent()
 {
-    const int myIdx = GameManager::Get().GetSlotiIdx();
+    std::cout << "OnCLick" << std::endl;
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseClick));
+
+    GameManager& gm = GameManager::Get();
+
+    auto updatePreviewImages = [&]()
+        {
+            if (gm.GetSceneState() == CurrentSceneState::StandBy || gm.GetSceneState() == CurrentSceneState::CountDown) return false;
+            if (auto* showCardDeck = dynamic_cast<ShowCardDeck*>(m_pShowCardDeck))
+                showCardDeck->SetWeaponCards(m_pieceType);
+
+            TextureImage* weaponNameImage = dynamic_cast<TextureImage*>(m_pWeaponNameImage);
+            if (weaponNameImage)
+            {
+                const std::wstring weaponNameTexturePath = GetWeaponNameTexturePath(m_pieceType);
+                if (!weaponNameTexturePath.empty())
+                {
+                    weaponNameImage->ChangeTexture(weaponNameTexturePath);
+                }
+            }
+
+            TextureImage* weaponCardImage = dynamic_cast<TextureImage*>(m_pWeaponCardImage);
+            if (weaponCardImage)
+            {
+                const std::wstring weaponCardTexturePath = GetWeaponCardTexturePath(m_pieceType);
+                if (!weaponCardTexturePath.empty())
+                {
+                    weaponCardImage->ChangeTexture(weaponCardTexturePath);
+                }
+            }
+        };
+
+    updatePreviewImages();
+
+    const PieceType pick0 = gm.GetMyPiece(0);
+    const PieceType pick1 = gm.GetMyPiece(1);
+    const bool isAlreadyPicked = (pick0 == m_pieceType) || (pick1 == m_pieceType);
+    const bool isSelectionFull = (pick0 != PieceType::None) && (pick1 != PieceType::None);
+
+    if (isSelectionFull && !isAlreadyPicked)
+    {
+        return true;
+    }
+
+    m_isSelected = !m_isSelected;
+    m_useHoverEvent = !m_isSelected;
+
+    //if (auto* showCardDeck = dynamic_cast<ShowCardDeck*>(m_pShowCardDeck))
+    //    showCardDeck->SetWeaponCards(m_pieceType);
+
+    const int myIdx = gm.GetSlotiIdx();
     if (myIdx != 1 && myIdx != 2)
         return true;
 
 
-    UserImage* slotImage0 = nullptr;
-    UserImage* slotImage1 = nullptr;
+    TextureImage* slotImage0 = nullptr;
+    TextureImage* slotImage1 = nullptr;
 
     if (myIdx == 1)
     {
-        slotImage0 = dynamic_cast<UserImage*>(m_pUserImage0);
-        slotImage1 = dynamic_cast<UserImage*>(m_pUserImage1);
+        slotImage0 = dynamic_cast<TextureImage*>(m_pUserImage0);
+        slotImage1 = dynamic_cast<TextureImage*>(m_pUserImage1);
     }
     else
     {
-        slotImage0 = dynamic_cast<UserImage*>(m_pUserImage2);
-        slotImage1 = dynamic_cast<UserImage*>(m_pUserImage3);
+        slotImage0 = dynamic_cast<TextureImage*>(m_pUserImage2);
+        slotImage1 = dynamic_cast<TextureImage*>(m_pUserImage3);
     }
 
     if (!slotImage0 || !slotImage1)
@@ -92,29 +228,95 @@ bool WeaponButton::LMBPressedEvent()
 
 
 
-    UserImage* targetImage = nullptr;
+
+    const int slotTextureBase = (myIdx == 1) ? 1 : 3;
+
+    TextureImage* weaponImage0 = (myIdx == 1)
+        ? dynamic_cast<TextureImage*>(m_pWeaponImage0)
+        : dynamic_cast<TextureImage*>(m_pWeaponImage2);
+    TextureImage* weaponImage1 = (myIdx == 1)
+        ? dynamic_cast<TextureImage*>(m_pWeaponImage1)
+        : dynamic_cast<TextureImage*>(m_pWeaponImage3);
+
+    auto clearPick = [&](int pickIndex)
+        {
+            TextureImage* clearSlotImage = (pickIndex == 0) ? slotImage0 : slotImage1;
+            TextureImage* clearWeaponImage = (pickIndex == 0) ? weaponImage0 : weaponImage1;
+
+            const std::wstring beforeSelectTexture = GetBeforeSelectTexturePath(slotTextureBase + pickIndex);
+            if (clearSlotImage && !beforeSelectTexture.empty())
+                clearSlotImage->ChangeTexture(beforeSelectTexture);
+
+            if (clearWeaponImage)
+                clearWeaponImage->SetScale(XMFLOAT3(0.f, 0.f, 1.f));
+
+            gm.SetMyPick(pickIndex, PieceType::None);
+        };
+
+    if (pick0 == m_pieceType)
+    {
+        clearPick(0);
+        return true;
+    }
+
+    if (pick1 == m_pieceType)
+    {
+        clearPick(1);
+        return true;
+    }
+
+    if (pick0 != PieceType::None && pick1 != PieceType::None)
+    {
+        return true;
+    }
+
+    TextureImage* targetImage = nullptr;
+    TextureImage* targetWeaponImage = nullptr;
     int pickIndex = 0;
 
-    if (slotImage0->GetPieceType() == PieceType::None)
+    if (pick0 == PieceType::None)
     {
         targetImage = slotImage0;
+        targetWeaponImage = weaponImage0;
         pickIndex = 0;
     }
-    else if (slotImage1->GetPieceType() == PieceType::None)
+    else if (pick1 == PieceType::None)
     {
         targetImage = slotImage1;
+        targetWeaponImage = weaponImage1;
         pickIndex = 1;
     }
-    else
+
+    const int slotTextureIndex = (myIdx == 1 ? 1 : 3) + pickIndex;
+    const std::wstring slotTexturePath = GetSelectedSlotTexturePath(m_pieceType, slotTextureIndex);
+    if (!slotTexturePath.empty())
     {
-        targetImage = slotImage0;
-        pickIndex = 0;
+        targetImage->ChangeTexture(slotTexturePath);
     }
 
-    targetImage->SetPieceType(m_pieceType);
-    targetImage->ChangeMaterial(static_cast<int>(m_pieceType));
+    const std::wstring weaponTexturePath = GetWeaponSlotTexturePath(m_pieceType, slotTextureIndex);
+    if (targetWeaponImage && !weaponTexturePath.empty())
+    {
+        targetWeaponImage->ChangeTexture(weaponTexturePath);
+        targetWeaponImage->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
+    }
 
-    GameManager::Get().SetMyPick(pickIndex, m_pieceType);
+    //TextureImage* weaponNameImage = dynamic_cast<TextureImage*>(m_pWeaponNameImage);
+    //if (weaponNameImage)
+    //{
+    //    const std::wstring weaponNameTexturePath = GetWeaponNameTexturePath(m_pieceType);
+    //    if (!weaponNameTexturePath.empty())
+    //    {
+    //        weaponNameImage->ChangeTexture(weaponNameTexturePath);
+    //    }
+    //}
+
+
+
+    gm.SetMyPick(pickIndex, m_pieceType);
+
+    
+
 
     return true;
 }
@@ -159,33 +361,35 @@ bool WeaponButton::KeyReleasedEvent(uint32_t key)
 bool WeaponButton::SetPieceType(PieceType pieceType)
 {
     m_pieceType = pieceType; 
-    std::wstring texturePath = L"../Assets/Test/X.png";
-    switch (m_pieceType)
-    {
-    case PieceType::Blaster:
-        texturePath = L"../Assets/Test/unit1.png";
-        break;
-    case PieceType::Breacher:
-        texturePath = L"../Assets/Test/unit2.png";
-        break;
-    case PieceType::Impactor:
-        texturePath = L"../Assets/Test/unit3.png";
-        break;
-    case PieceType::Chakram:
-        texturePath = L"../Assets/Test/unit4.png";
-        break;
-    case PieceType::Scythe:
-        texturePath = L"../Assets/Test/unit5.png";
-        break;
-    case PieceType::Cleaver:
-        texturePath = L"../Assets/Test/unit6.png";
-        break;
-    case PieceType::None:
-    default:
-        break;
-    }
+    //std::wstring texturePath = L"../Assets/Test/X.png";
+    //switch (m_pieceType)
+    //{
+    //case PieceType::Blaster:
+    //    texturePath = L"../Assets/Test/unit1.png";
+    //    break;
+    //case PieceType::Breacher:
+    //    texturePath = L"../Assets/Test/unit2.png";
+    //    break;
+    //case PieceType::Impactor:
+    //    texturePath = L"../Assets/Test/unit3.png";
+    //    break;
+    //case PieceType::Chakram:
+    //    texturePath = L"../Assets/Test/unit4.png";
+    //    break;
+    //case PieceType::Scythe:
+    //    texturePath = L"../Assets/Test/unit5.png";
+    //    break;
+    //case PieceType::Cleaver:
+    //    texturePath = L"../Assets/Test/unit6.png";
+    //    break;
+    //case PieceType::None:
+    //default:
+    //    break;
+    //}
+    //
+    //ChangeTexture(texturePath);
+    //m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
 
-    m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
 
     return true;
 }
@@ -198,4 +402,21 @@ void WeaponButton::SetUserImages(Widget* U1I1, Widget* U1I2, Widget* U2I1, Widge
     m_pUserImage3 = U2I2;
 }
 
+void WeaponButton::SetWeaponImages(Widget* U1W1, Widget* U1W2, Widget* U2W1, Widget* U2W2)
+{
+    m_pWeaponImage0 = U1W1;
+    m_pWeaponImage1 = U1W2;
+    m_pWeaponImage2 = U2W1;
+    m_pWeaponImage3 = U2W2;
+}
 
+void WeaponButton::SetWeaponPreviewImages(Widget* weaponNameImage, Widget* weaponCardImage)
+{
+    m_pWeaponNameImage = weaponNameImage;
+    m_pWeaponCardImage = weaponCardImage;
+}
+
+void WeaponButton::SetShowCardDeck(ShowCardDeck* showCardDeck)
+{
+    m_pShowCardDeck = showCardDeck;
+}

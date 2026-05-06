@@ -1,6 +1,5 @@
 #include "pch.h"
 
-#include <cstdlib>              // OS 한테 환경변수 받아오기
 
 #include "RenderTypes.h"
 #include "IInput.h"
@@ -15,10 +14,12 @@
 #include "Title.h"
 #include "TitleScene.h"
 #include "PlayScene.h"
+#include "PlayHUDScene.h"
 #include "UIScene.h"
 #include "PhaseScene.h"
 #include "WeaponSelectScene.h"
 #include "RenderTest.h"
+#include "PlayMidScene.h"
 
 #include "AudioQueue.h"
 #include "PlayQueue.h"
@@ -28,6 +29,7 @@
 #include "GameApp.h"
 
 #include "PacketBuilder.h"
+#include "utilityClass.h"
 
 
 // 패킷들
@@ -37,33 +39,7 @@
 #include "C2S_MatchLeave.h"
 
 
-namespace
-{
-    std::uint32_t ReadUserIdFromEnv()
-    {
-        char* buf = nullptr;
-        size_t len = 0;
 
-        if (_dupenv_s(&buf, &len, "YUNO_USER_ID") != 0 || buf == nullptr)
-        {
-            std::cout << "[GameApp] YUNO_USER_ID env not set\n";
-            return 0;
-        }
-
-        std::uint32_t uid = 0;
-        try
-        {
-            uid = static_cast<std::uint32_t>(std::stoul(buf));
-        }
-        catch (...)
-        {
-            uid = 0;
-        }
-
-        free(buf);
-        return uid;
-    }
-}
 
 
 GameApp::~GameApp() = default;
@@ -71,6 +47,15 @@ GameApp::~GameApp() = default;
 bool GameApp::OnInit()
 {
     std::cout << "[GameApp] OnInit\n";
+
+    IWindow* window = YunoEngine::GetWindow();
+    if (window)
+    {
+        window->InitializeCursor(
+            L"../Assets/UI/cursor/mousecursor_mouseout.cur",
+            L"../Assets/UI/cursor/mousecursor_mouseclick.cur"
+        );
+    }
 
     IRenderer* renderer = YunoEngine::GetRenderer();
     if (!renderer)
@@ -82,29 +67,39 @@ bool GameApp::OnInit()
 
    ISceneManager* sm = YunoEngine::GetSceneManager();
    if (!sm) return false;
-
+   
    m_gameManager = std::make_unique<GameManager>();
    GameManager::Initialize(m_gameManager.get());
    m_gameManager->BindClientNetwork(&m_clientNet);
+   GameManager::Get().Init();
 
    SceneTransitionOptions opt{};
    opt.immediate = true;
-   sm->RequestReplaceRoot(std::make_unique<RenderTest>(), opt);  // 본인이 작업중인 씬으로 넣으면 됨
+    
+
+   //sm->RequestReplaceRoot(std::make_unique<RenderTest>(), opt);  // 본인이 작업중인 씬으로 넣으면 됨
    //sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
    //sm->RequestReplaceRoot(std::make_unique<WeaponSelectScene>(), opt);
-   //sm->RequestReplaceRoot(std::make_unique<Title>(), opt);
 
+   //sm->RequestReplaceRoot(std::make_unique<PlayMidScene>(), opt);
+   sm->RequestReplaceRoot(std::make_unique<Title>(), opt); 
+   /*{
+       sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+       sm->RequestPush(std::make_unique<PlayHUDScene>());
+   }*/
+   //sm->RequestReplaceRoot(std::make_unique<PhaseScene>(), opt);
 
    // UI 재사용 쿼드 제작
    SetupDefWidgetMesh(g_defaultWidgetMesh, renderer);
 
-   CardManager::Get().LoadFromCSV("../Assets/CardData/CardData.csv");
     // 네트워크 스레드 시작
-    m_clientNet.Start("127.0.0.1", 9000);
+   const std::string serverHost = ReadServerHostFromEnv();
+   const std::uint16_t serverPort = ReadServerPortFromEnv();
+   std::cout << "[GameApp] Connect target=" << serverHost << ":" << serverPort << "\n";
+   m_clientNet.Start(serverHost, serverPort);
+    //m_clientNet.Start("127.0.0.1", 9000);
 
     m_clientNet.RegisterMatchPacketHandler();
-
-
 
     return true;
 }
@@ -120,7 +115,7 @@ void GameApp::OnUpdate(float dt)
     acc += dt;
     ++frameCount;
 
-    CameraMove(dt);
+    //CameraMove(dt);
 
     // MSAA 변경되는지 테스트
     //static float test = 0.0f;
@@ -147,6 +142,9 @@ void GameApp::OnUpdate(float dt)
     ISceneManager* sm = YunoEngine::GetSceneManager();
     IAudioManager* am = YunoEngine::GetAudioManager();
 
+    if (input->IsKeyDown('I')) // >> 이거 인스턴스 호출해서 키다운하는거 불편하니까 나중에 바꾸기 ㄱㄱ
+        window->SetClientSize(960, 540);
+
     if (input->IsKeyDown('O')) // >> 이거 인스턴스 호출해서 키다운하는거 불편하니까 나중에 바꾸기 ㄱㄱ
         window->SetClientSize(1920, 1080);
 
@@ -156,88 +154,61 @@ void GameApp::OnUpdate(float dt)
 
     if (input && sm)
     {
-        if (input->IsKeyPressed(VK_F1))
-        {
-            using namespace yuno::net;
-            yuno::net::packets::C2S_MatchEnter pkt{};
-            pkt.userId = ReadUserIdFromEnv();
-            
-            if (pkt.userId == 0)
-            {
-                std::cout << "[GameApp] MatchEnter aborted: invalid userId\n";
-                return; // 또는 UI 메시지 띄우고 종료
-            }
-            std::cout << "Env Id : " << pkt.userId << std::endl;
+        
+        //if (input->IsKeyPressed(VK_F2))
+        //{
+        //    SceneTransitionOptions opt{};
+        //    opt.immediate = true;
+        //    sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+        //    //sm->RequestPush(std::make_unique<PlayScene>());
+        //}
 
-            auto bytes = PacketBuilder::Build(
-                PacketType::C2S_MatchEnter,
-                [&](ByteWriter& w)
-                {
-                    pkt.Serialize(w);
-                });
+        //if (input->IsKeyPressed(VK_F3))
+        //{
+        //    SceneTransitionOptions opt{};
+        //    opt.immediate = true;
+        //    sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
+        //    //sm->RequestPush(std::make_unique<PlayScene>());
+        //}
+        //
+        //if (input->IsKeyPressed(VK_F4))
+        //{
+        //    SceneTransitionOptions opt{};
+        //    opt.immediate = true;
+        //    ScenePolicy policy;
+        //    policy.blockUpdateBelow = false;
+        //    policy.blockRenderBelow = false;
+        //    //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
+        //    sm->RequestPush(std::make_unique<TitleScene>(), policy);
+        //}
+        //
+        //if (input->IsKeyPressed(VK_F5))
+        //{
+        //    SceneTransitionOptions opt{};
+        //    opt.immediate = true;
+        //    ScenePolicy policy;
+        //    policy.blockUpdateBelow = false;
+        //    policy.blockRenderBelow = false;
+        //    //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+        //    sm->RequestPush(std::make_unique<PlayScene>(), policy);
+        //}
+        //
+        //if (input->IsKeyPressed(VK_F6))
+        //{
+        //    SceneTransitionOptions opt{};
+        //    opt.immediate = true;
+        //    ScenePolicy policy;
+        //    policy.blockUpdateBelow = false;
+        //    policy.blockRenderBelow = false;
+        //    //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
+        //    sm->RequestPush(std::make_unique<UIScene>(), policy);
+        //}
 
-            m_clientNet.SendPacket(std::move(bytes));
-
-            //SceneTransitionOptions opt{};
-            //opt.immediate = true;
-            //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
-            //sm->RequestPush(std::make_unique<PlayScene>());
-        }
-
-        if (input->IsKeyPressed(VK_F2))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
-            //sm->RequestPush(std::make_unique<PlayScene>());
-        }
-
-        if (input->IsKeyPressed(VK_F3))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            sm->RequestReplaceRoot(std::make_unique<UIScene>(), opt);
-            //sm->RequestPush(std::make_unique<PlayScene>());
-        }
-
-        if (input->IsKeyPressed(VK_F4))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            ScenePolicy policy;
-            policy.blockUpdateBelow = false;
-            policy.blockRenderBelow = false;
-            //sm->RequestReplaceRoot(std::make_unique<TitleScene>(), opt);
-            sm->RequestPush(std::make_unique<TitleScene>(), policy);
-        }
-
-        if (input->IsKeyPressed(VK_F5))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            ScenePolicy policy;
-            policy.blockUpdateBelow = false;
-            policy.blockRenderBelow = false;
-            //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
-            sm->RequestPush(std::make_unique<PlayScene>(), policy);
-        }
-
-        if (input->IsKeyPressed(VK_F6))
-        {
-            SceneTransitionOptions opt{};
-            opt.immediate = true;
-            ScenePolicy policy;
-            policy.blockUpdateBelow = false;
-            policy.blockRenderBelow = false;
-            //sm->RequestReplaceRoot(std::make_unique<PlayScene>(), opt);
-            sm->RequestPush(std::make_unique<UIScene>(), policy);
-        }
-
-        if (input->IsKeyPressed(VK_OEM_PERIOD))
-        {
-            AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, true));
-            AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, false));
-        }
+        //if (input->IsKeyPressed(VK_OEM_PERIOD))
+        //{
+        //    AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, true));
+        //    AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Playlist, false));
+        //}
 
         if (input->IsKeyPressed('1'))
         {

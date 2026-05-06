@@ -17,6 +17,45 @@ Mesh::~Mesh()
 
 }
 
+std::unique_ptr<Mesh> Mesh::Clone() const
+{
+    auto clone = std::make_unique<Mesh>();
+    clone->m_name = m_name;
+    clone->m_renderItem = m_renderItem;
+    clone->m_Mesh = m_Mesh;
+    clone->m_Material = m_Material;
+    clone->m_Albedo = m_Albedo;
+    clone->m_Normal = m_Normal;
+    clone->m_Orm = m_Orm;
+#ifdef _DEBUG
+    clone->mat = mat;
+    clone->emissive = emissive;
+    clone->emissiveCol = emissiveCol;
+#endif
+    return clone;
+}
+
+std::unique_ptr<MeshNode> MeshNode::Clone() const
+{
+    auto clone = std::make_unique<MeshNode>();
+    clone->m_name = m_name;
+    clone->mUserTM = mUserTM;
+
+    clone->m_Meshs.reserve(m_Meshs.size());
+    for (const auto& mesh : m_Meshs)
+        clone->m_Meshs.push_back(mesh->Clone());
+
+    clone->m_Childs.reserve(m_Childs.size());
+    for (const auto& child : m_Childs)
+    {
+        auto childClone = child->Clone();
+        childClone->m_Parent = clone.get();
+        clone->m_Childs.push_back(std::move(childClone));
+    }
+
+    return clone;
+}
+
 void Mesh::Create(MeshHandle mesh, MaterialHandle mat)
 {
     m_Mesh = mesh;
@@ -44,6 +83,24 @@ void Mesh::SetEmissiveColor(const XMFLOAT4& color)
     m_renderItem.Constant.emissiveColor = color;
 }
 
+void Mesh::SetDissolveAmount(float amount)
+{
+    if (!m_renderItem.isDissolve) m_renderItem.isDissolve = true;
+    m_renderItem.Constant.dissolveAmount = amount;
+}
+
+void Mesh::SetDissolveWidth(float width)
+{
+    if (!m_renderItem.isDissolve) m_renderItem.isDissolve = true;
+    m_renderItem.Constant.dissolveEdgeWidth = width;
+}
+
+void Mesh::SetDissolveColor(const XMFLOAT3& col)
+{
+    if (!m_renderItem.isDissolve) m_renderItem.isDissolve = true;
+    m_renderItem.Constant.dissolveColor = col;
+}
+
 void Mesh::CheckOption()
 {
     const auto& renderer = YunoEngine::GetRenderer();
@@ -59,7 +116,7 @@ void Mesh::SetTexture(TextureUse use, const std::wstring& filepath)
 
     TextureHandle handle;
     
-    if(filepath.find(L"Albedo") != std::wstring::npos)
+    if(TextureUse::Albedo == use)
         handle = renderer->CreateColorTexture2DFromFile(filepath.c_str());
     else
         handle = renderer->CreateDataTexture2DFromFile(filepath.c_str());
@@ -91,6 +148,9 @@ void Mesh::SetTexture(TextureUse use, const std::wstring& filepath)
         material.orm = handle;
         m_Orm = handle;
         break;
+    case TextureUse::Custom:
+        material.custom.push_back(handle);
+        break;
     }
 }
 
@@ -116,8 +176,23 @@ void Mesh::SetObjectConstants(const Update_Data& constants)
 
 void Mesh::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
 {
+    m_renderItem.materialHandle = m_Material;
+    m_renderItem.meshHandle = m_Mesh;
+
     XMStoreFloat4x4(&m_renderItem.Constant.world, XMLoadFloat4x4(&mWorld));
     m_renderItem.Constant.worldPos = pos;
+}
+void Mesh::SubmitWidget(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const Update_Data& updateData)
+{
+    //m_renderItem.Constant = updateData;
+    m_renderItem.isWidget = true;
+
+    XMStoreFloat4x4(&m_renderItem.Constant.world, XMLoadFloat4x4(&mWorld));
+    m_renderItem.Constant.worldPos = pos;
+
+    m_renderItem.Constant.widgetSize = updateData.widgetSize;
+    m_renderItem.Constant.widgetValueFloat = updateData.widgetValueFloat;
+    m_renderItem.Constant.widgetValueInt = updateData.widgetValueInt;
 }
 
 void Mesh::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
@@ -133,8 +208,6 @@ void Mesh::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
 void Mesh::LastSubmit()
 {
     YunoEngine::GetRenderer()->Submit(m_renderItem);
-
-    // 
 }
 
 void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
@@ -149,6 +222,21 @@ void MeshNode::Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos)
     for (auto& child : m_Childs)
         child->Submit(worldF, pos);
 }
+
+// 위젯용
+void MeshNode::SubmitWidget(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const Update_Data& updateData)
+{
+    XMMATRIX world = mUserTM * XMLoadFloat4x4(&mWorld);
+    XMFLOAT4X4 worldF;
+    XMStoreFloat4x4(&worldF, world);
+
+    for (auto& mesh : m_Meshs)
+        mesh->SubmitWidget(worldF, pos, updateData);
+
+    for (auto& child : m_Childs)
+        child->SubmitWidget(worldF, pos, updateData);
+}
+
 
 void MeshNode::AnimSubmit(const std::vector<XMFLOAT4X4>& animTM)
 {
@@ -172,9 +260,10 @@ MeshDesc Mesh::BuildDesc()
 {
     MeshDesc md;
 
+    md.emissive = m_renderItem.Constant.emissive;
+    md.emissiveCol = FromXM(m_renderItem.Constant.emissiveColor);
 
-
-    return MeshDesc();
+    return md;
 }
 
 #ifdef _DEBUG

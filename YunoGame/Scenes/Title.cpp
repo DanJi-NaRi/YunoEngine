@@ -10,8 +10,15 @@
 #include "GameManager.h"
 #include "UIManager.h"
 
+#include"IWindow.h"
+
 // 여러 오브젝트들 ;; 
-#include "TitleImage.h"
+#include "UIWidgets.h"
+#include "SpriteSheet.h"
+#include "Building.h"
+
+// 오디오
+#include "AudioQueue.h"
 
 // 사용법
 // 컨트롤 + H 누르면 이름 변경 나옴
@@ -21,21 +28,69 @@
 
 bool Title::OnCreateScene()
 {
-    //std::cout << "[Title] OnCreate\n";
-
-    // 디렉션 라이트 생성
-    //m_objectManager->CreateDirLight();
-    // 직교투영 필요한 씬만 ㄱㄱ
     m_uiManager->SetOrthoFlag(true);
+    auto iwindow = YunoEngine::GetWindow();
+    float ClientW = static_cast<float>(iwindow->GetClientWidth());
+    float ClientH = static_cast<float>(iwindow->GetClientHeight());
 
-    // Sample Object 생성 예시
-    //m_objectManager->CreateObject<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0));
+    PassOption po;
+    po.shader = ShaderId::NoneShadowPBRBase;
 
-    // FBX 파일로부터 오브젝트 생성 예시
-    //m_objectManager->CreateObjectFromFile<ObjectClass>(L"-name-", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Building/building.fbx");
+    auto map = m_objectManager->CreateObjectFromFile<Building>(L"Map", XMFLOAT3(0, 0, 0), L"../Assets/fbx/Map/Mainmap.fbx", po);
 
-    m_titleImage = m_uiManager->CreateWidget<TitleImage>(L"Title", XMFLOAT3(0, 0, 0));
-    m_titleImage->SetScale(XMFLOAT3(0.5f, 0.5f, 0.5f));
+    const int baseXOffset = 100;
+    const int baseYOffset = 200;   // 첫 버튼이 기준에서 얼마나 내려오는지
+    const int buttonGap = 85;   // 버튼 사이 간격
+
+    const float centerX = ClientW / 2;
+    const float centerY = ClientH / 2;
+
+    auto makeButtonPos = [&](int index)
+        {
+            return XMFLOAT3(
+                centerX,
+                centerY + baseYOffset + buttonGap * index,
+                0
+            );
+        };
+
+
+    auto sheet = CreateWidget<SpriteSheet>(L"background", Float2{ 1920, 1080 }, XMFLOAT3{ 0, 0, 0 }, UIDirection::LeftTop);
+    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_MainFrame.png", 5, 7, 34, 24.f, true);
+
+    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background_Opacity.png", XMFLOAT3(0, 0, 0));
+    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background.png", XMFLOAT3(0, 0, 0));
+    CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background_fog.png", XMFLOAT3(0, 0, 0));
+    
+    sheet = CreateWidget<SpriteSheet>(L"logo", Float2{ 1024, 1024 }, XMFLOAT3{ 960, 540, 0 }, UIDirection::Center);
+    sheet->SetSpriteSheet(L"../Assets/Effects/Main/EF_MainVS.png", 13, 12, 150, 24.f, true);
+
+    //CreateWidget<TextureImage>(L"Title", L"../Assets/UI/TITLE/Background.png", XMFLOAT3(0, 0, 0));
+
+    m_startBtn = CreateWidget<SceneChangeButton>(L"StartBtn", Float2(1538, 105), makeButtonPos(0), UIDirection::Center);       // 나중에 1920 1080 <-> 960 540 정상화되면 /2 ㄱㄱ
+    m_startBtn->SetTargetScene(CurrentSceneState::RequstEnter);
+    m_startBtn->SetHoverTexture(L"../Assets/UI/TITLE/start_mouseout.png", L"../Assets/UI/TITLE/start_mouseover.png");
+
+    m_optionBtn = CreateWidget<SceneChangeButton>(L"optionBtn", Float2(1538, 105), makeButtonPos(1), UIDirection::Center);       // 나중에 1920 1080 <-> 960 540 정상화되면 /2 ㄱㄱ
+    m_optionBtn->SetTargetScene(CurrentSceneState::Option);
+    m_optionBtn->SetHoverTexture(L"../Assets/UI/TITLE/option_mouseout.png", L"../Assets/UI/TITLE/option_mouseover.png");
+
+    m_guideBtn = CreateWidget<SceneChangeButton>(L"guideBtn", Float2(1538, 105), makeButtonPos(2), UIDirection::Center);       // 나중에 1920 1080 <-> 960 540 정상화되면 /2 ㄱㄱ
+    m_guideBtn->SetTargetScene(CurrentSceneState::Guide);
+    m_guideBtn->SetHoverTexture(L"../Assets/UI/TITLE/guide_mouseout.png", L"../Assets/UI/TITLE/guide_mouseover.png");
+
+    CreateWidget<ExitButton>(L"ExitBtn", Float2(1538, 105), makeButtonPos(3), UIDirection::Center)->SetHoverTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
+
+    // 오디오 추가
+    AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Main, true));
+    AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::BGM_Lobby, true));
+    AudioQ::Insert(AudioQ::PlayEvent(EventName::BGM_Title));
+
+    auto* a = CreateWidget<Letterbox>(L"LetterBoxA", Float2(50, 50), XMFLOAT3(0, 0, 0));
+    a->SetRole(Letterbox::Role::BarA);
+    auto* b = CreateWidget<Letterbox>(L"LetterBoxB", Float2(50, 50), XMFLOAT3(0, 0, 0));
+    b->SetRole(Letterbox::Role::BarB);
+
     return true;
 }
 
@@ -48,11 +103,13 @@ void Title::OnDestroyScene()
 void Title::OnEnter()
 {
     //std::cout << "[Title] OnEnter\n"; 
+    YunoEngine::GetInput()->AddContext(&m_uiCtx, this);
 }
 
 void Title::OnExit()
 {
     //std::cout << "[Title] OnExit\n"; 
+    YunoEngine::GetInput()->RemoveContext(&m_uiCtx);
 }
 
 void Title::Update(float dt)

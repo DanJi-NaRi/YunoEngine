@@ -15,8 +15,10 @@ struct MeshNode {
     std::vector<std::unique_ptr<Mesh>> m_Meshs;
 
     void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
+    void SubmitWidget(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const Update_Data& updateData);
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
+    std::unique_ptr<MeshNode> Clone() const;
 };
 
 enum class TextureUse
@@ -28,6 +30,7 @@ enum class TextureUse
     AO = 4,
     ORM = 5,    // AO, Metallic, Roughness
     Mask = 6,
+    Custom = 7,
 
     MAX
 };
@@ -49,18 +52,25 @@ public:
     Mesh();
     virtual ~Mesh();
 
+    std::unique_ptr<Mesh> Clone() const;
+
     void SetName(const std::string& name) { m_name = name; }
 
     void Create(MeshHandle mesh, MaterialHandle mat);
     void Create(MeshHandle mesh, MaterialHandle mat, const XMFLOAT3& vPos, const XMFLOAT3& vRot, const XMFLOAT3& vScale);
 
-    void SetMesh(MeshHandle mesh) { m_Mesh = mesh; }
-    void SetMaterial(MaterialHandle mat) { m_Material = mat; }
+    void SetMesh(MeshHandle mesh) { m_Mesh = mesh; m_renderItem.meshHandle = m_Mesh; }
+    void SetMaterial(MaterialHandle mat) { m_Material = mat; m_renderItem.materialHandle = mat; }
 
     void EmissiveOn() { m_renderItem.isEmissive = true; }
     void EmissiveOff() { m_renderItem.isEmissive = false; }
 
     void SetEmissiveColor(const XMFLOAT4& color);
+    void SetEmissivePow(float pow) { m_renderItem.Constant.emissive = pow; }
+
+    void SetDissolveAmount(float amount);
+    void SetDissolveWidth(float width/*0 ~ 0.2*/);
+    void SetDissolveColor(const XMFLOAT3& col);
 
     void CheckOption();
 
@@ -74,6 +84,7 @@ public:
 
 
     void Submit(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos);
+    void SubmitWidget(const XMFLOAT4X4& mWorld, const XMFLOAT3& pos, const Update_Data& updateData);
     void AnimSubmit(const std::vector<XMFLOAT4X4>& animTM);
     void LastSubmit();
 

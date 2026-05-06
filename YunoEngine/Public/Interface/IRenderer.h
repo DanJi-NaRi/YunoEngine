@@ -6,6 +6,7 @@
 class IWindow;
 class YunoMaterial;
 struct YunoCamera;
+struct PostProcessDesc;
 
 class IRenderer
 {
@@ -69,7 +70,8 @@ public:
     virtual YunoCamera& GetCamera() = 0;
 
     //포스트프로세싱 설정
-    virtual void SetPostProcessOption(uint32_t flag) = 0; //Use PostProcessFlag (기존 설정된 옵션 있으면 +, 없으면 Set)
+    virtual void SetPostProcessOption(const PostProcessDesc& opt) = 0; //Use PostProcessFlag (기존 설정된 옵션 있으면 +, 없으면 Set)
+    virtual PostProcessDesc GetPostProcessOption() = 0;
     virtual void ResetPostProcessOption() = 0; //Reset PostProcessOption
 
     // 종료

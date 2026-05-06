@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include "Image.h"
 
 
@@ -8,7 +7,7 @@ class TitleImage : public Image
 public:
     TitleImage(UIFactory& uiFactory);
     virtual ~TitleImage();
-    bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    bool Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale) override;
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();

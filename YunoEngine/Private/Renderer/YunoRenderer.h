@@ -30,6 +30,7 @@ enum PostProcessFlag : uint32_t
 {
     Default = 1u << 0,
     Bloom = 1u << 1,
+    ColorGrading = 1u << 2,
 
     Max
 };
@@ -61,6 +62,7 @@ class IWindow;
 class YunoRenderPass;
 class YunoMeshBuffer;
 class YunoShader;
+struct PostProcessDesc;
 
 namespace
 {
@@ -194,8 +196,9 @@ public:
     YunoCamera& GetCamera() override { return m_camera; }
     std::pair<int, int> GetTextureSize(TextureHandle handle) const;
     
-    void SetPostProcessOption(uint32_t flag); //Use PostProcessFlag (기존 설정된 옵션 있으면 +, 없으면 Set)
-    void ResetPostProcessOption(); //Reset PostProcessOption
+    void SetPostProcessOption(const PostProcessDesc& opt) override; //Use PostProcessFlag (기존 설정된 옵션 있으면 +, 없으면 Set)
+    PostProcessDesc GetPostProcessOption() override;
+    void ResetPostProcessOption() override; //Reset PostProcessOption
 private:
     void BindConstantBuffers(const RenderItem& item);
     void DrawTextBatch();
@@ -232,6 +235,8 @@ private:
     YunoConstantBuffer<CBPerObject_Material> m_cbObject_Material;
     YunoConstantBuffer<CBLight_All> m_cbLight;
     YunoConstantBuffer<CBEffect> m_cbEffect;
+    YunoConstantBuffer<CBWidget> m_cbWidget;
+    YunoConstantBuffer<CBDissolve> m_cbDissolve;
 
     CBLight_All m_LightInfo;
 
@@ -259,10 +264,12 @@ private:
     YunoConstantBuffer<CBShadow> m_cbShadow;
     CBShadow m_shadowInfo;
     YunoCamera m_shadowCamera;
-    float m_shadowBias = 0.0001f;
+    float m_shadowBias = 0.000001f;
 
     PassKey m_ShadowPassKey;
     RenderPassHandle m_ShadowPass;
+    PassKey m_ShadowSkinPassKey;
+    RenderPassHandle m_ShadowSkinPass;
 
     bool CreateShadowMap(uint32_t width, uint32_t height);
     void InitShadowPass();
@@ -273,8 +280,9 @@ private:
 private:
     RenderTarget m_sceneRT;
     RenderTarget m_postRT[2]; //chain방식
-    RenderTarget m_bloomRT[4]; // 각각 해상도 다른 렌더타겟
-    RenderTarget m_blurTemp[4]; // 각 bloomRT에 대응
+    static constexpr int kBloomLevels = 3;
+    RenderTarget m_bloomRT[kBloomLevels]; // 각각 해상도 다른 렌더타겟
+    RenderTarget m_blurTemp[kBloomLevels];
 
     uint32_t m_postIndex = 0;
 
@@ -294,6 +302,7 @@ private:
     void PostProcess();
     ID3D11ShaderResourceView* PostProcessScene();
     ID3D11ShaderResourceView* PostProcessBloom(ID3D11ShaderResourceView* input);
+    ID3D11ShaderResourceView* PostProcessColorGrading(ID3D11ShaderResourceView* input);
     void PostProcessFinal(ID3D11ShaderResourceView* input);
     void UnBindAllSRV();
     void BindRT(ID3D11RenderTargetView* rt);
@@ -310,11 +319,17 @@ private:
     MaterialHandle m_ppBlurHMat = 0; //Horizontal
     MaterialHandle m_ppBlurVMat = 0; //Vertical
     MaterialHandle m_ppCombineMat = 0;
+    MaterialHandle m_ppColorGradingMat = 0;
     MaterialHandle m_ppToneMapMat = 0;
 
     float m_Threshold = 1.05f; //추출할 최소 밝기값
     float m_BloomIntensity = 0.1f; //Bloom 빛 번짐정도
     float m_Exposure = 1.3f; //전체 화면 밝기조절 값
+    float m_ColorSaturation = 1.0f;
+    float m_ColorContrast = 1.0f;
+    float m_ColorGamma = 1.0f;
+    int m_Temparature = 6500;
+    float m_TInt = 0.0f;
     float m_blurRadius[4] = { 2.0f, 1.0f, 0.5f, 0.2f };
 
     //PP Default
@@ -482,6 +497,14 @@ public:
         const char* psEntry,      // "PSMain"
         const char* vsProfile = "vs_5_0",
         const char* psProfile = "ps_5_0");
+    bool LoadShaderBinary(
+        ShaderId id,
+        const std::wstring& vsBinaryPath,
+        const std::wstring& psBinaryPath);
+    bool LoadShaderBinary(
+        ShaderId id,
+        const char* vsBinaryPath,
+        const char* psBinaryPath);
 
 // 텍스쳐
 private:

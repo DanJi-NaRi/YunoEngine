@@ -18,7 +18,7 @@ namespace yuno::net
     // 전송 계층 TCP 세션 클래스
     class TcpSession final : public std::enable_shared_from_this<TcpSession>
     {
-    public:
+    public: 
         // 게임이랑 서버에서 사용할 별칭
         using YunoSession = std::shared_ptr<TcpSession>;
 

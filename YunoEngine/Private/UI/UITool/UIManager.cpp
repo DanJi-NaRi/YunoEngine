@@ -9,6 +9,7 @@
 #include "IInput.h"
 #include "UIFactory.h"
 #include "Button.h"
+#include "DragProvider.h"
 
 
 UIManager::UIManager()
@@ -48,10 +49,14 @@ void UIManager::Update(float dTime)
 {
     FrameDataUpdate();
     UpdateButtonStates(); // 모든 버튼 상태 업데이트
+    ProcessLeaveCursur(); // 클라이언트 밖으로 나간 경우 드래그/포커스 정리
 
     // 로직 업데이트
     for (auto& widget : m_widgets)
-        widget->Update(dTime);
+    {
+        if(!widget->IsCollapsed()) widget->Update(dTime);  
+    }
+        
 
     // Transform 업데이트 - 루트만
     for (auto& widget : m_widgets)
@@ -86,8 +91,8 @@ void UIManager::LayerSubmit(float dTime)
         layerWidgets[(int)pushWidget->GetLayer()].push_back(pushWidget.get());
     }
 
-    // 역순회 -> Default(0)가 가장 뒤에 그려짐
-    for (int i = (int)WidgetLayer::Count - 1; i >= 0; --i)
+    // 순회 -> Default(0)가 가장 뒤에 그려짐
+    for (int i = 0; i < (int)WidgetLayer::Count; ++i)
     {
         auto& widgetVec = layerWidgets[i];
 
@@ -95,6 +100,8 @@ void UIManager::LayerSubmit(float dTime)
             // 사실상 이제 생성 순서만으로 이미 정렬이 되어있어, 
             // 부모->자식 사이에 이물 Widget이 낄 수 없는 상태->체이닝 필요없음
             // 체이닝을 다시 살리게 되면, 레이어가 2순위가 됨
+
+            if (!widget->IsVisible()) continue;
 
             //if (widget->GetIsRoot()) 
                 widget->Submit(dTime);
@@ -228,7 +235,6 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
 
         Btn->SetButtonState(ButtonState::Idle); // 초기화
 
-
         ////////////////// 키보드 입력 검사 단계 //////////////////
 
         if (Btn->IsBindkey()) { // 바인딩 키가 있을 경우
@@ -253,24 +259,36 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
         ////////////////// 마우스 입력 검사 단계 //////////////////
 
         if (!widget->IsCursorOverWidget(mouseXY)) { // 커서가 위젯 위에 있는지 체크
+            
+            if (!Btn->IsUseHoverEvent()) continue;
+
+            if(Btn->IsUseHoverPath())
+                Btn->ChangeTexture(Btn->GetTexturePathBk());
+            
+            if (Btn->IsHoverJoin()) Btn->HoverLeftEvent(); // 커서 입장 시 1번만 실행
+            Btn->SetIsHoverJoin(false);
+
+            Btn->IdleEvent();
+            //std::cout << "Idle!!" << std::endl;
             Btn = nullptr;
             continue;
         }
-        else if (m_pInput->IsMouseButtonPressed(0)) {
+        else if (m_pInput->IsMouseButtonPressed(0) && Btn->IsUseLMB()) {
+            
             Btn->SetButtonState(ButtonState::Pressed);
             m_cursurSystem.SetFocusedWidget(Btn); // 마지막으로 누른 버튼 갱신
             m_cursurSystem.SetFocusedMouseButton(0);
             //Btn->PressedEvent();
             //std::cout << "LMBPressed!!" << std::endl;
         }
-        else if (m_pInput->IsMouseButtonPressed(1)) {
+        else if (m_pInput->IsMouseButtonPressed(1) && Btn->IsUseRMB()) {
             Btn->SetButtonState(ButtonState::Pressed);
             m_cursurSystem.SetFocusedWidget(Btn); // 마지막으로 누른 버튼 갱신
             m_cursurSystem.SetFocusedMouseButton(1);
             //Btn->PressedEvent();
             //std::cout << "RMBPressed!!" << std::endl;
         }
-        else if (m_pInput->IsMouseButtonDown(0) || m_pInput->IsMouseButtonDown(1)) {
+        else if (m_pInput->IsMouseButtonDown(0) && Btn->IsUseLMB() || m_pInput->IsMouseButtonDown(1) && Btn->IsUseRMB()) {
             Btn->SetButtonState(ButtonState::Down);
             //Btn->DownEvent();
             //std::cout << "Down!!" << std::endl;
@@ -287,9 +305,18 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
         //}
         else {
             Btn->SetButtonState(ButtonState::Hovered);
-            //Btn->HoveredEvent();
+
+            if (!Btn->IsUseHoverEvent()) continue;
+
+            if (!Btn->IsHoverJoin()) Btn->HoverJoinEvent(); // 커서 입장 시 1번만 실행
+            Btn->SetIsHoverJoin(true);
+
+            const auto& hoverdPath = Btn->GetHoveredTexturePath();
+            if(hoverdPath != g_notUsePath && Btn->IsUseHoverPath()) Btn->ChangeTexture(Btn->GetHoveredTexturePath());
+            Btn->HoveredEvent();
             //std::cout << "Hovered!!" << std::endl;
         }
+
         Btn = nullptr; // 다음 검사를 위해 초기화
     }
 }
@@ -297,6 +324,20 @@ void UIManager::UpdateButtonStates() // 기본 상태 (Idle,Hover) 업데이트
 bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
 {
     assert(m_pInput);
+
+    const bool isLMB = (mouseButton == 0);
+    const bool isRMB = (mouseButton == 1);
+
+    // 드래그 중 타 버튼 입력 차단
+    if (state == ButtonState::Pressed) {
+        Button* focusedWidget = m_cursurSystem.GetFocusedWidget();
+        if (focusedWidget) {
+            DragProvider* drag = focusedWidget->GetDragProvider();
+            if (drag && drag->IsNowDragging() && m_cursurSystem.GetFocusedMouseButton() != (int)mouseButton) {
+                return false;
+            }
+        }
+    }
 
     // 1) 이번 프레임 입력 발생 체크
     switch (state) {
@@ -317,13 +358,31 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
         {
             if (m_cursurSystem.GetFocusedMouseButton() != mouseButton) return false;
 
+            const bool wasPressed = (focusWidget->GetButtonState() == ButtonState::Pressed);
+
+            if (isLMB && !focusWidget->IsUseLMB() && wasPressed) { // 이미 눌렸던 상태에서 UseLMB를 끄면
+                m_cursurSystem.FindSnapWidget(); // DragProvider가 있을 경우, 스냅 검색 // LMBReleasedEvent와 순서 주의. IsDrag가 여기서 처리됨.
+                focusWidget->LMBReleasedEvent();
+                focusWidget->SetButtonState(ButtonState::Released);
+                m_cursurSystem.SetFocusedWidget(nullptr);
+                focusWidget = nullptr;
+                return true;
+            }
+            else if (isRMB && !focusWidget->IsUseRMB() && wasPressed) {
+                focusWidget->RMBReleasedEvent();
+                focusWidget->SetButtonState(ButtonState::Released);
+                m_cursurSystem.SetFocusedWidget(nullptr);
+                focusWidget = nullptr;
+                return true;
+            }
+
             focusWidget->SetButtonState(ButtonState::Released);
 
-            if (mouseButton == 0) {
+            if (isLMB && focusWidget->IsUseLMB()) {
                 m_cursurSystem.FindSnapWidget(); // DragProvider가 있을 경우, 스냅 검색 // LMBReleasedEvent와 순서 주의. IsDrag가 여기서 처리됨.
                 focusWidget->LMBReleasedEvent();
             }
-            else if (mouseButton == 1)
+            else if (isRMB && focusWidget->IsUseRMB())
             {
                 focusWidget->RMBReleasedEvent();
             }
@@ -356,21 +415,55 @@ bool UIManager::ProcessButtonMouse(ButtonState state, uint32_t mouseButton)
 
         switch (state) {
         case ButtonState::Pressed:  
-            if(mouseButton == 0) Btn->LMBPressedEvent();
-            else if(mouseButton == 1) Btn->RMBPressedEvent();
+            if (isLMB && Btn->IsUseLMB()) {
+                auto event = Btn->GetEventLMB();
+                if (event) event(); // 등록해둔 함수가 있으면 함수 실행
+
+                Btn->LMBPressedEvent();
+            }
+            else if (isRMB && Btn->IsUseRMB()) {
+                auto event = Btn->GetEventRMB();
+                if (event) event(); // 등록해둔 함수가 있으면 함수 실행
+
+                Btn->RMBPressedEvent();
+            }
             return true;
         case ButtonState::Down:     
             Btn->DownEvent();     
             return true;
         //case ButtonState::Released: // 사실상 이전에 처리
-        //    if (mouseButton == 0) Btn->LMBReleasedEvent();
-        //    else if (mouseButton == 1) Btn->RMBReleasedEvent(); 
+        //    if (isLMB) Btn->LMBReleasedEvent();
+        //    else if (isRMB) Btn->RMBReleasedEvent(); 
         //    return true;
         default: return false;
         }
     }
 
     return false;
+}
+
+bool UIManager::ProcessLeaveCursur()
+{
+    assert(m_pInput);
+
+    if (!m_pInput->IsMouseLeaved()) return false;
+
+    Button* focusWidget = m_cursurSystem.GetFocusedWidget();
+    if (!focusWidget) return false;
+
+    DragProvider* drag = focusWidget->GetDragProvider();
+    if (!drag || !drag->IsNowDragging()) {
+        focusWidget->SetButtonState(ButtonState::Idle);
+        m_cursurSystem.SetFocusedWidget(nullptr);
+        m_cursurSystem.SetFocusedMouseButton(-1);
+        return true;
+    }
+
+    drag->EndDrag();
+    focusWidget->SetButtonState(ButtonState::Idle);
+    m_cursurSystem.SetFocusedWidget(nullptr);
+    m_cursurSystem.SetFocusedMouseButton(-1);
+    return true;
 }
 
 bool UIManager::ProcessButtonKey(ButtonState state, uint32_t key)
@@ -437,6 +530,34 @@ Float2 UIManager::GetCanvasSize() // 개선사항 : 멤버에 this라던가 위�
 }
 // 아직 캔버스 개념이 없으므로 클라이언트가 곧 캔버스임. (단일 캔버스 느낌..)
 
+UICanvasMapping UIManager::GetCanvasMapping()
+{
+    UICanvasMapping mapping{};
+    mapping.origin = g_DefaultClientXY;
+    mapping.canvas = GetCanvasSize();
+
+    if (mapping.origin.x <= 0.0f || mapping.origin.y <= 0.0f ||
+        mapping.canvas.x <= 0.0f || mapping.canvas.y <= 0.0f) {
+        mapping.canvasScale = Float2(1.0f, 1.0f);
+        mapping.letterboxOffset = Float2(0.0f, 0.0f);
+        mapping.valid = false;
+        return mapping;
+    }
+
+    const float sx = mapping.canvas.x / mapping.origin.x;
+    const float sy = mapping.canvas.y / mapping.origin.y;
+    const float s = (sx < sy) ? sx : sy;
+
+    const Float2 fitted = Float2(mapping.origin.x * s, mapping.origin.y * s);
+    mapping.canvasScale = Float2(s, s);
+    mapping.letterboxOffset = Float2(
+        (mapping.canvas.x - fitted.x) * 0.5f,
+        (mapping.canvas.y - fitted.y) * 0.5f
+    );
+    mapping.valid = true;
+    return mapping;
+}
+
 
 std::vector<WidgetDesc> UIManager::BuildWidgetDesc()
 {
@@ -453,14 +574,18 @@ std::vector<WidgetDesc> UIManager::BuildWidgetDesc()
 
 void UIManager::ApplyWidgetFromDesc(const std::vector<WidgetDesc>& wds)
 {
-    for (auto& d : wds)
+    for (const auto& d : wds)
     {
-        Widget* w = FindWidget(d.name);
+        Widget* w = FindWidget(d.ID);
+
+        if (!w || w->GetName() != d.name)
+            w = FindWidget(d.name);
 
         if (!w) continue;
 
         XMFLOAT3 radRot = { XMConvertToRadians(d.transform.rotation.x), XMConvertToRadians(d.transform.rotation.y), XMConvertToRadians(d.transform.rotation.z) };
 
+        w->SetSize(ToFloat(d.size));
         w->SetPos(ToXM(d.transform.position));
         w->SetRot(radRot);
         w->SetScale(ToXM(d.transform.scale));
@@ -487,6 +612,34 @@ void UIManager::CheckDedicateWidgetName(std::wstring & name)
         name += std::to_wstring(count);
 }
 
+void UIManager::AllParentsSetScale(float scale)
+{
+    if (m_pendingCreateQ.empty()) return;
+
+    // Transform 업데이트 - 루트만
+    for (auto& widget : m_pendingCreateQ) {
+        if (widget.get()->GetWidgetClass() == WidgetClass::LetterBox) continue;
+
+        if (widget->GetIsRoot()) 
+            widget->SetScale(XMFLOAT3(scale, scale, scale));
+    }
+            
+}
+
+
+void UIManager::AllParentsSetScale(Float3 scale)
+{
+    if (m_pendingCreateQ.empty()) return;
+
+    // Transform 업데이트 - 루트만
+    for (auto& widget : m_pendingCreateQ) {
+        if (widget.get()->GetWidgetClass() == WidgetClass::LetterBox) continue;
+
+        if (widget->GetIsRoot()) widget->SetScale(scale.ToXM());
+    }
+}
+
+
 void UIManager::FrameDataUpdate()
 {
 
@@ -500,3 +653,4 @@ void UIManager::FrameDataSubmit()
 
     renderer->BindConstantBuffers_Camera(dirData);
 }
+

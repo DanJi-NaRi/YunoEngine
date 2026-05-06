@@ -74,4 +74,12 @@ namespace yuno::server
         return true;
     }
 
+    const RangeData* ServerCardRangeManager::GetRange(uint32_t rangeId) const
+    {
+        auto it = m_ranges.find(rangeId);
+        if (it == m_ranges.end())
+            return nullptr;
+        return &it->second;
+    }
+
 }

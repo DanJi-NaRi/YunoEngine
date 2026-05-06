@@ -1,8 +1,6 @@
 #pragma once
 
 #include "SceneBase.h"
-
-
 #include "Game_InputContext.h"
 
 class IGridSystem;

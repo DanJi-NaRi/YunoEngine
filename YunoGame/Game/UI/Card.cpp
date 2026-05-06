@@ -4,6 +4,7 @@
 #include "YunoEngine.h"
 #include "DragProvider.h"
 #include "IInput.h"
+#include "AudioQueue.h"
 
 Card::Card(UIFactory& uiFactory) : Button(uiFactory)
 {
@@ -17,15 +18,18 @@ Card::~Card()
 
 void Card::Clear()
 {
+    m_slotID = 0;
 }
 
-bool Card::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool Card::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Button::Create(name, id, vPos);
+    Button::Create(name, id, sizePx, vPos, rotZ, vScale);
     m_pDrag = std::make_unique<DragProvider>(); // 드래그 기능 사용
     if (!m_pDrag) return false;
 
-    m_pDrag->Init(m_pInput, &m_vPos, true);
+    SetLayer(WidgetLayer::Card);
+
+    m_pDrag->Init(&m_vPos, true, &m_uiFactory,this);
     return true;
 }
 
@@ -55,7 +59,10 @@ bool Card::HoveredEvent()
 
 bool Card::LMBPressedEvent()
 {
-    std::cout << "(Card - LMB)PressedEvent" << std::endl;
+    if (!m_isDraggable)
+        return true;
+    //std::cout << "(Card - LMB)PressedEvent" << std::endl;
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseClick));
     m_pDrag->StartDrag();
     return true;
 }
@@ -67,12 +74,15 @@ bool Card::RMBPressedEvent()
 
 bool Card::KeyPressedEvent(uint32_t key)
 {
+    if (m_isDraggable)
+        m_pDrag->EndDrag();
+
     return true;
 }
 
 bool Card::LMBReleasedEvent()
 {
-    std::cout << "(Card - LMB)ReleasedEvent" << std::endl;
+    //std::cout << "(Card - LMB)ReleasedEvent" << std::endl;
     m_pDrag->EndDrag();
     return true;
 }
@@ -85,5 +95,16 @@ bool Card::RMBReleasedEvent()
 bool Card::KeyReleasedEvent(uint32_t key)
 {
     return true;
+}
+
+bool Card::HoverJoinEvent()
+{
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
+    return true;
+}
+
+bool Card::HoverLeftEvent()
+{
+    return false;
 }
 

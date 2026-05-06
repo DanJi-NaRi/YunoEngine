@@ -3,7 +3,7 @@
 
 #include "YunoEngine.h"
 #include "IInput.h"
-
+#include "AudioQueue.h"
 
 #include "GameManager.h"
 
@@ -28,9 +28,11 @@ void ReadyButton::Clear()
     m_isReady = false;
 }
 
-bool ReadyButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool ReadyButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Button::Create(name, id, vPos);
+    sizePx.x /= 2;
+    sizePx.y /= 2;
+    Button::Create(name, id, sizePx, vPos, rotZ, vScale);
 
     m_bindkey = 0; // 0인 경우, 안쓴다는 뜻
 
@@ -38,6 +40,9 @@ bool ReadyButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
 }
 
 bool ReadyButton::Update(float dTime) {
+
+    if (GameManager::Get().GetSceneState() == CurrentSceneState::StandBy|| GameManager::Get().GetSceneState() == CurrentSceneState::CountDown)
+        ChangeTexture(L"../Assets/UI/WEAPON_SELECT/Go_mouseover.png");
     Button::Update(dTime);
 
 
@@ -61,7 +66,13 @@ bool ReadyButton::IdleEvent()
 // 커서가 위에 올라있을 때
 bool ReadyButton::HoveredEvent()
 {
-    std::cout << "HoveredEvent" << std::endl;
+    //std::cout << "HoveredEvent" << std::endl;
+    return true;
+}
+
+bool ReadyButton::HoverJoinEvent()
+{
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
     return true;
 }
 
@@ -75,22 +86,22 @@ bool ReadyButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool ReadyButton::LMBPressedEvent()
 {
-
     GameManager& gm = GameManager::Get();
     if (gm.GetMyPiece(0)==PieceType::None|| gm.GetMyPiece(1) == PieceType::None) 
     {
         return false;
     }
+    
+    if (gm.GetSceneState() == CurrentSceneState::StandBy || gm.GetSceneState() == CurrentSceneState::CountDown)
+    {
+        std::cout << "already StandBy or CountDown Scene" << std::endl;
+        return false;
+    }
 
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseClick));
 
     const bool isReady = gm.ToggleReady();
-    std::wstring texturePath;
-    if(!isReady)
-        texturePath = L"../Assets/Test/BtnOn.png";
-    else
-        texturePath = L"../Assets/Test/BtnOff.png";
 
-    m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
 
 
     // 패킷 초기화
@@ -109,6 +120,7 @@ bool ReadyButton::LMBPressedEvent()
 
     // 패킷 보내기
     gm.SendPacket(std::move(bytes));
+    gm.SetSceneState(CurrentSceneState::StandBy);
 
     return true;
 }
@@ -122,8 +134,8 @@ bool ReadyButton::RMBPressedEvent()
 // 바인딩한 키 눌렀을 때
 bool ReadyButton::KeyPressedEvent(uint32_t key)
 {
-    if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
-    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;
+    /*if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
+    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;*/
     return true;
 }
 
@@ -137,15 +149,15 @@ bool ReadyButton::LMBReleasedEvent()
 // 우클릭 뗐을 때
 bool ReadyButton::RMBReleasedEvent()
 {
-    std::cout << "(RMB)ReleasedEvent" << std::endl;
+    //std::cout << "(RMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 뗐을 때
 bool ReadyButton::KeyReleasedEvent(uint32_t key)
 {
-    if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
-    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
+    //if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
+    //else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
     return true;
 }
 

@@ -13,6 +13,7 @@ Animator::Animator()
     animCount = 0;
     curAnim = -1;
     m_CurAnim = nullptr;
+    XMStoreFloat4x4(&m_Identity, XMMatrixIdentity());
 }
 
 Animator::~Animator()
@@ -20,16 +21,19 @@ Animator::~Animator()
 
 }
 
-void Animator::SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, UINT boneCount)
+void Animator::SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, const std::unordered_map<std::string, UINT>& nameToIndex, UINT boneCount)
 {
     assert(boneCount <= MAX_BONE); //본 일단 넉넉하게 70개 제한 나중에 줄이기 ㄱ
 
     m_RootBone = std::move(rootNode);
+    m_BoneNameToIndex = nameToIndex;
 
     m_LocalBoneA.resize(boneCount);
     m_LocalBoneB.resize(boneCount);
     m_BlendBoneTM.resize(boneCount);
     m_FinalBoneTM.resize(boneCount);
+    m_GlobalBoneTM.resize(boneCount);
+    m_GlobalBoneNoOffsetTM.resize(boneCount);
     m_BoneCount = boneCount;
     for (size_t i = 0; i < m_BoneCount; i++)
     {
@@ -37,6 +41,7 @@ void Animator::SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, UINT boneCount)
         m_LocalBoneB[i] = XMMatrixIdentity();
         m_BlendBoneTM[i] = XMMatrixIdentity();
         XMStoreFloat4x4(&m_FinalBoneTM[i], XMMatrixIdentity());
+        XMStoreFloat4x4(&m_GlobalBoneNoOffsetTM[i], XMMatrixIdentity());
     }
 }
 
@@ -68,10 +73,54 @@ bool Animator::AddAnimationFromFile(const std::string& name, const std::wstring&
     auto clip = Parser::Instance().LoadAnimationClipFromFile(filepath);
 
     clip->name = name;
+    clip->isLoop = true;
     AddAnimationClip(name, std::move(clip));
 
     return true;
 }
+
+void Animator::DispatchFrameEvents(UINT clipID, float prevTickTime, float curTickTime, bool looped)
+{
+    auto clipIt = m_AnimationClips.find(clipID);
+    if (clipIt == m_AnimationClips.end()) return;
+
+    auto eventIt = m_FrameEvents.find(clipID);
+    if (eventIt == m_FrameEvents.end()) return;
+
+    auto dispatchInRange = [&](UINT beginFrame, UINT endFrame)
+        {
+            for (UINT frame = beginFrame; frame <= endFrame; ++frame)
+            {
+                auto frameIt = eventIt->second.find(frame);
+                if (frameIt == eventIt->second.end())
+                    continue;
+
+                for (auto& callback : frameIt->second)
+                {
+                    if (callback)
+                        callback();
+                }
+            }
+        };
+
+    const UINT prevFrame = static_cast<UINT>(prevTickTime);
+    const UINT curFrame = static_cast<UINT>(curTickTime);
+    const UINT maxFrame = clipIt->second->duration > 0 ? clipIt->second->duration - 1 : 0;
+
+    if (looped)
+    {
+        if (prevFrame < maxFrame)
+            dispatchInRange(prevFrame + 1, maxFrame);
+        if (curFrame >= 0)
+            dispatchInRange(0, curFrame);
+    }
+    else
+    {
+        if (curFrame > prevFrame)
+            dispatchInRange(prevFrame + 1, curFrame);
+    }
+}
+
 
 void Animator::Update(float dTime)
 {
@@ -84,21 +133,62 @@ void Animator::Update(float dTime)
     }
     else
     {
-        float TickTime = m_CurAnim->TickPerSec * dTime;
-        CurTickTime += TickTime;
+        const float prevTickTime = CurTickTime;
+        const float tickTime = m_CurAnim->TickPerSec * dTime;
+        CurTickTime += tickTime;
 
+        bool looped = false;
         if (CurTickTime >= m_CurAnim->duration)
         {
             if (m_CurAnim->isLoop)
+            {
                 CurTickTime = 0;
+                looped = true;
+            }
             else
+            {
+                CurTickTime = static_cast<float>(m_CurAnim->duration);
                 isPlay = false;
+            }
         }
+
+        DispatchFrameEvents(curAnim, prevTickTime, CurTickTime, looped);
 
         m_RootBone->SampleLocalPose(CurTickTime, m_CurAnim->channels, m_BlendBoneTM);
     }
 
-    m_RootBone->UpdateBoneMatrix(m_BlendBoneTM, m_FinalBoneTM, XMMatrixIdentity());
+    m_RootBone->UpdateBoneMatrix(
+        m_BlendBoneTM,
+        m_FinalBoneTM,
+        m_GlobalBoneTM,
+        m_GlobalBoneNoOffsetTM,
+        XMMatrixIdentity()
+    );
+}
+
+const XMFLOAT4X4& Animator::GetBoneGlobal(int idx)
+{
+    if (idx < 0 || idx >= m_BoneCount)
+        return m_Identity;
+
+    return m_GlobalBoneTM[idx];
+}
+
+const XMFLOAT4X4& Animator::GetBoneGlobalNoOffset(int idx)
+{
+    if (idx < 0 || idx >= m_BoneCount)
+        return m_Identity;
+
+    return m_GlobalBoneNoOffsetTM[idx];
+}
+
+int Animator::FindIndex(const std::string& name)
+{
+    auto it = m_BoneNameToIndex.find(name);
+    if (it == m_BoneNameToIndex.end())
+        return -1;
+
+    return it->second;
 }
 
 void Animator::BlendingUpdate(float dTime)
@@ -111,6 +201,7 @@ void Animator::BlendingUpdate(float dTime)
 
     m_RootBone->SampleLocalPose(PrevTickTime, m_prevAnim->channels, m_LocalBoneA);
     m_RootBone->SampleLocalPose(CurTickTime, m_CurAnim->channels, m_LocalBoneB);
+    //m_RootBone->SampleLocalPose(0, m_CurAnim->channels, m_LocalBoneB);
 
     BlendLocalPose(m_LocalBoneA, m_LocalBoneB, blendAlpha, m_BlendBoneTM);
 
@@ -150,13 +241,42 @@ void Animator::BlendLocalPose(
     }
 }
 
-void Animator::Change(UINT id, float duration)
+bool Animator::SetLoop(const std::string& name, bool isLoop)
 {
-    if (id == curAnim) return;
+    auto it = m_NameToID.find(name);
+
+    if (it != m_NameToID.end())
+    {
+        UINT id = m_NameToID[name];
+
+        m_AnimationClips[id]->isLoop = isLoop;
+
+        return true;
+    }
+    return false;
+}
+
+bool Animator::SetLoop(UINT id, bool isLoop)
+{
+    auto it = m_AnimationClips.find(id);
+
+    if (it != m_AnimationClips.end())
+    {
+        m_AnimationClips[id]->isLoop = isLoop;
+
+        return true;
+    }
+    return false;
+}
+
+
+bool Animator::Change(UINT id, float duration)
+{
+    if (id == curAnim) return false;
 
     auto it = m_AnimationClips.find(id);
     if (it == m_AnimationClips.end())
-        return;
+        return false;
 
     curAnim = id;
     m_prevAnim = m_CurAnim;
@@ -166,21 +286,23 @@ void Animator::Change(UINT id, float duration)
     isBlending = true;
     blendDuration = duration;
     blendAlpha = 0.0f;
+
+    return true;
 }
 
-void Animator::Change(const std::string& name, float duration)
+bool Animator::Change(const std::string& name, float duration)
 {
     auto it1 = m_NameToID.find(name);
     if (it1 == m_NameToID.end())
-        return;
+        return false;
 
     UINT id = it1->second;
 
-    if (id == curAnim) return;
+    if (id == curAnim) return false;
 
     auto it2 = m_AnimationClips.find(id);
-    if (it2 != m_AnimationClips.end())
-        m_CurAnim = it2->second.get();
+    if (it2 == m_AnimationClips.end())
+        return false;
 
     curAnim = id;
     m_prevAnim = m_CurAnim;
@@ -190,6 +312,47 @@ void Animator::Change(const std::string& name, float duration)
     isBlending = true;
     blendDuration = duration;
     blendAlpha = 0.0f;
+
+    return true;
+}
+
+bool Animator::RegisterFrameEvent(const std::string& clipName, UINT frame, AnimationEventCallback callback)
+{
+    auto it = m_NameToID.find(clipName);
+    if (it == m_NameToID.end())
+        return false;
+
+    return RegisterFrameEvent(it->second, frame, std::move(callback));
+}
+
+bool Animator::RegisterFrameEvent(UINT clipID, UINT frame, AnimationEventCallback callback)
+{
+    if (!callback)
+        return false;
+
+    auto clipIt = m_AnimationClips.find(clipID);
+    if (clipIt == m_AnimationClips.end())
+        return false;
+
+    if (frame > clipIt->second->duration)
+        return false;
+
+    m_FrameEvents[clipID][frame].push_back(std::move(callback));
+    return true;
+}
+
+bool Animator::ClearFrameEvents(const std::string& clipName)
+{
+    auto it = m_NameToID.find(clipName);
+    if (it == m_NameToID.end())
+        return false;
+
+    return ClearFrameEvents(it->second);
+}
+
+bool Animator::ClearFrameEvents(UINT clipID)
+{
+    return m_FrameEvents.erase(clipID) > 0;
 }
 
 void Animator::Serialize()
@@ -241,10 +404,12 @@ void Animator::Serialize()
             if (UI::SliderFloat("TickTime", &CurTickTime, 0.0f, m_CurAnim->duration))
             {
                 //CurTickTime = curTimeSec * m_CurAnim->TickPerSec;
-
+                m_RootBone->SampleLocalPose(CurTickTime, m_CurAnim->channels, m_BlendBoneTM);
                 m_RootBone->UpdateBoneMatrix(
                     m_BlendBoneTM,
                     m_FinalBoneTM,
+                    m_GlobalBoneTM,
+                    m_GlobalBoneNoOffsetTM,
                     XMMatrixIdentity()
                 );
             }
@@ -252,13 +417,18 @@ void Animator::Serialize()
             {
                 CurTickTime = curTimeSec * m_CurAnim->TickPerSec;
 
+                m_RootBone->SampleLocalPose(CurTickTime, m_CurAnim->channels, m_BlendBoneTM);
                 m_RootBone->UpdateBoneMatrix(
                     m_BlendBoneTM,
                     m_FinalBoneTM,
+                    m_GlobalBoneTM,
+                    m_GlobalBoneNoOffsetTM,
                     XMMatrixIdentity()
                 );
             }
             UI::EndDisabled();
+
+            UI::DragInt("FramePerSec", &m_CurAnim->TickPerSec, 1, 1, 60);
         }
     }
 }

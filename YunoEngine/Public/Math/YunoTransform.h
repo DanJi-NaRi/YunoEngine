@@ -18,9 +18,20 @@ struct YunoTransform
     }
 };
 
+struct XMMATRIX3
+{
+    XMMATRIX x = XMMatrixIdentity(), y = XMMatrixIdentity(), z = XMMatrixIdentity();
+};
+
 struct Float2;
 struct Float3;
 struct Float4;
+
+struct Int2;
+struct Int3;
+struct Int4;
+
+struct Bool3;
 
 struct Float2
 {
@@ -41,6 +52,8 @@ struct Float2
 
     // Float2 -> XMFLOAT2 (명시 함수 권장)
     XMFLOAT2 ToXM() const { return XMFLOAT2{ x, y }; }
+
+    constexpr bool operator==(const Float2& o) const noexcept { return (x == o.x && y == o.y); }
 
     // same-dim compound
     Float2& operator+=(const Float2& o) { x += o.x; y += o.y; return *this; }
@@ -75,6 +88,7 @@ struct Float3
     Float3& operator=(const Float4& v);
 
     XMFLOAT3 ToXM() const { return XMFLOAT3{ x, y, z }; }
+    XMFLOAT2 ToXM2() const { return XMFLOAT2{ x, y }; }
 
     // same-dim compound
     Float3& operator+=(const Float3& o) { x += o.x; y += o.y; z += o.z; return *this; }
@@ -248,3 +262,59 @@ inline Float2& Float2::operator=(const Float4& v) { x = v.x; y = v.y; return *th
 // Float3 <- Float4
 inline Float3::Float3(const Float4& v) : x(v.x), y(v.y), z(v.z) {}
 inline Float3& Float3::operator=(const Float4& v) { x = v.x; y = v.y; z = v.z; return *this; }
+
+
+struct Int2 
+{
+    constexpr Int2() = default;
+    constexpr Int2(int _x, int _y) : x(_x), y(_y) {}
+    int x = 0, y = 0;
+
+    Int2& operator+=(const Int2& o) { x += o.x; y += o.y; return *this; }
+    Int2& operator-=(const Int2& o) { x -= o.x; y -= o.y; return *this; }
+    Int2& operator*=(const Int2& o) { x *= o.x; y *= o.y; return *this; }
+    Int2& operator/=(const Int2& o) { x /= o.x; y /= o.y; return *this; }
+
+    Int2& operator+=(float s) { x += s; y += s; return *this; }
+    Int2& operator-=(float s) { x -= s; y -= s; return *this; }
+    Int2& operator*=(float s) { x *= s; y *= s; return *this; }
+    Int2& operator/=(float s) { x /= s; y /= s; return *this; }
+};
+
+struct Int3
+{
+    constexpr Int3() = default;
+    constexpr Int3(int _x, int _y, int _z) : x(_x), y(_y), z(_z) {}
+    int x = 0, y = 0, z = 0;
+};
+
+struct Int4
+{
+    int x, y, z, w;
+};
+
+struct Bool3
+{
+    bool x = false, y = false, z = false;
+};
+
+inline constexpr Float2 Clamp(Float2 v) noexcept {
+    v.x = std::clamp(v.x, 0.0f, 1.0f);
+    v.y = std::clamp(v.y, 0.0f, 1.0f);
+    return v;
+}
+
+inline constexpr Float3 Clamp(Float3 v) noexcept {
+    v.x = std::clamp(v.x, 0.0f, 1.0f);
+    v.y = std::clamp(v.y, 0.0f, 1.0f);
+    v.z = std::clamp(v.y, 0.0f, 1.0f);
+    return v;
+}
+
+inline constexpr Float4 Clamp(Float4 v) noexcept {
+    v.x = std::clamp(v.x, 0.0f, 1.0f);
+    v.y = std::clamp(v.y, 0.0f, 1.0f);
+    v.z = std::clamp(v.y, 0.0f, 1.0f);
+    v.w = std::clamp(v.y, 0.0f, 1.0f);
+    return v;
+}

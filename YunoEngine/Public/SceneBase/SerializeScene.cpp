@@ -1,9 +1,11 @@
 #include "pch.h"
 
-#include "SerializeScene.h"
 #include "json.hpp"
 #include "YunoLight.h"
-#include "ObjectManager.h"
+//#include "ObjectManager.h"
+//#include "UIManager.h"
+
+#include "SerializeScene.h"
 
 inline std::string WStringToUtf8(const std::wstring& w)
 {
@@ -25,6 +27,18 @@ inline std::wstring Utf8ToWString(const std::string& s)
 
 namespace nlohmann
 {
+    inline void to_json(json& j, const Vec2Desc& v)
+    {
+        j = json::array({ v.x, v.y });
+    }
+
+    inline void from_json(const json& j, Vec2Desc& v)
+    {
+        // 배열 형태: [x, y]
+        v.x = j.at(0).get<float>();
+        v.y = j.at(1).get<float>();
+    }
+
     inline void to_json(json& j, const Vec3Desc& v)
     {
         j = json::array({ v.x, v.y, v.z });
@@ -67,6 +81,22 @@ namespace nlohmann
         j.at("scale").get_to(t.scale);
     }
 
+    inline void to_json(json& j, const MeshDesc& t)
+    {
+        j = {
+            { "meshNum", t.meshNum },
+            { "emissiveColor", t.emissiveCol },
+            { "pow", t.emissive } 
+        };
+    }
+
+    inline void from_json(const json& j, MeshDesc& t)
+    {
+        j.at("meshNum").get_to(t.meshNum);
+        j.at("emissiveColor").get_to(t.emissiveCol);
+        j.at("pow").get_to(t.emissive);
+    }
+
     inline void to_json(json& j, const UnitDesc& d)
     {
         j = {
@@ -75,8 +105,17 @@ namespace nlohmann
             { "name",      WStringToUtf8(d.name) },
             { "meshPath",  WStringToUtf8(d.meshPath) },
             { "unitType",  WStringToUtf8(d.unitType) },
-            { "transform", d.transform }
+            { "transform", d.transform },
+            {"meshEmissive", d.MatDesc}
         };
+
+        if (d.hasEffectEmissive)
+        {
+            j["effectEmissive"] = {
+                { "color", d.effectEmissiveColor },
+                { "pow", d.effectEmissive }
+            };
+        }
     }
 
     inline void from_json(const json& j, UnitDesc& d)
@@ -89,6 +128,15 @@ namespace nlohmann
         d.unitType = Utf8ToWString(j.at("unitType").get<std::string>());
 
         j.at("transform").get_to(d.transform);
+        j.at("meshEmissive").get_to(d.MatDesc);
+
+        if (j.contains("effectEmissive"))
+        {
+            const auto& effectEmissive = j.at("effectEmissive");
+            effectEmissive.at("color").get_to(d.effectEmissiveColor);
+            effectEmissive.at("pow").get_to(d.effectEmissive);
+            d.hasEffectEmissive = true;
+        }
     }
 
     inline void to_json(json& j, const WidgetDesc& d)
@@ -97,7 +145,7 @@ namespace nlohmann
             { "ID",        d.ID },
             { "parentID",  d.parentID },
             { "name",      WStringToUtf8(d.name) },
-
+            { "size", d.size },
             { "transform", d.transform }
         };
     }
@@ -108,7 +156,7 @@ namespace nlohmann
         j.at("parentID").get_to(d.parentID);
 
         d.name = Utf8ToWString(j.at("name").get<std::string>());
-
+        j.at("size").get_to(d.size);
         j.at("transform").get_to(d.transform);
     }
 
@@ -212,6 +260,59 @@ namespace nlohmann
         return dl;
     }
 
+    inline void to_json(json& j, const PostProcessDesc& d)
+    {
+        j = {
+        { "optionflag",  d.ppFlag },
+        { "threshold",  d.threshold },
+        { "bloomIntensity",  d.bloomIntensity },
+        { "exposure",  d.exposure },
+        { "colorSaturation",  d.colorSaturation },
+        { "colorContrast",  d.colorContrast },
+        { "colorGamma",  d.colorGamma },
+        { "temparature",  d.temparature },
+        { "tint",  d.tint }
+        };
+    }
+
+    inline void from_json(const json& j, PostProcessDesc& d)
+    {
+        j.at("optionflag").get_to(d.ppFlag);
+        j.at("threshold").get_to(d.threshold);
+        j.at("bloomIntensity").get_to(d.bloomIntensity);
+        j.at("exposure").get_to(d.exposure);
+        if (j.contains("colorSaturation")) j.at("colorSaturation").get_to(d.colorSaturation);
+        if (j.contains("colorContrast")) j.at("colorContrast").get_to(d.colorContrast);
+        if (j.contains("colorGamma")) j.at("colorGamma").get_to(d.colorGamma);
+        if (j.contains("temparature")) j.at("temparature").get_to(d.temparature);
+        if (j.contains("tint")) j.at("tint").get_to(d.tint);
+    }
+
+    inline void to_json(json& j, const CameraDesc& c)
+    {
+        j = {
+            { "position", c.position },
+            { "lookAt", c.lookAt },
+            { "up", c.up },
+            { "fovYRadians", c.fovYRadians },
+            { "nearZ", c.nearZ },
+            { "farZ", c.farZ },
+            { "useOrtho", c.useOrtho }
+        };
+    }
+
+    inline void from_json(const json& j, CameraDesc& c)
+    {
+        if (j.contains("position")) j.at("position").get_to(c.position);
+        if (j.contains("lookAt")) j.at("lookAt").get_to(c.lookAt);
+        if (j.contains("up")) j.at("up").get_to(c.up);
+        if (j.contains("fovYRadians")) j.at("fovYRadians").get_to(c.fovYRadians);
+        if (j.contains("nearZ")) j.at("nearZ").get_to(c.nearZ);
+        if (j.contains("farZ")) j.at("farZ").get_to(c.farZ);
+        if (j.contains("useOrtho")) j.at("useOrtho").get_to(c.useOrtho);
+    }
+
+
     inline void to_json(json& j, const SceneDesc& s)
     {
         auto pls = ConvertToSave(s.pointLights);
@@ -224,7 +325,9 @@ namespace nlohmann
         j = {
             { "version",     s.version },
             { "scenename",     name },
-            { "isOrtho",     s.isOrtho },
+            { "isOrtho",     s.camera.useOrtho },
+            { "postprocessOption",     s.postprocess },
+            { "camera",     s.camera },
             { "units",       s.units },
             { "widgets",       s.widgets },
             { "pointLights", pls }
@@ -238,7 +341,20 @@ namespace nlohmann
     {
         j.at("version").get_to(s.version);
         s.sceneName = Utf8ToWString(j.at("scenename").get<std::string>());
-        j.at("isOrtho").get_to(s.isOrtho);
+        j.at("postprocessOption").get_to(s.postprocess);
+
+        if (j.contains("camera"))
+        {
+            j.at("camera").get_to(s.camera);
+        }
+        else
+        {
+            // Legacy scene schema fallback
+            if (j.contains("CameraPosition")) j.at("CameraPosition").get_to(s.camera.position);
+            if (j.contains("CameraLookAt")) j.at("CameraLookAt").get_to(s.camera.lookAt);
+            if (j.contains("isOrtho")) j.at("isOrtho").get_to(s.camera.useOrtho);
+        }
+        s.isOrtho = s.camera.useOrtho;
 
         j.at("units").get_to(s.units);
         j.at("widgets").get_to(s.widgets);

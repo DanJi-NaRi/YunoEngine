@@ -6,6 +6,73 @@
 #include "YunoCamera.h"
 #include "ObjectTypeRegistry.h"
 
+#define MAX_PL 12
+
+namespace
+{
+    struct SharedMeshCacheKey
+    {
+        std::wstring filepath;
+        PassOption opt;
+
+        bool operator==(const SharedMeshCacheKey& rhs) const
+        {
+            return filepath == rhs.filepath
+                && opt.shader == rhs.opt.shader
+                && opt.blend == rhs.opt.blend
+                && opt.raster == rhs.opt.raster
+                && opt.depth == rhs.opt.depth;
+        }
+    };
+
+    struct SharedMeshCacheKeyHash
+    {
+        size_t operator()(const SharedMeshCacheKey& key) const
+        {
+            size_t hash = std::hash<std::wstring>{}(key.filepath);
+            auto hashCombine = [&hash](size_t value)
+                {
+                    hash ^= value + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+                };
+
+            hashCombine(static_cast<size_t>(key.opt.shader));
+            hashCombine(static_cast<size_t>(key.opt.blend));
+            hashCombine(static_cast<size_t>(key.opt.raster));
+            hashCombine(static_cast<size_t>(key.opt.depth));
+            return hash;
+        }
+    };
+
+    class SharedMeshNodeCache
+    {
+    public:
+        std::unique_ptr<MeshNode> GetOrLoad(const std::wstring& filepath, PassOption opt)
+        {
+            SharedMeshCacheKey key{ filepath, opt };
+            auto it = m_meshCache.find(key);
+            if (it != m_meshCache.end())
+                return it->second->Clone();
+
+            auto loaded = Parser::Instance().LoadFile(filepath, opt);
+            if (!loaded)
+                return nullptr;
+
+            auto instance = loaded->Clone();
+            m_meshCache.emplace(std::move(key), std::move(loaded));
+            return instance;
+        }
+
+        static SharedMeshNodeCache& Instance()
+        {
+            static SharedMeshNodeCache instance;
+            return instance;
+        }
+
+    private:
+        std::unordered_map<SharedMeshCacheKey, std::unique_ptr<MeshNode>, SharedMeshCacheKeyHash> m_meshCache;
+    };
+}
+
 
 void ObjectManager::CreateObjectFromDesc(const UnitDesc& desc)
 {
@@ -28,7 +95,7 @@ void ObjectManager::CreateDirLight()
 
 void ObjectManager::CreatePointLight(const XMFLOAT3& pos, const XMFLOAT4& col, float intensity)
 {
-    if (m_pointLights.size() >= 10) return;
+    if (m_pointLights.size() >= 12) return;
 
     PointLightDesc pd{};
     pd.id = m_pointLightIDs++;
@@ -48,7 +115,7 @@ void ObjectManager::CreateDirLightFromDesc(const DirectionalLightDesc& dd)
 
 void ObjectManager::CreatePointLightFromDesc(const PointLightDesc& pd)
 {
-    if (m_pointLights.size() >= 10) return;
+    if (m_pointLights.size() >= 12) return;
 
     auto pl = std::make_unique<YunoPointLight>(pd);
     m_pointLights.push_back(std::move(pl));
@@ -70,8 +137,8 @@ bool ObjectManager::Init()
     m_objMap.reserve(30); //30개 정도 메모리 잡고 시작
     m_pendingCreateQ.reserve(30);
 
-    m_pointLights.reserve(10);
-    plData.resize(10);
+    m_pointLights.reserve(12);
+    plData.resize(12);
 
     return true;
 }
@@ -233,13 +300,30 @@ void ObjectManager::ApplyUnitFromDesc(const std::vector<UnitDesc>& uds)
     for (auto& d : uds)
     {
         Unit* o = FindObject(d.ID);
-        if (!o || o->GetName() != d.name) return;
+        if (!o || o->GetName() != d.name)
+            o = FindObject(d.name);
+
+        if (!o)
+            continue;
 
         XMFLOAT3 radRot = { XMConvertToRadians(d.transform.rotation.x), XMConvertToRadians(d.transform.rotation.y), XMConvertToRadians(d.transform.rotation.z) };
 
         o->SetPos(ToXM(d.transform.position));
         o->SetRot(radRot);
         o->SetScale(ToXM(d.transform.scale));
+        for (auto& emissveInfo : d.MatDesc)
+        {
+            o->SetEmissive(emissveInfo.meshNum, ToXM(emissveInfo.emissiveCol), emissveInfo.emissive);
+        }
+
+        if (d.hasEffectEmissive)
+        {
+            if (auto* effect = dynamic_cast<Effect*>(o))
+            {
+                effect->m_emissiveCol = ToXM(d.effectEmissiveColor);
+                effect->m_emissive = d.effectEmissive;
+            }
+        }
     }
 }
 
@@ -254,9 +338,12 @@ void ObjectManager::ApplyPointLightsFromDesc(const std::vector<PointLightDesc>& 
 {
     if (m_pointLights.empty()) return;
 
-    for (auto& d : m_pointLights)
+    for (auto& d : pds)
     {
-        d->SetDesc(pds[d->GetDesc().id - 1]);
+        if(d.id > m_pointLights.size() || d.id < 1)
+            continue;
+
+        m_pointLights[d.id - 1]->SetDesc(d);
     }
 }
 
@@ -278,6 +365,39 @@ void ObjectManager::CheckDedicateObjectName(std::wstring& name)
 
     if (count)
         name += std::to_wstring(count);
+}
+
+bool ObjectManager::IsObjectIDTaken(UINT id) const
+{
+    if (id == 0)
+        return true;
+
+    if (m_objMap.find(id) != m_objMap.end())
+        return true;
+
+    for (const auto& pending : m_pendingCreateQ)
+    {
+        if (pending && pending->GetID() == id)
+            return true;
+    }
+
+    return false;
+}
+
+UINT ObjectManager::AllocateObjectID(UINT preferredID)
+{
+    if (preferredID != 0 && !IsObjectIDTaken(preferredID))
+    {
+        if (preferredID >= m_objectIDs)
+            m_objectIDs = preferredID + 1;
+
+        return preferredID;
+    }
+
+    while (IsObjectIDTaken(m_objectIDs))
+        ++m_objectIDs;
+
+    return m_objectIDs++;
 }
 
 void ObjectManager::FrameDataUpdate()
@@ -324,5 +444,5 @@ void ObjectManager::FrameDataSubmit()
 
 std::unique_ptr<MeshNode> ObjectManager::CreateMeshNode(const std::wstring& filepath, PassOption opt)
 {
-    return Parser::Instance().LoadFile(filepath, opt);
+    return SharedMeshNodeCache::Instance().GetOrLoad(filepath, opt);
 }

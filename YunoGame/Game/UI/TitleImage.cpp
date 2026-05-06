@@ -29,9 +29,9 @@ bool TitleImage::ChangeMaterial(int num)
     return true;
 }
 
-bool TitleImage::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool TitleImage::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Image::Create(name, id, vPos);
+    Image::Create(name, id, sizePx, vPos, rotZ, vScale);
     
     return true;
 }

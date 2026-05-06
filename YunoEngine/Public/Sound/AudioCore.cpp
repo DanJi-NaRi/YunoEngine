@@ -132,6 +132,23 @@ FMOD::Studio::EventDescription* AudioCore::GetEventDesc(const std::string& event
     return desc;
 }
 
+FMOD::Studio::EventDescription* AudioCore::GetSnapshotDesc(const std::string& eventName)
+{
+    auto it = m_EventDescList.find(eventName);
+    if (it != m_EventDescList.end())
+        return it->second;
+
+    FMOD::Studio::EventDescription* desc = nullptr;
+    std::string eventPath = "snapshot:/";
+    std::string totalPath = eventPath + eventName;
+    FMOD_RESULT r = m_Studio->getEvent(totalPath.c_str(), &desc);
+    CheckFMOD(r, "Studio::System::getEvent");
+    if (r != FMOD_OK || !desc) return nullptr;
+
+    m_EventDescList[eventName] = desc;
+    return desc;
+}
+
 FMOD::Studio::Bus* AudioCore::GetBus(const std::string& busName)
 {
     auto it = m_BusList.find(busName);
@@ -169,7 +186,7 @@ FMOD::Studio::VCA* AudioCore::GetVCA(const std::string& vcaName)
 /////////////////////////////
 // vcaName:
 //  Master = 전체 볼륨
-//  BGM / UI / Card / Player
+//  Music / SFX
 // volume:
 //  1.f : 기본값
 //  0.f : 무음

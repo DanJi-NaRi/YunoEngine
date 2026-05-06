@@ -10,6 +10,7 @@ public:
 
     float m_lifetime = 1.0f;
     float m_emissive = 0.0f;
+    XMFLOAT4 m_emissiveCol = { 1, 1, 1, 1 };
     float m_age = 0.0f;
 
     int m_frameCount = 16;
@@ -24,6 +25,8 @@ public:
     Effect();
     virtual ~Effect() = default;
 
+    void SetID(int id) { m_id = id; }
+
     virtual void SetTemplate(const EffectTemplate& temp);
     virtual void Play(const XMFLOAT3& pos, const XMFLOAT3& scale, const XMFLOAT3& dir);
     virtual void Reset();
@@ -33,11 +36,19 @@ public:
 
     XMMATRIX UpdateBillBoard();
 
-    XMMATRIX UpdateDefault();
+    XMMATRIX UpdateBeam();
     XMMATRIX UpdateScreenAlign();
     XMMATRIX UpdateWorldUpAlign();
     XMMATRIX UpdateAxisLock();
 
     virtual bool Update(float dt) override;
     virtual bool Submit(float dt) override;
+
+    virtual UnitDesc GetDesc() override;
+
+private:
+    XMMATRIX GetParentRotationMatrix() const;
+    XMMATRIX GetParentTranslationMatrix() const;
+    XMFLOAT3 GetWorldPosition() const;
+    XMMATRIX AdjustBillboardForParent(const XMMATRIX& billboardWorld) const;
 };

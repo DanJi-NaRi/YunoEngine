@@ -13,23 +13,18 @@ struct PGridCmd
     {
         struct
         {
-            GamePiece whichPiece;
-            int cx, cz;
-        } mv_s;  // Move
+            float seconds;
+        } wait_p, rollback_p, roll_p;
+        struct
+        {
+            Direction dir;
+        } rot_p;
 
         struct
         {
             float wx, wy, wz;
-            Direction dir;
-            float speed;
+            float second;
         } mv_p;  // Move
-
-        struct
-        {
-            GamePiece whichPiece;
-            int damage;
-            uint8_t tileIDs[35];
-        } atk_s;            // Attack
 
         struct
         {
@@ -38,10 +33,22 @@ struct PGridCmd
 
         struct
         {
+            float disappearDissolveDuration;
+        } dead_p, disappear_p;
+
+        struct
+        {
             GamePiece whichPiece;
-            int damage1;
-            int damage2;
-        } hit;     // Hit
+            bool amIdead;
+            float disappearDissolveDuration;
+            bool isCollided;
+        } hit_p;     // Hit
+
+        struct 
+        {
+            GamePiece whichPiece;
+            bool isCollided;
+        } hit_s;
 
     };
 };
@@ -61,16 +68,20 @@ public:
     static void Insert(PGridCmd cmd);
     bool Empty();
     const PGridCmd Pop();
+    void Clear();
 
 public:
+    static PGridCmd Rot_P(Direction dir);
+    static PGridCmd Move_P(float wx, float wy, float wz, float second = 1, bool isDone = false);
 
-    static PGridCmd Move_S(GamePiece pieceType, int cx, int cz);
-    static PGridCmd Move_P(Direction dir, float wx, float wy, float wz, float speed = 1, bool isDone = false);
+    static PGridCmd Hit_S(GamePiece pieceType, bool isCollided = false);
+    static PGridCmd Hit_P(bool isCollided = false);
+    static PGridCmd MoveHit_P(GamePiece pieceType, bool amIdead, float disappearDissolveDuration = 0);
 
-    static PGridCmd Attack_S_TST(GamePiece pieceType, int damagae = 10);
-    static PGridCmd Hit_S(GamePiece pieceType, int damagae);
-    static PGridCmd Hit_P(int damagae1, GamePiece pieceType = GamePiece::None, int damage2 = 0);
+    static PGridCmd Dead_P(float disappearDissolveDuration);
+    static PGridCmd Disappear_P(float disappearDissolveDuration);
 
     static PGridCmd Cmd_S(CommandType cmdType, GamePiece pieceType);
+    static PGridCmd TimeCmd_P(CommandType cmdType, float seconds);
 
 };

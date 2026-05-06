@@ -32,6 +32,7 @@
 #include <cstring>
 #include <utility>
 #include <deque>
+#include <queue>
 #include <string_view>
 #include <type_traits>
 #include <fstream>
@@ -45,7 +46,7 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <Windowsx.h>
-
+#include <cstdlib>              // OS 한테 환경변수 받아오기
 
 // ===============================
 // DirectX 11
@@ -79,6 +80,13 @@ using Microsoft::WRL::ComPtr;
 #include <sstream>
 #include <filesystem>
 #include <type_traits>
+
+
+
+
+
+
+
 
 #ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC

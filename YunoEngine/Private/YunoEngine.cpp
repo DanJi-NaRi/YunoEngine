@@ -25,6 +25,8 @@
 #include "UImgui.h"
 
 
+#include "ImGUI_Debug.h"
+
 IRenderer* YunoEngine::s_renderer = nullptr;
 ITextureManager* YunoEngine::s_textureManager = nullptr;
 IInput* YunoEngine::s_input = nullptr;
@@ -98,9 +100,19 @@ bool YunoEngine::Initialize(IGameApp* game, const wchar_t* title, uint32_t width
 
     ImGuiManager::Initialize(static_cast<HWND>(m_window->GetNativeHandle()), yunorenderer->m_device.Get(), yunorenderer->m_context.Get());
 
-    ImGuiManager::RegisterDraw([]()
+    ImGuiManager::RegisterDraw([this]()
         {
-            UI::DrawFps();
+            auto& camera = m_renderer->GetCamera();
+            //UI::DrawDebugHUD(&camera.position.x, camera.GetForward().m128_f32);
+            UI::DrawCameraTransformController(&camera.position.x, &camera.target.x, 0.001);
+
+            float fovYDeg = camera.GetFovYDegrees();
+            const int changedMask = UI::DrawCameraFovController(&fovYDeg);
+
+            if (changedMask & 1)
+            {
+                camera.SetFovYDegrees(fovYDeg);
+            }
         }
     );
 #endif
@@ -187,8 +199,33 @@ int YunoEngine::Run()
         //s_renderer->Flush();
 
 #ifdef _DEBUG
-        ImGuiManager::BeginFrame();
 
+
+    //  UI 배치하는데 눈아파서 제거
+    //    // IMGUI 디버깅 스코프
+        ImGuiManager::BeginFrame();
+    
+         //머지할때 이거 풀고 머지 ㄱㄱ
+        //if (m_sceneManager->GetActiveScene()->GetUIManager()) {
+        //    auto& map = m_sceneManager->GetActiveScene()->GetUIManager()->GetWidgetlist();
+        //    for (const auto& kv : map) // kv: pair<const UINT, Widget*>
+        //    {
+        //
+        //        if (auto* cs = dynamic_cast<Slot*>(kv.second))
+        //        {
+        //            if(cs->IsSnapped()) DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(0, 0, 255));
+        //            else DrawDebugRect_Client(cs->GetSnapPoint()->snapRange, Int3(255, 0, 0));
+        //            //else DrawDebugRect_Client(cs->GetRect());
+        //        }
+        //
+        //        if (auto* cs = dynamic_cast<Widget*>(kv.second))
+        //            DrawDebugRect_Client(cs->GetRect());
+        //        //if (auto* cs = dynamic_cast<Image*>(kv.second))
+        //        //    DrawDebugRect_Client(cs->GetRect());
+        //    }
+        //}
+    
+        
         ImGuiManager::EndFrame();
 #endif
 

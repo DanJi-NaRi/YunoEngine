@@ -5,7 +5,6 @@
 
 namespace yuno::server
 {
-
     // 무기 선택 페이즈때 필요한 데이터
     class MatchManager final
     {
@@ -16,17 +15,12 @@ namespace yuno::server
         {
             bool occupied = false;
             std::uint32_t userId = 0;        // 고정 ID (OS한테 받아올 예정)
-            std::uint32_t sessionId = 0; 
+            std::uint32_t sessionId = 0;    
 
-            std::uint32_t unitId1 = 0;
-            std::uint32_t unitId2 = 0;
-
-            std::uint32_t hp = 0;
-            std::uint32_t stamina = 0;
+            std::uint32_t unitId1 = 0;      // 선택 무기 1번 id
+            std::uint32_t unitId2 = 0;      // 선택 무기 2번 id
 
             bool ready = false;
-
-
 
             bool IsReady() const { return (unitId1 != 0 && unitId2 != 0); }
             bool IsUnitsFilled() const
@@ -46,6 +40,8 @@ namespace yuno::server
 
         void LeaveByUserId(std::uint32_t uid);
 
+        void ClearAllSlots();
+
         std::uint8_t GetOccupiedCount() const;
 
         const std::array<MatchSlot, kMaxSlots>& Slots() const { return m_slots; }
@@ -56,6 +52,9 @@ namespace yuno::server
 
         bool SetReadyBySessionId(std::uint64_t sid, bool isReady);
 
+        void InitBattleState();//battlestate 초기화
+
+        void ClearReadyAndUnits();
     private:
         std::array<MatchSlot, kMaxSlots> m_slots{};
     };

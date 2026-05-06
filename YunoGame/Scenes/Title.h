@@ -1,8 +1,10 @@
 #pragma once
 
 #include "SceneBase.h"
+#include "TitleScene_InputContext.h"
 
 class UserImage;
+class SceneChangeButton;
 
 class Title final : public SceneBase
 {
@@ -21,5 +23,9 @@ protected:
     void OnDestroyScene() override;
 
 private:
+    TitleScene_InputContext m_uiCtx;
     Widget* m_titleImage = nullptr;
+    SceneChangeButton* m_startBtn = nullptr;
+    SceneChangeButton* m_optionBtn = nullptr;
+    SceneChangeButton* m_guideBtn = nullptr;
 };

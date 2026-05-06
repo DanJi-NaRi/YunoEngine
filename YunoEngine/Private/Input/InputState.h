@@ -14,6 +14,7 @@ struct InputState
     std::array<uint8_t, 3>      prevMouseDown{};
 
     bool mouseHovered;
+    bool mouseLeaved; // 마우스가 클라이언트 밖인지
 
     float mouseX = 0.0f;
     float mouseY = 0.0f;

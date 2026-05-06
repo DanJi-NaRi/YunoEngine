@@ -22,6 +22,9 @@ struct ScenePolicy
 
     // 이 씬이 활성화 됐을 때 스택 하단에 존재하는 다른 씬들의 렌더를 막을것인지
     bool blockRenderBelow = false;
+
+    // 이 씬이 활성화 됐을 때 스택 하단에 존재하는 다른 씬들의 입력을 막을것인지
+    bool blockInputBelow = false;
 };
 
 

@@ -23,10 +23,12 @@ struct CBPerObject_Material
 {
     XMFLOAT4 baseColor;
     XMFLOAT4 emissiveColor;
+    
     float roughRatio;
     float metalRatio;
     float shadowBias;
     float opacity;
+
     float emissive;
     float padding[3] = { 0, 0, 0 };
 };
@@ -49,7 +51,7 @@ struct CBPointLight
 struct CBLight_All
 {
     CBDirLight dirLit;
-    CBPointLight pointLit[10];
+    CBPointLight pointLit[12];
     XMFLOAT4 plCount = { 0, 0, 0, 1 }; // Only Use x
     //XMFLOAT4 padding[3];
 };
@@ -61,7 +63,13 @@ struct CBPostProcess
     float threshold = 1.0f;
 
     float exposure = 1.0f;
-    float padding[3]{ 0, 0, 0 };
+    float colorSaturation = 1.0f;
+    float colorContrast = 1.0f;
+    float colorGamma = 1.0f;
+
+    float temperature;
+    float tint;
+    float padding[2] = { 0, 0 };
 };
 
 struct CBBloom
@@ -69,6 +77,13 @@ struct CBBloom
     XMFLOAT4 bloomweights; //x : w0(1/2), y : w1(1/4), z : w2(1/8), w : w3(1/16)
     float bloomIntensity = 1.0f;
     XMFLOAT3 padding;
+};
+
+struct CBPostProcessCG
+{
+    XMFLOAT4 lift;      //그림자
+    XMFLOAT4 Gamma; //중간톤
+    XMFLOAT4 Gain;  //하이라이트
 };
 
 struct CBShadow
@@ -84,6 +99,21 @@ struct CBEffect
     XMFLOAT4 effectData; //x : index, y : time, z : cols, w : rows
 };
 
+struct CBWidget
+{
+    XMFLOAT2 widgetSize; //x : width, y : height
+    float widgetValueFloat; // 자율 용도 밸류
+    int   widgetValueInt;   // 자율 용도 밸류
+};
+
+struct CBDissolve
+{
+    XMFLOAT3 dissolveColor;
+    float dissolveAmount;
+
+    float edgeWidth;
+    float padding[3] = { 0, 0, 0 };
+};
 
 template<typename T>
 class YunoConstantBuffer

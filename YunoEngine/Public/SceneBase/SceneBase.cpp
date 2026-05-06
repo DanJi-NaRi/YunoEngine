@@ -6,6 +6,7 @@
 
 #include "IRenderer.h"
 #include "YunoLight.h"
+#include "YunoCamera.h"
 #include "ObjectManager.h"
 #include "SerializeScene.h"
 #include "UIManager.h"
@@ -61,7 +62,6 @@ bool SceneBase::OnCreate()
     m_selectedWidget = nullptr;
 #endif
 
-
     m_objectManager = std::make_unique<ObjectManager>();
     if (!m_objectManager->Init())
         return false;
@@ -71,7 +71,8 @@ bool SceneBase::OnCreate()
         return false;
 
     m_effectManager = std::make_unique<EffectManager>();
-    m_effectManager->Init(30);
+    m_effectManager->Init(50);
+    m_objectManager->SetEffectManager(m_effectManager.get());
 
     if (m_input = YunoEngine::GetInput(); !m_input)
         return false;
@@ -83,6 +84,17 @@ bool SceneBase::OnCreate()
     if (LoadScene(filepath, sd))
     {
         OnCreateScene();
+
+        auto& camera = YunoEngine::GetRenderer()->GetCamera();
+        camera.position = ToXM(sd.camera.position);
+        camera.target = ToXM(sd.camera.lookAt);
+        camera.up = ToXM(sd.camera.up);
+        camera.nearZ = sd.camera.nearZ;
+        camera.farZ = sd.camera.farZ;
+        camera.SetOrthoFlag(sd.camera.useOrtho);
+        camera.SetFovYRadians(sd.camera.fovYRadians);
+
+        YunoEngine::GetRenderer()->SetPostProcessOption(sd.postprocess);
 
         m_objectManager->ProcessPending();
         if(sd.dirLight)
@@ -116,8 +128,83 @@ SceneDesc SceneBase::BuildSceneDesc()
     SceneDesc sd = m_objectManager->BuildSceneDesc();
     sd.sceneName = Utf8ToWString(GetDebugName());
     sd.widgets = m_uiManager->BuildWidgetDesc();
+    sd.postprocess = YunoEngine::GetRenderer()->GetPostProcessOption();
+    auto& camera = YunoEngine::GetRenderer()->GetCamera();
+    sd.camera.position = FromXM(camera.position);
+    sd.camera.lookAt = FromXM(camera.target);
+    sd.camera.up = FromXM(camera.up);
+    sd.camera.nearZ = camera.nearZ;
+    sd.camera.farZ = camera.farZ;
+    sd.camera.fovYRadians = camera.GetFovYRadians();
+    sd.camera.useOrtho = camera.useOrtho;
+    sd.isOrtho = sd.camera.useOrtho;
 
     return sd;
+}
+
+bool SceneBase::OverlaySceneFromFile(const std::wstring& filepath, const RuntimeSceneOverlayOptions& options)
+{
+    SceneDesc sd;
+    if (!LoadSceneFromFile(filepath, sd))
+        return false;
+
+    if (options.applyCamera)
+    {
+        auto& camera = YunoEngine::GetRenderer()->GetCamera();
+        camera.position = ToXM(sd.camera.position);
+        camera.target = ToXM(sd.camera.lookAt);
+        camera.up = ToXM(sd.camera.up);
+        camera.nearZ = sd.camera.nearZ;
+        camera.farZ = sd.camera.farZ;
+        camera.SetOrthoFlag(sd.camera.useOrtho);
+        camera.SetFovYRadians(sd.camera.fovYRadians);
+    }
+
+    if (options.applyPostProcess)
+    {
+        YunoEngine::GetRenderer()->SetPostProcessOption(sd.postprocess);
+    }
+
+    if (options.replaceObjects)
+    {
+        m_objectManager->Clear();
+        m_objectManager->Init();
+        m_objectManager->SetEffectManager(m_effectManager.get());
+
+        for (const auto& unit : sd.units)
+            m_objectManager->CreateObjectFromDesc(unit);
+
+        m_objectManager->ProcessPending();
+
+        if (options.applyLights)
+        {
+            if (sd.dirLight)
+                m_objectManager->CreateDirLightFromDesc(*sd.dirLight);
+
+            for (const auto& pointLight : sd.pointLights)
+                m_objectManager->CreatePointLightFromDesc(pointLight);
+        }
+    }
+    else
+    {
+        m_objectManager->ProcessPending();
+        m_objectManager->ApplyUnitFromDesc(sd.units);
+
+        if (options.applyLights)
+        {
+            if (sd.dirLight)
+                m_objectManager->ApplyDirLightFromDesc(*sd.dirLight);
+            m_objectManager->ApplyPointLightsFromDesc(sd.pointLights);
+        }
+    }
+
+    if (options.applyWidgets)
+    {
+        m_uiManager->ProcessPending();
+        m_uiManager->ApplyWidgetFromDesc(sd.widgets);
+    }
+
+    return true;
 }
 
 // 삭제
@@ -202,7 +289,7 @@ void SceneBase::DrawObjectList()
 
         if (dirLight)
         {
-            bool selected = false;
+            bool selected = dirLight == m_selectedLight;
             if (UI::Selectable("DirectionalLight", selected))
             {
                 SelectLight(dirLight);
@@ -215,7 +302,7 @@ void SceneBase::DrawObjectList()
             int i = 0;
             for (auto& pl : pointLights)
             {
-                bool selected = false;
+                bool selected = pl.get() == m_selectedLight;
                 std::string name = "PointLight" + std::to_string(i);
                 if (UI::Selectable(name.c_str(), selected))
                 {
@@ -248,24 +335,20 @@ void SceneBase::DrawObjectList()
         if (!m_uiManager)
             return;
 
-        const uint32_t widgetcount = m_uiManager->GetWidgetCount();
-
         auto& widgetlist = m_uiManager->GetWidgetlist();
 
         for (auto [id, widget] : widgetlist)
         {
             Widget* obj = widget;
 
-            bool selected = false; //  EditorState에서 가져오게 될 것
+            if (obj->GetParent())
+                continue;
 
-            std::string name = WStringToString(obj->GetName());
-
-            if (UI::Selectable(name.c_str(), selected))
-            {
-                SelectWidget(obj);
-            }
+            DrawWidgetNode(obj);
         }
     }
+
+    m_effectManager->Serialize();
 }
 
 void SceneBase::DrawObjectNode(Unit* obj)
@@ -448,6 +531,7 @@ void SceneBase::DrawInspector()
     {
         if (UI::CollapsingHeader("Transform"))
         {
+            auto& size = m_selectedWidget->GetSize();
             auto& pos = m_selectedWidget->GetPos();
             auto& rot = m_selectedWidget->GetRot();
             auto& scale = m_selectedWidget->GetScale();
@@ -465,6 +549,12 @@ void SceneBase::DrawInspector()
 
             UI::Separator();
 
+
+            if (UI::DragFloat2Editable("Size", &size.x, 1.0f))
+            {
+                isChange = true;
+            }
+            UI::NextLine();
             if (UI::DragFloat3Editable("Position", &pos.x, 1.0f))
             {
                 isChange = true;

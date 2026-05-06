@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "YunoSceneManager.h"
+#include "YunoCamera.h"
 
 #include "IScene.h"
 #include "SceneBase.h"
@@ -9,7 +10,8 @@
 
 #include "ImGuiManager.h"
 #include "UImgui.h"
-
+#include "YunoCamera.h"
+#include "IInput.h"
 
 SceneEntry::~SceneEntry() = default;
 PendingOp::~PendingOp() = default;
@@ -65,9 +67,9 @@ void YunoSceneManager::RegisterDrawSceneUI()
 
     ImGuiManager::RegisterDraw(
         [this]() {
-            UI::SetNextUIPos(1, 50);
+            UI::SetNextUIPos(YunoEngine::GetWindow()->GetClientWidth() - 120, 1);
             UI::SetNextUISize(120, 60);
-            UI::BeginPanel("Save/Load");
+            UI::BeginPanel("Save");
 
             if (UI::Button("Save"))
             {
@@ -194,7 +196,7 @@ void YunoSceneManager::CreateView(const SceneEntry& e, UINT idx)
 
 void YunoSceneManager::DumpStack_Console(const char* reason) const
 {
-    std::cout << "\n[SceneStack] "
+    std::cout << "[SceneStack] "
         << (reason ? reason : "")
         << " | size=" << m_stack.size() << "\n";
 
@@ -206,7 +208,7 @@ void YunoSceneManager::DumpStack_Console(const char* reason) const
             << "  [" << i << "] "
             << (e.scene ? e.scene->GetDebugName() : "(null)")
             << " | state=" << static_cast<int>(e.state)
-            << "\n\n";
+            << "\n";
     }
 }
 
@@ -358,6 +360,18 @@ void YunoSceneManager::Update(float dt)
 
     ApplyPending(m_pendingNow);
 
+    IScene* blockInputScene = nullptr;
+    for (int i = (int)m_stack.size() - 1; i >= 0; --i)
+    {
+        if (m_stack[i].policy.blockInputBelow)
+        {
+            blockInputScene = m_stack[i].scene.get();
+            break;
+        }
+    }
+
+    YunoEngine::GetInput()->SetInputBlockScene(blockInputScene);
+
     if (m_stack.empty())
         return;
 
@@ -388,6 +402,7 @@ void YunoSceneManager::SubmitAndRender(IRenderer* renderer)
     }
 
 #if defined(_DEBUG)
+    renderer->GetCamera().SetOrthoFlag(false);
     renderer->DrawDebug();
 #endif
 

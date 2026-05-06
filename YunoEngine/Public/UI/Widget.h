@@ -7,6 +7,8 @@
 #include "YunoTransform.h"
 #include "Mesh.h"
 
+constexpr Float2 g_defWidgetSize{ 50, 50 };
+
 enum class Visibility : uint8_t { Visible, Hidden, Collapsed };
 
 //class UIManager;
@@ -32,29 +34,89 @@ enum class WidgetType : int { // 자신 / 부모 클래스 타입
     Button,
     Text,
     Slot,
-    //Progress,
+    ProgressBar,
+    Gauge,
+    SpriteSheet,
+    Debug,
+    Logic,
     //Slider,
     Count,
+    
 };
 
 enum class WidgetClass : int {
+    //////////////////////////////
+    // 기본
     Widget,
+    //LogicWidget,
     Image,
     Button,
     Text,
     Slot,
-    CardTable,
-    Card,
-    CardSlot,
+    ProgressBar,
+    Gauge,
+    SpriteSheet,
     LetterBox,
-    GridLine,
 
+    //////////////////////////////
+    //Option
+    OptionButton,
+    VolumePanel,
+    VolumeTrackButton,
+    //////////////////////////////
+    //Debug (부모없음 예외임)
+    WidgetGridLine,
+
+    //////////////////////////////
+    // 씬 전환
+    SceneChangeButton,
+
+    //////////////////////////////
     // 첫 무기 선택 페이즈
     UserImage,
     TitleImage,
     ReadyButton,
     ExitButton,
     WeaponButton,
+    CountdownImage,
+
+    //////////////////////////////
+    // 카드 선택 페이즈 씬
+    Card,
+    CardSlot,
+    PhasePanel,
+
+    //미니맵
+    Minimap,
+    MinimapTile,
+    DirSelectButton,
+
+    // 카드 컨펌
+    CardConfirmPanel,
+    CardConfirmArea,
+    CardConfirmButton,
+    CardCancelButton,
+
+    // 카드 선택
+    CardSelectionPanel,
+    PhaseWeaponSelectButton,
+    PhaseStaminaBar,
+
+    //////////////////////////////
+    // 전투 씬
+    PlayerIcon,
+    BarPanel,
+    PieceImage,
+    HealthBar,
+    HealthGauge,
+    StaminaBar,
+    StaminaGauge,
+    //이모지
+    Emoji,
+
+    // 씬 PopButton
+    PopButton
+    //////////////////////////////
 };
 
 enum class WidgetLayer : int {
@@ -62,6 +124,7 @@ enum class WidgetLayer : int {
     Background,
     HUD,
     Panels,
+    Card,
     Popups,
     Modal,    // 입력 차단
     Tooltip,  
@@ -88,7 +151,7 @@ inline constexpr Float2 kPivot[(int)UIDirection::Count] = {
     {1.0f, 1.0f}, // RightBottom
 };
 
-constexpr Float2 PivotFromUIDirection(UIDirection pivot) { // 피벗 전용 할당값
+constexpr const Float2 PivotFromUIDirection(UIDirection pivot) { // 피벗 전용 할당값
     const int i = (int)pivot;
     assert(0 <= i && i < (int)UIDirection::Count);
     return kPivot[(int)pivot];
@@ -100,18 +163,33 @@ constexpr bool PivotMinMax(Float2 pivot) { // 피벗 최소 최대치 비교
             pivot.x <= g_PivotMax &&
             pivot.y <= g_PivotMax);
 }
-    
 
-struct SnapPoint {
-    XMFLOAT2 m_snapPos; // 스냅 위치 : 기본적으로 slot과 1:1이겠지만, 슬롯이 여러 스냅포인트를 가진 경우 달라질 수 있다.
-    RECT m_snapRange;   // 스냅 검사 Rect : 위젯이 해당 Rect와 AABB가 통과되면, snapPos로 스냅한다.
-    float m_snapPadding; // 범위 보정치 : Rect 감지 범위에 padding만큼 추가 보정을 한다.
-    WidgetClass m_snapTargetClass; // 스냅 조건
-    // 추가 조건 있으면 추가...
-};
 
+// Left Top 기준 Pos를 넣으면, 피벗 적용 Pos 반환
+//inline constexpr XMFLOAT3 MakePivotPosFromLT(const XMFLOAT3& ltPos, const Float2& sizePx, UIDirection pivot)
+//{
+//    Float2 pv = PivotFromUIDirection(pivot); // (0~1)
+//    return XMFLOAT3(
+//        ltPos.x + sizePx.x * pv.x,
+//        ltPos.y + sizePx.y * pv.y,
+//        ltPos.z
+//    );
+//}
+//
+//// Left Top 기준 Pos를 넣으면, 피벗 적용 Pos 반환
+//inline constexpr XMFLOAT3 MakePivotPosFromLT(const XMFLOAT3& ltPos, const Float2& sizePx, Float2 pivot)
+//{
+//    Clamp(pivot);
+//    return XMFLOAT3(
+//        ltPos.x + sizePx.x * pivot.x,
+//        ltPos.y + sizePx.y * pivot.y,
+//        ltPos.z
+//    );
+//}
+
+
+//constexpr Float2 g_DefaultClientXY{ 1920,1080 };
 constexpr Float2 g_DefaultClientXY{ 1920,1080 };
-
 class Widget
 {
 protected:
@@ -130,12 +208,17 @@ protected:
     XMFLOAT3	m_vRot;     // 스크린상의 위젯 Rot
     XMFLOAT3	m_vScale;   // 스크린상의 위젯 크기 배율 (z는 의미 없음, 사용 안함)
     
-    XMFLOAT4X4	m_mWorld;
-    XMFLOAT4X4	m_mNoScaleWorld; // 스케일 곱만 빠진 버전
+    XMFLOAT4X4	m_mWorld; //m_mWorldWithSize; // 렌더/Rect/스냅에 쓰는 월드 (m_size 사용, 자식 결합에 사용)
+    XMFLOAT4X4& m_mWorldWithSize = m_mWorld;  // m_mWorld 별명
+    XMFLOAT4X4	m_mWorldNoSize;               // 부모가 자식에게 상속하는 월드 (m_size 안씀, 부모만 사용)
 
+    
+
+    XMFLOAT4X4  m_mSize;
     XMFLOAT4X4	m_mScale;
     XMFLOAT4X4  m_mRot;
     XMFLOAT4X4  m_mTrans;
+    XMFLOAT4X4  m_mPivot;
 
     XMFLOAT3	m_vPosBk;
     XMFLOAT3	m_vRotBk;
@@ -147,13 +230,11 @@ protected:
 
     // 사이즈 데이터
 
-    Float3 m_size;               // 위젯 자체의 사이즈 (width, height)s
-
-    std::vector<Float2> m_textureSizes;
+    Float2 m_size;               // 위젯 자체의 사이즈 (width, height)s
 
     Float3 m_finalPos;
 
-    Float3 m_finalSize;           // 최종 위젯 사이즈 XY // m_height * m_scale.y * m_canvasOffset
+    Float3 m_finalScale;           // 최종 위젯 스케일 XY // m_finalScale * m_canvasScale
 
     // 캔버스 관련 데이터
 
@@ -161,10 +242,13 @@ protected:
           
     //Float3 m_clientSize;        // 클라이언트 사이즈 XY
 
-    Float3 m_canvasScale;       // 캔버스 결과 적용 스케일 (canvasSizeXY/clientSizeXY)
-    Float3 m_canvasLetterboxOffset; // 레터박스 보정 오프셋
+    Float3 m_canvasScale;           // 해상도 대응 스케일 (canvasSizeXY/clientSizeXY) - Scale에 적용
+    Float3 m_canvasLetterboxOffset; // 레터박스 보정 오프셋 - Pos에 적용
     //Canvas* m_canvas;
 
+    std::wstring m_texturePath; // 현재 TexturePath
+    std::wstring m_texturePathBk; // 백업용 원본 TexturePath
+    Float2 m_textureSize;
 
     // 기타 데이터
 
@@ -172,7 +256,11 @@ protected:
 
     int m_zOrder;               // 아직 미사용
 
-    Visibility m_visible;       // 보이기 여부 // 아직 미사용
+    bool m_mirrorX = false;
+    bool m_mirrorY = false;
+
+    Visibility m_selfVisible; // 내가 원하는 상태
+    Visibility m_visible; // 최종 상태 (렌더/입력용)// 보이기 여부 // 아직 미사용
 
     std::wstring m_inputString; // 텍스트 입력 내용 // 아직 미사용
 
@@ -224,8 +312,8 @@ public:
     virtual ~Widget();
 
     //Create는 오브젝트 매니저만 쓰기
-    virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos);
-    virtual bool  Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3 vRot, XMFLOAT3 vScale);
+    virtual bool  Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos);
+    virtual bool  Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale);
     virtual bool  Start(); // Create 다 끝나고 호출. 
     virtual void  CreateChild() {};
 
@@ -247,32 +335,38 @@ public:
     //////////////////////////////////////////////////
     public:
 
-
     void          UpdateRect();
+    void          UpdateRectWorld();
 
     // 위치 세팅 // 더티 플래그는 아직 미사용
     void          SetSize(Float2 size)          { m_size = size; m_transformDirty = true; }
     void          SetPos(XMFLOAT3 vPos)         { m_vPos = vPos; m_transformDirty = true; }
     void          SetPosBK(XMFLOAT3 vPosBk)     { m_vPosBk = vPosBk; }
-    void          SetRot(XMFLOAT3 vRot)         { m_vRot = vRot; m_transformDirty = true; }
+    void          SetRot(XMFLOAT3 vRot);        // vRot: degree 기준
+    void          SetRotRadian(XMFLOAT3 vRot)   { m_vRot = vRot; m_transformDirty = true; }
+    void          SetRotZ(float rot)            { m_vRot.z = XMConvertToRadians(rot); m_transformDirty = true; }
     void          SetRotBK(XMFLOAT3 vRotBk)     { m_vRotBk = vRotBk; }
     void          SetScale(XMFLOAT3 vScale)     { m_vScale = vScale; m_transformDirty = true;}
     void          SetScaleBK(XMFLOAT3 vScaleBk) { m_vScaleBk = vScaleBk; }
     void          SetPivot(Float2 pivot)        { assert(PivotMinMax(pivot)); m_pivot = pivot; m_transformDirty = true; }
     void          SetPivot(UIDirection dir)     { m_pivot = PivotFromUIDirection(dir); m_transformDirty = true;}
-    virtual bool  IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
     void          SetCanvasSize(Float3 sizeXY)   { m_canvasSize = sizeXY; m_transformDirty = true;}
     void          SetIsRoot(bool isRoot) { m_isRoot = isRoot; }
     void          SetLayer(WidgetLayer layer) { m_layer = layer; }
-    void          SetTextureSize(int num, TextureHandle& handle);
-
-
-    Float2        AddTextureSize(TextureHandle& handle);
+    void          SetTextureSize(TextureHandle& texHandle);
+    void          SetTextureSize(std::wstring path);
+    void          SetUseAspectComp(bool useAspectComp) { m_useAspectComp = useAspectComp; }
+    void          SetVisible(Visibility visible);
+    void          UpdateEffectiveVisibility();
+    void          MirrorScaleX() { m_vScale.x *= -1; m_mirrorX = !m_mirrorX; }
+    void          MirrorScaleY() { m_vScale.y *= -1; m_mirrorY = !m_mirrorY; }
+    void          MirrorReset();
 
 
     virtual void  Backup();
     void SetBackUpTransform() { m_vPos = m_vPosBk; m_vRot = m_vRotBk; m_vScale = m_vScaleBk; }
 
+    Float2&                      GetSize() { return m_size; }
     XMFLOAT3&                    GetPos() { return m_vPos; }
     XMFLOAT3&                    GetRot() { return m_vRot; }
     XMFLOAT3&                    GetScale() { return m_vScale; }
@@ -283,20 +377,33 @@ public:
     XMMATRIX                     GetRotMatrix() { return XMLoadFloat4x4(&m_mRot); }
     XMMATRIX                     GetScaleMatrix() { return XMLoadFloat4x4(&m_mScale); }
     XMMATRIX                     GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
-    XMMATRIX                     GetNoScaleWorldMatrix() { return XMLoadFloat4x4(&m_mNoScaleWorld); }
+    XMMATRIX                     GetWorldWithSizeMatrix() { return XMLoadFloat4x4(&m_mWorldWithSize); } // Rect / 히트테스트용, 스냅용 
+    XMMATRIX                     GetWorldNoSizeMatrix() { return XMLoadFloat4x4(&m_mWorldNoSize); } // 자식 결합(부모-자식)체인용 중점 : "간격"
+    
     const RECT                   GetRect() const { return m_rect; }
     const Float2                 GetPivot() { return m_pivot; }
     bool                         GetIsRoot() { return m_isRoot; }
     WidgetLayer                  GetLayer() { return m_layer; }
-    bool                         HasMeshNode() const { return m_MeshNode.get() != nullptr; }
-    const Float3&                GetTextureSize(int num) const { assert(num >= 0 && num < m_textureSizes.size()); return m_textureSizes[num]; }
-    const std::vector<Float2>&   GetTextureSizes() const { return m_textureSizes; }
+    const Float2                 GetTextureSize(int num) const { m_textureSize; }
+    std::wstring                 GetTexturePath() { return m_texturePath; }
+    std::wstring                 GetTexturePathBk() { return m_texturePathBk; }
+
    
+    virtual bool                 IsCursorOverWidget(POINT mouseXY);    // 마우스 커서가 위젯 위에 있는지 체크
+    bool                         IsVisible(){ return (m_visible == Visibility::Visible); }
+    bool                         IsHidden() { return (m_visible == Visibility::Hidden); }
+    bool                         IsCollapsed() { return (m_visible == Visibility::Collapsed); }
+    Visibility                   GetVisible() { return m_visible; }
+
+
+    bool                         HasMeshNode() const { return m_MeshNode.get() != nullptr; }
+
 
     //UI 메쉬는 기본적으로 쿼드이므로 재사용 가능성이 높음
     virtual bool CreateMesh();
 
-    bool CreateMaterial(std::wstring path, MaterialDesc* pDesc = nullptr);
+    virtual bool CreateMaterial(std::wstring path, MaterialDesc* pDesc = nullptr);
+    virtual bool CreateMaterialDebug(std::wstring path, MaterialDesc* pDesc = nullptr);
 
     template <typename Path, typename... Paths>
     bool CreateMaterials(Path&& path, Paths&&... paths) // wstring_view 타입일 것
@@ -313,15 +420,17 @@ public:
         return hr;
     }
 
+    void ChangeTexture(std::wstring path);
+
     virtual bool CreateMaterial() { return CreateMaterial(L"../Assets/Textures/woodbox.bmp"); };
 
-    virtual bool AddMaterial(const std::wstring& path, MaterialDesc& desc);
+    //virtual bool AddMaterial(const std::wstring& path, MaterialDesc& desc); //  다중 머테리얼은 이용 안할듯?
 
-    virtual bool AddMaterial(MaterialDesc& desc);
+    //virtual bool AddMaterial(MaterialDesc& desc);                           //  다중 머테리얼은 이용 안할듯?
 
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
 
-    bool SwapMaterial(int num);
+    //bool SwapMaterial(int num);
 
     void Attach(Widget* obj);
     void DettachParent();
@@ -359,6 +468,23 @@ inline MeshHandle GetDefWidgetMesh(MeshHandle* out = nullptr)
 {
     if (out) *out = g_defaultWidgetMesh;
     return g_defaultWidgetMesh;
+}
+
+
+// IsIntersectWin32()와 동일 기능
+inline bool IsIntersect(const RECT& a, const RECT& b)
+{
+    // 경계 닿으면 판정 O
+    return !(a.right < b.left ||
+        a.left > b.right ||
+        a.bottom < b.top ||
+        a.top > b.bottom);
+
+    // 경계 닿으면 판정 X
+    //return !(a.right <= b.left ||
+    //    a.left >= b.right ||
+    //    a.bottom <= b.top ||
+    //    a.top >= b.bottom);
 }
 
 

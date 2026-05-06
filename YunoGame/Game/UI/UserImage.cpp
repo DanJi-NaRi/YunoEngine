@@ -49,13 +49,14 @@ bool UserImage::ChangeMaterial(int num)
         break;
     }
 
-    m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
+    ChangeTexture(texturePath);
+    //m_MeshNode->m_Meshs[0]->SetTexture(TextureUse::Albedo, texturePath);
     return true;
 }
 
-bool UserImage::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool UserImage::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Image::Create(name, id, vPos);
+    Image::Create(name, id, sizePx, vPos, rotZ, vScale);
     //m_vScale = XMFLOAT3(0.01f, 0.01f, 0.01f);
     m_userJoined = false;
     m_selectPiece = PieceType::None;

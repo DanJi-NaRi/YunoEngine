@@ -32,11 +32,6 @@ Dwarf::~Dwarf()
 
 bool Dwarf::Update(float dTime)
 {
-    m_constant.baseColor = XMFLOAT4(1, 1, 1, 1);
-    m_constant.roughRatio = 1.0f;
-    m_constant.roughRatio = 1.0f;
-    m_constant.shadowBias = 0.005f;
-
     IInput* input = YunoEngine::GetInput();
     if (input)
     {

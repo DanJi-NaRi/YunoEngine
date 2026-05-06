@@ -6,6 +6,9 @@
 #include "ObjectTypeRegistry.h"
 #include "ObjectManager.h"
 
+#ifdef _DEBUG
+#include "UImgui.h"
+#endif
 //오브젝트 타입.h
 
 namespace {
@@ -63,6 +66,7 @@ bool Unit::Create(XMFLOAT3 vPos)
     m_pRenderer = YunoEngine::GetRenderer();
     m_pTextures = YunoEngine::GetTextureManager();
     m_pInput = YunoEngine::GetInput();
+    m_pEffectManager = nullptr;
 
     Backup();
 
@@ -93,6 +97,7 @@ bool Unit::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3
     m_pRenderer = YunoEngine::GetRenderer();
     m_pTextures = YunoEngine::GetTextureManager();
     m_pInput = YunoEngine::GetInput();
+    m_pEffectManager = nullptr;
 
     Backup();
 
@@ -103,6 +108,8 @@ bool Unit::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos, XMFLOAT3
 
 bool Unit::Update(float dTime)
 {
+    if (!Enable) return true;
+
     XMMATRIX mScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);
     XMMATRIX mRot = XMMatrixRotationRollPitchYaw(m_vRot.x, m_vRot.y, m_vRot.z);
     XMMATRIX mTrans = XMMatrixTranslation(m_vPos.x, m_vPos.y, m_vPos.z);
@@ -124,6 +131,8 @@ bool Unit::Update(float dTime)
 
 bool Unit::Submit(float dTime)
 {
+    if (!Enable) return true;
+
     if (!m_MeshNode) return true;
     m_MeshNode->Submit(m_mWorld, m_vPos);
 
@@ -163,12 +172,29 @@ void Unit::SaveMesh(std::unique_ptr<MeshNode>& node, std::vector<Mesh*>& out)
         SaveMesh(child, out);
 }
 
+void Unit::SetEmissive(int num, const XMFLOAT4& color, float pow)
+{
+    if (num >= m_Meshs.size() || num < 0)
+        return;
+
+    m_Meshs[num]->SetEmissiveColor(color);
+    m_Meshs[num]->SetEmissivePow(pow);
+}
+
 void Unit::SetEmissiveColor(int num, const XMFLOAT4& color)
 {
     if (num >= m_Meshs.size() && num < 0)
         return;
 
     m_Meshs[num]->SetEmissiveColor(color);
+}
+
+void Unit::SetEmissivePow(int num, float pow)
+{
+    if (num >= m_Meshs.size() && num < 0)
+        return;
+
+    m_Meshs[num]->SetEmissivePow(pow);
 }
 
 void Unit::SetTexture(UINT meshindex, TextureUse use, const std::wstring& filepath)
@@ -198,6 +224,9 @@ void Unit::SetOpacity(const float opacity)
 
 void Unit::Attach(Unit* obj) //this가 부모, 파라미터로 자식
 {
+    if (obj == nullptr)
+        return;
+
     if (obj->m_Parent)//기존 부모있으면 떨어진 후 결합
         obj->DettachParent();
 
@@ -208,15 +237,23 @@ void Unit::Attach(Unit* obj) //this가 부모, 파라미터로 자식
 
 void Unit::DettachParent()
 {
+    if (m_Parent == nullptr)
+        return;
+
     m_Parent->DettachChild(m_id);
+    m_Parent = nullptr;
 }
 
 void Unit::DettachChild(uint32_t id)
 {
-    if (m_Childs.find(id) == m_Childs.end())
+    auto it = m_Childs.find(id);
+    if (it == m_Childs.end())
         return;
 
-    m_Childs.erase(id);
+    if (it->second)
+        it->second->m_Parent = nullptr;
+
+    m_Childs.erase(it);
 }
 
 void Unit::ClearChild()
@@ -224,12 +261,51 @@ void Unit::ClearChild()
     if (m_Childs.empty())
         return;
 
-    for (auto& [id, child] : m_Childs)
+    //for (auto& [id, child] : m_Childs)
+    //{
+    //    child->DettachParent();
+    //}
+    std::vector<uint32_t> childIDs;
+    childIDs.reserve(m_Childs.size());
+
+    for (const auto& [id, child] : m_Childs)
     {
-        child->DettachParent();
+        childIDs.push_back(id);
+    }
+
+    for (uint32_t id : childIDs)
+    {
+        auto it = m_Childs.find(id);
+        if (it == m_Childs.end())
+            continue;
+
+        if (it->second)
+            it->second->DettachParent();
+        else
+            m_Childs.erase(it);
     }
 
     m_Childs.clear();
+}
+
+XMMATRIX Unit::GetAttachMatrixForChild(Unit* child)
+{
+    return GetWorldMatrix();
+}
+
+void Unit::SetEnable(bool enabled)
+{
+    if (Enable == enabled)
+        return;
+
+    Enable = enabled;
+
+    if (Enable)
+    {
+        Update();
+    }
+
+    OnEnableChanged(Enable);
 }
 
 UnitDesc Unit::GetDesc()
@@ -250,10 +326,15 @@ UnitDesc Unit::GetDesc()
     d.transform.rotation = degRot; // deg
     d.transform.scale = FromXM(m_vScale);
 
-    std::vector<MaterialDesc> mds;
+    std::vector<MeshDesc> mds;
+    int num = 0;
     for (auto& m : m_Meshs)
     {
         MeshDesc md = m->BuildDesc();
+        md.meshNum = num;
+
+        d.MatDesc.push_back(md);
+        num++;
     }
 
     return d;
@@ -262,6 +343,12 @@ UnitDesc Unit::GetDesc()
 #ifdef _DEBUG
 void Unit::Serialize()
 {
+    bool enabled = IsEnabled();
+    if (UI::Checkbox("Enable", &enabled))
+    {
+        SetEnable(enabled);
+    }
+    
     int i = 0;
     for (auto& mesh : m_Meshs)
     {

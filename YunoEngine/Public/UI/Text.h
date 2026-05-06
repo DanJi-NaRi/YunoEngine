@@ -6,7 +6,7 @@ public:
     explicit Text(UIFactory& uiFactory);
     ~Text() override;
 
-    bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    bool Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale) override;
     bool Start() override;
     bool UpdateTransform(float dTime = 0) override;
     bool Update(float dTime = 0) override;

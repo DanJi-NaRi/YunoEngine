@@ -2,6 +2,7 @@
 #include "ISceneManager.h"
 
 class IScene;
+class IInput;
 
 struct SceneView
 {
@@ -58,7 +59,6 @@ public:
 #ifdef _DEBUG
     void RegisterDrawSceneUI();
 #endif
-
     void RequestReplaceRoot(std::unique_ptr<IScene> scene, SceneTransitionOptions opt = {}) override;
     void RequestPush(std::unique_ptr<IScene> scene, ScenePolicy policy = {}, SceneTransitionOptions opt = {}) override;
     void RequestPop(SceneTransitionOptions opt = {}) override;

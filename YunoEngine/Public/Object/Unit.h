@@ -5,8 +5,9 @@
 #include "IRenderer.h"
 #include "ITextureManager.h"
 #include "Mesh.h"
+#include "SerializeScene.h"
 
-class UnitDesc;
+class IEffectManager;
 // 모든 메쉬는 CW 시계방향 정점이 앞면임
 /* 예시)
 01
@@ -58,10 +59,13 @@ protected:
     Unit* m_Parent;
     std::unordered_map<uint32_t, Unit*> m_Childs;
 
+    bool Enable = true;
+
 protected:
     IRenderer* m_pRenderer = nullptr;
     ITextureManager* m_pTextures = nullptr;
     IInput* m_pInput = nullptr;
+    IEffectManager* m_pEffectManager = nullptr;
 
 public:
     explicit Unit();
@@ -96,7 +100,9 @@ public:
     virtual void SetMesh(std::unique_ptr<MeshNode>&& mesh);
     void SaveMesh(std::unique_ptr<MeshNode>& node, std::vector<Mesh*>& out);
 
+    void SetEmissive(int num, const XMFLOAT4& color, float pow);
     void SetEmissiveColor(int num, const XMFLOAT4& color);
+    void SetEmissivePow(int num, float pow);
 
     UINT GetMeshNum() { return m_Meshs.size(); }
 
@@ -110,16 +116,35 @@ public:
 
     void Attach(Unit* obj);
     void DettachParent();
-    void DettachChild(uint32_t id);
-    void ClearChild();
+    virtual void DettachChild(uint32_t id);
+    virtual void ClearChild();
 
     Unit* GetParent() { return m_Parent; }
     std::unordered_map<uint32_t, Unit*>& GetChilds() { return m_Childs; }
 
-    XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
+    virtual XMMATRIX GetWorldMatrix() { return XMLoadFloat4x4(&m_mWorld); }
+    virtual XMMATRIX GetScaleMatrix() { return XMLoadFloat4x4(&m_mScale); }
+    virtual XMMATRIX GetTransMatrix() { return XMLoadFloat4x4(&m_mTrans); }
+    virtual XMMATRIX GetRotationMatrix() { return XMLoadFloat4x4(&m_mRot); }
+    virtual XMMATRIX GetDeleteRotWorldMatrix() { return XMLoadFloat4x4(&m_mScale) * XMLoadFloat4x4(&m_mTrans); }
+    virtual XMMATRIX GetAttachMatrixForChild(Unit* child); //본에 붙은 자식 행렬 얻어오기용 버츄얼 함수 애니메이션 유닛에서 사용함
+                                                                                                            //부모의 본에 붙는 오브젝트는 부모 행렬받아올 때 이거 써야함
+
+    IEffectManager* GetEffectManager() const { return m_pEffectManager; }
+    void SetEffectManager(IEffectManager* manager) { m_pEffectManager = manager; }
 
     void SetMeshPath(const std::wstring& meshpath) { m_meshpath = meshpath; }
-    UnitDesc GetDesc();
+    virtual UnitDesc GetDesc();
+
+    bool IsEnabled() const { return Enable; }
+    void SetEnable(bool enabled);
+    void SetEnable() { SetEnable(true); }
+    void SetDisable() { SetEnable(false); }
+
+protected:
+    virtual void OnEnableChanged(bool enabled) {}
+
+public:
 
 #ifdef _DEBUG
     virtual void Serialize(); //나중에 상속해서 새로운 오브젝트 만들 때 임구이에 띄우고 싶은거있으면 이 함수 오버라이드하면됌

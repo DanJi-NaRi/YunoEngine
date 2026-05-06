@@ -94,7 +94,7 @@ std::unique_ptr<Animator> Parser::LoadAnimatorFromFile(const std::string& name, 
         aiProcess_Triangulate |
         aiProcess_ConvertToLeftHanded |
         aiProcess_GenSmoothNormals |
-        aiProcess_CalcTangentSpace |
+        aiProcess_CalcTangentSpace  |
         aiProcess_GlobalScale
     );
 
@@ -189,12 +189,22 @@ void CreateBoneNameSet(const aiScene* scene, std::unordered_map<std::string, UIN
         {
             for (size_t j = 0; j < mesh->mNumBones; j++)
             {
-                std::string name(mesh->mBones[j]->mName.C_Str());
+                aiBone* bone = mesh->mBones[j];
+                std::string name = bone->mName.C_Str();
+
+                if(name.find("_end") != std::string::npos)
+                    continue;
+                
+                std::string Arm = scene->mRootNode->FindNode(bone->mName)->mParent->mName.C_Str();
+
+                indexOut.emplace(Arm, -1);
+
                 if (indexOut.find(name) == indexOut.end())
                 {
                     indexOut.emplace(name, -1);
 
-                    XMMATRIX mBoneOffset = XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4*>(&mesh->mBones[j]->mOffsetMatrix.Transpose()));
+                    XMMATRIX mBoneOffset = XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4*>(&bone->mOffsetMatrix.Transpose()));
+
                     matrixOut.emplace(name, mBoneOffset);
                 }
             }
@@ -224,13 +234,15 @@ std::unique_ptr<Animator> CreateAnimator(aiNode* node, const aiScene* scene, std
 
     size_t index = 0;
 
-    for (size_t i = 0; i < node->mNumChildren; i++)
+    /*for (size_t i = 0; i < node->mNumChildren; i++)
     {
         XMMATRIX root = XMMatrixIdentity();
-        CreateBoneNode(node->mChildren[i], index, bRoot.get(), nullptr, root, root, nameToIndex, nameToOffset);
-    }
+        CreateBoneNode(node->mChildren[i], index, bRoot.get(), bRoot.get(), root, root, nameToIndex, nameToOffset);
+    }*/
+    XMMATRIX root = XMMatrixIdentity();
+    CreateBoneNode(node, index, bRoot.get(), nullptr, root, root, nameToIndex, nameToOffset);
 
-    animator->SetBoneTree(std::move(bRoot), nameToIndex.size());
+    animator->SetBoneTree(std::move(bRoot), nameToIndex, nameToIndex.size());
 
     for (size_t i = 0; i < scene->mNumAnimations; i++)
     {
@@ -286,6 +298,7 @@ void CreateAnimationClip(aiAnimation* anim, const aiScene* scene, std::unordered
             boneClip->QuatKeys.push_back(quatkey);
         }
 
+
         for (size_t j = 0; j < channel->mNumScalingKeys; j++)
         {
             ScaleKey scalekey;
@@ -294,7 +307,7 @@ void CreateAnimationClip(aiAnimation* anim, const aiScene* scene, std::unordered
             scalekey.scale = XMFLOAT3(scalingkey.x, scalingkey.y, scalingkey.z);
             boneClip->ScaleKeys.push_back(scalekey);
         }
-
+        
         UINT index = it->second;
         out->channels[index] = std::make_unique<BoneAnimation>(std::move(boneClip));
     }

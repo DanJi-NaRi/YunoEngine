@@ -1,12 +1,13 @@
 #pragma once
 #include "BoneNode.h"
+#include <functional>
 
 
 struct AnimationClip
 {
     std::string name;
 
-    UINT TickPerSec;
+    int TickPerSec;
     UINT duration; //애니메이션 한 사이클 도는 틱 타임
     bool isLoop;
 
@@ -15,9 +16,13 @@ struct AnimationClip
 
 class Animator
 {
+public:
+    using AnimationEventCallback = std::function<void()>;
+
 private:
     std::unique_ptr<BoneNode> m_RootBone;
 
+    std::unordered_map<std::string, UINT> m_BoneNameToIndex;
     std::unordered_map<UINT, std::unique_ptr<AnimationClip>> m_AnimationClips;
     std::unordered_map<std::string, UINT> m_NameToID;
     UINT animCount = 0;
@@ -31,10 +36,15 @@ private:
     std::vector<XMMATRIX> m_LocalBoneB;
     std::vector<XMMATRIX> m_BlendBoneTM;
     std::vector<XMFLOAT4X4> m_FinalBoneTM;
+    std::vector<XMFLOAT4X4> m_GlobalBoneTM;
+    std::vector<XMFLOAT4X4> m_GlobalBoneNoOffsetTM;
+    XMFLOAT4X4 m_Identity;
 
     UINT m_BoneCount;
 
     float CurTickTime = 0;
+
+    std::unordered_map<UINT, std::unordered_map<UINT, std::vector<AnimationEventCallback>>> m_FrameEvents;
 
     bool isPlay = true;
 
@@ -44,6 +54,8 @@ private:
     float blendDuration = 0.001f;
     float PrevTickTime = 0;
     AnimationClip* m_prevAnim;
+
+    void DispatchFrameEvents(UINT clipID, float prevTickTime, float curTickTime, bool looped);
 public:
     Animator();
     virtual ~Animator();
@@ -51,19 +63,35 @@ public:
     void Play() { isPlay = true; }
     void Stop() { isPlay = false; }
 
-    void SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, UINT boneCount);
+    bool isPlaying() { return isPlay; }
+
+    void SetBoneTree(std::unique_ptr<BoneNode>&& rootNode, const std::unordered_map<std::string, UINT>& nameToIndex, UINT boneCount);
     //겹치는 id 이미 있으면 실패 false 반환
     bool AddAnimationClip(const std::string& id, std::unique_ptr<AnimationClip>&& clip);
     bool AddAnimationFromFile(const std::string& name, const std::wstring& filepath);
     void Update(float dTime);
     void BlendLocalPose(const std::vector<XMMATRIX>& A, const std::vector<XMMATRIX>& B, float alpha, std::vector<XMMATRIX>& out);
 
+    bool SetLoop(const std::string& name, bool isLoop);
+
+    bool SetLoop(UINT id, bool isLoop);
+
     UINT GetAnimationNum() { return m_AnimationClips.size(); }
+    UINT GetBoneCount() { return m_BoneCount; }
+    const UINT& GetCurFrame() { return static_cast<UINT>(CurTickTime); }
+    const XMFLOAT4X4& GetBoneGlobal(int idx);
+    const XMFLOAT4X4& GetBoneGlobalNoOffset(int idx);
+    int FindIndex(const std::string& name);
 
     void BlendingUpdate(float dTime);
 
-    void Change(UINT id, float duration = 0.5f);
-    void Change(const std::string& name, float duration = 0.5f);
+    bool Change(UINT id, float duration = 0.5f);
+    bool Change(const std::string& name, float duration = 0.5f);
+
+    bool RegisterFrameEvent(const std::string& clipName, UINT frame, AnimationEventCallback callback);
+    bool RegisterFrameEvent(UINT clipID, UINT frame, AnimationEventCallback callback);
+    bool ClearFrameEvents(const std::string& clipName);
+    bool ClearFrameEvents(UINT clipID);
 
     void Serialize();
 

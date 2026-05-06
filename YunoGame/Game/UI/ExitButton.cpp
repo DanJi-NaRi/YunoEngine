@@ -3,6 +3,7 @@
 
 #include "YunoEngine.h"
 #include "IInput.h"
+#include "AudioQueue.h"
 
 #include "ISceneManager.h"
 #include "IScene.h"
@@ -28,24 +29,28 @@ void ExitButton::Clear()
     m_pExitScene = nullptr;
 }
 
-bool ExitButton::Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos)
+bool ExitButton::Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale)
 {
-    Button::Create(name, id, vPos);
+    sizePx /= 2;
+    Button::Create(name, id, sizePx, vPos, rotZ, vScale);
+    //SetHoverTexture(m_texturePathBk, L"../Assets/UI/Title/exit_mouseout.png");
 
     m_bindkey = 0; // 0인 경우, 안쓴다는 뜻
+
+    SetHoverTexture(L"../Assets/UI/TITLE/exit_mouseout.png", L"../Assets/UI/TITLE/exit_mouseover.png");
 
     return true;
 }
 
 bool ExitButton::Update(float dTime) {
     Button::Update(dTime);
-
     return true;
 }
 
 bool ExitButton::Submit(float dTime)
 {
-    Button::Submit();
+    Button::Submit(dTime);
+
     return true;
 }
 
@@ -54,13 +59,20 @@ bool ExitButton::IdleEvent()
 {
     //std::cout << "IdleEvent" << std::endl;
     // 내용 작성
+
     return true;
 }
 
 // 커서가 위에 올라있을 때
 bool ExitButton::HoveredEvent()
 {
-    std::cout << "HoveredEvent" << std::endl;
+    //std::cout << "HoveredEvent" << std::endl;
+    return true;
+}
+
+bool ExitButton::HoverJoinEvent()
+{
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseHover));
     return true;
 }
 
@@ -74,55 +86,47 @@ bool ExitButton::HoveredEvent()
 // 왼클릭 눌렀을 때
 bool ExitButton::LMBPressedEvent()
 {
-    auto bytes = yuno::net::PacketBuilder::Build(
-        yuno::net::PacketType::C2S_MatchLeave,
-        [&](yuno::net::ByteWriter& w)
-        {
-            yuno::net::packets::C2S_MatchLeave req{};
-            req.Serialize(w);
-        });
-
-    GameManager::Get().SendPacket(std::move(bytes));
-
-    GameManager::Get().SetSceneState(CurrentSceneState::Title);
-
+    //std::cout << "(LMB)PressedEvent" << std::endl;
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_MouseClick));
+    // 게임 끄기
+    PostQuitMessage(0);
     return true;
 }
 
 // 우클릭 눌렀을 때
 bool ExitButton::RMBPressedEvent()
 {
-    std::cout << "(RMB)PressedEvent" << std::endl;
+    //std::cout << "(RMB)PressedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 눌렀을 때
 bool ExitButton::KeyPressedEvent(uint32_t key)
 {
-    if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
-    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;
+    /*if (key == 0) std::cout << "(Key)PressedEvent" << std::endl;
+    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')PressedEvent" << std::endl;*/
     return true;
 }
 
 // 왼클릭 뗐을 때
 bool ExitButton::LMBReleasedEvent()
 {
-    std::cout << "(LMB)ReleasedEvent" << std::endl;
+    //std::cout << "(LMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 우클릭 뗐을 때
 bool ExitButton::RMBReleasedEvent()
 {
-    std::cout << "(RMB)ReleasedEvent" << std::endl;
+    //std::cout << "(RMB)ReleasedEvent" << std::endl;
     return true;
 }
 
 // 바인딩한 키 뗐을 때
 bool ExitButton::KeyReleasedEvent(uint32_t key)
 {
-    if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
-    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;
+   /* if (key == 0) std::cout << "(Key)ReleasedEvent" << std::endl;
+    else std::cout << "(Key - " << key << ", \'" << static_cast<char>(key) << "\')ReleasedEvent" << std::endl;*/
     return true;
 }
 

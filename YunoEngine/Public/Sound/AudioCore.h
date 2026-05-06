@@ -25,6 +25,7 @@ public:
 
     // Events
     FMOD::Studio::EventDescription* GetEventDesc(const std::string& eventName);
+    FMOD::Studio::EventDescription* GetSnapshotDesc(const std::string& eventName);
 
     // Bus / VCA
     FMOD::Studio::Bus* GetBus(const std::string& busName);

@@ -10,9 +10,12 @@
 #include "ServerCardRuntime.h"
 #include "ServerCardManager.h"
 #include "ServerCardRangeManager.h"
+#include "ServerObstacleManager.h"
 #include "RoundController.h"
 #include "ServerCardDealer.h"
 #include "TurnManager.h"
+#include "PlayerCardController.h"
+#include "BattleState.h"
 
 namespace yuno::net
 {
@@ -41,6 +44,7 @@ namespace yuno::server
         void Broadcast(std::vector<std::uint8_t>&& bytes);
 
         std::shared_ptr<yuno::net::TcpSession> FindSession(std::uint64_t sessionId);
+        void OnDisconnected(std::uint64_t sessionId);
         // 핸들러 등록
     public:
         void RegisterMatchPacketHandler();
@@ -58,9 +62,10 @@ namespace yuno::server
         ServerCardDealer  m_cardDealer;
         ServerCardManager m_cardDB;
         ServerCardRangeManager m_cardRangeDB;
+        ServerObstacleManager m_obstacleDB;
         ServerCardRuntime m_cardRuntime;
         RoundController m_roundController;
         TurnManager m_turnManager;
-
+        PlayerCardController m_cardController;
     };
 }

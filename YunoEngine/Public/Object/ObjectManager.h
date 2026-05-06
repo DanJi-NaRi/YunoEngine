@@ -1,18 +1,20 @@
 #pragma once
 
-#pragma once
 #include "RenderTypes.h"
 #include "Unit.h"
 #include "AnimationUnit.h"
 #include "SerializeScene.h"
+#include "Effect.h"
 
 class YunoDirectionalLight;
 class YunoPointLight;
+class IEffectManager;
 
 class ObjectManager
 {
 private:
     using CreateFn = std::function<std::unique_ptr<Unit>(ObjectManager&, const UnitDesc&)>;
+
     size_t m_objectCount;
     UINT m_objectIDs;
     UINT m_pointLightIDs;
@@ -32,6 +34,7 @@ private:
 
     std::unique_ptr<YunoDirectionalLight> m_directionLight;
     std::vector<std::unique_ptr<YunoPointLight>> m_pointLights;
+    IEffectManager* m_effectManager = nullptr;
 
 public:
     void CreateDirLight();
@@ -39,6 +42,7 @@ public:
     void CreateDirLightFromDesc(const DirectionalLightDesc& dd);
     void CreatePointLightFromDesc(const PointLightDesc& pd);
     void SetOrthoFlag(bool flag) { m_isOrtho = flag; };
+    void SetEffectManager(IEffectManager* manager) { m_effectManager = manager; }
 
     YunoDirectionalLight* GetDirLight() { return m_directionLight.get(); }
     std::vector<std::unique_ptr<YunoPointLight>>& GetPointLights() { return m_pointLights; }
@@ -82,6 +86,8 @@ public:
     void ApplyPointLightsFromDesc(const std::vector<PointLightDesc>& pds);
 private:
     void CheckDedicateObjectName(std::wstring& name);
+    bool IsObjectIDTaken(UINT id) const;
+    UINT AllocateObjectID(UINT preferredID = 0);
 
 
     // 프레임 상수버퍼 관리
@@ -112,6 +118,16 @@ void ObjectManager::CreateObjectInternal(const UnitDesc& desc)
                                                              XMConvertToRadians(degRot.z));
     obj->SetRot(radRot);
     obj->SetScale(ToXM(desc.transform.scale));
+    obj->SetEffectManager(m_effectManager);
+
+    if (desc.hasEffectEmissive)
+    {
+        if (auto* effect = dynamic_cast<Effect*>(obj))
+        {
+            effect->m_emissiveCol = ToXM(desc.effectEmissiveColor);
+            effect->m_emissive = desc.effectEmissive;
+        }
+    }
 }
 
 template<typename T>
@@ -119,7 +135,7 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, UINT id)
 {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
-    UINT newID = m_objectIDs++;
+    UINT newID = AllocateObjectID(id);
 
     std::wstring newname = name;
 
@@ -127,6 +143,7 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, UINT id)
     CheckDedicateObjectName(newname);
 
     obj->Create(newname, newID, pos);
+    obj->SetEffectManager(m_effectManager);
 
     auto* pObj = obj.get();
 
@@ -139,7 +156,7 @@ template<typename T>//파싱없이 메쉬 생성해서 렌더할 오브젝트, �
 T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, PassOption opt, UINT id) {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
-    UINT newID = m_objectIDs++;
+    UINT newID = AllocateObjectID(id);
 
     std::wstring newname = name;
     
@@ -147,6 +164,7 @@ T* ObjectManager::CreateObject(const std::wstring& name, XMFLOAT3 pos, PassOptio
     CheckDedicateObjectName(newname);
 
     obj->Create(newname, newID, pos, opt);
+    obj->SetEffectManager(m_effectManager);
 
     auto* pObj = obj.get();
 
@@ -160,7 +178,7 @@ T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, c
 {
     static_assert(std::is_base_of_v<Unit, T>, "T must Derived Unit(GameObject, ObjectManager.h)");
 
-    UINT newID = m_objectIDs++;
+    UINT newID = AllocateObjectID(id);
 
     auto mesh = CreateMeshNode(filepath, opt);
 
@@ -175,6 +193,7 @@ T* ObjectManager::CreateObjectFromFile(const std::wstring& name, XMFLOAT3 pos, c
     obj->SetMeshPath(filepath);
 
     obj->SetMesh(std::move(meshnode));
+    obj->SetEffectManager(m_effectManager);
 
     auto* pObj = obj.get();
     m_pendingCreateQ.emplace_back(std::move(obj));

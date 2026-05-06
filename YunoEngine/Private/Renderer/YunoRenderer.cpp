@@ -17,6 +17,8 @@
 #include "IWindow.h"
 #include "YunoEngine.h"
 
+#include "SerializeScene.h"
+
 using Microsoft::WRL::ComPtr;
 
 
@@ -66,6 +68,8 @@ bool YunoRenderer::Initialize(IWindow* window)
     if (!m_cbObject_Material.Create(m_device.Get())) return false; 
     if (!m_cbLight.Create(m_device.Get())) return false;
     if (!m_cbEffect.Create(m_device.Get())) return false;
+    if (!m_cbWidget.Create(m_device.Get())) return false;
+    if (!m_cbDissolve.Create(m_device.Get())) return false;
     if (!CreatePPCB()) return false;
 
 
@@ -111,21 +115,45 @@ bool YunoRenderer::Initialize(IWindow* window)
 bool YunoRenderer::CreateShaders()
 {
     // 여기서 쉐이더들 초기화 쭉 하면 됨
-    if (!LoadShader(ShaderId::Basic, "../Assets/Shaders/BasicColor.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PBRBase, "../Assets/Shaders/PBR_Base.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::EffectBase, "../Assets/Shaders/EffectBase.hlsl", "VSMain", "PSMain")) return false;
+    //if (!LoadShader(ShaderId::Basic, "../Assets/Shaders/BasicColor.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::Basic, "../Assets/Shaders/Binary/BasicColor_VS.cso", "../Assets/Shaders/Binary/BasicColor_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PBRBase, "../Assets/Shaders/Binary/PBR_Base_VS.cso", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PBRBase, "../Assets/Shaders/Binary/PBR_Base_VS.cso", "../Assets/Shaders/Binary/PBR_Base_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::NoneShadowPBRBase, "../Assets/Shaders/NoneShadowPBR_Base.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::NoneShadowPBRBase, "../Assets/Shaders/Binary/NoneShadowPBR_Base_VS.cso", 
+                                                                                                        "../Assets/Shaders/Binary/NoneShadowPBR_Base_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::BasicAnimation, "../Assets/Shaders/BasicAnimation.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::BasicAnimation, "../Assets/Shaders/Binary/BasicAnimation_VS.cso", "../Assets/Shaders/Binary/BasicAnimation_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PBRAnimation, "../Assets/Shaders/PBR_Animation.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PBRAnimation, "../Assets/Shaders/Binary/PBR_Animation_VS.cso", "../Assets/Shaders/Binary/PBR_Animation_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PBR_AniDissolve, "../Assets/Shaders/PBR_Animation_Dissolve.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PBR_AniDissolve, "../Assets/Shaders/Binary/PBR_Animation_Dissolve_VS.cso", "../Assets/Shaders/Binary/PBR_Animation_Dissolve_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::UIBase, "../Assets/Shaders/UI_Base.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::UIBase, "../Assets/Shaders/Binary/UI_Base_VS.cso", "../Assets/Shaders/Binary/UI_Base_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::UIDebug, "../Assets/Shaders/UI_Debug.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::UIDebug, "../Assets/Shaders/Binary/UI_Debug_VS.cso", "../Assets/Shaders/Binary/UI_Debug_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::UIGauge, "../Assets/Shaders/UI_Gauge.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::UIGauge, "../Assets/Shaders/Binary/UI_Gauge_VS.cso", "../Assets/Shaders/Binary/UI_Gauge_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::UISpriteSheet, "../Assets/Shaders/UI_SpriteAnim.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::UISpriteSheet, "../Assets/Shaders/Binary/UI_SpriteAnim_VS.cso", "../Assets/Shaders/Binary/UI_SpriteAnim_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::EffectBase, "../Assets/Shaders/EffectBase.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::EffectBase, "../Assets/Shaders/Binary/EffectBase_VS.cso", "../Assets/Shaders/Binary/EffectBase_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::EffectWithTexMap, "../Assets/Shaders/EffectWithTexMap.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::EffectWithTexMap, "../Assets/Shaders/Binary/EffectWithTexMap_VS.cso", "../Assets/Shaders/Binary/EffectWithTexMap_PS.cso")) return false;
 
     if (!CreatePPShader()) return false;
 
     //Debug
-    if (!LoadShader(ShaderId::DebugGrid, "../Assets/Shaders/DebugGrid.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::DebugMesh, "../Assets/Shaders/DebugMesh.hlsl", "VSMain", "PSMain")) return false;
+    //if (!LoadShader(ShaderId::DebugGrid, "../Assets/Shaders/DebugGrid.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::DebugGrid, "../Assets/Shaders/Binary/DebugGrid_VS.cso", "../Assets/Shaders/Binary/DebugGrid_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::DebugMesh, "../Assets/Shaders/DebugMesh.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::DebugMesh, "../Assets/Shaders/Binary/DebugMesh_VS.cso", "../Assets/Shaders/Binary/DebugMesh_PS.cso")) return false;
 
     //ps 안씀
-    if (!LoadShader(ShaderId::ShadowPass, "../Assets/Shaders/ShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
+    //if (!LoadShader(ShaderId::ShadowPass, "../Assets/Shaders/ShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::ShadowPass, "../Assets/Shaders/Binary/ShadowMapWrite_VS.cso", "../Assets/Shaders/Binary/ShadowMapWrite_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::ShadowPassSkinning, "../Assets/Shaders/SkinningShadowMapWrite.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::ShadowPassSkinning, "../Assets/Shaders/Binary/SkinningShadowMapWrite_VS.cso", "../Assets/Shaders/Binary/SkinningShadowMapWrite_PS.cso")) return false;
 
     //픽셀셰이더 필요없을 때 쓰는 셰이더(섀도우맵)
     YunoShader empty;
@@ -411,7 +439,7 @@ bool YunoRenderer::CreateShadowMap(uint32_t width, uint32_t height)
     m_ShadowMap.srvFormat = DXGI_FORMAT_R32_FLOAT;
 
     m_shadowInfo.shadowMapSize = width;
-    m_shadowBias = 0.0005f;
+    m_shadowBias = 0.00001f;
 
     m_cbShadow.Create(m_device.Get());
 
@@ -448,9 +476,11 @@ bool YunoRenderer::CreateShadowMap(uint32_t width, uint32_t height)
     if (FAILED(m_device->CreateShaderResourceView(m_ShadowMap.dstex.Get(), &srvDesc, m_ShadowMap.dssrv.GetAddressOf())))
         return false;
 
-    m_shadowCamera.position = XMFLOAT3(0, 20, 0);
-    m_shadowCamera.target = XMFLOAT3(0, 0, -0.01f);
+    m_shadowCamera.position = XMFLOAT3(0, 10, -3);
+    m_shadowCamera.target = XMFLOAT3(0, 0, 0);
     m_shadowCamera.up = XMFLOAT3(0, 1, 0);
+    m_shadowCamera.nearZ = 0.1f;
+    m_shadowCamera.farZ = 500;
 
     return true;
 }
@@ -461,10 +491,19 @@ void YunoRenderer::InitShadowPass()
     m_ShadowPassKey.ps = ShaderId::None;
     m_ShadowPassKey.vertexFlags = VSF_Pos;
     m_ShadowPassKey.blend = BlendPreset::Opaque;
-    m_ShadowPassKey.raster = RasterPreset::CullFront;
+    m_ShadowPassKey.raster = RasterPreset::CullBack;
     m_ShadowPassKey.depth = DepthPreset::ReadWrite;
 
     m_ShadowPass = GetOrCreatePass(m_ShadowPassKey);
+
+    m_ShadowSkinPassKey.vs = ShaderId::ShadowPassSkinning;
+    m_ShadowSkinPassKey.ps = ShaderId::None;
+    m_ShadowSkinPassKey.vertexFlags = VSF_Pos | VSF_BoneIndex | VSF_BoneWeight;
+    m_ShadowSkinPassKey.blend = BlendPreset::Opaque;
+    m_ShadowSkinPassKey.raster = RasterPreset::CullBack;
+    m_ShadowSkinPassKey.depth = DepthPreset::ReadWrite;
+
+    m_ShadowSkinPass = GetOrCreatePass(m_ShadowSkinPassKey);
 }
 
 void YunoRenderer::DrawShadowMap()
@@ -475,7 +514,7 @@ void YunoRenderer::DrawShadowMap()
 
     //ViewProj Bind
     XMMATRIX LightView = m_shadowCamera.View();
-    XMMATRIX LightProj = m_shadowCamera.ProjShadowOrtho(100, 100);
+    XMMATRIX LightProj = m_shadowCamera.ProjShadowOrtho(30, 30);
 
     XMStoreFloat4x4(&m_shadowInfo.lightViewProj, XMMatrixTranspose(LightView * LightProj));
     m_shadowInfo.shadowBias = m_shadowBias;
@@ -493,18 +532,15 @@ void YunoRenderer::DrawShadowMap()
         return;
 
     // 렌더 패스 바인드
-    m_passes[m_ShadowPass - 1]->Bind(m_context.Get());
-
     ID3D11Buffer* cb = m_cbShadow.Get();
 
     m_context->VSSetConstantBuffers(4, 1, &cb);
     //m_context->PSSetConstantBuffers(4, 1, &cb);
 
+    RenderPassHandle boundPass = 0;
+
     for (const RenderItem& item : m_renderQueue)
     {
-        if (!item.castShadow)
-            continue;
-
         if (item.meshHandle == 0 || item.meshHandle > m_meshes.size())
             continue;
 
@@ -517,6 +553,18 @@ void YunoRenderer::DrawShadowMap()
         {
             if (m_defaultMaterial > 0 && m_defaultMaterial <= m_materials.size())
                 material = &m_materials[m_defaultMaterial - 1];
+        }
+
+        RenderPassHandle targetPass = item.haveAnim ? m_ShadowSkinPass : m_ShadowPass;
+        if (targetPass == 0 || targetPass > m_passes.size())
+            targetPass = m_ShadowPass;
+        if (targetPass == 0 || targetPass > m_passes.size())
+            continue;
+
+        if (targetPass != boundPass)
+        {
+            m_passes[targetPass - 1]->Bind(m_context.Get());
+            boundPass = targetPass;
         }
 
         // 메쉬 바인드
@@ -696,7 +744,7 @@ bool YunoRenderer::CreateBloomRT(uint32_t width, uint32_t height)
     sd.Texture2D.MipLevels = td.MipLevels;
     sd.Texture2D.MostDetailedMip = 0;
 
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < kBloomLevels; ++i)
     {
         m_bloomRT[i] = {};
 
@@ -730,13 +778,22 @@ bool YunoRenderer::CreateBloomRT(uint32_t width, uint32_t height)
 
 bool YunoRenderer::CreatePPShader()
 {
-    if (!LoadShader(ShaderId::PP_Default, "../Assets/Shaders/PP_Default.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_Threshold, "../Assets/Shaders/PP_Threshold.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_DownSample, "../Assets/Shaders/PP_DownSample.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_BlurH, "../Assets/Shaders/PP_BlurHorizon.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_BlurV, "../Assets/Shaders/PP_BlurVertical.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_Combine, "../Assets/Shaders/PP_Combine.hlsl", "VSMain", "PSMain")) return false;
-    if (!LoadShader(ShaderId::PP_ToneMap, "../Assets/Shaders/PP_ToneMap.hlsl", "VSMain", "PSMain")) return false;
+    //if (!LoadShader(ShaderId::PP_Default, "../Assets/Shaders/PP_Default.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_Default, "../Assets/Shaders/Binary/PP_Default_VS.cso", "../Assets/Shaders/Binary/PP_Default_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_Threshold, "../Assets/Shaders/PP_Threshold.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_Threshold, "../Assets/Shaders/Binary/PP_Threshold_VS.cso", "../Assets/Shaders/Binary/PP_Threshold_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_DownSample, "../Assets/Shaders/PP_DownSample.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_DownSample, "../Assets/Shaders/Binary/PP_DownSample_VS.cso", "../Assets/Shaders/Binary/PP_DownSample_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_BlurH, "../Assets/Shaders/PP_BlurHorizon.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_BlurH, "../Assets/Shaders/Binary/PP_BlurHorizon_VS.cso", "../Assets/Shaders/Binary/PP_BlurHorizon_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_BlurV, "../Assets/Shaders/PP_BlurVertical.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_BlurV, "../Assets/Shaders/Binary/PP_BlurVertical_VS.cso", "../Assets/Shaders/Binary/PP_BlurVertical_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_Combine, "../Assets/Shaders/PP_Combine.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_Combine, "../Assets/Shaders/Binary/PP_Combine_VS.cso", "../Assets/Shaders/Binary/PP_Combine_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_ColorGrading, "../Assets/Shaders/PP_ColorGrading.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_ColorGrading, "../Assets/Shaders/Binary/PP_ColorGrading_VS.cso", "../Assets/Shaders/Binary/PP_ColorGrading_PS.cso")) return false;
+    //if (!LoadShader(ShaderId::PP_ToneMap, "../Assets/Shaders/PP_ToneMap.hlsl", "VSMain", "PSMain")) return false;
+    if (!LoadShaderBinary(ShaderId::PP_ToneMap, "../Assets/Shaders/Binary/PP_ToneMap_VS.cso", "../Assets/Shaders/Binary/PP_ToneMap_PS.cso")) return false;
 
     return true;
 }
@@ -807,6 +864,18 @@ bool YunoRenderer::CreatePPMaterial()
     else
         return false;
 
+    //ColorGrading
+    md.passKey.vs = ShaderId::PP_ColorGrading;
+    md.passKey.ps = ShaderId::PP_ColorGrading;
+    h = CreateMaterial(md);
+    if (h)
+    {
+        m_PPMaterials.emplace(PostProcessFlag::ColorGrading, h);
+        m_ppColorGradingMat = h;
+    }
+    else
+        return false;
+
     //ToneMapping
     md.passKey.vs = ShaderId::PP_ToneMap;
     md.passKey.ps = ShaderId::PP_ToneMap;
@@ -832,7 +901,8 @@ void YunoRenderer::SetPP_Pass()
     if (m_PPFlag == 0)
     {
         m_PPFlag = PostProcessFlag::Default
-                            | PostProcessFlag::Bloom;
+                            | PostProcessFlag::Bloom
+                            | PostProcessFlag::ColorGrading;
     }
 
     m_ppChain.clear();
@@ -874,6 +944,8 @@ void YunoRenderer::PostProcess()
     auto input = PostProcessScene();
     if(m_PPFlag & PostProcessFlag::Bloom)
         input = PostProcessBloom(input);
+    if (m_PPFlag & PostProcessFlag::ColorGrading)
+        input = PostProcessColorGrading(input);
     PostProcessFinal(input);
 }
 
@@ -937,7 +1009,7 @@ ID3D11ShaderResourceView* YunoRenderer::PostProcessBloom(ID3D11ShaderResourceVie
     m_ppCB.Update(m_context.Get(), cbpp);
     BindBloomThreshold(input);
 
-    for (int i = 1; i < 3; i++)
+    for (int i = 1; i < kBloomLevels; i++)
     {
         UnBindAllSRV();
         BindRT(m_bloomRT[i].rtv.Get());
@@ -947,7 +1019,7 @@ ID3D11ShaderResourceView* YunoRenderer::PostProcessBloom(ID3D11ShaderResourceVie
         BindBloomDownSample(m_bloomRT[i - 1].srv.Get());
     }
 
-    for (int i = 3; i > -1; i--)
+    for (int i = kBloomLevels - 1; i > -1; i--)
     {
         UnBindAllSRV();
         BindRT(m_blurTemp[i].rtv.Get());
@@ -1084,7 +1156,7 @@ void YunoRenderer::BindBloomCombine(ID3D11ShaderResourceView* input)
     // 렌더 패스 바인드
     m_passes[passHandle - 1]->Bind(m_context.Get());
 
-    XMFLOAT4 weight = XMFLOAT4(0.4, 0.3f, 0.2f, 0.1f);
+    XMFLOAT4 weight = XMFLOAT4(0.5f, 0.3f, 0.2f, 0.0f);
     //XMFLOAT4 weight = XMFLOAT4(0.25, 0.15, 0.10, 0.02);
 
     m_ppCBloom.Update(m_context.Get(), { weight, m_BloomIntensity });
@@ -1093,11 +1165,45 @@ void YunoRenderer::BindBloomCombine(ID3D11ShaderResourceView* input)
     m_context->PSSetConstantBuffers(1, 1, &cb);
 
     m_context->PSSetShaderResources(0, 1, &input);
-    ID3D11ShaderResourceView* bloomRT[4] = { m_bloomRT[0].srv.Get(), m_bloomRT[1].srv.Get(), m_bloomRT[2].srv.Get(), m_bloomRT[3].srv.Get() };
-    m_context->PSSetShaderResources(2, 4, bloomRT);
+    //ID3D11ShaderResourceView* bloomRT[4] = { m_bloomRT[0].srv.Get(), m_bloomRT[1].srv.Get(), m_bloomRT[2].srv.Get(), m_bloomRT[3].srv.Get() };
+    ID3D11ShaderResourceView* bloomRT[kBloomLevels] = { m_bloomRT[0].srv.Get(), m_bloomRT[1].srv.Get(), m_bloomRT[2].srv.Get() };
+    m_context->PSSetShaderResources(2, kBloomLevels, bloomRT);
 
     // 드로우
     m_context->Draw(3, 0);
+}
+
+ID3D11ShaderResourceView* YunoRenderer::PostProcessColorGrading(ID3D11ShaderResourceView* input)
+{
+    if (m_ppColorGradingMat <= 0 || m_ppColorGradingMat > m_materials.size())
+        return input;
+
+    auto& dst = NextPostRT();
+    UnBindAllSRV();
+    BindRT(dst.rtv.Get());
+    SetViewPort();
+
+    const YunoMaterial& material = m_materials[m_ppColorGradingMat - 1];
+    RenderPassHandle passHandle = material.pass;
+    if (passHandle == 0 || passHandle > m_passes.size())
+        return input;
+
+    CBPostProcess cbpp{};
+    cbpp.colorSaturation = m_ColorSaturation;
+    cbpp.colorContrast = m_ColorContrast;
+    cbpp.colorGamma = m_ColorGamma;
+    cbpp.temperature = static_cast<float>(m_Temparature);
+    cbpp.tint = m_TInt;
+    m_ppCB.Update(m_context.Get(), cbpp);
+    auto cb = m_ppCB.Get();
+    m_context->PSSetConstantBuffers(0, 1, &cb);
+
+    m_passes[passHandle - 1]->Bind(m_context.Get());
+    m_context->PSSetShaderResources(0, 1, &input);
+    m_context->Draw(3, 0);
+
+    m_postIndex++;
+    return dst.srv.Get();
 }
 
 void YunoRenderer::PostProcessFinal(ID3D11ShaderResourceView* input)
@@ -1118,6 +1224,9 @@ void YunoRenderer::PostProcessFinal(ID3D11ShaderResourceView* input)
 
     CBPostProcess cbpp{};
     cbpp.exposure = m_Exposure;
+    cbpp.colorSaturation = m_ColorSaturation;
+    cbpp.colorContrast = m_ColorContrast;
+    cbpp.colorGamma = m_ColorGamma;
     m_ppCB.Update(m_context.Get(), cbpp);
     auto cb = m_ppCB.Get();
     m_context->PSSetConstantBuffers(0, 1, &cb);
@@ -1470,6 +1579,45 @@ bool YunoRenderer::LoadShader(
     return LoadShader(id, wPath, sVsEntry, sPsEntry, sVsProfile, sPsProfile);
 }
 
+bool YunoRenderer::LoadShaderBinary(ShaderId id, const std::wstring& vsBinaryPath, const std::wstring& psBinaryPath)
+{
+    if (!m_device)
+        return false;
+
+    Microsoft::WRL::ComPtr<ID3DBlob> vsBlob;
+    Microsoft::WRL::ComPtr<ID3DBlob> psBlob;
+
+    const HRESULT hrVS = D3DReadFileToBlob(vsBinaryPath.c_str(), vsBlob.GetAddressOf());
+    if (FAILED(hrVS) || !vsBlob)
+        return false;
+
+    const HRESULT hrPS = D3DReadFileToBlob(psBinaryPath.c_str(), psBlob.GetAddressOf());
+    if (FAILED(hrPS) || !psBlob)
+        return false;
+
+    ShaderProgram prog{};
+    prog.vsBytecode = vsBlob;
+
+    prog.vs = std::make_unique<YunoShader>();
+    prog.ps = std::make_unique<YunoShader>();
+
+    if (!prog.vs->CreateVertexShader(m_device.Get(), vsBlob.Get()))
+        return false;
+    if (!prog.ps->CreatePixelShader(m_device.Get(), psBlob.Get()))
+        return false;
+
+    m_programs[id] = std::move(prog);
+    return true;
+}
+
+bool YunoRenderer::LoadShaderBinary(ShaderId id, const char* vsBinaryPath, const char* psBinaryPath)
+{
+    if (!vsBinaryPath || !psBinaryPath)
+        return false;
+
+    return LoadShaderBinary(id, Utf8ToWString(vsBinaryPath), Utf8ToWString(psBinaryPath));
+}
+
 
 // desc 체크해서 셰이더 지정해주는 함수
 const ShaderId YunoRenderer::SetShaderKey(const MaterialDesc& desc)
@@ -1780,6 +1928,7 @@ MeshHandle YunoRenderer::CreateMesh(const VertexStreams& streams,
 
     // 저장하고 핸들 반환 (1-based)
     m_meshes.push_back(std::move(mr));
+
     return static_cast<MeshHandle>(m_meshes.size());
 }
 
@@ -1814,6 +1963,7 @@ MaterialHandle YunoRenderer::CreateMaterial(const MaterialDesc& desc)
     mat.ao = desc.ao;
 
     m_materials.push_back(mat);
+
     return static_cast<MaterialHandle>(m_materials.size()); // 1-based
 }
 
@@ -1990,21 +2140,48 @@ std::pair<int, int> YunoRenderer::GetTextureSize(TextureHandle handle) const
         return { -1, -1 };
     const TextureResource& tr = m_textures[handle - 1];
     return { static_cast<int>(tr.w), static_cast<int>(tr.h) };
-
 }
 
-void YunoRenderer::SetPostProcessOption(uint32_t flag)
+void YunoRenderer::SetPostProcessOption(const PostProcessDesc& opt)
 {
-    if(m_PPFlag = 0)
+    if(m_PPFlag == 0)
         m_PPFlag = PostProcessFlag::Default;
-    m_PPFlag |= flag;
+    m_PPFlag |= opt.ppFlag;
+
+    m_Threshold = opt.threshold;
+    m_BloomIntensity = opt.bloomIntensity;
+    m_Exposure = opt.exposure;
+    m_ColorSaturation = opt.colorSaturation;
+    m_ColorContrast = opt.colorContrast;
+    m_ColorGamma = opt.colorGamma;
+    m_Temparature = opt.temparature;
+    m_TInt = opt.tint;
 
     SetPP_Pass();
+}
+
+PostProcessDesc YunoRenderer::GetPostProcessOption()
+{
+    PostProcessDesc pd;
+    pd.threshold = m_Threshold;
+    pd.bloomIntensity = m_BloomIntensity;
+    pd.exposure = m_Exposure;
+    pd.ppFlag = m_PPFlag;
+    pd.colorSaturation = m_ColorSaturation;
+    pd.colorContrast = m_ColorContrast;
+    pd.colorGamma = m_ColorGamma;
+    pd.temparature = m_Temparature;
+    pd.tint = m_TInt;
+
+    return pd;
 }
 
 void YunoRenderer::ResetPostProcessOption()
 {
     m_PPFlag = PostProcessFlag::Default;
+    m_ColorSaturation = 1.0f;
+    m_ColorContrast = 1.0f;
+    m_ColorGamma = 1.0f;
 
     SetPP_Pass();
 }
@@ -2431,7 +2608,7 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
             i++;
         }
     }
-    
+
     XMStoreFloat4x4(&cbPerObject_matrix.mWorld, XMMatrixTranspose(W));
     XMStoreFloat4x4(&cbPerObject_matrix.mWVP, XMMatrixTranspose(WVP));
     XMStoreFloat4x4(&cbPerObject_matrix.mWInvT, (XMMatrixInverse(nullptr, W)));
@@ -2486,6 +2663,40 @@ void YunoRenderer::BindConstantBuffers(const RenderItem& item)
         m_context->VSSetConstantBuffers(5, 1, cbEffectBuffers);
         m_context->PSSetConstantBuffers(5, 1, cbEffectBuffers);
     }
+
+    // -----------------------------
+    // CBWidget (b6) ★[UI]
+    // -----------------------------
+    if (item.isWidget)
+    {
+        CBWidget cbWidget{};
+        cbWidget.widgetSize = item.Constant.widgetSize;
+        cbWidget.widgetValueFloat = item.Constant.widgetValueFloat;
+        cbWidget.widgetValueInt = item.Constant.widgetValueInt;
+        cbWidget.widgetSize = item.Constant.widgetSize;
+        
+
+        m_cbWidget.Update(m_context.Get(), cbWidget);
+
+        ID3D11Buffer* cbWidgetBuffers[] = { m_cbWidget.Get() };
+        m_context->VSSetConstantBuffers(6, 1, cbWidgetBuffers);
+        m_context->PSSetConstantBuffers(6, 1, cbWidgetBuffers);
+    }
+
+    //CBDissolve
+    if (item.isDissolve)
+    {
+        CBDissolve cbDissolve{};
+        cbDissolve.dissolveColor = item.Constant.dissolveColor;
+        cbDissolve.dissolveAmount = item.Constant.dissolveAmount;
+        cbDissolve.edgeWidth = item.Constant.dissolveEdgeWidth;
+
+        m_cbDissolve.Update(m_context.Get(), cbDissolve);
+
+        ID3D11Buffer* cbDissolveBuffers[] = { m_cbDissolve.Get() };
+        m_context->VSSetConstantBuffers(7, 1, cbDissolveBuffers);
+        m_context->PSSetConstantBuffers(7, 1, cbDissolveBuffers);
+    }
 }
 
 
@@ -2521,6 +2732,7 @@ void YunoRenderer::BindConstantBuffers_Camera(const Frame_Data_Dir& dirData)
 void YunoRenderer::BindConstantBuffers_Light(const Frame_Data_Dir& dirData, const std::vector<Frame_Data_Point>& plData, UINT plCount)
 {
     using namespace DirectX;
+    constexpr size_t kMaxPointLights = sizeof(m_LightInfo.pointLit) / sizeof(m_LightInfo.pointLit[0]);
     // -----------------------------
     // CBLight (b3)
     // -----------------------------
@@ -2586,6 +2798,8 @@ bool YunoRenderer::RegisterFont()
         //여기다 폰트 등록
         auto font = std::make_unique<SpriteFont>(m_device.Get(), L"../Assets/Font/Danjo-bold.spritefont");
         m_Fonts.emplace(FontID::Default, std::move(font));
+        font = std::make_unique<SpriteFont>(m_device.Get(), L"../Assets/Font/number.spritefont");
+        m_Fonts.emplace(FontID::Number, std::move(font));
     }
     catch (...) {
         return false;
@@ -2608,21 +2822,30 @@ void YunoRenderer::BindTextures(const YunoMaterial& material)
     TextureHandle hRoughness = (material.roughness != 0) ? material.roughness : m_texBlack;
     TextureHandle hAO = (material.ao != 0) ? material.ao : m_texBlack;
 
-    ID3D11ShaderResourceView* srvs[9] =
+    std::vector<ID3D11ShaderResourceView*> srvs;
+
+    srvs.push_back(ResolveSRV(hAlbedo));
+    srvs.push_back(ResolveSRV(hNormal));
+    srvs.push_back(ResolveSRV(hOrm));
+    srvs.push_back(ResolveSRV(hMetallic));
+    srvs.push_back(ResolveSRV(hRoughness));
+    srvs.push_back(ResolveSRV(hAO));
+    srvs.push_back(ResolveSRV(hEmissive));
+    srvs.push_back(ResolveSRV(hOpacity));
+    srvs.push_back(m_ShadowMap.dssrv.Get());
+
+    //커스텀 텍스쳐는 공용 인클루드 텍스쳐 X
+    //각 셰이더 내부에서 각자 바인딩으로 register번호 맞춤(t9번부터)
+    if (!material.custom.empty())
     {
-        ResolveSRV(hAlbedo),
-        ResolveSRV(hNormal),
-        ResolveSRV(hOrm),
-        ResolveSRV(hMetallic),
-        ResolveSRV(hRoughness),
-        ResolveSRV(hAO),
-        ResolveSRV(hEmissive),
-        ResolveSRV(hOpacity),
-        m_ShadowMap.dssrv.Get()
-    };
+        for (auto& tex : material.custom)
+        {
+            srvs.push_back(ResolveSRV(tex));
+        }
+    }
 
     // 혹시라도 ResolveSRV가 nullptr이면 안전하게 nullptr 바인딩(디버그에서 보이게)
-    m_context->PSSetShaderResources(0, 9, srvs);
+    m_context->PSSetShaderResources(0, srvs.size(), srvs.data());
 }
 
 // ------------------------------------------------------------
@@ -2776,7 +2999,7 @@ void YunoRenderer::SubmitDebugGrid()
     item.Constant.baseColor = { 1, 1, 0, 1 };
     item.Constant.roughRatio = 1.0f;
     item.Constant.metalRatio = 1.0f;
-    item.Constant.shadowBias = 0.005f;
+    item.Constant.shadowBias = 0.00005f;
 
     Submit(item);
 }
@@ -2872,13 +3095,22 @@ void YunoRenderer::RegisterDrawUI()
 
             if (UI::CollapsingHeader("BloomFilter"))
             {
-                UI::DragFloatEditable("Threshold", &m_Threshold, 0.01f, 0.0f, 1.5f);
-                UI::DragFloatEditable("BloomIntensity", &m_BloomIntensity, 0.01f, 0.0f, 2.0f);
+                UI::DragFloatEditable("Threshold", &m_Threshold, 0.001f, 0.0f, 5.0f);
+                UI::DragFloatEditable("BloomIntensity", &m_BloomIntensity, 0.001f, 0.0f, 5.0f);
+            }
+
+            if (UI::CollapsingHeader("ColorGrading"))
+            {
+                UI::DragFloatEditable("Saturation", &m_ColorSaturation, 0.001f, 0.0f, 3.0f);
+                UI::DragFloatEditable("Contrast", &m_ColorContrast, 0.001f, 0.0f, 3.0f);
+                UI::DragFloatEditable("Gamma", &m_ColorGamma, 0.001f, 0.1f, 3.0f);
+                UI::DragIntEditable("Temparature", &m_Temparature, 10, 2000, 10000);
+                UI::DragFloatEditable("TINT", &m_TInt, 0.001f, -1.0f, 1.0f);
             }
 
             if (UI::CollapsingHeader("ToneMapping"))
             {
-                UI::DragFloatEditable("Exposure", &m_Exposure, 0.01f, 0.0f, 5.0f);
+                UI::DragFloatEditable("Exposure", &m_Exposure, 0.001f, 0.0f, 10.0f);
             }
 
             UI::EndPanel();

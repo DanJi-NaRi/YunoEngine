@@ -8,7 +8,7 @@ class ExitButton : public Button
 public:
     ExitButton(UIFactory& uiFactory);
     virtual ~ExitButton();
-    bool Create(const std::wstring& name, uint32_t id, XMFLOAT3 vPos) override;
+    bool Create(const std::wstring& name, uint32_t id, Float2 sizePx, XMFLOAT3 vPos, float rotZ, XMFLOAT3 vScale) override;
     bool Update(float dTime = 0) override;
     bool Submit(float dTime = 0) override;
     void Clear();
@@ -16,6 +16,7 @@ public:
     // 버튼 이벤트 핸들
     virtual bool IdleEvent() override;                          // 아무것도 안할 때
     virtual bool HoveredEvent() override;                       // 커서가 위에 있을 때
+    virtual bool HoverJoinEvent() override;                     // 호버 진입했을 때
     virtual bool LMBPressedEvent() override;                    // 왼클릭 눌렀을 때
     virtual bool RMBPressedEvent() override;                    // 우클릭 눌렀을 때
     virtual bool KeyPressedEvent(uint32_t key = 0) override;    // 바인딩한 키 눌렀을 때
@@ -31,7 +32,7 @@ public:
     virtual WidgetType GetWidgetType() override { return WidgetType::Button; }
     virtual WidgetClass GetWidgetClass() override { return WidgetClass::ExitButton; }
 
-    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/Test/BtnOn.png"); }    // 머테리얼 생성 (한 번만)
+    virtual bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/TITLE/exit_mouseout.png"); }    // 머테리얼 생성 (한 번만)
 protected:
     IScene* m_pExitScene = nullptr;
     // SceneEnum m_ExitScene = SceneEnum::Default;

@@ -131,6 +131,15 @@
     <Filter Include="Shaders\effect">
       <UniqueIdentifier>{c7201cee-dca9-4513-af31-88666aad6757}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\UI\BaseWidget\ProgressBar">
+      <UniqueIdentifier>{083d0648-f299-41f9-92fa-567b3cfd7d41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\UI">
+      <UniqueIdentifier>{311bdcd1-2fb9-465e-a36d-096cc06a11c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\UI\UtilWIdget">
+      <UniqueIdentifier>{58b29e9d-f497-41cc-8819-8f7f0b3bf9e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <!-- ===== Source files ===== -->
   <ItemGroup>
@@ -151,9 +160,6 @@
     </ClCompile>
     <ClCompile Include="Private\Renderer\Shader\YunoShaderCompiler.cpp">
       <Filter>Private\Renderer\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Renderer\YunoRenderer.cpp">
-      <Filter>Private\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Private\Resource\YunoTextureManager.cpp">
       <Filter>Private\Resource</Filter>
@@ -233,19 +239,15 @@
     <ClCompile Include="Private\UI\UITool\DragProvider.cpp">
       <Filter>Public\UI\UISystem</Filter>
     </ClCompile>
-    <ClCompile Include="Private\UI\Slot.cpp" />
     <ClCompile Include="Private\UI\UITool\CursurSystem.cpp">
       <Filter>Public\UI\UISystem</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Input\InputContextBase.cpp" />
-    <ClCompile Include="Public\Object\Button.cpp" />
     <ClCompile Include="Public\SceneBase\SerializeScene.cpp">
       <Filter>Public\SceneBase</Filter>
     </ClCompile>
     <ClCompile Include="Public\Object\ObjectTypeRegistry.cpp">
       <Filter>Public\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Private\UI\Letterbox.cpp" />
     <ClCompile Include="Public\Object\Effect.cpp">
       <Filter>Public\Object\Effect</Filter>
     </ClCompile>
@@ -257,6 +259,36 @@
     </ClCompile>
     <ClCompile Include="Private\UI\UITool\UIFactory.cpp">
       <Filter>Public\UI\UISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\Button.cpp">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Input\InputContextBase.cpp">
+      <Filter>Public\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\Slot.cpp">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Renderer\YunoRenderer.cpp">
+      <Filter>Private\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UIConverter.cpp">
+      <Filter>Public\UI\UISystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\ProgressBar.cpp">
+      <Filter>Public\UI\BaseWidget\ProgressBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\Gauge.cpp">
+      <Filter>Public\UI\BaseWidget\ProgressBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\UI\Letterbox.cpp">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\UI\SpriteSheet.cpp">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Object\EffectUnit.cpp">
+      <Filter>Public\Object\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- ===== Header files ===== -->
@@ -423,19 +455,15 @@
     <ClInclude Include="Public\UI\UITool\DragProvider.h">
       <Filter>Public\UI\UISystem</Filter>
     </ClInclude>
-    <ClInclude Include="Public\UI\Slot.h" />
     <ClInclude Include="Public\UI\UITool\CursurSystem.h">
       <Filter>Public\UI\UISystem</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Input\InputContextBase.h" />
-    <ClInclude Include="Public\Object\Button.h" />
     <ClInclude Include="Public\SceneBase\SerializeScene.h">
       <Filter>Public\SceneBase</Filter>
     </ClInclude>
     <ClInclude Include="Public\Object\ObjectTypeRegistry.h">
       <Filter>Public\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Public\UI\Letterbox.h" />
     <ClInclude Include="Public\Object\Effect.h">
       <Filter>Public\Object\Effect</Filter>
     </ClInclude>
@@ -450,6 +478,36 @@
     </ClInclude>
     <ClInclude Include="Public\UI\UITool\UIFactory.h">
       <Filter>Public\UI\UISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\Button.h">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Input\InputContextBase.h">
+      <Filter>Public\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\Slot.h">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\ImGUI_Debug.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UIConverter.h">
+      <Filter>Public\UI\UISystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\ProgressBar.h">
+      <Filter>Public\UI\BaseWidget\ProgressBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\Gauge.h">
+      <Filter>Public\UI\BaseWidget\ProgressBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\Letterbox.h">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\UI\SpriteSheet.h">
+      <Filter>Public\UI\BaseWidget</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Object\EffectUnit.h">
+      <Filter>Public\Object\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <!-- ===== Shaders / None ===== -->
@@ -467,9 +525,6 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\PBR_Animation.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Assets\Shaders\UI_Base.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Assets\Shaders\PP_Default.hlsl">
@@ -502,6 +557,37 @@
     <FxCompile Include="..\Assets\Shaders\EffectBase.hlsl">
       <Filter>Shaders\effect</Filter>
     </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\SkinningShadowMapWrite.hlsl">
+      <Filter>Shaders\shadowMap</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_Base.hlsl">
+      <Filter>Shaders\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_Gauge.hlsl">
+      <Filter>Shaders\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_SpriteAnim.hlsl">
+      <Filter>Shaders\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PBR_Animation_Dissolve.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\UI_Debug.hlsl">
+      <Filter>Shaders\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PBR_Animation_Dissolve.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\EffectWithTexMap.hlsl">
+      <Filter>Shaders\effect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\NoneShadowPBR_Base.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Shaders\PP_ColorGrading.hlsl">
+      <Filter>Shaders\postprocess</Filter>
+    </FxCompile>
+
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\ConstantBuffers.hlsli">
