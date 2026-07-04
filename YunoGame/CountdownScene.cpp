@@ -7,6 +7,7 @@
 #include "CountdownImage.h"
 #include "Emoji.h"
 #include "AudioQueue.h"
+#include "UIWidgets.h"
 
 
 namespace
@@ -19,6 +20,13 @@ bool CountdownScene::OnCreateScene()
 {
     // UI 전용 씬
     m_uiManager->SetOrthoFlag(true);
+
+    // 카운트다운(3,2,1) 글씨 뒤 어두운 필터 (StandBy와 동일한 방식)
+    auto canvas = m_uiManager->GetCanvasSize();
+    CreateWidget<TextureImage>(L"CountdownBackGround",
+        L"../Assets/UI/WEAPON_SELECT/black_background.png",
+        XMFLOAT3(canvas.x * 0.5f, canvas.y * 0.5f, 0), UIDirection::Center);
+
     return true;
 }
 

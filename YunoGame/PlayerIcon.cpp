@@ -58,8 +58,8 @@ void PlayerIcon::SetPlayer(const IconData& idata)
     prevHp = maxHp;
     prevStamina = maxStamina;
 
-    m_hpText->SetText(std::to_wstring(prevHp) + L" / " + std::to_wstring(maxHp));
-    m_StaminaText->SetText(std::to_wstring(prevStamina) + L" / " + std::to_wstring(maxStamina));
+    m_hpText->SetText(std::to_wstring(prevHp) + L"/" + std::to_wstring(maxHp));
+    m_StaminaText->SetText(std::to_wstring(prevStamina) + L"/" + std::to_wstring(maxStamina));
 }
 
 void PlayerIcon::SetWeapon(int weaponID)
@@ -128,7 +128,7 @@ void PlayerIcon::UpdateHPValue(float dTime)
 
     float percent = curHp / maxHp;
     m_HpBar->SetGaugeValue((int)(percent * 100.0f));
-    m_hpText->SetText(std::to_wstring(static_cast<int>(curHp)) + L" / " + std::to_wstring(maxHp));
+    m_hpText->SetText(std::to_wstring(static_cast<int>(curHp)) + L"/" + std::to_wstring(maxHp));
 
     if (t >= 1.0f)
     {
@@ -159,7 +159,7 @@ void PlayerIcon::UpdateStaminaValue(float dTime)
 
     float percent = curStamina / maxStamina;
     m_StaminaBar->SetGaugeValue((int)(percent * 100.0f));
-    m_StaminaText->SetText(std::to_wstring(static_cast<int>(curStamina)) + L" / " + std::to_wstring(maxStamina));
+    m_StaminaText->SetText(std::to_wstring(static_cast<int>(curStamina)) + L"/" + std::to_wstring(maxStamina));
 
     if (t >= 1.0f)
     {
