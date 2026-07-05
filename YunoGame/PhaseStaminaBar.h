@@ -22,7 +22,7 @@ public:
 
     PhaseWeaponSelectButton* GetWeponSelectButton() { if (m_pWeaponButton) return m_pWeaponButton; else return nullptr; }
 private:
-    bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/Bar_base.png"); }  // 머테리얼 생성 (한 번만)
+    bool CreateMaterial() override { return Widget::CreateMaterial(L"../Assets/UI/PLAY/Bar_base_mirror.png"); }  // 머테리얼 생성 (한 번만). 목업 기준 사선이 오른쪽인 반전 텍스처 사용
 
 protected:
     PhaseWeaponSelectButton* m_pWeaponButton = nullptr;

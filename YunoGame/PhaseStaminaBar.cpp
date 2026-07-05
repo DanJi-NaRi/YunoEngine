@@ -30,8 +30,9 @@ void PhaseStaminaBar::CreateChild()
     //m_pGauge = m_uiFactory;
     m_pGauge = m_uiFactory.CreateChild<StaminaGauge>(m_name + L"_Gauge0", Float2(1077, 28), XMFLOAT3(0, 0, 0), UIDirection::Center, this);
     m_pGauge->SetFillDirection(FillDirection::LeftToRight);
+    m_pGauge->ChangeTexture(L"../Assets/UI/PLAY/Bar_STA_mirror.png"); // 목업 기준 사선이 오른쪽인 반전 텍스처 사용
 
-    m_pWeaponButton = m_uiFactory.CreateChild<PhaseWeaponSelectButton>(m_name + L"_Button", Float2(230, 72), XMFLOAT3(-650, -15, 0), UIDirection::LeftTop, this);
+    m_pWeaponButton = m_uiFactory.CreateChild<PhaseWeaponSelectButton>(m_name + L"_Button", Float2(230, 72), XMFLOAT3(-762, -35, 0), UIDirection::LeftTop, this); // 텍스처 투명여백(8px) 감안, 게이지 왼쪽 끝에 밀착
 }
 
 bool PhaseStaminaBar::Start()

@@ -185,10 +185,10 @@ void CardSelectionPanel::CreateChild() {
     
     // 페이지 버튼
     {
-        m_pPageText = m_uiFactory.CreateChild<Text>(m_name + L"_PageNum", Float2(74, 66), XMFLOAT3(-100, -302, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::Center, this);
+        m_pPageText = m_uiFactory.CreateChild<Text>(m_name + L"_PageNum", Float2(74, 66), XMFLOAT3(-64, -184, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::Center, this);
         m_pPageText->SetText(std::to_wstring(m_curPage));
-        m_pPageText->SetTextScale(XMFLOAT3(1.5f, 1.5f, 1.5f));
-        m_pPageText->SetFont(FontID::Number);
+        m_pPageText->SetTextScale(XMFLOAT3(0.8f, 0.8f, 1.0f));
+        m_pPageText->SetFont(FontID::SFAutomatonExt);
 
 
         m_pPageUpButton = m_uiFactory.CreateChild<Button>(m_name + L"_PageUp", Float2(74, 66), XMFLOAT3(-100, -302, 0), 0, XMFLOAT3(1, 1, 1), UIDirection::LeftTop, this);

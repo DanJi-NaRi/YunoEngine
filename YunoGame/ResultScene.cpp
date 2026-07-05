@@ -22,6 +22,12 @@ bool ResultScene::OnCreateScene()
 
 void ResultScene::CreateUI()
 {
+    // 승리/패배/무승부 페이지 글씨 뒤 어두운 필터 (StandBy와 동일한 방식). 가장 먼저 생성 → 패널 뒤에 깔림
+    auto canvas = m_uiManager->GetCanvasSize();
+    CreateWidget<TextureImage>(L"ResultBackGround",
+        L"../Assets/UI/WEAPON_SELECT/black_background.png",
+        XMFLOAT3(canvas.x * 0.5f, canvas.y * 0.5f, 0), UIDirection::Center);
+
     const float baseX = ClientW / 2 + 960;
     const float baseY = ClientH / 2 + 540;
 

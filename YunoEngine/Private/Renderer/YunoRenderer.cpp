@@ -2800,6 +2800,8 @@ bool YunoRenderer::RegisterFont()
         m_Fonts.emplace(FontID::Default, std::move(font));
         font = std::make_unique<SpriteFont>(m_device.Get(), L"../Assets/Font/number.spritefont");
         m_Fonts.emplace(FontID::Number, std::move(font));
+        font = std::make_unique<SpriteFont>(m_device.Get(), L"../Assets/Font/SFAutomatonExt.spritefont");
+        m_Fonts.emplace(FontID::SFAutomatonExt, std::move(font));
     }
     catch (...) {
         return false;

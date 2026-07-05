@@ -155,6 +155,7 @@ enum class FontID : uint8_t
 {
     Default = 0,
     Number = 1,
+    SFAutomatonExt = 2,
 
 
     Count
