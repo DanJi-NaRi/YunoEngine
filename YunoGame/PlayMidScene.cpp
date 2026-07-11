@@ -10,6 +10,12 @@
 #include "AddCardPanel.h"
 #include "AudioQueue.h"
 
+namespace
+{
+    constexpr float kRevealCardStartYOffset = -97.f;
+    constexpr float kRevealCardGapY = 160.f;
+}
+
 bool PlayMidScene::OnCreateScene()
 {
     // UI 전용 씬
@@ -71,8 +77,7 @@ void PlayMidScene::CreateRevealCardUI()
 
     const float centerY = ClientH * 0.5f;
 
-    const float startY = centerY- 100;
-    const float gapY = 200.f;
+    const float startY = centerY + kRevealCardStartYOffset;
 
     m_leftBG = CreateWidget<TextureImage>(
         L"LeftCardBG",
@@ -97,7 +102,7 @@ void PlayMidScene::CreateRevealCardUI()
     for (int i = 0; i < 8; ++i)
     {
         float x = (i < 4) ? leftX : rightX;
-        float y = startY + (i % 4) * gapY;
+        float y = startY + (i % 4) * kRevealCardGapY;
 
         auto* card = CreateWidget<TextureImage>(
             L"ReadyCard",
@@ -221,8 +226,7 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
             const float leftX = 50.f;
             const float rightX = ClientW - 50.f;
             const float centerY = ClientH * 0.5f;
-            const float startY = centerY - 74;
-            const float gapY = 160.f;
+            const float startY = centerY + kRevealCardStartYOffset;
 
             for (int i = 0; i < (int)m_readyCards.size(); ++i)
             {
@@ -233,7 +237,7 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
                 card->SetVisible(Visibility::Visible);
 
                 float x = (i < 4) ? leftX : rightX;
-                float y = startY + (i % 4) * gapY;
+                float y = startY + (i % 4) * kRevealCardGapY;
 
                 XMFLOAT3 target = { x, y, 0 };
                 XMFLOAT3 start = target;
