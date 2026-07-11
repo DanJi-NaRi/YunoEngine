@@ -12,7 +12,8 @@
 
 namespace
 {
-    constexpr float kRevealCardStartYOffset = -97.f;
+    constexpr float kRevealCardSideInsetX = 80.f;
+    constexpr float kRevealCardStartYOffset = -105.f;
     constexpr float kRevealCardGapY = 160.f;
 }
 
@@ -72,8 +73,8 @@ void PlayMidScene::CreateRevealCardUI()
 {
     m_readyCards.clear();
 
-    const float leftX = 50.f;
-    const float rightX = ClientW - 50.f;
+    const float leftX = kRevealCardSideInsetX;
+    const float rightX = ClientW - kRevealCardSideInsetX;
 
     const float centerY = ClientH * 0.5f;
 
@@ -223,8 +224,8 @@ void PlayMidScene::ChangeUIState(PlayMidUIState state)
             if (m_leftBG)  m_leftBG->SetVisible(Visibility::Visible);
             if (m_rightBG) m_rightBG->SetVisible(Visibility::Visible);
 
-            const float leftX = 50.f;
-            const float rightX = ClientW - 50.f;
+            const float leftX = kRevealCardSideInsetX;
+            const float rightX = ClientW - kRevealCardSideInsetX;
             const float centerY = ClientH * 0.5f;
             const float startY = centerY + kRevealCardStartYOffset;
 
