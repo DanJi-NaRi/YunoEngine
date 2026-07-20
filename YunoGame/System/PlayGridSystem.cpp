@@ -67,6 +67,10 @@ void PlayGridSystem::InitRound()
     m_utilitySequence = {};
     m_obstacleSequence = {};
 
+    ChangeAttackState(AttackPhase::None);
+    ChangeUtilityState(UtilityPhase::None);
+    ChangeObstacleState(ObstaclePhase::None);
+
     // 라운드 시작 시 타일 상태/연출을 먼저 초기화한다.
     ClearTileState();
     for (int tileID = 1; tileID < static_cast<int>(m_tilesIDs.size()); ++tileID)
@@ -626,11 +630,49 @@ void PlayGridSystem::CheckPacket(float dt)
 
 
 
+void PlayGridSystem::ChangeAttackState(AttackPhase phase)
+{
+    switch (phase)
+    {
+    case AttackPhase::None:     m_attackSM.Stop();                          break;
+    case AttackPhase::Alaram:   m_attackSM.ChangeState(&m_attackAlarmState);  break;
+    case AttackPhase::Attack:   m_attackSM.ChangeState(&m_attackAttackState); break;
+    case AttackPhase::Hit:      m_attackSM.ChangeState(&m_attackHitState);    break;
+    case AttackPhase::Over:     m_attackSM.ChangeState(&m_attackOverState);   break;
+    }
+}
+
+void PlayGridSystem::ChangeUtilityState(UtilityPhase phase)
+{
+    switch (phase)
+    {
+    case UtilityPhase::None:            m_utilitySM.Stop();                                   break;
+    case UtilityPhase::Move:            m_utilitySM.ChangeState(&m_utilityMoveState);          break;
+    case UtilityPhase::AttackAndMove:   m_utilitySM.ChangeState(&m_utilityAttackAndMoveState); break;
+    case UtilityPhase::Buff:            m_utilitySM.ChangeState(&m_utilityBuffState);          break;
+    case UtilityPhase::Over:            m_utilitySM.ChangeState(&m_utilityOverState);          break;
+    }
+}
+
+void PlayGridSystem::ChangeObstacleState(ObstaclePhase phase)
+{
+    switch (phase)
+    {
+    case ObstaclePhase::None:       m_obstacleSM.Stop();                            break;
+    case ObstaclePhase::Trigger:    m_obstacleSM.ChangeState(&m_obstacleTriggerState); break;
+    case ObstaclePhase::Warning:    m_obstacleSM.ChangeState(&m_obstacleWarningState); break;
+    case ObstaclePhase::Over:       m_obstacleSM.ChangeState(&m_obstacleOverState);    break;
+    }
+}
+
 void PlayGridSystem::UpdateSequence(float dt)
 {
-    UpdateAttackSequence(dt);
-    UpdateUtilitySequence(dt);
-    UpdateObstacleSequence(dt);
+    //UpdateAttackSequence(dt);
+    //UpdateUtilitySequence(dt);
+    //UpdateObstacleSequence(dt);
+    m_attackSM.Update(dt);
+    m_utilitySM.Update(dt);
+    m_obstacleSM.Update(dt);
 }
 
 void PlayGridSystem::UpdateAttackSequence(float dt)
@@ -813,106 +855,106 @@ void PlayGridSystem::UpdateAttackSequence(float dt)
     as.elapsed += dt;
 }
 
-void PlayGridSystem::UpdateUtilitySequence(float dt)
-{
-    if (!m_utilityActive) return;
-
-    auto& us = m_utilitySequence;
-    
-    switch (us.utilityPhase)
-    {
-    case UtilityPhase::Move:
-    {
-        if (us.elapsed >= us.m_moveDuration)
-        {
-            ++us.utilityPhase;
-            us.phaseStarted = true;
-            us.elapsed = 0.f;
-            break;
-        }
-        if (!us.phaseStarted)    break;
-
-        const auto& pm = us.playerMove;
-
-        //ApplyMoveChanges(pm->dirty, pm->prevState, pm->snapshot, pm->mainUnit, pm->dir);
-        if (pm != nullptr)
-            ApplyMoveChanges(pm->dirty, pm->prevState, pm->snapshot, pm->mainUnit, pm->dir);
-
-        us.phaseStarted = false;
-        break;
-    }
-    case UtilityPhase::AttackAndMove:
-    {
-        if (us.elapsed >= us.m_attackAndMoveDuration)
-        {
-            ++us.utilityPhase;
-            us.phaseStarted = true;
-            us.elapsed = 0.f;
-            break;
-        }
-
-        if (!us.phaseStarted)    break;
-
-        auto& as = m_attackSequence;
-        bool condition1 = as.attackPhase == AttackPhase::Hit;
-        bool condition2 = as.phaseStarted == false;
-        bool condition3 = us.hitMove != HitMove::None;      // 넉백 또는 그랩이 있는가
-
-        if (!(condition1 && condition2 && condition3))  break;
-
-        const auto& pieces = as.hitPieces;
-        const auto& hm = us.hittersMove;
-        if (pieces.size() != hm.size())
-        {
-            std::cout << "hitter count and hitter move ain't same!\n";
-            assert(false);
-        }
-        for (int i = 0; i < pieces.size(); i++)
-        {
-            if (!CheckNotDying(pieces[i]))    continue;
-            ApplyMoveChanges(hm[i]->dirty, hm[i]->prevState, hm[i]->snapshot, hm[i]->mainUnit, hm[i]->dir);
-        }
-
-        us.phaseStarted = false;
-
-        break;
-    }
-    case UtilityPhase::Buff:
-    {
-        if (us.elapsed >= us.m_buffDuration)
-        {
-            ++us.utilityPhase;
-            us.phaseStarted = true;
-            us.elapsed = 0.f;
-            break;
-        }
-
-        if (!us.phaseStarted)    break;
-
-        if(us.buffData != nullptr)
-            BuffEvent(us.playPiece, us.buffData);
-
-        us.phaseStarted = false;
-
-        break;
-    }
-    case UtilityPhase::Over:
-    {
-        // 초기화
-        m_utilityActive = false;
-        delete us.playerMove;
-        for (auto& hm : us.hittersMove)
-        {
-            delete hm;
-        }
-        us.hittersMove.clear();
-        m_utilitySequence = {};
-        return;
-    }
-    }
-
-    us.elapsed += dt;
-}
+//void PlayGridSystem::UpdateUtilitySequence(float dt)
+//{
+//    if (!m_utilityActive) return;
+//
+//    auto& us = m_utilitySequence;
+//    
+//    switch (us.utilityPhase)
+//    {
+//    case UtilityPhase::Move:
+//    {
+//        if (us.elapsed >= us.m_moveDuration)
+//        {
+//            ++us.utilityPhase;
+//            us.phaseStarted = true;
+//            us.elapsed = 0.f;
+//            break;
+//        }
+//        if (!us.phaseStarted)    break;
+//
+//        const auto& pm = us.playerMove;
+//
+//        //ApplyMoveChanges(pm->dirty, pm->prevState, pm->snapshot, pm->mainUnit, pm->dir);
+//        if (pm != nullptr)
+//            ApplyMoveChanges(pm->dirty, pm->prevState, pm->snapshot, pm->mainUnit, pm->dir);
+//
+//        us.phaseStarted = false;
+//        break;
+//    }
+//    case UtilityPhase::AttackAndMove:
+//    {
+//        if (us.elapsed >= us.m_attackAndMoveDuration)
+//        {
+//            ++us.utilityPhase;
+//            us.phaseStarted = true;
+//            us.elapsed = 0.f;
+//            break;
+//        }
+//
+//        if (!us.phaseStarted)    break;
+//
+//        auto& as = m_attackSequence;
+//        bool condition1 = as.attackPhase == AttackPhase::Hit;
+//        bool condition2 = as.phaseStarted == false;
+//        bool condition3 = us.hitMove != HitMove::None;      // 넉백 또는 그랩이 있는가
+//
+//        if (!(condition1 && condition2 && condition3))  break;
+//
+//        const auto& pieces = as.hitPieces;
+//        const auto& hm = us.hittersMove;
+//        if (pieces.size() != hm.size())
+//        {
+//            std::cout << "hitter count and hitter move ain't same!\n";
+//            assert(false);
+//        }
+//        for (int i = 0; i < pieces.size(); i++)
+//        {
+//            if (!CheckNotDying(pieces[i]))    continue;
+//            ApplyMoveChanges(hm[i]->dirty, hm[i]->prevState, hm[i]->snapshot, hm[i]->mainUnit, hm[i]->dir);
+//        }
+//
+//        us.phaseStarted = false;
+//
+//        break;
+//    }
+//    case UtilityPhase::Buff:
+//    {
+//        if (us.elapsed >= us.m_buffDuration)
+//        {
+//            ++us.utilityPhase;
+//            us.phaseStarted = true;
+//            us.elapsed = 0.f;
+//            break;
+//        }
+//
+//        if (!us.phaseStarted)    break;
+//
+//        if(us.buffData != nullptr)
+//            BuffEvent(us.playPiece, us.buffData);
+//
+//        us.phaseStarted = false;
+//
+//        break;
+//    }
+//    case UtilityPhase::Over:
+//    {
+//        // 초기화
+//        m_utilityActive = false;
+//        delete us.playerMove;
+//        for (auto& hm : us.hittersMove)
+//        {
+//            delete hm;
+//        }
+//        us.hittersMove.clear();
+//        m_utilitySequence = {};
+//        return;
+//    }
+//    }
+//
+//    us.elapsed += dt;
+//}
 
 void PlayGridSystem::UpdateObstacleSequence(float dt)
 {
@@ -1122,6 +1164,12 @@ void PlayGridSystem::ApplyActionOrder(const std::vector<std::array<UnitState, 4>
 
         m_UnitStates = unitStates_Now;
     }
+
+    // Utility 상태머신 시동.
+    // ApplyUtilityChanges는 snapNum 0~2로 세 번 호출되며 시퀀스를 채우므로,
+    // 데이터가 전부 채워진 루프 종료 후에 한 번만 시작해야 Move가 중복 적용되지 않는다.
+    if (cardType == CardType::Utility && m_utilityActive)
+        ChangeUtilityState(UtilityPhase::Move);
 }
 
 bool PlayGridSystem::ApplyBuffChanges(int mainUnit, const CardEffectData*& buffData)
@@ -1248,6 +1296,9 @@ bool PlayGridSystem::ApplyAttackChanges
     as.m_hitDuration = hitDuration;
     as.m_attackDuration = attackDuration;
 
+    // 공격 상태머신 시동
+    ChangeAttackState(AttackPhase::Alaram);
+
     return true;
 }
 
@@ -1277,7 +1328,8 @@ bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
             if (!HasThis_US(dirty, Dirty_US::targetTileID))
                 break;
 
-            us.playerMove = new MoveInfo{ dirty, m_UnitStates[mainUnit], newUnitStates, mainUnit, dir };
+            // MoveInfo는 const 멤버를 가진 집합체라 make_unique(생성자 호출)를 쓸 수 없다. (C++17)
+            us.playerMove = std::unique_ptr<const MoveInfo>(new MoveInfo{ dirty, m_UnitStates[mainUnit], newUnitStates, mainUnit, dir });
             us.m_moveDuration = moveDuration;
             break;
         }
@@ -1302,8 +1354,7 @@ bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
             {
                 int unitID = GetUnitID(hps[i]);
                 Dirty_US d = Diff_US(m_UnitStates[unitID], newUnitStates[unitID]);
-                MoveInfo* mi = new MoveInfo{ d, m_UnitStates[unitID], newUnitStates, unitID, dir };
-                us.hittersMove.push_back(mi);
+                us.hittersMove.push_back(std::unique_ptr<MoveInfo>(new MoveInfo{ d, m_UnitStates[unitID], newUnitStates, unitID, dir }));
                 if (HasThis_US(d, Dirty_US::targetTileID))   us.hitMove = HitMove::Move;
             }
             us.buffData = buffData;
@@ -1741,6 +1792,9 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
     // 장애물 정보 갱신
     m_obstacleTile.obstacleID = obstacle.obstacleID;
     m_obstacleTile.tileIDs = obstacle.tileIDs;
+
+    // 장애물 상태머신 시동. (발동할 타일이 없으면 os.obstaclePhase가 Warning으로 세팅되어 있음)
+    ChangeObstacleState(os.obstaclePhase);
 }
 
 bool PlayGridSystem::CheckNotDying(const GamePiece pieceType)

@@ -3,6 +3,10 @@
 #include "PieceHelper.h"
 #include "TileHelper.h"
 #include "BattlePackets.h"
+#include "../StateMachine.h"
+#include "AttackStates.h"
+#include "UtilityStates.h"
+#include "ObstacleStates.h"
 
 class UnitTile;
 class UnitPiece;
@@ -89,11 +93,11 @@ struct UtilitySequence
     GamePiece playPiece = GamePiece::None;
 
     // move 시행 시
-    const MoveInfo* playerMove = nullptr;
+    std::unique_ptr<const MoveInfo> playerMove = nullptr;
     float m_moveDuration = 0.f;
 
     // attack&move 시행 시
-    std::vector<MoveInfo*> hittersMove;
+    std::vector<std::unique_ptr<MoveInfo>> hittersMove;
     HitMove hitMove = HitMove::None;
     float m_attackAndMoveDuration = 0.f;
 
@@ -147,9 +151,61 @@ public:
     PlayGridSystem(ObjectManager* objmng, EffectManager* effectmng);                   // 씬에서 objmanager 받기
     virtual ~PlayGridSystem();
 
-    void CreateObject(float x, float y, float z) override;                      
+    void CreateObject(float x, float y, float z) override;
     void Update(float dt) override;
     void ApplyTransform() override;
+
+public:
+    // 시퀀스별 상태 전환. State의 Update 내부에서는 반드시 이 함수들을 통해서만 전환한다.
+    void ChangeAttackState(AttackPhase phase);
+    void ChangeUtilityState(UtilityPhase phase);
+    void ChangeObstacleState(ObstaclePhase phase);
+
+    // State 클래스들이 사용하는 접근자
+    AttackSequence& GetAttackSequence() { return m_attackSequence; }
+    void SetAttackActive(bool active) { m_attackActive = active; }
+
+    UtilitySequence& GetUtilitySequence() { return m_utilitySequence; }
+    void SetUtilityActive(bool active) { m_utilityActive = active; }
+
+    ObstacleSequence& GetObstacleSequence() { return m_obstacleSequence; }
+    void SetObstacleActive(bool active) { m_obstacleActive = active; }
+
+    // 공격 상태머신이 Hit 상태인지 (Utility의 AttackAndMove 진행 조건)
+    bool IsAttackInHitState() const { return m_attackSM.IsInState(&m_attackHitState); }
+
+    // private 로직 래퍼
+    bool ApplyMoveInfo(const MoveInfo* mi)
+    {
+        return ApplyMoveChanges(mi->dirty, mi->prevState, mi->snapshot, mi->mainUnit, mi->dir);
+    }
+    bool PlayBuffEvent(const GamePiece& piece, const CardEffectData*& buffData)
+    {
+        return BuffEvent(piece, buffData);
+    }
+    bool IsPieceNotDying(const GamePiece piece) { return CheckNotDying(piece); }
+    TileState& GetTileState(int tileID) { return m_tiles[tileID]; }
+    void SetTileOccupyByID(int tileID, const TileOccupy to)
+    {
+        auto cell = GetCellByID(tileID);
+        ChangeTileTO(cell.x, cell.y, to);
+    }
+
+    ObjectManager* GetObjectManager() const { return m_manager; }
+    EffectManager* GetEffectManager() const { return m_effectManager; }
+
+    uint32_t GetTileObjectID(int tileID) const { return m_tilesIDs[tileID]; }
+    const UnitState& GetUnitState(int unitID) const { return m_UnitStates[unitID]; }
+    const PieceInfo* FindPieceInfo(GamePiece piece) const
+    {
+        auto it = m_pieces.find(piece);
+        return (it != m_pieces.end()) ? &it->second : nullptr;
+    }
+    int GetUnitIDOf(GamePiece gamePiece) { return GetUnitID(gamePiece); }
+
+    float GetAttackRotDuration() const { return attackRotDuration; }
+    float GetDisappearDissolveDuration() const { return disappearDisolveDuration; }
+
 private:
     void Init();
     void CreateTileAndPiece(float x, float y, float z);
@@ -255,6 +311,26 @@ private:
     // 공격 처리
     bool m_attackActive = false;
     AttackSequence m_attackSequence;
+
+    // 공격 상태머신
+    StateMachine<PlayGridSystem> m_attackSM{ this };
+    AttackStates::AlarmState m_attackAlarmState;
+    AttackStates::AttackState m_attackAttackState;
+    AttackStates::HitState m_attackHitState;
+    AttackStates::OverState m_attackOverState;
+
+    // 특수 카드 상태머신
+    StateMachine<PlayGridSystem> m_utilitySM{ this };
+    UtilityStates::MoveState m_utilityMoveState;
+    UtilityStates::AttackAndMoveState m_utilityAttackAndMoveState;
+    UtilityStates::BuffState m_utilityBuffState;
+    UtilityStates::OverState m_utilityOverState;
+
+    // 장애물 상태머신
+    StateMachine<PlayGridSystem> m_obstacleSM{ this };
+    ObstacleStates::TriggerState m_obstacleTriggerState;
+    ObstacleStates::WarningState m_obstacleWarningState;
+    ObstacleStates::OverState m_obstacleOverState;
 
     // 특수 카드 처리
     bool m_utilityActive = false;

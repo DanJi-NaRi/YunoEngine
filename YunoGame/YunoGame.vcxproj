@@ -231,6 +231,9 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="StaminaBar.cpp" />
     <ClCompile Include="StaminaGauge.cpp" />
     <ClCompile Include="StandByScene.cpp" />
+    <ClCompile Include="System\AttackStates.cpp" />
+    <ClCompile Include="System\UtilityStates.cpp" />
+    <ClCompile Include="System\ObstacleStates.cpp" />
     <ClCompile Include="System\BattlePackets.cpp" />
     <ClCompile Include="System\CardManager.cpp" />
     <ClCompile Include="System\CardRangeManager.cpp" />
@@ -313,6 +316,7 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="EscScene.h" />
     <ClInclude Include="EscScene_inputContext.h" />
     <ClInclude Include="Game\UI\DirSelectButton.h" />
+    <ClInclude Include="IState.h" />
     <ClInclude Include="PlayHUD_InputContext.h" />
     <ClInclude Include="PlayMidScene.h" />
     <ClInclude Include="PlayMidScene_InputContext.h" />
@@ -348,6 +352,10 @@ xcopy /y /d "$(SolutionDir)Assets\Sound\*.dll" "$(TargetDir)"</Command>
     <ClInclude Include="StaminaBar.h" />
     <ClInclude Include="StaminaGauge.h" />
     <ClInclude Include="StandByScene.h" />
+    <ClInclude Include="StateMachine.h" />
+    <ClInclude Include="System\AttackStates.h" />
+    <ClInclude Include="System\UtilityStates.h" />
+    <ClInclude Include="System\ObstacleStates.h" />
     <ClInclude Include="System\BattlePackets.h" />
     <ClInclude Include="System\CardManager.h" />
     <ClInclude Include="Game\Object\CardQueue.h" />

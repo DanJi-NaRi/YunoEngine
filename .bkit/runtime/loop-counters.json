@@ -1,0 +1,36 @@
+{
+  "fileEditCounts": {
+    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\IState.h": {
+      "count": 2,
+      "ts": 1784438111257
+    },
+    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\StateMachine.h": {
+      "count": 2,
+      "ts": 1784438112663
+    },
+    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\AttackStates.h": {
+      "count": 2,
+      "ts": 1784438127047
+    },
+    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\AttackStates.cpp": {
+      "count": 2,
+      "ts": 1784438262453
+    },
+    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\UtilityStates.h": {
+      "count": 1,
+      "ts": 1784439104742
+    },
+    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\ObstacleStates.h": {
+      "count": 1,
+      "ts": 1784439106520
+    },
+    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\UtilityStates.cpp": {
+      "count": 1,
+      "ts": 1784439178044
+    },
+    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\ObstacleStates.cpp": {
+      "count": 1,
+      "ts": 1784439225018
+    }
+  }
+}
