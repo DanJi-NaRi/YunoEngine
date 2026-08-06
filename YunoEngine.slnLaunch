@@ -4,7 +4,7 @@
     "Projects": [
       {
         "Path": "YunoServer\\YunoServer.vcxproj",
-        "Action": "StartWithoutDebugging"
+        "Action": "Start"
       },
       {
         "Path": "YunoGame\\YunoGame.vcxproj",

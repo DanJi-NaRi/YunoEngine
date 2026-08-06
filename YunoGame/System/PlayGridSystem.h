@@ -3,6 +3,10 @@
 #include "PieceHelper.h"
 #include "TileHelper.h"
 #include "BattlePackets.h"
+#include "../StateMachine.h"
+#include "AttackStates.h"
+#include "UtilityStates.h"
+#include "ObstacleStates.h"
 
 class UnitTile;
 class UnitPiece;
@@ -32,18 +36,14 @@ enum class AttackPhase : uint8_t
     Hit,
     Over
 };
-inline void operator++(AttackPhase& a) { a = (AttackPhase)((uint8_t)a + 1); }
 
+// 상태 전환은 PlayGridSystem::ChangeAttackState(AttackPhase)로 수행한다.
 struct AttackSequence
 {
     GamePiece attacker = GamePiece::None;   // 공격 기물
     Direction dir = Direction::Same;
     std::vector<int> tileIDs;               // 피격 타일들
     std::vector<GamePiece> hitPieces;       // 피격 기물들
-    AttackPhase attackPhase = AttackPhase::None;
-    bool phaseStarted = false;
-
-    float elapsed = 0.f;                    // 누적된 시간
 
     int m_flashCount = 0;                   // 번쩍이는 횟수
     float m_flashInterval = 0.f;            // 한번 번쩍일 때 걸리는 시간
@@ -68,7 +68,6 @@ enum class UtilityPhase : uint8_t
     Buff,
     Over
 };
-inline void operator++(UtilityPhase& a) { a = (UtilityPhase)((uint8_t)a + 1); }
 
 struct MoveInfo
 {
@@ -79,21 +78,25 @@ struct MoveInfo
     Direction dir = Direction::None;
 };
 
+// 피격 기물과 그 기물의 넉백/그랩 이동 정보를 한 쌍으로 묶는다.
+// 공격 시퀀스의 hitPieces를 따로 참조하지 않으므로 개수 불일치나 수명 문제가 발생하지 않는다.
+struct HitterMove
+{
+    GamePiece piece = GamePiece::None;
+    std::unique_ptr<MoveInfo> move;
+};
+
+// 상태 전환은 PlayGridSystem::ChangeUtilityState(UtilityPhase)로 수행한다.
 struct UtilitySequence
 {
-    bool phaseStarted = false;
-    UtilityPhase utilityPhase = UtilityPhase::None;
-
-    float elapsed = 0.f;                    // 누적된 시간
-
     GamePiece playPiece = GamePiece::None;
 
     // move 시행 시
-    const MoveInfo* playerMove = nullptr;
+    std::unique_ptr<const MoveInfo> playerMove = nullptr;
     float m_moveDuration = 0.f;
 
     // attack&move 시행 시
-    std::vector<MoveInfo*> hittersMove;
+    std::vector<HitterMove> hittersMove;
     HitMove hitMove = HitMove::None;
     float m_attackAndMoveDuration = 0.f;
 
@@ -118,9 +121,8 @@ enum class ObstaclePhase : uint8_t
 
 struct ObstacleSequence
 {
-    bool phaseStarted = false;
+    // 상태머신 시동 시 시작 단계를 지정하는 용도로만 사용한다. (ChangeObstacleState)
     ObstaclePhase obstaclePhase = ObstaclePhase::None;
-    float elapsed = 0.f;
 
     // 장애물 발동 ObstaclePhase::Trigger
     float m_triggerDuration = 0.f;
@@ -147,9 +149,64 @@ public:
     PlayGridSystem(ObjectManager* objmng, EffectManager* effectmng);                   // 씬에서 objmanager 받기
     virtual ~PlayGridSystem();
 
-    void CreateObject(float x, float y, float z) override;                      
+    void CreateObject(float x, float y, float z) override;
     void Update(float dt) override;
     void ApplyTransform() override;
+
+public:
+    // 시퀀스별 상태 전환. State의 Update 내부에서는 반드시 이 함수들을 통해서만 전환한다.
+    void ChangeAttackState(AttackPhase phase);
+    void ChangeUtilityState(UtilityPhase phase);
+    void ChangeObstacleState(ObstaclePhase phase);
+
+    // State 클래스들이 사용하는 접근자
+    AttackSequence& GetAttackSequence() { return m_attackSequence; }
+    void SetAttackActive(bool active) { m_attackActive = active; }
+
+    UtilitySequence& GetUtilitySequence() { return m_utilitySequence; }
+    void SetUtilityActive(bool active) { m_utilityActive = active; }
+
+    ObstacleSequence& GetObstacleSequence() { return m_obstacleSequence; }
+    void SetObstacleActive(bool active) { m_obstacleActive = active; }
+
+    // 공격 시퀀스가 Hit 단계에 진입했음을 알린다. (AttackStates::HitState::Enter에서 호출)
+    // Utility가 AttackAndMove에 이미 도착했으면 즉시 넉백/그랩을 적용하고,
+    // 아직 도착 전이면 래치에 남겨 두어 AttackAndMove::Enter가 회수하도록 한다.
+    void OnAttackHitStarted();
+    bool HasAttackHitStarted() const { return m_attackHitStarted; }
+
+    // private 로직 래퍼
+    bool ApplyMoveInfo(const MoveInfo* mi)
+    {
+        return ApplyMoveChanges(mi->dirty, mi->prevState, mi->snapshot, mi->mainUnit, mi->dir);
+    }
+    bool PlayBuffEvent(const GamePiece& piece, const CardEffectData*& buffData)
+    {
+        return BuffEvent(piece, buffData);
+    }
+    bool IsPieceNotDying(const GamePiece piece) { return CheckNotDying(piece); }
+    TileState& GetTileState(int tileID) { return m_tiles[tileID]; }
+    void SetTileOccupyByID(int tileID, const TileOccupy to)
+    {
+        auto cell = GetCellByID(tileID);
+        ChangeTileTO(cell.x, cell.y, to);
+    }
+
+    ObjectManager* GetObjectManager() const { return m_manager; }
+    EffectManager* GetEffectManager() const { return m_effectManager; }
+
+    uint32_t GetTileObjectID(int tileID) const { return m_tilesIDs[tileID]; }
+    const UnitState& GetUnitState(int unitID) const { return m_UnitStates[unitID]; }
+    const PieceInfo* FindPieceInfo(GamePiece piece) const
+    {
+        auto it = m_pieces.find(piece);
+        return (it != m_pieces.end()) ? &it->second : nullptr;
+    }
+    int GetUnitIDOf(GamePiece gamePiece) { return GetUnitID(gamePiece); }
+
+    float GetAttackRotDuration() const { return attackRotDuration; }
+    float GetDisappearDissolveDuration() const { return disappearDisolveDuration; }
+
 private:
     void Init();
     void CreateTileAndPiece(float x, float y, float z);
@@ -163,9 +220,6 @@ private:
     void ReflectWeaponData();
 
     void UpdateSequence(float dt);
-    void UpdateAttackSequence(float dt);
-    void UpdateUtilitySequence(float dt);
-    void UpdateObstacleSequence(float dt);
 
 private:
     void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, uint32_t runCardID, Direction dir);
@@ -255,6 +309,27 @@ private:
     // 공격 처리
     bool m_attackActive = false;
     AttackSequence m_attackSequence;
+    bool m_attackHitStarted = false;    // 이번 공격 시퀀스가 Hit 단계에 진입했는가 (Utility 통지용 래치)
+
+    // 공격 상태머신
+    StateMachine<PlayGridSystem> m_attackSM{ this };
+    AttackStates::AlarmState m_attackAlarmState;
+    AttackStates::AttackState m_attackAttackState;
+    AttackStates::HitState m_attackHitState;
+    AttackStates::OverState m_attackOverState;
+
+    // 특수 카드 상태머신
+    StateMachine<PlayGridSystem> m_utilitySM{ this };
+    UtilityStates::MoveState m_utilityMoveState;
+    UtilityStates::AttackAndMoveState m_utilityAttackAndMoveState;
+    UtilityStates::BuffState m_utilityBuffState;
+    UtilityStates::OverState m_utilityOverState;
+
+    // 장애물 상태머신
+    StateMachine<PlayGridSystem> m_obstacleSM{ this };
+    ObstacleStates::TriggerState m_obstacleTriggerState;
+    ObstacleStates::WarningState m_obstacleWarningState;
+    ObstacleStates::OverState m_obstacleOverState;
 
     // 특수 카드 처리
     bool m_utilityActive = false;

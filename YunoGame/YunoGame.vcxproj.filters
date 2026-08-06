@@ -389,6 +389,9 @@
       <Filter>Game\UI\Image\Panel</Filter>
     </ClCompile>
     <ClCompile Include="OptionButton.cpp" />
+    <ClCompile Include="System\AttackStates.cpp" />
+    <ClCompile Include="System\UtilityStates.cpp" />
+    <ClCompile Include="System\ObstacleStates.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePCH\pch.h">
@@ -674,6 +677,11 @@
     <ClInclude Include="AddCardPanel.h">
       <Filter>Game\UI\Image\Panel</Filter>
     </ClInclude>
+    <ClInclude Include="StateMachine.h" />
+    <ClInclude Include="IState.h" />
+    <ClInclude Include="System\AttackStates.h" />
+    <ClInclude Include="System\UtilityStates.h" />
+    <ClInclude Include="System\ObstacleStates.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\UI\Card.h">

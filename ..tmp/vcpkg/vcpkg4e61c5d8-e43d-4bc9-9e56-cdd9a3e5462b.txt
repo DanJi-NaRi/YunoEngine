@@ -1,0 +1,47 @@
+[
+  {
+    "ver": 1,
+    "name": "Microsoft.ApplicationInsights.Event",
+    "time": "2026-07-14T15:29:05Z",
+    "sampleRate": 100.000000,
+    "seq": "0:0",
+    "iKey": "b4e88960-4393-4dd9-ab8e-97e8fe6d7603",
+    "flags": 0,
+    "tags": {
+      "ai.device.os": "Other",
+      "ai.device.osVersion": "Windows-10.0.26100",
+      "ai.session.id": "414ebb39-c9fb-4c65-bad0-4e0d1a2d0fb3",
+      "ai.user.id": "3af76d57-4b74-4842-9a97-05739bcca890",
+      "ai.user.accountAcquisitionDate": "2026-07-14T15:27:07Z"
+    },
+    "data": {
+      "baseType": "EventData",
+      "baseData": {
+        "ver": 2,
+        "name": "commandline_test7",
+        "properties": {
+          "user_mac": "6e3dd3173996fa9fe7c0b2a82f961f59d101412b9fd63ace144d55c804516d1c",
+          "command_name": "list",
+          "deployment_kind": "Git",
+          "detected_libcurl_version": "unknown",
+          "devdeviceid": "8f1abcb3-bd88-4513-ac96-f9a1d2ccafd2",
+          "exit_code": "0",
+          "exit_location": "commands.list.cpp:command_list_and_exit:154",
+          "vcpkg_version": "2025-12-16-44bb3ce006467fc13ba37ca099f64077b8bbf84d",
+          "detected_container": false,
+          "feature-flag-binarycaching": true,
+          "feature-flag-compilertracking": true,
+          "feature-flag-dependency-graph": false,
+          "feature-flag-manifests": true,
+          "feature-flag-registries": true,
+          "feature-flag-versions": true,
+          "option_overlay_ports": false,
+          "process_tree": "de4852baff2a85be84d9aa2da12e5fb3f8ca9c6209efcc3d8fc390b5131f0b6f;f307e73a3447b10444e67233700c1aa5ca8e3673dd2f292084bf485583caad6f;79786b1279560f071e2f0be3f9367a064c10a14a89ccc6933d746f3553dbd505"
+        },
+        "measurements": {
+          "elapsed_us": 5240.500000
+        }
+      }
+    }
+  }
+]
