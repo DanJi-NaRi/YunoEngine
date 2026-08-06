@@ -45,6 +45,7 @@ namespace ObstacleStates
         for (const auto& tileID : os.hitTileIDs)
         {
             auto pTile = dynamic_cast<UnitTile*>(pObjMng->FindObject(owner->GetTileObjectID(tileID)));
+            if (pTile == nullptr)   continue;
 
             pTile->PlayTrigger(os.attackType);
 
@@ -61,7 +62,8 @@ namespace ObstacleStates
             {
                 auto pTile = dynamic_cast<UnitTile*>(pObjMng->FindObject(owner->GetTileObjectID(middleTileID)));
                 auto eff = owner->GetEffectManager()->Spawn(EffectID::Razer, { 0.f, 0.8f, 0.f }, { 11.f, 1.f, 1.f }, { -1, 0, 0 });
-                pTile->Attach(eff);
+                if (pTile != nullptr && eff != nullptr)
+                    pTile->Attach(eff);
             }
 
             AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_HorizonLazer));
@@ -75,12 +77,15 @@ namespace ObstacleStates
 
             int unitID = owner->GetUnitIDOf(piece);
             auto pPiece = dynamic_cast<UnitPiece*>(pObjMng->FindObject(pieceInfo->id));
+            if (pPiece == nullptr)  continue;
+
             if (owner->GetUnitState(unitID).hp == 0)
             {
                 pPiece->InsertQ(PlayGridQ::Dead_P(owner->GetDisappearDissolveDuration()));
                 for (auto& subId : pieceInfo->subIds)
                 {
                     auto pSub = dynamic_cast<UnitPiece*>(pObjMng->FindObject(subId));
+                    if (pSub == nullptr)    continue;
                     pSub->InsertQ(PlayGridQ::Dead_P(owner->GetDisappearDissolveDuration()));
                 }
             }
@@ -90,6 +95,7 @@ namespace ObstacleStates
                 for (auto& subId : pieceInfo->subIds)
                 {
                     auto pSub = dynamic_cast<UnitPiece*>(pObjMng->FindObject(subId));
+                    if (pSub == nullptr)    continue;
                     pSub->InsertQ(PlayGridQ::Hit_P());
                 }
             }
@@ -130,6 +136,8 @@ namespace ObstacleStates
         for (const auto& tileID : os.warningTileIDs)
         {
             auto pTile = dynamic_cast<UnitTile*>(pObjMng->FindObject(owner->GetTileObjectID(tileID)));
+            if (pTile == nullptr)   continue;
+
             pTile->PlayWarning(os.attackType);
 
             EffectDesc ed{};

@@ -630,8 +630,22 @@ void PlayGridSystem::CheckPacket(float dt)
 
 
 
+void PlayGridSystem::OnAttackHitStarted()
+{
+    m_attackHitStarted = true;
+
+    // Utility가 이미 AttackAndMove에 도착해 있으면 지금 바로 적용한다.
+    // 아직 도착 전이면 위 래치를 보고 AttackAndMove::Enter가 회수한다.
+    if (m_utilitySM.IsInState(&m_utilityAttackAndMoveState))
+        m_utilityAttackAndMoveState.ApplyHittersMove(this);
+}
+
 void PlayGridSystem::ChangeAttackState(AttackPhase phase)
 {
+    // 새 공격 시퀀스를 시작하거나 정지할 때 Hit 통지 래치를 초기화한다.
+    if (phase == AttackPhase::None || phase == AttackPhase::Alaram)
+        m_attackHitStarted = false;
+
     switch (phase)
     {
     case AttackPhase::None:     m_attackSM.Stop();                          break;
@@ -667,466 +681,9 @@ void PlayGridSystem::ChangeObstacleState(ObstaclePhase phase)
 
 void PlayGridSystem::UpdateSequence(float dt)
 {
-    //UpdateAttackSequence(dt);
-    //UpdateUtilitySequence(dt);
-    //UpdateObstacleSequence(dt);
     m_attackSM.Update(dt);
     m_utilitySM.Update(dt);
     m_obstacleSM.Update(dt);
-}
-
-void PlayGridSystem::UpdateAttackSequence(float dt)
-{
-    if (!m_attackActive) return;
-    
-    auto& as = m_attackSequence;
-
-    switch (as.attackPhase)
-    {
-    case AttackPhase::Alaram:
-    {
-        // alaram 시간 끝나고 다음 단계로 이동
-        if (as.elapsed >= as.m_alarmDuration)
-        {
-            ++as.attackPhase;
-            as.phaseStarted = true;
-            as.elapsed = 0;
-            break;
-        }
-
-        if (!as.phaseStarted) break;
-
-        auto attackerIt = m_pieces.find(as.attacker);
-        if (attackerIt == m_pieces.end())
-        {
-            as.attackPhase = AttackPhase::Over;
-            break;
-        }
-
-        const auto& pieceInfo = attackerIt->second;
-        auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
-        if (pPiece == nullptr)
-        {
-            as.attackPhase = AttackPhase::Over;
-            break;
-        }
-
-
-        pPiece->SetDir(as.dir, true, attackRotDuration);
-
-        const auto& tiles = as.tileIDs;
-        for (int i = 0; i < tiles.size(); i++)
-        {
-            int id = tiles[i];
-            auto pTile = static_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[id]));
-            pTile->SetFlashColor(as.m_alarmColor, as.m_flashCount, as.m_flashInterval);
-        }
-        as.phaseStarted = false;
-
-        break;
-    }
-    case AttackPhase::Attack:
-    {
-        // unit attack 시간 끝나고 다음 단계로 이동
-        if (as.elapsed >= as.m_attackDuration)
-        {
-            ++as.attackPhase;
-            as.phaseStarted = true;
-            as.elapsed = 0;
-            break;
-        }
-
-        if (!as.phaseStarted) break;
-
-        auto attackerIt = m_pieces.find(as.attacker);
-        if (attackerIt == m_pieces.end())
-        {
-            as.attackPhase = AttackPhase::Over;
-            break;
-        }
-
-        const auto& pieceInfo = attackerIt->second;
-        auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
-        if (pPiece == nullptr)
-        {
-            as.attackPhase = AttackPhase::Over;
-            break;
-        }
-
-        pPiece->InsertQ({ CommandType::Attack });
-
-        //if(pieceInfo.subIds.size() == 0)    // 서브 유닛이 없는 경우에만
-        //    pPiece->InsertQ({ CommandType::Attack });
-        //else
-        //    pPiece->InsertQ({ CommandType::Attack });
-        //for (uint32_t subId : pieceInfo.subIds)
-        //{
-        //    auto pSubPiece = static_cast<UnitPiece*>(m_manager->FindObject(subId));
-        //    if (pSubPiece != nullptr)
-        //    {
-        //        pSubPiece->InsertQ({ CommandType::Attack });
-        //    }
-        //}
-        as.phaseStarted = false;
-        
-        std::cout << "[Attack Sequence]\nAttacker hp: " << static_cast<int>(m_UnitStates[GetUnitID(as.attacker)].hp) << std::endl;
-        break;
-    }
-    case AttackPhase::Hit:
-    {
-        if (as.elapsed >= as.m_hitDuration)
-        {
-            ++as.attackPhase;
-            as.phaseStarted = true;
-            as.elapsed = 0;
-            break;
-        }
-
-        if (!as.phaseStarted) break;
-
-        // 타일 피격 이펙트 시작
-        const auto& tiles = as.tileIDs;
-        for (int i = 0; i < tiles.size(); i++)
-        {
-            int id = tiles[i];
-            auto pTile = static_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[id]));
-
-            Team team = m_pieces[as.attacker].team;
-
-            Effect* eff = nullptr;;
-
-            if((GameManager::Get().GetPID() == 1 && team == Team::Ally) || (GameManager::Get().GetPID() == 2 && team == Team::Enemy))
-                eff = m_effectManager->Spawn(EffectID::Target, { 0, 0.01, 0 }, { 1, 1, 1 });
-            else if((GameManager::Get().GetPID() == 1 && team == Team::Enemy) || (GameManager::Get().GetPID() == 2 && team == Team::Ally))
-                eff = m_effectManager->Spawn(EffectID::TargetEnemy, { 0, 0.01, 0 }, { 1, 1, 1 });
-
-            if(eff)
-                pTile->Attach(eff);
-            //pTile->SetFlashColor(as.m_tileEffectColor, as.m_flashCount, as.m_flashInterval);
-        }
-
-        AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_TileHit));
-
-        // 기물 피격 애니메이션 시작
-        const auto& pieces = as.hitPieces;
-        for (int i = 0; i < pieces.size(); i++)
-        {
-            auto it = m_pieces.find(pieces[i]);
-            if (it == m_pieces.end()) continue;
-
-            const auto& pieceInfo = it->second;
-
-            auto pPiece = static_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
-            if (pPiece == nullptr) continue;
-
-            // 죽었는지 체크. 죽었으면 죽는 애니메이션 재생
-            int unitID = GetUnitID(it->first);
-            if (m_UnitStates[unitID].hp == 0)
-            {
-                pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
-                for (auto& subId : pieceInfo.subIds)
-                {
-                    auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                    pSub->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
-                }
-            }
-            else // 살았다면 피격 애니메이션 재생
-            {
-                pPiece->InsertQ(PlayGridQ::Hit_P());
-                for (auto& subId : pieceInfo.subIds)
-                {
-                    auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                    pSub->InsertQ(PlayGridQ::Hit_P());
-                }
-            }
-            std::cout << "[PlayGridSystem::UpdateAttackSequence]\nHitter hp: " << static_cast<int>(m_UnitStates[GetUnitID(pieces[i])].hp) << std::endl;
-        }
-        as.phaseStarted = false;
-        break;
-    }
-    case AttackPhase::Over:
-    {   
-        as = {};
-        m_attackActive = false;
-        return;
-    }
-    }
-
-    as.elapsed += dt;
-}
-
-//void PlayGridSystem::UpdateUtilitySequence(float dt)
-//{
-//    if (!m_utilityActive) return;
-//
-//    auto& us = m_utilitySequence;
-//    
-//    switch (us.utilityPhase)
-//    {
-//    case UtilityPhase::Move:
-//    {
-//        if (us.elapsed >= us.m_moveDuration)
-//        {
-//            ++us.utilityPhase;
-//            us.phaseStarted = true;
-//            us.elapsed = 0.f;
-//            break;
-//        }
-//        if (!us.phaseStarted)    break;
-//
-//        const auto& pm = us.playerMove;
-//
-//        //ApplyMoveChanges(pm->dirty, pm->prevState, pm->snapshot, pm->mainUnit, pm->dir);
-//        if (pm != nullptr)
-//            ApplyMoveChanges(pm->dirty, pm->prevState, pm->snapshot, pm->mainUnit, pm->dir);
-//
-//        us.phaseStarted = false;
-//        break;
-//    }
-//    case UtilityPhase::AttackAndMove:
-//    {
-//        if (us.elapsed >= us.m_attackAndMoveDuration)
-//        {
-//            ++us.utilityPhase;
-//            us.phaseStarted = true;
-//            us.elapsed = 0.f;
-//            break;
-//        }
-//
-//        if (!us.phaseStarted)    break;
-//
-//        auto& as = m_attackSequence;
-//        bool condition1 = as.attackPhase == AttackPhase::Hit;
-//        bool condition2 = as.phaseStarted == false;
-//        bool condition3 = us.hitMove != HitMove::None;      // 넉백 또는 그랩이 있는가
-//
-//        if (!(condition1 && condition2 && condition3))  break;
-//
-//        const auto& pieces = as.hitPieces;
-//        const auto& hm = us.hittersMove;
-//        if (pieces.size() != hm.size())
-//        {
-//            std::cout << "hitter count and hitter move ain't same!\n";
-//            assert(false);
-//        }
-//        for (int i = 0; i < pieces.size(); i++)
-//        {
-//            if (!CheckNotDying(pieces[i]))    continue;
-//            ApplyMoveChanges(hm[i]->dirty, hm[i]->prevState, hm[i]->snapshot, hm[i]->mainUnit, hm[i]->dir);
-//        }
-//
-//        us.phaseStarted = false;
-//
-//        break;
-//    }
-//    case UtilityPhase::Buff:
-//    {
-//        if (us.elapsed >= us.m_buffDuration)
-//        {
-//            ++us.utilityPhase;
-//            us.phaseStarted = true;
-//            us.elapsed = 0.f;
-//            break;
-//        }
-//
-//        if (!us.phaseStarted)    break;
-//
-//        if(us.buffData != nullptr)
-//            BuffEvent(us.playPiece, us.buffData);
-//
-//        us.phaseStarted = false;
-//
-//        break;
-//    }
-//    case UtilityPhase::Over:
-//    {
-//        // 초기화
-//        m_utilityActive = false;
-//        delete us.playerMove;
-//        for (auto& hm : us.hittersMove)
-//        {
-//            delete hm;
-//        }
-//        us.hittersMove.clear();
-//        m_utilitySequence = {};
-//        return;
-//    }
-//    }
-//
-//    us.elapsed += dt;
-//}
-
-void PlayGridSystem::UpdateObstacleSequence(float dt)
-{
-    if (!m_obstacleActive)   return;
-    
-    auto& os = m_obstacleSequence;
-
-    switch (os.obstaclePhase)
-    {
-    case ObstaclePhase::Trigger:
-    {
-        if (os.elapsed >= os.m_triggerDuration || os.hitTileIDs.size() == 0)
-        {
-            os.obstaclePhase = ObstaclePhase::Warning;
-            os.phaseStarted = true;
-            os.elapsed = 0;
-            break;
-        }
-        if (!os.phaseStarted)    break;
-        
-        // 경고 이펙트 제거
-        for (const auto& tileID : os.hitTileIDs)
-        {
-            if (m_tiles[tileID].effectIDs.size() == 0) continue;
-            for (auto effectID : m_tiles[tileID].effectIDs)
-            {
-                m_manager->DestroyObject(effectID);
-            }
-            m_tiles[tileID].effectIDs.clear();
-        }
-
-        // 장애물 발동
-
-        for (const auto& tileID : os.hitTileIDs)
-        {
-            auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
-
-            //pTile->PlayTrigger(os.attackType, os.hitColor, os.hitFlashCount, os.hitFlashInterval);
-
-
-            pTile->PlayTrigger(os.attackType);
-
-            auto [cx, cz] = GetCellByID(tileID);
-            if(os.attackType == ObstacleType::Collapse)
-                ChangeTileTO(cx, cz, TileOccupy{ TileOccuType::Collapesed, TileWho::None });
-        }
-
-        // 세로 장애물은 가운데 타일 위치에서 한번만 발동
-        if (os.attackType == ObstacleType::Horizon_Razer)
-        {
-            int middleTileID = os.hitTileIDs.size() / 2.f;
-
-            if (middleTileID != 0)
-            {
-                auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[middleTileID]));
-                auto eff = m_effectManager->Spawn(EffectID::Razer, { 0.f, 0.8f, 0.f }, { 11.f, 1.f, 1.f }, { -1, 0, 0 });
-                pTile->Attach(eff);
-            }
-
-            AudioQ::Insert(AudioQ::PlayOneShot(EventName::PLAYER_HorizonLazer));
-        }
-
-        // 기물
-        if (os.hitPieces.size() != 0)
-        {
-            for (auto& piece : os.hitPieces)
-            {
-                auto pieceIt = m_pieces.find(piece);
-                if (pieceIt == m_pieces.end())   continue;
-                auto& pieceInfo = pieceIt->second;
-
-                int unitID = GetUnitID(piece);
-                auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
-                if (m_UnitStates[unitID].hp == 0)
-                {
-                    pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
-                    for (auto& subId : pieceInfo.subIds)
-                    {
-                        auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                        pSub->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
-                    }
-                }
-                else
-                {
-                    pPiece->InsertQ(PlayGridQ::Hit_P());
-                    for (auto& subId : pieceInfo.subIds)
-                    {
-                        auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subId));
-                        pSub->InsertQ(PlayGridQ::Hit_P());
-                    }
-                }
-            }
-        }
-
-        std::cout << "[PlayGridSystem] Obstacle is triggered\n";
-
-        os.phaseStarted = false;
-
-        break;
-    }
-    case ObstaclePhase::Warning:
-    {
-        if (os.elapsed >= os.m_warningDuration || os.warningTileIDs.size() == 0)
-        {
-            os.obstaclePhase = ObstaclePhase::Over;
-            os.elapsed = 0;
-            break;
-        }
-        if (!os.phaseStarted)    break;
-
-        AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_CointEvent));
-
-        // 타일
-        for (const auto& tileID : os.warningTileIDs)
-        {
-            auto pTile = dynamic_cast<UnitTile*>(m_manager->FindObject(m_tilesIDs[tileID]));
-            pTile->PlayWarning(os.attackType);
-
-            EffectDesc ed{};
-            ed.id = EffectID::FloorWarning1;
-            ed.shaderid = ShaderId::EffectBase;
-            ed.billboard = BillboardMode::None;
-            ed.lifetime = 5.f;
-            ed.framecount = 120;
-            ed.cols = 12;
-            ed.rows = 10;
-            ed.emissive = 1.0f;
-            ed.color = XMFLOAT4{ 1, 1, 0, 1 };
-            ed.rot = { 0, 0, 0 };
-            ed.isLoop = true;
-            ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_1.png";
-            if (os.attackType != ObstacleType::Collapse)
-            {
-                m_effectManager->RegisterEffect(ed);
-                auto pEffect1 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning1", XMFLOAT3(0, 0, -0.01f));
-                pEffect1->BuildInternalEffectMaterial(ed);
-                pTile->Attach(pEffect1);
-                m_tiles[tileID].effectIDs.push_back(pEffect1->GetID());
-            }
-
-            ed.id = EffectID::FloorWarning2;
-            ed.framecount = 30;
-            ed.lifetime = 1.2f;
-            ed.cols = 5;
-            ed.rows = 6;
-            ed.color = (os.attackType == ObstacleType::Collapse)? XMFLOAT4{ 1, 0, 0, 1 } : XMFLOAT4{ 1, 1, 0, 1 };
-            ed.rot = { -XMConvertToRadians(90.f), 0, 0};
-            ed.texPath = L"../Assets/Effects/Warning/EF_Floor_WARNING_2.png";
-            m_effectManager->RegisterEffect(ed);
-
-            auto pEffect2 = m_manager->CreateObject<EffectUnit>(L"BarrierWarning2", XMFLOAT3(0, 0, -0.3f));
-
-            pEffect2->BuildInternalEffectMaterial(ed);
-            pTile->Attach(pEffect2);
-            m_tiles[tileID].effectIDs.push_back(pEffect2->GetID());
-        }
-
-        std::cout << "[PlayGridSystem] Warning Next Obstacle\n";
-
-        os.phaseStarted = false;
-
-        break;
-    }
-    case ObstaclePhase::Over:
-    {
-        os = {};
-        m_obstacleActive = false;
-        return;
-    }
-    }
-
-    os.elapsed += dt;
 }
 
 void PlayGridSystem::ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, uint32_t runCardID, Direction dir)
@@ -1263,8 +820,7 @@ bool PlayGridSystem::ApplyAttackChanges
     as.attacker = whichPiece;
     as.dir = dir;
     as.tileIDs = targetTileIDs;
-    as.attackPhase = AttackPhase::Alaram;
-    as.phaseStarted = m_attackActive = true;
+    m_attackActive = true;
 
     // 공격 팀 확인. 피격 팀 확인하기.
     Team attackTeam = m_pieces[whichPiece].team;
@@ -1316,8 +872,7 @@ bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
 
     auto& us = m_utilitySequence;
 
-    m_utilityActive = us.phaseStarted = true;
-    us.utilityPhase = UtilityPhase::Move;
+    m_utilityActive = true;
     us.playPiece = whichPiece;
 
     switch (snapNum)
@@ -1354,7 +909,10 @@ bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
             {
                 int unitID = GetUnitID(hps[i]);
                 Dirty_US d = Diff_US(m_UnitStates[unitID], newUnitStates[unitID]);
-                us.hittersMove.push_back(std::unique_ptr<MoveInfo>(new MoveInfo{ d, m_UnitStates[unitID], newUnitStates, unitID, dir }));
+                // 피격 기물과 이동 정보를 한 쌍으로 저장한다. (개수 불일치 구조적 차단)
+                us.hittersMove.push_back(HitterMove{
+                    hps[i],
+                    std::unique_ptr<MoveInfo>(new MoveInfo{ d, m_UnitStates[unitID], newUnitStates, unitID, dir }) });
                 if (HasThis_US(d, Dirty_US::targetTileID))   us.hitMove = HitMove::Move;
             }
             us.buffData = buffData;
@@ -1693,7 +1251,6 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
     // ObstacleSequence 정보 기입
     auto& os = m_obstacleSequence;
     m_obstacleActive = true;
-    os.phaseStarted = true;
     os.obstaclePhase = ObstaclePhase::Trigger;
 
     for (int i = 0; i < static_cast<int>(m_UnitStates.size()); ++i)

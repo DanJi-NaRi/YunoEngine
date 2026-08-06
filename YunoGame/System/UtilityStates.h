@@ -26,6 +26,9 @@ namespace UtilityStates
         void Update(PlayGridSystem* owner, float dt) override;
         void Exit(PlayGridSystem* owner) override;
 
+        // 공격 Hit 통지를 받았을 때 피격자 넉백/그랩 이동을 적용한다. (중복 호출 안전)
+        void ApplyHittersMove(PlayGridSystem* owner);
+
     private:
         float m_elapsed = 0.f;
         bool m_applied = false;     // 피격자 이동을 이미 적용했는가 (조건 충족 시 1회만)

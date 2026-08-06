@@ -31,7 +31,7 @@ namespace AttackStates
             return;
         }
 
-        auto pPiece = static_cast<UnitPiece*>(owner->GetObjectManager()->FindObject(pieceInfo->id));
+        auto pPiece = dynamic_cast<UnitPiece*>(owner->GetObjectManager()->FindObject(pieceInfo->id));
         if (pPiece == nullptr)
         {
             m_aborted = true;
@@ -42,7 +42,8 @@ namespace AttackStates
 
         for (int id : as.tileIDs)
         {
-            auto pTile = static_cast<UnitTile*>(owner->GetObjectManager()->FindObject(owner->GetTileObjectID(id)));
+            auto pTile = dynamic_cast<UnitTile*>(owner->GetObjectManager()->FindObject(owner->GetTileObjectID(id)));
+            if (pTile == nullptr)   continue;
             pTile->SetFlashColor(as.m_alarmColor, as.m_flashCount, as.m_flashInterval);
         }
     }
@@ -81,7 +82,7 @@ namespace AttackStates
             return;
         }
 
-        auto pPiece = static_cast<UnitPiece*>(owner->GetObjectManager()->FindObject(pieceInfo->id));
+        auto pPiece = dynamic_cast<UnitPiece*>(owner->GetObjectManager()->FindObject(pieceInfo->id));
         if (pPiece == nullptr)
         {
             m_aborted = true;
@@ -127,7 +128,8 @@ namespace AttackStates
 
         for (int id : as.tileIDs)
         {
-            auto pTile = static_cast<UnitTile*>(pObjMng->FindObject(owner->GetTileObjectID(id)));
+            auto pTile = dynamic_cast<UnitTile*>(pObjMng->FindObject(owner->GetTileObjectID(id)));
+            if (pTile == nullptr)   continue;
 
             Effect* eff = nullptr;
             int pid = GameManager::Get().GetPID();
@@ -148,7 +150,7 @@ namespace AttackStates
             const PieceInfo* pieceInfo = owner->FindPieceInfo(piece);
             if (pieceInfo == nullptr) continue;
 
-            auto pPiece = static_cast<UnitPiece*>(pObjMng->FindObject(pieceInfo->id));
+            auto pPiece = dynamic_cast<UnitPiece*>(pObjMng->FindObject(pieceInfo->id));
             if (pPiece == nullptr) continue;
 
             int unitID = owner->GetUnitIDOf(piece);
@@ -158,6 +160,7 @@ namespace AttackStates
                 for (auto& subId : pieceInfo->subIds)
                 {
                     auto pSub = dynamic_cast<UnitPiece*>(pObjMng->FindObject(subId));
+                    if (pSub == nullptr)    continue;
                     pSub->InsertQ(PlayGridQ::Dead_P(owner->GetDisappearDissolveDuration()));
                 }
             }
@@ -167,12 +170,16 @@ namespace AttackStates
                 for (auto& subId : pieceInfo->subIds)
                 {
                     auto pSub = dynamic_cast<UnitPiece*>(pObjMng->FindObject(subId));
+                    if (pSub == nullptr)    continue;
                     pSub->InsertQ(PlayGridQ::Hit_P());
                 }
             }
             std::cout << "[AttackStates::HitState]\nHitter hp: "
                 << static_cast<int>(owner->GetUnitState(unitID).hp) << std::endl;
         }
+
+        // Utility 시퀀스에 Hit 진입을 통지한다. (넉백/그랩 이동 트리거)
+        owner->OnAttackHitStarted();
     }
 
     void HitState::Update(PlayGridSystem* owner, float dt)

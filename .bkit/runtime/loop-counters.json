@@ -1,36 +1,20 @@
 {
   "fileEditCounts": {
-    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\IState.h": {
-      "count": 2,
-      "ts": 1784438111257
-    },
-    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\StateMachine.h": {
-      "count": 2,
-      "ts": 1784438112663
-    },
-    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\AttackStates.h": {
-      "count": 2,
-      "ts": 1784438127047
-    },
-    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\AttackStates.cpp": {
-      "count": 2,
-      "ts": 1784438262453
-    },
-    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\UtilityStates.h": {
+    "C:\\Users\\user\\AppData\\Local\\Temp\\claude\\C--Users-user-OneDrive-Desktop-KMK-YunoEngine\\133d1a99-275d-44ff-9d68-c749063ca348\\scratchpad\\restore.py": {
       "count": 1,
-      "ts": 1784439104742
+      "ts": 1786021840755
     },
-    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\ObstacleStates.h": {
+    "C:\\Users\\user\\AppData\\Local\\Temp\\claude\\C--Users-user-OneDrive-Desktop-KMK-YunoEngine\\133d1a99-275d-44ff-9d68-c749063ca348\\scratchpad\\restore2.py": {
       "count": 1,
-      "ts": 1784439106520
+      "ts": 1786021960343
     },
-    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\UtilityStates.cpp": {
+    "C:\\Users\\user\\AppData\\Local\\Temp\\claude\\C--Users-user-OneDrive-Desktop-KMK-YunoEngine\\133d1a99-275d-44ff-9d68-c749063ca348\\scratchpad\\restore3.py": {
       "count": 1,
-      "ts": 1784439178044
+      "ts": 1786022029263
     },
-    "C:\\Users\\user\\OneDrive\\Desktop\\KMK\\YunoEngine\\YunoGame\\System\\ObstacleStates.cpp": {
+    "C:\\Users\\user\\AppData\\Local\\Temp\\claude\\C--Users-user-OneDrive-Desktop-KMK-YunoEngine\\133d1a99-275d-44ff-9d68-c749063ca348\\scratchpad\\restore4.py": {
       "count": 1,
-      "ts": 1784439225018
+      "ts": 1786022089526
     }
   }
 }

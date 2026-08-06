@@ -41,32 +41,33 @@ namespace UtilityStates
     {
         m_elapsed = 0.f;
         m_applied = false;
+
+        // 이 상태에 도착하기 전에 이미 Hit 통지가 지나갔다면 여기서 회수한다.
+        if (owner->HasAttackHitStarted())
+            ApplyHittersMove(owner);
+    }
+
+    void AttackAndMoveState::ApplyHittersMove(PlayGridSystem* owner)
+    {
+        if (m_applied)  return;
+
+        auto& us = owner->GetUtilitySequence();
+        if (us.hitMove == HitMove::None)    return;     // 넉백/그랩이 없는 카드
+
+        for (const auto& hitter : us.hittersMove)
+        {
+            if (hitter.move == nullptr)                     continue;
+            if (!owner->IsPieceNotDying(hitter.piece))      continue;
+            owner->ApplyMoveInfo(hitter.move.get());
+        }
+
+        m_applied = true;
     }
 
     void AttackAndMoveState::Update(PlayGridSystem* owner, float dt)
     {
-        auto& us = owner->GetUtilitySequence();
-
-        // 조건 충족 시 1회만 적용: 공격 SM이 Hit 상태 && 넉백/그랩 이동 존재
-        if (!m_applied && owner->IsAttackInHitState() && us.hitMove != HitMove::None)
-        {
-            const auto& pieces = owner->GetAttackSequence().hitPieces;
-            const auto& hm = us.hittersMove;
-            if (pieces.size() != hm.size())
-            {
-                std::cout << "hitter count and hitter move ain't same!\n";
-                assert(false);
-            }
-            for (int i = 0; i < pieces.size(); i++)
-            {
-                if (!owner->IsPieceNotDying(pieces[i]))    continue;
-                owner->ApplyMoveInfo(hm[i].get());
-            }
-            m_applied = true;
-        }
-
         m_elapsed += dt;
-        if (m_elapsed >= us.m_attackAndMoveDuration)
+        if (m_elapsed >= owner->GetUtilitySequence().m_attackAndMoveDuration)
             owner->ChangeUtilityState(UtilityPhase::Buff);
     }
 
