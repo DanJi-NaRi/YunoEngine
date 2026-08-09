@@ -114,10 +114,15 @@ void Minimap::ApplyCollapsedTiles()
         // 렌더 제외. Hidden은 Update는 돌되 Submit에서 걸러진다.
         tile->SetVisible(collapsed ? Visibility::Hidden : Visibility::Visible);
 
-        // 숨긴 타일은 클릭도 막는다. 되살릴 때는 현재 버튼 잠금 상태를 따라간다.
-        const bool useButton = !collapsed && !m_buttonLock;
-        tile->SetUseLMB(useButton);
-        tile->SetUseRMB(useButton);
+        // 붕괴 타일만 클릭을 막는다.
+        // 정상 타일의 버튼 상태는 켜지 않는다. 그 권한은 SetButtonLock과
+        // OpenDirButton에 있고, 여기서 켜면 DefaultSetAllTile로 꺼둔 버튼이
+        // 다시 살아나 클릭하면 안 되는 타일이 눌리게 된다.
+        if (collapsed)
+        {
+            tile->SetUseLMB(false);
+            tile->SetUseRMB(false);
+        }
     }
 }
 
@@ -527,6 +532,8 @@ void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
     {
         const Int2 n = { tileXY.x + d.x, tileXY.y + d.y };
         if (auto* dirTile = GetTileByID(n)) {
+            // 붕괴된 타일로는 이동할 수 없으므로 방향 후보에서 제외한다.
+            if (IsCollapsedTile(dirTile->GetTileId())) continue;
             candidates.emplace_back(dirTile);
         }
     }
@@ -536,6 +543,7 @@ void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
         const Int2 n = { tileXY.x + d.x, tileXY.y + d.y };
         MinimapTile* dirTile = GetTileByID(n);
         if (!dirTile) continue;
+        if (IsCollapsedTile(dirTile->GetTileId())) continue;    // 위 후보 목록과 동일 기준
 
         dirTile->SetUseLMB(true);
         dirTile->SetUseRMB(true);
