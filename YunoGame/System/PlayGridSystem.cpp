@@ -623,6 +623,9 @@ void PlayGridSystem::CheckPacket(float dt)
 
     // ui weapon data에 현 유닛 상태 반영
     ReflectWeaponData();
+
+    // 미니맵에 붕괴 타일 상태 반영
+    ReflectTileData();
 }
 
 
@@ -1236,6 +1239,19 @@ void PlayGridSystem::ReflectWeaponData()
         datas[i].currentTile = m_UnitStates[i].targetTileID;
     }
     mng.SetUIWeaponData(datas);
+}
+
+void PlayGridSystem::ReflectTileData()
+{
+    // 붕괴 타일만 추려서 GameManager에 넘긴다. Minimap이 이 정보로 타일을 숨긴다.
+    // 내용이 같으면 SetCollapsedTiles가 무시하므로 매 프레임 호출해도 부담이 없다.
+    std::array<bool, kTileCount> collapsed{};
+
+    const int tileCount = std::min(static_cast<int>(m_tiles.size()), kTileCount);
+    for (int tileID = 1; tileID < tileCount; ++tileID)
+        collapsed[tileID] = (m_tiles[tileID].to.occuType == TileOccuType::Collapesed);
+
+    GameManager::Get().SetCollapsedTiles(collapsed);
 }
 
 void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)

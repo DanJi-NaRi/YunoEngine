@@ -218,6 +218,7 @@ private:
     void CheckPacket(float dt);
     void CheckOver();
     void ReflectWeaponData();
+    void ReflectTileData();     // 붕괴 타일 상태를 GameManager로 반영 (Minimap이 소비)
 
     void UpdateSequence(float dt);
 

@@ -50,6 +50,12 @@ public:
 
     void PaintTile(std::array<MinimapTile*, 2>& myTiles); // 팀 기준의 타일 배열을 넣으면 됨
 
+    // 붕괴된 타일을 숨기고 클릭도 막는다.
+    // GameManager의 붕괴 정보를 읽으며, DefaultSetAllTile/SetButtonLock이
+    // 상태를 되돌리므로 그 뒤에 다시 호출해야 한다.
+    void ApplyCollapsedTiles();
+    bool IsCollapsedTile(int tileID) const;
+
     bool GetButtonLock() { return m_buttonLock; } // SetButtonLock
     int GetTileID(int cx, int cy) const;
     int GetTileID(Int2 tileXY) const;
@@ -77,6 +83,8 @@ protected:
     std::array<MinimapTile*, 2> m_pMyTileBackup = {nullptr,};
     std::array<MinimapTile*, 2> m_pEnemyTile = {nullptr,};
     bool m_hasSimulationBackup = false;
+
+    uint32_t m_lastCollapsedVersion = 0;    // GameManager 붕괴 정보 갱신 감지용
 
     WidgetGridLine* m_pGridLine = nullptr;
 

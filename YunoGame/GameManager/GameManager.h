@@ -10,6 +10,9 @@
 #include "CardQueue.h"
 
 
+// 타일 상태 배열 크기. 서버와 동일하게 tileID는 1~35를 쓰고 0번은 비워 둔다.
+constexpr int kTileCount = 36;
+
 class Minimap;
 class CardConfirmPanel;
 class CardSelectionPanel;
@@ -322,6 +325,19 @@ public:
     bool IsUIWeaponDataReady() const { return m_uiWeaponDataReady; }
     uint64_t GetUIWeaponDataVersion() const { return m_uiWeaponDataVersion; }
     void ClearUIWeaponDataState();
+
+    // 붕괴 타일 정보 (PlayGridSystem -> GameManager -> Minimap)
+    // 인덱스는 tileID를 그대로 쓴다. 0번은 서버 수 체계상 미사용.
+private:
+    std::array<bool, kTileCount> m_collapsedTiles{};
+    uint32_t m_collapsedTilesVersion = 0;
+
+public:
+    // 내용이 실제로 바뀐 경우에만 버전을 올린다. (매 프레임 호출해도 안전)
+    void SetCollapsedTiles(const std::array<bool, kTileCount>& tiles);
+    const std::array<bool, kTileCount>& GetCollapsedTiles() const { return m_collapsedTiles; }
+    uint32_t GetCollapsedTilesVersion() const { return m_collapsedTilesVersion; }
+    void ClearCollapsedTiles();
 
     // 매 턴 매 슬롯 카드 하나 진행할 때마다 받아옴
 private:
