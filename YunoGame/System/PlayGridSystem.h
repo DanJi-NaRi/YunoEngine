@@ -228,7 +228,7 @@ private:
     bool ApplyMoveChanges(Dirty_US dirty, const UnitState prevUnitState, const std::array<UnitState, 4> newUnitStates, int mainUnit, Direction dir);
     bool ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
     bool ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit,
-        const std::vector<RangeOffset>& ranges, Direction dir, const CardEffectData*& buffData, int snapNum);
+        const std::vector<RangeOffset>& ranges, Direction dir, const int controllId, const CardEffectData*& buffData, int snapNum);
     void ApplyObstacleResult(const ObstacleResult& obstacle);   // 장애물 패킷 적용하는 함수
 
     void MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 newcell, Direction moveDir,

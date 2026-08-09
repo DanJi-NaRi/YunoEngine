@@ -319,7 +319,7 @@ void UnitTile::UpdateFlash(float dt)
 
 void UnitTile::SetIdleState()
 {
-    if (m_state == ObstacleType::None) return;
+    if (m_state == ObstacleType::None || isCollapsed) return;
     
     m_state = ObstacleType::None;
     isTriggering = false;

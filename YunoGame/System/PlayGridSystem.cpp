@@ -715,7 +715,7 @@ void PlayGridSystem::ApplyActionOrder(const std::vector<std::array<UnitState, 4>
             ApplyAttackChanges(dirty, unitStates_Now, mainUnit, ranges, dir);
             break;
         case CardType::Utility:
-            ApplyUtilityChanges(dirty, unitStates_Now, mainUnit, ranges, dir, buffData, i);
+            ApplyUtilityChanges(dirty, unitStates_Now, mainUnit, ranges, dir, cardData.m_controlId, buffData, i);
             break;
         }
 
@@ -859,7 +859,7 @@ bool PlayGridSystem::ApplyAttackChanges
 }
 
 bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit,
-    const std::vector<RangeOffset>& ranges, Direction dir, const CardEffectData*& buffData, int snapNum)
+    const std::vector<RangeOffset>& ranges, Direction dir, const int controllId, const CardEffectData*& buffData, int snapNum)
 {
     const UnitState prevUS = m_UnitStates[mainUnit];
     const UnitState newUS = newUnitStates[mainUnit];
@@ -905,15 +905,23 @@ bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
             const auto& hps = m_attackSequence.hitPieces;
             if (hps.size() == 0)
                 break;
+            // 1: 그랩(시전자 쪽으로 당김)  -> 충돌 연출 방향은 공격 방향의 반대
+            // 2: 넉백(시전자 반대로 밀어냄) -> 충돌 연출 방향은 공격 방향 그대로
+            // 루프 밖에서 한 번만 계산한다. 안에서 dir을 덮으면 대상마다 방향이 번갈아 뒤집힌다.
+            const Direction hitterDir = (controllId == 1) ? GetOppositeDirection(dir) : dir;
+
             for (int i = 0; i < hps.size(); i++)
             {
                 int unitID = GetUnitID(hps[i]);
                 Dirty_US d = Diff_US(m_UnitStates[unitID], newUnitStates[unitID]);
-                // 피격 기물과 이동 정보를 한 쌍으로 저장한다. (개수 불일치 구조적 차단)
+
                 us.hittersMove.push_back(HitterMove{
                     hps[i],
-                    std::unique_ptr<MoveInfo>(new MoveInfo{ d, m_UnitStates[unitID], newUnitStates, unitID, dir }) });
-                if (HasThis_US(d, Dirty_US::targetTileID))   us.hitMove = HitMove::Move;
+                    std::unique_ptr<MoveInfo>(new MoveInfo{ d, m_UnitStates[unitID], newUnitStates, unitID, hitterDir }) });
+
+                // 밀려서 타일이 바뀐 경우와, 막혀서 제자리 충돌한 경우 모두 연출이 필요하다.
+                if (HasThis_US(d, Dirty_US::targetTileID) || newUnitStates[unitID].isEvent != 0)
+                    us.hitMove = HitMove::Move;
             }
             us.buffData = buffData;
             us.m_buffDuration = buffDuration;
@@ -1585,6 +1593,8 @@ void PlayGridSystem::ClearTileState()
 {
     for (auto& cell : m_tiles)
     {
+        if (cell.to.occuType == TileOccuType::Collapesed)
+            continue;
         cell = TileState{};
     }
 }
