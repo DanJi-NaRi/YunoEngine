@@ -46,7 +46,9 @@ public:
     bool IsPlayerTile() { return m_data.isPlayerTile; }
     void SetTileId(uint8_t tileID) { m_tileID = tileID; };
     void SetTileData(TileData& tile) { m_data = tile; }
-    const int& GetTileId() { return m_tileID; };
+    // uint8_t 멤버를 const int&로 반환하면 변환용 임시 객체가 만들어지고
+    // return 직후 소멸해 죽은 참조가 나간다(C4172). 값으로 반환한다.
+    uint8_t GetTileId() const { return m_tileID; };
 
     void ClearTileData();
 

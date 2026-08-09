@@ -511,9 +511,14 @@ void PlayGridSystem::CheckMyQ()
             m_pieces.erase(it);
 
             // 해당 타일 상태 초기화
+            // 단, 붕괴한 타일 위에서 죽은 경우 TileState{}로 통째로 덮으면
+            // occuType이 Unoccupied로 되돌아가 붕괴가 풀린다. 점유 정보만 지운다.
             int unitID = GetUnitID(pieceType);
             int tileID = m_UnitStates[unitID].targetTileID;
-            m_tiles[tileID] = TileState{};
+            if (m_tiles[tileID].to.occuType == TileOccuType::Collapesed)
+                m_tiles[tileID].to.who = TileWho::None;
+            else
+                m_tiles[tileID] = TileState{};
 
             // m_pieces가 전부 사라졌는지 체크
             if (m_pieces.size() == 0)
@@ -756,7 +761,7 @@ bool PlayGridSystem::ApplyMoveChanges
 }
 
 bool PlayGridSystem::ApplyMoveChanges
-(Dirty_US dirty, const UnitState prevUS, const std::array<UnitState, 4> newUnitStates, int mainUnit, Direction dir)
+(Dirty_US dirty, const UnitState prevUS, const std::array<UnitState, 4> newUnitStates, int mainUnit, Direction dir, bool keepFacing)
 {
     const UnitState newUS = newUnitStates[mainUnit];
     GamePiece whichPiece = GetGamePiece(newUS.pId, newUS.slotId);
@@ -776,17 +781,17 @@ bool PlayGridSystem::ApplyMoveChanges
     {
         if (HasThis_US(dirty, Dirty_US::hp))
         {
-            MoveEvent(whichPiece, oldcell, newcell, dir, true, true);
+            MoveEvent(whichPiece, oldcell, newcell, dir, true, true, keepFacing);
         }
         else
         {
-            MoveEvent(whichPiece, oldcell, newcell, dir, true);
+            MoveEvent(whichPiece, oldcell, newcell, dir, true, false, keepFacing);
         }
     }
     // 이동만 할 때
     else if (HasThis_US(dirty, Dirty_US::targetTileID))
     {
-        MoveEvent(whichPiece, oldcell, newcell, dir);
+        MoveEvent(whichPiece, oldcell, newcell, dir, false, false, keepFacing);
     }
     else    // 충돌 X & 이동 X 일 경우
     {
@@ -918,9 +923,10 @@ bool PlayGridSystem::ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitSt
                 int unitID = GetUnitID(hps[i]);
                 Dirty_US d = Diff_US(m_UnitStates[unitID], newUnitStates[unitID]);
 
+                // keepFacing = true : 밀려나는 기물은 회전 없이 이동만 한다.
                 us.hittersMove.push_back(HitterMove{
                     hps[i],
-                    std::unique_ptr<MoveInfo>(new MoveInfo{ d, m_UnitStates[unitID], newUnitStates, unitID, hitterDir }) });
+                    std::unique_ptr<MoveInfo>(new MoveInfo{ d, m_UnitStates[unitID], newUnitStates, unitID, hitterDir, true }) });
 
                 // 밀려서 타일이 바뀐 경우와, 막혀서 제자리 충돌한 경우 모두 연출이 필요하다.
                 if (HasThis_US(d, Dirty_US::targetTileID) || newUnitStates[unitID].isEvent != 0)
@@ -979,7 +985,7 @@ const std::vector<int> PlayGridSystem::GetRangeTileIDs(const Int2 unitCell, cons
 }
 
 void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 newcell, Direction moveDir,
-    bool isCollided, bool isEnemy)
+    bool isCollided, bool isEnemy, bool keepFacing)
 {
     // 죽어가고 있는 기물인지 확인
     if (!CheckNotDying(pieceType)) return;
@@ -998,8 +1004,11 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
     const TileOccupy to = GetTileTO(newcell.x, newcell.y);
 
     // 기물의 상태 회전 방향 체크 및 변경
+    // keepFacing이면(넉백/그랩으로 밀려나는 경우) 바라보는 방향을 유지한다.
     auto dir = Get2Dir(oldcell.x, oldcell.y, newcell.x, newcell.y);
-    auto fdir = pieceInfo.dir = (dir == Direction::Same) ? pieceInfo.dir : dir;
+    auto fdir = pieceInfo.dir;
+    if (!keepFacing)
+        fdir = pieceInfo.dir = (dir == Direction::Same) ? pieceInfo.dir : dir;
 
     // 타 기물과 충돌했을 경우 충돌지점
     //auto moveDir = Get8Dir(oldcell.x, oldcell.y, newcell.x, newcell.y);             // 진입 방향
@@ -1033,7 +1042,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
             }
 
             // 충돌지점까지 이동 후 원래 자리로 되돌아감
-            pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
+            if (!keepFacing) pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
             pPiece->InsertQ(PlayGridQ::Move_P(colW.x, m_wy, colW.y));       // 충돌 위치까지 이동 후
             pPiece->InsertQ(PlayGridQ::MoveHit_P(existWho, amIdead, disappearDisolveDuration));                                 // 이동하는 애 죽었는지 부딪힌 애 죽었는지
             pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));            // 제자리로 돌아감
@@ -1043,7 +1052,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
             std::cout << "[PlayGridSystem]::Ally_Collison\n";
 
             // 충돌지점까지 이동 후 원래 자리로 되돌아감
-            pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
+            if (!keepFacing) pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
             pPiece->InsertQ(PlayGridQ::Move_P(colW.x, m_wy, colW.y));
             pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));
         }
@@ -1053,7 +1062,7 @@ void PlayGridSystem::MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 ne
         std::cout << "[PlayGridSystem]::Unoccupied\n";
         
         // 기물 이동
-        pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
+        if (!keepFacing) pPiece->InsertQ(PlayGridQ::Rot_P(fdir));
         pPiece->InsertQ(PlayGridQ::Move_P(wx, m_wy, wz, 1));
     }
     

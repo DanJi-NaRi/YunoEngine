@@ -46,6 +46,7 @@ namespace ObstacleStates
         {
             auto pTile = dynamic_cast<UnitTile*>(pObjMng->FindObject(owner->GetTileObjectID(tileID)));
             if (pTile == nullptr)   continue;
+            if (pTile->IsCollapsed())    continue;
 
             pTile->PlayTrigger(os.attackType);
 
@@ -137,6 +138,7 @@ namespace ObstacleStates
         {
             auto pTile = dynamic_cast<UnitTile*>(pObjMng->FindObject(owner->GetTileObjectID(tileID)));
             if (pTile == nullptr)   continue;
+            if (pTile->IsCollapsed())    continue;
 
             pTile->PlayWarning(os.attackType);
 
