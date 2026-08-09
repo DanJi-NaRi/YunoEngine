@@ -35,6 +35,12 @@ namespace yuno::server
         constexpr int kGridColumns = 7;
         constexpr int kGridSize = kGridRows * kGridColumns;
 
+        // 적군과 부딪혔을 때의 충돌 데미지.
+        // 이동 카드(applyMove)와 그랩/넉백(applyDisplacement)이 같은 값을 쓴다.
+        // 부딪힌 쪽(움직인 유닛)이 더 크게 다친다. 아군끼리는 데미지 없음.
+        constexpr int kCollisionDamageMover = 10;   // 이동/밀려난 유닛이 받는 피해
+        constexpr int kCollisionDamageBlocker = 5;  // 제자리에서 막은 유닛이 받는 피해
+
         struct TilePos
         {
             int x = 0;
@@ -45,6 +51,15 @@ namespace yuno::server
         {
             return pos.x >= 0 && pos.x < kGridColumns
                 && pos.y >= 0 && pos.y < kGridRows;
+        }
+
+        // hp를 dmg만큼 깎되 0 미만으로 내려가지 않게 한다.
+        template <typename T>
+        void SubClampHp(T& hp, int dmg)
+        {
+            int v = static_cast<int>(hp) - dmg;
+            if (v < 0) v = 0;
+            hp = static_cast<T>(v);
         }
 
         TilePos TileIdToPos(uint8_t tileId)
@@ -464,20 +479,11 @@ namespace yuno::server
                         if (isEnemy)
                         {
                             // 적군 충돌
-                            std::cout << "Enemy collision: self -10, enemy -5" << std::endl;
-                            
-                            auto subClamp = [](auto& hp, int dmg)
-                                {
-                                    using T = std::decay_t<decltype(hp)>;
-                                    int v = static_cast<int>(hp) - dmg;
-                                    if (v < 0) v = 0;
-                                    hp = static_cast<T>(v);
-                                };
+                            std::cout << "Enemy collision: self -" << kCollisionDamageMover
+                                << ", enemy -" << kCollisionDamageBlocker << std::endl;
 
-
-                            subClamp(unit.hp, 10);
-                            subClamp(other.hp, 5);
-
+                            SubClampHp(unit.hp, kCollisionDamageMover);
+                            SubClampHp(other.hp, kCollisionDamageBlocker);
                         }
                         else
                         {
@@ -537,10 +543,28 @@ namespace yuno::server
                     }
 
                     uint8_t nextTile = PosToTileId(next);
-                    if (grid[nextTile] != -1)
+                    int blockerIndex = grid[nextTile];
+                    if (blockerIndex != -1)
                     {
                         std::cout << "object exist" << std::endl;
                         if (outCollided) *outCollided = true;   // 다른 기물과 충돌
+
+                        // 충돌 데미지: 밀려난 유닛과 막고 있던 유닛.
+                        // 아군끼리 부딪힌 경우에는 데미지 없음. (applyMove의 이동 충돌과 동일 규칙)
+                        const bool isEnemy = (targetIndex / 2) != (blockerIndex / 2);
+                        if (isEnemy)
+                        {
+                            std::cout << "Enemy collision(displacement): pushed -" << kCollisionDamageMover
+                                << ", blocker -" << kCollisionDamageBlocker << std::endl;
+
+                            SubClampHp(targetUnit.hp, kCollisionDamageMover);
+                            SubClampHp(units[blockerIndex]->hp, kCollisionDamageBlocker);
+                        }
+                        else
+                        {
+                            std::cout << "Blocked by ally(displacement)" << std::endl;
+                        }
+
                         break;
                     }
 
@@ -584,14 +608,6 @@ namespace yuno::server
                     totalDamage += attacker.buffstat.nextDamageBonus;
                     attacker.buffstat.nextDamageBonus = 0;
                 }
-
-                auto subClamp = [](auto& hp, int dmg)
-                    {
-                        using T = std::decay_t<decltype(hp)>;
-                        int v = static_cast<int>(hp) - dmg;
-                        if (v < 0) v = 0;
-                        hp = static_cast<T>(v);
-                    };
 
                 bool eventOccurred = false;
 
@@ -645,7 +661,7 @@ namespace yuno::server
                             targetUnit.buffstat.nextDamageReduce = 0;
                         }
 
-                        subClamp(targetUnit.hp, adjustedDamage);
+                        SubClampHp(targetUnit.hp, adjustedDamage);
 
                         if (targetUnit.hp == 0)
                         {
