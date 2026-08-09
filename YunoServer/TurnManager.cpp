@@ -35,6 +35,12 @@ namespace yuno::server
         constexpr int kGridColumns = 7;
         constexpr int kGridSize = kGridRows * kGridColumns;
 
+        // 적군과 부딪혔을 때의 충돌 데미지.
+        // 이동 카드(applyMove)와 그랩/넉백(applyDisplacement)이 같은 값을 쓴다.
+        // 부딪힌 쪽(움직인 유닛)이 더 크게 다친다. 아군끼리는 데미지 없음.
+        constexpr int kCollisionDamageMover = 10;   // 이동/밀려난 유닛이 받는 피해
+        constexpr int kCollisionDamageBlocker = 5;  // 제자리에서 막은 유닛이 받는 피해
+
         struct TilePos
         {
             int x = 0;
@@ -45,6 +51,15 @@ namespace yuno::server
         {
             return pos.x >= 0 && pos.x < kGridColumns
                 && pos.y >= 0 && pos.y < kGridRows;
+        }
+
+        // hp를 dmg만큼 깎되 0 미만으로 내려가지 않게 한다.
+        template <typename T>
+        void SubClampHp(T& hp, int dmg)
+        {
+            int v = static_cast<int>(hp) - dmg;
+            if (v < 0) v = 0;
+            hp = static_cast<T>(v);
         }
 
         TilePos TileIdToPos(uint8_t tileId)
@@ -311,6 +326,40 @@ namespace yuno::server
                 return deltas;
             };
 
+        // buildDeltaSnapshot은 이벤트 유닛을 하나만 지정할 수 있다.
+        // 그랩/넉백은 여러 대상이 동시에 충돌할 수 있으므로 유닛별로 플래그를 받는다.
+        auto buildDeltaSnapshotMulti = [&](const std::array<bool, 4>& eventUnits)
+            {
+                std::array<yuno::net::packets::UnitStateDelta, 4> deltas{};
+                int deltaIndex = 0;
+
+                for (int p = 0; p < 2; ++p)
+                {
+                    const auto& player = g_battleState.players[p];
+
+                    const UnitState* playerUnits[2] = {
+                        &player.unit1,
+                        &player.unit2
+                    };
+
+                    for (int u = 0; u < 2; ++u)
+                    {
+                        const UnitState* unit = playerUnits[u];
+
+                        deltas[deltaIndex] = {
+                            player.PID,
+                            unit->slotID,
+                            unit->hp,
+                            unit->stamina,
+                            unit->tileID,
+                            static_cast<uint8_t>(eventUnits[deltaIndex] ? 1 : 0)
+                        };
+                        ++deltaIndex;
+                    }
+                }
+                return deltas;
+            };
+
         auto getUnitIndexForCard = [&](int ownerSlot, const CardData& card) -> int
             {
                 auto& player = (ownerSlot == 0) ? g_battleState.players[0] : g_battleState.players[1];
@@ -430,20 +479,11 @@ namespace yuno::server
                         if (isEnemy)
                         {
                             // 적군 충돌
-                            std::cout << "Enemy collision: self -10, enemy -5" << std::endl;
-                            
-                            auto subClamp = [](auto& hp, int dmg)
-                                {
-                                    using T = std::decay_t<decltype(hp)>;
-                                    int v = static_cast<int>(hp) - dmg;
-                                    if (v < 0) v = 0;
-                                    hp = static_cast<T>(v);
-                                };
+                            std::cout << "Enemy collision: self -" << kCollisionDamageMover
+                                << ", enemy -" << kCollisionDamageBlocker << std::endl;
 
-
-                            subClamp(unit.hp, 10);
-                            subClamp(other.hp, 5);
-
+                            SubClampHp(unit.hp, kCollisionDamageMover);
+                            SubClampHp(other.hp, kCollisionDamageBlocker);
                         }
                         else
                         {
@@ -476,8 +516,12 @@ namespace yuno::server
                 value = static_cast<T>(v);
             };
 
-        auto applyDisplacement = [&](int targetIndex, const TilePos& step, int distance) -> bool
+        // outCollided : 격자 밖이거나 다른 기물에 막혀서 더 못 밀린 경우 true.
+        //               (클라이언트의 충돌 연출 트리거로 사용된다)
+        auto applyDisplacement = [&](int targetIndex, const TilePos& step, int distance, bool* outCollided = nullptr) -> bool
             {
+                if (outCollided) *outCollided = false;
+
                 if (step.x == 0 && step.y == 0)
                     return false;
 
@@ -494,13 +538,33 @@ namespace yuno::server
                     if (!IsInBounds(next))
                     {
                         std::cout << "Out of Grid" << std::endl;
+                        if (outCollided) *outCollided = true;   // 벽에 부딪힘
                         break;
                     }
 
                     uint8_t nextTile = PosToTileId(next);
-                    if (grid[nextTile] != -1)
+                    int blockerIndex = grid[nextTile];
+                    if (blockerIndex != -1)
                     {
                         std::cout << "object exist" << std::endl;
+                        if (outCollided) *outCollided = true;   // 다른 기물과 충돌
+
+                        // 충돌 데미지: 밀려난 유닛과 막고 있던 유닛.
+                        // 아군끼리 부딪힌 경우에는 데미지 없음. (applyMove의 이동 충돌과 동일 규칙)
+                        const bool isEnemy = (targetIndex / 2) != (blockerIndex / 2);
+                        if (isEnemy)
+                        {
+                            std::cout << "Enemy collision(displacement): pushed -" << kCollisionDamageMover
+                                << ", blocker -" << kCollisionDamageBlocker << std::endl;
+
+                            SubClampHp(targetUnit.hp, kCollisionDamageMover);
+                            SubClampHp(units[blockerIndex]->hp, kCollisionDamageBlocker);
+                        }
+                        else
+                        {
+                            std::cout << "Blocked by ally(displacement)" << std::endl;
+                        }
+
                         break;
                     }
 
@@ -544,14 +608,6 @@ namespace yuno::server
                     totalDamage += attacker.buffstat.nextDamageBonus;
                     attacker.buffstat.nextDamageBonus = 0;
                 }
-
-                auto subClamp = [](auto& hp, int dmg)
-                    {
-                        using T = std::decay_t<decltype(hp)>;
-                        int v = static_cast<int>(hp) - dmg;
-                        if (v < 0) v = 0;
-                        hp = static_cast<T>(v);
-                    };
 
                 bool eventOccurred = false;
 
@@ -605,7 +661,7 @@ namespace yuno::server
                             targetUnit.buffstat.nextDamageReduce = 0;
                         }
 
-                        subClamp(targetUnit.hp, adjustedDamage);
+                        SubClampHp(targetUnit.hp, adjustedDamage);
 
                         if (targetUnit.hp == 0)
                         {
@@ -660,6 +716,8 @@ namespace yuno::server
                 bool utilityMoveOccurred = false;
                 bool utilityAttackOccurred = false;
                 bool utilityControlOccurred = false;
+                // 그랩/넉백으로 '막혀서 충돌한' 대상 유닛 표시. 컨트롤 스냅샷의 isEvent로 나간다.
+                std::array<bool, 4> controlCollided{};
                 std::array<yuno::net::packets::UnitStateDelta, 4> utilityMoveSnapshot{};
                 std::array<yuno::net::packets::UnitStateDelta, 4> utilityAttackSnapshot{};
                 std::array<yuno::net::packets::UnitStateDelta, 4> utilityControlSnapshot{};
@@ -853,19 +911,24 @@ namespace yuno::server
                             }
                             if (cardData.m_controlId == 1)
                             {
-                                bool displaced = applyDisplacement(targetIndex, pullStep, 1);
-                                utilityControlOccurred = displaced || utilityControlOccurred;
-                                eventOccurred = displaced || eventOccurred;
+                                bool collided = false;
+                                bool displaced = applyDisplacement(targetIndex, pullStep, 1, &collided);
+                                controlCollided[targetIndex] = collided;
+                                utilityControlOccurred = displaced || collided || utilityControlOccurred;
+                                eventOccurred = displaced || collided || eventOccurred;
                             }
                             else if (cardData.m_controlId == 2)
                             {
-                                bool displaced = applyDisplacement(targetIndex, pushStep, 1);
-                                utilityControlOccurred = displaced || utilityControlOccurred;
-                                eventOccurred = displaced || eventOccurred;
+                                bool collided = false;
+                                bool displaced = applyDisplacement(targetIndex, pushStep, 1, &collided);
+                                controlCollided[targetIndex] = collided;
+                                utilityControlOccurred = displaced || collided || utilityControlOccurred;
+                                eventOccurred = displaced || collided || eventOccurred;
                             }
                         }
                     }
-                    utilityControlSnapshot = buildDeltaSnapshot(unitIndex, utilityControlOccurred);
+                    // isEvent는 '충돌한 대상 유닛'에 붙는다. (시전자가 아님)
+                    utilityControlSnapshot = buildDeltaSnapshotMulti(controlCollided);
                 }
                 else { std::cout << "Card Type is invalid" << std::endl; };
 

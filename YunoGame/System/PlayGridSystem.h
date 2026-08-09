@@ -76,6 +76,10 @@ struct MoveInfo
     const std::array<UnitState, 4> snapshot;
     int mainUnit = -1;
     Direction dir = Direction::None;
+
+    // 넉백/그랩처럼 '밀려나는' 이동은 기물이 바라보는 방향을 바꾸지 않는다.
+    // 스스로 이동하는 경우(카드 사용자 본인)에는 false.
+    bool keepFacing = false;
 };
 
 // 피격 기물과 그 기물의 넉백/그랩 이동 정보를 한 쌍으로 묶는다.
@@ -178,7 +182,7 @@ public:
     // private 로직 래퍼
     bool ApplyMoveInfo(const MoveInfo* mi)
     {
-        return ApplyMoveChanges(mi->dirty, mi->prevState, mi->snapshot, mi->mainUnit, mi->dir);
+        return ApplyMoveChanges(mi->dirty, mi->prevState, mi->snapshot, mi->mainUnit, mi->dir, mi->keepFacing);
     }
     bool PlayBuffEvent(const GamePiece& piece, const CardEffectData*& buffData)
     {
@@ -218,6 +222,7 @@ private:
     void CheckPacket(float dt);
     void CheckOver();
     void ReflectWeaponData();
+    void ReflectTileData();     // 붕괴 타일 상태를 GameManager로 반영 (Minimap이 소비)
 
     void UpdateSequence(float dt);
 
@@ -225,14 +230,14 @@ private:
     void ApplyActionOrder(const std::vector<std::array<UnitState, 4>>& order, int mainUnit, uint32_t runCardID, Direction dir);
     bool ApplyBuffChanges(int mainUnit, const CardEffectData*& buffData);
     bool ApplyMoveChanges(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit, Direction dir);
-    bool ApplyMoveChanges(Dirty_US dirty, const UnitState prevUnitState, const std::array<UnitState, 4> newUnitStates, int mainUnit, Direction dir);
+    bool ApplyMoveChanges(Dirty_US dirty, const UnitState prevUnitState, const std::array<UnitState, 4> newUnitStates, int mainUnit, Direction dir, bool keepFacing = false);
     bool ApplyAttackChanges(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit, const std::vector<RangeOffset>& ranges, Direction dir);
     bool ApplyUtilityChanges(Dirty_US dirty, const std::array<UnitState, 4> newUnitStates, int mainUnit,
-        const std::vector<RangeOffset>& ranges, Direction dir, const CardEffectData*& buffData, int snapNum);
+        const std::vector<RangeOffset>& ranges, Direction dir, const int controllId, const CardEffectData*& buffData, int snapNum);
     void ApplyObstacleResult(const ObstacleResult& obstacle);   // 장애물 패킷 적용하는 함수
 
     void MoveEvent(const GamePiece& pieceType, Int2 oldcell, Int2 newcell, Direction moveDir,
-        bool isCollided = false, bool isEnemy = false);
+        bool isCollided = false, bool isEnemy = false, bool keepFacing = false);
     bool BuffEvent(const GamePiece& pieceType, const CardEffectData*& buffData);
     
 private:

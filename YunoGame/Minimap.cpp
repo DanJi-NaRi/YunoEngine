@@ -10,6 +10,7 @@
 #include "Grid.h"
 
 #include "BattlePackets.h"
+#include "GameManager.h"
 
 #include "IInput.h"
 #include "UIFactory.h"
@@ -81,8 +82,48 @@ bool Minimap::Update(float dTime)
 {
     PhasePanel::Update(dTime);
 
+    // 붕괴는 장애물 패킷 수신 시점이 아니라 연출(TriggerState) 도중에 일어나므로
+    // UpdatePanel만으로는 반영 시점을 놓친다. 버전이 바뀐 프레임에만 다시 적용한다.
+    const uint32_t collapsedVersion = GameManager::Get().GetCollapsedTilesVersion();
+    if (m_lastCollapsedVersion != collapsedVersion)
+    {
+        m_lastCollapsedVersion = collapsedVersion;
+        ApplyCollapsedTiles();
+    }
+
     Simulate();
     return true;
+}
+
+bool Minimap::IsCollapsedTile(int tileID) const
+{
+    const auto& collapsed = GameManager::Get().GetCollapsedTiles();
+    if (tileID <= 0 || tileID >= static_cast<int>(collapsed.size()))
+        return false;
+    return collapsed[tileID];
+}
+
+void Minimap::ApplyCollapsedTiles()
+{
+    for (auto* tile : m_pTiles)
+    {
+        if (!tile) continue;
+
+        const bool collapsed = IsCollapsedTile(tile->GetTileId());
+
+        // 렌더 제외. Hidden은 Update는 돌되 Submit에서 걸러진다.
+        tile->SetVisible(collapsed ? Visibility::Hidden : Visibility::Visible);
+
+        // 붕괴 타일만 클릭을 막는다.
+        // 정상 타일의 버튼 상태는 켜지 않는다. 그 권한은 SetButtonLock과
+        // OpenDirButton에 있고, 여기서 켜면 DefaultSetAllTile로 꺼둔 버튼이
+        // 다시 살아나 클릭하면 안 되는 타일이 눌리게 된다.
+        if (collapsed)
+        {
+            tile->SetUseLMB(false);
+            tile->SetUseRMB(false);
+        }
+    }
 }
 
 bool Minimap::Submit(float dTime)
@@ -290,6 +331,9 @@ void Minimap::UpdatePanel(const BattleResult& battleResult) {
         }
     }
     PaintTile(m_pMyTile);
+
+    // DefaultSetAllTile이 전 타일을 되살리므로 마지막에 다시 숨긴다.
+    ApplyCollapsedTiles();
 }
 
 void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
@@ -328,6 +372,9 @@ void Minimap::UpdatePanel(const ObstacleResult& obstacleResult) {
         }
     }
     PaintTile(m_pMyTile);
+
+    // DefaultSetAllTile이 전 타일을 되살리므로 마지막에 다시 숨긴다.
+    ApplyCollapsedTiles();
 }
 
 /*
@@ -426,6 +473,9 @@ void Minimap::SetButtonLock(bool buttonLock)
             tile->SetUseLMB(true);
             tile->SetUseRMB(true);
         }
+
+        // 잠금을 풀더라도 붕괴 타일은 계속 막아야 한다.
+        ApplyCollapsedTiles();
     }
 }
 
@@ -482,6 +532,8 @@ void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
     {
         const Int2 n = { tileXY.x + d.x, tileXY.y + d.y };
         if (auto* dirTile = GetTileByID(n)) {
+            // 붕괴된 타일로는 이동할 수 없으므로 방향 후보에서 제외한다.
+            if (IsCollapsedTile(dirTile->GetTileId())) continue;
             candidates.emplace_back(dirTile);
         }
     }
@@ -491,6 +543,7 @@ void Minimap::OpenDirButton(int tileID, CardConfirmArea* CardSlot) {
         const Int2 n = { tileXY.x + d.x, tileXY.y + d.y };
         MinimapTile* dirTile = GetTileByID(n);
         if (!dirTile) continue;
+        if (IsCollapsedTile(dirTile->GetTileId())) continue;    // 위 후보 목록과 동일 기준
 
         dirTile->SetUseLMB(true);
         dirTile->SetUseRMB(true);

@@ -27,6 +27,7 @@ public:
     void SetFlashColor(Float4 color, int count, float blinkTime);
     void PlayWarning(ObstacleType obstacleType);
     void PlayTrigger(ObstacleType obstacleType);
+    bool IsCollapsed() { return isCollapsed; }
 private:
     Float4 GetLerpColor(float dt);
     float Graph(float x);

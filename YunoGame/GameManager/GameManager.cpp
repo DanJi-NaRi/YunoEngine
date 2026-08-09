@@ -161,6 +161,23 @@ void GameManager::ClearUIWeaponDataState()
     ++m_uiWeaponDataVersion;
 }
 
+void GameManager::SetCollapsedTiles(const std::array<bool, kTileCount>& tiles)
+{
+    // PlayGridSystem이 매 프레임 호출하므로, 실제로 바뀐 경우에만 버전을 올린다.
+    // 그래야 Minimap이 버전 비교만으로 갱신 필요 여부를 판단할 수 있다.
+    if (m_collapsedTiles == tiles)
+        return;
+
+    m_collapsedTiles = tiles;
+    ++m_collapsedTilesVersion;
+}
+
+void GameManager::ClearCollapsedTiles()
+{
+    m_collapsedTiles.fill(false);
+    ++m_collapsedTilesVersion;
+}
+
 
 void GameManager::ClearBattlePacket()
 {
@@ -359,7 +376,7 @@ void GameManager::Initialize(GameManager* inst)
 
 void GameManager::Init()
 {
-    m_cardBasicMng.LoadFromCSV("../Assets/CardData/Carddata(Cheat).csv");
+    m_cardBasicMng.LoadFromCSV("../Assets/CardData/Carddata.csv");
     m_cardRangeMng.LoadFromCSV("../Assets/CardData/CardRange.csv");
     SetMasterVolume(m_masterVolume);
     SetBGMVolume(m_bgmVolume);
@@ -427,6 +444,9 @@ void GameManager::SetSceneState(CurrentSceneState state)
         m_myUIWeapons = {};
         m_enemyUIWeapons = {};
         ClearUIWeaponDataState();
+
+        // 타일 정보. 붕괴는 라운드를 넘겨 유지되지만 매치가 끝나면 초기화한다.
+        ClearCollapsedTiles();
 
         while (!m_pendingEmotes.empty()) m_pendingEmotes.pop();
         while (!m_coinTossQueue.empty()) m_coinTossQueue.pop();

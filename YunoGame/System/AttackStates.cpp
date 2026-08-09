@@ -44,6 +44,8 @@ namespace AttackStates
         {
             auto pTile = dynamic_cast<UnitTile*>(owner->GetObjectManager()->FindObject(owner->GetTileObjectID(id)));
             if (pTile == nullptr)   continue;
+            if (pTile->IsCollapsed())   continue;
+
             pTile->SetFlashColor(as.m_alarmColor, as.m_flashCount, as.m_flashInterval);
         }
     }
@@ -130,6 +132,7 @@ namespace AttackStates
         {
             auto pTile = dynamic_cast<UnitTile*>(pObjMng->FindObject(owner->GetTileObjectID(id)));
             if (pTile == nullptr)   continue;
+            if (pTile->IsCollapsed())   continue;
 
             Effect* eff = nullptr;
             int pid = GameManager::Get().GetPID();
