@@ -521,7 +521,9 @@ namespace yuno::game
                 gm.AddCards(added);
                 gm.ClearDrawCandidates();
                 gm.ClearCardQueue();
-                gm.SetEndTrun(true);
+                // Turn 1 has no bonus-card selection screen. Only later turns
+                // should release AddCardPanel after both players have selected.
+                gm.SetEndTrun(pkt.turnNumber != 1);
 
                 for (int i = 0; i < 2; ++i)
                 {
@@ -560,7 +562,8 @@ namespace yuno::game
                 std::cout << "=============================\n";
                 std::cout << "[Client] S2C_EndGame received\n";
 
-                GameManager::Get().SetBattleOngoing(false);
+                auto& gm = GameManager::Get();
+                gm.SetBattleOngoing(false);
 
                 for (int i = 0; i < 2; ++i)
                 {
@@ -579,22 +582,25 @@ namespace yuno::game
                 if (p1Wins > p2Wins)
                 {
                     winnerPID = 1;
+                    gm.SetRoundResult(RoundResult::Winner_P1);
                     std::cout << "[Result] Player 1 WIN\n";
                 }
                 else if (p1Wins < p2Wins)
                 {
                     winnerPID = 2;
+                    gm.SetRoundResult(RoundResult::Winner_P2);
                     std::cout << "[Result] Player 2 WIN\n";
                 }   
                 else
                 {
                     winnerPID = -1;
+                    gm.SetRoundResult(RoundResult::Draw);
                     std::cout << "[Result] DRAW\n";
                 }
                 std::cout << "=============================\n";
 
-                GameManager::Get().SetWinnerPID(winnerPID);
-                GameManager::Get().SetEndGame(true);
+                gm.SetWinnerPID(winnerPID);
+                gm.SetEndGame(true);
             }
         );// S2C_EndGame Packet End
 

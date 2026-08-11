@@ -515,6 +515,11 @@ namespace yuno::server
 
                 auto& player = g_battleState.players[idx];
 
+                // Ignore packets that arrive after the timeout already advanced
+                // the turn; otherwise a late selection could mutate the new hand.
+                if (!m_roundController.CanSelectBonusCard(idx))
+                    return;
+
                 std::cout
                     << "[Server] C2S_SelectCard received"
                     << " SessionID=" << peer.sId
@@ -610,7 +615,6 @@ namespace yuno::server
                 g_battleState.roundWins[winnerPID - 1]++;
 
                 // 라운드 번호 증가
-                g_battleState.currentRound++;
 
                 //매치 종료 여부 체크
                 if (g_battleState.roundWins[0] >= g_battleState.winsToFinish)
@@ -623,6 +627,9 @@ namespace yuno::server
                     g_battleState.matchEnded = true;
                     g_battleState.matchWinnerPID = 2;
                 }
+
+                if (!g_battleState.matchEnded)
+                    g_battleState.currentRound++;
 
                 m_roundController.EndRound();
             }

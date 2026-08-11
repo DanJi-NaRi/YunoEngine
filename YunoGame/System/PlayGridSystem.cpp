@@ -1277,7 +1277,6 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
     }
     //std::cout << std::endl;
 
-    bool hasTriggerSnapshot = false;
     Float4 warnColor{ 1.0f, 0.0f, 0.0f, 1.f };
 
 
@@ -1311,7 +1310,6 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
         if (prev.hp != cur.hp)
         {
             os.hitPieces.push_back(piece);
-            hasTriggerSnapshot = true;
         }
 
 
@@ -1350,10 +1348,8 @@ void PlayGridSystem::ApplyObstacleResult(const ObstacleResult& obstacle)
         os.hitTileIDs = m_obstacleTile.tileIDs;
     }
 
-    if (hasTriggerSnapshot) // 누군가 맞은 애 있으면 obstacle 패킷에서 받은 스냅샷으로 현재 유닛 상태 변경
-    {
-        m_UnitStates = obstacle.unitState;
-    }
+    // 피해 유무와 관계없이 스태미나 회복을 포함한 서버 턴 경계 스냅샷을 적용한다.
+    m_UnitStates = obstacle.unitState;
 
 
     // 다음 장애물 경고    // 이펙트 넣기★

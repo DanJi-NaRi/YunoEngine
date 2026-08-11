@@ -12,6 +12,7 @@
 #include "S2C_CardPackets.h"
 #include "S2C_EndGame.h"
 #include "S2C_EndGame_Disconnect.h"
+#include <algorithm>
 #include <iostream>
 
 namespace yuno::server
@@ -30,6 +31,18 @@ namespace yuno::server
 
     void RoundController::Update()
     {
+        if (m_waitingCardSelection &&
+            std::chrono::steady_clock::now() >= m_cardSelectionDeadline)
+        {
+            std::cout << "[Round] Bonus card selection timeout. Auto-selecting.\n";
+
+            for (int playerIdx = 0; playerIdx < 2 && m_waitingCardSelection; ++playerIdx)
+            {
+                if (!m_cardSelected[playerIdx])
+                    AutoSelectBonusCard(playerIdx);
+            }
+        }
+
         if (!m_waitingRoundStartReady)
             return;
 
@@ -234,8 +247,12 @@ namespace yuno::server
 
         m_roundStarted = false;
 
-        if (g_battleState.matchEnded || g_battleState.currentRound > 3)
+        if (g_battleState.matchEnded ||
+            g_battleState.currentRound >= g_battleState.maxRounds)
         {
+            g_battleState.matchEnded = true;
+            if (g_battleState.matchWinnerPID == 0)
+                g_battleState.matchWinnerPID = g_battleState.roundWinnerPID;
             EndGame();
             return;
         }
@@ -258,17 +275,8 @@ namespace yuno::server
 
     void RoundController::StartTurn()
     {
-
-        //auto recoverUnitStamina = [](UnitState& unit)
-        //    {
-        //        const int recovered = static_cast<int>(unit.stamina) + 10;
-        //        unit.stamina = static_cast<uint8_t>(std::min(recovered, static_cast<int>(unit.maxStamina)));
-        //    };
-
-        //recoverUnitStamina(g_battleState.players[0].unit1);
-        //recoverUnitStamina(g_battleState.players[0].unit2);
-        //recoverUnitStamina(g_battleState.players[1].unit1);
-        //recoverUnitStamina(g_battleState.players[1].unit2);
+        // Stamina is recovered after obstacle resolution at the turn boundary,
+        // so S2C_ObstacleResult and the authoritative server state stay identical.
 
         yuno::net::packets::S2C_StartTurn pkt{};
         pkt.turnNumber = ++g_battleState.turnNumber;        // 1턴부터 시작
@@ -281,8 +289,21 @@ namespace yuno::server
 
         if (g_battleState.turnNumber != 1)
         {
-            pkt.addedCards[0] = g_battleState.players[0].handCards.back();
-            pkt.addedCards[1] = g_battleState.players[1].handCards.back();
+            for (int playerIdx = 0; playerIdx < 2; ++playerIdx)
+            {
+                const uint32_t runtimeId = m_selectedBonusRuntimeIds[playerIdx];
+                const auto& handCards = g_battleState.players[playerIdx].handCards;
+                const auto selectedCard = std::find_if(
+                    handCards.begin(),
+                    handCards.end(),
+                    [runtimeId](const auto& card)
+                    {
+                        return runtimeId != 0 && card.runtimeID == runtimeId;
+                    });
+
+                if (selectedCard != handCards.end())
+                    pkt.addedCards[playerIdx] = *selectedCard;
+            }
         }
 
 
@@ -294,6 +315,8 @@ namespace yuno::server
             });
 
         m_network.Broadcast(std::move(bytes));
+        m_waitingCardSelection = false;
+        m_selectedBonusRuntimeIds.fill(0);
         std::cout << "==================S2C_StartTurn Broadcast==================" << std::endl;
     }
 
@@ -309,8 +332,19 @@ namespace yuno::server
         }
         m_cardSelected[0] = false;
         m_cardSelected[1] = false;
+        m_selectedBonusRuntimeIds.fill(0);
 
         SendDrawCandidates();
+        m_waitingCardSelection = true;
+        m_cardSelectionDeadline =
+            std::chrono::steady_clock::now() + kCardSelectionTimeout;
+
+        // An empty candidate list must not block the next turn.
+        for (int playerIdx = 0; playerIdx < 2 && m_waitingCardSelection; ++playerIdx)
+        {
+            if (g_battleState.players[playerIdx].drawCandidates.empty())
+                AutoSelectBonusCard(playerIdx);
+        }
         //종료 플래그 이미 받은 상태
         //턴스타트 라운드엔드
 
@@ -382,6 +416,8 @@ namespace yuno::server
         m_roundStartReady[1] = false;
         m_cardSelected[0] = false;
         m_cardSelected[1] = false;
+        m_selectedBonusRuntimeIds.fill(0);
+        m_waitingCardSelection = false;
 
         g_battleState.turnNumber = 0;
         g_battleState.roundWins[0] = 0;
@@ -410,8 +446,12 @@ namespace yuno::server
     
     void RoundController::OnPlayerSelectedCard(int playerIdx)
     {
-        if (m_cardSelected[playerIdx])
-            return; // 중복 선택 방지
+        if (!CanSelectBonusCard(playerIdx))
+            return;
+
+        const auto& handCards = g_battleState.players[playerIdx].handCards;
+        if (!handCards.empty())
+            m_selectedBonusRuntimeIds[playerIdx] = handCards.back().runtimeID;
 
         m_cardSelected[playerIdx] = true;
 
@@ -423,5 +463,46 @@ namespace yuno::server
         {
             StartTurn();
         }
+    }
+
+    bool RoundController::CanSelectBonusCard(int playerIdx) const
+    {
+        return playerIdx >= 0 && playerIdx < 2 &&
+            m_waitingCardSelection && !m_cardSelected[playerIdx];
+    }
+
+    void RoundController::AutoSelectBonusCard(int playerIdx)
+    {
+        if (playerIdx < 0 || playerIdx > 1 || m_cardSelected[playerIdx])
+            return;
+
+        auto& player = g_battleState.players[playerIdx];
+        if (player.drawCandidates.empty())
+        {
+            m_selectedBonusRuntimeIds[playerIdx] = 0;
+            m_cardSelected[playerIdx] = true;
+            std::cout << "[Round] Player " << playerIdx
+                << " has no bonus card candidates.\n";
+
+            if (m_cardSelected[0] && m_cardSelected[1])
+                StartTurn();
+            return;
+        }
+
+        const uint32_t runtimeId = player.drawCandidates.front().runtimeID;
+        if (!m_cardController.SelectCard(player, runtimeId))
+        {
+            std::cout << "[Round] Failed to auto-select bonus card for player "
+                << playerIdx << "\n";
+
+            // Even a malformed candidate list must not block the match forever.
+            m_selectedBonusRuntimeIds[playerIdx] = 0;
+            m_cardSelected[playerIdx] = true;
+            if (m_cardSelected[0] && m_cardSelected[1])
+                StartTurn();
+            return;
+        }
+
+        OnPlayerSelectedCard(playerIdx);
     }
 }

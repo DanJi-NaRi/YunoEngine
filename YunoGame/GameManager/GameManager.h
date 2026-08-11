@@ -173,7 +173,11 @@ public:
 
     int GetCurrentRound() const { return m_currentRound; }
     void IncreaseRound() { ++m_currentRound; }
-    void ResetRound() { m_currentRound = 0; }
+    void ResetRound()
+    {
+        m_currentRound = 0;
+        m_roundResult = RoundResult::None;
+    }
 
     int GetCurrentTurn() const { return m_currentTurn; }
     uint64_t GetTurnStateVersion() const { return m_turnStateVersion; }

@@ -189,6 +189,11 @@ void PlayMidScene::CreateCoinTossUI()
 
 void PlayMidScene::ChangeUIState(PlayMidUIState state)
 {
+    // The server sends EndGame as soon as a player is eliminated. Keep the
+    // battle/reveal presentation, but never open bonus-card selection afterward.
+    if (state == PlayMidUIState::AddCardSelect && GameManager::Get().GetEndGame())
+        state = PlayMidUIState::Finished;
+
     if (m_uiState == state) return;
 
     Clear();
@@ -435,7 +440,9 @@ void PlayMidScene::UpdateRevealCard(float dt, GameManager& gm)
         if (m_postRevealTimer >= m_postRevealDelay)
         {
             ResetAllCardsToBack();
-            ChangeUIState(PlayMidUIState::AddCardSelect);
+            ChangeUIState(gm.GetEndGame()
+                ? PlayMidUIState::Finished
+                : PlayMidUIState::AddCardSelect);
         }
     }
 }
@@ -570,6 +577,11 @@ void PlayMidScene::Update(float dt)
     {
         ChangeUIState(PlayMidUIState::RevealCard);
     }
+
+    // Defensive path for an EndGame packet arriving after the selection panel
+    // has already opened in the same frame.
+    if (gm.GetEndGame() && m_uiState == PlayMidUIState::AddCardSelect)
+        ChangeUIState(PlayMidUIState::Finished);
 
     switch (m_uiState)
     {

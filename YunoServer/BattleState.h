@@ -48,10 +48,11 @@ namespace yuno::server
         PlayerBattleState players[2];   // [0] = P1, [1] = P2
         int turnNumber = 0;
     
-        // 3판 2선승제용 상태
+        // A match is intentionally limited to a single round.
         uint8_t roundWins[2] = { 0, 0 }; // [0] = P1, [1] = P2
         uint8_t currentRound = 1;
-        uint8_t winsToFinish = 2;
+        uint8_t winsToFinish = 1;
+        uint8_t maxRounds = 1;
 
         bool roundEnded = false;
         uint8_t roundWinnerPID = 0; // 0 = 무승부/미결
@@ -62,7 +63,9 @@ namespace yuno::server
 
         bool CheckMatchEnd() // 최종 승자 나왔는지 체크
         {
-            return roundWins[0] == 2 || roundWins[1] == 2;
+            return roundWins[0] >= winsToFinish ||
+                roundWins[1] >= winsToFinish ||
+                (roundEnded && currentRound >= maxRounds);
         }
     };
 
