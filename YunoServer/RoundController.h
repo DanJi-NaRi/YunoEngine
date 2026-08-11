@@ -1,4 +1,6 @@
 #pragma once
+#include <array>
+#include <chrono>
 #include <unordered_map>
 
 namespace yuno::server
@@ -23,6 +25,7 @@ namespace yuno::server
         void EndTurn();
         void EndGame();
         void OnPlayerSelectedCard(int playerIdx);
+        bool CanSelectBonusCard(int playerIdx) const;
         void ResetMatchState();
 
         void EndGameByDisconnect(uint8_t winnerPID, uint32_t winnerSessionId);
@@ -39,6 +42,7 @@ namespace yuno::server
         void SendInitialCards();
         void SendRoundStart();
         void SendDrawCandidates();
+        void AutoSelectBonusCard(int playerIdx);
 
         void StartTurn();
         
@@ -57,6 +61,13 @@ namespace yuno::server
         bool m_roundStartReady[2] = { false, false };
 
         bool m_cardSelected[2] = { false, false };
+        std::array<uint32_t, 2> m_selectedBonusRuntimeIds{};
+        bool m_waitingCardSelection = false;
+        std::chrono::steady_clock::time_point m_cardSelectionDeadline{};
+
+        // The server starts this clock before clients finish battle playback.
+        // Keep a generous fail-safe; the client auto-selects 15 seconds after its UI opens.
+        static constexpr std::chrono::seconds kCardSelectionTimeout{ 90 };
         std::unordered_map<uint32_t, uint8_t> m_unitIdMap;
     };
 }

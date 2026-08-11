@@ -40,7 +40,7 @@ protected:
     void RefreshTurnTexture();
 
     bool CheckRoundOver();
-    void ResetRound();
+    void ApplyRoundMarker();
 
 private:
     PlayHUD_InputContext m_uiContext;

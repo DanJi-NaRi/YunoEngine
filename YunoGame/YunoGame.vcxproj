@@ -24,6 +24,7 @@
     <ProjectGuid>{6f20f6e3-ab1d-4d58-b117-1aa018d32777}</ProjectGuid>
     <RootNamespace>YunoGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <VCToolsVersion Condition="'$(VCToolsVersion)'==''">14.44.35207</VCToolsVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

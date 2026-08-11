@@ -1,13 +1,17 @@
 [
   {
-    "Name": "새 프로필",
+    "Name": "Server + Client 1 + Client 2",
     "Projects": [
       {
         "Path": "YunoServer\\YunoServer.vcxproj",
         "Action": "Start"
       },
       {
-        "Path": "YunoGame\\YunoGame.vcxproj",
+        "Path": "Launchers\\YunoClient1Launcher.vcxproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Launchers\\YunoClient2Launcher.vcxproj",
         "Action": "Start"
       }
     ]

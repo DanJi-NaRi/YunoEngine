@@ -44,8 +44,9 @@ bool PlayHUDScene::OnCreateScene()
 
     //WinLose
     roundWin[0] = CreateWidget<TextureImage>(L"RoundCount", L"../Assets/UI/PLAY/3player_yet.png", XMFLOAT3(0, 0, 0));
-    roundWin[1] = CreateWidget<TextureImage>(L"RoundCount", L"../Assets/UI/PLAY/3player_yet.png", XMFLOAT3(0, 0, 0));
-    roundWin[2] = CreateWidget<TextureImage>(L"RoundCount", L"../Assets/UI/PLAY/3player_yet.png", XMFLOAT3(0, 0, 0));
+    // Only round one is playable. Keep the other two boxes as disabled gray placeholders.
+    roundWin[1] = CreateWidget<TextureImage>(L"RoundCount1", L"../Assets/UI/PLAY/4player_draw.png", XMFLOAT3(0, 0, 0));
+    roundWin[2] = CreateWidget<TextureImage>(L"RoundCount2", L"../Assets/UI/PLAY/4player_draw.png", XMFLOAT3(0, 0, 0));
 
     m_playerIcons[0] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
     m_playerIcons[1] = CreateWidget<PlayerIcon>(L"PlayerIcon", Float2(130, 100), XMFLOAT3(700, 500, 0), UIDirection::Center);
@@ -312,30 +313,28 @@ bool PlayHUDScene::CheckRoundOver()
     return !isRoundReset;
 }
 
-void PlayHUDScene::ResetRound()
+void PlayHUDScene::ApplyRoundMarker()
 {
     if (isRoundReset)
         return;
 
     auto& gm = GameManager::Get();
+    constexpr size_t playableRoundMarker = 0;
 
     switch (gm.GetRoundResult())
     {
     case RoundResult::Winner_P1:
-        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/2player_win_blick.png");
+        roundWin[playableRoundMarker]->ChangeTexture(L"../Assets/UI/PLAY/2player_win_blick.png");
         break;
     case RoundResult::Winner_P2:
-        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/1player_win_blink.png");
+        roundWin[playableRoundMarker]->ChangeTexture(L"../Assets/UI/PLAY/1player_win_blink.png");
         break;
     case RoundResult::Draw:
-        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/4player_draw.png");
+        roundWin[playableRoundMarker]->ChangeTexture(L"../Assets/UI/PLAY/4player_draw.png");
         break;
     default:
-        roundWin[curRound - 2]->ChangeTexture(L"../Assets/UI/PLAY/4player_draw_blink.png"); //디버그용 뜨면 버그인거임
-        break;
+        return;
     }
-
-    gm.ResetTurn();
 
     isRoundReset = true;
 }
@@ -344,7 +343,7 @@ void PlayHUDScene::ChangeRound(float dt)
 {
     if (m_SceneChange->IsFinished() && !m_isRoundChangeReverse && !m_hasRoundChangeSignalSent)
     {
-        ResetRound();
+        ApplyRoundMarker();
         m_SceneChange->SetReverse(true);
         m_SceneChange->Stop();
         GameManager::Get().SetRoundChangeNow();
@@ -374,6 +373,10 @@ void PlayHUDScene::Update(float dt)
 
     auto& gm = GameManager::Get();
     auto scenestate = gm.GetSceneState();
+
+    // A one-round match never increments to round two, so apply the result
+    // marker directly when the authoritative EndGame result arrives.
+    ApplyRoundMarker();
 
     if (m_appliedTurnStateVersion != gm.GetTurnStateVersion())
     {

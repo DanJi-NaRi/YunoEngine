@@ -418,6 +418,12 @@ namespace yuno::server
                     g_battleState.matchEnded = true;
                     g_battleState.matchWinnerPID = 2;
                 }
+                else if (g_battleState.currentRound >= g_battleState.maxRounds)
+                {
+                    // A simultaneous knockout in the only playable round ends the match as a draw.
+                    g_battleState.matchEnded = true;
+                    g_battleState.matchWinnerPID = 0;
+                }
 
                 if (!g_battleState.matchEnded)
                 {
@@ -1053,9 +1059,7 @@ namespace yuno::server
                     obstacleState.unitState[i].ownerSlot = static_cast<uint8_t>(ownerSlot);
                     obstacleState.unitState[i].unitLocalIndex = static_cast<uint8_t>(unitLocalIndex);
                     obstacleState.unitState[i].hp = units[i]->hp;
-                    const int boostedStamina = static_cast<int>(units[i]->stamina) + 10;
-                    obstacleState.unitState[i].stamina = static_cast<uint8_t>(
-                        std::min(boostedStamina, static_cast<int>(units[i]->maxStamina)));
+                    obstacleState.unitState[i].stamina = units[i]->stamina;
                     obstacleState.unitState[i].targetTileID = units[i]->tileID;
                     obstacleState.unitState[i].isEvent = damagedByObstacle[i] ? 1 : 0; // 장애물 패킷에서 isEvent는 장애물에 적중됐으면 T, 아니면 F
                 }
@@ -1127,11 +1131,28 @@ namespace yuno::server
                     g_battleState.matchEnded = true;
                     g_battleState.matchWinnerPID = 2;
                 }
+                else if (g_battleState.currentRound >= g_battleState.maxRounds)
+                {
+                    g_battleState.matchEnded = true;
+                    g_battleState.matchWinnerPID = 0;
+                }
 
                 if (!g_battleState.matchEnded)
                 {
                     g_battleState.currentRound = static_cast<uint8_t>(g_battleState.currentRound + 1);
                 }
+            }
+        }
+
+        // Recover once at the turn boundary, after obstacle damage has been resolved.
+        // The packet below then carries the exact authoritative stamina value.
+        if (!g_battleState.roundEnded)
+        {
+            for (UnitState* unit : units)
+            {
+                const int recovered = static_cast<int>(unit->stamina) + 20;
+                unit->stamina = static_cast<uint8_t>(
+                    std::min(recovered, static_cast<int>(unit->maxStamina)));
             }
         }
 

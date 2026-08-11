@@ -62,6 +62,9 @@ void AddCardPanel::CreateChild()
 void AddCardPanel::SetCandidateCards(const std::vector<ClientCardInfo>& cards)
 {
     m_candidates = cards;
+    m_selectionTimer = 0.f;
+    m_closeTimer = 0.f;
+    m_locked = false;
 
     for (auto* btn : m_addCard)
     {
@@ -110,6 +113,7 @@ void AddCardPanel::OnCardSelected(int index)
 
 void AddCardPanel::Show()
 {
+    m_selectionTimer = 0.f;
     SetVisible(Visibility::Visible);
 
     if (m_bg)
@@ -138,24 +142,31 @@ void AddCardPanel::Hide()
 
 bool AddCardPanel::Update(float dt)
 {
-    if (m_locked)
+    auto& gameManager = GameManager::Get();
+
+    if (!m_locked && !m_candidates.empty())
     {
+        m_selectionTimer += dt;
+        if (m_selectionTimer >= m_selectionTimeout)
+        {
+            std::cout << "[Client] Bonus card selection timeout. Selecting index 0.\n";
+            OnCardSelected(0);
+        }
+    }
+
+    if (m_locked)
         m_closeTimer += dt;
 
-        if (m_closeTimer >= m_closeDelay)
-        {
-            Hide();
-            
-            if (GameManager::Get().GetEndTrun())
-            {
-                GameManager::Get().SetSceneState(CurrentSceneState::SubmitCard);
-                GameManager::Get().SetEndTrun(false);
-            }
-                
-            // 상태 리셋
-            m_locked = false;
-            m_selectedIndex = -1;
-        }
+    // Keep the existing selection effect for manual choices. If the server
+    // selected on timeout, there is no local lock and the transition is immediate.
+    const bool selectionEffectFinished = !m_locked || m_closeTimer >= m_closeDelay;
+    if (gameManager.GetEndTrun() && selectionEffectFinished)
+    {
+        Hide();
+        gameManager.SetEndTrun(false);
+        m_locked = false;
+        m_selectedIndex = -1;
+        gameManager.SetSceneState(CurrentSceneState::SubmitCard);
     }
     return Widget::Update(dt);
 }

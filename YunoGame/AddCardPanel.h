@@ -38,4 +38,6 @@ private:
     bool m_locked = false;       // 클릭 잠금
     float m_closeTimer = 0.f;    // 닫기 타이머
     float m_closeDelay = 3.f;    // 3초 유지
+    float m_selectionTimer = 0.f;
+    float m_selectionTimeout = 15.f;
 };
