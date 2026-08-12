@@ -88,6 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -102,6 +103,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -116,6 +118,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)ServerNetwork;$(ProjectDir)MatchManager;$(SolutionDir)vcpkg_installed\x64-windows\include;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,6 +135,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)ServerNetwork;$(ProjectDir)MatchManager;$(SolutionDir)vcpkg_installed\x64-windows\include;$(SolutionDir)YunoNetTransport\Public;$(SolutionDir)YunoNetTransport\Public\Net;$(SolutionDir)YunoNetProtocol\Public;$(SolutionDir)YunoNetProtocol\Public\Net;$(SolutionDir)YunoNetProtocol\Public\Net\C2SPackets;$(SolutionDir)YunoNetProtocol\Public\Net\S2CPackets;$(SolutionDir)YunoNetProtocol\Public\Net\ErrorPackets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

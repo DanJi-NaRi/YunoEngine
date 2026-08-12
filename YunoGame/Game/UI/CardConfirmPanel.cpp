@@ -96,7 +96,7 @@ void CardConfirmPanel::CreateChild() {
     m_setCardSlots.back()->SetIsEnabled(false);
     m_setCardSlots.back()->ChangeTexture(L"../Assets/UI/PLAY/PhaseScene/draganddrop_x.png");
 
-    m_cardConfirmButton = m_uiFactory.CreateChild<CardConfirmButton>(m_name + L"_CardConfirmButton", Float2(367, 69), XMFLOAT3(0, -100, 0), UIDirection::LeftTop, this);
+    m_cardConfirmButton = m_uiFactory.CreateChild<CardConfirmButton>(m_name + L"_CardConfirmButton", Float2(353, 83), XMFLOAT3(0, -0, 0), UIDirection::LeftTop, this);
 
     m_cardConfirmButton->SetEventLMB([this]() {
         if (!BuildCardQueueFromSlots())
@@ -109,7 +109,7 @@ void CardConfirmPanel::CreateChild() {
         });
 
 
-    m_cardCancelButton = m_uiFactory.CreateChild<CardCancelButton>(m_name + L"_CardCancelButton", Float2(367, 69), XMFLOAT3(700, -100, 0), UIDirection::LeftTop, this);
+    m_cardCancelButton = m_uiFactory.CreateChild<CardCancelButton>(m_name + L"_CardCancelButton", Float2(119, 108), XMFLOAT3(700, -100, 0), UIDirection::LeftTop, this);
     m_cardCancelButton->SetEventLMB([this]() 
         { 
             if (m_gameManager.GetSceneState() == CurrentSceneState::BattleStandBy) return;
@@ -218,6 +218,11 @@ void CardConfirmPanel::UpdateCardSlot()
         currentSlot->SetIsEnabled(false);
         m_dirChoice = true;
         m_pMinimap->StartDirChoice(currentSlot);
+
+        if (m_gameManager.GetCurrentTurn() <= 1)
+        {
+            m_gameManager.RequestTutorial(TutorialType::DirectionSelection);
+        }
         return;
     }
 
@@ -422,6 +427,11 @@ void CardConfirmPanel::SubmitCurrentSelection()
     else
     {
         m_confirmReady = true;
+
+        if (m_gameManager.GetCurrentTurn() <= 1)
+        {
+            m_gameManager.RequestTutorial(TutorialType::CardConfirmation);
+        }
     }
     RefreshSlotVisualState();
     if (m_pSelectionPanel)

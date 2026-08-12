@@ -449,6 +449,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         ClearCollapsedTiles();
 
         while (!m_pendingEmotes.empty()) m_pendingEmotes.pop();
+        m_pendingTutorial = TutorialType::None;
         while (!m_coinTossQueue.empty()) m_coinTossQueue.pop();
         while (!m_revealBuffer.empty()) m_revealBuffer.pop();
         while (!m_obstaclePkts.empty()) m_obstaclePkts.pop();
@@ -893,6 +894,33 @@ bool GameManager::PopEmote(PendingEmote& out)
 
     out = m_pendingEmotes.front();
     m_pendingEmotes.pop();
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////
+// - RequestTutorial -
+// 화면에 표시할 최신 튜토리얼 종류를 등록한다.
+// type : 표시할 튜토리얼 종류
+void GameManager::RequestTutorial(TutorialType type)
+{
+    if (type == TutorialType::None)
+        return;
+
+    m_pendingTutorial = type;
+}
+
+//////////////////////////////////////////////////////////////////////
+// - ConsumeTutorial -
+// 등록된 최신 튜토리얼 요청을 한 번 꺼낸다.
+// outType : 꺼낸 튜토리얼 종류를 저장할 변수
+// 반환값 : 꺼낼 요청이 있었으면 true, 없으면 false
+bool GameManager::ConsumeTutorial(TutorialType& outType)
+{
+    if (m_pendingTutorial == TutorialType::None)
+        return false;
+
+    outType = m_pendingTutorial;
+    m_pendingTutorial = TutorialType::None;
     return true;
 }
 

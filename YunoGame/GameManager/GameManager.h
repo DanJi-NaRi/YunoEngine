@@ -28,6 +28,15 @@ struct PendingEmote //이모지
     uint8_t pid;
     uint8_t emoteId;
 };
+
+enum class TutorialType : uint8_t
+{
+    None = 0,
+    CardRegistration,
+    DirectionSelection,
+    CardConfirmation,
+};
+
 struct ClientCardInfo //UI에 적용하기 위한 데이터 저장
 {
     //uint8_t slotID;         // 0 1 2 3 
@@ -146,6 +155,10 @@ public:
     void PushEmote(uint8_t pid, uint8_t emoteId);
     bool PopEmote(PendingEmote& out);
     //~여기까지
+
+    void RequestTutorial(TutorialType type);
+    bool ConsumeTutorial(TutorialType& outType);
+
     void SendEmote(uint8_t emoteId);
     const CardData GetCardData(uint32_t runtimeID);
     const CardEffectData* GetCardEffectData(uint32_t runtimeID);
@@ -286,6 +299,7 @@ private:
     CardQueue m_cardQueue;
 
     std::queue<PendingEmote> m_pendingEmotes;
+    TutorialType m_pendingTutorial = TutorialType::None;
 
     bool m_countdownActive = false;
     bool m_countdownFinished = false;
