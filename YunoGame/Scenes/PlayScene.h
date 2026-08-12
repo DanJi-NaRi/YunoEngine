@@ -35,6 +35,7 @@ private:
     void RegisterEffect();
 
     void MoveCamera(float dt);
+    void StartMatchEndCameraMove();
     void ApplyRoundObject();
 
 private:
@@ -62,4 +63,5 @@ private:
     bool flag = false;
 
     bool isCamMove = false;
+    bool m_matchEndCameraStarted = false;
 };

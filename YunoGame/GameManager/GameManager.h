@@ -102,6 +102,10 @@ public:
     const int GetPID() { return m_PID; }
 
     void SendSurrender();//항복 패킷 보내기
+
+#if defined(_DEBUG)
+    void SendDebugKillPlayer(uint8_t targetPID);
+#endif
     //void RoundInit(yuno::net::packets::S2C_Error data);
 
 // 카드 관련 변수와 함수

@@ -44,6 +44,10 @@ namespace yuno::server
             uint64_t sessionId,
             const std::vector<CardPlayCommand>& commands);
 
+#if defined(_DEBUG)
+        void DebugKillPlayer(uint8_t targetPID);
+#endif
+
     private:
         void TryResolveTurn();
         void ClearTurn();

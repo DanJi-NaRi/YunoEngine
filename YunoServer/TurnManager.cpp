@@ -131,6 +131,28 @@ namespace yuno::server
     {
     }
 
+#if defined(_DEBUG)
+    void TurnManager::DebugKillPlayer(uint8_t targetPID)
+    {
+        if (targetPID < 1 || targetPID > 2 ||
+            !m_roundController.IsRoundStarted() ||
+            g_battleState.roundEnded || g_battleState.matchEnded)
+        {
+            return;
+        }
+
+        auto& target = g_battleState.players[targetPID - 1];
+        target.unit1.hp = 0;
+        target.unit2.hp = 0;
+
+        std::cout << "[Debug Cheat] Killed P"
+            << static_cast<int>(targetPID) << "\n";
+
+        ClearTurn();
+        NotifyEndFinished();
+    }
+#endif
+
     void TurnManager::SubmitTurn(
         uint64_t sessionId,
         const std::vector<CardPlayCommand>& commands)

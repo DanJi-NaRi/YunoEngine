@@ -47,4 +47,18 @@ namespace yuno::net::packets
             return {};
         }
     }
+
+#if defined(_DEBUG)
+    void C2S_DebugKillPlayer::Serialize(ByteWriter& w) const
+    {
+        w.WriteU8(targetPID);
+    }
+
+    C2S_DebugKillPlayer C2S_DebugKillPlayer::Deserialize(ByteReader& r)
+    {
+        C2S_DebugKillPlayer pkt;
+        pkt.targetPID = r.ReadU8();
+        return pkt;
+    }
+#endif
 }

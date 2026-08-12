@@ -68,4 +68,14 @@ namespace yuno::net::packets
         void Serialize(ByteWriter& w) const;
         static C2S_RoundStartReadyOK Deserialize(ByteReader& r);
     };
+
+#if defined(_DEBUG)
+    struct C2S_DebugKillPlayer final
+    {
+        uint8_t targetPID = 0;
+
+        void Serialize(ByteWriter& w) const;
+        static C2S_DebugKillPlayer Deserialize(ByteReader& r);
+    };
+#endif
 }

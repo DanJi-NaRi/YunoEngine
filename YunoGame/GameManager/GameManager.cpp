@@ -1100,6 +1100,30 @@ void GameManager::SendSurrender()
 
     std::cout << "[GameManager] C2S_Surrender sent\n";
 }
+
+#if defined(_DEBUG)
+void GameManager::SendDebugKillPlayer(uint8_t targetPID)
+{
+    if (!m_clientNet || targetPID < 1 || targetPID > 2)
+        return;
+
+    using namespace yuno::net;
+
+    packets::C2S_DebugKillPlayer pkt{};
+    pkt.targetPID = targetPID;
+
+    auto bytes = PacketBuilder::Build(
+        PacketType::C2S_ReservedDebug,
+        [&](ByteWriter& w)
+        {
+            pkt.Serialize(w);
+        });
+
+    m_clientNet->SendPacket(std::move(bytes));
+    std::cout << "[Debug Cheat] Requested kill for P"
+        << static_cast<int>(targetPID) << "\n";
+}
+#endif
 //void GameManager::RoundInit(yuno::net::packets::S2C_Error data)
 //{
 //    // 너가 패킷 사용해서 하고싶은거하면돼

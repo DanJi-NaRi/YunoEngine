@@ -244,13 +244,27 @@ void CardSelectionPanel::CreateChild() {
 
 }
 
+//////////////////////////////////////////////////////////////////////
+// - Codex -
+// 카드 장착 페이즈 진입 시 살아있는 첫 번째 기물의 카드 목록을 표시하는 함수
+// 반환값 : 패널 시작 성공 여부
 bool CardSelectionPanel::Start()
 {
     PhasePanel::Start();
 
-    ViewCardPage(0, 0); // 0번 슬롯, 0번 페이지
+    m_curSlot = 0;
+    for (int slot = 0; slot < static_cast<int>(m_player.weapons.size()); ++slot)
+    {
+        if (IsWeaponSlotAlive(m_player, slot))
+        {
+            m_curSlot = slot;
+            break;
+        }
+    }
 
-    m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[0].weaponId);
+    m_curPage = 0;
+    ViewCardPage(m_curSlot, m_curPage);
+    m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[m_curSlot].weaponId);
     return true;
 }
 

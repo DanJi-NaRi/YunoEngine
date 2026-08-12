@@ -634,6 +634,27 @@ namespace yuno::server
                 m_roundController.EndRound();
             }
         ); //C2S_Surrender Packet End
+
+#if defined(_DEBUG)
+        m_dispatcher.RegisterRaw(
+            PacketType::C2S_ReservedDebug,
+            [this](const NetPeer& peer,
+                const PacketHeader&,
+                const uint8_t* body,
+                uint32_t bodyLen)
+            {
+                if (body == nullptr || bodyLen < 1)
+                    return;
+
+                const int requesterSlot = m_match.FindSlotBySessionId(peer.sId);
+                if (requesterSlot < 0 || requesterSlot > 1)
+                    return;
+
+                ByteReader r(body, bodyLen);
+                const auto pkt = packets::C2S_DebugKillPlayer::Deserialize(r);
+                m_turnManager.DebugKillPlayer(pkt.targetPID);
+            });
+#endif
     }
 }
 
