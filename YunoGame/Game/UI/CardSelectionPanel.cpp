@@ -158,6 +158,7 @@ void CardSelectionPanel::CreateChild() {
     // 스태미나 바
     {
         m_pPhaseStaminaBars[0] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_0", Float2(1083, 34), XMFLOAT3(-650, -450, 0), UIDirection::Center, this);
+#if 0
         m_pPhaseStaminaBars[0]->GetWeponSelectButton()->ChangeWeaponImage(m_player.weapons[0].weaponId);
         m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() {
             if (!IsWeaponSlotAlive(m_player, 0))
@@ -169,8 +170,10 @@ void CardSelectionPanel::CreateChild() {
             }); // 0번 슬롯 CardPage 0번으로 이동
 
         //m_pPhaseStaminaBars[0]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(0, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[0].weaponId); m_curSlot = 0; }); // 0번 슬롯 CardPage 0번으로 이동
+#endif
         
         m_pPhaseStaminaBars[1] = m_uiFactory.CreateChild<PhaseStaminaBar>(m_name + L"_PhaseSTABar_1", Float2(1083, 34), XMFLOAT3(-650, -400, 0), UIDirection::Center, this);
+#if 0
         m_pPhaseStaminaBars[1]->GetWeponSelectButton()->ChangeWeaponImage(m_player.weapons[1].weaponId);
         m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() {
             if (!IsWeaponSlotAlive(m_player, 1))
@@ -181,6 +184,15 @@ void CardSelectionPanel::CreateChild() {
             m_curSlot = 1;
             }); // 0번 슬롯 CardPage 0번으로 이동
         //m_pPhaseStaminaBars[1]->GetWeponSelectButton()->SetEventLMB([this]() { this->ViewCardPage(1, 0); this->m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[1].weaponId); m_curSlot = 1; }); // 0번 슬롯 CardPage 0번으로 이동
+#endif
+    }
+
+    // 무기 전환 토글 버튼
+    {
+        m_pWeaponSwitchButton = m_uiFactory.CreateChild<Button>(m_name + L"_WeaponSwitchButton", Float2(126, 61), XMFLOAT3(-1418, -473, 0), UIDirection::LeftTop, this);
+        assert(m_pWeaponSwitchButton);
+        m_pWeaponSwitchButton->SetHoverTexture(L"../Assets/UI/PLAY/PhaseScene/swich_mouseover.png", L"../Assets/UI/PLAY/PhaseScene/swich_mouseout.png");
+        m_pWeaponSwitchButton->SetEventLMB([this]() { ToggleWeaponSlot(); });
     }
     
     // 페이지 버튼
@@ -289,6 +301,23 @@ bool CardSelectionPanel::Submit(float dTime)
 {
     PhasePanel::Submit(dTime);
     return false;
+}
+
+//////////////////////////////////////////////////////////////////////
+// - Codex -
+// 현재 선택한 무기에서 다른 생존 무기로 전환하는 함수
+void CardSelectionPanel::ToggleWeaponSlot()
+{
+    const int nextSlot = (m_curSlot == 0) ? 1 : 0;
+    if (!IsWeaponSlotAlive(m_player, nextSlot))
+        return;
+
+    m_curSlot = nextSlot;
+    m_curPage = 0;
+    ViewCardPage(m_curSlot, m_curPage);
+
+    if (m_pWeaponIMG)
+        m_pWeaponIMG->ChangeWeaponImage(m_player.weapons[m_curSlot].weaponId);
 }
 
 void CardSelectionPanel::UpdatePanel(const BattleResult& battleResult)

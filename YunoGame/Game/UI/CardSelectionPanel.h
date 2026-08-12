@@ -76,5 +76,9 @@ public:
     int GetCurrentPage() const { return m_curPage; }
     void RefreshCardVisualState();
 
+private:
+    Button* m_pWeaponSwitchButton = nullptr;
+    void ToggleWeaponSlot();
+
 };
 
