@@ -68,6 +68,11 @@ bool UnitPiece::Submit(float dTime)
     return true;
 }
 
+//////////////////////////////////////////////////////////////////////
+// - Codex -
+// 디졸브가 끝난 본체 기물만 시스템 삭제 큐에 등록하는 함수
+// dt : 프레임 경과 시간
+// 반환값 : 기물이 사망 처리 중인지 여부
 bool UnitPiece::CheckDead(float dt)
 {
     if (!HasAnimState(PieceAnim::Dead)) return false;
@@ -76,7 +81,11 @@ bool UnitPiece::CheckDead(float dt)
     // 다 사라지고 난 뒤에만 시스템에 삭제를 요청한다.
     if (m_dissolveAmount >= 0.999f)
     {
-        PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
+        // 본체 삭제 처리에서 연결된 서브 피스도 함께 제거하므로
+        // 서브 피스가 동일 GamePiece의 삭제 명령을 중복 등록하지 않게 한다.
+        if (m_subID == 0)
+            PlayGridQ::Insert(PlayGridQ::Cmd_S(CommandType::Dead, m_who));
+
         AddAnimState(PieceAnim::DeadQueued);
     }
 

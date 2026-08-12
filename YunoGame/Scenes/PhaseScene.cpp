@@ -84,6 +84,16 @@ bool PhaseScene::OnCreateScene()
     auto* b = CreateWidget<Letterbox>(L"LetterBoxB", Float2(50, 50), XMFLOAT3(0, 0, 0));
     b->SetRole(Letterbox::Role::BarB);
 
+    m_pTutorialImage = CreateWidget<TextureImage>(
+        L"TutorialImage",
+        L"../Assets/UI/PLAY/Tutorial.png",
+        Float2(3840,2160),
+        XMFLOAT3(0, 0, 0),
+        UIDirection::LeftTop);
+    m_pTutorialImage->SetSize(Float2(3840, 2160));
+    m_pTutorialImage->SetLayer(WidgetLayer::Tooltip);
+    m_pTutorialImage->SetVisible(Visibility::Collapsed);
+
     //m_minimap = std::make_unique<MinimapGridSystem>(m_uiManager.get(), m_input);
 
     m_uiManager->AllParentsSetScale(0.5f); // 일괄 사이즈 조정
@@ -133,8 +143,73 @@ void PhaseScene::Update(float dt)
     //m_uiManager->GetCursurStstem()->UpdateCheckSnap();
     SceneBase::Update(dt); // 여기만 UI 출력하게끔 빼둘까?
 
+    auto& gm = GameManager::Get();
+
+    if (!m_hasShownRegistrationTutorial &&
+        gm.GetCurrentTurn() <= 1)
+    {
+        ShowTutorial(TutorialType::CardRegistration);
+        m_hasShownRegistrationTutorial = true;
+    }
+
+    TutorialType requestedType = TutorialType::None;
+    if (gm.ConsumeTutorial(requestedType))
+    {
+        ShowTutorial(requestedType);
+    }
+
+    if (m_isTutorialVisible)
+    {
+        m_tutorialRemainingTime -= dt;
+        if (m_tutorialRemainingTime <= 0.0f)
+        {
+            HideTutorial();
+        }
+    }
+
     //m_input->Dispatch();
     //m_minimap->Update(dt);
+}
+
+//////////////////////////////////////////////////////////////////////
+// - ShowTutorial -
+// 요청한 종류의 튜토리얼 이미지를 5초 동안 표시한다.
+// type : 표시할 튜토리얼 종류
+void PhaseScene::ShowTutorial(TutorialType type)
+{
+    if (!m_pTutorialImage || type == TutorialType::None)
+        return;
+
+    switch (type)
+    {
+    case TutorialType::CardRegistration:
+        m_pTutorialImage->ChangeTexture(L"../Assets/UI/PLAY/Tutorial_1.png");
+        break;
+    case TutorialType::DirectionSelection:
+        m_pTutorialImage->ChangeTexture(L"../Assets/UI/PLAY/Tutorial_3.png");
+        break;
+    case TutorialType::CardConfirmation:
+        m_pTutorialImage->ChangeTexture(L"../Assets/UI/PLAY/Tutorial_2.png");
+        break;
+    default:
+        return;
+    }
+
+    m_pTutorialImage->SetVisible(Visibility::Visible);
+    m_tutorialRemainingTime = 5.0f;
+    m_isTutorialVisible = true;
+}
+
+//////////////////////////////////////////////////////////////////////
+// - HideTutorial -
+// 표시 시간이 끝난 튜토리얼 이미지를 숨기고 타이머를 초기화한다.
+void PhaseScene::HideTutorial()
+{
+    if (m_pTutorialImage)
+        m_pTutorialImage->SetVisible(Visibility::Collapsed);
+
+    m_tutorialRemainingTime = 0.0f;
+    m_isTutorialVisible = false;
 }
 
 void PhaseScene::SubmitObj()

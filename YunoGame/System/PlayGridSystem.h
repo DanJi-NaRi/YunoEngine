@@ -123,6 +123,16 @@ enum class ObstaclePhase : uint8_t
     Over
 };
 
+enum class MatchEndPresentationPhase : uint8_t
+{
+    None,
+    WaitingForLoser,
+    DissolvingWinner,
+    WaitingForCamera,
+    ShowingWinner,
+    Complete
+};
+
 struct ObstacleSequence
 {
     // 상태머신 시동 시 시작 단계를 지정하는 용도로만 사용한다. (ChangeObstacleState)
@@ -211,6 +221,10 @@ public:
     float GetAttackRotDuration() const { return attackRotDuration; }
     float GetDisappearDissolveDuration() const { return disappearDisolveDuration; }
 
+    bool IsMatchEndPresentationActive() const;
+    bool IsWaitingForMatchEndWinnerSpawn() const;
+    void SpawnMatchEndWinners();
+
 private:
     void Init();
     void CreateTileAndPiece(float x, float y, float z);
@@ -221,6 +235,7 @@ private:
     void CheckMyQ();
     void CheckPacket(float dt);
     void CheckOver();
+    void UpdateMatchEndPresentation(float dt);
     void ReflectWeaponData();
     void ReflectTileData();     // 붕괴 타일 상태를 GameManager로 반영 (Minimap이 소비)
 
@@ -303,6 +318,11 @@ private:
         // 기물 디졸브
     float appearDisolveDuration = 1.f;
     float disappearDisolveDuration = 1.25f;
+
+    MatchEndPresentationPhase m_matchEndPresentationPhase = MatchEndPresentationPhase::None;
+    float m_matchEndPresentationTimer = 0.f;
+    float m_matchEndWinnerHoldDuration = 0.5f;
+    int m_matchEndWinnerPID = 0;
     
         // 패킷. 일단 하드코딩..서버랑 맞춰야해ㅠㅠㅠ
     float pktOffset = disappearDisolveDuration;

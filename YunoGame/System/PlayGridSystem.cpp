@@ -130,6 +130,9 @@ void PlayGridSystem::InitRound()
     ReflectWeaponData();
     ApplyTransform();
     isRoundOver = false;
+    m_matchEndPresentationPhase = MatchEndPresentationPhase::None;
+    m_matchEndPresentationTimer = 0.f;
+    m_matchEndWinnerPID = 0;
 }
 
 void PlayGridSystem::Update(float dt)
@@ -143,6 +146,7 @@ void PlayGridSystem::Update(float dt)
 
     CheckPacket(dt);
     CheckMyQ();
+    UpdateMatchEndPresentation(dt);
 }
 
 void PlayGridSystem::ApplyTransform()
@@ -154,6 +158,145 @@ void PlayGridSystem::ApplyTransform()
             unit->SetScale({ 2, 2, 2 });
         else
             unit->SetScale({ 1, 1, 1 });
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+// - Codex -
+// 패배 유닛 제거 후 카메라 이동을 포함한 매치 종료 연출이 진행 중인지 확인하는 함수
+// 반환값 : 카메라 이동을 시작할 수 있는 매치 종료 연출 진행 여부
+bool PlayGridSystem::IsMatchEndPresentationActive() const
+{
+    return m_matchEndPresentationPhase != MatchEndPresentationPhase::None
+        && m_matchEndPresentationPhase != MatchEndPresentationPhase::WaitingForLoser
+        && m_matchEndPresentationPhase != MatchEndPresentationPhase::Complete;
+}
+
+//////////////////////////////////////////////////////////////////////
+// - Codex -
+// 승리 유닛 디졸브가 끝나고 카메라 이동 완료를 기다리는지 확인하는 함수
+// 반환값 : 승리 유닛 스폰 대기 여부
+bool PlayGridSystem::IsWaitingForMatchEndWinnerSpawn() const
+{
+    return m_matchEndPresentationPhase == MatchEndPresentationPhase::WaitingForCamera;
+}
+
+//////////////////////////////////////////////////////////////////////
+// - Codex -
+// 승리 플레이어의 두 유닛을 5행 3열과 5행 5열에 생성하는 함수
+void PlayGridSystem::SpawnMatchEndWinners()
+{
+    if (m_matchEndPresentationPhase != MatchEndPresentationPhase::WaitingForCamera)
+        return;
+
+    if (m_matchEndWinnerPID < 1 || m_matchEndWinnerPID > 2)
+        return;
+
+    constexpr int winnerRow = 4;
+    constexpr int winnerColumns[2] = { 2, 4 };
+
+    for (int slotIndex = 0; slotIndex < 2; ++slotIndex)
+    {
+        const int slotID = slotIndex + 1;
+        const int unitID = GetUnitID(m_matchEndWinnerPID, slotID);
+        const int tileID = GetID(winnerColumns[slotIndex], winnerRow);
+
+        Wdata winnerData{};
+        winnerData.pId = m_matchEndWinnerPID;
+        winnerData.slotId = slotID;
+        winnerData.weaponId = m_weaponIDs[unitID];
+        winnerData.hp = m_UnitStates[unitID].hp;
+        winnerData.stamina = m_UnitStates[unitID].stamina;
+        winnerData.currentTile = tileID;
+
+        m_UnitStates[unitID].targetTileID = static_cast<uint8_t>(tileID);
+        CreatePiece(winnerData);
+    }
+
+    ApplyTransform();
+    m_matchEndPresentationTimer = 0.f;
+    m_matchEndPresentationPhase = MatchEndPresentationPhase::ShowingWinner;
+}
+
+//////////////////////////////////////////////////////////////////////
+// - Codex -
+// 승리 유닛 제거 완료와 결과 화면 전환 시점을 갱신하는 함수
+// dt : 프레임 경과 시간
+void PlayGridSystem::UpdateMatchEndPresentation(float dt)
+{
+    if (m_matchEndPresentationPhase == MatchEndPresentationPhase::WaitingForLoser)
+    {
+        const int loserPID = (m_matchEndWinnerPID == 1) ? 2 : 1;
+        bool loserPieceRemains = false;
+        for (int slotID = 1; slotID <= 2; ++slotID)
+        {
+            const GamePiece loserPiece = GetGamePiece(loserPID, slotID);
+            if (m_pieces.find(loserPiece) != m_pieces.end())
+            {
+                loserPieceRemains = true;
+                break;
+            }
+        }
+
+        if (loserPieceRemains)
+            return;
+
+        for (int slotID = 1; slotID <= 2; ++slotID)
+        {
+            const GamePiece winnerPiece = GetGamePiece(m_matchEndWinnerPID, slotID);
+            auto it = m_pieces.find(winnerPiece);
+            if (it == m_pieces.end())
+                continue;
+
+            auto& pieceInfo = it->second;
+            auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceInfo.id));
+            if (pPiece != nullptr)
+                pPiece->InsertQ(PlayGridQ::Disappear_P(disappearDisolveDuration));
+
+            for (auto subID : pieceInfo.subIds)
+            {
+                auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(subID));
+                if (pSub != nullptr)
+                    pSub->InsertQ(PlayGridQ::Disappear_P(disappearDisolveDuration));
+            }
+        }
+
+        m_matchEndPresentationTimer = 0.f;
+        m_matchEndPresentationPhase = MatchEndPresentationPhase::DissolvingWinner;
+    }
+    else if (m_matchEndPresentationPhase == MatchEndPresentationPhase::DissolvingWinner)
+    {
+        m_matchEndPresentationTimer += dt;
+
+        if (m_matchEndPresentationTimer < disappearDisolveDuration)
+            return;
+
+        bool winnerPieceRemains = false;
+        for (int slotID = 1; slotID <= 2; ++slotID)
+        {
+            const GamePiece winnerPiece = GetGamePiece(m_matchEndWinnerPID, slotID);
+            if (m_pieces.find(winnerPiece) != m_pieces.end())
+            {
+                winnerPieceRemains = true;
+                break;
+            }
+        }
+
+        if (!winnerPieceRemains)
+        {
+            m_matchEndPresentationTimer = 0.f;
+            m_matchEndPresentationPhase = MatchEndPresentationPhase::WaitingForCamera;
+        }
+    }
+    else if (m_matchEndPresentationPhase == MatchEndPresentationPhase::ShowingWinner)
+    {
+        m_matchEndPresentationTimer += dt;
+
+        if (m_matchEndPresentationTimer >= appearDisolveDuration + m_matchEndWinnerHoldDuration)
+        {
+            m_matchEndPresentationPhase = MatchEndPresentationPhase::Complete;
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+        }
     }
 }
 
@@ -509,6 +652,7 @@ void PlayGridSystem::CheckMyQ()
             pieceInfo.effectIds.clear();
 
             m_pieces.erase(it);
+            m_units.erase(pieceType);
 
             // 해당 타일 상태 초기화
             // 단, 붕괴한 타일 위에서 죽은 경우 TileState{}로 통째로 덮으면
@@ -521,7 +665,7 @@ void PlayGridSystem::CheckMyQ()
                 m_tiles[tileID] = TileState{};
 
             // m_pieces가 전부 사라졌는지 체크
-            if (m_pieces.size() == 0)
+            if (m_pieces.size() == 0 && !GameManager::Get().GetEndGame())
             {
                 // 패킷 초기화
                 yuno::net::packets::C2S_RoundStartReadyOK req{};
@@ -1166,8 +1310,6 @@ void PlayGridSystem::CheckOver()
     RoundResult roundResult = RoundResult::None;
     if (allyDead && enemyDead)          // 무승부
     {
-        if(GameManager::Get().GetEndGame())
-            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         //else 
         //    GameManager::Get().SetSceneState(CurrentSceneState::RoundStart);
         std::cout << "This Round Result : Draw\n";
@@ -1175,8 +1317,6 @@ void PlayGridSystem::CheckOver()
     }
     else if (allyDead)                  // Lose
     {
-        if (GameManager::Get().GetEndGame())
-            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         //else
         //    GameManager::Get().SetSceneState(CurrentSceneState::RoundStart);
         std::cout << "This Round Result : Lose\n";
@@ -1184,8 +1324,6 @@ void PlayGridSystem::CheckOver()
     }
     else if (enemyDead)                 // Win
     {
-        if (GameManager::Get().GetEndGame())
-            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
         //else
         //    GameManager::Get().SetSceneState(CurrentSceneState::RoundStart);
         std::cout << "This Round Result : Win\n";
@@ -1194,15 +1332,38 @@ void PlayGridSystem::CheckOver()
     else
         return;
 
+    const bool waitForLoserRemoval = GameManager::Get().GetEndGame()
+        && roundResult != RoundResult::Draw;
+
     for (GamePiece i = GamePiece::Ally1; i < GamePiece::MAX; ++i)
     {
-        if (deadUnits[(int)i]) continue;
-
         auto it = m_pieces.find(i);
         if (it == m_pieces.end()) continue;
 
         auto& pieceinfo = it->second;
         auto pPiece = dynamic_cast<UnitPiece*>(m_manager->FindObject(pieceinfo.id));
+
+        if (deadUnits[(int)i])
+        {
+            if (!waitForLoserRemoval)
+                continue;
+
+            // 매치 종료 시 마지막 사망 커맨드가 누락되어도 패배 기물 제거를 보장한다.
+            if (pPiece != nullptr)
+                pPiece->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+
+            for (auto sid : pieceinfo.subIds)
+            {
+                auto pSub = dynamic_cast<UnitPiece*>(m_manager->FindObject(sid));
+                if (pSub != nullptr)
+                    pSub->InsertQ(PlayGridQ::Dead_P(disappearDisolveDuration));
+            }
+            continue;
+        }
+
+        if (waitForLoserRemoval)
+            continue;
+
         if (pPiece != nullptr)
         {
             // 라운드 종료 시 남아있는 기물도 일괄 제거
@@ -1231,6 +1392,20 @@ void PlayGridSystem::CheckOver()
 
     GameManager::Get().ClearBattlePacket();
     GameManager::Get().SetRoundResult(roundResult);
+
+    if (GameManager::Get().GetEndGame())
+    {
+        if (roundResult == RoundResult::Draw)
+        {
+            GameManager::Get().SetSceneState(CurrentSceneState::ResultScene);
+        }
+        else
+        {
+            m_matchEndWinnerPID = (roundResult == RoundResult::Winner_P1) ? 1 : 2;
+            m_matchEndPresentationTimer = 0.f;
+            m_matchEndPresentationPhase = MatchEndPresentationPhase::WaitingForLoser;
+        }
+    }
 }
 
 void PlayGridSystem::ReflectWeaponData()

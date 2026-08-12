@@ -449,6 +449,7 @@ void GameManager::SetSceneState(CurrentSceneState state)
         ClearCollapsedTiles();
 
         while (!m_pendingEmotes.empty()) m_pendingEmotes.pop();
+        m_pendingTutorial = TutorialType::None;
         while (!m_coinTossQueue.empty()) m_coinTossQueue.pop();
         while (!m_revealBuffer.empty()) m_revealBuffer.pop();
         while (!m_obstaclePkts.empty()) m_obstaclePkts.pop();
@@ -896,6 +897,33 @@ bool GameManager::PopEmote(PendingEmote& out)
     return true;
 }
 
+//////////////////////////////////////////////////////////////////////
+// - RequestTutorial -
+// 화면에 표시할 최신 튜토리얼 종류를 등록한다.
+// type : 표시할 튜토리얼 종류
+void GameManager::RequestTutorial(TutorialType type)
+{
+    if (type == TutorialType::None)
+        return;
+
+    m_pendingTutorial = type;
+}
+
+//////////////////////////////////////////////////////////////////////
+// - ConsumeTutorial -
+// 등록된 최신 튜토리얼 요청을 한 번 꺼낸다.
+// outType : 꺼낸 튜토리얼 종류를 저장할 변수
+// 반환값 : 꺼낼 요청이 있었으면 true, 없으면 false
+bool GameManager::ConsumeTutorial(TutorialType& outType)
+{
+    if (m_pendingTutorial == TutorialType::None)
+        return false;
+
+    outType = m_pendingTutorial;
+    m_pendingTutorial = TutorialType::None;
+    return true;
+}
+
 bool GameManager::IsCountdownActive() const
 {
     return m_countdownActive;
@@ -1100,6 +1128,30 @@ void GameManager::SendSurrender()
 
     std::cout << "[GameManager] C2S_Surrender sent\n";
 }
+
+#if defined(_DEBUG)
+void GameManager::SendDebugKillPlayer(uint8_t targetPID)
+{
+    if (!m_clientNet || targetPID < 1 || targetPID > 2)
+        return;
+
+    using namespace yuno::net;
+
+    packets::C2S_DebugKillPlayer pkt{};
+    pkt.targetPID = targetPID;
+
+    auto bytes = PacketBuilder::Build(
+        PacketType::C2S_ReservedDebug,
+        [&](ByteWriter& w)
+        {
+            pkt.Serialize(w);
+        });
+
+    m_clientNet->SendPacket(std::move(bytes));
+    std::cout << "[Debug Cheat] Requested kill for P"
+        << static_cast<int>(targetPID) << "\n";
+}
+#endif
 //void GameManager::RoundInit(yuno::net::packets::S2C_Error data)
 //{
 //    // 너가 패킷 사용해서 하고싶은거하면돼

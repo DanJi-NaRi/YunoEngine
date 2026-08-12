@@ -525,6 +525,7 @@ void PlayScene::OnEnter()
     m_NextCamTarget = { 0.0f, 3.631f, -6.974f };
     //m_NextCamTarget = { 0.0f, -147.85f, -139.64f };
     isCamMove = true;
+    m_matchEndCameraStarted = false;
 }
 
 void PlayScene::OnExit()
@@ -576,6 +577,22 @@ void PlayScene::MoveCamera(float dt)
     }
 }
 
+//////////////////////////////////////////////////////////////////////
+// - Codex -
+// 매치 종료 시 현재 위치에서 카드 선택 페이즈 카메라 위치로 이동을 시작하는 함수
+void PlayScene::StartMatchEndCameraMove()
+{
+    auto& cam = YunoEngine::GetRenderer()->GetCamera();
+
+    m_CurCamPos = cam.position;
+    m_CurCamTarget = cam.target;
+    m_NextCamPos = { 0.0f, 4.383f, -6.315f };
+    m_NextCamTarget = { 0.0f, 3.631f, -6.974f };
+    m_curMoveTime = 0.f;
+    isCamMove = true;
+    m_matchEndCameraStarted = true;
+}
+
 void PlayScene::ApplyRoundObject()
 {
     auto& gm = GameManager::Get();
@@ -609,10 +626,25 @@ void PlayScene::Update(float dt)
     //TestInput();
     auto& gm = GameManager::Get();
 
+#if defined(_DEBUG)
+    if (m_input->IsKeyPressed(VK_F1))
+        gm.SendDebugKillPlayer(1);
+    else if (m_input->IsKeyPressed(VK_F2))
+        gm.SendDebugKillPlayer(2);
+#endif
+
     if (gm.isRoundChangeNow())
         ApplyRoundObject();
 
     m_playGrid->Update(dt);
+
+    auto* playGrid = dynamic_cast<PlayGridSystem*>(m_playGrid.get());
+    if (playGrid != nullptr
+        && playGrid->IsMatchEndPresentationActive()
+        && !m_matchEndCameraStarted)
+    {
+        StartMatchEndCameraMove();
+    }
 
     m_CurSceneState = GameManager::Get().GetSceneState();
 
@@ -624,6 +656,14 @@ void PlayScene::Update(float dt)
     }
 
     MoveCamera(dt);
+
+    if (playGrid != nullptr
+        && m_matchEndCameraStarted
+        && !isCamMove
+        && playGrid->IsWaitingForMatchEndWinnerSpawn())
+    {
+        playGrid->SpawnMatchEndWinners();
+    }
     
     if (m_input->IsKeyPressed(VK_ESCAPE) && flag)
     {
