@@ -190,8 +190,22 @@ AudioManager::~AudioManager()
 
 void AudioManager::Load(std::string bankName)
 {
+    // 이미 로드한 bank면 m_Banks에 중복으로 쌓이지 않게 막는다.
+    auto it = std::find(m_Banks.begin(), m_Banks.end(), bankName);
+    if (it != m_Banks.end())
+    {
+        std::cerr << "[AudioManager]" << "Load : " << "The bank has already loaded.\n";
+        return;
+    }
+
+    // 로드에 성공했을 때만 기록
+    if (!AudioCore::Get().LoadBank(bankName))
+    {
+        std::cerr << "[AudioManager]" << "Load : " << "Failed to load the bank.\n";
+        return;
+    }
+
     m_Banks.push_back(bankName);
-    AudioCore::Get().LoadBank(bankName);
 }
 
 

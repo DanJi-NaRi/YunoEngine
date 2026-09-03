@@ -70,6 +70,9 @@ private:
     FMOD::System* m_Core = nullptr;
 
     BankHelper m_BH;
+
+    FMOD::Studio::Bank* m_MasterStringBank = nullptr;
+    FMOD::Studio::Bank* m_MasterBank = nullptr;
     std::unordered_map<std::string, FMOD::Studio::Bank*> m_Banks;
     std::unordered_map<std::string, FMOD::Studio::EventDescription*> m_EventDescList;
     std::unordered_map<std::string, FMOD::Studio::Bus*> m_BusList;

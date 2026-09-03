@@ -27,13 +27,16 @@ bool AudioCore::Init(int maxChannels)
     CheckFMOD(r, "Studio::System::initialize");
     if (r != FMOD_OK) return false;
     
-    r = m_Studio->loadBankFile(m_BH.GetBankPath("Master.strings"), FMOD_STUDIO_LOAD_BANK_NORMAL, &m_BH.m_MasterStringBank);
+    r = m_Studio->loadBankFile(m_BH.GetBankPath("Master.strings"), FMOD_STUDIO_LOAD_BANK_NORMAL, &m_MasterStringBank);
     CheckFMOD(r, "Studio::System::Init::LoadBank");
     if (r != FMOD_OK) return false;
 
-    r = m_Studio->loadBankFile(m_BH.GetBankPath("Master"), FMOD_STUDIO_LOAD_BANK_NORMAL, &m_BH.m_MasterBank);
+    r = m_Studio->loadBankFile(m_BH.GetBankPath("Master"), FMOD_STUDIO_LOAD_BANK_NORMAL, &m_MasterBank);
     CheckFMOD(r, "Studio::System::Init::LoadBank");
     if (r != FMOD_OK) return false;
+
+    // master bank는 게임 내내 로드 상태를 유지하므로 m_Banks에 넣지 않는다.(UnloadBank 대상 제외)
+    m_BH.IndexBankContent("Master", m_MasterBank);
 
     // 기본 3D 설정 (단위가 '미터'라면 distanceFactor=1.0)
     Set3DSettings(1.0f, 1.0f, 1.0f);
@@ -51,6 +54,20 @@ void AudioCore::Shutdown()
     m_EventDescList.clear();
     m_BusList.clear();
     m_VCAList.clear();
+
+    m_BH.Clear();
+
+    if (m_MasterBank)
+    {
+        m_MasterBank->unload();
+        m_MasterBank = nullptr;
+    }
+
+    if (m_MasterStringBank)
+    {
+        m_MasterStringBank->unload();
+        m_MasterStringBank = nullptr;
+    }
 
     if (m_Studio)
     {
@@ -87,7 +104,7 @@ bool AudioCore::LoadBank(const std::string& bankName, bool loadSampleData)
 
     m_Banks[bankName] = bank;
 
-    // 이 bank가 포함한 event/bus/vca 목록을 기록하고 refcount 증가
+    // 이 bank가 포함한 event 목록을 기록하고 refcount 증가
     m_BH.IndexBankContent(bankName, bank);
 
     return true;
@@ -142,7 +159,7 @@ FMOD::Studio::EventDescription* AudioCore::GetSnapshotDesc(const std::string& ev
     std::string eventPath = "snapshot:/";
     std::string totalPath = eventPath + eventName;
     FMOD_RESULT r = m_Studio->getEvent(totalPath.c_str(), &desc);
-    CheckFMOD(r, "Studio::System::getEvent");
+    CheckFMOD(r, "Studio::System::getSnapshot");
     if (r != FMOD_OK || !desc) return nullptr;
 
     m_EventDescList[eventName] = desc;
@@ -229,34 +246,6 @@ void AudioCore::DecRefAndEraseCaches(BankContent& content)
             m_EventDescList.erase(name); // 해당 Event 캐시만 제거
         }
     }
-
-    // Buses
-    for (const auto& name : content.buses)
-    {
-        auto it = m_BH.m_BusRef.find(name);
-        if (it == m_BH.m_BusRef.end()) continue;
-
-        it->second--;
-        if (it->second <= 0)
-        {
-            m_BH.m_BusRef.erase(it);
-            m_BusList.erase(name); // 해당 Bus 캐시만 제거
-        }
-    }
-
-    // VCAs
-    for (const auto& name : content.vcas)
-    {
-        auto it = m_BH.m_VcaRef.find(name);
-        if (it == m_BH.m_VcaRef.end()) continue;
-
-        it->second--;
-        if (it->second <= 0)
-        {
-            m_BH.m_VcaRef.erase(it);
-            m_VCAList.erase(name); // 해당 VCA 캐시만 제거
-        }
-    }
 }
 
 void AudioCore::SetListener3DAttributes(const FMOD_3D_ATTRIBUTES& attrs, int listenerIndex)
@@ -290,10 +279,14 @@ void AudioCore::Set3DSettings(float dopplerScale, float distanceFactor, float ro
 
 const std::vector<std::string>& AudioCore::GetEventList(const std::string bankName)
 {
+    // 찾지 못했을 때 돌려줄 빈 목록. 참조 반환이라 유효한 대상이 필요
+    static const std::vector<std::string> s_emptyEventList;
+
     auto it = m_BH.m_BankContents.find(bankName);
     if (it == m_BH.m_BankContents.end())
     {
         std::cerr << "[AudioCore]" << "GetEventList : " << "Failed to find the eventList with that bankName.\n";
+        return s_emptyEventList;
     }
 
     return it->second.events;

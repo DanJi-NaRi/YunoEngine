@@ -98,8 +98,6 @@ bool PhaseScene::OnCreateScene()
 
     m_uiManager->AllParentsSetScale(0.5f); // 일괄 사이즈 조정
 
-    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_Move));
-
     return true;
 }
 
@@ -130,12 +128,16 @@ void PhaseScene::OnEnter()
     //std::cout << "[UIScene] OnEnter\n"; 
     // 컨텍스트 추가
     YunoEngine::GetInput()->AddContext(&m_uiCtx, this);
+
+    AudioQ::Insert(AudioQ::PlayOneShot(EventName::UI_Move));
+    AudioQ::Insert(AudioQ::PlaySnapshot(EventName::Blocking));
 }
 
 void PhaseScene::OnExit()
 {
     //std::cout << "[UIScene] OnExit\n"; 
     YunoEngine::GetInput()->RemoveContext(&m_uiCtx);
+    AudioQ::Insert(AudioQ::StopOrRestartEvent(EventName::Blocking, true));
 }
 
 void PhaseScene::Update(float dt)

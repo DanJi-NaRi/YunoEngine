@@ -108,7 +108,7 @@ void OptionScene::CreateVolumeUI()
             Float2(600, 80),
             XMFLOAT3(
                 centerX,
-                centerY + gapY - i * gapY,
+                centerY - gapY + i * gapY,
                 0.f
             )
         );

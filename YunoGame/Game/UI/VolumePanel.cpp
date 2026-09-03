@@ -51,7 +51,7 @@ void VolumePanel::CreateChild()
             switch (m_type)
             {
             case VolumeType::Master:
-                GameManager::Get().SetSFXVolume(newLevel);
+                GameManager::Get().SetMasterVolume(newLevel);
                 break;
 
             case VolumeType::Music:
@@ -60,7 +60,7 @@ void VolumePanel::CreateChild()
                 break;
 
             case VolumeType::SFX:
-                GameManager::Get().SetMasterVolume(newLevel);
+                GameManager::Get().SetSFXVolume(newLevel);
                 break;
             }
         };
